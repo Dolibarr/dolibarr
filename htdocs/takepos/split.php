@@ -68,6 +68,8 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 	$split = GETPOSTINT('split');
 	$invoice = null;
 	$placeid = 0;
+	// The line can only be taken from the draft invoice of this terminal it is moved from
+	$sourceref = '(PROV-POS'.$_SESSION["takeposterminal"].'-'.($split == 1 ? $place : 'SPLIT').')';
 	if ($split == 1) { // Split line
 		$invoice = new Facture($db);
 		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
@@ -93,8 +95,12 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
-		$db->query($sql);
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
 	} elseif ($split == 0) { // Unsplit line
 		$invoice = new Facture($db);
 		if ($place == "SPLIT") {
@@ -124,8 +130,12 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
-		$db->query($sql);
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
 	}
 	if ($invoice !== null) {
 		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');

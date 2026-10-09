@@ -122,7 +122,7 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodisable) {
 		$object->fetch($id);
 		$object->delete($user);
 		header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");

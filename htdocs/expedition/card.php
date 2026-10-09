@@ -1266,6 +1266,7 @@ if ($action == 'create') {
 					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
+					$selectedLines = GETPOST('subtotal_toselect', 'array:int');
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;

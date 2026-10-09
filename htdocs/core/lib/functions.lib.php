@@ -9623,7 +9623,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
@@ -9648,7 +9648,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->thirdparty->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->thirdparty->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->thirdparty->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->thirdparty->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->thirdparty->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->thirdparty->idprof2 ?? '';
@@ -10556,7 +10556,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="'.$style.' clearboth">';
 		$divend = '</div>';
 	}
@@ -10581,7 +10581,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			$return = '<script nonce="'.getNonce().'">
 				$(document).ready(function() {
 					/* jnotify(message, preset of message type, keepmessage) */
