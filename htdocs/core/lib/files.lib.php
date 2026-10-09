@@ -2361,6 +2361,47 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
 
 
 /**
+ * Extract the main document text from a DOCX file.
+ *
+ * @param	string	$filetoprocess	Full path to the DOCX file
+ * @return	string					Extracted text, or an empty string on failure
+ */
+function dolExtractTextFromDocxFile($filetoprocess)
+{
+	if (!class_exists('ZipArchive') || !is_readable($filetoprocess)) {
+		return '';
+	}
+
+	$zip = new ZipArchive();
+	if ($zip->open($filetoprocess) !== true) {
+		return '';
+	}
+
+	$documentIndex = $zip->locateName('word/document.xml');
+	$documentStat = ($documentIndex === false ? false : $zip->statIndex($documentIndex));
+	if (!is_array($documentStat) || empty($documentStat['size']) || $documentStat['size'] > 8 * 1024 * 1024) {
+		$zip->close();
+		return '';
+	}
+
+	$documentXml = $zip->getFromIndex($documentIndex);
+	$zip->close();
+	if (!is_string($documentXml)) {
+		return '';
+	}
+
+	$documentXml = preg_replace('/<w:tab\b[^>]*\/>/i', "\t", $documentXml);
+	$documentXml = preg_replace('/<w:(?:br|cr)\b[^>]*\/>/i', "\n", (string) $documentXml);
+	$documentXml = preg_replace('/<\/w:(?:p|tr|tc)>/i', "\n", (string) $documentXml);
+	$text = html_entity_decode(strip_tags((string) $documentXml), ENT_QUOTES | ENT_XML1, 'UTF-8');
+	$text = preg_replace('/[ \t]+/', ' ', $text);
+	$text = preg_replace("/\n{3,}/", "\n\n", (string) $text);
+
+	return substr(trim((string) $text), 0, 4 * 1024 * 1024);
+}
+
+
+/**
  *  Add a file into database index.
  *  Called by dol_add_file_process when uploading a file and on other cases.
  *  See also commonGenerateDocument that also add/update database index when a file is generated.
@@ -2458,6 +2499,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 					$cmd = $result['cmd'];
 				} else {
 					$error++;
+				}
+			} elseif (preg_match('/\.docx$/i', $filename)) {
+				$textforfulltextindex = dolExtractTextFromDocxFile($filetoprocess);
+				if ($textforfulltextindex !== '') {
+					$cmd = 'native DOCX parser';
 				}
 			}
 
