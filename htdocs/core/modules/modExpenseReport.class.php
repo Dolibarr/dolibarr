@@ -98,10 +98,38 @@ class modExpenseReport extends DolibarrModules
 				'Tolerance delay (in days) before alert for expense reports to pay',
 				0,
 			],
+			[
+				"EXPENSEREPORT_EMAIL_TEMPLATE_REMIND_DELAY",
+				"emailtemplate:expensereport",
+				"(SendingReminderForDelayedExpenseReport)",
+				'Email template used to remind the person in charge of a late expense report (see MAIN_DELAY_EXPENSEREPORTS and MAIN_DELAY_EXPENSEREPORTS_TO_PAY)',
+				0,
+			],
 		];
 
 		// Array to add new pages in new tabs
 		$this->tabs[] = [];
+
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForDelayedExpenseReportsTitle',
+				'jobtype' => 'method',
+				'class' => 'expensereport/class/expensereport.class.php',
+				'objectname' => 'ExpenseReport',
+				'method' => 'sendReminderForDelayedExpenseReports',
+				'parameters' => '',
+				'comment' => 'SendReminderForDelayedExpenseReports',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("expensereport")',
+				'datestart' => $datestart
+			),
+		);
 
 		// Boxes
 		$this->boxes = []; // List of boxes
