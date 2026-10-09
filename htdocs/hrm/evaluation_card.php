@@ -296,6 +296,8 @@ $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
+
+$urltopost = DOL_URL_ROOT.'/core/ajax/updatefield.php';
 ?>
 <script>
 	$(document).ready(function() {
@@ -307,7 +309,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 				rank = -1;	/* Not applicable */
 			}
 			console.log("Save rank "+rank+" for evaluation line "+lineid);
-			$.post('<?php echo dol_escape_js(DOL_URL_ROOT); ?>/core/ajax/updatefield.php', {
+			$.post('<?php echo dol_escape_js($urltopost); ?>', {
 				token: '<?php echo currentToken(); ?>',
 				element: "evaluationdet",
 				fk_element: lineid,
