@@ -170,7 +170,8 @@ $hashp = GETPOST('hashp', 'aZ09', 1);
 $extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = ($entity > 0 ? $entity : $conf->entity);
+// Read the entity again: for an already logged session, main.inc.php overwrites the global $entity with the session entity
+$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
