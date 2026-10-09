@@ -1804,7 +1804,8 @@ class User extends CommonObject
 				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
 			);
 			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
-				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->sanitize($hrmtable)." WHERE ".$sanitizedhrminfo['filter'];
+				$sanitizedfilter = $sanitizedhrminfo['filter'];	// Built above from the id of the user only
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -2140,8 +2141,15 @@ class User extends CommonObject
 		// Set properties on new user
 		$this->admin = 0;
 		$this->civility_code = $member->civility_code;
-		$this->lastname     = $member->lastname;
-		$this->firstname    = $member->firstname;
+		// A corporation member has no lastname/firstname (the name is in the company field), so use it as
+		// the user lastname, otherwise the created user would have an empty name and login (#33642).
+		if ($member->morphy == 'mor' && empty($member->lastname) && !empty($member->company)) {
+			$this->lastname = $member->company;
+			$this->firstname = '';
+		} else {
+			$this->lastname     = $member->lastname;
+			$this->firstname    = $member->firstname;
+		}
 		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
@@ -2158,7 +2166,8 @@ class User extends CommonObject
 
 		if (empty($login)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$login = dol_buildlogin($member->lastname, $member->firstname);
+			// Use the resolved name so a corporation member (name in company field) still gets a login.
+			$login = dol_buildlogin($this->lastname, $this->firstname);
 		}
 		$this->login = $login;
 

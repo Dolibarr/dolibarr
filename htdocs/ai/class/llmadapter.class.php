@@ -75,12 +75,12 @@ class UniversalLLMAdapter
 	 * the text prompt — which is what allows the provider to actually see the file
 	 * (vision/document understanding).
 	 *
-	 * @param string $system   The system prompt/instruction
-	 * @param string $userMsg  The specific user query
-	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
+	 * @param string $system   		The system prompt/instruction
+	 * @param string $userMsg  		The specific user query
+	 * @param string $mode     		'json' for strict JSON (MCP), 'text' for legacy (default)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
 	 * @param array<int,array{role:string,text:string}> $history     Optional prior conversation turns (role 'user'|'assistant'), sent as native multi-turn messages before the current query. Caller sanitizes and caps them.
-	 * @return string|null     The text response from the AI or null on failure
+	 * @return string|null     		The text response from the AI or null on failure
 	 */
 	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
@@ -97,12 +97,12 @@ class UniversalLLMAdapter
 	/**
 	 * Call OpenAI-compatible API
 	 *
-	 * @param string $sys System prompt
-	 * @param string $msg User message
-	 * @param string $mode 'json' or 'text'
-	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
-	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
-	 * @return string|null Response content or null on failure
+	 * @param 	string 			$sys 		System prompt
+	 * @param 	string 			$msg 		User message
+	 * @param 	string 			$mode 		'json' or 'text'
+	 * @param 	array<int,array{mime:string,data:string}> $attachments 		Optional attachments sent as native multimodal parts
+	 * @param 	array<int,array{role:string,text:string}> $history 			Optional prior turns inserted before the current query
+	 * @return 	string|null 				Response content or null on failure
 	 */
 	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{

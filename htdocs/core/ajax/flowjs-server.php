@@ -38,9 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
-}
+
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');    // Required to know date format for dol_print_date
 
 // Load Dolibarr environment
