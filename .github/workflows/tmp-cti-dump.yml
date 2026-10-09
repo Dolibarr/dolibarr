@@ -1,0 +1,62 @@
+name: TMP dump CTI PHPStan debt
+
+on:
+  push:
+    branches:
+      - tmp-cti-phpstan-dump
+    paths-ignore:
+      - 'tmp-dump/**'
+
+permissions:
+  contents: write
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and extract PHPSTAN debt table
+        run: |
+          mkdir -p tmp-dump
+          python3 - <<'PYEOF'
+          import urllib.request, re, html
+          req = urllib.request.Request('https://cti.dolibarr.org/', headers={'User-Agent': 'Mozilla/5.0'})
+          page = urllib.request.urlopen(req, timeout=120).read().decode('utf-8', 'replace')
+          open('tmp-dump/page.html', 'w').write(page)
+          print('PAGE_SIZE=' + str(len(page)))
+          # Locate the PHPSTAN technical debt section: find the anchor/heading then the following table
+          idx = page.find('PHPSTAN')
+          print('PHPSTAN_IDX=' + str(idx))
+          # try to find, after each occurrence of PHPSTAN, a table whose rows look like file/line/error
+          best = []
+          for m in re.finditer(r'PHPSTAN', page):
+              start = m.start()
+              # take the next 80KB window and parse tables in it
+              window = page[start:start+80000]
+              for tm in re.finditer(r'<table[^>]*>(.*?)</table>', window, re.S):
+                  table = tm.group(1)
+                  trs = re.findall(r'<tr[^>]*>(.*?)</tr>', table, re.S)
+                  rows = []
+                  ok = True
+                  for tr in trs:
+                      tds = re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', tr, re.S)
+                      if len(tds) < 3:
+                          continue
+                      clean = [html.unescape(re.sub(r'<[^>]+>', '', t)).strip() for t in tds[:3]]
+                      rows.append('	'.join(clean))
+                  # heuristics: rows mention php files
+                  if len(rows) > 5 and sum(1 for r in rows if '.php' in r) > 5:
+                      if len(rows) > len(best):
+                          best = rows
+          open('tmp-dump/phpstan_debt.txt', 'w').write('
+'.join(best))
+          print('ROWS=' + str(len(best)))
+          for r in best[:6]:
+              print('ROW: ' + r)
+          PYEOF
+      - name: Commit dump
+        run: |
+          git config user.name "dolibot" && git config user.email "dolibarr-bot@users.noreply.github.com"
+          git add tmp-dump
+          git commit -m "TMP: dump CTI PHPStan debt table" || echo "nothing to commit"
+          git push
