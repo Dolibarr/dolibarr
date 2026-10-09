@@ -208,4 +208,52 @@ class AccountingAccountTest extends CommonClassTest
 
 		return $result;
 	}
+
+	/**
+	 * testAccountingSplitAmountPerYear
+	 *
+	 * @return	void
+	 */
+	public function testAccountingSplitAmountPerYear()
+	{
+		$this->assertSame(array(), accountingSplitAmountPerYear(1200, '2026-02-01', '2026-11-30 12:00:00', 2026));
+
+		$result = accountingSplitAmountPerYear(1200, '2026-07-01', '2027-06-30', 2026);
+		$this->assertSame(array(
+			2026 => array('days' => 184, 'percent' => 50.41, 'amount' => 604.93),
+			2027 => array('days' => 181, 'percent' => 49.59, 'amount' => 595.07),
+		), $result);
+
+		$result = accountingSplitAmountPerYear(1000, '2025-07-01', '2027-06-30', 2026);
+		$this->assertSame(array(
+			2025 => array('days' => 184, 'percent' => 25.21, 'amount' => 252.05),
+			2026 => array('days' => 365, 'percent' => 50.0, 'amount' => 500.0),
+			2027 => array('days' => 181, 'percent' => 24.79, 'amount' => 247.95),
+		), $result);
+
+		$result = accountingSplitAmountPerYear(100, '2026-12-31', '2028-01-01', 2026);
+		$this->assertSame(array(2026, 2027, 2028), array_keys($result));
+		$this->assertEqualsWithDelta(100, array_sum(array_column($result, 'amount')), 0.001);
+	}
+
+	/**
+	 * testAccountingAccountIsExcludedFromSplit
+	 *
+	 * @return	void
+	 */
+	public function testAccountingAccountIsExcludedFromSplit()
+	{
+		global $conf;
+		$conf = $this->savconf;
+
+		$conf->global->ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS = '';
+		$this->assertFalse(accountingAccountIsExcludedFromSplit('1500'));
+
+		$conf->global->ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS = '1,20';
+		$this->assertTrue(accountingAccountIsExcludedFromSplit('1'));
+		$this->assertTrue(accountingAccountIsExcludedFromSplit('1500'));
+		$this->assertTrue(accountingAccountIsExcludedFromSplit('2010'));
+		$this->assertFalse(accountingAccountIsExcludedFromSplit('2300'));
+		$this->assertFalse(accountingAccountIsExcludedFromSplit('3400'));
+	}
 }

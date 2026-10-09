@@ -157,7 +157,7 @@ $accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'CREANCES-DETTES');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (in_array($action, array('setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTING_BANK_CONCILIATED'))) {
+if (in_array($action, array('setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTING_BANK_CONCILIATED', 'setACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
@@ -699,6 +699,19 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
 	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferondiscounts&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS").'</td>';
+if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
