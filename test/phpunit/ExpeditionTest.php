@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
@@ -315,5 +316,59 @@ class ExpeditionTest extends CommonClassTest
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testStandaloneShipmentLineLoadsShippedQtyAndProductData
+	 *
+	 * A shipment with no origin document loads its lines with fetch_lines_free(), which must
+	 * expose the same line properties as fetch_lines(): PDF templates and getTotalWeightVolume()
+	 * read qty_shipped, desc and the product columns, not the raw qty/description.
+	 *
+	 * @return void
+	 */
+	public function testStandaloneShipmentLineLoadsShippedQtyAndProductData()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = "ExpeditionTest standalone";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$product = new Product($db);
+		$product->ref = 'PRODSTANDALONE'.dol_now();
+		$product->label = 'Standalone shipment product';
+		$product->description = 'Long description of the shipped product';
+		$product->weight = 2;
+		$product->weight_units = 0;
+		$prodid = $product->create($user);
+		$this->assertGreaterThan(0, $prodid, $product->errorsToString());
+
+		$shipment = new Expedition($db);
+		$shipment->socid = $socid;
+		$shipmentid = $shipment->create($user);
+		$this->assertGreaterThan(0, $shipmentid, $shipment->errorsToString());
+
+		$result = $shipment->addlinefree(3, 'shipping', $prodid, 0, 0, $product->description, 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		$reloaded = new Expedition($db);
+		$this->assertGreaterThan(0, $reloaded->fetch($shipmentid));
+		$this->assertCount(1, $reloaded->lines);
+
+		$line = $reloaded->lines[0];
+		$this->assertEquals(3, $line->qty_shipped);
+		$this->assertSame($product->description, $line->desc);
+		$this->assertSame($product->label, $line->product_label);
+		$this->assertSame($product->ref, $line->product_ref);
+		$this->assertEquals(2, $line->weight);
+
+		$totals = $reloaded->getTotalWeightVolume();
+		$this->assertEquals(3, $totals['toship']);
 	}
 }
