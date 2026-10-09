@@ -5,7 +5,9 @@ on:
     branches:
       - tmp-cti-phpstan-dump
     paths-ignore:
-      - 'tmp-dump/**'
+      - 'tmp-dump/phpstan_debt.txt'
+      - 'tmp-dump/page.html'
+      - 'tmp-dump/run.log'
 
 permissions:
   contents: write
@@ -15,45 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch and extract PHPSTAN debt table
+      - name: Dump
         run: |
           mkdir -p tmp-dump
-          set +e
-          {
-            curl -sL --max-time 180 -A "Mozilla/5.0" https://cti.dolibarr.org/ -o tmp-dump/page.html
-            ls -la tmp-dump
-            cat > /tmp/extract.py <<'PYEOF'
-          import re, html
-          page = open('tmp-dump/page.html', encoding='utf-8', errors='replace').read()
-          print('PAGE_SIZE=' + str(len(page)))
-          idxs = [m.start() for m in re.finditer(r'PHPSTAN', page)]
-          print('PHPSTAN_IDXS=' + str(idxs[:10]))
-          best = []
-          for idx in idxs:
-              window = page[idx:idx+90000]
-              for tm in re.finditer(r'<table[^>]*>(.*?)</table>', window, re.S):
-                  table = tm.group(1)
-                  rows = []
-                  for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', table, re.S):
-                      tds = re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', tr, re.S)
-                      if len(tds) < 3:
-                          continue
-                      clean = [html.unescape(re.sub(r'<[^>]+>', '', t)).strip() for t in tds[:3]]
-                      rows.append('\t'.join(clean))
-                  if len(rows) > 5 and sum(1 for r in rows if '.php' in r) > 5 and len(rows) > len(best):
-                      best = rows
-          open('tmp-dump/phpstan_debt.txt', 'w').write('\n'.join(best))
-          print('ROWS=' + str(len(best)))
-          for r in best[:8]:
-              print('ROW: ' + r)
-          PYEOF
-            python3 /tmp/extract.py
-          } > tmp-dump/run.log 2>&1
-          cat tmp-dump/run.log
-          exit 0
-      - name: Commit dump
-        run: |
-          git config user.name "dolibot" && git config user.email "dolibarr-bot@users.noreply.github.com"
+          curl -sL --max-time 180 -A "Mozilla/5.0" https://cti.dolibarr.org/ -o tmp-dump/page.html || echo "curl failed" > tmp-dump/run.log
+          python3 tmp-dump/extract.py > tmp-dump/run.log 2>&1 || true
+          cat tmp-dump/run.log || true
+          git config user.name "dolibot"
+          git config user.email "dolibarr-bot@users.noreply.github.com"
           git add tmp-dump
           git commit -m "TMP: dump CTI PHPStan debt table" || echo "nothing to commit"
           git push || echo "push failed"
