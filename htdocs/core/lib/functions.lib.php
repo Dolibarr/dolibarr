@@ -28,6 +28,7 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7226,6 +7227,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+			if (isModEnabled('invoice') && (!is_object($object) || $object->element == 'facture')) {
+				$substitutionarray['__PAYMENT_REFERENCE__'] = 'Structured payment reference of an invoice';
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__'] = 'Finnish virtual barcode of an invoice';
+				}
+			}
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -7588,6 +7595,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
+				}
+
+				// Structured payment reference stored on the invoice
+				if ($object->element == 'facture') {
+					$substitutionarray['__PAYMENT_REFERENCE__'] = empty($object->payment_reference) ? '' : $object->payment_reference;
+				}
+
+				// Finnish virtual barcode. Reading it needs the bank account, so it is
+				// loaded only if the key is used, see the lazyload note on this function.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $object->element == 'facture' && $mysoc->country_code == 'FI') {
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__@lazyload'] = '/compta/facture/class/facture.class.php:Facture:fetchAndSetSubstitution:' . $object->id;
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {

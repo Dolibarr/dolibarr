@@ -7,7 +7,7 @@
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2024-2026  Nick Fragoulis
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,6 +134,9 @@ if ($action == 'update') {
 		if (GETPOSTINT('INVOICE_ADD_ZATCA_QR_CODE') == 1) {
 			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 		}
+	}
+	if (GETPOSTISSET('INVOICE_ADD_FI_BARCODE')) {
+		dolibarr_set_const($db, "INVOICE_ADD_FI_BARCODE", GETPOSTINT("INVOICE_ADD_FI_BARCODE"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_EPC_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_EPC_QR_CODE", GETPOST("INVOICE_ADD_EPC_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
@@ -566,6 +569,20 @@ if (isModEnabled('invoice')) {
 		print $form->selectarray("INVOICE_ADD_EPC_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_EPC_QR_CODE'));
 	}
 	print '</td></tr>';
+
+	// Finnish domestic payment barcode, only relevant to finnish companies
+	if ($mysoc->country_code == 'FI') {
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_FI_BARCODE"), $langs->trans("INVOICE_ADD_FI_BARCODEMore"));
+		print '</td><td>';
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff('INVOICE_ADD_FI_BARCODE');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("INVOICE_ADD_FI_BARCODE", $arrval, getDolGlobalString('INVOICE_ADD_FI_BARCODE'));
+		}
+		print '</td></tr>';
+	}
 
 	print '<tr class="oddeven"><td>';
 	if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {

@@ -6720,6 +6720,38 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 *	Load an invoice and return the value of a substitution key that needs a database read.
+	 *	Called by make_substitutions() only when the key is present in the text, see the
+	 *	lazyload note on getCommonSubstitutionArray().
+	 *
+	 *	@param	int		$id			Id of invoice to load
+	 *	@param	string	$key		Substitution key to return, like '__PAYMENT_VIRTUAL_BARCODE__'
+	 *	@param	bool	$fetched	True if the object was already loaded by a previous call
+	 *	@return	string				Value to use for the substitution
+	 */
+	public function fetchAndSetSubstitution($id, $key, $fetched = false)
+	{
+		$substitution = '';
+
+		if ($fetched === false) {
+			$res = $this->fetch($id);
+			if ($res > 0) {
+				$fetched = true;
+			}
+		}
+
+		if ($fetched === true) {
+			if ($key == '__PAYMENT_VIRTUAL_BARCODE__') {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+				$substitution = dolFIFormatVirtualBarcode(dolFIGetInvoiceBarcodeData($this));
+			}
+		}
+
+		return (string) $substitution;
+	}
+
+
+	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
 	 *
 	 * @param 	boolean 	$allow_validated_drafts		return true if the invoice has been validated before returning to DRAFT state.
