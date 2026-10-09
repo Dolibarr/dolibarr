@@ -246,7 +246,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$showempty = $langs->trans("ProductOrService");
 
 		$s = img_picto('', 'product', 'class="pictofixedwidth"');
-		$s .= $form->select_produits(GETPOSTINT('productid'), 'productid', $filtertype, 0, 0, -1, 2, '', 0, array(), $socid, $showempty, 0, '', 0, '', null, 1);
+		$s .= $form->select_produits(GETPOSTINT('productid'), 'productid', $filtertype, 0, 0, -1, 2, '', 0, array(), $socid, $showempty, 0, 'maxwidth300', 0, '', null, 1);
 		/*
 		.'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
