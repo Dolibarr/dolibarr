@@ -1026,6 +1026,15 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && GETPOST('clone_supplier_prices')) {
+							$result = $clone->clone_fournisseurs($object->id, $id);
+							if ($result < 1) {
+								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
+							}
+						}
+
 						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 							$defbomidac = 0; // to avoid cloning same BOM twice
 							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
@@ -1063,7 +1072,6 @@ if (empty($reshook)) {
 								}
 							}
 						}
-						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
 							$refalreadyexists++;
@@ -3138,6 +3146,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPricesAndCustomerPerPrices").')', 'value' => 0);
 	}
+	$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_supplier_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("SupplierPrices").')', 'value' => 0);
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
