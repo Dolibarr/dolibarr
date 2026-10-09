@@ -622,7 +622,10 @@ class Job extends CommonObject
 		$position = new Position($db);
 		$TPosition = $position->getForUser($userid);
 		foreach ($TPosition as $UPosition) {
-			$TReturn[$UPosition->Job->rowid] = $UPosition->Job->ref;
+			$tmpjob = new Job($db);
+			if ($tmpjob->fetch($UPosition->fk_job) > 0) {
+				$TReturn[$tmpjob->id] = $tmpjob->label;
+			}
 		}
 		return $TReturn;
 	}

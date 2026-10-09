@@ -497,7 +497,7 @@ if ($managedfor == "member") {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		dol_banner_tab($adhstat, 'rowid', $linkback);
 
 		print '<div class="fichecenter">';
 
@@ -506,7 +506,7 @@ if ($managedfor == "member") {
 
 		// Login
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adhstat->login.'&nbsp;</td></tr>';
 		}
 
 		// Type
@@ -984,7 +984,7 @@ while ($i < $imaxinloop) {
 						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 					}
 				} else {
-					if ($adherent->subscription == 'yes') {
+					if (!empty($adherent->need_subscription)) {
 						print $langs->trans("SubscriptionNotReceived");
 						if ($adherent->statut > 0) {
 							print " ".img_warning();

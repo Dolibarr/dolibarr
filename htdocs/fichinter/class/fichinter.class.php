@@ -619,6 +619,9 @@ class Fichinter extends CommonObject
 
 			// Define new ref
 			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+				if (empty($this->thirdparty)) {	// Not loaded when validated by the API or on closing a ticket
+					$this->fetch_thirdparty();
+				}
 				$num = $this->getNextNumRef($this->thirdparty);
 			} else {
 				$num = $this->ref;
@@ -1168,7 +1171,7 @@ class Fichinter extends CommonObject
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
-			if ($conf->ficheinter->dir_output) {
+			if ($conf->ficheinter->dir_output && !empty($fichinterref)) {
 				$dir = $conf->ficheinter->dir_output."/".$fichinterref;
 				$file = $conf->ficheinter->dir_output."/".$fichinterref."/".$fichinterref.".pdf";
 				if (file_exists($file)) {

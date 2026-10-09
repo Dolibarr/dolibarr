@@ -289,6 +289,22 @@ class ChargeSociales extends CommonObject
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if a social contribution can be deleted: not once a payment exists, as for invoices
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function is_erasable()
+	{
+		// phpcs:enable
+		$totalpaid = $this->getSommePaiement();
+		if ($totalpaid < 0) {
+			return -1;
+		}
+		return (empty($totalpaid) ? 1 : 0);
+	}
+
 	/**
 	 *      Delete a social contribution
 	 *
@@ -298,6 +314,11 @@ class ChargeSociales extends CommonObject
 	public function delete($user)
 	{
 		$error = 0;
+
+		if ($this->is_erasable() <= 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
 
 		$this->db->begin();
 

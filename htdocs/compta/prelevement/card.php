@@ -197,6 +197,10 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
+if (($id > 0 || $ref) && $object->id <= 0) {
+	recordNotFound('', 0);
+}
+
 if ($id > 0 || $ref) {
 	$head = prelevement_prepare_head($object);
 	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');

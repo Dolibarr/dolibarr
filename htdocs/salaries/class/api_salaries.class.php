@@ -321,17 +321,34 @@ class Salaries extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validatepayments($request_data);
 
+		$salary = new Salary($this->db);
+		if ($salary->fetch($id) <= 0 || empty($salary->id)) {
+			throw new RestException(404, 'Salary not found');
+		}
+		// create() pays the salaries that are the keys of amounts, not {id}
+		if (!is_array($request_data['amounts']) || array_diff(array_keys($request_data['amounts']), array($salary->id))) {
+			throw new RestException(400, 'amounts must be keyed by the salary id '.$salary->id);
+		}
+
 		$paymentsalary = new PaymentSalary($this->db);
 		$paymentsalary->fk_salary = $id;
 		foreach ($request_data as $field => $value) {
 			$paymentsalary->$field = $this->_checkValForAPI($field, $value, $paymentsalary);
 		}
+		// create() and addPaymentToBank() read fk_typepayment, the mandatory field is paiementtype
+		if (empty($paymentsalary->fk_typepayment)) {
+			$paymentsalary->fk_typepayment = (int) $request_data['paiementtype'];
+		}
+
+		// Payment and bank line are written together, or not at all
+		$this->db->begin();
 
 		if ($paymentsalary->create(DolibarrApiAccess::$user, 1) < 0) {
-			throw new RestException(500, 'Error creating paymentsalary', array_merge(array($paymentsalary->error), $paymentsalary->errors));
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$paymentsalary->errorsToString());
 		}
 		if (isModEnabled("bank")) {
-			$paymentsalary->addPaymentToBank(
+			$result = $paymentsalary->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_salary',
 				'(SalaryPayment)',
@@ -339,7 +356,14 @@ class Salaries extends DolibarrApi
 				'',
 				''
 			);
+			if ($result <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$paymentsalary->errorsToString());
+			}
 		}
+
+		$this->db->commit();
+
 		return $paymentsalary->id;
 	}
 

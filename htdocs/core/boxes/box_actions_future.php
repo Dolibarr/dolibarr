@@ -99,7 +99,7 @@ class box_actions_future extends ModeleBoxes
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->hasRight('agenda', 'allactions', 'read')) {
-				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id).")";
 			}
 			$sql .= " AND a.datep > '".$this->db->idate($now)."'";
 			$sql .= " ORDER BY a.datep ASC";

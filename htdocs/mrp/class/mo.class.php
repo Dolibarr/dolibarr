@@ -2216,8 +2216,10 @@ class MoLine extends CommonObjectLine
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
-					if ($key == 't.rowid') {
+					if ($key == 't.rowid' || $key == 'fk_mo' || $key == 'origin_id') {
 						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif ($key == 'origin_type') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 					} elseif (strpos($key, 'date') !== false) {
 						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 					} else {

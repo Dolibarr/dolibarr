@@ -345,7 +345,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 				$parameters = array(
 					'datesubscription' => $datesubscription,
 					'amount' => $amount,
-					'ccountid' => $accountid,
+					'accountid' => $accountid,
+					'ccountid' => $accountid,	// Deprecated key (typo), kept for the hooks that already read it
 					'operation' => $operation,
 					'label' => $label,
 					'num_chq' => $num_chq,
