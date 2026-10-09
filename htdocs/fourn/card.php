@@ -10,6 +10,7 @@
  * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -577,15 +578,14 @@ if ($object->id > 0) {
 		$text = $langs->trans("CurrentOutstandingBill");
 		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
 		$icon = 'bill';
+		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+		$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		}
-		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-		$boxstat .= '</div>';
-		if ($link) {
-			$boxstat .= '</a>';
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $langs->transnoentitiesnoconv("CurrentOutstandingBill"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+		} else {
+			$boxstat .= $boxstattmp;
 		}
 
 		$tmp = $object->getOutstandingBills('supplier', 1);
@@ -594,15 +594,14 @@ if ($object->id > 0) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
 			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
 			$icon = 'bill';
+			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-			}
-			$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-			$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-			$boxstat .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-			$boxstat .= '</div>';
-			if ($link) {
-				$boxstat .= '</a>';
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $langs->transnoentitiesnoconv("CurrentOutstandingBillLate"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+			} else {
+				$boxstat .= $boxstattmp;
 			}
 		}
 	}
