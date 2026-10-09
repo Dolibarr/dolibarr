@@ -548,7 +548,7 @@ if (empty($reshook)) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
-	} elseif ($action == 'classifyclosed') {
+	} elseif ($action == 'classifyclosed' && $user->rights->reception->creer) {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
