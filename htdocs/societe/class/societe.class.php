@@ -5434,12 +5434,13 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Return amount of order not yet paid and total and list of all orders
+	 *  Return amount of order not yet paid and total and list of orders, optionally filtered by status
 	 *
 	 *  @param     'customer'|'supplier'|''	$mode	'customer' or 'supplier'
-	 *  @return    array{opened:float,total_ht:float,total_ttc:float}|array{}	array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
+	 *  @param     list<int>				$statuses	Order statuses to include (empty means all statuses)
+	 *  @return    array{opened:float,total_ht:float,total_ttc:float,refs:array<int,string>}|array{}	Amounts and references of matching orders, or an empty array on query failure
 	 */
-	public function getOutstandingOrders($mode = 'customer')
+	public function getOutstandingOrders($mode = 'customer', $statuses = array())
 	{
 		global $hookmanager;
 		$table = 'commande';
@@ -5449,6 +5450,9 @@ class Societe extends CommonObject
 
 		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		if (!empty($statuses)) {
+			$sql .= " AND f.fk_statut IN (".$this->db->sanitize(implode(',', array_map('intval', $statuses))).")";
+		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_order').")";
 		} else {
