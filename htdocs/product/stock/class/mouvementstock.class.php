@@ -935,7 +935,7 @@ class MouvementStock extends CommonObject
 	 *                                                                            - int if row id of product_batch table (for update)
 	 *                                                                            - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	float		$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int<-2,-1>|int<1,max>	  Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
+	 * @return 	int<-2,max>			  Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, 0 if no record created because quantity is null, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -977,12 +977,14 @@ class MouvementStock extends CommonObject
 			// No error
 			if ($pdluo->id > 0) {	// product_batch record found
 				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
-				$pdluo->qty += $qty;
+				$pdluo->qty = (float) price2num($pdluo->qty + $qty, 'MS');
 				if ($pdluo->qty == 0) {
 					$result = $pdluo->delete($user, 1);
 				} else {
 					$result = $pdluo->update($user, 1);
 				}
+			} elseif ((float) price2num($qty, 'MS') == 0) {
+				$result = 0;
 			} else {					// product_batch record not found
 				$pdluo->fk_product_stock = $vfk_product_stock;
 				$pdluo->qty = $qty;

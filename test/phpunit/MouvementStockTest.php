@@ -32,6 +32,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/productbatch.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -204,6 +205,58 @@ class MouvementStockTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result, 'Test create B');
 
 		return $localobject;
+	}
+
+	/**
+	 * testBatchLineRemovedWhenQtyIsNull
+	 *
+	 * @return	void
+	 */
+	public function testBatchLineRemovedWhenQtyIsNull()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref .= ' phpunit batchnull';
+		$product->label .= ' phpunit batchnull';
+		$product->status_batch = 1;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product');
+
+		$warehouse = new Entrepot($db);
+		$warehouse->initAsSpecimen();
+		$warehouse->label .= ' phpunit batchnull';
+		$warehouseid = $warehouse->create($user);
+		$this->assertGreaterThan(0, $warehouseid, 'Failed to create warehouse');
+
+		$movement = new MouvementStock($db);
+
+		// 0.3 - (0.7 - 0.4) leaves a float residue that must be seen as a null quantity
+		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 0.3, 0, 'phpunit', '', '', 'LOTFLOAT'));
+		$this->assertGreaterThan(0, $movement->livraison($user, $productid, $warehouseid, 0.7 - 0.4, 0, 'phpunit', '', '', '', 'LOTFLOAT'));
+
+		$productbatch = new Productbatch($db);
+		$productbatch->find(0, '', '', 'LOTFLOAT', $warehouseid, $productid);
+		$this->assertEmpty($productbatch->id, 'Batch line with a null quantity must be deleted');
+
+		// The smallest quantity storable with MAIN_MAX_DECIMALS_STOCK must be kept
+		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 1, 0, 'phpunit', '', '', 'LOTATPRECISION'));
+		$this->assertGreaterThan(0, $movement->livraison($user, $productid, $warehouseid, 0.99999, 0, 'phpunit', '', '', '', 'LOTATPRECISION'));
+
+		$productbatch = new Productbatch($db);
+		$productbatch->find(0, '', '', 'LOTATPRECISION', $warehouseid, $productid);
+		$this->assertNotEmpty($productbatch->id, 'Batch line with the smallest storable quantity must be kept');
+
+		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 0, 0, 'phpunit', '', '', 'LOTZERO'));
+
+		$productbatch = new Productbatch($db);
+		$productbatch->find(0, '', '', 'LOTZERO', $warehouseid, $productid);
+		$this->assertEmpty($productbatch->id, 'Batch line must not be created with a null quantity');
 	}
 
 	/**
