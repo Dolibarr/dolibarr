@@ -48,6 +48,9 @@ if (!$user->hasRight('adherent', 'lire')) {
 
 $rowid = GETPOSTINT("rowid");
 
+// Security check (the subscription must be the one of a member of an entity of the user)
+$result = restrictedArea($user, 'subscription', $rowid);
+
 
 
 /*
