@@ -163,10 +163,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "validate" && $permissiontoadd) {
-		$TNote = GETPOST('TNote', 'array');
+		// Levels are saved in database as soon as they are clicked (see core/ajax/updatefield.php)
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
-			if (!in_array((isset($TNote[$line->fk_skill]) ? $TNote[$line->fk_skill] : ''), array("0", ""))) {
+			if ((int) $line->rankorder != 0) {
 				$emptyTNote = false;
 				break;
 			}
@@ -299,11 +299,27 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 ?>
 <script>
 	$(document).ready(function() {
-		$("#btn_valid").click(function() {
-			console.log("Click on btn_valid");
-			var form = $("#form_save_rank");
-			form.submit();
-			return true;
+		// Save the level of a skill as soon as it is clicked, so it is not lost when leaving the page
+		$("#form_save_rank").on("change", "input[name^=TNote]", function() {
+			var lineid = $(this).closest("tr").attr("id").replace(/^row-/, "");
+			var rank = $(this).val();
+			if (rank == "NA") {
+				rank = -1;	/* Not applicable */
+			}
+			console.log("Save rank "+rank+" for evaluation line "+lineid);
+			$.post('<?php echo dol_escape_js(DOL_URL_ROOT); ?>/core/ajax/updatefield.php', {
+				token: '<?php echo currentToken(); ?>',
+				element: "evaluationdet",
+				fk_element: lineid,
+				field: "rankorder",
+				value: rank
+			}).done(function(data) {
+				if (data && data.error) {
+					$.jnotify(data.error, 'error', true);
+				}
+			}).fail(function(xhr) {
+				$.jnotify('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
+			});
 		});
 	});
 </script>
@@ -696,7 +712,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken(), 'btn_valid', $permissiontovalidate);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);

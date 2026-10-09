@@ -1140,6 +1140,8 @@ if (empty($reshook)) {
 				$result = $object->fetch(GETPOSTINT('fac_replacement'));
 				$object->fetch_thirdparty();
 
+				$tmpproject = GETPOSTINT('projectid');
+
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOSTINT('socid');

@@ -1805,7 +1805,7 @@ function onKanbanColumnChange(item, newColumn) {
 	var originalColumn = item.data('original-column');
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/savekanbanfield.php',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php',
 		data: {
 			field: 'editval_'+newColumn.data('groupbyfield'),
 			element: item.data('element'),
