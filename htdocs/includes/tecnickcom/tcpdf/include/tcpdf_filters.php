@@ -355,8 +355,27 @@ class TCPDF_FILTERS {
 	public static function decodeFilterFlateDecode($data) {
 		// initialize string to return
 		$decoded = @gzuncompress($data);
-		if ($decoded === false) {
-			self::Error('decodeFilterFlateDecode: invalid code');
+		if (false === $decoded) {
+			// If gzuncompress() failed, try again using the compress.zlib://
+			// wrapper to decode it in a file-based context.
+			// See: https://www.php.net/manual/en/function.gzuncompress.php#79042
+			// Issue: https://github.com/smalot/pdfparser/issues/592
+			$ztmp = tmpfile();
+			if (false != $ztmp) {
+				fwrite($ztmp, "\x1f\x8b\x08\x00\x00\x00\x00\x00".$data);
+				$file = stream_get_meta_data($ztmp)['uri'];
+				if (0 === $decodeMemoryLimit) {
+					$decoded = file_get_contents('compress.zlib://'.$file);
+				} else {
+					$decoded = file_get_contents('compress.zlib://'.$file, false, null, 0, $decodeMemoryLimit);
+				}
+				fclose($ztmp);
+			}
+		}
+
+		if (false === \is_string($decoded) || '' === $decoded) {
+			// If the decoded string is empty, that means decoding failed.
+			throw new \Exception('decodeFilterFlateDecode: invalid data');
 		}
 		return $decoded;
 	}
