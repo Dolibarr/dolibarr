@@ -12,6 +12,8 @@
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Christos Kanotidis		<christoskanotidis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +32,7 @@
 
 /**
  *	\file       htdocs/core/lib/company.lib.php
- *	\brief      Ensemble de functions de base pour le module societe
+ *	\brief      Set of basic functions for the company module
  *	\ingroup    societe
  */
 
@@ -210,6 +212,16 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/consumption.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
+		$h++;
+	}
+
+	// Monthly invoiced amounts
+	if ((($object->client == 1 || $object->client == 3) && isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
+		|| ($object->fournisseur && ((isModEnabled("fournisseur") && $user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "lire"))))
+	) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/monthly_report.php', ['socid' => $object->id]);
+		$head[$h][1] = $langs->trans("MonthlyReport");
+		$head[$h][2] = 'monthlyreport';
 		$h++;
 	}
 
