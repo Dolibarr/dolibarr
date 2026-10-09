@@ -273,17 +273,21 @@ class Inventory extends CommonObject
 		}
 
 		if ($this->status == self::STATUS_DRAFT) {
-			// Delete inventory
-			$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				return -1;
+			// Lines already present on a draft were added by hand (the stock prefill only runs here,
+			// at validation). Starting with no line means the user counts manually, so wiping what
+			// they already entered would destroy their work: keep those lines.
+			if ($startmode != self::START_MODE_NONE) {
+				$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
 			}
 
 			if ($startmode == self::START_MODE_NONE) {
-				// Start with no line at all: they will be added manually or with a barcode scanner while counting
+				// Start with no prefilled line: lines are added manually or with a barcode scanner
 				$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
 				if ($result > 0) {
 					$this->db->commit();
@@ -400,6 +404,24 @@ class Inventory extends CommonObject
 			$this->db->rollback();
 		}
 		return $result;
+	}
+
+	/**
+	 * Count the lines currently recorded on this inventory.
+	 * Used to warn the user before an action that would erase them.
+	 *
+	 * @return int	Number of lines, 0 if none, -1 if KO
+	 */
+	public function countLines()
+	{
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."inventorydet WHERE fk_inventory = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		return $obj ? (int) $obj->nb : 0;
 	}
 
 	/**
