@@ -53,25 +53,7 @@ $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 
 $hookmanager->initHooks(array('contratstats', 'globalcard'));
 
-$usercanreadcustumerstatistic = $user->hasRight('commande', 'lire');
-$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'lire');
-if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-	$usercanreadcustumerstatistic = $user->hasRight('commande', 'commande', 'export');
-	$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'export');
-}
-if ($mode == 'customer' && !$usercanreadcustumerstatistic) {
-	accessforbidden();
-}
-if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
-	accessforbidden();
-}
-
-if ($mode == 'supplier') {
-	$object_status = GETPOST('object_status', 'array:int');
-	$object_status = implode(',', $object_status);
-} else {
-	$object_status = GETPOST('object_status', 'intcomma');
-}
+$object_status = GETPOST('object_status', 'intcomma');
 
 
 $typent_id = GETPOSTINT('typent_id');
@@ -83,6 +65,15 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'contrat', 0);
+
+$usercanreadcustumerstatistic = $user->hasRight('contrat', 'lire');
+if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+	$usercanreadcustumerstatistic = $user->hasRight('contrat', 'export');
+}
+if (!$usercanreadcustumerstatistic) {
+	accessforbidden();
 }
 
 $parameters = array();
@@ -353,7 +344,7 @@ foreach ($data as $val) {
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
 		print '<td class="right">0</td>';
@@ -365,7 +356,7 @@ foreach ($data as $val) {
 
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';

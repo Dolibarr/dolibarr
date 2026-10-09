@@ -163,10 +163,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "validate" && $permissiontoadd) {
-		$TNote = GETPOST('TNote', 'array');
+		// Levels are saved in database as soon as they are clicked (see core/ajax/updatefield.php)
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
-			if (!in_array((isset($TNote[$line->fk_skill]) ? $TNote[$line->fk_skill] : ''), array("0", ""))) {
+			if ($line->rankorder != "") {
 				$emptyTNote = false;
 				break;
 			}
@@ -296,14 +296,32 @@ $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
+
+$urltopost = DOL_URL_ROOT.'/core/ajax/updatefield.php';
 ?>
 <script>
 	$(document).ready(function() {
-		$("#btn_valid").click(function() {
-			console.log("Click on btn_valid");
-			var form = $("#form_save_rank");
-			form.submit();
-			return true;
+		// Save the level of a skill as soon as it is clicked, so it is not lost when leaving the page
+		$("#form_save_rank").on("change", "input[name^=TNote]", function() {
+			var lineid = $(this).closest("tr").attr("id").replace(/^row-/, "");
+			var rank = $(this).val();
+			if (rank == "NA") {
+				rank = -1;	/* Not applicable */
+			}
+			console.log("Save rank "+rank+" for evaluation line "+lineid);
+			$.post('<?php echo dol_escape_js($urltopost); ?>', {
+				token: '<?php echo currentToken(); ?>',
+				element: "evaluationdet",
+				fk_element: lineid,
+				field: "rankorder",
+				value: rank
+			}).done(function(data) {
+				if (data && data.error) {
+					$.jnotify(data.error, 'error', true);
+				}
+			}).fail(function(xhr) {
+				$.jnotify('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
+			});
 		});
 	});
 </script>
@@ -571,7 +589,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_evaluationdet as ed ON  e.rowid = ed.fk_evaluation';
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_job as j ON e.fk_job = j.rowid';
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skill as sk ON ed.fk_skill = sk.rowid';
-		$sql .= '  INNER JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_user ON (skdet_user.fk_skill = sk.rowid AND skdet_user.rankorder = ed.rankorder)';
+		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_user ON (skdet_user.fk_skill = sk.rowid AND skdet_user.rankorder = ed.rankorder)';
 		//$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "hrm_skillrank as skr ON (j.rowid = skr.fk_object AND skr.fk_skill = ed.fk_skill AND skr.objecttype = 'job')";
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_required ON (skdet_required.fk_skill = sk.rowid AND skdet_required.rankorder = ed.required_rank)';
 		$sql .= " WHERE e.rowid =" . ((int) $object->id);
@@ -590,7 +608,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$Tab[$num]->skill_id = $obj->fk_skill;
 				$Tab[$num]->skilllabel = $obj->skilllabel;
 				$Tab[$num]->description = $obj->description;
-				$Tab[$num]->userRankForSkill = '<span title="'.$obj->userRankForSkillDesc.'" class="radio_js_bloc_number TNote_1">' . $obj->userRankForSkill . '</span>';
+
+				$rank = $obj->userRankForSkill;
+				$rank_desc = $obj->userRankForSkillDesc;
+				if ($obj->userRankForSkill < 0) {
+					$rank = $langs->trans('NA');
+					$rank_desc = $langs->trans("NA");
+				}
+				if ($obj->userRankForSkill == 0) {
+					$rank = "-";
+				}
+				$Tab[$num]->userRankForSkill = '<span title="'.$rank_desc.'" class="radio_js_bloc_number TNote_1">' . $rank . '</span>';
 
 				$required_rank = $obj->required_rank;
 				$required_rank_desc = $obj->required_rank_desc;
@@ -696,7 +724,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken(), 'btn_valid', $permissiontovalidate);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
