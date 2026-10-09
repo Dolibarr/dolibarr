@@ -1,21 +1,13 @@
-import re, html
+import urllib.request
 
-page = open('tmp-dump/page.html', encoding='utf-8', errors='replace').read()
-print('PAGE_SIZE=' + str(len(page)))
-out = open('tmp-dump/debug.txt', 'w')
-out.write('PAGE_SIZE=' + str(len(page)) + '\n')
-idxs = [m.start() for m in re.finditer(r'PHPSTAN', page)]
-out.write('PHPSTAN_IDXS=' + str(idxs[:20]) + '\n')
-for n, idx in enumerate(idxs[:8]):
-    out.write('\n===== OCCURRENCE ' + str(n) + ' at ' + str(idx) + ' =====\n')
-    out.write(page[idx:idx + 3500])
-    out.write('\n')
-# count php-ish patterns
-out.write('\nhtdocs php occurrences: ' + str(len(re.findall(r'htdocs/', page))) + '\n')
-# show a sample around first htdocs occurrence
-h = page.find('htdocs/')
-if h >= 0:
-    out.write('\n===== AROUND FIRST htdocs =====\n')
-    out.write(page[max(0, h - 1500):h + 1500])
+url = 'https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/htdocs/core/class/commonobject.class.php'
+req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+data = urllib.request.urlopen(req, timeout=120).read().decode('utf-8', 'replace')
+lines = data.split('\n')
+out = open('tmp-dump/code_slice.txt', 'w')
+out.write('TOTAL_LINES=' + str(len(lines)) + '\n')
+for i in range(3130, 3290):
+    if i < len(lines):
+        out.write(str(i + 1) + '\t' + lines[i].replace('\r', '<CR>') + '\n')
 out.close()
 print('done')
