@@ -93,7 +93,7 @@ CREATE TABLE llx_accounting_transaction_template_det (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
-ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT fk_accounting_transaction_template_det_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
 
 create table llx_categorie_mo
 (
@@ -572,5 +572,10 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
+DELETE FROM llx_rights_def WHERE module= 'cron' AND perms = 'execute';
+
+-- Quick memo: date_archived is a plain data field, not an auto-updated column, so it must be datetime and not timestamp
+ALTER TABLE llx_quickmemo_memo MODIFY COLUMN date_archived datetime DEFAULT NULL;
 
 -- end of migration

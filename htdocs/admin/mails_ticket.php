@@ -472,7 +472,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_TICKET" size="32" value="'.$mainstmpid.'">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_TICKET" size="32" value="'.$mainstmpid.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID_TICKET'), $htmltext, 1, 'superadmin');
@@ -487,7 +487,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_TICKET" size="32" value="'.$mainsmtppw.'">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_TICKET" size="32" value="'.$mainsmtppw.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW_TICKET'), $htmltext, 1, 'superadmin');
@@ -734,10 +734,10 @@ if ($action == 'edit') {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init&token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init&token='.newToken().'">'.$langs->trans("DoTestSendHTML").'</a>';
 		}
 	}
 

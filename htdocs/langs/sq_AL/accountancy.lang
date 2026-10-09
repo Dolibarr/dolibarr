@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për regjistrimin e donacioneve (moduli i dhurimit)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për të regjistruar abonimet e anëtarësimit (Moduli i anëtarësimit - nëse anëtarësimi regjistrohet pa faturë)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për të regjistruar depozitën e klientit
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Ruani llogarinë e klientit si llogari individuale në librin e varur për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Llogaria e furnitorit të dyqanit si llogari individuale në librin filial për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)

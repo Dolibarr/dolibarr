@@ -839,7 +839,7 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 1, 0, 0, '', $morecss, 1, '', 0, 0);
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -1120,7 +1120,9 @@ class FormFile
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$addcolumforpicto = ($delallowed || $printer || $morepicto);
+				$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+				$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
@@ -1773,10 +1775,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {

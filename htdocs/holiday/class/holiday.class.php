@@ -535,6 +535,7 @@ class Holiday extends CommonObject
 		$sql .= " uu.login as user_login,";
 		$sql .= " uu.statut as user_status,";
 		$sql .= " uu.photo as user_photo,";
+		$sql .= " uu.fk_country as country_id,";
 
 		$sql .= " ua.lastname as validator_lastname,";
 		$sql .= " ua.firstname as validator_firstname,";
@@ -615,6 +616,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
+
+				$tab_result[$i]['country_id'] = (int) $obj->country_id; // id of country of user
 
 				$i++;
 			}
@@ -777,9 +780,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -901,9 +910,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1026,12 +1041,21 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
+		if ($this->status == self::STATUS_REFUSED || $this->status == self::STATUS_APPROVED) {
+			$checkBalance = 0;	// No balance check to refuse a request, nor on an approved request (its days are already debited)
+		}
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1175,11 +1199,19 @@ class Holiday extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		// Delete extrafields before the leave request
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		if (!$error) {
@@ -1234,6 +1266,11 @@ class Holiday extends CommonObject
 			//var_dump("--");
 			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
 			//var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
+
+			// A new leave can fully contain an existing leave, so neither endpoint is inside the existing range.
+			if ($dateStart < $infos_CP['date_debut'] && $dateEnd > $infos_CP['date_fin']) {
+				return false;
+			}
 
 			if ($halfday == 0) {
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin']) {
@@ -1690,6 +1727,22 @@ class Holiday extends CommonObject
 
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
+			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
+			// the first time. Treat an empty value as "start from now" instead of a very old date, otherwise the catch-up
+			// loop below would credit every user with years of monthly accrual at once. Store it, because the loop is the
+			// only other place that writes it: an empty value would stay empty and no month would ever be credited.
+			if (empty($stringInDBForLastUpdate)) {
+				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+				$sql .= " value = '".$this->db->escape($stringInDBForLastUpdate)."'";
+				$sql .= " WHERE name = 'lastUpdate'";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
 				$stringInDBForLastUpdate = '20000101000000';
@@ -1766,7 +1819,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
+						$nbDaysToDeduct = (float) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -2751,12 +2804,15 @@ class Holiday extends CommonObject
 		foreach ($arrayfields as $key => $label) {
 			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
 			$outputarrayleaves .= $outputlangs->trans($label);
+			if ($key == 'date_end') {
+				$outputarrayleaves .=" (".$langs->trans("Included").")";
+			}
 			$outputarrayleaves .= '</td>';
 		}
 		$outputarrayleaves .= '</tr>';
 
 		if (!empty($arrayleaves)) {
-			foreach ($arrayleaves as $key => $fields) {
+			foreach ($arrayleaves as $fields) {
 				$outputarrayleaves .= '<tr>';
 				foreach ($fields as $field => $value) {
 					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';

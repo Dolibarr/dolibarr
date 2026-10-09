@@ -123,7 +123,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

@@ -1070,7 +1070,7 @@ class pdf_vinci extends ModelePDFMo
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : dol_trunc($object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1346,16 +1346,16 @@ class pdf_vinci extends ModelePDFMo
 		$this->cols['code'] = array(
 			'rank' => $rank,
 			'status' => true,
-			'width' => 35, // in mm
+			'width' => 35.0, // in mm
 			'title' => array(
 				'textkey' => 'Ref',
 				'align' => 'L',
-				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 1.0, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1369,12 +1369,12 @@ class pdf_vinci extends ModelePDFMo
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
-				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 1.0, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true,
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1382,7 +1382,7 @@ class pdf_vinci extends ModelePDFMo
 		$this->cols['dim'] = array(
 			'rank' => $rank,
 			'status' => true,
-			'width' => 25, // in mm
+			'width' => 25.0, // in mm
 			'title' => array(
 				'textkey' => 'Dimensions'
 			),
@@ -1392,7 +1392,7 @@ class pdf_vinci extends ModelePDFMo
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -1403,7 +1403,7 @@ class pdf_vinci extends ModelePDFMo
 		$rank += 10;
 		$this->cols['qtytot'] = array(
 			'rank' => $rank,
-			'width' => 25, // in mm
+			'width' => 25.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'QtyTot'

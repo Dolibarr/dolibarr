@@ -404,7 +404,7 @@ if (!function_exists('ftp_connect')) {
 		$sectionarray = preg_split('|[\/]|', $section);
 		// For /
 		$newsection = '/';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
 		print '/';
 		print '</a> ';
 		// For other directories
@@ -418,7 +418,7 @@ if (!function_exists('ftp_connect')) {
 				$newsection .= '/';
 			}
 			$newsection .= $val;
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
 			print $val;
 			print '</a>';
 			$i++;
@@ -445,7 +445,7 @@ if (!function_exists('ftp_connect')) {
 		if ($conf->use_javascript_ajax) {
 			print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
 		}
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section ? '&section='.urlencode($section) : '').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($section ? '&section='.urlencode($section) : '').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
 

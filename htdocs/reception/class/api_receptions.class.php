@@ -456,7 +456,13 @@ class Receptions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of object
+		$receptionline = new ReceptionLineBatch($this->db);
+		if ($receptionline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Reception line not found');
+		}
+		if ($receptionline->fk_reception != $this->reception->id) {
+			throw new RestException(403, 'Line does not belong to this reception');
+		}
 
 		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {

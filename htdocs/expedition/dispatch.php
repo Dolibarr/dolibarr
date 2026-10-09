@@ -221,6 +221,11 @@ if (empty($reshook)) {
 
 						if ($idline > 0) {
 							$result = $expeditiondispatch->fetch($idline);	// get line from llx_expeditiondet
+							if ($result > 0 && (int) $expeditiondispatch->fk_expedition !== (int) $object->id) {
+								// The line must be a line of the shipment of the page
+								$expeditiondispatch->error = $langs->trans('ErrorRecordNotFound');
+								$result = -1;
+							}
 							if ($result < 0) {
 								setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 								$error++;
@@ -1642,7 +1647,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/expedition/ajax/searchfrombarcode.php\',
-						data: { "token":"'.newToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
+						data: { "token":"'.currentToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {

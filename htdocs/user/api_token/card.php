@@ -65,7 +65,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // SQL query to retrieve the selected token
-$sql = "SELECT oat.rowid as token_id, oat.token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
+$sql = "SELECT oat.rowid as token_id, oat.tokenstring as token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
 if (isModEnabled('multicompany')) {
 	$sql .= ", e.label";
 }
@@ -74,6 +74,8 @@ if (isModEnabled('multicompany')) {
 	$sql .= " JOIN ".$db->prefix()."entity as e ON oat.entity = e.rowid";
 }
 $sql .= " WHERE oat.rowid = ".((int) $tokenid);
+$sql .= " AND oat.fk_user = ".((int) $id);
+$sql .= " AND oat.service = 'dolibarr_rest_api'";
 
 $resql = $db->query($sql);
 
@@ -88,6 +90,9 @@ if (empty($object->api_key)) {
 
 $form = new Form($db);
 $token = $db->fetch_object($resql);
+if (!empty($tokenid) && empty($token)) {
+	accessforbidden();
+}
 
 $entity = $conf->entity;
 
@@ -128,7 +133,8 @@ if (empty($reshook)) {
 	if ($action == 'add' && $canedittoken) {
 		$tokenstring = GETPOST('api_key', 'alphanohtml');
 		$userid = GETPOSTINT('user');
-		$useridtoadd = !empty($userid) && $userid > 0 ? $userid : $id;
+		// Only an admin can create a token for another user
+		$useridtoadd = ($user->admin && $userid > 0) ? $userid : $id;
 
 		if (empty($tokenstring)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Token")), null, 'errors');
@@ -146,7 +152,7 @@ if (empty($reshook)) {
 		$nbtotalofrecords = '';
 		$sqlforcount = 'SELECT COUNT(*) as nbtotalofrecords';
 		$sqlforcount .= " FROM ".MAIN_DB_PREFIX."oauth_token as oat";
-		$sqlforcount .= " WHERE token = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
+		$sqlforcount .= " WHERE tokenstring = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
 		$sqlforcount .= " AND service = 'dolibarr_rest_api'";
 		$resql = $db->query($sqlforcount);
 		if ($resql) {
@@ -166,7 +172,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, state, fk_user, entity, datec)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, state, fk_user, entity, datec)";
 			$sql .= " VALUES ('dolibarr_rest_api', '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."', 0, ".((int) $useridtoadd).", ".((int) $entity).", '".$db->idate(dol_now())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -193,6 +199,8 @@ if (empty($reshook)) {
 		// Remove token
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE rowid = ".((int) $tokenid);
+		$sql .= " AND fk_user = ".((int) $object->id);
+		$sql .= " AND service = 'dolibarr_rest_api'";
 
 		$resql = $db->query($sql);
 

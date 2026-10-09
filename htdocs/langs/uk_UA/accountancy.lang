@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися для реєстрації пожертв (модуль пожертв)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Обліковий запис (з Плану рахунків), який використовується для реєстрації підписок на членство (модуль членства - якщо членство зареєстровано без рахунка-фактури)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Рахунок (з Плану рахунків), який використовуватиметься як рахунок за умовчанням для реєстрації депозиту клієнта
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Зберігати обліковий запис клієнта як індивідуальний рахунок у допоміжній книзі для рядків авансових платежів (якщо вимкнено, індивідуальний рахунок для рядків авансових платежів залишатиметься порожнім)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Рахунок (з Плану рахунків), який використовуватиметься як рахунок за умовчанням для реєстрації депозиту постачальника
 UseAuxiliaryAccountOnSupplierDeposit=Зберігати обліковий запис постачальника як індивідуальний рахунок у допоміжній книзі для рядків авансових платежів (якщо вимкнено, індивідуальний рахунок для рядків авансових платежів залишатиметься порожнім)

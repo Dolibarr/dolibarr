@@ -562,14 +562,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->color = trim($this->color);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->color = trim((string) $this->color);
 		$this->position = (int) $this->position;
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		$this->ref_ext = trim($this->ref_ext);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;
 		}
@@ -676,9 +676,9 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->ref_ext = trim($this->ref_ext);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
@@ -687,6 +687,23 @@ class Categorie extends CommonObject
 			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
+		}
+		// Nor one of its descendants, which would detach both from the tree and make a loop: go up from the new parent
+		// (only when the parent changes, or when we do not know the previous parent)
+		if (empty($this->oldcopy) || $this->fk_parent != $this->oldcopy->fk_parent) {
+			$ancestorid = $this->fk_parent;
+			$protection = 1000;
+			while ($ancestorid > 0 && $protection-- > 0) {
+				$resql = $this->db->query("SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $ancestorid));
+				$obj = $resql ? $this->db->fetch_object($resql) : null;
+				$ancestorid = $obj ? (int) $obj->fk_parent : 0;
+				if ($ancestorid == $this->id) {
+					$langs->load('categories');
+					$this->error = $langs->trans("ErrorCategoryCannotBeMovedIntoItsDescendant");
+					dol_syslog($this->error, LOG_WARNING);
+					return -1;
+				}
+			}
 		}
 
 		if ($this->already_exists()) {
@@ -811,6 +828,17 @@ class Categorie extends CommonObject
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
+		// The links of the category are in the table of its own type: make sure that table is purged even when it is
+		// missing from the list above or disabled there, otherwise its foreign key refuses to delete the category.
+		$typecode = is_numeric($this->type) ? array_search((int) $this->type, $this->MAP_ID) : $this->type;
+		if (!empty($typecode) && $typecode != 'bank_line') {	// the links of bank lines are in category_bankline, already in the list
+			$linktable = 'categorie_'.(empty($this->MAP_CAT_TABLE[$typecode]) ? $typecode : $this->MAP_CAT_TABLE[$typecode]);
+			if (array_key_exists($linktable, $arraydelete)) {
+				$arraydelete[$linktable] = 'fk_categorie';
+			} else {
+				$arraydelete = array($linktable => 'fk_categorie') + $arraydelete;
+			}
+		}
 		foreach ($arraydelete as $key => $value) {
 			$sanitizedvalue = $value;
 			if (is_array($value)) {
@@ -1049,6 +1077,15 @@ class Categorie extends CommonObject
 			// Protection for external users
 			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
+
+			// Add where from hooks (for example to restrict to objects an external module shares
+			// with the current entity by a granularity finer than this category's own)
+			global $hookmanager;
+			if (is_object($hookmanager)) {
+				$parameters = array('type' => $type, 'alias' => 'o');
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this);
+				$sql .= $hookmanager->resPrint;
 			}
 
 			$errormessage = '';
@@ -1349,7 +1386,7 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		// Note: The DISTINCT reduces pb with old tables with duplicates but should not be used
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible";
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible, c.entity";
 		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1379,6 +1416,7 @@ class Categorie extends CommonObject
 						'position' => (string) $obj->position,
 						'visible' => (int) $obj->visible,
 						'ref_ext' => (string) $obj->ref_ext,
+						'entity' => (int) $obj->entity,
 						'picto' => 'category',
 						// fields are filled with buildPathFromId later
 						'fullpath' => '',
@@ -1390,6 +1428,17 @@ class Categorie extends CommonObject
 		} else {
 			dol_print_error($this->db);
 			return -1;
+		}
+
+		// Let external modules complete or filter the tree (for example to restrict categories
+		// coming from other entities according to a sharing granularity they manage)
+		global $hookmanager;
+		if (is_object($hookmanager)) {
+			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
+			$reshook = $hookmanager->executeHooks('completeCategoryFullTree', $parameters, $this);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)

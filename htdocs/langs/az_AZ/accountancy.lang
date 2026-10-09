@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=İanələrin qeydiyyatı üçün istifadə ediləcək hesab (Hesab Planından) (İanə modulu)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Üzvlük abunəliklərinin qeydiyyatı üçün istifadə ediləcək hesab (Hesab Planından) (Üzvlük modulu - əgər üzvlük fakturasız qeydə alınıbsa)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Müştəri depozitini qeydiyyata almaq üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından).
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Müştəri hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Təchizatçı hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (əgər deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)

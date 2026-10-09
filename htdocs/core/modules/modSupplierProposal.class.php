@@ -100,6 +100,7 @@ class modSupplierProposal extends DolibarrModules
 				0,
 			],
 		];
+
 		// Boxes
 		$this->boxes = [];
 
@@ -161,6 +162,8 @@ class modSupplierProposal extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
+		$this->_load_tables('/install/mysql/', 'supplier_proposal');
 
 		// Remove permissions and default values
 		$this->remove($options);

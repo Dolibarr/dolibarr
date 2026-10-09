@@ -390,11 +390,13 @@ if ($mysoc->country_code == 'FR') {
 		} else {
 			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
 		}
+		$infotoshow .= ' - ';
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
+		$infotoshow .= '<br>';
 	}
 
-	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+	$infotoshow .= '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why
@@ -487,7 +489,7 @@ if ($mode == "forceregistration") {
 	);
 
 	// Output js code to register data.
-	// Note: You can force thereigstration message by calling page /index.php?foreceregistration=1
+	// Note: You can force the registration message by calling page /index.php?foreceregistration=1
 	printCodeForPing("MAIN_LAST_REGISTRATION_KO_DATE", "MAIN_FIRST_REGISTRATION_OK_DATE", $arrayofdata, 1);
 
 	if (!isModEnabled("blockedlog")) {

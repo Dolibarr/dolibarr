@@ -101,12 +101,12 @@ class DolibarrApi
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $field)) {
+			throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+		}
+
 		if (!is_array($value)) {
 			// Make protected values for forbidden properties
-			/* Disabled. A protection exists to check that ->entity is same than the HTTP header DOLAPIENTITY
-			if (in_array($field, array('entity'))) {
-				throw new RestException(400, 'Parameter '.$field.' is not allowed in request. To work on a different entity, you must set the entity into the HTTP header "DOLAPIENTITY: idOfEntity"');
-			}*/
 			if (in_array($field, array(
 				'db', 'table_element', 'table_rowid', 'table_ref_field', 'table_element_line', 'element', 'fk_element', 'element_for_permission', 'class_element_line',
 				'fields', 'TRIGGER_PREFIX', 'picto',
@@ -126,7 +126,7 @@ class DolibarrApi
 
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
-				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
+				if (strpos($object->fields[$field]['type'], 'int') === 0 || strpos($object->fields[$field]['type'], 'double') === 0 || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($object->fields[$field]['type'] == 'html') {
@@ -184,9 +184,13 @@ class DolibarrApi
 	 */
 	protected function _checkValExtrafieldsForAPI($field, $value, $object)
 	{
+		// phpcs:enable
 		global $extrafields;
 
-		// phpcs:enable
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $field)) {
+			throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+		}
+
 		if (!is_array($value)) {
 			// Sanitize the value using its type declared into ->fields of $object
 			$typeOfExtraField = '';
@@ -197,7 +201,7 @@ class DolibarrApi
 			}
 
 			if ($typeOfExtraField) {
-				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
+				if (strpos($typeOfExtraField, 'int') === 0 || strpos($typeOfExtraField, 'double') === 0 || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($typeOfExtraField == 'html') {
@@ -307,6 +311,7 @@ class DolibarrApi
 		unset($object->table_rowid);
 		unset($object->pass);
 		unset($object->pass_indatabase);
+		unset($object->pass_indatabase_crypted);
 
 		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
@@ -482,15 +487,16 @@ class DolibarrApi
 	/**
 	 * Check access by user to a given resource
 	 *
-	 * @param 	string				$resource		element to check
-	 * @param 	int|string|Object	$resource_id	Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param 	string				$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param 	string				$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param 	string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param 	string				$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$resource				Element code to check
+	 * @param 	int|string|Object	$resource_id			Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param 	string				$dbtablename			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param 	string				$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param 	string				$dbt_keyfield   		Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param 	string				$dbt_select     		Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
 	 * @return 	bool
 	 */
-	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $parenttableforentity = '')
 	{
 		// phpcs:enable
 		// Features/modules to check
@@ -506,7 +512,7 @@ class DolibarrApi
 			$feature2 = explode("|", $feature2);
 		}
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select, $parenttableforentity);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

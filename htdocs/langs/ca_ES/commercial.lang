@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Aquesta és la informació sobre la i
 ThisIsInformationOnDocumentToSignSociete_rib=Aquesta és informació a signar en l'ordre SEPA
 ThisIsInformationOnDocumentToSignExpedition= Aquesta és la informació sobre l'enviament per signar
 SignatureProposalRef=Signatura de pressupost / proposta comercial %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Signatura del contracte %s
 SignatureFichinterRef=Signatura d'intervenció %s
 SignatureSociete_ribRef=Signatura de l'ordre SEPA %s

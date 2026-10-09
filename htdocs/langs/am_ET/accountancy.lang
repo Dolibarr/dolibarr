@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=ልገሳዎችን ለመመዝገብ (የልገሳ ሞጁል) መለያ (ከሂሳብ ገበታ)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=የአባልነት ምዝገባዎችን ለመመዝገብ የሚያገለግል መለያ (ከሂሳብ ገበታ) (የአባልነት ሞጁል - አባልነት ያለክፍያ ከተመዘገበ)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=የደንበኛ ተቀማጭ ለመመዝገብ እንደ ነባሪ መለያ (ከሂሳብ ገበታ) መለያ (ከሂሳብ ገበታ)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=ለቅድመ ክፍያ መስመሮች የደንበኛ መለያን እንደ ግለሰብ መለያ በንዑስ ደብተር ውስጥ ያከማቹ (ከተሰናከለ፣ የቅድሚያ ክፍያ መስመሮች የግለሰብ መለያ ባዶ ሆኖ ይቆያል)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=ለቅድመ ክፍያ መስመሮች የአቅራቢ አካውንት እንደ ግለሰብ ሂሳብ በንዑስ ደብተር መዝገብ ያከማቹ (ከተሰናከለ፣ ለቅድመ ክፍያ መስመሮች የግለሰብ መለያ ባዶ ሆኖ ይቆያል)

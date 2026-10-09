@@ -16,6 +16,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,8 +159,7 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -643,7 +643,7 @@ class Commande extends CommonOrder
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($dirdest.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -724,7 +724,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -821,13 +821,15 @@ class Commande extends CommonOrder
 	 *
 	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *  @param		int		$checkpermission	1=Check the user can close the order, 0=Do not check (automatic action such as a workflow trigger)
 	 *	@return		int					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function cloture($user, $notrigger = 0)
+	public function cloture($user, $notrigger = 0, $checkpermission = 1)
 	{
 		$error = 0;
 
-		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+		$usercanclose = (!$checkpermission
+			|| (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
 
 		if ($usercanclose) {
@@ -1057,7 +1059,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1167,6 +1169,16 @@ class Commande extends CommonOrder
 						$this->db->rollback();
 						return -1;
 					}
+
+					// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+					// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+					if ($result > 0 && !empty($line->extraparams)) {
+						$newline = new OrderLine($this->db);
+						$newline->id = $result;
+						$newline->extraparams = $line->extraparams;
+						$newline->setExtraParameters();
+					}
+
 					// Defined the new fk_parent_line
 					if ($result > 0 && $line->product_type == 9) {
 						$fk_parent_line = $result;
@@ -1288,83 +1300,86 @@ class Commande extends CommonOrder
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *  @param	    User	$user		User making the clone
-	 *	@param		int		$socid		Id of thirdparty
-	 *	@return		int					New id of clone
+	 *  @param	    User	$user		    User making the clone
+	 *	@param		int		$socid		    Id of thirdparty
+	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null)
 	{
-		global $user, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
+		$object = new self($this->db);
+
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach ($this->lines as $line) {
-			$line->fetch_optionals();
-		}
-
 		// Load source object
-		$objFrom = clone $this;
+		$object->fetch($this->id);
+
+		$objFrom = clone $object;
 
 		// Change socid if needed
-		if (!empty($socid) && $socid != $this->socid) {
+		if (!empty($socid) && $socid != $object->socid) {
 			$objsoc = new Societe($this->db);
 
 			if ($objsoc->fetch($socid) > 0) {
-				$this->socid = $objsoc->id;
-				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
-				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project = 0;
-				$this->fk_delivery_address = 0;
+				$object->socid = $objsoc->id;
+				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$object->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
+				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$object->fk_project = 0;
+				$object->fk_delivery_address = 0;
 			}
 
 			// TODO Change product price if multi-prices
 		}
 
-		$this->id = 0;
-		$this->ref = '';
-		$this->statut = self::STATUS_DRAFT;	// deprecated
-		$this->status = self::STATUS_DRAFT;
+		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
+
+		$object->id = 0;
+		$object->ref = '';
+		$object->statut = self::STATUS_DRAFT;	// deprecated
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->user_author_id = $user->id;
-		$this->user_validation_id = 0;
-		$this->date = dol_now();
-		$this->date_commande = dol_now();
-		$this->date_creation = '';
-		$this->date_validation = '';
+		$object->user_author_id = $user->id;
+		$object->user_validation_id = 0;
+		$object->date = dol_now();
+		$object->date_commande = dol_now();
+		$object->date_creation = '';
+		$object->date_validation = '';
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
-			$this->ref_client = '';
-			$this->ref_customer = '';
+			$object->ref_client = '';
+			$object->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
-		$num = count($this->lines);
+		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
-			$this->lines[$i]->ref_ext = '';
+			$object->lines[$i]->ref_ext = '';
 		}
 
 		// Create clone
-		$this->context['createfromclone'] = 'createfromclone';
-		$result = $this->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($objFrom, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if ($this->socid == $objFrom->socid) {
-				if ($this->copy_linked_contact($objFrom, 'external') < 0) {
+			if ($object->socid == $objFrom->socid) {
+				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 				}
 			}
@@ -1373,9 +1388,9 @@ class Commande extends CommonOrder
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $objFrom);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
-				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$this->setErrorsFromObject($hookmanager);
 					$error++;
@@ -1383,12 +1398,12 @@ class Commande extends CommonOrder
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
 			$this->db->commit();
-			return $this->id;
+			return $object->id;
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -1736,15 +1751,10 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs((float) $qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
+				$newqty = $this->roundQtyToPackaging($qty, $tmpproduct->packaging);
+				if ($newqty != $qty) {
+					$qty = $newqty;
 					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
-				} else {
-					if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
-						$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
-					}
 				}
 			}
 
@@ -1872,7 +1882,7 @@ class Commande extends CommonOrder
 					} else {
 						// Loop on all lines of parent object
 						foreach ($this->lines as $tmpline) {
-							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+							if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
 								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
@@ -2532,7 +2542,11 @@ class Commande extends CommonOrder
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_commande != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_commande !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}
@@ -3169,6 +3183,11 @@ class Commande extends CommonOrder
 	{
 		global $mysoc, $langs, $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code, ref_ext=$ref_ext");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -3233,6 +3252,19 @@ class Commande extends CommonOrder
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			}
+
+			// Round the quantity to the packaging before computing the amounts of the line (and checking the stock),
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpline = new OrderLine($this->db);
+				if ($tmpline->fetch($rowid) > 0) {
+					$newqty = $this->roundQtyToPackaging($qty, $tmpline->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+				}
 			}
 
 			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
@@ -3312,23 +3344,6 @@ class Commande extends CommonOrder
 				$this->line->rang = $rangmax + 1;
 			}
 
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if (abs((float) $qty) < $this->line->packaging) {
-					$qty = $this->line->packaging;
-					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
-				} else {
-					if (!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
-						// Use abs() to keep the rounding consistent for negative qty,
-						// matching what addline() at line 1725 already does (#38782 bug 5).
-						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
-						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
-					}
-				}
-			}
 
 			$this->line->id = $rowid;
 			$this->line->label = $label;
@@ -3446,6 +3461,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
@@ -3456,7 +3472,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? ((int) $this->user_validation_id) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? ((float) $this->deposit_percent) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? ((int) $this->shipping_method_id) : "null").",";
@@ -3890,7 +3906,7 @@ class Commande extends CommonOrder
 			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');

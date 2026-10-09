@@ -602,7 +602,8 @@ if (empty($reshook)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-								if (!($result > 0)) {
+								// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($result) || $result <= 0) {
 									$errors[] = "ErrorFailedToSaveFile";
 								} else {
 									// Create thumbs
@@ -775,7 +776,8 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-							if (!($result > 0)) {
+							// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+							if (!is_numeric($result) || $result <= 0) {
 								$errors[] = "ErrorFailedToSaveFile";
 							} else {
 								// Create thumbs
@@ -1179,7 +1181,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-					if (!($result > 0)) {
+					// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+					if (!is_numeric($result) || $result <= 0) {
 						$errors[] = "ErrorFailedToSaveFile";
 					} else {
 						// Create thumbs
@@ -1197,6 +1200,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
+		$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 
 		// We set multicurrency_code if enabled
 		if (isModEnabled("multicurrency")) {
@@ -2005,7 +2009,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr class="morefields">';
 				print '<td>'.$langs->trans('ParentCompany').'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'company', 'class="paddingrightonly"');
+				print img_picto('', 'company', 'class="pictofixedwidth"');
 				print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 				print '</td></tr>';
 			}
@@ -2018,7 +2022,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
-			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
 			// Add logo
@@ -2225,7 +2229,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				//Incoterms
 				if (isModEnabled('incoterm')) {
 					$object->fk_incoterms = GETPOSTINT('incoterm_id');
-					$object->location_incoterms = GETPOST('lcoation_incoterms', 'alpha');
+					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				}
 
 				//Local Taxes

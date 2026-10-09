@@ -92,7 +92,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoadd) {
 		if ($object->id) {
 			$file = $_FILES['userfile'];
 			if (is_array($file['name']) && count($file['name']) > 0) {
@@ -193,7 +193,7 @@ if ($object->id) {
 
 	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
 		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
+			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;token='.newToken().'&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';

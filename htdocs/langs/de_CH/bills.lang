@@ -117,6 +117,7 @@ RefBill=Rechnungs Nr.
 ToBill=Zu verrechnen
 RelatedRecurringCustomerInvoices=Verknüpfte wiederkehrende Kundenrechnung
 DatePointOfTax=Steuerort
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoices=Rechnungs-Vorlagen
 ExportDataset_invoice_2=Kundenrechnungen und -zahlungen
 Reduction=Ermässigung

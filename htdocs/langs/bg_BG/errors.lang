@@ -155,9 +155,6 @@ ErrNoZipEngine=Няма инструмент за архивиране/раза�
 ErrorFileMustBeADolibarrPackage=Файла %s трябва да бъде Dolibarr zip архив
 ErrorModuleFileRequired=Трябва да изберете файл с модул за Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP навийте не е инсталиран, това е от съществено значение, за да разговаря с Paypal
 ErrorFailedToAddToMailmanList=Неуспешно добавяне на запис на пощальона списък или база СПИП
 ErrorFailedToRemoveToMailmanList=Премахването на запис %s в списъка на Mailman %s или SPIP не бе успешно
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Бъдете внимателни, когато получавате модул (платен или безплатен) от подозрителна неофициална платформа, като например %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Фактурата SwissQR може да се добавя само към фактури, настроени да се плащат с плащания с кредитен превод.
 SwissQrCreditorAddressInvalid = Адресът на кредитора е невалиден (пощенски код и град зададени ли са? (%s)

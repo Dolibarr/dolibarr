@@ -136,6 +136,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement(0));
 				if ($amounts[$cursorfacid]) {
 					// Check amount
@@ -163,6 +166,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
@@ -748,8 +754,8 @@ if ($result >= 0) {
 					$multicurrency_payment = $invoice->getSommePaiement(1);
 					$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 					$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
-					$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
-					$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+					$multicurrency_alreadypayed = (float) price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+					$multicurrency_remaintopay = (float) price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 					// Multicurrency full amount tooltip
 					$tooltiponmulticurrencyfullamount = $langs->trans('AmountHT') . ": " . price($objp->multicurrency_total_ht, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
 					$tooltiponmulticurrencyfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->multicurrency_total_tva, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";

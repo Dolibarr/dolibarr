@@ -112,8 +112,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("MiscellaneousDesc")."</div>\n";
 
 
 
@@ -206,7 +205,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MaxNumberOfFailedAuth").'</td><td class="right">';
+print '<td>'.$form->textwithpicto($langs->trans("MaxNumberOfFailedAuth"), $langs->trans("MaxNumberOfFailedAuthHelp", 'USER_LOGIN_FAILED', $langs->transnoentitiesnoconv("Audit"))).'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");

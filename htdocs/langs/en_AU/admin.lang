@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
 DictionaryVAT=GST Rates or Sales Tax Rates

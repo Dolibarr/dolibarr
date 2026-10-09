@@ -132,6 +132,9 @@ $arrayfields = array(
 	'aa.data_suggest'       => array('label' => "DataUsedToSuggestAccount",     'position' => 1, 'checked' => '1', 'enabled' => '1'), // Seems not used in search.
 	'aa.account_number'     => array('label' => "AccountAccountingSuggest",     'position' => 1, 'checked' => '1', 'enabled' => '1'),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 	$arrayfields['er.date_valid'] = array('label' => "DateValidation",           'position' => 1, 'checked' => '1', 'enabled' => '1');
 }

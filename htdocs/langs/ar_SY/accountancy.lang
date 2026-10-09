@@ -202,6 +202,7 @@ DiscountReceived=خصم مستلم
 DONATION_ACCOUNTINGACCOUNT=الحساب (من دليل الحسابات) المستخدم لتسجيل التبرعات (وحدة التبرعات)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=الحساب (من دليل الحسابات) المستخدم لتسجيل اشتراكات الأعضاء (وحدة العضويات – عند تسجيل الاشتراك دون فاتورة)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=الحساب (من دليل الحسابات) المستخدم كحساب افتراضي لتسجيل دفعات العملاء المقدمة
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=تخزين حساب العميل كحساب فردي في دفتر الأستاذ الفرعي لبنود الدفعات المقدمة (عند التعطيل، سيبقى الحساب الفردي لبنود الدفعات المقدمة فارغًا)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=الحساب (من دليل الحسابات) المستخدم كحساب افتراضي لتسجيل دفعات الموردين المُقدمة
 UseAuxiliaryAccountOnSupplierDeposit=تخزين حساب المورد كحساب فردي في دفتر الأستاذ الفرعي لبنود الدفعات المقدمة (عند التعطيل، سيبقى الحساب الفردي لبنود الدفعات المقدمة فارغًا)

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -519,7 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -815,6 +815,10 @@ input.pageplusone {
 .noopacity {
 	opacity: unset !important;
 }
+.spantitle {
+	opacity: 0.5;
+	font-size: 0.95em;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -916,7 +920,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
@@ -1107,8 +1111,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
 	line-height: 1.2em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
@@ -1191,7 +1201,10 @@ textarea.centpercent {
 }
 .liste_titre.sticky {
 	position: sticky;
-	top:0;
+	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
+	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
+	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
 	z-index: 2;
 }
 
@@ -3071,12 +3084,12 @@ a.pictosubstatus:hover {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here, it varies on font size */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 16px;	/* Do not use em unit here */
-	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	width: 16px;	/* Do not use em unit here, it varies on font size */
+	padding-right: 6px;		/* img width + img padding-right must be equal to width of .pictofixedwidth */
 	margin-right: 4px;
 }
 
@@ -5261,7 +5274,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
 /* to avoid too much border on contract card */
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
@@ -8010,11 +8023,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 
 .parentonrightofpage {
@@ -9526,9 +9539,15 @@ table.jPicker {
 
 	.pictofixedwidth {
 		text-align: start;
-		width: 1.5em;
-		/* padding-right: 0; */
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;
 	}
+	img.pictofixedwidth {
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;	/* img width + img padding-right must be equal to width + padding-right of .pictofixedwidth */
+		margin-right: 4px;
+	}
+
 	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}

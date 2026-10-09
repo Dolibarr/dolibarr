@@ -102,6 +102,7 @@ return [
         'htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/workstation/mod_workstation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/multicompany_page.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/core/tpl/contacts.tpl.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/massactions_pre.tpl.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],

@@ -112,7 +112,7 @@ function stock_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("StockSetupExtraFields");
 	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';

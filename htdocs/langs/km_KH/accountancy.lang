@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=គណនី (ពីតារាងគណនី) ដែលត្រូវប្រើដើម្បីចុះឈ្មោះការបរិច្ចាគ (ម៉ូឌុលបរិច្ចាគ)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=គណនី (ពីគំនូសតាងនៃគណនី) ដែលត្រូវប្រើដើម្បីចុះឈ្មោះការជាវសមាជិកភាព (ម៉ូឌុលសមាជិកភាព - ប្រសិនបើសមាជិកភាពត្រូវបានកត់ត្រាដោយគ្មានវិក្កយបត្រ)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=គណនី (ពីតារាងគណនី) ដែលត្រូវប្រើជាគណនីលំនាំដើមដើម្បីចុះឈ្មោះប្រាក់បញ្ញើរបស់អតិថិជន
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=រក្សាទុកគណនីអតិថិជនជាគណនីបុគ្គលនៅក្នុងសៀវភៅបញ្ជីសាខាសម្រាប់បន្ទាត់នៃការទូទាត់ចុះក្រោម (ប្រសិនបើត្រូវបានបិទ គណនីបុគ្គលសម្រាប់បន្ទាត់បង់ប្រាក់ចុះក្រោមនឹងនៅទទេ)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=រក្សាទុកគណនីអ្នកផ្គត់ផ្គង់ជាគណនីបុគ្គលនៅក្នុងសៀវភៅបញ្ជីសាខាសម្រាប់បន្ទាត់នៃការទូទាត់ចុះក្រោម (ប្រសិនបើត្រូវបានបិទ គណនីបុគ្គលសម្រាប់បន្ទាត់បង់ប្រាក់ចុះក្រោមនឹងនៅទទេ)

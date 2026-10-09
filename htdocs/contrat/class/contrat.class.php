@@ -9,11 +9,10 @@
  * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1189,7 +1188,11 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			} else {
-				$this->error = "Failed to add contract";
+				// Keep the error reported by the failing step, it is the only actionable one.
+				// Only fall back to a generic message when nothing was set, as propal.class.php does.
+				if (empty($this->error) && empty($this->errors)) {
+					$this->error = "Failed to add contract";
+				}
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -1308,7 +1311,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->contrat->dir_output) {
+			if ($conf->contrat->dir_output && !empty($ref)) {
 				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -1411,6 +1414,7 @@ class Contrat extends CommonObject
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " extraparams=".(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1447,6 +1451,9 @@ class Contrat extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			if (isset($user->id)) {
+				$this->fk_user_modif = (int) $user->id;
+			}
 			$this->db->commit();
 			return 1;
 		}
@@ -1580,7 +1587,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product, $qty);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -1706,12 +1713,16 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters
 		$qty = trim((string) $qty);
-		$desc = trim($desc);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
@@ -1871,6 +1882,15 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		if ($this->statut >= 0) {
+			if ($this->id > 0) {
+				// The line must belong to this contract
+				$contractline = new ContratLigne($this->db);
+				if ($contractline->fetch($idline) <= 0 || (int) $contractline->fk_contrat !== (int) $this->id) {
+					$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+					return -1;
+				}
+			}
+
 			// Call trigger
 			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
@@ -1899,6 +1919,18 @@ class Contrat extends CommonObject
 				if ($result < 0) {
 					$error++;
 					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
+				}
+			}
+
+			if (!$error) {
+				// Renumber remaining lines so rang stays a contiguous 1..N sequence.
+				// Without this, a deleted line leaves a permanent gap that breaks
+				// the up/down swap logic (updateLineUp/updateLineDown) for any pair
+				// of lines that no longer sit at an exact rang+/-1 from each other.
+				$result = $this->line_order(true, 'ASC', false);
+				if ($result < 0) {
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline line_order error";
 				}
 			}
 
@@ -2050,7 +2082,7 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');
@@ -2542,7 +2574,7 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if (!dol_strlen($modele)) {
 			$modele = '';	// No doc template/generation by default

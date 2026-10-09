@@ -208,6 +208,7 @@ LastActivationIP=IP de última activación
 UpdateServerOffline=Actualizar servidor fuera de línea
 WithCounter=Administrar un contador
 AddCRIfTooLong=No hay ajuste de texto automático. El texto que es demasiado largo no será mostrado en el documento.  Por favor agregar saltos de línea en el área de texto si es necesario.
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 String=Cuerda
 Text=Texto
 Module30Name=Facturas

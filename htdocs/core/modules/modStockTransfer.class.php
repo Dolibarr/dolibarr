@@ -435,8 +435,10 @@ class modStockTransfer extends DolibarrModules
 
 		$sql = [];
 
+		// TODO Move this into llx_c_type_contact.sql
+
 		// Roles
-		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'internal'");
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STRESP' AND element = 'stocktransfer' AND source = 'internal'");
 		$res = $this->db->fetch_object($resql);
 		$nextid = $this->getNextId();
 		if (empty($res)) {

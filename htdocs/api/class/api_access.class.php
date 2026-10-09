@@ -136,7 +136,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
 					$sql .= " u.tms as date_modification,";
 					$sql .= " gu.entity, gu.entity as token_entity";
 					$sql .= " FROM ".$this->db->prefix()."user as u";
@@ -150,7 +150,7 @@ class DolibarrApiAccess implements iAuthenticate
 				}
 			} else {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification,";
 					$sql .= " gu.entity";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
@@ -310,8 +310,8 @@ class DolibarrApiAccess implements iAuthenticate
 					$sqlforcounter = "UPDATE ".$this->db->prefix()."oauth_token SET ";
 					$sqlforcounter .= " apicount_total = apicount_total + 1,";
 					$sqlforcounter .= " apicount_month = apicount_month + 1,";
-					// if last access was done during previous month, we save pageview_month into pageviews_previous_month
-					$sqlforcounter .= " pageviews_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
+					// if last access was done during previous month, we save apicount_month into apicount_previous_month
+					$sqlforcounter .= " apicount_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
 					$sqlforcounter .= " lastaccess = '".$this->db->idate(dol_now('gmt'), 'gmt')."'";
 					$sqlforcounter .= " WHERE rowid = ".((int) $token_rowid);
 
@@ -340,6 +340,7 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
+
 		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
@@ -359,7 +360,7 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
 	/**
-	 * Verify access
+	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
 	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *

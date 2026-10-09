@@ -95,7 +95,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "p.datep";
+	// rowid is needed as a tiebreaker: many payments share the same date, and without it
+	// the order of those rows is undefined, so paging can repeat or skip records.
+	$sortfield = "p.datep,p.rowid";
 }
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
@@ -117,6 +119,9 @@ $arrayfields = array(
 	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
 	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 70),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -145,6 +150,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	|| (!$user->hasRight("supplier_invoice", "lire") && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))) {
 	accessforbidden();
 }
+
+$arrayofselected = !empty($arrayofselected) && is_array($arrayofselected) ? $arrayofselected : array();
 
 
 /*
@@ -181,9 +188,11 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $title = $langs->trans('ListPayment');
 $help_url = '';
 

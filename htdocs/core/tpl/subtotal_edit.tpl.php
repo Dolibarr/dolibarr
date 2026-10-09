@@ -125,14 +125,25 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 
 	if (!$situationinvoicelinewithparent) {
-		print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
 		$disabled = 0;
-		if ($line_type == 'subtotal') {
-			print ' readonly="readonly"';
-			$disabled = 1;
+		if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
+			print '<textarea name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
+			print dol_escape_htmltag(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 0, 1);
+			print '</textarea>';
+		} else {
+			print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
+			print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1).'"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
 		}
-		print '>';
 		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
 		print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
 		if ($disabled) {
@@ -156,7 +167,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<td colspan="' . $colspan . '" class="right"></td>';
 	} else {
 		print '<input type="text" readonly name="line_desc" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1);
 		print '"></td>';
 	}
 	?>

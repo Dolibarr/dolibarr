@@ -889,8 +889,27 @@ class Reception extends CommonObject
 				$this->setErrorsFromObject($supplierorderdispatch);
 				return $ret;
 			} else {
+				// Lines of draft receptions are not received yet
+				$draft_lines = array();
+				$sql = "SELECT rb.rowid FROM ".MAIN_DB_PREFIX."receptiondet_batch as rb";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.rowid = rb.fk_reception";
+				$sql .= " WHERE rb.fk_element = ".((int) $this->origin_id);
+				$sql .= " AND r.fk_statut = ".self::STATUS_DRAFT;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+				while ($obj = $this->db->fetch_object($resql)) {
+					$draft_lines[(int) $obj->rowid] = (int) $obj->rowid;
+				}
+				$this->db->free($resql);
+
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
+					if (isset($draft_lines[(int) $dispatch_line->id])) {
+						continue;
+					}
 					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
 						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
 					} else {
@@ -1145,7 +1164,7 @@ class Reception extends CommonObject
 			}
 
 			$qty = (float) $qty;
-			$description = trim($description);
+			$description = trim((string) $description);
 
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new ReceptionLineBatch($this->db);
@@ -1209,8 +1228,6 @@ class Reception extends CommonObject
 	public function fetch_lines_free()
 	{
 		// phpcs:enable
-		global $mysoc;
-
 		$this->lines = array();
 
 		$sql = 'SELECT rc.rowid, rc.fk_reception, rc.fk_entrepot, rc.fk_product, rc.fk_unit, rc.description, rc.fk_elementdet, rc.fk_element, rc.element_type, rc.qty, rc.rang';
@@ -1248,8 +1265,6 @@ class Reception extends CommonObject
 				$line->fk_elementdet 	= $objp->fk_elementdet;
 				$line->fk_element_type	= $objp->element_type;
 				$line->fetch_optionals();
-
-
 
 				$this->lines[$i] = $line;
 
@@ -1555,6 +1570,40 @@ class Reception extends CommonObject
 		}
 	}
 
+	/**
+	 *	Delete a line of the reception. Only allowed while the reception is a draft.
+	 *
+	 *	@param	User	$user		User that deletes
+	 *	@param	int		$lineid		Id of the line to delete (llx_receptiondet_batch.rowid)
+	 *	@return	int					>0 if OK, <0 if KO
+	 */
+	public function deleteLine($user, $lineid)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new ReceptionLineBatch($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+		if ($line->fk_reception != $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
+		if ($line->delete($user) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+		$this->error = $line->error;
+		$this->db->rollback();
+		return -1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load lines
@@ -1582,7 +1631,7 @@ class Reception extends CommonObject
 				// TODO Remove or keep this ?
 				$line->fetch_product();
 
-				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
+				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, localtax1_tx, localtax2_tx, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva, date_start, date_end, product_type';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$sql_commfourndet .= ' ORDER BY rang';
@@ -1595,6 +1644,8 @@ class Reception extends CommonObject
 					$line->desc = $obj->description;
 					$line->tva_tx = $obj->tva_tx;
 					$line->vat_src_code = $obj->vat_src_code;
+					$line->localtax1_tx = $obj->localtax1_tx;
+					$line->localtax2_tx = $obj->localtax2_tx;
 					$line->subprice = $obj->subprice;
 					$line->multicurrency_subprice = $obj->multicurrency_subprice;
 					$line->remise_percent = $obj->remise_percent;
@@ -1603,6 +1654,9 @@ class Reception extends CommonObject
 					$line->total_ht = $obj->total_ht;
 					$line->total_ttc = $obj->total_ttc;
 					$line->total_tva = $obj->total_tva;
+					$line->date_start = $this->db->jdate($obj->date_start);
+					$line->date_end = $this->db->jdate($obj->date_end);
+					$line->product_type = $obj->product_type;
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
@@ -2077,7 +2131,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 
@@ -2237,7 +2291,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
@@ -2325,7 +2379,7 @@ class Reception extends CommonObject
 	public function setDraft($user)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -2374,7 +2428,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 

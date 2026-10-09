@@ -354,12 +354,12 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$emailsendersignature = $obj->signature;
 				}
 			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
-				$sql = "SELECT rowid, ".$db->sanitize($email_from)." FROM ".MAIN_DB_PREFIX."c_email_templates";
+				$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates";
 				$sql .= " WHERE rowid = ".(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$email_from = $obj->$email_from;
+					$email_from = $obj->email_from;
 				}
 			} else {
 				$email_from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
@@ -472,14 +472,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// TODO Fix this: Such properties does not exists on all objects
 						$object->context['email_msgid'] = $mailfile->msgid;
-						$object->context['$email_from'] = $email_from;
+						$object->context['email_from'] = $email_from;
 						$object->context['email_subject'] = $subject;
 						$object->context['email_to'] = $sendto;
 						$object->context['email_tocc'] = $sendtocc;
 						$object->context['email_tobcc'] = $sendtobcc;
 
 						$object->email_msgid = $mailfile->msgid; // @todo Set msgid into $mailfile after sending
-						$object->$email_from = $email_from;
+						$object->email_from = $email_from;
 						$object->email_subject = $subject;
 						$object->email_to = $sendto;
 						$object->email_tocc = $sendtocc;

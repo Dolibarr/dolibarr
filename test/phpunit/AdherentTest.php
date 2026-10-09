@@ -2,7 +2,7 @@
 /* Copyright (C) 2010      Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2023      Alexandre Janniaux    <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +156,7 @@ class AdherentTest extends CommonClassTest
 		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+		$this->assertEquals('MR', $localobject->civility_code);		// Value set by initAsSpecimen() and stored by create()
 		return $localobject;
 	}
 
@@ -203,7 +204,8 @@ class AdherentTest extends CommonClassTest
 
 		$timestamp = dol_now();
 
-		$localobject->civility_id = 0;
+		$localobject->civility_id = 0;			// Deprecated alias, must be ignored in favor of civility_code
+		$localobject->civility_code = '';
 		$localobject->login = 'newlogin';
 		$localobject->company = 'New company label';
 		$localobject->note_public = 'New note public after update';
@@ -237,7 +239,7 @@ class AdherentTest extends CommonClassTest
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		$this->assertEquals($localobject->civility_id, $newobject->civility_id);
+		$this->assertEquals($localobject->civility_code, $newobject->civility_code);
 		$this->assertEquals($localobject->login, $newobject->login);
 		$this->assertEquals($localobject->company, $newobject->company);
 		$this->assertEquals($localobject->note_public, $newobject->note_public);

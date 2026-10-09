@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Hau sinatzeko esku-hartzeari buruzko 
 ThisIsInformationOnDocumentToSignSociete_rib=Hau SEPA aginduari buruzko informazioa da sinatzeko
 ThisIsInformationOnDocumentToSignExpedition= Hau da bidalketari buruzko informazioa sinatu behar dena
 SignatureProposalRef=Aurrekontuaren/proposamen komertzialaren sinadura %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Kontratuaren sinadura %s
 SignatureFichinterRef=Esku-hartzearen sinadura %s
 SignatureSociete_ribRef=SEPA Aginduaren sinadura %s

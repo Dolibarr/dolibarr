@@ -269,6 +269,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat, 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE", GETPOST('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 

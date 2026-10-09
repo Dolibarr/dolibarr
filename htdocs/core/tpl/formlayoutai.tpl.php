@@ -93,6 +93,14 @@ if (!empty($showlinktolayout)) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is 
 								jQuery(".ai_input'.$htmlname.'").hide();
 								jQuery("#pageContent").show();	// May exists for website page only
 							});
+						jQuery(document).on("click", function (event) {
+							templateselector = jQuery(".template-selector");
+							templateselectorbutton = jQuery("#linkforlayouttemplates");
+							if (!templateselector.is(event.target) && !templateselectorbutton.is(event.target) && jQuery(event.target).closest(templateselector).length === 0 && jQuery(event.target).closest(templateselectorbutton).length === 0 && templateselector.is(":visible")) {
+								console.log("You clicked outside of template-selector - we close it");
+								jQuery(".template-selector").hide();
+							}
+						});
 						});
 					</script>
 					';

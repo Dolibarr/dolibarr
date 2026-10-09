@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) na które będą rejestrowane darowizny (moduł Darowizny)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) służące do rejestracji zapisów na członkostwo (moduł Członkostwo - w przypadku członkostwa rejestrowanego bez faktury)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (z Planu Kont), które będzie używane jako konto domyślne do rejestracji wpłaty klienta
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Zapisz konto klienta jako konto indywidualne w księdze pomocniczej dla linii zaliczek (jeśli opcja jest wyłączona, konto indywidualne dla linii zaliczek pozostanie puste)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Zapisz konto dostawcy jako konto indywidualne w księdze pomocniczej dla linii zaliczek (w przypadku wyłączenia indywidualne konto dla linii zaliczek pozostanie puste)

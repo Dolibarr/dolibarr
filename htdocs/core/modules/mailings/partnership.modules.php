@@ -244,7 +244,8 @@ class mailing_partnership extends MailingTargets
 		$langs->load("companies");
 
 		// Add filter on partnership type
-		$s = '<select id="filter_partnership" name="filter" class="flat">';
+		$s = '<!-- form to filter partnerships -->'."\n";
+		$s .= '<select id="filter_partnership" name="filter" class="flat">';
 
 		// Get all types of partnership
 		$sql = "SELECT rowid, label, code, active";
@@ -270,7 +271,8 @@ class mailing_partnership extends MailingTargets
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$s .= '<option value="'.$obj->rowid.'"'.($obj->rowid == GETPOST('filter') ? "selected" : "").'>'.dol_escape_htmltag($obj->label);
+				$s .= '<option value="'.$obj->rowid.'"'.($obj->rowid == GETPOST('filter') ? "selected" : "").'>';
+				$s .= dolPrintHTML($obj->label);
 				$s .= '</option>';
 				$i++;
 			}
@@ -285,7 +287,8 @@ class mailing_partnership extends MailingTargets
 		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 		$tmppartnership = new Partnership($this->db);
 
-		$dummy = $tmppartnership->getLibStatut(0);	// We call this only to have $tmppartnership->labelStatus loaded
+		$tmppartnership->status = 0;
+		$tmppartnership->getLibStatut(0);	// We call this only to have $tmppartnership->labelStatus loaded
 
 		$s .= $form->selectarray('filter_status_partnership', $tmppartnership->labelStatus, GETPOST('filter_status_partnership'), $langs->trans("Status"));
 

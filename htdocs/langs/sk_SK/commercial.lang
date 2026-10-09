@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Toto je informácia o zásahu, ktorú
 ThisIsInformationOnDocumentToSignSociete_rib=Toto sú informácie o SEPA mandáte na podpis
 ThisIsInformationOnDocumentToSignExpedition= Toto sú informácie o zásielke na podpis
 SignatureProposalRef=Podpis cenovej ponuky/komerčnej ponuky %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Podpis zmluvy %s
 SignatureFichinterRef=Podpis zásahu %s
 SignatureSociete_ribRef=Podpis mandátu SEPA %s

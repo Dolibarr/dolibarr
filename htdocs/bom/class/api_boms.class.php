@@ -472,6 +472,16 @@ class Boms extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// BOM::updateLine() sets fk_bom to this BOM on whatever line it is given, so a line of
+		// another BOM must be refused here or it would be moved into this one.
+		$bomline = new BOMLine($this->db);
+		if ($bomline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'BOM line not found');
+		}
+		if ($bomline->fk_bom != $this->bom->id) {
+			throw new RestException(403, 'Line does not belong to this BOM');
+		}
+
 		$request_data = (object) $request_data;
 
 		$updateRes = $this->bom->updateLine(
@@ -576,6 +586,7 @@ class Boms extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->statut);
 		unset($object->state);
+		unset($object->region_id);
 		unset($object->state_id);
 		unset($object->state_code);
 		unset($object->region);
@@ -587,11 +598,26 @@ class Boms extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->civility_code);
+		unset($object->actiontypecode);
+		unset($object->product);
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
+
+		unset($object->user);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->deposit_percent);
+		unset($object->cond_reglement_supplier_id);
+
 		unset($object->fk_account);
 		unset($object->comments);
 		unset($object->note);

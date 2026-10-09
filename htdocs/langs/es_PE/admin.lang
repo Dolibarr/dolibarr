@@ -22,6 +22,7 @@ PositionByDefault=Orden predeterminado
 BoxesActivated=Widgets activados
 ActiveOn=Activado en
 LastActivationIP=IP de última activación
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 PDFRulesForSalesTax=Reglas para el impuesto a las ventas / IGV
 HideLocalTaxOnPDF=Ocultar la tasa %s en la columna de impuesto / IGV
 OldVATRates=Antigua tasa de IGV

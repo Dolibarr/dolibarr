@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Dyma wybodaeth am ymyrraeth i arwyddo
 ThisIsInformationOnDocumentToSignSociete_rib=Mae hon yn wybodaeth am Fandad SEPA i lofnodi
 ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=Llofnod y dyfynbris/cynnig masnachol %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Llofnod y contract %s
 SignatureFichinterRef=Llofnod yr ymyriad %s
 SignatureSociete_ribRef=Llofnod Mandad SEPA %s

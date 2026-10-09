@@ -1,6 +1,7 @@
 ---
 name: pre-commit
 
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:

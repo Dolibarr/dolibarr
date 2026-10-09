@@ -429,7 +429,7 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -1302,6 +1302,23 @@ class FunctionsLibTest extends CommonClassTest
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
 		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+
+		// Every digit must appear exactly once, in order, whatever the country format
+		$object->country_code = 'JO';
+		$phone = dol_print_phone('+96212345678', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+962 1 234 56 78</span>', $phone, 'Phone for JO 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">987 654 321</span>', $phone, 'Phone for PE 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+5111234567', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+511 123 4567</span>', $phone, 'Phone for PE 2');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+51987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+51 987 654 321</span>', $phone, 'Phone for PE 3');
 	}
 
 
@@ -1370,19 +1387,17 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testVerifCond
 	 *
-	 * @dataProvider verifCondDataProvider
-	 *
-	 * @param string $cond     Condition to test using verifCond
-	 * @param string $expected Expected outcome of verifCond
-	 *
 	 * @return	void
 	 */
-	public function testVerifCond($cond, $expected)
+	public function testVerifCond()
 	{
-		if ($expected) {
-			$this->assertTrue(verifCond($cond));
-		} else {
-			$this->assertFalse(verifCond($cond));
+		foreach ($this->verifCondDataProvider() as $case) {
+			list($cond, $expected) = $case;
+			if ($expected) {
+				$this->assertTrue(verifCond($cond));
+			} else {
+				$this->assertFalse(verifCond($cond));
+			}
 		}
 	}
 
@@ -1978,6 +1993,12 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$newstring."\n";
 		$this->assertEquals($newstring, "This is a text with<br>\nNew line<br>\nThen<br>\nNo html<br>\nThen<br>\n<b>HTML</b>", 'Test on make_substitutions with full conversion of text accepted');
 
+
+		// Try mix HTML into not HTML but no replaement is done
+		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+
 		return true;
 	}
 
@@ -2080,6 +2101,35 @@ class FunctionsLibTest extends CommonClassTest
 		$result = fetchObjectByElement(0, 'product');
 
 		$this->assertTrue(is_object($result));
+
+		$hasvariantsmodule = array_key_exists('variants', $conf->modules);
+		$originalvariantsmodule = $hasvariantsmodule ? $conf->modules['variants'] : null;
+
+		try {
+			$conf->modules['variants'] = 1;
+
+			$productattribute = getElementProperties('product_attribute');
+			$this->assertSame('variants', $productattribute['module']);
+			$this->assertSame('variants/class', $productattribute['classpath']);
+			$this->assertSame('ProductAttribute', $productattribute['classfile']);
+			$this->assertSame('ProductAttribute', $productattribute['classname']);
+
+			$productattributevalue = getElementProperties('product_attribute_value');
+			$this->assertSame('variants', $productattributevalue['module']);
+			$this->assertSame('variants/class', $productattributevalue['classpath']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classfile']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classname']);
+			$this->assertSame('product_attribute', $productattributevalue['parent_element']);
+
+			$this->assertInstanceOf(ProductAttribute::class, fetchObjectByElement(0, 'product_attribute'));
+			$this->assertInstanceOf(ProductAttributeValue::class, fetchObjectByElement(0, 'product_attribute_value'));
+		} finally {
+			if ($hasvariantsmodule) {
+				$conf->modules['variants'] = $originalvariantsmodule;
+			} else {
+				unset($conf->modules['variants']);
+			}
+		}
 
 		return true;
 	}

@@ -22,7 +22,6 @@
  */
 
 use Luracast\Restler\RestException;
-use PhpParser\Node\Name;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -374,17 +373,27 @@ class Users extends DolibarrApi
 
 		//assign field values
 		foreach ($request_data as $field => $value) {
-			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key', 'openid'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			/*if ($field == 'pass') {
-				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
+			if ($field == 'pass') {
+				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {		// In creation, users is always a different user than the one who create it.
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
-					continue;
+				}
+				if (!DolibarrApiAccess::$user->admin) {		// Only admin can set a password and knowing it. Others can reset with correct rights user->self->password but without knowing it.
+					throw new RestException(403, 'As a non admin user, you are not allowed to set a password from this API. Use the /setPassword endpoint for this.');
 				}
 			}
-			*/
+
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				if (in_array($field, array('salary', 'salaryextra', 'thm', 'tjm'))) {
+					// This properties can't be set/modified with API
+					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
+				}
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -456,10 +465,19 @@ class Users extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key', 'openid'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
+
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				if (in_array($field, array('salary', 'salaryextra', 'thm', 'tjm'))) {
+					// This properties can't be set/modified with API
+					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
+				}
+			}
+
 			if ($field == 'id') {
 				continue;
 			}
@@ -469,6 +487,9 @@ class Users extends DolibarrApi
 				}
 				if ($this->useraccount->id == DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'self', 'password')) {
 					throw new RestException(403, 'You are not allowed to modify your own password');
+				}
+				if (!DolibarrApiAccess::$user->admin) {		// Only admin can set a password and knowing it. Others can reset with correct rights user->self->password but without knowing it.
+					throw new RestException(403, 'As a non admin user, you are not allowed to set a password from this API. Use the /setPassword endpoint for this.');
 				}
 			}
 			if ($field === 'caller') {
@@ -542,8 +563,11 @@ class Users extends DolibarrApi
 			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
+		if ($id != DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
+			throw new RestException(403, 'You are not allowed to modify password of other users');
+		}
+		if ($id == DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'self', 'password')) {
+			throw new RestException(403, 'You are not allowed to modify your own password');
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -779,18 +803,28 @@ class Users extends DolibarrApi
 	 */
 	public function removeUserFromGroup($id, $group)
 	{
+		global $conf;
+
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only admin can remove users from groups');
 		}
 
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
-		$sql .= " WHERE fk_user = " . ((int) $id);
-		$sql .= " AND fk_usergroup = " . ((int) $group);
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
 
-		$resql = $this->db->query($sql);
+		// Same entity resolution as setGroup(): the action is done on the entity of the logged user, so an
+		// admin of one entity can not remove the group link of a user in another entity.
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && empty(DolibarrApiAccess::$user->entity)) {
+			$entity = $conf->entity;
+		} else {
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-		if (!$resql) {
-			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		$result = $this->useraccount->RemoveFromGroup($group, $entity);
+		if (!($result > 0)) {
+			throw new RestException(500, $this->useraccount->error);
 		}
 
 		return [
@@ -956,6 +990,14 @@ class Users extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if ($this->useraccount->admin && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, 'Only admin users can delete admin users');
+		}
+		if ($this->useraccount->admin && empty($this->useraccount->entity) && !empty(DolibarrApiAccess::$user->entity)) {
+			throw new RestException(403, 'Only superadmin users can delete superadmin users');
+		}
+
 		$this->useraccount->oldcopy = clone $this->useraccount; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {

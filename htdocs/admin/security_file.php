@@ -137,8 +137,7 @@ llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("SecurityFilesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("SecurityFilesDesc")."</div>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

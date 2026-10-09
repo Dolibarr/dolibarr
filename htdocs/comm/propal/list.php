@@ -279,6 +279,10 @@ $arrayfields = array(
 	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
+if ($user->socid) {
+	unset($arrayfields['p.note_private']);
+}
+
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
  foreach ($object->fields as $key => $val) {
@@ -310,6 +314,10 @@ if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Permissions
 $permissiontoread = $user->hasRight('propal', 'lire');
@@ -1264,7 +1272,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers((empty($search_user) ? -2 : 0), 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers(($search_user > 0 ? $search_user : -2), 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 // If the user can view products
@@ -1830,6 +1838,13 @@ if (isModEnabled('margin') && (
 	$with_margin_info = true;
 }
 
+$with_amount_invoiced_info = isModEnabled('invoice') && (
+	!empty($arrayfields['p.total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.total_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_invoiced']['checked'])
+);
+
 $total_ht = 0;
 $total_margin = 0;
 
@@ -1877,21 +1892,23 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalInvoicedHT = 0;
 	$multicurrency_totalInvoicedTTC = 0;
 
-	$TInvoiceData = $object->InvoiceArrayList($object->id);
+	if ($with_amount_invoiced_info) {
+		$TInvoiceData = $object->InvoiceArrayList($object->id);
 
-	if (!empty($TInvoiceData)) {
-		foreach ($TInvoiceData as $invoiceData) {
-			$invoice = new Facture($db);
-			$invoice->fetch($invoiceData->facid);
+		if (!empty($TInvoiceData)) {
+			foreach ($TInvoiceData as $invoiceData) {
+				$invoice = new Facture($db);
+				$invoice->fetch($invoiceData->facid);
 
-			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
-				continue;
+				if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
+					continue;
+				}
+
+				$totalInvoicedHT += $invoice->total_ht;
+				$totalInvoicedTTC += $invoice->total_ttc;
+				$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
+				$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 			}
-
-			$totalInvoicedHT += $invoice->total_ht;
-			$totalInvoicedTTC += $invoice->total_ttc;
-			$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
-			$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 		}
 	}
 

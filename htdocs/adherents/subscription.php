@@ -378,7 +378,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$parameters = array(
 					'datesubscription' => $datesubscription,
 					'amount' => $amount,
-					'ccountid' => $accountid,
+					'accountid' => $accountid,
+					'ccountid' => $accountid,	// Deprecated key (typo), kept for the hooks that already read it
 					'operation' => $operation,
 					'label' => $label,
 					'num_chq' => $num_chq,
@@ -400,7 +401,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 
@@ -798,7 +799,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
 			print '<td class="center tdoverflowmax125">';
 			if ($typeid > 0) {
@@ -1094,7 +1095,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
@@ -1124,7 +1125,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
@@ -1195,7 +1196,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		$formmail = new FormMail($db);
 		// Set output language
 		$outputlangs = new Translate('', $conf);
-		$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+		$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template

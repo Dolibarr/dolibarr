@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
+ * Copyright (C) 2026      Nathan Pixodeo        <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,25 +205,35 @@ if ($action == 'testprinter2') {
 
 if ($action == 'testtemplate') {
 	$error = 0;
-	// if (empty($printerid)) {
-	//     $error++;
-	//     setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
-	// }
-
-	// if (! $error) {
-	// test
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	$object = new Facture($db);
-	$object->initAsSpecimen();
-	//$object->fetch(18);
-	//var_dump($object->lines);
-	$ret = $printer->sendToPrinter($object, $templateid, 1);
-	if ($ret == 0) {
-		setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
-	} else {
-		setEventMessages($printer->error, $printer->errors, 'errors');
+	if (empty($printerid)) {
+		$ret = $printer->listPrinters();
+		if ($ret > 0) {
+			$error++;
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		} elseif (!empty($printer->listprinters)) {
+			// Keep the historic first-printer behavior without assuming its rowid is 1.
+			$printerid = (int) min(array_column($printer->listprinters, 'rowid'));
+		}
 	}
-	//}
+	if (!$error && empty($printerid)) {
+		$error++;
+		setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
+	}
+
+	if (!$error) {
+		// test
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		//$object->fetch(18);
+		//var_dump($object->lines);
+		$ret = $printer->sendToPrinter($object, $templateid, $printerid);
+		if ($ret == 0) {
+			setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
+		} else {
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		}
+	}
 	$action = '';
 }
 

@@ -440,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Avís, aquest mòdul ha estat denuncia
 WarningModuleAffiliatedToAPiratPlatform=Aneu amb compte quan obtingueu un mòdul (de pagament o gratuït) d'una plataforma no oficial sospitosa com ara %s
 WarningDNSServerNotAvailable=Avís, servidor DNS no disponible
 WarningSecureKeyNotSet=El valor de la clau segura no pot estar buit
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR invoice només es pot afegir a invoices establert per ser paid Transfer pagaments.
 SwissQrCreditorAddressInvalid = L'adreça del creditor no és vàlida (s'han definit el codi postal i la ciutat? (%s)

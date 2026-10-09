@@ -863,8 +863,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $this->db->jdate($objp->date_start);
-				$line->date_end                 = $this->db->jdate($objp->date_end);
+				$line->date_start               = $objp->date_start; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
+				$line->date_end                 = $objp->date_end; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
@@ -1176,6 +1176,11 @@ class FactureFournisseurRec extends CommonInvoice
 	{
 		global $mysoc, $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$facid = $this->id;
 
 		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
@@ -1316,7 +1321,8 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1);
+		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
+		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1, 'tzserver');
 	}
 
 	/**

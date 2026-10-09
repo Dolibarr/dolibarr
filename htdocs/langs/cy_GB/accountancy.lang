@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Cyfrif (o'r Siart Cyfrifon) i'w ddefnyddio i gofrestru rhoddion (modiwl rhoddion)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cyfrif (o'r Siart Cyfrif) i'w ddefnyddio i gofrestru tanysgrifiadau aelodaeth (modiwl aelodaeth - os yw aelodaeth wedi'i chofnodi heb anfoneb)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cyfrif (o'r Siart Cyfrif) i'w ddefnyddio fel y cyfrif rhagosodedig i gofrestru blaendal cwsmer
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Storio cyfrif cwsmer fel cyfrif unigol yn y cyfriflyfr atodol ar gyfer llinellau talu i lawr (os yn anabl, bydd cyfrif unigol ar gyfer llinellau talu i lawr yn aros yn wag)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Storio cyfrif cyflenwr fel cyfrif unigol yn y cyfriflyfr atodol ar gyfer llinellau talu i lawr (os yn anabl, bydd cyfrif unigol ar gyfer llinellau talu i lawr yn aros yn wag)

@@ -155,6 +155,9 @@ if (empty($modulepart) && empty($hashp)) {
 if (empty($original_file) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
+}
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
@@ -186,14 +189,15 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	if (GETPOST('type', 'alpha') == 'link') {
+		// If we request a link
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$result = $link->fetch(0, $hashp);
 		if ($result > 0 && !empty($link->url)) {
 			if (preg_match('/^(http|dav)/', $link->url)) {
-				header('Location: '.$link->url);
+				header('Location: '.$link->url);				// Return the shared link we found in db
 				exit;
 			}
 		} else {
@@ -201,6 +205,7 @@ if (!empty($hashp)) {
 			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
 		}
 	} else {
+		// If we request a file
 		include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', '', '', $hashp);
@@ -218,7 +223,7 @@ if (!empty($hashp)) {
 					$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
 					//var_dump($original_file); exit;
 				} else {
-					httponly_accessforbidden('Bad link. File is from another module part.', 403);
+					httponly_accessforbidden('Bad entry found. File has a path from another module part.', 403);
 				}
 			} else {
 				$modulepart = $moduleparttocheck;
@@ -289,7 +294,7 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } else {
@@ -310,7 +315,12 @@ if (!empty($hashp)) {
 				}
 			}
 		}
-	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+	} /*
+	TODO Why this else ? Which use case does it cover ?
+	TICKET_EMAIL_MUST_EXISTS means a visitor can create a ticket from public interface even if email does not exists yet as a contact.
+	Public interface means no login and unknown user (ticket are found by email submiter / id).
+	Disabled as this looks a security bypass
+	elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
 		if ($sqlprotectagainstexternals) {
 			$resql = $db->query($sqlprotectagainstexternals);
 			if ($resql) {
@@ -321,6 +331,7 @@ if (!empty($hashp)) {
 			}
 		}
 	}
+	*/
 }
 
 // Security:

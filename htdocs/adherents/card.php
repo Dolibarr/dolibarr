@@ -372,7 +372,7 @@ if (empty($reshook)) {
 			$object->morphy = GETPOST("morphy", 'alpha');
 
 			$current_photo = '';
-			if (!empty($_FILES['photo']['name'])) {
+			if (!empty($_FILES['photo']['name']) && empty($_FILES['photo']['error'])) {
 				$current_photo = $object->photo;
 				$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
@@ -448,7 +448,9 @@ if (empty($reshook)) {
 
 							if (@is_dir($dir)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-								if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+								$resultupload = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+								// Note: $resultupload is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($resultupload) || $resultupload <= 0) {
 									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 								} else {
 									// Create thumbs
@@ -465,16 +467,18 @@ if (empty($reshook)) {
 								}
 							}
 						} else {
-							setEventMessages("ErrorBadImageFormat", null, 'errors');
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 						}
 					} else {
 						switch ($_FILES['photo']['error']) {
 							case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 							case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-								$errors[] = "ErrorFileSizeTooLarge";
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
 								break;
 							case 3: //uploaded file was only partially uploaded
-								$errors[] = "ErrorFilePartiallyUploaded";
+								setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 								break;
 						}
 					}
@@ -722,7 +726,7 @@ if (empty($reshook)) {
 				$formmail = new FormMail($db);
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 				// Get email content from template
@@ -790,7 +794,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -857,7 +861,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -1690,7 +1694,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 			// Get email content from template
@@ -1754,7 +1758,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
@@ -1815,7 +1819,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
@@ -2109,7 +2113,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				/*
 				if ($user->hasRight('adherent', 'creer')) {
 					if (Adherent::STATUS_VALIDATED == $object->status) {
-						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a>\n";
+						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo&token='.newToken().'">'.$langs->trans("SendCardByMail")."</a>\n";
 						else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</span>";
@@ -2248,8 +2252,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($useonlinepayment) {
 				print '<br>';
-				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
-					$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
+				// Take the maximum amount among what the member is supposed to pay / has paid in the past
+				$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
+				if (!empty($adht->caneditamount)) {
+					$amount = max($amount, $adht->minimumamount);
 				}
 				if (empty($amount)) {
 					$amount = 0;

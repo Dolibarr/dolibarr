@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('stock@stock', 'admin'));
+$langs->loadLangs(array('companies', 'admin', 'stocks'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -81,7 +81,7 @@ print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'stockMouvementAttributes', $langs->trans("StockMouvementExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'stockMouvementAttributes', $langs->trans("StockMouvementExtraFields"), -1, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

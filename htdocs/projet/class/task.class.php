@@ -1639,7 +1639,10 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -2097,16 +2100,19 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2249,9 +2255,9 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2350,6 +2356,8 @@ class Task extends CommonObjectLine
 
 		$origin_task->fetch($fromid);
 
+		$clone_task->date_c = $datec;	// Set the new creation date before computing the ref, else the numbering mask uses the source task year
+
 		$defaultref = '';
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
@@ -2365,7 +2373,6 @@ class Task extends CommonObjectLine
 		$clone_task->ref				= $defaultref;
 		$clone_task->fk_project = $project_id;
 		$clone_task->fk_task_parent = $parent_task_id;
-		$clone_task->date_c = $datec;
 		$clone_task->planned_workload = $origin_task->planned_workload;
 		$clone_task->rang = $origin_task->rang;
 		$clone_task->priority = $origin_task->priority;

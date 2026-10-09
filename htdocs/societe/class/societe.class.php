@@ -143,10 +143,10 @@ class Societe extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * array of supplier categories
+	 * array of supplier categories. TODO Remove this.
 	 * @var string[]
 	 */
-	public $SupplierCategories = array();
+	public $supplierCategories = array();
 
 	/**
 	 * prefixCustomerIsRequired
@@ -188,7 +188,7 @@ class Societe extends CommonObject
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
+		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -1010,7 +1010,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name = $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 
@@ -1261,7 +1261,7 @@ class Societe extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->name = trim($this->name);
+		$this->name = trim((string) $this->name);
 		$this->nom = $this->name; // For backward compatibility
 
 		if (!$this->name) {
@@ -1471,7 +1471,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id 			= $id;
 		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name 		= $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name 		= $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->nom 			= $this->name; // For backward compatibility
 		$this->name_alias 	= trim((string) $this->name_alias);
 		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
@@ -1524,8 +1524,8 @@ class Societe extends CommonObject
 		$this->localtax1_assuj = (int) trim((string) $this->localtax1_assuj);
 		$this->localtax2_assuj = (int) trim((string) $this->localtax2_assuj);
 
-		$this->localtax1_value = trim($this->localtax1_value);
-		$this->localtax2_value = trim($this->localtax2_value);
+		$this->localtax1_value = trim((string) $this->localtax1_value);
+		$this->localtax2_value = trim((string) $this->localtax2_value);
 
 		$this->capital = (!is_null($this->capital) && (string) $this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
@@ -1944,7 +1944,7 @@ class Societe extends CommonObject
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
-		$sql .= ', GREATEST(s.tms, sef.tms) as date_modification, s.fk_user_creat, s.fk_user_modif';
+		$sql .= ', GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.phone_mobile, s.fax, s.email';
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
@@ -2778,7 +2778,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2839,7 +2839,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2904,7 +2904,7 @@ class Societe extends CommonObject
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 
 		// Check parameters
 		if (!($remise > 0)) {
@@ -4566,7 +4566,7 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, sef.tms) as datem,";
+		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
@@ -4654,7 +4654,7 @@ class Societe extends CommonObject
 	public function LoadSupplierCateg()
 	{
 		// phpcs:enable
-		$this->SupplierCategories = array();
+		$this->supplierCategories = array();
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type = ".Categorie::TYPE_SUPPLIER;
@@ -4662,7 +4662,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->SupplierCategories[$obj->rowid] = $obj->label;
+				$this->supplierCategories[$obj->rowid] = $obj->label;
 			}
 			return 0;
 		} else {

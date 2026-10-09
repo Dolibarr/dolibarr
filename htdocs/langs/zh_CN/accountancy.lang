@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=用作捐赠（捐赠模块）的账户（来自会计科目表）
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用于注册会员资格订阅的帐户（来自会计科目表）（会员资格模块 - 如果会员资格记录没有发票）
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=用作登记客户存款的默认账户（来自会计科目表）
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=在辅助分类账中将客户账户记为首付款项目的个人账户（如果禁用，首付款项目的个人账户将保持为空）
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=在辅助分类账中将供应商账户记为首付款项目的个人账户（如果禁用，首付款项目的个人账户将保持为空）

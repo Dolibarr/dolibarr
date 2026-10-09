@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=នេះគឺជាព័ត៌ម�
 ThisIsInformationOnDocumentToSignSociete_rib=នេះគឺជាព័ត៌មានស្តីពីអាណត្តិ SEPA ដើម្បីចុះហត្ថលេខា
 ThisIsInformationOnDocumentToSignExpedition= នេះគឺជាព័ត៌មានស្តីពីការដឹកជញ្ជូនដើម្បីចុះហត្ថលេខា
 SignatureProposalRef=ហត្ថលេខានៃសំណើសម្រង់/សំណើពាណិជ្ជកម្ម %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=ហត្ថលេខានៃកិច្ចសន្យា %s
 SignatureFichinterRef=ហត្ថលេខានៃអន្តរាគមន៍ %s
 SignatureSociete_ribRef=ហត្ថលេខានៃអាណត្តិ SEPA %s
