@@ -818,7 +818,7 @@ class Facture extends CommonInvoice
 					$exp = new Expedition($this->db);
 					$exp->fetch($this->origin_id);
 					$exp->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-					if (count($exp->linkedObjectsIds['commande']) > 0) {
+					if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {
 						foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 							$originforcontact = 'commande';
 							if (is_object($value)) {
