@@ -51,6 +51,7 @@
  * @var string $action
  * @var string $massaction
  * @var string $modelmail
+ * @var int $projectid
  * @var string $sendto
  * @var string $topicmail
  * @var string $trackid
@@ -66,6 +67,7 @@
 @phan-var-force int[] $toselect
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
+@phan-var-force int $projectid
 @phan-var-force string $sendto
 @phan-var-force string $massaction
 @phan-var-force int[] $arrayofselected
@@ -373,6 +375,44 @@ if ($massaction == 'presend') {
 	}
 
 	print dol_get_fiche_end();
+}
+
+if ($massaction == 'preclone') {
+	dol_syslog('massactions_pre.tpl.php::if massaction == preclone', LOG_DEBUG);
+	$langs->loadLangs(array("eventorganization", "admin", "projects"));
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	$formprojet = new FormProjets($db);
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$projectstatic = new Project($db);
+	if (!isset($projectid)) {
+		$projectid = 0;
+	}
+	if (isset($projectstatic->date_start_event)) {
+		$fromdate = $projectstatic->date_start_event;
+	} else {
+		$fpresult = $projectstatic->fetch($projectid);
+		if ($fpresult) {
+			$fromdate = $projectstatic->date_start_event;
+		} else {
+			setEventMessages($langs->trans("ErrorRefNotFound", $langs->trans("Project")), null, 'errors');
+			dol_syslog('massaction_pre.tpl.php::failed fetching project='.$projectid, LOG_ERR);
+			$fromdate = 0;
+		}
+	}
+
+	$project_list = $projectstatic->fetchEventOrgIds($user, 1, $fromdate, 1);
+	$status_list = array();
+	foreach ($objecttmp->list_possible_status as $statusid) {
+		$status_list[$statusid] = $objecttmp->LibStatut($statusid, 1);
+	}
+	$htmlname = 'eventorg';
+	$page = '';
+	$size = (int) round(3 + log(count($project_list)));
+	$toptext = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBoxFromList");
+	$title = '<h4><label for="eventOrg_selection_choices_'.$htmlname.'">'.$toptext.':</label></h4>';
+	$formprojet->formMultiSelectEventOrg4Clone($page, $htmlname, $title, $status_list, $project_list, $toptext, $size, 'width: 100%;');
+
+	print '<br>';
 }
 
 if ($massaction == 'edit_extrafields') {

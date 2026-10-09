@@ -38,23 +38,43 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force CommonObject[] $linkedObjectBlock';
 /** @var CommonObject[] $linkedObjectBlock */
-$langs->load("eventorganization");
+$langs->loadLangs(array("eventorganization", "main", "accountancy"));
 
 $total = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="oddeven">';
 	echo '<td>' . $langs->trans(get_class($objectlink)) . '</td>';
 	echo '<td>'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="center">';
-	if (get_class($objectlink) == 'ConferenceOrBooth') {
-		print  dol_trunc($objectlink->label, 20);
+	echo '<td class="left">';
+	echo '<!-- relationtype should be here -->';
+	$relationtype = '';
+	$translation= '';
+	if ($object->id < $objectlink->id) {
+		$relationtype = $objectlink->getRelationtypeByValues($object->id, $object->element, $objectlink->id, $objectlink->element);
+		if ($relationtype == 'clone') {
+			$translation = $langs->trans("Clone");
+		} else {
+			$translation = $relationtype;
+		}
+	} elseif ($object->id > $objectlink->id) {
+		$relationtype = $objectlink->getRelationtypeByValues($objectlink->id, $objectlink->element, $object->id, $object->element);
+		if ($relationtype == 'clone') {
+			$translation = $langs->trans("Source");
+		} else {
+			$translation = $relationtype;
+		}
+	}
+	if ($relationtype == 'clone') {
+		echo $translation;
+	} else {
+		print $objectlink->getFullName($langs, 0, -1, 20);
 	}
 	print '</td>';
 	echo '<td class="center">';
 	if (get_class($objectlink) == 'ConferenceOrBoothAttendee') {
 		print dol_print_date($objectlink->date_subscription);
 	} else {
-		print dol_print_date($objectlink->datep);
+		print dol_print_date($objectlink->date_creation);
 	}
 	print '</td>';
 	echo '<td class="right">';
