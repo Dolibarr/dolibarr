@@ -307,18 +307,18 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 				rank = -1;	/* Not applicable */
 			}
 			console.log("Save rank "+rank+" for evaluation line "+lineid);
-			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php", {
-				token: "<?php echo currentToken(); ?>",
+			$.post('<?php echo dol_escape_js(DOL_URL_ROOT); ?>/core/ajax/updatefield.php', {
+				token: '<?php echo currentToken(); ?>',
 				element: "evaluationdet",
 				fk_element: lineid,
 				field: "rankorder",
 				value: rank
 			}).done(function(data) {
 				if (data && data.error) {
-					$.jnotify(data.error, "error", true);
+					$.jnotify(data.error, 'error', true);
 				}
 			}).fail(function(xhr) {
-				$.jnotify("<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>", "error", true);
+				$.jnotify('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
 			});
 		});
 	});
