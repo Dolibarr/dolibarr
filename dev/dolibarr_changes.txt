@@ -529,11 +529,6 @@ Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug:
 
 
 
-JS JCROP:
-----------
-* Remove analytics tag into file index.html
-
-
 PHP MIKE42 ESCPOS:
 ------------------
 * In htdocs/includes/mike42/escpos-php/src/Mike42/Escpos/GdEscposImage.php
