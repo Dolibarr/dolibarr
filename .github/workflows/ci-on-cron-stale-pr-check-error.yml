@@ -23,7 +23,7 @@ jobs:
         run: |
           FOUR_MONTHS_AGO=$(date -d "4 months ago" --iso-8601=seconds)
 
-          echo "Looking for PRs created before: $FOUR_MONTHS_AGO"
+          echo "Looking for open PRs not updated since: $FOUR_MONTHS_AGO"
 
           CLOSED_COUNT=0
           MAX_CLOSED=20
@@ -72,7 +72,7 @@ jobs:
 
               echo "Closing PR #$PR_NUMBER"
 
-              COMMENT=$(printf 'This PR has been closed automatically because it is older than 4 months, and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
+              COMMENT=$(printf 'This PR has been closed automatically because it has not been updated for more than 4 months, and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
 
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \
