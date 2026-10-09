@@ -193,6 +193,15 @@ if (!function_exists("simplexml_load_string")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
 }
 
+// Check if Dom is supported. Dolibarr uses DOMDocument to sanitize html, so a page can not even be rendered without it.
+if (!extension_loaded("dom")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Dom")."<br>\n";
+	// $checksok = 0;	// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Dom")."<br>\n";
+}
+
 // Check if UTF8 is supported
 if (!function_exists("utf8_encode")) {
 	$langs->load("errors");

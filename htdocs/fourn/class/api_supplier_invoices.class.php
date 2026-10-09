@@ -343,8 +343,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
 			throw new RestException(500, 'Error when deleting invoice');
+		} elseif ($result == 0) {
+			throw new RestException(403, 'Invoice not erasable');
 		}
 
 		return array(

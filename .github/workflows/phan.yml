@@ -1,4 +1,7 @@
 ---
+name: phan
+
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -20,7 +23,6 @@ env:
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 
-name: phan
 jobs:
   phan:
     name: Run phan

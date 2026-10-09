@@ -838,10 +838,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	if ($action == 'confirm_remove_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOSTINT('lineid');
-		$result = $prodcustprice->delete($user);
+		$update_child_soc = GETPOSTINT('updatechildprice');
+
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		$result = $prodcustprice->delete($user, 0, $update_child_soc);
 
 		if ($result > 0) {
 			$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields WHERE fk_object = ".((int) $prodcustprice->id));
@@ -1012,6 +1014,14 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 }
 
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price');
+
+if ($action == 'ask_remove_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	$formquestion = array(
+		array('type' => 'checkbox', 'name' => 'updatechildprice', 'label' => $langs->trans('ForceDeleteChildPriceSoc'), 'value' => 0),
+	);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.GETPOSTINT('lineid'), $langs->trans('DeleteCustomerPrice'), $langs->trans('ConfirmDeleteCustomerPrice'), 'confirm_remove_customer_price', $formquestion, 0, 1);
+	print $formconfirm;
+}
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
@@ -1623,7 +1633,9 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 
 	// VAT
 	print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td>';
-	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+
+	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
+
 	print '</td></tr>';
 
 	print '</table>';
@@ -1653,7 +1665,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 
 		// VAT
 		print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -1866,7 +1878,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			} else {
 				// This option is kept for backward compatibility but has no sense
 				print '<td style="text-align: center">';
-				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, null, $object->id, 0, $object->type, false, 1);
+				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, null, $object->id, 0, $object->type, false, 1, 1);
 				print '</td>';
 			}
 
@@ -2025,7 +2037,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2158,7 +2170,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $object->id, $prodcustprice->recuperableonly, $object->type, false, 1, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2218,7 +2230,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		if (!empty($extralabels)) {
 			if (empty($object->id)) {
 				foreach ($extralabels as $key => $value) {
-					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 						if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 							$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 						}
@@ -2244,7 +2256,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 							if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 								$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 							}
@@ -2709,7 +2721,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=ask_remove_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';

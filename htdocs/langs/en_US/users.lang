@@ -148,3 +148,4 @@ NewEmailUserClone=Email address of the new user
 SocialNetworksUser=Social networks for user
 MyTeam=My team
 TotalAPICall=Total API Calls
+OnlyAdminUsersCanDeleteAdminUsers=Only admin users can delete admin users

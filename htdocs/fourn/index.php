@@ -168,7 +168,7 @@ if (isModEnabled("supplier_order")) {
 
 // Draft invoices
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
-	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
+	$sql = "SELECT ff.ref, ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";

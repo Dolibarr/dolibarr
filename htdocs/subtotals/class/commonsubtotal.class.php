@@ -64,7 +64,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
-		if (empty($desc)) {
+		if (!isset($desc) || trim((string) $desc) === '') {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("TitleNeedDesc");
 			}

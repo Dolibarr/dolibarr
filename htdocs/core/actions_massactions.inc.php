@@ -1601,6 +1601,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields();
+				$nbok++;
 			} else {
 				$error++;
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1614,9 +1615,9 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("save"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
@@ -1733,6 +1734,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+				} else {
+					$nbok++;
 				}
 
 				// If no SQL error, we redirect to the request form
@@ -1742,18 +1745,21 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 
@@ -1896,7 +1902,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if (empty($newproject->public)) {
 		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
 		$tmparray = explode(',', $tmps);
-		if (!in_array($newproject->id, $tmparray)) {
+		if (in_array($newproject->id, $tmparray)) {
 			$iscontactofnewproject = 1;
 		}
 	}
@@ -1910,8 +1916,28 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if ($permisstiontoadd) {
 		$taskidsmapping = array();		// old task id => new cloned task id
 		$clonedtaskoldparent = array();	// new cloned task id => old parent task id
+
+		// Build the list of projects the current user is allowed to read, used to authorize
+		// every source task against its actual project before cloning it (the previous fix for
+		// CVE-2026-77923 only validated the destination project).
+		$authorizedsourceprojects = null;
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$sourceprojectstatic = new Project($db);
+			$tmps = $sourceprojectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$authorizedsourceprojects = explode(',', $tmps);
+		}
+
 		foreach (GETPOST('selected') as $task) {
-			$origin_task->fetch($task, '', 0);
+			if ($origin_task->fetch($task, '', 0) <= 0) {
+				continue;	// Source task not found, skip it
+			}
+
+			// Authorize the source task against its actual project before cloning it
+			if (is_array($authorizedsourceprojects) && !in_array($origin_task->fk_project, $authorizedsourceprojects)) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+				break;
+			}
 
 			$defaultref = '';
 			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
