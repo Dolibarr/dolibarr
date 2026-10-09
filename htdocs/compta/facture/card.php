@@ -2247,6 +2247,19 @@ if (empty($reshook)) {
 							}
 						}
 					}
+				} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					// Without origin the lines are copied as they are: in progressive mode their percent is the delta of the previous situation, so it must restart at 0
+					foreach ($object->lines as $line) {
+						$line->situation_percent = 0;
+						$line->total_ht = 0;
+						$line->total_tva = 0;
+						$line->total_ttc = 0;
+						$line->total_localtax1 = 0;
+						$line->total_localtax2 = 0;
+						$line->multicurrency_total_ht = 0;
+						$line->multicurrency_total_tva = 0;
+						$line->multicurrency_total_ttc = 0;
+					}
 				}
 
 				$object->fetch_thirdparty();
@@ -3149,7 +3162,8 @@ if (empty($reshook)) {
 		$percent = $line->get_prev_progress($object->id);
 		$progress = price2num(GETPOST('progress', 'alpha'));
 
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
+		// Legacy mode only: a negative delta is entered; in progressive mode the progress left after the credit is entered and checked below
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0 && getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 			// in case of situation credit note
 			if ($progress >= 0) {
 				$mesg = $langs->trans("CantBeNullOrPositive");
@@ -3250,16 +3264,25 @@ if (empty($reshook)) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
 
-			if ($fullprogress < $previousprogress) {
-				$error++;
-				setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
-			}
+			if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+				// On a credit note the progress entered is the one left after the credit: the credit note holds the difference, as a positive percent
+				if ($fullprogress > $previousprogress) {
+					$error++;
+					setEventMessages($langs->trans('CantBeMoreThanMinPercent'), null, 'errors');
+				}
+				$addprogress = $previousprogress - $fullprogress;
+			} else {
+				if ($fullprogress < $previousprogress) {
+					$error++;
+					setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+				}
 
-			// Max 100%
-			if ($fullprogress > 100) {
-				$fullprogress = 100;
+				// Max 100%
+				if ($fullprogress > 100) {
+					$fullprogress = 100;
+				}
+				$addprogress = $fullprogress - $previousprogress;
 			}
-			$addprogress = $fullprogress - $previousprogress;
 		} else {
 			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		}
@@ -3444,7 +3467,8 @@ if (empty($reshook)) {
 							}
 
 
-							if (!empty($object->tab_previous_situation_invoice)) {
+							// In progressive mode (INVOICE_USE_SITUATION = 2) the line already holds its own delta, so the progress of the previous situation must not be subtracted
+							if (!empty($object->tab_previous_situation_invoice) && getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 								// search the last invoice in cycle
 								$lineIndex = count($object->tab_previous_situation_invoice) - 1;
 								$searchPreviousInvoice = true;

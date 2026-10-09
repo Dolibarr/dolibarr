@@ -1030,11 +1030,18 @@ class FactureLigne extends CommonInvoiceLine
 			$cumulated_percent = 0.0;
 
 			while (!$all_found) {
-				$sql = "SELECT situation_percent, fk_prev_id FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $lastprevid);
+				$sql = "SELECT fd.situation_percent, fd.fk_prev_id, f.situation_cycle_ref";
+				$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
+				$sql .= " WHERE fd.rowid = ".((int) $lastprevid);
 				$resql = $this->db->query($sql);
 
 				if ($resql && $this->db->num_rows($resql) > 0) {
 					$obj = $this->db->fetch_object($resql);
+					// A line of another cycle (the invoice was removed from its cycle) is not part of the progress of this cycle
+					if ((int) $obj->situation_cycle_ref != (int) $invoicecache[$invoiceid]->situation_cycle_ref) {
+						break;
+					}
 					$cumulated_percent += (float) $obj->situation_percent;
 
 					if ($include_credit_note) {

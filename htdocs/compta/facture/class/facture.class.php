@@ -4880,6 +4880,10 @@ class Facture extends CommonInvoice
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
+			if ($this->type == self::TYPE_CREDIT_NOTE) {
+				// On a credit note $percent is the progress left after the credit: the credit note holds the difference, as a positive percent
+				$current_progress = $previous_progress - $percent;
+			}
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
 		} else {
