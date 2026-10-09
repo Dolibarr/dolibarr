@@ -58,6 +58,7 @@ function dolPayRefGetSchemeForCountry($country_code)
  *
  *  - greek references are printed unbroken, all 25 characters
  *  - a belgian structured communication already carries its own separators
+ *  - a finnish national reference is grouped in fives from the right
  *  - everything else is grouped in fours, the ISO 11649 convention
  *
  * @param	string	$ref			Stored payment reference
@@ -75,6 +76,9 @@ function dolPayRefFormatForDisplay($ref, $country_code = '')
 
 	if (dolPayRefDetectScheme($ref) == 'BBA') {
 		return $ref;
+	}
+	if (dolPayRefDetectScheme($ref) == 'FI') {
+		return strrev(wordwrap(strrev(dolPayRefStrip($ref)), 5, ' ', true));
 	}
 	if (dolPayRefGetSchemeForCountry($country_code) == 'GR') {
 		return dolPayRefStrip($ref);
@@ -175,8 +179,11 @@ function dolPayRefBuild($payment_id, $statut, $country_code, $invoice_type = 0)
 			// Finnish RF is accepted for both domestic and cross border payments.
 			// Since 18 november 2024 a plain ISO 11649 reference is also valid in
 			// Finland, but the RF form built on the national reference stays the
-			// most widely supported, so it is the default here.
-			return dolPayRefStrip(dolFICalculatePaymentReference((string) $payment_id, $statut, 1));
+			// most widely supported, so it is the default here. A company whose
+			// customers already pay against national references can keep them
+			// with INVOICE_PAYMENT_REF_FI_FORMAT set to 'national'.
+			$use_rf = (getDolGlobalString('INVOICE_PAYMENT_REF_FI_FORMAT') == 'national') ? 0 : 1;
+			return dolPayRefStrip(dolFICalculatePaymentReference((string) $payment_id, $statut, $use_rf));
 
 		case 'GR':
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';

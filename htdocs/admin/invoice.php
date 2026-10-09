@@ -206,6 +206,15 @@ if ($action == 'updateMask') {
 	}
 	dolibarr_set_const($db, "INVOICE_PAYMENT_REF_TP_BASE", $payrefbase, 'chaine', 0, '', $conf->entity);
 
+	// Format of a finnish reference, only offered to finnish companies
+	if ($mysoc->country_code == 'FI' && GETPOSTISSET('INVOICE_PAYMENT_REF_FI_FORMAT')) {
+		$payreffiformat = GETPOST('INVOICE_PAYMENT_REF_FI_FORMAT', 'aZ09');
+		if (!in_array($payreffiformat, array('rf', 'national'))) {
+			$payreffiformat = 'rf';
+		}
+		dolibarr_set_const($db, "INVOICE_PAYMENT_REF_FI_FORMAT", $payreffiformat, 'chaine', 0, '', $conf->entity);
+	}
+
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
 
@@ -737,6 +746,20 @@ if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'thirdparty') {
 		'rowid' => $langs->trans("Id"),
 	);
 	print $form->selectarray("INVOICE_PAYMENT_REF_TP_BASE", $arraypayrefbase, getDolGlobalString('INVOICE_PAYMENT_REF_TP_BASE', 'code_client'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '</td></tr>';
+}
+
+// Format of the finnish reference
+// Specific to Finland - See core/lib/functions_fi.lib.php
+if ($mysoc->country_code == 'FI' && getDolGlobalString('INVOICE_PAYMENT_REF_MODE')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("PaymentRefFIFormat") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("PaymentRefFIFormatHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	$arraypayreffiformat = array(
+		'rf' => $langs->trans("PaymentRefFIFormatRF"),
+		'national' => $langs->trans("PaymentRefFIFormatNational"),
+	);
+	print $form->selectarray("INVOICE_PAYMENT_REF_FI_FORMAT", $arraypayreffiformat, getDolGlobalString('INVOICE_PAYMENT_REF_FI_FORMAT', 'rf'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
 	print '</td></tr>';
 }
 

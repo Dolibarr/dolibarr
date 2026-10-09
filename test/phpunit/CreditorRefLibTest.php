@@ -236,4 +236,53 @@ class CreditorRefLibTest extends CommonClassTest
 			$this->assertLessThanOrEqual(25, dol_strlen($ref), 'Reference too long for column, country '.$country);
 		}
 	}
+
+	/**
+	 * A finnish company can choose the national reference instead of the RF form
+	 *
+	 * @return void
+	 */
+	public function testFinnishReferenceFormat()
+	{
+		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = '';
+		$ref = dolPayRefBuild('2024001', 1, 'FI');
+		$this->assertSame('SCOR', dolPayRefDetectScheme($ref), 'RF is the default');
+		$this->assertTrue(dolCreditorRefIsValid($ref));
+
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+		$ref = dolPayRefBuild('2024001', 1, 'FI');
+		$this->assertSame('20240015', $ref, 'Base followed by the 7-3-1 check digit');
+		$this->assertTrue(dolFIIsValidReference($ref));
+
+		// The national form travels inside the RF one
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'rf';
+		$this->assertSame($ref, dol_substr(dolPayRefBuild('2024001', 1, 'FI'), 4));
+
+		// A base without any digit must not give the same 0000 to everybody
+		$this->assertSame('', dolPayRefBuild('ABCDEF', 1, 'FI'));
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'rf';
+		$this->assertSame('', dolPayRefBuild('ABCDEF', 1, 'FI'));
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+
+		// The setting only concerns finnish companies
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+		$this->assertSame('SCOR', dolPayRefDetectScheme(dolPayRefBuild('2024001', 1, 'DE')));
+
+		unset($conf->global->INVOICE_PAYMENT_REF_FI_FORMAT);
+	}
+
+	/**
+	 * A finnish national reference is printed in groups of five from the right
+	 *
+	 * @return void
+	 */
+	public function testFinnishReferenceDisplay()
+	{
+		$this->assertSame('1 23456', dolPayRefFormatForDisplay('123456', 'FI'));
+		$this->assertSame('12345 67890 12345 67890', dolPayRefFormatForDisplay('12345678901234567890', 'FI'));
+		$this->assertSame('RF18 5390 0754 7034', dolPayRefFormatForDisplay('RF18539007547034', 'FI'), 'RF stays in groups of four');
+	}
 }

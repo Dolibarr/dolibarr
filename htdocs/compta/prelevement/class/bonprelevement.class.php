@@ -2615,14 +2615,22 @@ class BonPrelevement extends CommonObject
 
 				$scheme = dolPayRefDetectScheme($paymentref);
 
-				if ($scheme == 'SCOR' || $scheme == 'BBA') {
+				// The finnish banks expect a valid national reference with the SCOR code
+				// too, see the ISO 20022 payment guide of Finance Finland.
+				$finnishscor = false;
+				if ($scheme == 'FI') {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_fi.lib.php';
+					$finnishscor = dolFIIsValidReference($paymentref);
+				}
+
+				if ($scheme == 'SCOR' || $scheme == 'BBA' || $finnishscor) {
 					// ISO 20022 needs the reference inside a CdtrRefInf block. SCOR is the
 					// code for ISO 11649, BBA the proprietary scheme of the belgian banks.
 					$XML_DEBITOR .= '					<Strd>' . $CrLf;
 					$XML_DEBITOR .= '						<CdtrRefInf>' . $CrLf;
 					$XML_DEBITOR .= '							<Tp>' . $CrLf;
 					$XML_DEBITOR .= '								<CdOrPrtry>' . $CrLf;
-					if ($scheme == 'SCOR') {
+					if ($scheme == 'SCOR' || $finnishscor) {
 						$XML_DEBITOR .= '									<Cd>SCOR</Cd>' . $CrLf;
 					} else {
 						$XML_DEBITOR .= '									<Prtry>BBA</Prtry>' . $CrLf;
@@ -2633,7 +2641,7 @@ class BonPrelevement extends CommonObject
 					$XML_DEBITOR .= '						</CdtrRefInf>' . $CrLf;
 					$XML_DEBITOR .= '					</Strd>' . $CrLf;
 				} elseif ($scheme == 'FI') {
-					// A finnish national reference has no ISO 20022 code, it travels as free text
+					// Digits that are not a valid finnish reference travel as free text
 					$XML_DEBITOR .= '					<Ustrd>' . dolEscapeXML($paymentref) . '</Ustrd>' . $CrLf;
 				} else {
 					// A string with some information on payment - 140 max
