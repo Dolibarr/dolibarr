@@ -870,12 +870,14 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
+// Note: these are INNER JOIN (and not a comma-separated implicit join) so that the "c" table stays
+// in scope for any LEFT JOIN a module hook may append afterward (comma has lower precedence than JOIN in MySQL).
 if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc";
 }
 if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = c.rowid";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON tc.rowid = ec.fk_c_type_contact AND tc.element = 'commande' AND tc.source = 'internal'";
 }
 
 // Add table from hooks
@@ -889,7 +891,7 @@ if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -974,10 +976,10 @@ if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
+	$sql .= " AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_total_ht != '') {
 	$sql .= natural_search('c.total_ht', $search_total_ht, 1);
