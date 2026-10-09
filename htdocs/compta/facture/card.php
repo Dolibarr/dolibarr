@@ -7229,11 +7229,16 @@ if ($action == 'create') {
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || ($object->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) || $object->type == Facture::TYPE_PROFORMA) && $object->status > 0 && $usercancreate) {
 				if (!$objectidnext) {
-					print '<!-- button create credit note -->';
-					if ($object->module_source == 'takepos') {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseInvoiceGeneratedBy", $langs->transnoentitiesnoconv('TakePOS')).'">'.$langs->trans("CreateCreditNote").'</a>';
+					$blockedDeposit = false;
+					if ($object->type == Facture::TYPE_DEPOSIT) {
+						$resrem = $db->query("SELECT COALESCE(SUM(amount_ttc),0) as unused_credit_ttc FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_facture_source=".((int) $object->id)." AND fk_facture IS NULL AND fk_facture_line IS NULL");
+						$blockedDeposit = ($resrem && (float) $db->fetch_object($resrem)->unused_credit_ttc <= 0);
+					}
+					if ($blockedDeposit) {
+						$langs->load('bills');
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DepositFullyApplied").'">'.$langs->trans("CreateCreditNote").'</span>';
 					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&fac_avoir='.$object->id.'&action=create&type=2'.($object->fk_project > 0 ? '&projectid='.$object->fk_project : '').($object->entity > 0 ? '&originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&fac_avoir='.$object->id.'&action=create&type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').($object->entity > 0 ? '&originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 					}
 				}
 			}

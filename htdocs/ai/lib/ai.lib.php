@@ -611,6 +611,28 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Resolve the text model used by the AI Assistant when the picker is on "Auto"
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The model id, or '' if no service is configured
+ */
+function getAiAssistantDefaultModel()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+	$prefix = 'AI_API_'.strtoupper($serviceKey);
+	$model = getDolGlobalString($prefix.'_MODEL_TEXT')
+		?: getDolGlobalString($prefix.'_MODEL')
+		?: ($services[$serviceKey]['textgeneration']['default'] ?? '');
+
+	return is_string($model) ? $model : '';
+}
+
+/**
  * Return the list of model ids offered by the configured AI provider, with a
  * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
  * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
@@ -947,7 +969,12 @@ function getAiChatAssistantHtml($mode = 'page')
 	// Model picker pill: 'Auto' (provider default) + presets + the dynamic model
 	// list fetched from ajax/list_models.php by the JS. Choice kept in localStorage.
 	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($langs->trans("AIModelToUse")).'">';
-	$out .= '<option value="">'.$langs->transnoentitiesnoconv("AIModelAuto").'</option>';
+	$autoLabel = $langs->transnoentitiesnoconv("AIModelAuto");
+	$defaultModel = getAiAssistantDefaultModel();
+	if ($defaultModel !== '') {
+		$autoLabel .= ' ('.$defaultModel.')';
+	}
+	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
