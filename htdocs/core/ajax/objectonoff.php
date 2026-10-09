@@ -36,6 +36,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
