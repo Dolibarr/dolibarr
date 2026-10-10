@@ -420,15 +420,13 @@ if (empty($reshook)) {
 						$entrepot_id = 0;
 					}
 
-					$eatby = GETPOST($eatby, 'alpha');
-					$sellby = GETPOST($sellby, 'alpha');
-					$eatbydate = str_replace('/', '-', $eatby);
-					$sellbydate = str_replace('/', '-', $sellby);
+					$eatbydate = dol_mktime(12, 0, 0, GETPOSTINT($eatby.'month'), GETPOSTINT($eatby.'day'), GETPOSTINT($eatby.'year'));
+					$sellbydate = dol_mktime(12, 0, 0, GETPOSTINT($sellby.'month'), GETPOSTINT($sellby.'day'), GETPOSTINT($sellby.'year'));
 
 					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
+						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
 					} else {
-						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch));
+						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch));
 					}
 					if ($ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -701,15 +699,11 @@ if (empty($reshook)) {
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
 						$dluo = "dluo".$line_id;
-						// EATBY <-> DLUO
-						$eatby = GETPOST($dluo, 'alpha');
-						$eatbydate = str_replace('/', '-', $eatby);
-						// SELLBY <-> DLC
-						$sellby = GETPOST($dlc, 'alpha');
-						$sellbydate = str_replace('/', '-', $sellby);
 						$line->batch = GETPOST($batch, 'alpha');
-						$line->eatby = strtotime($eatbydate);
-						$line->sellby = strtotime($sellbydate);
+						// EATBY <-> DLUO
+						$line->eatby = dol_mktime(12, 0, 0, GETPOSTINT($dluo.'month'), GETPOSTINT($dluo.'day'), GETPOSTINT($dluo.'year'));
+						// SELLBY <-> DLC
+						$line->sellby = dol_mktime(12, 0, 0, GETPOSTINT($dlc.'month'), GETPOSTINT($dlc.'day'), GETPOSTINT($dlc.'year'));
 					}
 
 					if ($line->update($user) < 0) {
