@@ -4064,6 +4064,19 @@ class Propal extends CommonObject
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
+	}
+
+	/**
 	 * 	Retrieve an array of proposal lines
 	 *
 	 *	@param  string	$sqlforgedfilters       Filter on other fields
