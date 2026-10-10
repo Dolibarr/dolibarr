@@ -429,6 +429,7 @@ AIProviderInUse=AI provider in use
 AICannotUnderstandRequest=I'm having trouble understanding your request. Please try rephrasing it differently. If the problem persists, please contact your administrator to check the AI connection status.
 AIProviderBusy=The AI service could not answer right now (%s). This is usually temporary: please try again in a moment.
 AIProviderError=The AI service returned an error: %s. If it persists, please contact your administrator to check the AI configuration.
+AIModelNotAvailableAtProvider=The AI model '%s' is not, or no longer, available at the provider %s (%s). Choose another model in the model list of the assistant, or ask your administrator to check the AI configuration.
 AIGreeting=Hi %s, how can I help?
 AIGreetingSubtitle=Ask a question in natural language about your third parties, invoices, orders or products.
 AIQuickInvoicesTitle=Unpaid invoices

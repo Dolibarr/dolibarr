@@ -94,6 +94,7 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['showEyeButton'] = 1;
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
 	$item->helpText = '<span class="helptoshow">HelpToShow</span>';

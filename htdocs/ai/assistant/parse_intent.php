@@ -592,7 +592,7 @@ try {
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
 		// Build System Prompt
-		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM with access to a set of tools.";
+		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
 
 		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
 		$systemRules .= "Answer JSON format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
@@ -947,7 +947,11 @@ try {
 		if (strpos($errorDetails, 'Error:') === 0) {
 			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
 			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
-			if (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
+			if (UniversalLLMAdapter::isModelUnavailableError($reason)) {
+				// The chosen model is unknown or retired at the provider: rephrasing
+				// will not help, choosing another model will.
+				$message = $langs->transnoentitiesnoconv('AIModelNotAvailableAtProvider', (isset($model) ? $model : ''), getAiAssistantProviderLabel(), $reason);
+			} elseif (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
 				$message = $langs->transnoentitiesnoconv('AIProviderBusy', $reason);
 			} else {
 				$message = $langs->transnoentitiesnoconv('AIProviderError', $reason);
