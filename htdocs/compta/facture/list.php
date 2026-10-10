@@ -766,6 +766,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
 $facturestatic = new Facture($db);
+$facrecstatic = new FactureRec($db);
 $accountstatic = new Account($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
@@ -810,6 +811,9 @@ $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
 $sql .= ' f.fk_fac_rec_source,';
+if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+	$sql .= ' facrec.rowid as facrec_id, facrec.titre as facrec_title,';
+}
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
@@ -856,7 +860,8 @@ if ($sortfield == "f.datef") {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
-if (!empty($search_fac_rec_source_title)) {
+// 1:1 join on facture_rec.rowid. A deleted template leaves facrec columns NULL.
+if (!empty($arrayfields['f.fk_fac_rec_source']['checked']) || !empty($search_fac_rec_source_title) || strpos((string) $sortfield, 'facrec.') !== false) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source = facrec.rowid';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
@@ -3123,12 +3128,13 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
 				print '<td class="center">';
 				if (!empty($obj->fk_fac_rec_source)) {
-					$facrec = new FactureRec($db);
-					$result = $facrec->fetch($obj->fk_fac_rec_source);
-					if ($result < 0) {
-						setEventMessages($facrec->error, $facrec->errors, 'errors');
+					if (!empty($obj->facrec_id)) {
+						$facrecstatic->id = $obj->facrec_id;
+						$facrecstatic->ref = $obj->facrec_title;
+						$facrecstatic->title = $obj->facrec_title;
+						print $facrecstatic->getNomUrl();
 					} else {
-						print $facrec->getNomUrl();
+						print '<span class="opacitymedium">'.$langs->trans('ObjectDeleted').'</span>';
 					}
 				}
 				print '</td>';
