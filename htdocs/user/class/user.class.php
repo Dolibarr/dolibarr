@@ -946,6 +946,7 @@ class User extends CommonObject
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'facturerec' => 'facture',
 			'margins' => 'margin',
+			'facture_fourn'=>'supplier_invoice',
 		);
 
 		if (!empty($moduletomoduletouse[$module])) {
