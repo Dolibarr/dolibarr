@@ -2699,7 +2699,7 @@ class ExpenseReport extends CommonObject
 		$now = dol_now();
 		$warning_delay = (int) ($option == 'toapprove' ? $conf->expensereport->approve->warning_delay : $conf->expensereport->payment->warning_delay);
 		if ($warning_delay <= 0) {
-			// No delay configured (MAIN_DELAY_EXPENSEREPORTS / MIN_DELAY_EXPENSEREPORTS_TO_PAY not set), so nothing is late.
+			// No delay configured (MAIN_DELAY_EXPENSEREPORTS / MAIN_DELAY_EXPENSEREPORTS_TO_PAY not set), so nothing is late.
 			return false;
 		}
 		return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $warning_delay);
@@ -2903,5 +2903,206 @@ class ExpenseReport extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Send an email to the person in charge when an expense report has gone past the tolerance delay
+	 * for its current step (waiting for approval, or waiting for payment) without being handled.
+	 * CAN BE A CRON TASK
+	 *
+	 * The delays are the same ones already used to show the "Late" badge on the expense report list and
+	 * card (MAIN_DELAY_EXPENSEREPORTS for approval, MAIN_DELAY_EXPENSEREPORTS_TO_PAY for payment, both in
+	 * days): this method does not add new setup, it reuses ExpenseReport::hasDelay() so the email only ever
+	 * fires for an expense report that already shows as late there. The recipient is the person designated
+	 * to validate it (fk_user_validator) while it is waiting for approval, or the person who approved it
+	 * (fk_user_approve) while it is waiting for payment: there is no dedicated "payer" field, and whoever
+	 * approved it is the one accountable for following it through to payment.
+	 * A report is only ever reminded once per calendar day (same dedup convention as the other automated
+	 * reminder emails in the application, via the AC_EMAIL agenda event it logs on success), so it keeps
+	 * being reminded once a day for as long as it stays late. A failure on one report (ex: no email
+	 * template found, recipient has no email) is counted and does not prevent the other late reports from
+	 * being processed.
+	 *
+	 * @return	int		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForDelayedExpenseReports()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		if (!isModEnabled('expensereport')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("ExpenseReport"));
+			return 0;
+		}
+
+		if (empty(getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS')) && empty(getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS_TO_PAY'))) {
+			$this->output = 'Neither MAIN_DELAY_EXPENSEREPORTS nor MAIN_DELAY_EXPENSEREPORTS_TO_PAY is set, nothing to check.';
+			return 0;
+		}
+
+		$langs->loadLangs(array('main', 'trips', 'bills'));
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listofreportsok = array();
+		$listofreportsko = array();
+
+		// For each step: the status an expense report must be in, the field holding who to remind, and the
+		// delay setup constant that governs it (already checked by hasDelay()).
+		$steps = array(
+			'toapprove' => array('status' => self::STATUS_VALIDATED, 'recipientfield' => 'fk_user_validator', 'delayconst' => 'MAIN_DELAY_EXPENSEREPORTS'),
+			'topay' => array('status' => self::STATUS_APPROVED, 'recipientfield' => 'fk_user_approve', 'delayconst' => 'MAIN_DELAY_EXPENSEREPORTS_TO_PAY'),
+		);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$formmail = new FormMail($this->db);
+
+		foreach ($steps as $option => $step) {
+			if (empty(getDolGlobalInt($step['delayconst']))) {
+				continue; // No delay configured for this step, hasDelay() would always return false, nothing to do.
+			}
+
+			// Label of the event recorded once a reminder is sent for a given step. Also used to not send the same reminder twice the same day.
+			$labelreminderok = 'sendReminderForDelayedExpenseReportsOK (option='.$option.')';
+
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expensereport as e";
+			$sql .= " WHERE e.entity = ".((int) $conf->entity); // Do not use getEntity('expensereport') here, we want the batch to be on its entity only
+			$sql .= " AND e.fk_statut = ".((int) $step['status']);
+			$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+			$sql .= " WHERE a.elementtype = 'expensereport' AND a.fk_element = e.rowid AND a.code = 'AC_EMAIL'";
+			$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+			$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+
+			$num_rows = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_rows) {
+				$obj = $this->db->fetch_object($resql);
+
+				$expensereportstatic = new ExpenseReport($this->db);
+				$expensereportstatic->fetch($obj->rowid);
+
+				// Same late/not-late decision as the warning badge on expensereport/list.php and card.php, so
+				// the email only ever fires for reports that already show as late there.
+				if (!$expensereportstatic->hasDelay($option)) {
+					$i++;
+					continue;
+				}
+
+				$recipientid = $expensereportstatic->{$step['recipientfield']};
+				$recipient = new User($this->db);
+				$recipientres = (!empty($recipientid)) ? $recipient->fetch($recipientid) : -1;
+
+				if ($recipientres <= 0 || empty($recipient->email)) {
+					$nbko++;
+					$listofreportsko[$expensereportstatic->id] = $expensereportstatic->id;
+				} else {
+					$arraydefaultmessage = null;
+					$labeltouse = getDolGlobalString('EXPENSEREPORT_EMAIL_TEMPLATE_REMIND_DELAY');
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'expensereport', $user, $langs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$author = new User($this->db);
+						$author->fetch($expensereportstatic->fk_user_author);
+
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $expensereportstatic);
+						complete_substitutions_array($substitutionarray, $langs, $expensereportstatic);
+						$substitutionarray['__EXPENSEREPORT_WAITING_FOR__'] = ($option == 'toapprove' ? $langs->transnoentitiesnoconv('Approval') : $langs->transnoentitiesnoconv('Payment'));
+						$substitutionarray['__EXPENSEREPORT_EMPLOYEE_NAME__'] = $author->getFullName($langs);
+						$substitutionarray['__EXPENSEREPORT_PERIOD__'] = get_date_range($expensereportstatic->date_debut, $expensereportstatic->date_fin, '', $langs);
+						$substitutionarray['__EXPENSEREPORT_URL__'] = DOL_MAIN_URL_ROOT.'/expensereport/card.php?id='.$expensereportstatic->id;
+
+						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $langs);
+						$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $langs);
+						$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						$to = (string) $recipient->email;
+
+						$trackid = 'exp'.$expensereportstatic->id;
+						$moreinheader = 'X-Dolibarr-Info: sendReminderForDelayedExpenseReports'."\r\n";
+
+						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+						$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+						$result = $cmail->sendfile();
+						if (!$result) {
+							$error++;
+							$this->error .= $cmail->error.' ';
+							if (!is_null($cmail->errors)) {
+								$this->errors = array_merge($this->errors, $cmail->errors);
+							}
+							$nbko++;
+							$listofreportsko[$expensereportstatic->id] = $expensereportstatic->id;
+						} else {
+							$nbok++;
+							$listofreportsok[$expensereportstatic->id] = $expensereportstatic->id;
+
+							// Insert record of email sent, as an agenda event on the expense report (same convention as other automated reminder emails)
+							require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+							$actioncomm = new ActionComm($this->db);
+							$actioncomm->type_code = 'AC_OTH_AUTO';
+							$actioncomm->code = 'AC_EMAIL';
+							$actioncomm->label = $labelreminderok;
+							$actioncomm->note_private = $msg;
+							$actioncomm->fk_project = 0;
+							$actioncomm->datep = $now;
+							$actioncomm->datef = $now;
+							$actioncomm->percentage = -1; // Not applicable
+							$actioncomm->socid = 0;
+							$actioncomm->contact_id = 0;
+							$actioncomm->authorid = $user->id;
+							$actioncomm->userownerid = $user->id;
+							$actioncomm->email_msgid = $cmail->msgid;
+							$actioncomm->email_from = $email_from;
+							$actioncomm->email_sender = '';
+							$actioncomm->email_to = $to;
+							$actioncomm->email_subject = $subject;
+
+							$actioncomm->fk_element = $expensereportstatic->id;
+							$actioncomm->elementid = $expensereportstatic->id;
+							$actioncomm->elementtype = $expensereportstatic->element;
+
+							$actioncomm->create($user);
+						}
+					} else {
+						$error++;
+						$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+						$nbko++;
+						$listofreportsko[$expensereportstatic->id] = $expensereportstatic->id;
+
+						// Do not break here: a template issue for one report (ex: template not found) must not
+						// prevent the reminder from being sent for the other late reports.
+					}
+				}
+
+				$i++;
+			}
+		}
+
+		$this->output = 'Found '.($nbok + $nbko).' delayed expense reports to send reminder for.';
+		$this->output .= ' Sent email successfully for '.$nbok.' expense reports';
+		if ($nbko) {
+			$this->output .= ' - Canceled for '.$nbko.' expense report(s) (no email for the recipient, missing template, or send error)';
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }
