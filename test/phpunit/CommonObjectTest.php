@@ -1104,10 +1104,11 @@ class CommonObjectTest extends CommonClassTest
 			$method->setAccessible(true);
 
 			$object->status = $object->statut = $object::STATUS_DRAFT;
-			$this->assertFalse($method->invoke($object, 'ref_client'), $classname.' draft must not be blocked');
+			$this->assertFalse($method->invoke($object, 'ref_ext'), $classname.' draft must not be blocked');
 
 			$object->status = $object->statut = $object::STATUS_VALIDATED;
-			$this->assertTrue($method->invoke($object, 'ref_client'), $classname.' validated must be blocked');
+			$this->assertTrue($method->invoke($object, 'ref_ext'), $classname.' validated must be blocked');
+			$this->assertFalse($method->invoke($object, 'ref_client'), $classname.' ref_client is alwayseditable, validated must not block it');
 
 			$this->assertSame((bool) $user->hasRight($module, 'creer'), $object->hasUserWritePermissionOnField($user, 'ref_client'), $classname.' must use the creer permission');
 			$this->assertFalse($object->hasUserWritePermissionOnField($user, ''), $classname.' empty field must be refused');
@@ -1129,6 +1130,142 @@ class CommonObjectTest extends CommonClassTest
 		$method->setAccessible(true);
 		$this->assertFalse($method->invoke($societe, 'name_alias'), 'Active thirdparty must not be blocked by state');
 		$this->assertSame((bool) $user->hasRight('societe', 'creer'), $societe->hasUserWritePermissionOnField($user, 'name_alias'));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Data provider for testIsFieldEditableFromUi
+	 *
+	 * @return array<string,array{0:array<string,mixed>,1:int,2:bool,3:bool}>	field config, object status, user has write permission, expected result
+	 */
+	public function fieldEditableFromUiProvider()
+	{
+		return array(
+			'no_uieditable_flag' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1), 0, true, false),
+			'uieditable_flag_zero' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 0), 0, true, false),
+			'uieditable_draft_with_right' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 1), 0, true, true),
+			'uieditable_without_right' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 1), 0, false, false),
+			'uieditable_noteditable' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 1, 'noteditable' => 1), 0, true, false),
+			'uieditable_not_enabled' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 0, 'uieditable' => 1), 0, true, false),
+			'uieditable_validated' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 1), 1, true, false),
+			'uieditable_alwayseditable_validated' => array(array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'uieditable' => 1, 'alwayseditable' => 1), 1, true, true),
+		);
+	}
+
+	/**
+	 * isFieldEditableFromUi() requires the "uieditable" opt-in in addition to all rules of isFieldEditAllowed()
+	 *
+	 * @dataProvider fieldEditableFromUiProvider
+	 * @param array<string,mixed> $fieldConfig  Field configuration
+	 * @param int                 $status       Object status
+	 * @param bool                $hasRight     User has write permission
+	 * @param bool                $expected     Expected result
+	 * @return void
+	 */
+	public function testIsFieldEditableFromUi($fieldConfig, $status, $hasRight, $expected)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db, $fieldConfig, $status, $hasRight) extends CommonObject {
+			const STATUS_DRAFT = 0;
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array();
+			/** @var bool */
+			public $hasRight;
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB              $db          Database handler
+			 * @param array<string,mixed> $fieldConfig Field configuration
+			 * @param int                 $status      Object status
+			 * @param bool                $hasRight    User has write permission
+			 */
+			public function __construct($db, $fieldConfig, $status, $hasRight)
+			{
+				$this->db = $db;
+				$this->fields['test_field'] = $fieldConfig;
+				$this->status = $status;
+				$this->hasRight = $hasRight;
+			}
+
+			/**
+			 * @param User   $user  User
+			 * @param string $field Field name
+			 * @return bool
+			 */
+			public function hasUserWritePermissionOnField(User $user, $field)
+			{
+				return $this->hasRight;
+			}
+		};
+
+		$this->assertSame($expected, $localobject->isFieldEditableFromUi($user, 'test_field'), 'Config: '.json_encode($fieldConfig).', status '.$status.', right '.json_encode($hasRight));
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'undefined_field'), 'Undefined field must not be editable from UI');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Fields opened to the user interface on core classes: only declared safe fields, never computed or technical ones
+	 *
+	 * @return void
+	 */
+	public function testIsFieldEditableFromUiOnCoreClasses()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+		$documents = array(
+			'Commande' => array(new Commande($db), 'commande'),
+			'Facture' => array(new Facture($db), 'facture'),
+			'Propal' => array(new Propal($db), 'propal'),
+		);
+		foreach ($documents as $classname => $def) {
+			list($object, $module) = $def;
+			$canWrite = (bool) $user->hasRight($module, 'creer');
+
+			foreach (array($object::STATUS_DRAFT, $object::STATUS_VALIDATED) as $status) {
+				$object->status = $object->statut = $status;
+				foreach (array('note_public', 'note_private', 'ref_client') as $field) {
+					$this->assertSame($canWrite, $object->isFieldEditableFromUi($user, $field), $classname.' '.$field.' status '.$status);
+				}
+				foreach (array('ref', 'ref_ext', 'total_ht', 'total_tva', 'total_ttc', 'fk_statut', 'fk_soc', 'entity') as $field) {
+					$this->assertFalse($object->isFieldEditableFromUi($user, $field), $classname.' '.$field.' must not be editable from UI, status '.$status);
+				}
+			}
+		}
+
+		$product = new Product($db);
+		$product->type = Product::TYPE_PRODUCT;
+		$this->assertSame((bool) $user->hasRight('produit', 'creer'), $product->isFieldEditableFromUi($user, 'note_public'));
+		foreach (array('ref', 'label', 'entity') as $field) {
+			$this->assertFalse($product->isFieldEditableFromUi($user, $field), 'Product '.$field.' must not be editable from UI');
+		}
+
+		$societe = new Societe($db);
+		$societe->status = 1;
+		foreach (array('note_public', 'note_private') as $field) {
+			$this->assertSame((bool) $user->hasRight('societe', 'creer'), $societe->isFieldEditableFromUi($user, $field));
+		}
+		foreach (array('nom', 'code_client', 'entity') as $field) {
+			$this->assertFalse($societe->isFieldEditableFromUi($user, $field), 'Societe '.$field.' must not be editable from UI');
+		}
 
 		print __METHOD__." OK\n";
 	}
