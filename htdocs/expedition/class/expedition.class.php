@@ -319,6 +319,15 @@ class Expedition extends CommonObject
 	const STATUS_VALIDATED = 1;
 
 	/**
+	 * Expedition in progress
+	 * -> package exit the warehouse and is now
+	 *    in the truck or into the hand of the deliverer
+	 * prev status : validated
+	 * next status : closed
+	 */
+	const STATUS_SHIPMENT_IN_PROGRESS = 3;
+
+	/**
 	 * Closed status
 	 * -> parcel was received by customer / end of process
 	 * prev status : validated or shipment_in_progress
@@ -329,15 +338,6 @@ class Expedition extends CommonObject
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
-
-	/**
-	 * Expedition in progress
-	 * -> package exit the warehouse and is now
-	 *    in the truck or into the hand of the deliverer
-	 * prev status : validated
-	 * next status : closed
-	 */
-	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
 	/**
 	 *	Constructor
@@ -1064,18 +1064,20 @@ class Expedition extends CommonObject
 		}
 
 		// Change status of order to "shipment in process"
-		if (!$error) {
-			$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
-			if ($this->origin == 'commande') {
-				$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
-			} else {
-				$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+		if (!$error && $this->origin_id > 0) {
+			$origintype = ($this->origin_type ? $this->origin_type : $this->origin);
+			if ($origintype == 'order') {
+				$origintype = 'commande';	// Like into add_object_linked()
 			}
+			if ($origintype == 'commande') {
+				// Because when the trigger is fired the object is a shipping and not the real target object, so we add a prefix like SHIPPING_ to avoid confusion
+				$triggerKey = 'SHIPPING_ORDER_SHIPMENTONPROCESS';
 
-			// TODO : load the origin object to trigger the right setStatus according to origin object
-			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
-			if (!$ret) {
-				$error++;
+				// TODO : load the origin object to trigger the right setStatus according to origin object
+				$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $origintype, $triggerKey);
+				if (!$ret) {
+					$error++;
+				}
 			}
 		}
 
