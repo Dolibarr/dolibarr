@@ -69,6 +69,8 @@ class box_invoices_dispute extends ModeleBoxes
 		$now = dol_now();
 		$nbofperiod = 3;
 
+		$langs->load("bills");
+
 		// Force use of cache for this box as it has very bad performances
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
