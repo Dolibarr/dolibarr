@@ -29,6 +29,7 @@ var Dolibarr = {
 		/**
 		 * Send an ajax request to Dolibarr : anti CSRF token added for POST/PUT/PATCH/DELETE,
 		 * parameters sent as PHP expects them, response parsed, errors displayed and thrown.
+		 * Responses of PHP class JsonResponse are recognized : result = 0 is an error, msg is the error message.
 		 *
 		 * @param {string} url
 		 * @param {Object} [options] Any other option is passed to native fetch()
@@ -40,6 +41,7 @@ var Dolibarr = {
 		 * @param {string} [options.responseType='auto'] 'auto', 'json', 'text' or 'response'
 		 * @param {boolean} [options.showErrors=true] Display errors with setEventMessage
 		 * @param {number} [options.timeout=0] Abort after this delay in ms
+		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug}, return only data
 		 * @returns {Promise<*>} Parsed response body, throws Dolibarr.tools.fetch.Error {message, status, data, response}
 		 */
 		fetch: Object.assign(function(url, options) {}, {

@@ -5,9 +5,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * Ajax requests to Dolibarr pages with :
 	 * - anti CSRF token added automatically (POST, PUT, PATCH, DELETE or option token: true)
 	 * - parameters sent as PHP expects them (arrays as key[], objects as key[sub])
-	 * - response parsed according to its content type (or forced with option responseType)
+	 * - response parsed according to its content type, or as JSON if it looks like JSON (or forced with option responseType)
 	 * - errors displayed with Dolibarr.tools.setEventMessage() (unless option showErrors: false)
 	 *   and thrown as Dolibarr.tools.fetch.Error with status and response data
+	 * - responses built with PHP class JsonResponse {result, msg, newToken, data, debug} recognized :
+	 *   result = 0 is an error even with HTTP 200, msg is used as error message, option unwrap returns only data
 	 *
 	 * Require Dolibarr context vars
 	 * DOL_CSRF_TOKEN
@@ -73,6 +75,31 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Parse a text body as JSON if it looks like JSON (many Dolibarr ajax pages print JSON without JSON content type)
+	 * @param {string} text
+	 * @returns {*} Parsed JSON, or the text itself
+	 */
+	function parseIfJson(text) {
+		const trimmed = text.trim();
+		if (trimmed.charAt(0) !== '{' && trimmed.charAt(0) !== '[') return text;
+		try {
+			return JSON.parse(trimmed);
+		} catch (err) {
+			return text;
+		}
+	}
+
+	/**
+	 * Check if a response body was built with PHP class JsonResponse (core/class/jsonResponse.class.php)
+	 * @param {*} data Parsed response body
+	 * @returns {boolean}
+	 */
+	function isJsonResponse(data) {
+		return data !== null && typeof data === 'object' && !Array.isArray(data)
+			&& 'result' in data && 'msg' in data && 'newToken' in data;
+	}
+
+	/**
 	 * Find a readable error message in a response body
 	 * @param {*} data Parsed response body
 	 * @param {Response} response
@@ -83,6 +110,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			if (Array.isArray(data.errors) && data.errors.length > 0) return data.errors.join(', ');
 			if (typeof data.error === 'string' && data.error !== '') return data.error;
 			if (data.error && typeof data.error.message === 'string') return data.error.message;
+			if (typeof data.msg === 'string' && data.msg !== '') return data.msg;
 			if (typeof data.message === 'string' && data.message !== '') return data.message;
 		}
 
@@ -91,6 +119,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const text = data.trim();
 			if (text !== '' && text.length < 500 && text.charAt(0) !== '<') return text;
 		}
+
+		if (response.ok) return 'Request failed';
 
 		return `HTTP ${response.status} ${response.statusText}`.trim();
 	}
@@ -108,6 +138,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {string} [options.responseType='auto'] 'auto' (according to content type), 'json', 'text' or 'response' (native Response)
 	 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
 	 * @param {number} [options.timeout=0] Abort after this delay in ms, 0 to wait without limit
+	 * @param {boolean} [options.unwrap=false] For a JsonResponse, return only its data property
 	 * @returns {Promise<*>} Parsed response body
 	 * @throws {DolibarrFetchError}
 	 */
@@ -121,6 +152,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			responseType = 'auto',
 			showErrors = true,
 			timeout = 0,
+			unwrap = false,
 			...fetchOptions
 		} = options;
 
@@ -194,17 +226,24 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const isJson = contentType.includes('json');
 		let body;
 		try {
-			body = (responseType === 'json' || (responseType === 'auto' && isJson)) ? await response.json() : await response.text();
+			if (responseType === 'json' || (responseType === 'auto' && isJson)) {
+				body = await response.json();
+			} else {
+				body = await response.text();
+				if (responseType === 'auto') body = parseIfJson(body);
+			}
 		} catch (err) {
 			// json expected but not received, ex: login page returned because the session has expired
 			return fail(new DolibarrFetchError('Invalid response from server, your session may have expired', response.status, null, response));
 		}
 
-		if (!response.ok) {
+		// JsonResponse with result = 0 is an error, even if HTTP status could not be set (output already sent)
+		const jsonResponse = isJsonResponse(body);
+		if (!response.ok || (jsonResponse && !body.result)) {
 			return fail(new DolibarrFetchError(getErrorMessage(body, response), response.status, body, response));
 		}
 
-		return body;
+		return (unwrap && jsonResponse) ? body.data : body;
 	}
 
 	dolFetch.Error = DolibarrFetchError;
