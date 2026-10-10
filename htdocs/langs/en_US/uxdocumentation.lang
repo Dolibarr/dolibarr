@@ -189,6 +189,7 @@ DocTitleWithFilters=Display title with filters, buttons or navigation
 DocTitleWithFiltersDescription=If you want to display a title with many navigation options like on list pages, you can use the print_barre_liste() function which is a bit more complex. See code below or core/lib/functions.lib.php file to see how it works.
 JSDolibarrhooksReadyVsInit = Difference between Dolibarr:Init and Dolibarr:Ready
 SetAndUseContextVars = Set and use context vars
+AddContextVarsFromModule = Add context vars from a module (PHP hook)
 
 
 ConsoleHelp = Console help

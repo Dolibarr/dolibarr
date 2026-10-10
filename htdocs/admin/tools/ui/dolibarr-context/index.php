@@ -835,6 +835,37 @@ $documentation->showSidebar(); ?>
 				$documentation->showCode($lines, 'php');
 				?>
 
+			<h3 id="titlesection-contextvars-module">Add context vars from a module (PHP hook)</h3>
+			<p>
+				A module can add context vars from PHP with the hook <code>addJsContextVars</code> (context <code>main</code>).
+				They are set with the core context vars, before <code>Dolibarr:Init</code>, so they are available to all tools and scripts.
+			</p>
+			<ul>
+				<li>Return the vars into <code>$this->results</code>, as an array key =&gt; value.</li>
+				<li>Values must be a string, a number or a boolean, other values are ignored.</li>
+				<li>A var already defined by Dolibarr (ex: <code>DOL_URL_ROOT</code>) or by another module is ignored. Prefix your keys with your module name.</li>
+				<li>These vars are protected: they can't be replaced in JS.</li>
+				<li><code>$parameters['jsContextVars']</code> contains the core context vars (read only).</li>
+			</ul>
+				<?php
+				$lines = array(
+					'<?php',
+					'// In the hook class of your module (class/actions_mymodule.class.php), with \'main\' in the hook contexts of the module descriptor',
+					'public function addJsContextVars($parameters, &$object, &$action, $hookmanager)',
+					'{',
+					'	global $user;',
+					'',
+					'	$this->results = array(',
+					'		\'MYMODULE_INTERFACE_URL\' => dol_buildpath(\'/mymodule/ajax/interface.php\', 1),',
+					'		\'MYMODULE_CAN_WRITE\' => (bool) $user->hasRight(\'mymodule\', \'myobject\', \'write\'),',
+					'	);',
+					'',
+					'	return 0;',
+					'}',
+				);
+				$documentation->showCode($lines, 'php');
+				?>
+
 			<h3>Get context var</h3>
 				<?php
 				$lines = array(

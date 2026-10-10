@@ -257,6 +257,7 @@ class Documentation
 						'JSContextCompatAndDeprecations' => '#titlesection-compat',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
 					),
 				),
 				'UxDolibarrContextLangsTool' => array(
