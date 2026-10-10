@@ -1,0 +1,49 @@
+{
+  "name": "tmw/fpdm",
+  "description": "PDF form filling using FPDM Class written by FPDF author Olivier",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Olivier Plathey",
+      "email": "oliver@fpdf.org",
+      "homepage": "http://www.fpdf.org/",
+      "role": "Author"
+    },
+    {
+      "name": "codeshell",
+      "role": "Developer",
+      "homepage": "https://github.com/codeshell/"
+    }
+  ],
+  "homepage": "https://github.com/codeshell/fpdm",
+  "autoload": {
+    "classmap": [
+      "src/fpdm.php",
+      "src/filters/"
+    ]
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/codeshell/fpdm",
+      "name": "GitHub"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "keywords": [
+    "FPDM",
+    "PDF",
+    "forms",
+    "fields",
+    "fill",
+    "populate",
+    "FPDF"
+  ],
+  "support": {
+    "issues": "https://github.com/codeshell/fpdm/issues",
+    "source": "https://github.com/codeshell/fpdm/tree/master"
+  }
+}
