@@ -61,7 +61,7 @@ $authentication=array(
 
 
 // Test URL
-if ($action == 'get')
+if ($action == 'get')		// Test on pemrission not required
 {
     $parameters = array('authentication'=>$authentication,'id'=>1,'name'=>'','ref_ext'=>'');
     dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTY);
@@ -78,7 +78,7 @@ if ($action == 'get')
 }
 
 // Test URL
-if ($action == 'getList')
+if ($action == 'getList')		// Test on pemrission not required
 {
     $filterthirdparty=array('category'=>'3');
     $parameters = array('authentication'=>$authentication,$filterthirdparty);
@@ -96,7 +96,7 @@ if ($action == 'getList')
 }
 
 // Test URL
-if ($action == 'create')
+if ($action == 'create')		// Test on pemrission not required
 {
 	$newthirdparty=array(
 	'ref'=>'Test WS Create Client',
@@ -144,7 +144,7 @@ if ($action == 'create')
 }
 
 // Test URL
-if ($action == 'update')
+if ($action == 'update')		// Test on pemrission not required
 {
 	$thirdparty=array(
 	'id'=>'1',

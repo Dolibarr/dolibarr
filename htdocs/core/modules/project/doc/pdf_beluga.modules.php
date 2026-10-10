@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -457,7 +457,7 @@ class pdf_beluga extends ModelePDFProjects
 					}
 
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, 0, 0, $projectField);
+					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, null, null, $projectField);
 
 					$num = is_array($elementarray) ? count($elementarray) : $elementarray;
 					if ($num >= 0) {
@@ -652,6 +652,9 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty) ? $element->thirdparty->name : ''), 1, 'L');
 								}
+								// The third party name can wrap over several lines, while every column written
+								// after it stays on one. Remember where it ended so the row height accounts for it.
+								$posYAfterThirdparty = $pdf->GetY();
 
 								// Amount without tax
 								if (empty($value['disableamount'])) {
@@ -662,7 +665,7 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->SetXY($this->posxamountht, $curY);
 									if ($key == 'agenda') {
-										$textforamount = dol_trunc($element->label, 26);
+										$textforamount = pdf_truncate_text($pdf, $element->label, 26);
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, $textforamount, 1, 'L');
 									} else {
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
@@ -683,7 +686,7 @@ class pdf_beluga extends ModelePDFProjects
 									$total_ht += $element->total_ht;
 									$total_ttc += $element->total_ttc;
 								}
-								$nexY = $pdf->GetY();
+								$nexY = max($pdf->GetY(), $posYAfterThirdparty);
 								$curY = $nexY;
 							}
 

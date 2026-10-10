@@ -151,14 +151,14 @@ print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
 
 $head = paypaladmin_prepare_head();
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
 print dol_get_fiche_head($head, 'paypalaccount', '', -1);
 
-print '<span class="opacitymedium">'.$langs->trans("PaypalDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("PaypalDesc")."</div>\n";
 
 // Test if php curl exist
 if (!function_exists('curl_version')) {
@@ -193,20 +193,26 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.getDolGlobalString('PAYPAL_API_USER').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
+print ' &nbsp; <span class="opacitymedium small">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.getDolGlobalString('PAYPAL_API_PASSWORD').'">';
+print '<input size="32" type="password" id="PAYPAL_API_PASSWORD" name="PAYPAL_API_PASSWORD" value="'.getDolGlobalString('PAYPAL_API_PASSWORD').'">';
+if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
+	print showEyeForField('eyePAYPAL_API_PASSWORD', 'PAYPAL_API_PASSWORD');
+}
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.getDolGlobalString('PAYPAL_API_SIGNATURE').'">';
-print '<br><span class="opacitymedium">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
+print '<input size="64" type="password" id="PAYPAL_API_SIGNATURE" name="PAYPAL_API_SIGNATURE" value="'.getDolGlobalString('PAYPAL_API_SIGNATURE').'">';
+if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
+	print showEyeForField('eyePAYPAL_API_SIGNATURE', 'PAYPAL_API_SIGNATURE');
+}
+print '<br><span class="opacitymedium small">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
 print '</td></tr>';
 
 
@@ -246,8 +252,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PublicVendorName").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'" placeholder="'.dolPrintHTMLForAttribute($mysoc->name).'">';
 print '</td></tr>';
 
 if (isModEnabled("bank")) {
@@ -261,7 +266,7 @@ if (isModEnabled("bank")) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': https://mysite/mycss.css</span>';
+print ' &nbsp; <span class="opacitymedium small">'.$langs->trans("Example").': https://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -295,7 +300,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
-print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
+print ' &nbsp;  <span class="opacitymedium small">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 print '</table>';

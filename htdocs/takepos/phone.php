@@ -250,7 +250,7 @@ if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 
 	function SetNote(place, selectedline){
 		console.log("We click on SetNote()");
-		var note = prompt("<?php dol_escape_js($langs->trans('Note')); ?>", "");
+		var note = prompt(<?php echo "'".dol_escape_js($langs->trans('Note'))."'"; ?>, "");
 		$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/public/auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 		LoadCats();

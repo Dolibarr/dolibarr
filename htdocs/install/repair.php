@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
@@ -96,6 +96,13 @@ dolibarr_install_syslog("--- repair: entering upgrade.php page");
 if (!is_object($conf)) {
 	dolibarr_install_syslog("repair: conf file not initialized", LOG_ERR);
 }
+
+
+// This page runs on the install bootstrap, which never sets $user.
+// dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
+// so we force an empty one here, before any action that may need it.
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user = new User($db);
 
 
 /*
@@ -352,7 +359,9 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	ob_flush();
+	if (ob_get_level() > 0) {
+		ob_flush();
+	}
 	flush();
 }
 
@@ -391,7 +400,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		print '<tr><td class="nowrap">*** ';
 		print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
 
-		$name = substr($file, 0, dol_strlen($file) - 4);
+		$name = dol_substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
 		$ok = run_sql($dir.$file, 0, 0, 1);
@@ -1055,7 +1064,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'invoice') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'invoice_supplier') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1063,23 +1072,23 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				}
 				if ($modulepart == 'propal') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order_supplier') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'contract') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = $reg[1];
+					$id = empty($reg[1]) ? '' : $reg[1];
 				}
 
 				if (($id || $ref) && $object_instance !== null) {
@@ -1589,7 +1598,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1614,7 +1625,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1719,7 +1732,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1744,7 +1759,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1950,7 +1967,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			if (!($n_processed_rows & 0xff)) {
 				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 				flush();
-				ob_flush();
+				if (ob_get_level() > 0) {
+					ob_flush();
+				}
 			}
 		}
 	} else {

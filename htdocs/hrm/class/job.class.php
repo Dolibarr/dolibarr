@@ -576,10 +576,10 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * Get the last occupied position for a user
+	 * Get the last job occupied by a user
 	 *
-	 * @param 	int 				$fk_user 	Id of user we need to get last job
-	 * @return	Position|string					Last occupied position
+	 * @param int		$fk_user	Id of user we need to get last job
+	 * @return string						Label of the last occupied job, '' if none
 	 */
 	public function getLastJobForUser($fk_user)
 	{
@@ -595,10 +595,10 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * 	Get array of occupied positions for a user
+	 * Get array of jobs occupied by a user
 	 *
-	 * @param 	int 		$userid 	Id of user we need to get job list
-	 * @return 	Position[] 				Array of occupied positions
+	 * @param int		$userid		Id of user we need to get job list
+	 * @return array<int,string>		Array of job labels indexed by job id
 	 */
 	public function getForUser($userid)
 	{
@@ -608,7 +608,10 @@ class Job extends CommonObject
 		$position = new Position($db);
 		$TPosition = $position->getForUser($userid);
 		foreach ($TPosition as $UPosition) {
-			$TReturn[$UPosition->Job->rowid] = $UPosition->Job->ref;
+			$tmpjob = new Job($db);
+			if ($tmpjob->fetch($UPosition->fk_job) > 0) {
+				$TReturn[$tmpjob->id] = $tmpjob->label;
+			}
 		}
 		return $TReturn;
 	}
@@ -766,7 +769,7 @@ class Job extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->label.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->label.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

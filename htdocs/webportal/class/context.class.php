@@ -297,7 +297,7 @@ class Context
 		$fileName = basename($path);
 		$needle = '.controller.class.php';
 		$length = strlen($needle);
-		$isControllerFile = $length > 0 ? substr($fileName, -$length) === $needle : true;
+		$isControllerFile = $length > 0 ? dol_substr($fileName, -$length) === $needle : true;
 		if (!$isControllerFile) {
 			$this->setError('Error: controller definition ' . $fileName);
 			return false;

@@ -641,7 +641,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 /* this cases always use an input with only a background border */
-span.massactionselect, input.inputsearch_dropdownselectedfields {
+span.massactionselect, input.inputsearch_dropdownselectedfields, div.liinputsearch input {
 	border-radius: 0 !important;
 	border-top: 0 !important;
 	border-left: 0 !important;
@@ -963,6 +963,10 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.spantitle {
+	opacity: 0.6;
+	font-size: 0.95em;
+}
 .noopacity {
 	opacity: unset !important;
 }
@@ -1251,8 +1255,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
 	line-height: 1.2em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
@@ -1515,6 +1525,14 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+div.kmcontent {
+	/* border: 2px solid #888; */
+	background-color: light-dark(#f5f5f5, #1e1e1e);
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
@@ -1707,7 +1725,8 @@ div.divsearchfield {
 }
 .divadvancedsearchfieldcompinput {
 	background: #fff;
-	border-bottom: solid 1px var(--inputbordercolor);
+	border: solid 1px var(--inputbordercolor);
+	border-radius: 5px;
 }
 
 .search_component_params {
@@ -4706,6 +4725,27 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+
+
+/* Block of CSS to fix border on firefox */
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type {
+	background: unset !important;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type td,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type td {
+	background: var(--colorbacktitle1) !important;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) {
+	background: inherit;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) td {
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
+}
+
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
@@ -4716,7 +4756,7 @@ table.nointerlines tr:not(:last-child) td {
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable, .margintable) {
 	border-radius: <?php echo $borderradius; ?>px;
-	overflow: hidden; /* Firefox does not clip cell backgrounds to the table border-radius without this */
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
@@ -4758,7 +4798,7 @@ table.liste:not(.listwithfilterbefore) {
 table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
-	overflow: hidden; /* Firefox does not clip cell backgrounds to the table border-radius without this */
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
@@ -5648,6 +5688,90 @@ img.boxhandle, img.boxclose {
 .add-filter-btn {
 	margin: 0 !important;
 }
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
+.fieldcombo {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+.fieldcombo-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 250px;
+	padding: 4px 8px;
+	background: #fff;
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	text-align: left;
+	cursor: pointer;
+	height: 28px;
+}
+.fieldcombo-label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.fieldcombo-panel {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 450px;
+	margin-top: 2px;
+	background: var(--colorbackbody);
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	z-index: 1001;
+}
+.fieldcombo-search {
+	width: 95%;
+	margin: 0;
+	padding: 4px 8px;
+	border: 0;
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+.fieldcombo-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px
+}
+.fieldcombo-elementheader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 8px;
+	cursor: pointer;
+	font-weight: bold;
+}
+.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-elementcaret {
+	flex: 0 0 auto;
+}
+.fieldcombo-element.open .fieldcombo-elementcaret {
+	transform: rotate(90deg);
+}
+.fieldcombo-children {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 26px;
+}
+.fieldcombo-fields {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 26px;
+}
+.fieldcombo-field {
+	padding: 4px 8px;
+	cursor: pointer;
+}
+.fieldcombo-field:hover, .fieldcombo-field:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-field.selected {
+	font-weight: bold;
+}
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: inline-block;
 }
@@ -6027,6 +6151,14 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
+.ui-dialog {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	min-width: 300px;
+	max-width: 70%;
+}
 
 div#dialogforpopup {
 	background-color: #f8f8f8 !important;
@@ -6337,11 +6469,14 @@ span[phptag] {
 .websitebar .fa-plus-circle.btnTitle-icon {
 	margin: 0px 4px 0px 4px !important;
 }
-
 .websitebar {
 	border-bottom: 1px solid #ccc;
+	/* background: var(--colorbacktitle1); */
 	background: #eee;
 	display: inline-block;
+}
+span#morelines {
+	font-weight: normal;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
@@ -6945,14 +7080,19 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 	border: 1px solid #ddd;
 	margin: 0;
 }
+.ace_editor.ace-chrome .ace_gutter {
+	background: var(--colorbacktitle1);
+	color: var(--colortexttitle);
+}
 .aceeditorstatusbar {
 		margin: 0;
-		padding: 0;
+		padding: 5px 5px;
 		padding-<?php echo $left; ?>: 10px;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		color: #666;
+		background-color: var(--colorbacktitle1);
+		color: var(--colortexttitle);
 		height: 28px;
 		line-height: 2.2em;
 }
@@ -6960,7 +7100,7 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 		color: gray;
 		position: relative;
 		right: 0;
-		border-left: 1px solid;
+		border-left: unset;
 }
 pre#editfilecontentaceeditorid {
 	margin-top: 5px;
@@ -7801,12 +7941,12 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 300px !important;
 		padding: 8px;
 	}
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 300px !important;
 		padding: 8px;
 	}
@@ -7816,6 +7956,14 @@ select.multiselectononeline {
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 320px !important;
+	}
+	/* CSS to have the dropdown list of the combo larger than the visible component when closed (min-width 450px) */
+	.combolargelist.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 450px !important;
+	}
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--below,
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--above {
+		min-width: 450px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
@@ -7831,6 +7979,15 @@ select.multiselectononeline {
 
 .parentonrightofpage {
   direction: rtl;
+}
+/* Fix the rendering of the list of options when the dropdown of a select2 combo is rendered into the pagination bar
+   (a select into a parent with class parentonrightofpage): cancel the rules div.pagination ul and div.pagination li */
+div.pagination ul.select2-results__options {
+	display: block;
+}
+div.pagination li.select2-results__option {
+	display: block;
+	padding: 6px;	/* Must repeat the padding of select2 default because the rule div.pagination li sets it to 0 */
 }
 
 
@@ -8014,7 +8171,7 @@ dl.dropdown {
 .dropdown dd ul.selectedfieldsleft {
 	<?php echo $right; ?>: auto;
 }
-.dropdown dd ul li {
+.dropdown dd ul li, div.liinputsearch {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
@@ -8990,6 +9147,16 @@ table.jPicker {
 	padding-top: 6px;
 	border-radius: <?php echo $borderradius; ?>px;
 }
+/* Module AI - configure_tools.php: chevron rotation animation on collapse/expand */
+.toggle-icon {
+	display: inline-block;
+	margin-right: 8px;
+	transition: transform 0.2s ease-in-out;
+}
+
+.trgroup.collapsed .toggle-icon {
+	transform: rotate(-90deg);
+}
 
 
 /* ============================================================================== */
@@ -9370,6 +9537,7 @@ if (is_object($db)) {
 	user-select: none; /* Non-prefixed version, currently
 			  supported by Chrome, Edge, Opera and Firefox */
 }
+
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

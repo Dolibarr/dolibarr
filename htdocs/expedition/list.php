@@ -631,30 +631,24 @@ if (empty($reshook)) {
 	}
 
 	// If massaction is close
-	if ($massaction == 'classifyclose') {
+	if ($massaction == 'classifyclose' && $permissiontoadd) {
 		$error = 0;
 		$selectids = GETPOST('toselect', 'array:int');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);
 			$result = $object->setClosed();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		$massaction = $action = 'classifyclose';
 
-		if ($result < 0) {
-			$error++;
-		}
-
-
 		if (!$error) {
-			$db->commit();
-
 			setEventMessage($langs->trans("Close Done"));
 			header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		} else {
-			$db->rollback();
 			exit;
 		}
 	}
@@ -1052,9 +1046,11 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if ($user->hasRight('expedition', 'creer')) {
+	$arrayofmassactions['classifyclose'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close");
+}
 if ($user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }
@@ -1551,7 +1547,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $object->getNomUrl(1);
+			print $object->getNomUrl(1, '', 0, 0, 0, -1, 1);
 			$filedir = ($conf->expedition->multidir_output[$object->entity ?? $conf->entity] ? $conf->expedition->multidir_output[$object->entity ?? $conf->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);

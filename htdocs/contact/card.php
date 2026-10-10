@@ -226,7 +226,9 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
-		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		if (GETPOSTISSET("civility_code")) {
+			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		}
 		$object->poste = (string) GETPOST("poste", 'alpha');
 		$object->address = (string) GETPOST("address", 'alpha');
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
@@ -429,7 +431,8 @@ if (empty($reshook)) {
 						$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-						if (!($result > 0)) {
+						// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+						if (!is_numeric($result) || $result <= 0) {
 							$errors[] = "ErrorFailedToSaveFile";
 						} else {
 							$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -458,7 +461,9 @@ if (empty($reshook)) {
 			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
-			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			if (GETPOSTISSET("civility_code")) {
+				$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			}
 			$object->poste = (string) GETPOST("poste", 'alpha');
 
 			$object->address = (string) GETPOST("address", 'alpha');
@@ -501,6 +506,14 @@ if (empty($reshook)) {
 				$result = $object->update($contactid, $user);
 
 				if ($result > 0) {
+					// Warn if the third party of the contact is modified and differs from the one of the linked user
+					if ($object->user_id > 0 && $object->oldcopy->socid != $object->socid) {
+						$tmpuser = new User($db);
+						if ($tmpuser->fetch($object->user_id) > 0 && $tmpuser->socid != $object->socid) {
+							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), null, 'warnings');
+						}
+					}
+
 					// Categories association
 					$categories = GETPOST('contcats', 'array');
 					$object->setCategories($categories);
@@ -705,14 +718,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
+								$(\'textarea[name="address"]\').val(\''.dol_escape_js($objsoc->address).'\');
+								$(\'input[name="zipcode"]\').val(\''.dol_escape_js($objsoc->zip).'\');
+								$(\'input[name="town"]\').val(\''.dol_escape_js($objsoc->town).'\');
+								console.log(\'Set state_id to '.dol_escape_js((string) $objsoc->state_id).'\');
+								$(\'select[name="state_id"]\').val(\''.dol_escape_js((string) $objsoc->state_id).'\').trigger("change");
 								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+								console.log(\'Set country id to '.dol_escape_js((string) $objsoc->country_id).'\');
+								$(\'select[name="country_id"]\').val(\''.dol_escape_js((string) $objsoc->country_id).'\').trigger("change");   /* trigger required to update select2 components */
                             });
 						})'."\n";
 				print '</script>'."\n";
@@ -1016,14 +1029,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
+								$(\'textarea[name="address"]\').val(\''.dol_escape_js($objsoc->address).'\');
+								$(\'input[name="zipcode"]\').val(\''.dol_escape_js($objsoc->zip).'\');
+								$(\'input[name="town"]\').val(\''.dol_escape_js($objsoc->town).'\');
+								console.log(\'Set state_id to '.dol_escape_js((string) $objsoc->state_id).'\');
+								$(\'select[name="state_id"]\').val(\''.dol_escape_js((string) $objsoc->state_id).'\').trigger("change");
 								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+								console.log(\'Set country id to '.dol_escape_js((string) $objsoc->country_id).'\');
+								$(\'select[name="country_id"]\').val(\''.dol_escape_js((string) $objsoc->country_id).'\').trigger("change");   /* trigger required to update select2 components */
 							});
 						})'."\n";
 				print '</script>'."\n";
@@ -1622,12 +1635,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Merge
 			if ($permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
-				print dolGetButtonAction($langs->trans("MergeContacts"), $langs->trans("Merge"), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('societe', 'contact', 'supprimer'));
+				print dolGetButtonAction($langs->trans("MergeContacts"), $langs->trans("Merge"), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('societe', 'contact', 'supprimer'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 			}
 
 			// Delete
 			if ($user->hasRight('societe', 'contact', 'supprimer')) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->hasRight('societe', 'contact', 'supprimer'));
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->hasRight('societe', 'contact', 'supprimer'), array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

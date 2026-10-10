@@ -58,6 +58,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 
 $statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_id = GETPOST('search_id', 'alpha');
 $search_type = GETPOSTINT('search_type');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
@@ -121,6 +122,7 @@ $fieldstosearchall = array(
 	'c.note' => "Label",
 );
 $arrayfields = array(
+	'c.rowid' => array('label' => 'TechnicalID', 'checked' => '-1', 'position' => 1),
 	'd.ref' => array('label' => "Ref", 'checked' => '1'),
 	'd.fk_type' => array('label' => "Type", 'checked' => '1'),
 	'd.lastname' => array('label' => "Lastname", 'checked' => '1'),
@@ -173,6 +175,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_type = "";
 		$search_ref = "";
+		$search_id = "";
 		$search_lastname = "";
 		$search_firstname = "";
 		$search_login = "";
@@ -260,6 +263,9 @@ if ($search_ref) {
 	} else {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
+}
+if ($search_id) {
+	$sql .= natural_search("c.rowid", $search_id);
 }
 if ($search_type > 0) {
 	$sql .= natural_search(array('c.fk_type'), (string) $search_type);
@@ -376,6 +382,9 @@ if ($statut != '') {
 }
 if ($search_type) {
 	$param .= "&search_type=".((int) $search_type);
+}
+if ($search_id) {
+	$param .= "&search_id=".((int) $search_id);
 }
 if ($date_select) {
 	$param .= "&date_select=".urlencode($date_select);
@@ -514,9 +523,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-// Line numbering
-if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-	print '<td class="liste_titre">&nbsp;</td>';
+// Technical ID
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
 }
 
 // Ref
@@ -616,6 +627,11 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	$totalarray['nbfield']++;
+}
+// Technical ID
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
@@ -764,6 +780,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.dolPrintHTML($obj->crowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
 			print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
@@ -792,7 +815,7 @@ while ($i < $imaxinloop) {
 		}
 		// Firstname
 		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($adherent->firstname).'">'.dol_escape_htmltag($adherent->firstname).'</td>';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($adherent->firstname).'">'.dolPrintHTML($adherent->firstname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -800,16 +823,20 @@ while ($i < $imaxinloop) {
 
 		// Login
 		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.dol_escape_htmltag($adherent->login).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($adherent->login).'">'.dolPrintHTML($adherent->login).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 
-		// Label
+		// Note
 		if (!empty($arrayfields['c.note']['checked'])) {
-			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'">';
-			print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->note_private).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<span class="spantitle">';
+			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private));
+			print '</span>';
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

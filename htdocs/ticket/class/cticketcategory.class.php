@@ -98,7 +98,7 @@ class CTicketCategory extends CommonObject
 		'active' => array('type' => 'integer', 'label' => 'Active', 'enabled' => 1, 'visible' => -1, 'position' => 35),
 		'use_default' => array('type' => 'integer', 'label' => 'Usedefault', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'description' => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 45),
-		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
+		'fk_parent' => array('type' => 'integer', 'label' => 'ParentCategory', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
 		'force_severity' => array('type' => 'varchar(32)', 'label' => 'Forceseverity', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'public' => array('type' => 'integer', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 	);

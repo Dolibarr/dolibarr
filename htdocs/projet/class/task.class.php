@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -423,10 +423,10 @@ class Task extends CommonObjectLine
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->note_public = trim($this->note_public);
-		$this->note_private = trim($this->note_private);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->note_public = trim((string) $this->note_public);
+		$this->note_private = trim((string) $this->note_private);
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
 			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
@@ -1042,15 +1042,19 @@ class Task extends CommonObjectLine
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
+		$query = ['id' => $this->id];
+		if ($option == 'withproject') {
+			$query['withproject'] = 1;
+		}
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query['save_lastsearch_values'] = 1;
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -1639,7 +1643,10 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -2097,16 +2104,19 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2249,9 +2259,9 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2374,7 +2384,7 @@ class Task extends CommonObjectLine
 		//Manage Task Date
 		if ($clone_change_dt) {
 			$projectstatic = new Project($this->db);
-			$projectstatic->fetch($ori_project_id);
+			$projectstatic->fetch((int) $ori_project_id);
 
 			// Origin project start date
 			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
@@ -2441,7 +2451,7 @@ class Task extends CommonObjectLine
 
 				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
-				$projectstatic->fetch($ori_project_id);
+				$projectstatic->fetch((int) $ori_project_id);
 				$ori_project_ref = $projectstatic->ref;
 
 				if ($ori_project_id != $project_id) {
@@ -2662,9 +2672,10 @@ class Task extends CommonObjectLine
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
-		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end";
+		// The count and the number of late tasks are computed by the database instead of reading every task. A task to do is late
+		// when it has an end date and that date is before now minus the warning delay (the rule of hasDelay()).
+		$sql = "SELECT COUNT(t.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN (t.progress IS NULL OR t.progress >= 0) AND t.datee IS NOT NULL AND t.datee < '".$this->db->idate(dol_now() - $conf->project->task->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2684,8 +2695,6 @@ class Task extends CommonObjectLine
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$task_static = new Task($this->db);
-
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
@@ -2697,19 +2706,10 @@ class Task extends CommonObjectLine
 			$response->img = img_object('', "task");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$task_static->projectstatus = $obj->projectstatus;
-				$task_static->progress = $obj->progress;
-				$task_static->fk_statut = $obj->status;
-				$task_static->status = $obj->status;
-				$task_static->date_start = $this->db->jdate($obj->date_start);
-				$task_static->date_end = $this->db->jdate($obj->date_end);
-
-				if ($task_static->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -2971,5 +2971,195 @@ class Task extends CommonObjectLine
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROJECT_TASK);
+	}
+
+	/**
+	 * Send an email to the task's executives (internal contacts of type TASKEXECUTIVE) when a task has
+	 * gone past its end date without being completed.
+	 * CAN BE A CRON TASK
+	 *
+	 * The delay is the same one already used to show the "Late" warning icon on the task everywhere it is
+	 * displayed (MAIN_DELAY_TASKS_TODO, in days, 7 by default): this method does not add new setup, it
+	 * reuses Task::hasDelay() so the email only ever fires for a task that already shows as late there.
+	 * Unlike a plain fk_user column, a task can have several executives (or none): the reminder is sent to
+	 * all of them in one email, and a task with no executive with an email on file is counted as a
+	 * failure. A task is only ever reminded once per calendar day (same dedup convention as the other
+	 * automated reminder emails in the application, via the AC_EMAIL agenda event it logs on success), so
+	 * it keeps being reminded once a day for as long as it stays overdue. A failure on one task (ex: no
+	 * email template found) is counted and does not prevent the other overdue tasks from being processed.
+	 *
+	 * @return	int		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForOverdueTasks()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		if (!isModEnabled('project')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Project"));
+			return 0;
+		}
+
+		$langs->loadLangs(array('main', 'projects'));
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listoftasksok = array();
+		$listoftasksko = array();
+
+		// Label of the event recorded once a reminder is sent for a task. Also used to not send the same reminder twice the same day.
+		$labelreminderok = 'sendReminderForOverdueTasksOK';
+
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."projet_task as t";
+		$sql .= " WHERE t.entity = ".((int) $conf->entity); // Do not use getEntity('project_task') here, we want the batch to be on its entity only
+		$sql .= " AND t.fk_statut NOT IN (".self::STATUS_CLOSED.", ".self::STATUS_CANCELED.")";
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'project_task' AND a.fk_element = t.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$formmail = new FormMail($this->db);
+
+		$num_rows = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num_rows) {
+			$obj = $this->db->fetch_object($resql);
+
+			$taskstatic = new Task($this->db);
+			$taskstatic->fetch($obj->rowid);
+
+			// Same late/not-late decision as the warning icon shown everywhere a task is displayed, so the
+			// email only ever fires for tasks that already show as late there.
+			if (!$taskstatic->hasDelay()) {
+				$i++;
+				continue;
+			}
+
+			// An executive is an internal contact of type TASKEXECUTIVE. There is no single "assigned user"
+			// column on a task, and there can be several (or none).
+			$to = array();
+			$tmparraycontact = $taskstatic->liste_contact(-1, 'internal', 0, 'TASKEXECUTIVE');
+			if (is_array($tmparraycontact)) {
+				foreach ($tmparraycontact as $data_email) {
+					if (!empty($data_email['email'])) {
+						$to[] = $data_email['email'];
+					}
+				}
+			}
+
+			if (empty($to)) {
+				$nbko++;
+				$listoftasksko[$taskstatic->id] = $taskstatic->id;
+			} else {
+				$projectstatic = new Project($this->db);
+				$projectstatic->fetch($taskstatic->fk_project);
+				$projectstatic->fetch_thirdparty();
+
+				$arraydefaultmessage = null;
+				$labeltouse = getDolGlobalString('PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE');
+
+				if (!empty($labeltouse)) {
+					$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'project_task', $user, $langs, 0, 1, $labeltouse);
+				}
+
+				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $taskstatic);
+					complete_substitutions_array($substitutionarray, $langs, $taskstatic);
+					$substitutionarray['__TASK_LABEL__'] = $taskstatic->label;
+					$substitutionarray['__TASK_END_DATE__'] = dol_print_date($taskstatic->date_end, 'day', 'tzuserrel', $langs);
+					$substitutionarray['__TASK_PROGRESS__'] = (string) $taskstatic->progress;
+					$substitutionarray['__TASK_PROJECT_REF__'] = $projectstatic->ref;
+					$substitutionarray['__TASK_URL__'] = DOL_MAIN_URL_ROOT.'/projet/tasks/task.php?id='.$taskstatic->id.'&withproject=1';
+
+					$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $langs);
+					$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $langs);
+					$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+					$toimploded = implode(',', $to);
+
+					$trackid = 'tas'.$taskstatic->id;
+					$moreinheader = 'X-Dolibarr-Info: sendReminderForOverdueTasks'."\r\n";
+
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					$cmail = new CMailFile($subject, $toimploded, $email_from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+					$result = $cmail->sendfile();
+					if (!$result) {
+						$error++;
+						$this->error .= $cmail->error.' ';
+						if (!is_null($cmail->errors)) {
+							$this->errors = array_merge($this->errors, $cmail->errors);
+						}
+						$nbko++;
+						$listoftasksko[$taskstatic->id] = $taskstatic->id;
+					} else {
+						$nbok++;
+						$listoftasksok[$taskstatic->id] = $taskstatic->id;
+
+						// Insert record of email sent, as an agenda event on the task (same convention as other automated reminder emails)
+						require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+						$actioncomm = new ActionComm($this->db);
+						$actioncomm->type_code = 'AC_OTH_AUTO';
+						$actioncomm->code = 'AC_EMAIL';
+						$actioncomm->label = $labelreminderok;
+						$actioncomm->note_private = $msg;
+						$actioncomm->fk_project = $taskstatic->fk_project;
+						$actioncomm->datep = $now;
+						$actioncomm->datef = $now;
+						$actioncomm->percentage = -1; // Not applicable
+						$actioncomm->socid = (is_object($projectstatic->thirdparty) ? $projectstatic->thirdparty->id : 0);
+						$actioncomm->contact_id = 0;
+						$actioncomm->authorid = $user->id;
+						$actioncomm->userownerid = $user->id;
+						$actioncomm->email_msgid = $cmail->msgid;
+						$actioncomm->email_from = $email_from;
+						$actioncomm->email_sender = '';
+						$actioncomm->email_to = $toimploded;
+						$actioncomm->email_subject = $subject;
+
+						$actioncomm->fk_element = $taskstatic->id;
+						$actioncomm->elementid = $taskstatic->id;
+						$actioncomm->elementtype = $taskstatic->element;
+
+						$actioncomm->create($user);
+					}
+				} else {
+					$error++;
+					$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+					$nbko++;
+					$listoftasksko[$taskstatic->id] = $taskstatic->id;
+
+					// Do not break here: a template issue for one task (ex: template not found) must not
+					// prevent the reminder from being sent for the other overdue tasks.
+				}
+			}
+
+			$i++;
+		}
+
+		$this->output = 'Found '.($nbok + $nbko).' overdue tasks to send reminder for.';
+		$this->output .= ' Sent email successfully for '.$nbok.' tasks';
+		if ($nbko) {
+			$this->output .= ' - Canceled for '.$nbko.' task(s) (no executive with an email, missing template, or send error)';
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

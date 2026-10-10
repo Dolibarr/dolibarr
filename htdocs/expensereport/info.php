@@ -63,8 +63,14 @@ if ($object->id > 0) {
 	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
+		$canread = 1;	// Can create an expense report for everybody, so can also read it
+	}
 	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
+	}
+	if ($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id) {
+		$canread = 1;	// The user designated to approve this expense report
 	}
 	if (!$canread) {
 		accessforbidden();

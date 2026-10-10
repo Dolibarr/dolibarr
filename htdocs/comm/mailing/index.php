@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ $handle = opendir($dir);
 
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
-		if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+		if (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
 				if ($modulename == 'example') {

@@ -38,7 +38,7 @@ class mailing_advthirdparties extends MailingTargets
 	public $desc = "Third parties";
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $require_admin = 0;
 

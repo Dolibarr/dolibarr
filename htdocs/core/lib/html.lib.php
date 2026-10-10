@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  * @return	string							String ready for HTML output
  * @see dolPrintText()
+ * @example <span><?php echo dolPrintLabel($object->name); ?></span>
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
 {
@@ -53,6 +55,7 @@ function dolPrintLabel($s, $escapeonlyhtmltags = 0)
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  * @see dolPrintLabel(), dolPrintHTML()
+ * @example <div class="description"><?php echo dolPrintText($object->description); ?></div>
  */
 function dolPrintText($s)
 {
@@ -69,6 +72,7 @@ function dolPrintText($s)
  * @param 	string[] 			$moreallowedtags 	Array of extra allowed tags (in addition to 'common' list)
  * @return	string									String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
+ * @example <div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>
  */
 function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 {
@@ -95,6 +99,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
  * @param	string[]	$allowothertags			List of other tags allowed
  * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @example <span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>
  */
 function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
@@ -118,6 +123,7 @@ function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags =
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @example <a href="<?php echo dolPrintHTMLForAttributeUrl($url); ?>">Link</a>
  */
 function dolPrintHTMLForAttributeUrl($s)
 {
@@ -135,6 +141,7 @@ function dolPrintHTMLForAttributeUrl($s)
  * @param	int		$allowiframe	Allow iframe tags
  * @return	string					String ready for HTML output into a textarea
  * @see dolPrintHTML(), dolPrintHTMLForAttribute()
+ * @example <textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>
  */
 function dolPrintHTMLForTextArea($s, $allowiframe = 0)
 {
@@ -146,6 +153,7 @@ function dolPrintHTMLForTextArea($s, $allowiframe = 0)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
+ * @example <input type="text" value="<?php echo dolPrintPassword($masked); ?>">
  */
 function dolPrintPassword($s)
 {
@@ -160,7 +168,7 @@ function dolPrintPassword($s)
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(...), 1, 1, 1, 0)), 1, 1, 'common', 0, 1) for notes or descriptions into textarea, add 'common' if into a html content
  *        - dolPrintPassword that is a simple htmlspecialchars(... , ENT_COMPAT, 'UTF-8') for passwords.
  *
- *  @param      string		$stringtoescape			String to escape
+ *  @param      ?string		$stringtoescape			String to escape (treated as '' if null)
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or 'common,a,b,c' or list of tags to not escape.
@@ -168,9 +176,13 @@ function dolPrintPassword($s)
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @example <div data-value="<?php echo dol_escape_htmltag($value, 0, 0, '', 1, 1); ?>"></div>
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
+	if ($stringtoescape === null) {
+		return '';
+	}
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
@@ -230,6 +242,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	} else {
 		// Now we protect all the tags we want to keep
 		$tmparrayoftags = array();
+		$tmparrayoftagsfound = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
@@ -242,6 +255,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$tmp = str_ireplace(array('__DOUBLEQUOTE', '__BEGINTAGTOREPLACE', '__ENDTAGTOREPLACE', '__BEGINENDTAGTOREPLACE'), '', $tmp);
 
 			foreach ($tmparrayoftags as $tagtoreplace) {
+				// The 4 patterns below all start with '<tag' or '</tag': a tag that is not in the string can not be protected, so it
+				// does not need the 4 regex passes, nor to be restored later. On a list page, most strings hold no tag at all.
+				if (stripos($tmp, '<' . $tagtoreplace) === false && stripos($tmp, '</' . $tagtoreplace) === false) {
+					continue;
+				}
+				$tmparrayoftagsfound[] = $tagtoreplace;
+
 				// For case of tag without attributes '<abc>', '</abc>', '<abc />', we protect them to avoid transformation by htmlentities() later
 				$tmp = preg_replace('/<' . preg_quote($tagtoreplace, '/') . '>/', '__BEGINTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
 				$tmp = str_ireplace('</' . $tagtoreplace . '>', '__ENDTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
@@ -282,7 +302,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			// Restore protected tags
-			foreach ($tmparrayoftags as $tagtoreplace) {
+			foreach ($tmparrayoftagsfound as $tagtoreplace) {
 				$result = str_ireplace('__BEGINTAGTOREPLACE' . $tagtoreplace . '__', '<' . $tagtoreplace . '>', $result);
 				$result = preg_replace('/__BEGINTAGTOREPLACE' . $tagtoreplace . '\[([^\]]*)\]__/', '<' . $tagtoreplace . ' \1>', $result);
 				$result = str_ireplace('__ENDTAGTOREPLACE' . $tagtoreplace . '__', '</' . $tagtoreplace . '>', $result);
@@ -373,12 +393,12 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '      modal: true,';
 	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
-	$out .= '      title: "' . dol_escape_js($label) . '",';
+	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
 
 	// Simulate a click on the original "submit" input to export the site.
 	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
-	$out .= '      console.log("Clic on exportsite.");';
+	$out .= '      console.log("Click on exportsite.");';
 	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
 	$out .= '      console.log("element founded:", target.length > 0);';
 	$out .= '      if (target.length > 0) { target.click(); }';
@@ -493,6 +513,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	void
  *  @deprecated Use print dol_get_fiche_head() instead
+ *  @example <?php dol_fiche_head(['card.php?id='.$id=>$langs->trans("Card")], 'card.php?id='.$id, $langs->trans("Title"), 0, 'generic'); ?>
  */
 function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '')
 {
@@ -548,7 +569,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 	}
 
-	// Show tabs
 	// if =0 we don't use the feature
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
@@ -702,6 +722,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
  *  @param	int<-1,1>	$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
  *  @deprecated Use print dol_get_fiche_end() instead
+ *  @example <?php dol_fiche_end(); ?>
  */
 function dol_fiche_end($notab = 0)
 {
@@ -741,6 +762,7 @@ function dol_get_fiche_end($notab = 0)
  *  @param  int     	$onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string		$morehtmlright	More html code to show before navigation arrows
  *  @return	void
+ *  @example <?php dol_banner_tab($supplier, 'rowid', '', 1, 'rowid', 'ref', '', '', 0, '', '', '', ''); ?>
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
@@ -1004,9 +1026,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif (in_array($object->element, array('salary'))) {
 		/** @var Salary $object */
 		'@phan-var-force Salary $object';
-		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
@@ -1287,6 +1309,7 @@ function getPictoForType($key, $morecss = '')
  *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
+ *  @example <a href="edit.php?id=<?php echo $id; ?>"><?php echo img_picto($langs->trans("Edit"), 'edit', 'class="valignmiddle"'); ?></a>
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2, $allowothertags = array())
 {
@@ -1298,6 +1321,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	$path = 'theme/' . $theme;
 	if (empty($picto)) {
 		$picto = 'generic';
+	}
+
+	if ($titlealt) {
+		$titlealt = str_replace(array('\n', "\n"), ' - ', $titlealt);
 	}
 
 	// Define fullpathpicto to use into src
@@ -1372,7 +1399,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$moreatt = trim($moreatt);
 
 			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey;
-			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -1645,7 +1672,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$moreatt = trim($moreatt);
 
 			$enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
-			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -1921,14 +1948,11 @@ function getImgPictoConv($mode = 'fa')
  *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
  *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
+ *  @example <div class="logo"><?php echo img_object($langs->trans("Company"), 'company', 'class="pictofixedwidth"'); ?></div>
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
-	if (strpos($picto, '^') === 0) {
-		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
-	} else {
-		return img_picto($titlealt, 'object_' . $picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
-	}
+	return img_picto($titlealt, $picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 }
 
 /**
@@ -1984,10 +2008,17 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		$path = DOL_URL_ROOT . '/theme/common/' . $picto;
 
 		if (getDolGlobalInt('MAIN_MODULE_CAN_OVERWRITE_COMMONICONS')) {
-			$themepath = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/img/' . $picto;
+			$themeimg = '/theme/' . $conf->theme . '/img/' . $picto;
 
-			if (file_exists($themepath)) {
-				$path = $themepath;
+			if (file_exists(DOL_DOCUMENT_ROOT . $themeimg)) {
+				$path = DOL_URL_ROOT . $themeimg;
+			} elseif (!empty($conf->modules_parts['theme'])) {	// Using this feature slow down application
+				foreach ($conf->modules_parts['theme'] as $reldir) {
+					if (file_exists(dol_buildpath($reldir . $themeimg, 0))) {
+						$path = dol_buildpath($reldir . $themeimg, 1);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -2046,6 +2077,7 @@ function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <div><?php echo img_edit_add($langs->trans("Add"), 'class="inline-block"'); ?></div>
  */
 function img_edit_add($titlealt = 'default', $other = '')
 {
@@ -2063,6 +2095,7 @@ function img_edit_add($titlealt = 'default', $other = '')
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <div><?php echo img_edit_remove($langs->trans("Remove")); ?></div>
  */
 function img_edit_remove($titlealt = 'default', $other = '')
 {
@@ -2082,6 +2115,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <td><?php echo img_edit($langs->transnoentitiesnoconv("Edit"), 0, 'class="paddingleft"'); ?></td>
  */
 function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
@@ -2101,6 +2135,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <td><?php echo img_view($langs->transnoentitiesnoconv("View")); ?></td>
  */
 function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmiddle"')
 {
@@ -2122,6 +2157,7 @@ function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmidd
  *	@param  string	$other      Add more attributes on img
  *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
+ *  @example <td><?php echo img_delete($langs->transnoentitiesnoconv("Delete"), 'class="pictodelete"', 'width20'); ?></td>
  */
 function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
@@ -2174,6 +2210,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
  * 	@param	int              	$usehelpcursor		1=Use help cursor, 2=Use click pointer cursor, 0=No specific cursor
  * 	@param	int|string	        $usealttitle		Text to use as alt title
  * 	@return string            	           			Return tag img
+ *  @example <span class="help"><?php echo img_help(1, 1); ?></span>
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
@@ -2195,6 +2232,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
+ *  @example <td><?php echo img_info($langs->trans("Info")); ?></td>
  */
 function img_info($titlealt = 'default')
 {
@@ -2214,6 +2252,7 @@ function img_info($titlealt = 'default')
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
  *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
+ *  @example <div class="alert"><?php echo img_warning($langs->trans("Warning")); ?></div>
  */
 function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
@@ -2232,6 +2271,7 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
+ *  @example <div class="error"><?php echo img_error($langs->trans("Error")); ?></div>
  */
 function img_error($titlealt = 'default')
 {
@@ -2548,6 +2588,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  @param		string[]|null   $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
+ *  @example <?php dol_print_error($db, $object->error, $object->errors); ?>
  */
 function dol_print_error($db = null, $error = '', $errors = null)
 {
@@ -2574,7 +2615,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= $langs->trans("InformationToHelpDiagnose") . ":<br>\n";
 
-		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(time(), 'dayhourlog') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(dol_now(), 'dayhourlog') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Dolibarr") . ":</b> " . DOL_VERSION . " - https://www.dolibarr.org<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) {
 			$out .= "<b>" . $langs->trans("LevelOfFeature") . ":</b> " . getDolGlobalInt('MAIN_FEATURES_LEVEL') . "<br>\n";
@@ -2886,6 +2927,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
  *  @return	void
  *  @deprecated						Use load_fiche_titre instead
  *  @see load_fiche_titre()
+ *  @example <?php print_titre($langs->trans("MySection")); ?>
  */
 function print_titre($title)
 {
@@ -2904,6 +2946,7 @@ function print_titre($title)
  * 	@param	string	$id					To force an id on html objects by example id="name" where name is id
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
+ *  @example <?php print_fiche_titre($langs->trans("Invoice"), $mesg, 'bill'); ?>
  */
 function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
@@ -2976,6 +3019,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *  @param	string		$morehtmlrightbeforearrow	More html to show (before arrows)
  *	@return	void
+ *  @example <?php print_barre_liste($langs->trans("List"), $page, $_SERVER['PHP_SELF'], $sortfield, $sortorder); ?>
  */
 function print_barre_liste($title, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $selectlimitsuffix = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
@@ -3335,6 +3379,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
+ *  @example <td><?php echo yn($object->active, 1, 1); ?></td>
  */
 function yn($yesno, $format = 1, $color = 0)
 {
@@ -3397,6 +3442,7 @@ function yn($yesno, $format = 1, $color = 0)
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
  *  @see	dol_htmloutput_events()
+ *  @example <?php setEventMessage($langs->trans("RecordSaved"), 'mesgs', 0, 0); ?>
  */
 function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
 {
@@ -3444,6 +3490,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
  *  @see	dol_htmloutput_events()
+ *  @example <?php setEventMessages($langs->trans("Saved"), [], 'mesgs'); ?>
  */
 function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0, $attop = 0)
 {
@@ -3530,7 +3577,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="' . $style . ' clearboth">';
 		$divend = '</div>';
 	}
@@ -3555,7 +3602,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			if ($style == "ok") {
 				// For success messages (green), allow manual click to close immediately without fade
 				$return = '<script nonce="' . getNonce() . '">
@@ -4041,13 +4088,22 @@ function printCommonFooter($zone = 'private')
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
- * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
- * @return	void
+ * @param 	string		$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
+ * @param	int<0,1>	$nooutput	Use 1 to return with no output
+ * @return	string					Empty string or HTML output
  */
-function dol_set_focus($selector)
+function dol_set_focus($selector, $nooutput = 0)
 {
-	print "\n" . '<!-- Set focus onto a specific field -->' . "\n";
-	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery("' . dol_escape_js($selector) . '").focus(); });</script>' . "\n";
+	$out = "\n" . '<!-- Set focus onto a specific field -->' . "\n";
+	$out .= '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
+
+	if ($nooutput) {
+		return $out;
+	} else {
+		print $out;
+	}
+
+	return '';
 }
 
 
@@ -4062,6 +4118,8 @@ function dol_set_focus($selector)
 function showSimpleHTMLTable($outputlangs, $object)
 {
 	global $conf;
+
+	$outputlangs->loadLangs(array("products"));
 
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
@@ -4239,6 +4297,7 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  * @param   string  			$url        the url for link
  * @param   array{attr?:array{class:string,title:string},css?:string}	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              			Html badge
+ *  @example <div><?php echo dolGetBadge($langs->trans("New"), '', 'primary'); ?></div>
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
@@ -4308,6 +4367,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  * @param   string  			$url				The url for link
  * @param   array<string,mixed>	$params				Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
  * @return  string									Html status string
+ *  @example <div><?php echo dolGetStatus($langs->trans("Validated"), $langs->trans("Valid"), '', 'status4'); ?></div>
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
@@ -4405,17 +4465,19 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Long label (or tooltip of button if param $text is provided). Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string    	$text       	Optional : Short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	If string, complete relative Url for link,
+ * 																																										or if array, array of subbutton description with:
+ *                                                                                                                                                                      'url' for relative url from core module, 'urlroot' for external module relative url including DOL_URL_ROOT like when using dol_buildpath, 'urlraw' for final URL.
  *                                                                                                                                                                      Example when an array is used:
  *                                                                                                                                                                      $arrayforbutaction = array(
- *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal',   'enabled'=>isModEnabled("propal"),   'perm'=>$user->hasRight('propal', 'creer'),   'label' => 'AddProp',             'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction',      'urlroot'=>dol_buildpath('/mymodule/mypage.php?action=create')),
  *                                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                                      );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param bool|int		$userRight  	User action right. True or 1 of ok. Use 0 if user has no permission, it will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
- * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,forceDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
  *                                                                                                                                                                                                                                                                                                                                      	'xxxxx' => '', // your xxxxx attribute you want
  *                                                                                                                                                                                                                                                                                                                                      	'class' => 'reposition', // to add more css class to the button class attribute
@@ -4433,6 +4495,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                                                                                                                                                                                                      ]
  * // phpcs:enable
  * @return string               		html button
+ *  @example <div><?php echo dolGetButtonAction($langs->trans("Save"), '', 'default', 'save.php'); ?></div>
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -4457,7 +4520,15 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$label = $langs->trans($button['label']);
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
-				$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				$tmpUrl = '';
+				if (isset($subbutton['urlraw']) && !empty($subbutton['urlraw'])) {
+					$tmpUrl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
+				} elseif (!empty($button['urlroot'])) {
+					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				} elseif (!empty($button['url'])) {
+					$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				}
+
 				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
 				$button['params'] = $button['params'] ?? [];  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
@@ -4467,7 +4538,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			return $out;
 		}
 
-		if (count($url) > 1) {
+		if (count($url) > 1 || !empty($params["forceDropdownButtons"])) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction' . ($userRight ? '' : 'Refused') . '" title="' . dol_escape_htmltag($label) . '" data-toggle="dropdown">' . ($text ? $text : $label) . '</a>';
 			$out .= '<div class="dropdown-content">';
@@ -4480,7 +4551,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
 					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
-					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));	// For 'urlroot', no need to complete with DOL_URL_ROOT.
 				}
 
 				$subbuttonparam = array();
@@ -4617,7 +4688,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);
@@ -4708,7 +4779,7 @@ function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
 			// Not recommended
 			$value = dol_htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl((string) $value);
 		} else {
 			$value = dolPrintHTMLForAttribute((string) $value);
@@ -5370,7 +5441,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql2 .= ", '' as ref";
 		}
 		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
-		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
+		$sql2 .= " WHERE mc.email = '" . $db->escape((string) $objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
@@ -5507,7 +5578,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 
 		if (

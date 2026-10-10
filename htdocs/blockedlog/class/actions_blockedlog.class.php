@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,53 +130,4 @@ class ActionsBlockedlog extends CommonHookActions
 
 		return $ret;
 	}
-
-
-
-	/**
-	 * Overload the loadDataForCustomReports function : returns data to complete the customreport tool
-	 *
-	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
-	 * @param	?string				$action 		Current action (if set). Generally create or edit or null
-	 * @param	HookManager			$hookmanager    Hook manager propagated to allow calling another hook
-	 * @return	int									Return integer < 0 on error, 0 on success, 1 to replace standard code
-	 */
-	/*
-	public function loadDataForCustomReports($parameters, &$action, $hookmanager)
-	{
-		global $langs;
-
-		$langs->load("mymodule@mymodule");
-
-		$this->results = array();
-
-		$head = array();
-		$h = 0;
-
-		if ($parameters['tabfamily'] == 'mymodule') {
-			$head[$h][0] = dol_buildpath('/module/index.php', 1);
-			$head[$h][1] = $langs->trans("Home");
-			$head[$h][2] = 'home';
-			$h++;
-
-			$this->results['title'] = $langs->trans("MyModule");
-			$this->results['picto'] = 'mymodule@mymodule';
-		}
-
-		$head[$h][0] = 'customreports.php?objecttype='.$parameters['objecttype'].(empty($parameters['tabfamily']) ? '' : '&tabfamily='.$parameters['tabfamily']);
-		$head[$h][1] = $langs->trans("CustomReports");
-		$head[$h][2] = 'customreports';
-
-		$this->results['head'] = $head;
-
-		$arrayoftypes = array();
-		//$arrayoftypes['mymodule_myobject'] = array('label' => 'MyObject', 'picto'=>'myobject@mymodule', 'ObjectClassName' => 'MyObject', 'enabled' => isModEnabled('mymodule'), 'ClassPath' => "/mymodule/class/myobject.class.php", 'langs'=>'mymodule@mymodule')
-
-		$this->results['arrayoftype'] = $arrayoftypes;
-
-		return 0;
-	}
-	*/
-
-	/* Add other hook methods here... */
 }

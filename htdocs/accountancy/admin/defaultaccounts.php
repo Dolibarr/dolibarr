@@ -30,12 +30,6 @@
  * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
-
-// Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "trips", "loan"));
@@ -243,7 +240,7 @@ llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url, '', 0, 0, '', '',
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DefaultBindingDesc").'</span><br>';
+print '<div class="info">'.$langs->trans("DefaultBindingDesc").'</div>';
 print '<br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -284,6 +281,7 @@ foreach ($list_account_main as $key) {
 print "</table>\n";
 print "</div>\n";
 
+print '<br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

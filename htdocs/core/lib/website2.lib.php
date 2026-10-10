@@ -199,7 +199,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
-			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.preg_replace('/[^\w_-]/', '', $objectpage->pageurl).'");'."\n";
 		}
 		$tplcontent .= "ob_start();\n";
 		$tplcontent .= "try {\n";
@@ -480,7 +480,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
-			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.preg_replace('/[^\w_-]/', '', $objectpage->pageurl).'");'."\n";
 		}
 		$tplcontent .= "// END PHP ?>\n";
 
@@ -984,7 +984,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
  * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
  * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
  * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
- * Called by website->importWebSite() via dolKeepOnlyPhpCode() or when editing a page.
+ * Called by website->importWebSite() via dolKeepOnlyPhpCode() or when editing a page (full page) or when editing part of page (editinline)
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"

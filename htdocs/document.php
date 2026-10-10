@@ -50,21 +50,20 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
+}
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -191,12 +190,13 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 $ecmfile = '';
 if (!empty($hashp) && $hashp != 'shared') {
 	if (GETPOST('type', 'alpha') == 'link') {
+		// If we request a link
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$result = $link->fetch(0, $hashp);
 		if ($result > 0 && !empty($link->url)) {
 			if (preg_match('/^(http|dav)/', $link->url)) {
-				header('Location: '.$link->url);
+				header('Location: '.$link->url);				// Return the shared link we found in db
 				exit;
 			}
 		} else {
@@ -204,6 +204,7 @@ if (!empty($hashp) && $hashp != 'shared') {
 			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
 		}
 	} else {
+		// If we request a file
 		include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', '', '', $hashp);
@@ -221,7 +222,7 @@ if (!empty($hashp) && $hashp != 'shared') {
 					$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
 					//var_dump($original_file); exit;
 				} else {
-					httponly_accessforbidden('Bad link. File is from another module part.', 403);
+					httponly_accessforbidden('Bad entry found. File has a path from another module part.', 403);
 				}
 			} else {
 				$modulepart = $moduleparttocheck;
@@ -280,13 +281,20 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
+// Find the subdirectory name as the reference
+$refname = basename(dirname($original_file)."/");
+if ($refname == 'thumbs' || $refname == 'temp') {
+	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+	$refname = basename(dirname(dirname($original_file))."/");
+}
+
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -313,17 +321,19 @@ if (!empty($hashp) && $hashp != 'shared') {
 				}
 			}
 		}
-	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				if ($num > 0) {
-					$accessallowed = 1;
-				}
-			}
-		}
 	}
+}
+
+// Check permission on per object basis
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
+	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+
+	//var_dump($object);
+	if (is_object($object)) {
+		$accessallowed = restrictedArea($user, $modulepart, $object);
+	}
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
 }
 
 // Security:
@@ -377,12 +387,6 @@ if ($reshook < 0) {
 
 // If we show an invoice, we test if we must regenerate the PDF
 if ($modulepart == 'facture') {
-	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
-		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
-		$refname = basename(dirname(dirname($original_file))."/");
-	}
-
 	$invoice = fetchObjectByElement(0, $modulepart, $refname);
 
 	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {

@@ -1,5 +1,6 @@
 name: "CI-PUSH"
 
+
 on:
   push:
     # Executer only on push of the main repository, not on fork.
@@ -7,6 +8,8 @@ on:
       - develop
       - master
       - '=.0'
+    paths-ignore:
+      - '.agents/**'
 
 jobs:
   pre-commit:
@@ -33,12 +36,12 @@ jobs:
   #  uses: ./.github/workflows/windows-ci.yml
   #  with:
   #    gh_event: ${{ github.event_name }}
-  # gh-travis:  # Runs travis script on github runner (not on travis)
-  #   if: false
-  #   # needs: [pre-commit, phan]
-  #   # needs: [windows-ci]
-  #   secrets: inherit
-  #   needs: [pre-commit, phan, phpstan]
-  #   uses: ./.github/workflows/gh-travis.yml
-  #   with:
-  #     gh_event: ${{ github.event_name }}
+  # Runs the build of the .travis.yml emulated on a github runner (not on
+  # travis), see travis-emulated.yml. It starts only when the pre-commit CI
+  # has passed. Add phan, phpstan to the "needs" to also wait for them.
+  #travis-emulated:
+  #  secrets: inherit
+  #  needs: [pre-commit]
+  #  uses: ./.github/workflows/travis-emulated.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}

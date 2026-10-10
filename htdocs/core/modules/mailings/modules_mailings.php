@@ -78,6 +78,21 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 */
 	public $evenunsubscribe = 0;
 
+	/**
+	 * @var string[] List of module names that must be enabled for this selector to be active
+	 */
+	public $require_module = array();
+
+	/**
+	 * @var int<0,1> 1 to restrict the selector to admin users, 0 otherwise
+	 */
+	public $require_admin = 0;
+
+	/**
+	 * @var string|false  Icon to use for the selector (false or '' for no icon)
+	 */
+	public $picto = false;
+
 
 	/**
 	 *	Constructor

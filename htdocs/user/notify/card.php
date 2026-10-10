@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Abbes Bahfir        <contact@dolibarrpar.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Charlene Benke		<charlene@patas-monkey.com>
  *
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'mails', 'admin', 'other'));
 
 $id = GETPOSTINT("id");
 $ref = GETPOST('ref', 'alpha');
@@ -138,7 +138,9 @@ if ($action == 'add' && $permissiontoadd) {
 
 // Remove a notification (edit a user)
 if ($action == 'delete' && $permissiontoadd) {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT("actid");
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+	$sql .= " WHERE rowid = ".GETPOSTINT("actid");
+	$sql .= " AND fk_user = ".((int) $id);
 	$db->query($sql);
 }
 
@@ -188,7 +190,7 @@ if ($result > 0) {
 
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';

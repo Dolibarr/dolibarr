@@ -45,9 +45,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-$langs->loadLangs(array("admin", "errors"));
+$langs->loadLangs(array("admin"));
 
-if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
+if (!$user->admin && !$user->hasRight('blockedlog', 'read')) {
 	accessforbidden();
 }
 
@@ -296,12 +296,14 @@ print '<!-- filecheck_diff.php fragment -->'."\n";
 $errormsg = '';
 $reallocal = '';
 if (empty($file) || $file[0] !== '/' || strpos($file, '..') !== false || !preg_match('/^[A-Za-z0-9_\/.\-]+$/', $file)) {
+	$langs->load('errors');
 	$errormsg = $langs->trans("ErrorBadValueForParameter", dol_escape_htmltag($file), "file");
 }
 
 if (empty($errormsg)) {
 	$reallocal = realpath(DOL_DOCUMENT_ROOT.$file);
 	if ($reallocal === false || strpos($reallocal, realpath(DOL_DOCUMENT_ROOT).'/') !== 0 || !is_file($reallocal)) {
+		$langs->load('errors');
 		$errormsg = $langs->trans("ErrorFileNotFound", $file);
 	}
 }

@@ -419,6 +419,38 @@ if (GETPOSTINT('projectid') > 0) {
 		$projectstatic->fetch_thirdparty();
 	}
 	$res = $projectstatic->fetch_optionals();
+
+	// Quick edit for project extrafields (pencil shown on the project summary of this page)
+	if ($action == 'update_extras' && $projectstatic->id > 0) {	// Test on permission already done
+		$permissiontoeditextra = $user->hasRight('projet', 'creer');
+		if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$projectstatic->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+			$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$projectstatic->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+		}
+
+		if ($permissiontoeditextra) {
+			$projectstatic->oldcopy = dol_clone($projectstatic, 2);
+
+			$attribute_name = GETPOST('attribute', 'aZ09');
+
+			// Fill array 'array_options' with data from update form
+			$ret = $extrafields->setOptionalsFromPost(null, $projectstatic, $attribute_name);
+			if ($ret < 0) {
+				$error++;
+			}
+
+			if (!$error) {
+				$result = $projectstatic->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+				if ($result < 0) {
+					setEventMessages($projectstatic->error, $projectstatic->errors, 'errors');
+					$error++;
+				}
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
 } elseif (GETPOST('project_ref', 'alpha')) {
 	$projectstatic->fetch(0, GETPOST('project_ref', 'alpha'));
 	$projectidforalltimes = $projectstatic->id;
@@ -569,6 +601,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -677,6 +711,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 								$error++;
 								$langs->load("errors");
 								setEventMessages(null, $tmpproduct->errors, 'errors');
+								// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+								continue;
 							}
 
 							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -723,8 +759,14 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);        // Call method to get list of timespent for a timespent line id (We use the utility method found into Task object)
 					// $object->id is now the task id
+					if (!isset($arrayoftasks[$object->id][(int) $object->timespent_fk_product])) {
+						$arrayoftasks[$object->id][(int) $object->timespent_fk_product] = array('timespent' => 0, 'totalvaluetodivideby3600' => 0, 'ids' => array());
+					}
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
+					// Keep the time spent lines that feed this invoice line, so the back link below
+					// points each of them at its own line and not at the last one created.
+					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['ids'][] = (int) $value;
 				}
 
 				foreach ($arrayoftasks as $task_id => $data) {  // @phan-suppress-current-line PhanEmptyForeach
@@ -755,6 +797,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -808,7 +852,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						if (!$error) {
 							// Update lineid into line of timespent
 							$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'element_time SET invoice_line_id = ' . ((int) $lineid) . ', invoice_id = ' . ((int) $tmpinvoice->id);
-							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $toselect)) . ')';
+							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $timespent_data['ids'])) . ')';
 							$result = $db->query($sql);
 							if (!$result) {
 								$error++;
@@ -861,7 +905,7 @@ if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer'))
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinter->fk_project = $projectstatic->id;
-		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->label : '');
+		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->description : '');
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);
@@ -1091,7 +1135,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$cols = 2;
 			$savobject = $object;
 			$object = $projectstatic;
+			// On this page, the 'id' GET parameter is the task id, not the project id, so force the
+			// edit link/form of the project extrafields to use 'projectid' instead, and keep 'withproject'
+			// so the project summary (this whole block) stays visible after the edit link is followed.
+			$forcefieldid = 'projectid';
+			$moreparam = '&withproject=1';
 			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			unset($forcefieldid, $moreparam);
 			$object = $savobject;
 
 			print '</table>';

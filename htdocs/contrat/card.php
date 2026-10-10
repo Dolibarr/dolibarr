@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2026	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
@@ -310,42 +310,10 @@ if (empty($reshook)) {
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
+			$object->fk_contract_type = GETPOSTINT('contract_type');
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
-				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $origin;
-				$regs = array();
-				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-					$element = $regs[1];
-					$subelement = $regs[2];
-				}
-
-				// For compatibility
-				$classname = '';
-				if ($element == 'order') {
-					$element = $subelement = 'commande';
-				}
-				if ($element == 'propal') {
-					$element = 'comm/propal';
-					$subelement = 'propal';
-				}
-				if ($element == 'invoice' || $element == 'facture') {
-					$element = 'compta/facture';
-					$subelement = 'facture';
-				}
-				if ($element == 'facturerec' || $element == 'facture_rec') {
-					// FactureRec lives in compta/facture/class/facture-rec.class.php (#34775)
-					$element = 'compta/facture';
-					$subelement = 'facture-rec';
-					$classname = 'FactureRec';
-				}
-				if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
-					$element = 'fourn';
-					$subelement = 'fournisseur.facture-rec';
-					$classname = 'FactureFournisseurRec';
-				}
-
 				$object->origin    = $origin;
 				$object->origin_id = $originid;
 
@@ -357,17 +325,13 @@ if (empty($reshook)) {
 
 				$id = $object->create($user);
 				if ($id > 0) {
-					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-
-					if (empty($classname)) {
-						$classname = ucfirst($subelement);
-					}
-					$srcobject = new $classname($db);
-					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
-
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
-					$result = $srcobject->fetch($object->origin_id);
-					if ($result > 0) {
+
+					// Resolve and load the source object from its element type (propal, commande, facture, facture_rec, invoice_supplier_rec, ...)
+					$srcobject = fetchObjectByElement($object->origin_id, $origin);
+
+					if (is_object($srcobject) && $srcobject->id > 0) {
+						'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 						$srcobject->fetch_thirdparty();
 						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
@@ -458,12 +422,18 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+						if (is_object($srcobject) && !empty($srcobject->error)) {
+							$srcobjecterror = $srcobject->error;
+						} else {
+							$langs->load("errors");
+							$srcobjecterror = $langs->trans("ErrorRecordNotFound");
+						}
+						setEventMessages($srcobjecterror, (is_object($srcobject) ? $srcobject->errors : null), 'errors');
 						$error++;
 					}
 
 					// Hooks
-					$parameters = array('objFrom' => $srcobject);
+					$parameters = array('objFrom' => (is_object($srcobject) ? $srcobject : null));
 					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 					// modified by hook
 					if ($reshook < 0) {
@@ -951,6 +921,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -1182,6 +1153,7 @@ if ($result > 0) {
 // Create
 if ($action == 'create') {
 	$objectsrc = null;
+	$projectid = GETPOSTINT('projectid');
 	print load_fiche_titre($langs->trans('NewContract'), '', 'contract');
 
 	$soc = new Societe($db);
@@ -1190,67 +1162,42 @@ if ($action == 'create') {
 	}
 
 	if (GETPOST('origin') && GETPOSTINT('originid')) {
-		// Parse element/subelement (ex: project_task)
+		// Parse element (ex: project_task -> project) just to detect the 'project' origin handled below
 		$regs = array();
-		$element = $subelement = GETPOST('origin');
+		$element = GETPOST('origin');
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
 			$element = $regs[1];
-			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
 			$projectid = GETPOSTINT('originid');
 		} else {
-			// For compatibility
-			if ($element == 'order' || $element == 'commande') {
-				$element = $subelement = 'commande';
-			}
-			if ($element == 'propal') {
-				$element = 'comm/propal';
-				$subelement = 'propal';
-			}
-			if ($element == 'invoice' || $element == 'facture') {
-				$element = 'compta/facture';
-				$subelement = 'facture';
-			}
-			$classname = '';
-			if ($element == 'facturerec' || $element == 'facture_rec') {
-				$element = 'compta/facture';
-				$subelement = 'facture-rec';
-				$classname = 'FactureRec';
-			}
-			if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.facture-rec';
-				$classname = 'FactureFournisseurRec';
-			}
+			// Resolve and load the source object from its element type (propal, commande, facture, facture_rec, invoice_supplier_rec, ...)
+			$objectsrc = fetchObjectByElement($originid, $origin);
 
-			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+			if (is_object($objectsrc) && $objectsrc->id > 0) {
+				'@phan-var-force Commande|Propal|Facture $objectsrc';
+				if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+					$objectsrc->fetch_lines();
+				}
+				$objectsrc->fetch_thirdparty();
 
-			if (empty($classname)) {
-				$classname = ucfirst($subelement);
+				// Replicate extrafields
+				$objectsrc->fetch_optionals();
+				$object->array_options = $objectsrc->array_options;
+
+				$projectid = (int) $objectsrc->fk_project;
+
+				$soc = $objectsrc->thirdparty;
+
+				$note_private = (!empty($objectsrc->note_private) ? $objectsrc->note_private : '');
+				$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+
+				// Object source contacts list
+				$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
+			} else {
+				$objectsrc = null;
 			}
-			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Facture $objectsrc';
-			$objectsrc->fetch($originid);
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
-				$objectsrc->fetch_lines();
-			}
-			$objectsrc->fetch_thirdparty();
-
-			// Replicate extrafields
-			$objectsrc->fetch_optionals();
-			$object->array_options = $objectsrc->array_options;
-
-			$projectid = (int) $objectsrc->fk_project;
-
-			$soc = $objectsrc->thirdparty;
-
-			$note_private = (!empty($objectsrc->note_private) ? $objectsrc->note_private : '');
-			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : '');
-
-			// Object source contacts list
-			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
 		$projectid = GETPOSTINT('projectid');
@@ -1266,6 +1213,10 @@ if ($action == 'create') {
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
+	print '<input type="hidden" name="contract_type" value="'.GETPOSTINT('contract_type').'">';
 
 	print dol_get_fiche_head();
 
@@ -1594,6 +1545,12 @@ if ($action == 'create') {
 		print '</td><td>';
 		print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, $user->hasRight('contrat', 'creer'), 'datehourpicker');
 		print '</td>';
+		print '</tr>';
+
+		// Contract type (read-only)
+		$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+		print '<tr><td class="titlefield">'.$langs->trans('ContractType').'</td>';
+		print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $object->fk_contract_type] ?? $contractTypeLabels[0]).'</td>';
 		print '</tr>';
 
 		// Other attributes
@@ -1949,8 +1906,12 @@ if ($action == 'create') {
 							print '</tr>';
 						}
 
+						$parameters = ['line' => $object->lines[$cursorline - 1], 'i' => $cursorline - 1, 'coldisplay' => &$coldisplay, 'colspan' => $colspan, 'moreparam' => $moreparam];
+						$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;
+
 						// Display lines extrafields
-						if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+						if (empty($reshook) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 							$line = new ContratLigne($db);
 							$line->id = $objp->rowid;
 							$line->fetch_optionals();
@@ -2208,7 +2169,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end;
@@ -2219,7 +2180,7 @@ if ($action == 'create') {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
 							if (!empty($product->duration_value) && !empty($product->duration_unit)) {
-								$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+								$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 							}
 						}
 					}
@@ -2265,7 +2226,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end_real;
@@ -2275,7 +2236,7 @@ if ($action == 'create') {
 						if ($objp->fk_product > 0) {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
-							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+							$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 						}
 					}
 					$now = dol_now();
@@ -2447,6 +2408,16 @@ if ($action == 'create') {
 						'enabled' => true,
 					);
 				}
+				if (isModEnabled('intervention') && $object->status > 0) {
+					$langs->load("interventions");
+					$arrayofcreatebutton[] = array(
+						'url' => '/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('AddIntervention'),
+						'lang' => 'interventions',
+						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
 				if (count($arrayofcreatebutton)) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
@@ -2493,12 +2464,12 @@ if ($action == 'create') {
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete
 				unset($params['attr']['title']);
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, $params);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print "</div>";
@@ -2594,7 +2565,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 				if (fournprice > 0) {
 					if (this.id == fournprice) {
 					  options += ' selected';
-					  $("#buying_price").val(this.price);
+					  $("#buying_price").val(pricejs(this.price, 'MU'));
 					  trouve = true;
 					}
 				}
@@ -2612,7 +2583,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 			  $("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-				  $("#buying_price").val(selval).hide();
+				  $("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 				  $('#buying_price').show();
 			  });
@@ -2630,5 +2601,5 @@ if (isModEnabled('margin') && $action == 'editline') {
 		}
 	});
 	<?php
-	print "\n".'<script type="text/javascript">'."\n";
+	print '</script>'."\n";
 }

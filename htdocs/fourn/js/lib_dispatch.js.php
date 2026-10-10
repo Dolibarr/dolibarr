@@ -1,6 +1,9 @@
 <?php
+/* Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
+ */
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
+// Copyright (C) 2026 Lenin Rivas		<lenin.rivas777@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -183,14 +186,18 @@ function addDispatchLine(index, type, mode, lotnumber) {
 		$("#qty_" + (nbrTrs - 1) + "_" + index).data('index', index);
 		// Update dispatched qty when value dispatch qty input field changed
 		//$("#qty_" + (nbrTrs - 1) + "_" + index).change(this.onChangeDispatchLineQty);
-		//set focus on lot of new line (if it exists)
-		$("#lot_number_" + (nbrTrs) + "_" + index).focus();
 		//Clean bad values
 		$("tr[name^='" + type + "_'][name$='_" + index + "']:last").data("remove", "remove");
 		$("#lot_number_" + (nbrTrs) + "_" + index).val(lotnumber)
 		$("#idline_" + (nbrTrs) + "_" + index).val("-1")
 		$("#qty_" + (nbrTrs) + "_" + index).data('expected', "0");
 		$("#lot_number_" + (nbrTrs) + "_" + index).removeAttr("disabled");
+		//set focus on lot of new line (if it exists)
+		if ($("#lot_number_" + (nbrTrs) + "_" + index).length) {
+			$("#lot_number_" + (nbrTrs) + "_" + index).focus().select();
+		} else {
+			$("#qty_" + (nbrTrs) + "_" + index).focus().select();
+		}
 	}
 }
 
@@ -207,7 +214,7 @@ function addDispatchLinesFromSerialList(index, type) {
 	console.log("fourn/js/lib_dispatch.js.php addDispatchLinesFromSerialList type="+type+" index="+index);
 
 	var $dialog = jQuery("#dialogforpopup");
-	var html = '<textarea id="seriallist" class="centpercent" rows="10" placeholder="<?php echo dol_escape_js(dol_escape_htmltag($langs->transnoentitiesnoconv("EnterOneSerialNumberPerLine"))); ?>"></textarea>';
+	var html = '<textarea id="seriallist" class="centpercent" rows="10" placeholder=<?php echo "'".dol_escape_js(dol_escape_htmltag($langs->transnoentitiesnoconv("EnterOneSerialNumberPerLine")))."'" ; ?>></textarea>';
 	html += '<div id="seriallistmessage" class="opacitymedium paddingtop"></div>';
 	$dialog.html(html);
 
@@ -217,17 +224,17 @@ function addDispatchLinesFromSerialList(index, type) {
 	};
 
 	jQuery("#seriallist").on("input", function() {
-		jQuery("#seriallistmessage").removeClass("error").text('<?php echo dol_escape_js($langs->transnoentitiesnoconv("NbOfSerialNumbersDetected", "%s")); ?>'.replace('%s', getSerialList().length));
+		jQuery("#seriallistmessage").removeClass("error").text(<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("NbOfSerialNumbersDetected", "%s"))."'" ; ?>.replace('%s', getSerialList().length));
 	});
 
 	$dialog.dialog({
-		title: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("EnterMultipleSerialNumbers")); ?>',
+		title: <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("EnterMultipleSerialNumbers"))."'" ; ?>,
 		modal: true,
 		resizable: false,
 		width: 'auto',
 		buttons: [
 			{
-				text: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Apply")); ?>',
+				text: <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Apply"))."'" ; ?>,
 				click: function() {
 					var serials = getSerialList();
 					if (serials.length == 0) {
@@ -237,7 +244,7 @@ function addDispatchLinesFromSerialList(index, type) {
 					var seen = {};
 					for (var n = 0; n < serials.length; n++) {
 						if (seen[serials[n]]) {
-							jQuery("#seriallistmessage").addClass("error").text('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorDuplicateSerialNumberInList", "%s")); ?>'.replace('%s', serials[n]));
+							jQuery("#seriallistmessage").addClass("error").text(<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("ErrorDuplicateSerialNumberInList", "%s"))."'" ; ?>.replace('%s', serials[n]));
 							return;
 						}
 						seen[serials[n]] = true;
@@ -260,7 +267,7 @@ function addDispatchLinesFromSerialList(index, type) {
 				}
 			},
 			{
-				text: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>',
+				text: <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Cancel"))."'" ; ?>,
 				click: function() {
 					jQuery(this).dialog("close");
 				}
@@ -305,3 +312,51 @@ function onChangeDispatchLineQty(element) {
 		$(element).data('expected', $(element).val());
 	}
 }
+
+$(document).ready(function () {
+	$(document).on('keydown', '.inputlotnumber', function (e) {
+		if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
+			e.preventDefault();
+
+			var $input = $(this);
+			var $tr = $input.closest('tr');
+			var trName = $tr.attr('name');
+			if (!trName) {
+				return;
+			}
+
+			var parts = trName.split('_');
+			if (parts.length < 3) {
+				return;
+			}
+
+			var type = parts[0];
+			var rowIdx = parseInt(parts[1], 10);
+			var prodIdx = parseInt(parts[2], 10);
+
+			var $rows = $("tr[name^='" + type + "_'][name$='_" + prodIdx + "']");
+			var nbrTrs = $rows.length;
+
+			// If user is on the last row of this product line
+			if (rowIdx === nbrTrs - 1) {
+				var qty = parseFloat($("#qty_" + rowIdx + "_" + prodIdx).val());
+				if (qty > 1) {
+					addDispatchLine(prodIdx, type);
+				} else {
+					// Last line for this product reached, try focusing next product line if available
+					var nextProdIdx = prodIdx + 1;
+					var $nextLot = $("#lot_number_0_" + nextProdIdx);
+					if ($nextLot.length && !$nextLot.prop('disabled')) {
+						$nextLot.focus().select();
+					}
+				}
+			} else {
+				// Move focus to next row's lot input if it exists
+				var $nextRowLot = $("#lot_number_" + (rowIdx + 1) + "_" + prodIdx);
+				if ($nextRowLot.length) {
+					$nextRowLot.focus().select();
+				}
+			}
+		}
+	});
+});

@@ -395,6 +395,22 @@ class Tva extends CommonObject
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if a VAT declaration can be deleted: not once a payment exists, as for invoices
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function is_erasable()
+	{
+		// phpcs:enable
+		$totalpaid = $this->getSommePaiement();
+		if ($totalpaid < 0) {
+			return -1;
+		}
+		return (empty($totalpaid) ? 1 : 0);
+	}
+
 	/**
 	 *  Delete object in database
 	 *
@@ -406,6 +422,11 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
+
+		if ($this->is_erasable() <= 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
 
 		// Call trigger
 		$result = $this->call_trigger('TVA_DELETE', $user);
@@ -809,6 +830,16 @@ class Tva extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -965,7 +996,7 @@ class Tva extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

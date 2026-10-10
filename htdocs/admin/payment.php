@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2020  Maxime DEMAREST              <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "errors", "bills"));
+$langs->loadLangs(array("admin", "other", "bills"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -150,7 +150,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+				if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
@@ -166,7 +166,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
@@ -237,10 +237,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValue").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval)) {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}

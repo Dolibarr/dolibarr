@@ -39,7 +39,7 @@ class mailing_partnership extends MailingTargets
 	public $desc = "Thirdparties or members included into a partnership program";
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $require_admin = 0;
 

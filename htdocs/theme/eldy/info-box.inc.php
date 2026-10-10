@@ -305,7 +305,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box-title {
 	text-transform: uppercase;
 	/* font-weight: bold; */
-	margin-bottom: 3px;	/* not too much space so we can add another lines */
+	margin-bottom: 6px;	/* not too much space so we can add another lines */
 	opacity: 0.5;
 	/* color: var(--colortexttitlenotab); */
 }
@@ -314,6 +314,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-desc {
 	font-size: 0.91em;
+	line-height: 1.3em;
 }
 
 /* Force values for small screen 480 */

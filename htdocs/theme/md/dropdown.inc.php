@@ -473,11 +473,12 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
 	z-index: 1;
+	background: inherit;
 }
 
 
@@ -630,7 +631,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #000 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

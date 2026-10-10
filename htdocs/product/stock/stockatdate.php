@@ -6,6 +6,7 @@
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,6 +202,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}
@@ -267,6 +269,7 @@ if ($date && $dateIsValid) {
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}

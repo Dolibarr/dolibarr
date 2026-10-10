@@ -80,8 +80,8 @@ class FileUpload
 
 		$object_ref = 'UndefinedReference';
 		$object = null;
-		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
-		if ($pathname !== null && $filename !== null) {
+		// If pathname and filename are empty then we can still upload files if we have specified upload_dir on $options
+		if ($pathname !== '' && $filename !== '') {
 			// Get object from its id and type
 			$object = fetchObjectByElement($fk_element, $element);
 

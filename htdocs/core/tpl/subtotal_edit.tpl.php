@@ -152,11 +152,11 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 					$disabled = 1;
 				}
 				print '>';
-				print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+				print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
 				print '</textarea>';
 			} else {
 				print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
-				print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+				print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1).'"';
 				if ($line_type == 'subtotal') {
 					print ' readonly="readonly"';
 					$disabled = 1;
@@ -166,7 +166,9 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			if ($line_type == 'title') {
 				$predefinedtitles = $this->getPredefinedTitles();  // @phan-suppress-current-line PhanUndeclaredMethod
 				if (!empty($predefinedtitles)) {
-					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+					// The visible option label is exactly the title to insert, so read it from the selected
+					// option (already escaped by selectarray, decoded by the browser) instead of shipping a map.
+					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var o = this.options[this.selectedIndex]; if (o.value && o.value != \'-1\') { jQuery(\'#line_desc\').val(o.text); }"', 0, 0, 0, '', 'minwidth100');
 				}
 			}
 		}
@@ -195,7 +197,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<td colspan="' . $colspan . '" class="right"></td>';
 	} else {
 		print '<input type="text" readonly name="line_desc" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1);
 		print '"></td>';
 	}
 	?>
