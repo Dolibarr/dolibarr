@@ -4553,18 +4553,12 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall = 1;
-			$dateSelector = 0;
-			$inputalsopricewithtax = 1;
-			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
-				$senderissupplier = getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY');
-			}
+			// Display context of lines, also sets the global variables used by the line templates
+			$linesContext = $object->initObjectLinesDisplay();
 
 			// Show object lines (result may vary according to hidden option MAIN_NO_INPUT_PRICE_WITH_TAX)
 			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+				$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 			}
 
 			$num = count($object->lines);
@@ -4580,7 +4574,7 @@ if ($action == 'create') {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $societe, $mysoc);
+						$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 					}
 				}
 			}

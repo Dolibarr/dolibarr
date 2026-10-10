@@ -5670,25 +5670,9 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define $usemargins (used by objectline_xxx.tpl.php files)
-		$usemargins = 0;
-		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
-			$usemargins = 1;
-		}
+		$this->prepareObjectLinesDisplay();
 
 		$num = count($this->lines);
-
-		// Line extrafield
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line);
-
-		if (method_exists($this, 'loadExpeditions')) {
-			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
-			$this->loadExpeditions();
-		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printObjectLinesBlock', $parameters, $this, $action);
@@ -5727,23 +5711,174 @@ abstract class CommonObject
 				// Line extrafield. TODO Remove this. extrafields should be already loaded.
 				//$line->fetch_optionals();
 
-				if (is_object($hookmanager)) {
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
-				}
-				if (empty($reshook)) {
-					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
-				}
+				$this->printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 
 				$i++;
 			}
 			print "<!-- end printObjectLines() -->\n";
 		}
+	}
+
+	/**
+	 *	Prepare the display of the lines: global $usemargins and line extrafields used by the line templates (objectline_xxx.tpl.php)
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@return	void
+	 */
+	protected function prepareObjectLinesDisplay()
+	{
+		global $extrafields, $usemargins;
+
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
+		$usemargins = 0;
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+			$usemargins = 1;
+		}
+
+		// Line extrafield
+		if (!is_object($extrafields)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line);
+
+		if (method_exists($this, 'loadExpeditions')) {
+			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
+			$this->loadExpeditions();
+		}
+	}
+
+	/**
+	 *	Print a line of the lines table: hooks printObjectLine or printObjectSubLine, then printObjectLine() if no hook replaced it
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@param	string		$action				Action code
+	 *	@param	CommonObjectLine	$line		Line to print
+	 *	@param	int			$num				Number of lines
+	 *	@param	int			$i					Index of the line in $this->lines
+	 *	@param	int			$dateSelector		1=Show also date range input fields
+	 *	@param	Societe		$seller				Object of seller third party
+	 *	@param	?Societe	$buyer				Object of buyer third party
+	 *	@param	int<0,max>	$selected			ID line selected
+	 *	@param	?ExtraFields	$extrafields	Object of extrafields
+	 *	@param	string		$defaulttpldir		Directory where to find the template
+	 *	@return	void
+	 */
+	protected function printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir)
+	{
+		global $hookmanager;
+
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			if (empty($line->fk_parent_line)) {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			} else {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			}
+		}
+		if (empty($reshook)) {
+			$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card of the object before printObjectLines() and formAddObjectLine().
+	 *	Override it in child classes when the card uses other values.
+	 *
+	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		return array(
+			'seller' => $mysoc,
+			'buyer' => (is_object($this->thirdparty) ? $this->thirdparty : null),
+			'dateSelector' => 1,
+			'forceall' => 0,
+			'senderissupplier' => 0,
+			'inputalsopricewithtax' => 0,
+		);
+	}
+
+	/**
+	 *	Init the display of the lines: set the global variables used by the line templates (objectline_xxx.tpl.php) from getObjectLinesDisplayContext()
+	 *	To call in the card before printObjectLines() and formAddObjectLine().
+	 *
+	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
+	 */
+	public function initObjectLinesDisplay()
+	{
+		// TODO We should not use global var for this
+		global $forceall, $senderissupplier, $inputalsopricewithtax;
+
+		$context = $this->getObjectLinesDisplayContext();
+
+		$forceall = $context['forceall'];
+		$senderissupplier = $context['senderissupplier'];
+		$inputalsopricewithtax = $context['inputalsopricewithtax'];
+
+		return $context;
+	}
+
+	/**
+	 *	Return the HTML of a line as printed in the card by printObjectLines(), hooks printObjectLine and printObjectSubLine included.
+	 *	Used to reload a line with ajax. The line is always in view mode.
+	 *	The lines must be loaded into $this->lines (for example with getLinesArray()).
+	 *	Note: the caller must init the hook context of the card (for example 'propalcard') so modules hooking it render the line as in the card.
+	 *	The global variables of the caller used for the rendering ($object, $form, ...) are restored at the end.
+	 *
+	 *	@param	int		$lineid		Id of the line
+	 *	@param	string	$action		Action code
+	 *	@return	string				HTML of the line (<tr id="row-...">), empty string if line not found (error in $this->error)
+	 */
+	public function getObjectLineHtml($lineid, $action = '')
+	{
+		global $object, $form, $extrafields;
+		global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+
+		$lines = (is_array($this->lines) ? $this->lines : array());
+		$num = count($lines);
+		$i = 0;
+		$line = null;
+		foreach ($lines as $tmpline) {
+			if ($tmpline->id == $lineid) {
+				$line = $tmpline;
+				break;
+			}
+			$i++;
+		}
+		if ($line === null) {
+			$this->error = 'ErrorRecordNotFound';
+			return '';
+		}
+
+		// Third party is needed for seller or buyer and by printObjectLine()
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (!is_object($this->thirdparty) && property_exists($this, 'socid') && !empty($this->socid)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Keep the global variables of the caller, they are restored at the end
+		$savedGlobals = array($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins);
+
+		$object = $this; // Used by the line templates
+		if (!is_object($form)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+		}
+		$context = $this->initObjectLinesDisplay();
+		$this->prepareObjectLinesDisplay();
+
+		ob_start();
+		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], 0, $extrafields, '/core/tpl');
+		$out = ob_get_clean();
+
+		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+
+		return (string) $out;
 	}
 
 	/**

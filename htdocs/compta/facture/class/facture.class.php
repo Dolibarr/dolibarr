@@ -5947,6 +5947,19 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
+	}
+
+	/**
 	 * 	Create an array of invoice lines
 	 *
 	 * 	@return int<-1,1>	>0 if OK, <0 if KO
