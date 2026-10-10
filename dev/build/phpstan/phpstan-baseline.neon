@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^PHPDoc tag @var with type CommandeFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type FactureFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
