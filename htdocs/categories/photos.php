@@ -113,7 +113,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader("", "", $langs->trans("Categories"));
+llxHeader("", $langs->trans("Categories"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
