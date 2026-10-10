@@ -44,9 +44,12 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'commande', $id, '');
-
 $object = new Commande($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'commande', $id, '');
 
 /*
  * Ajout d'un nouveau contact
