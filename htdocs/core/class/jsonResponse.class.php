@@ -68,6 +68,16 @@ class JsonResponse
 	const HTTP_NOT_FOUND = 404;
 
 	/**
+	 * @var int HTTP status code: Method Not Allowed (ex: GET on an endpoint accepting only POST)
+	 */
+	const HTTP_METHOD_NOT_ALLOWED = 405;
+
+	/**
+	 * @var int HTTP status code: Conflict (ex: record modified by someone else since it was displayed)
+	 */
+	const HTTP_CONFLICT = 409;
+
+	/**
 	 * @var int HTTP status code: Internal Server Error
 	 */
 	const HTTP_INTERNAL_ERROR = 500;
@@ -256,6 +266,8 @@ class JsonResponse
 			self::HTTP_UNAUTHORIZED,
 			self::HTTP_FORBIDDEN,
 			self::HTTP_NOT_FOUND,
+			self::HTTP_METHOD_NOT_ALLOWED,
+			self::HTTP_CONFLICT,
 			self::HTTP_INTERNAL_ERROR,
 			self::HTTP_NOT_IMPLEMENTED,
 			self::HTTP_SERVICE_UNAVAILABLE
