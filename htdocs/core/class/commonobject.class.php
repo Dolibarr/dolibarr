@@ -10461,6 +10461,45 @@ abstract class CommonObject
 		return $this->isFieldEditAllowed($user, $field);
 	}
 
+	/**
+	 * Check whether the value of a field can be read from the user interface with generic tools
+	 * (ajax refresh of the values displayed on a card...), by a user allowed to read the object.
+	 *
+	 * The field must be enabled and visible on the card (visible 1, 3, 4 or 5, or an expression giving one of these values),
+	 * or editable from the user interface (fields like notes are hidden from generic forms but shown by their own block of the card).
+	 * Password fields are never readable, and the private note is always hidden to external users.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the value of the field can be read from the user interface, false otherwise
+	 */
+	public function isFieldReadableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || !$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		if (preg_match('/^password/', (string) $this->fields[$field]['type'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		if (!empty($this->fields[$field]['uieditable'])) {
+			return true;
+		}
+
+		$visible = isset($this->fields[$field]['visible']) ? $this->fields[$field]['visible'] : 0;
+		if (!is_numeric($visible)) {
+			$visible = dol_eval((string) $visible);
+		}
+
+		return in_array(abs((int) $visible), array(1, 3, 4, 5));
+	}
+
 
 	/**
 	 * Check if the field is defined in the object's field metadata.

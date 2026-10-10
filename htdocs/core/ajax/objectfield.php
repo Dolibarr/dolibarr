@@ -17,10 +17,13 @@
 
 /**
  *       \file      htdocs/core/ajax/objectfield.php
- *       \brief     Update one field of an object from the user interface (ajax edition of cards).
- *                  Only fields allowed by CommonObject::isFieldEditableFromUi() can be updated (attribute "uieditable").
- *                  The value is saved with CommonObject::updateFieldFromUi(), so triggers are called.
- *                  Answer is a JsonResponse, data contains the saved value and its output html.
+ *       \brief     Read or update fields of an object from the user interface (ajax edition of cards).
+ *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
+ *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
+ *                  POST with parameters field and value updates one field allowed by CommonObject::isFieldEditableFromUi()
+ *                  (attribute "uieditable"). The value is saved with CommonObject::updateFieldFromUi(), so triggers are called.
+ *                  Answer is a JsonResponse, data contains the values and their output html. After an update, it also contains
+ *                  the other fields changed by the update (computed fields, triggers...).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -50,18 +53,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/jsonResponse.class.php';
 $element = GETPOST('element', 'aZ09');
 $id = GETPOSTINT('id');
 $field = GETPOST('field', 'aZ09');
+$fieldlist = GETPOST('fields', 'aZ09comma');
 $tms = GETPOSTINT('tms');
+
+$isupdate = ($_SERVER['REQUEST_METHOD'] === 'POST');
 
 $langs->load('errors');
 
 $jsonResponse = new JsonResponse();
 
-// Only POST is allowed, so the CSRF token is always checked. An invalid token empties $_POST, so $field is empty.
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+// Update only with POST, so the CSRF token is always checked. An invalid token empties $_POST, so $field is empty.
+if (!$isupdate && $_SERVER['REQUEST_METHOD'] !== 'GET') {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_METHOD_NOT_ALLOWED);
 	$jsonResponse->output();
 }
-if (empty($element) || empty($id) || empty($field)) {
+if (empty($element) || empty($id) || ($isupdate ? empty($field) : empty($fieldlist))) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
 	$jsonResponse->output();
 }
@@ -73,10 +79,49 @@ if (!is_object($object) || $object->id <= 0) {
 	$jsonResponse->output();
 }
 
-// Security check with mode 'write', so restrictedArea() tests the write permission and the access of external users
-$result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, 'write');
+// Security check, restrictedArea() tests the read or write permission and the access of external users
+$result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, $isupdate ? 'write' : 'read');
 if (!$result) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
+}
+
+/**
+ * Return the value of a field of an object and its output html
+ *
+ * @param	CommonObject	$object		Object
+ * @param	string			$fieldname	Field name
+ * @return	array{value:mixed,html:string}
+ */
+function objectFieldGetOutput($object, $fieldname)
+{
+	// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
+	// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
+	$fielddef = $object->fields[$fieldname];
+	$fielddef['visible'] = 1;
+	$value = property_exists($object, $fieldname) ? $object->$fieldname : null;
+
+	return array('value' => $value, 'html' => $object->showOutputField($fielddef, $fieldname, $value));
+}
+
+// Read the values of fields
+if (!$isupdate) {
+	$fields = array();
+	foreach (explode(',', $fieldlist) as $fieldname) {
+		// Fields not readable are ignored, the page may display fields not defined in $fields
+		if ($fieldname !== '' && $object->isFieldReadableFromUi($user, $fieldname)) {
+			$fields[$fieldname] = objectFieldGetOutput($object, $fieldname);
+		}
+	}
+
+	$jsonResponse->data = array(
+		'element' => $element,
+		'id' => $id,
+		'fields' => $fields,
+		'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
+	);
+
+	$jsonResponse->setSuccess();
 	$jsonResponse->output();
 }
 
@@ -112,6 +157,14 @@ if ($type == 'html') {
  * Actions
  */
 
+// Values before the update, to return the other fields changed by the update
+$valuesbefore = array();
+foreach (array_keys($object->fields) as $fieldname) {
+	if ($object->isFieldReadableFromUi($user, $fieldname)) {
+		$valuesbefore[$fieldname] = property_exists($object, $fieldname) ? $object->$fieldname : null;
+	}
+}
+
 $result = $object->updateFieldFromUi($user, $field, $value);
 if ($result < 0) {
 	$jsonResponse->setError(dol_html_entity_decode($object->error, ENT_QUOTES | ENT_HTML5), JsonResponse::HTTP_BAD_REQUEST);
@@ -124,17 +177,22 @@ if (is_object($reloadedobject) && $reloadedobject->id > 0) {
 	$object = $reloadedobject;
 }
 
-// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
-// so the output is forced visible: the field is already allowed by isFieldEditableFromUi().
-$fielddef = $object->fields[$field];
-$fielddef['visible'] = 1;
+// The updated field and the other fields changed by the update
+$fields = array($field => objectFieldGetOutput($object, $field));
+foreach ($valuesbefore as $fieldname => $valuebefore) {
+	$valueafter = property_exists($object, $fieldname) ? $object->$fieldname : null;
+	if ($fieldname != $field && $valueafter !== $valuebefore) {
+		$fields[$fieldname] = objectFieldGetOutput($object, $fieldname);
+	}
+}
 
 $jsonResponse->data = array(
 	'element' => $element,
 	'id' => $id,
 	'field' => $field,
-	'value' => $object->$field,
-	'html' => $object->showOutputField($fielddef, $field, $object->$field),
+	'value' => $fields[$field]['value'],
+	'html' => $fields[$field]['html'],
+	'fields' => $fields,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
 );
 

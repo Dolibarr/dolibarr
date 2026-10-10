@@ -1279,6 +1279,99 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * Data provider for testIsFieldReadableFromUi
+	 *
+	 * @return array<string,array{0:string,1:array<string,mixed>,2:bool}>
+	 */
+	public function fieldReadableFromUiProvider()
+	{
+		return array(
+			'visible_card' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 1), true),
+			'visible_card_not_list' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => -1), true),
+			'visible_view_only' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 5), true),
+			'visible_expression_true' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => '1 + 0'), true),
+			'visible_expression_false' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => '0 + 0'), false),
+			'visible_list_only' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 2), false),
+			'hidden' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 0), false),
+			'no_visible_attribute' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1), false),
+			'hidden_but_uieditable' => array('test_field', array('type' => 'html', 'label' => 'Test', 'enabled' => 1, 'visible' => 0, 'uieditable' => 1), true),
+			'not_enabled' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 0, 'visible' => 1), false),
+			'password' => array('test_field', array('type' => 'password', 'label' => 'Test', 'enabled' => 1, 'visible' => 1), false),
+		);
+	}
+
+	/**
+	 * isFieldReadableFromUi() allows only enabled fields visible on the card, or editable from the user interface
+	 *
+	 * @dataProvider fieldReadableFromUiProvider
+	 * @param string              $fieldName   Field name
+	 * @param array<string,mixed> $fieldConfig Field configuration
+	 * @param bool                $expected    Expected result
+	 * @return void
+	 */
+	public function testIsFieldReadableFromUi($fieldName, $fieldConfig, $expected)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db, $fieldName, $fieldConfig) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array();
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB              $db          Database handler
+			 * @param string              $fieldName   Field name
+			 * @param array<string,mixed> $fieldConfig Field configuration
+			 */
+			public function __construct($db, $fieldName, $fieldConfig)
+			{
+				$this->db = $db;
+				$this->fields[$fieldName] = $fieldConfig;
+			}
+		};
+
+		$this->assertSame($expected, $localobject->isFieldReadableFromUi($user, $fieldName), 'Config: '.json_encode($fieldConfig));
+		$this->assertFalse($localobject->isFieldReadableFromUi($user, 'undefined_field'), 'Undefined field must not be readable from UI');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Fields readable from the user interface on a core class: totals and notes, but not the private note for external users
+	 *
+	 * @return void
+	 */
+	public function testIsFieldReadableFromUiOnCoreClasses()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		foreach (array('ref', 'ref_client', 'total_ht', 'total_tva', 'total_ttc', 'note_public', 'note_private') as $field) {
+			$this->assertTrue($propal->isFieldReadableFromUi($user, $field), 'Propal '.$field.' must be readable from UI');
+		}
+		$this->assertFalse($propal->isFieldReadableFromUi($user, 'import_key'), 'Propal import_key is hidden');
+
+		$externaluser = clone $user;
+		$externaluser->socid = 1;
+		$this->assertTrue($propal->isFieldReadableFromUi($externaluser, 'note_public'));
+		$this->assertFalse($propal->isFieldReadableFromUi($externaluser, 'note_private'), 'The private note is hidden to external users');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
 	 *
 	 * @return void
