@@ -632,7 +632,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'classifyclosed' && $permissiontoread) {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
