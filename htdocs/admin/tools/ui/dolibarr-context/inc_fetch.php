@@ -22,7 +22,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<code>Dolibarr.tools.fetch()</code> sends ajax requests to Dolibarr pages and handles what every module has to do otherwise:
 	</p>
 	<ul>
-		<li>The anti CSRF token is added automatically for POST, PUT, PATCH and DELETE requests (option <code>token: true</code> to add it on a GET request).</li>
+		<li>The anti CSRF token is added automatically for POST, PUT, PATCH and DELETE requests (option <code>token: true</code> to add it on a GET request). It is read from the meta tag <code>anti-csrf-currenttoken</code> printed by <code>main.inc.php</code>.</li>
 		<li>Parameters are sent the way PHP reads them: arrays as <code>key[]</code>, objects as <code>key[sub]</code>, booleans as <code>1</code> / <code>0</code>.</li>
 		<li>The response is parsed according to its content type (JSON or text), or forced with option <code>responseType</code>. A text response that looks like JSON is parsed as JSON, because many Dolibarr ajax pages print JSON without JSON content type.</li>
 		<li>Responses built with the PHP class <code>JsonResponse</code> are recognized, see below.</li>
@@ -83,7 +83,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<li><code>result</code> to <code>0</code> is an error, even if the HTTP status could not be set to 400 because something was already printed.</li>
 		<li><code>msg</code> is used as error message.</li>
 		<li>On success, the whole response is returned, or only <code>data</code> with option <code>unwrap: true</code>. A success <code>msg</code> is not displayed automatically.</li>
-		<li><code>newToken</code> is not used: with <code>NOTOKENRENEWAL</code> the token to use stays the one of the <code>DOL_CSRF_TOKEN</code> context var.</li>
+		<li><code>newToken</code> is not used: with <code>NOTOKENRENEWAL</code> the token to use stays the one of the meta tag <code>anti-csrf-currenttoken</code>.</li>
 	</ul>
 	<?php
 	$lines = array(

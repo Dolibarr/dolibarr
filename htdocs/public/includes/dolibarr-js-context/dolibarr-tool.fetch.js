@@ -11,8 +11,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - responses built with PHP class JsonResponse {result, msg, newToken, data, debug} recognized :
 	 *   result = 0 is an error even with HTTP 200, msg is used as error message, option unwrap returns only data
 	 *
-	 * Require Dolibarr context vars
-	 * DOL_CSRF_TOKEN
+	 * The token is read from the meta tag anti-csrf-currenttoken printed by main.inc.php
 	 *
 	 * Note : the called page must define NOTOKENRENEWAL, otherwise each request renews the session token
 	 * and invalidates the forms of the current page.
@@ -72,6 +71,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				target.append(name, value);
 			}
 		});
+	}
+
+	/**
+	 * Get the anti CSRF token to use for ajax calls (current token of the session)
+	 * @returns {string}
+	 */
+	function getCsrfToken() {
+		const meta = document.querySelector('meta[name="anti-csrf-currenttoken"]');
+		return meta ? (meta.getAttribute('content') || '') : '';
 	}
 
 	/**
@@ -159,12 +167,12 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const upperMethod = method.toUpperCase();
 		const isReadMethod = upperMethod === 'GET' || upperMethod === 'HEAD';
 		const addToken = token === undefined ? !isReadMethod : !!token;
-		const csrfToken = Dolibarr.getContextVar('DOL_CSRF_TOKEN', '');
+		const csrfToken = addToken ? getCsrfToken() : '';
 		const finalUrl = new URL(url, window.location.href);
 		const init = { credentials: 'same-origin', ...fetchOptions, method: upperMethod, headers: { ...headers } };
 
 		if (addToken && !csrfToken) {
-			Dolibarr.log('tools: fetch: DOL_CSRF_TOKEN context var is missing');
+			Dolibarr.log('tools: fetch: meta anti-csrf-currenttoken is missing, request sent without token');
 		}
 
 		if (isReadMethod) {
