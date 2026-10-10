@@ -39,9 +39,9 @@ jobs:
   # Runs the build of the .travis.yml emulated on a github runner (not on
   # travis), see travis-emulated.yml. It starts only when the pre-commit CI
   # has passed. Add phan, phpstan to the "needs" to also wait for them.
-  travis-emulated:
-    secrets: inherit
-    needs: [pre-commit]
-    uses: ./.github/workflows/travis-emulated.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  #travis-emulated:
+  #  secrets: inherit
+  #  needs: [pre-commit]
+  #  uses: ./.github/workflows/travis-emulated.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}

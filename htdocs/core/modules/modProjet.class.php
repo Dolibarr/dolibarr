@@ -125,6 +125,13 @@ class modProjet extends DolibarrModules
 				"",
 				0,
 			],
+			[
+				"PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE",
+				"emailtemplate:project_task",
+				"(SendingReminderForOverdueTask)",
+				'Email template used to remind the task executives of an overdue task (see MAIN_DELAY_TASKS_TODO)',
+				0,
+			],
 		];
 
 		// Boxes
@@ -147,6 +154,19 @@ class modProjet extends DolibarrModules
 			'frequency' => 1,
 			'unitfrequency' => 86400 * 7,
 			'status' => 0,
+			'test' => 'isModEnabled("project")',
+		);
+		$this->cronjobs[] = array(
+			'label' => 'SendReminderForOverdueTasksTitle',
+			'jobtype' => 'method',
+			'class' => 'projet/class/task.class.php',
+			'objectname' => 'Task',
+			'method' => 'sendReminderForOverdueTasks',
+			'parameters' => '',
+			'comment' => 'SendReminderForOverdueTasks',
+			'frequency' => 1,
+			'unitfrequency' => 86400,
+			'status' => 1,
 			'test' => 'isModEnabled("project")',
 		);
 		// Permissions
