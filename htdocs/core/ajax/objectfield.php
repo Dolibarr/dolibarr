@@ -56,61 +56,40 @@ $langs->load('errors');
 
 $jsonResponse = new JsonResponse();
 
-/**
- * Print the JSON answer with a HTTP response code and stop
- *
- * @param JsonResponse	$jsonResponse		Answer
- * @param int			$httpResponseCode	HTTP response code, used when answer is an error
- * @return void
- */
-function objectFieldPrintResponse(JsonResponse $jsonResponse, $httpResponseCode = 400)
-{
-	global $db;
-
-	top_httphead('application/json');
-	$response = $jsonResponse->getResponse();
-	if (!$jsonResponse->result) {
-		http_response_code($httpResponseCode);
-	}
-	print $response;
-	$db->close();
-	exit;
-}
-
 // Only POST is allowed, so the CSRF token is always checked. An invalid token empties $_POST, so $field is empty.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorBadParameters');
-	objectFieldPrintResponse($jsonResponse, 405);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_METHOD_NOT_ALLOWED);
+	$jsonResponse->output();
 }
 if (empty($element) || empty($id) || empty($field)) {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorBadParameters');
-	objectFieldPrintResponse($jsonResponse, 400);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
+	$jsonResponse->output();
 }
 
 // Load object
 $object = fetchObjectByElement($id, $element);
 if (!is_object($object) || $object->id <= 0) {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorRecordNotFound');
-	objectFieldPrintResponse($jsonResponse, 404);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorRecordNotFound'), JsonResponse::HTTP_NOT_FOUND);
+	$jsonResponse->output();
 }
 
 // Security check with mode 'write', so restrictedArea() tests the write permission and the access of external users
 $result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, 'write');
 if (!$result) {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('NotEnoughPermissions');
-	objectFieldPrintResponse($jsonResponse, 403);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
 }
 
 // The user interface can only change fields with an explicit opt-in, never isFieldEditAllowed() alone
 if (!$object->isFieldEditableFromUi($user, $field)) {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorFieldIsNotEditable');
-	objectFieldPrintResponse($jsonResponse, 403);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorFieldIsNotEditable'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
 }
 
 // Optional optimistic lock: refuse if the object was modified since the date of modification known by the page
 if ($tms > 0 && !empty($object->date_modification) && $object->date_modification > $tms) {
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorRecordModifiedSinceDisplay');
-	objectFieldPrintResponse($jsonResponse, 409);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorRecordModifiedSinceDisplay'), JsonResponse::HTTP_CONFLICT);
+	$jsonResponse->output();
 }
 
 // Get the value with a filter matching the type of field
@@ -123,8 +102,8 @@ if ($type == 'html') {
 	$value = GETPOSTINT('value');
 } else {
 	// Other types (dates, lists, links...) are not supported yet
-	$jsonResponse->msg = $langs->transnoentitiesnoconv('ErrorFieldIsNotEditable');
-	objectFieldPrintResponse($jsonResponse, 400);
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorFieldIsNotEditable'), JsonResponse::HTTP_BAD_REQUEST);
+	$jsonResponse->output();
 }
 
 
@@ -134,8 +113,8 @@ if ($type == 'html') {
 
 $result = $object->updateFieldFromUi($user, $field, $value);
 if ($result < 0) {
-	$jsonResponse->msg = dol_html_entity_decode($object->error, ENT_QUOTES | ENT_HTML5);
-	objectFieldPrintResponse($jsonResponse, 400);
+	$jsonResponse->setError(dol_html_entity_decode($object->error, ENT_QUOTES | ENT_HTML5), JsonResponse::HTTP_BAD_REQUEST);
+	$jsonResponse->output();
 }
 
 // Reload object to return the value really saved and the new date of modification
@@ -149,7 +128,6 @@ if (is_object($reloadedobject) && $reloadedobject->id > 0) {
 $fielddef = $object->fields[$field];
 $fielddef['visible'] = 1;
 
-$jsonResponse->result = 1;
 $jsonResponse->data = array(
 	'element' => $element,
 	'id' => $id,
@@ -159,4 +137,5 @@ $jsonResponse->data = array(
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
 );
 
-objectFieldPrintResponse($jsonResponse);
+$jsonResponse->setSuccess();
+$jsonResponse->output();
