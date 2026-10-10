@@ -271,7 +271,7 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a DRAFT supplier order (purchase order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'description' => "Create a DRAFT supplier order (purchase order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. The third party is mandatory, so ask the user for their ID or name beforehand if you don't already have it. You can give also the lines that name its product_ref and quantity. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewCreateSupplierOrder',
 						'object' => 'CommandeFournisseur',
@@ -368,6 +368,47 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'payments_list',
 					'description' => "Payments already recorded on one invoice: amount, date, payment mode, bank reference.",
 					'params' => ['id' => "Rowid of the invoice."]
+				]
+			]
+		],
+		'orders' => [
+			'label' => 'sale orders',
+			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT sale order (customer order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. The third party is mandatory, so ask the user for their ID or name beforehand if you don't already have it. You can give also the lines that name its product_ref and quantity. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateOrder',
+						'object' => 'Commande',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['commande', 'creer'],
+						// Commande::create() refuses without one, and a draft
+						// created today is what the user means.
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				]
 			]
 		],
@@ -597,47 +638,6 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => "One warehouse with its address, status and description."
-				]
-			]
-		],
-		'orders' => [
-			'label' => 'customer orders (commandes)',
-			'methods' => [
-				'post' => [
-					'suffix' => 'create',
-					'description' => "Create a DRAFT customer order. Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The order date defaults to today. The user confirms before anything is written.",
-					'write' => [
-						'preview' => 'AIPreviewCreateOrder',
-						'object' => 'Commande',
-						'thirdparty' => 'socid',
-						'lines' => 'lines',
-						'right' => ['commande', 'creer'],
-						// Commande::create() refuses without one, and a draft
-						// created today is what the user means.
-						'defaults' => ['date' => 'now']
-					],
-					'params' => [
-						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
-						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
-					]
-				],
-				'index' => [
-					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
-					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
-					'params' => [
-						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
-						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
-					]
-				],
-				'get' => [
-					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
-					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
-				],
-				'getByRef' => [
-					'suffix' => 'get_by_ref',
-					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
-					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				]
 			]
 		],

@@ -597,9 +597,13 @@ try {
 		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
 		$systemRules .= "Answer JSON format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
 		$systemRules .= "ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language. ";
-		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. Only when genuinely NO tool can fulfill the request, use respond_to_user to say the feature is not available. ";
+		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. ";
+		$systemRules .= "If you need to to a search before an action answer with a search tool.";
+		$systemRules .= "Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available. ";
 
-		// If MCP is disabled, we disable all tools
+
+
+		// If option is on, we disable all tools
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
 		}
@@ -617,7 +621,9 @@ try {
 
 		// A bare date is not enough for weaker models: state explicitly that
 		// relative periods are the assistant's job to resolve, not the user's.
-		$systemPrompt .= $systemRules . " Current date: " . date('Y-m-d') . " (" . date('l') . ").";
+		// Use date ISO 8601
+		$date = new DateTime('now', new DateTimeZone('UTC'));
+		$systemPrompt .= $systemRules . " Current date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
