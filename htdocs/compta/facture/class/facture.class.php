@@ -2649,11 +2649,8 @@ class Facture extends CommonInvoice
               $totalTVA += $this->lines[$i]->tva_tx /100 * $this->lines[$i]->total_ht * (1-$previousprogress) ;
               }
          }
-var_dump($totalTVA);
-var_dump($totalHTwospecialcode);
-
-                return round($this->prorata_discount * $totalTVA/$totalHTwospecialcode, 2);
-        }
+         return round($this->prorata_discount * $totalTVA/$totalHTwospecialcode, 2);
+    }
 
 	/**
 	 * Provide the "BTP" TTC: TTC - prorata - VAT on prorata - retained warranty
