@@ -456,24 +456,22 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// TVA prorata
-$objecttmp = new Facture($db);
-$objecttmp->fetch($obj->rowid);
-$objecttmp->fetch_optionals();
-$tvaprorata =$objecttmp->tvaOnProrata() ;
+$errorforinvoice = array();
+
+// TVA prorata - A AMELIORER SUR REPERAGE DES COMPTES 
+$objecttmp=New facture($db);
 $to_tva = array( &$tabtva, &$tabttc);
-$compt_tva=0; // pas terrible !
 foreach ($to_tva as &$tab) {
-     $compt_tva+=1;
      foreach ($tab as $invoice => $accounts) {
+        $objecttmp->fetch($invoice);
+        $objecttmp->fetch_optionals();
+        $tvaprorata =$objecttmp->tvaOnProrata() ;
         foreach ($accounts as $label => $value) {
-            if ($compt_tva==1) $tab[$invoice][$label] -= $tvaprorata ;
-            if ($compt_tva==2) $tab[$invoice][$label] += $tvaprorata ;
+            if (preg_match("/4457/", $label)) $tab[$invoice][$label] -= $tvaprorata ;
+            if (preg_match("/411/", $label)) $tab[$invoice][$label] -= $tvaprorata ;
         }
     }
 }
-
-$errorforinvoice = array();
 
 // Round prorata and TVA to cents
 if (getDolGlobalString('ROUND_IN_ACCOUNTING')) {
