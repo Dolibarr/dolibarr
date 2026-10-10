@@ -3092,6 +3092,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {

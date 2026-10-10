@@ -78,6 +78,10 @@ $permissiontoadd = $user->rights->commande->creer;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'commande', $id, '');
 
 
