@@ -65,6 +65,8 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+		$fieldid = 'rowid';	// $id is now the id of the invoice, not its ref
 		$object->fetch_thirdparty();
 	}
 }
