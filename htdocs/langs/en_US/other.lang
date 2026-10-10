@@ -527,6 +527,7 @@ CloudVoiceRequiresSecureContext=The Cloud Voice engine requires %s or %s. If you
 WorkerInitFailed=Failed to initialize worker (Network or CSP error?). Try 'Cloud' mode.
 NetworkError=Failed to load
 AIError=AI Error
+AIPdfReport=PDF report
 AISessionExpiredReload=Your session has expired: please reload the page and sign in again
 AIContextCounter=Context: %s exchange(s), %s message(s) =~ %s tokens
 AIContextClear=None

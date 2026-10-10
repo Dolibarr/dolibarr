@@ -3191,7 +3191,6 @@ abstract class CommonObject
 								}
 								break;
 							case 'order_supplier':
-								/** @var CommandeFournisseur $this */
 								/** @var CommandeFournisseurLigne $line */
 								'@phan-var-force CommandeFournisseur $this';
 								'@phan-var-force CommandeFournisseurLigne $line';
@@ -3217,7 +3216,6 @@ abstract class CommonObject
 								);
 								break;
 							case 'invoice_supplier':
-								/** @var FactureFournisseur $this */
 								/** @var SupplierInvoiceLine $line */
 								'@phan-var-force FactureFournisseur $this';
 								'@phan-var-force SupplierInvoiceLIne $line';
