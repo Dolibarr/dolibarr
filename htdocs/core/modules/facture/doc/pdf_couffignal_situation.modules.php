@@ -2283,11 +2283,11 @@ class pdf_couffignal_situation extends ModelePDFFactures
                    if (getDolGlobalInt('INVOICE_USE_SITUATION') !=0) {
                         $previousprogress = $object->lines[$i]->get_Prev_Progress($object->lines[$i]->fk_facture) / 100;
                    }
-                   $totaltvaprorata += $object->lines[$i]->total_ht * (1-$previousprogress) ;
+                   $totalwospecialcode += $object->lines[$i]->total_ht * (1-$previousprogress) ;
              }
          }
-         if ($totaltvaprorata != 0) {
-              $prorata_effective_rate = ($totaltvaprorata - $object->prorata_discount) / $totaltvaprorata;
+         if ($totalwospecialcode != 0) {
+              $prorata_effective_rate = ($totalwospecialcode - $object->prorata_discount) / $totalwospecialcode;
          }
          for ($i=0; $i < count($object->lines); $i++) {
                // --- Manage VAT, sorted by VAT rate ---
