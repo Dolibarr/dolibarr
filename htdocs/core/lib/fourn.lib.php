@@ -98,7 +98,7 @@ function facturefourn_prepare_head(FactureFournisseur $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/core/note.php?element=fourn_facture&facid='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -243,7 +243,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/core/note.php?element=fourn_commande&id='.$object->id;
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
