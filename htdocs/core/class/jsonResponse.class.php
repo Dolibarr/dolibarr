@@ -59,11 +59,47 @@ class JsonResponse
 	public $newToken = '';
 
 	/**
+	 * Event messages to display by the caller, by style
+	 *
+	 * @var array{mesgs?:string[],warnings?:string[],errors?:string[]}
+	 */
+	public $eventMessages = array();
+
+	/**
 	 * JsonResponse constructor.
 	 */
 	public function __construct()
 	{
 		$this->newToken = newToken();
+	}
+
+	/**
+	 * Move the event messages set with setEventMessages() from the session into the response.
+	 * They are then displayed by the ajax caller (Dolibarr.tools.fetch) instead of on the next loaded page.
+	 *
+	 * @return void
+	 */
+	public function addSessionEventMessages()
+	{
+		global $langs;
+
+		if (empty($_SESSION['dol_events']) || !is_array($_SESSION['dol_events'])) {
+			return;
+		}
+
+		if (is_object($langs)) {
+			$langs->load('errors');
+		}
+
+		foreach (array('mesgs', 'warnings', 'errors') as $style) {
+			if (!empty($_SESSION['dol_events'][$style]) && is_array($_SESSION['dol_events'][$style])) {
+				foreach ($_SESSION['dol_events'][$style] as $message) {
+					// Same translation as dol_htmloutput_mesg(), messages can be translation keys
+					$this->eventMessages[$style][] = is_object($langs) ? $langs->trans((string) $message) : (string) $message;
+				}
+			}
+			unset($_SESSION['dol_events'][$style]);
+		}
 	}
 
 	/**
@@ -87,6 +123,7 @@ class JsonResponse
 		$jsonResponse->newToken = $this->newToken;
 		$jsonResponse->data = $this->data;
 		$jsonResponse->debug = $this->debug;
+		$jsonResponse->eventMessages = (object) $this->eventMessages;
 
 		return json_encode($jsonResponse, JSON_PRETTY_PRINT);
 	}
