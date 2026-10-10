@@ -1636,9 +1636,15 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			// The label of a job is a translation key, with the lang file to load after ':' (as in cron/list.php)
+			$reg = array();
+			if (preg_match('/:(.*)$/', $this->label, $reg)) {
+				$langs->load($reg[1]);
+			}
+			$labeltoshow = $langs->transnoentitiesnoconv(preg_replace('/:.*$/', '', $this->label));
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow);
 			// The body gives what the job returned, so the cause can be read without opening the job
-			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label)."\n\n";
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow)."\n\n";
 			$msg .= $langs->transnoentitiesnoconv("CronDtLastResult").': '.dol_print_date($this->datelastresult, 'dayhourtext')."\n";
 			$msg .= $langs->transnoentitiesnoconv("CronLastResult").': '.$this->lastresult."\n";
 			$msg .= $langs->transnoentitiesnoconv("CronLastOutput").":\n".$this->lastoutput."\n";

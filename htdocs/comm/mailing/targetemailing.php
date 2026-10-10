@@ -591,6 +591,11 @@ if ($object->fetch($id) >= 0) {
 				$classname = "mailing_".$modulename;
 				require_once $file;
 
+				if (!class_exists($classname)) {
+					dol_syslog("Emailing target selector class ".$classname." not found", LOG_WARNING);
+					continue;
+				}
+
 				$obj = new $classname($db);
 				'@phan-var-force MailingTargets $obj';
 

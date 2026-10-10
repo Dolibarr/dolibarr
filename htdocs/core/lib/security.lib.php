@@ -1199,7 +1199,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
 				if (!$user->hasRight('expensereport', 'readall')) {
-					if (!in_array($useridtocheck, $childids)) {
+					if (!in_array($useridtocheck, $childids) && !($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id)) {
 						return false;
 					}
 				}
