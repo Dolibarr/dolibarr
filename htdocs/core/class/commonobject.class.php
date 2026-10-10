@@ -164,7 +164,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * notnull?: int<-1, 1>,
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
+	 * uieditable?: int<0, 1>,
 	 * default?: string|int,
 	 * description?: string,
 	 * index?: int<0, 1>,
@@ -223,6 +224,7 @@ abstract class CommonObject
 	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 * 'noteditable' says if field is not editable (1 or 0)
 	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'uieditable' says if field can be modified from the user interface with generic tools like ajax edition (1 or 0, default 0). See isFieldEditableFromUi()
 	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 * 'index' if we want an index in database.
 	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
@@ -2389,6 +2391,122 @@ abstract class CommonObject
 		return $result;
 	}
 
+
+	/**
+	 * @var array<string,bool> Fields currently being processed by setFieldValue(), keyed by field name.
+	 *                         Used to detect and break infinite recursion that could be caused by
+	 *                         onFieldValueChanged() side effects calling setFieldValue() back.
+	 */
+	protected $fieldValueBeingSet = array();
+
+	/**
+	 * Set a value for a dynamic field on the current object.
+	 *
+	 * This method performs multiple safety checks before assigning the value:
+	 * - verifies that the field is defined
+	 * - checks if the user is allowed to edit the field
+	 * - optionally validates the value if validation is required
+	 *
+	 * If all checks pass, the value is assigned dynamically to the property, and
+	 * onFieldValueChanged() is called so child classes can recompute dependent fields
+	 * (for example recalculating a TTC amount when the HT amount of a line changes).
+	 *
+	 * @param User 		$user					The user attempting to modify the field.
+	 * @param string 	$fieldKey 	 			The name of the field to modify.
+	 * @param mixed 	$value 					The value to assign to the field.
+	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value.
+	 *                                         	Only user rights are skipped, field and object state checks still apply.
+	 *                                         	When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
+	 *
+	 * @return bool Returns true if the value was successfully set, false otherwise.
+	 */
+	public function setFieldValue(User $user, $fieldKey, $value, $byPassUserPermission = false)
+	{
+		global $langs;
+
+		if (!empty($this->fieldValueBeingSet[$fieldKey])) {
+			// A side effect (onFieldValueChanged) is trying to set this same field again while it is
+			// still being processed higher up the call stack: this would cause infinite recursion.
+			dol_syslog(get_class($this)."::setFieldValue recursive call detected on field '".$fieldKey."', aborting to avoid infinite loop", LOG_WARNING);
+			return false;
+		}
+
+		if (!$this->isFieldDefined($fieldKey)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
+			return false;
+		}
+
+		if (!$this->isFieldEditAllowed($user, $fieldKey, $byPassUserPermission)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotAllowedForEdit'));
+			return false;
+		}
+
+		if ($this->isFieldValidationRequired($fieldKey) && !$this->validateField($this->fields, $fieldKey, $value)) {
+			return false;
+		}
+
+		if ($this->oldcopy === null || !is_object($this->oldcopy)) {
+			$this->oldcopy = clone $this;
+		}
+
+
+		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
+			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		}
+
+		$this->fieldValueBeingSet[$fieldKey] = true;
+
+		// Set new value
+		$this->$fieldKey = $value;
+
+		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
+		// both declared as real properties on the object for backward compatibility, so PHP never triggers
+		// DolDeprecationHandler magic methods for them (magic only fires for undefined/inaccessible properties).
+		// We must keep such pairs manually in sync, but only the pair that actually matches $fieldKey.
+		$deprecatedProperties = $this->deprecatedProperties();
+		if (!empty($deprecatedProperties) && is_array($deprecatedProperties)) {
+			foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+				if ($fieldKey === $oldProperty && property_exists($this, $newProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $newProperty) && property_exists($this->oldcopy, $oldProperty)) {
+						$this->oldcopy->$newProperty = $this->oldcopy->$oldProperty;
+					}
+					$this->$newProperty = $value;
+				} elseif ($fieldKey === $newProperty && property_exists($this, $oldProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $oldProperty) && property_exists($this->oldcopy, $newProperty)) {
+						$this->oldcopy->$oldProperty = $this->oldcopy->$newProperty;
+					}
+					$this->$oldProperty = $value;
+				}
+			}
+		}
+
+		// Let child classes recompute dependent fields (ex: TTC amount when HT amount changes on a line).
+		// Left as a no-op by default in CommonObject, which is shared by every kind of object.
+		$this->onFieldValueChanged($fieldKey, $value);
+
+		unset($this->fieldValueBeingSet[$fieldKey]);
+
+		return true;
+	}
+
+	/**
+	 * Hook called by setFieldValue() after a field has been successfully assigned.
+	 * Override in child classes to recompute fields that depend on the one that just changed
+	 * (for example recalculating total_ttc when subprice or tva_tx changes on a line).
+	 *
+	 * Warning: to avoid infinite recursion, dependent fields should be assigned directly
+	 * (ex: $this->total_ttc = ...) rather than through a recursive call to setFieldValue().
+	 * setFieldValue() also guards against re-entrant calls on the same field as a safety net.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		// Nothing to do by default.
+	}
+
 	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
@@ -2425,6 +2543,7 @@ abstract class CommonObject
 		$propfield = $field;
 
 		// Special case
+		// TODO move special case to product class and/or create a propfield/field (table col name ) mapping key in object fields parameters ?
 		if ($table == 'product') {
 			if ($field == 'note_private') {
 				$field = 'note';
@@ -10121,7 +10240,18 @@ abstract class CommonObject
 	public function getRights()
 	{
 		global $user;
+		return $this->getRightsForUser($user);
+	}
 
+	/**
+	 * Returns the rights used for this class for a specific user
+	 *
+	 * @param User $user User to check rights
+	 *
+	 * @return null|int|stdClass        Object of permission for the module
+	 */
+	public function getRightsForUser(User $user)
+	{
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
@@ -10135,6 +10265,219 @@ abstract class CommonObject
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
+	}
+
+	/**
+	 * Check if user has write permission on a field of this object.
+	 * Generic check based on the "write" permission of getRightsForUser() (objects built with ModuleBuilder).
+	 * Child classes using another permission (ex: "creer") or needing per field rules must override it.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if current user have right to write for this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		// Basic rights validation (invalid or missing rights object = deny access)
+		// TODO remove chaos from getRights results
+		$right = $this->getRightsForUser($user);
+		// Normalize global rights
+		if (is_null($right)) {
+			return false;
+		}
+
+		if (is_int($right)) {
+			if ((int) $right !== 1) {
+				return false;
+			}
+		} elseif (is_object($right)) {
+			if (empty($right->write)) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+		if (empty($field)) {
+			// Each child class need to be edited
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether a given field is allowed to be edited on the current object.
+	 * This method combines:
+	 * - user rights check
+	 * - field configuration constraints
+	 * - object state constraints (status/statut)
+	 * Note: This method is defined in CommonObject, so it must remain generic.
+	 * Some child classes use `status`, others use `statut`, hence both are checked.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value.
+	 *                                     Only user rights are skipped, field and object state checks still apply.
+	 *                                     When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
+	 *
+	 * @return bool True if the field is editable, false otherwise
+	 */
+	public function isFieldEditAllowed(User $user, $field, $byPassUserPermission = false)
+	{
+		// TODO : Implement error message ?
+
+		// Ensure user has write permission for field
+		if (!$byPassUserPermission && !$this->hasUserWritePermissionOnField($user, $field)) {
+			return false;
+		}
+
+		// Ensure field exists in object definition
+		if (!$this->isFieldDefined($field)) {
+			return false;
+		}
+
+		// Field explicitly disabled
+		if ($this->isFieldDisabled($field)) {
+			return false;
+		}
+
+		// Field must be enabled (default = enabled if not defined)
+		if (!$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		// Field explicitly marked as not editable
+		if ($this->isFieldMarkedNotEditable($field)) {
+			return false;
+		}
+
+		// Object state restriction
+		if ($this->isFieldBlockedByObjectState($field)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether a field can be edited from the user interface with generic tools (ajax edition of cards...),
+	 * where the user chooses the field to modify.
+	 *
+	 * isFieldEditAllowed() is a generic rule for PHP code and allows any field not marked as "noteditable",
+	 * including computed or technical fields (ref, status, totals...). Exposing it to the user interface
+	 * would let a user change them, so the user interface requires an explicit opt-in on each field
+	 * with the "uieditable" attribute, in addition to all rules of isFieldEditAllowed().
+	 * The private note is always hidden to external users, so it is never editable by them.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the field can be edited from the user interface, false otherwise
+	 */
+	public function isFieldEditableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || empty($this->fields[$field]['uieditable'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		return $this->isFieldEditAllowed($user, $field);
+	}
+
+
+	/**
+	 * Check if the field is defined in the object's field metadata.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field exists in the object definition, false otherwise
+	 */
+	protected function isFieldDefined($field)
+	{
+		return !empty($this->fields)
+			&& is_array($this->fields)
+			&& isset($this->fields[$field]);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as disabled.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is disabled, false otherwise
+	 */
+	protected function isFieldDisabled($field)
+	{
+		return !empty($this->fields[$field]['disabled']);
+	}
+
+	/**
+	 * Check if the field requires validation.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if validation is required, false otherwise
+	 */
+	protected function isFieldValidationRequired($field)
+	{
+		return !empty($this->fields[$field]['validate']);
+	}
+
+
+
+	/**
+	 * Check if the field is enabled.
+	 * A field is considered enabled by default if the "enabled" flag is not set.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is enabled, false otherwise
+	 */
+	protected function isFieldEnabled($field)
+	{
+		return !isset($this->fields[$field]['enabled']) || (bool) (int) dol_eval((string) $this->fields[$field]['enabled']);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as not editable.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is not editable, false otherwise
+	 */
+	protected function isFieldMarkedNotEditable($field)
+	{
+		return !empty($this->fields[$field]['noteditable']);
+	}
+
+	/**
+	 * Check if the field is blocked by the current object state.
+	 * For objects having a draft status (class constant STATUS_DRAFT), fields are locked
+	 * when the object is not in draft, unless "alwayseditable" is set.
+	 * Objects without STATUS_DRAFT (ex: Product, Societe) have no status meaning "draft",
+	 * so their fields are never blocked by state here. Override in child classes for specific rules.
+	 *
+	 * Note:
+	 * This method is kept generic for CommonObject compatibility.
+	 * Both `status` and `statut` are checked because child classes may use either.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is blocked by object state, false otherwise
+	 */
+	protected function isFieldBlockedByObjectState($field)
+	{
+		if (!empty($this->fields[$field]['alwayseditable'])) {
+			return false;
+		}
+
+		if (!defined(static::class.'::STATUS_DRAFT')) {
+			return false;
+		}
+
+		$draftStatus = (int) constant(static::class.'::STATUS_DRAFT');
+
+		return (isset($this->status) && (int) $this->status !== $draftStatus)
+			|| (isset($this->statut) && (int) $this->statut !== $draftStatus);
 	}
 
 	/**

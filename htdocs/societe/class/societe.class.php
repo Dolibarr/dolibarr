@@ -224,8 +224,8 @@ class Societe extends CommonObject
 		'euid' => array('type' => 'varchar(20)', 'label' => 'EUIDShort', 'enabled' => 1, 'visible' => -1, 'position' => 213),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225, 'uieditable' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230, 'uieditable' => 1),
 		'client' => array('type' => 'tinyint(4)', 'label' => 'Customer', 'enabled' => 1, 'visible' => -1, 'position' => 240),
 		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Supplier', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
@@ -998,6 +998,23 @@ class Societe extends CommonObject
 			$this->fields['town']['showoncombobox'] = getDolGlobalInt('COMPANY_SHOW_ADDRESS_SELECTLIST');
 			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 		}
+	}
+
+	/**
+	 * Check if user has write permission on a field of this object.
+	 * Override of CommonObject::hasUserWritePermissionOnField(): thirdparties use the "creer" permission.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if user has right to write this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return (bool) $user->hasRight('societe', 'creer');
 	}
 
 
