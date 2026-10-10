@@ -30,6 +30,22 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		The setEventMessage tool can be replaced internally without requiring any changes in your modules or custom scripts.
 	</p>
 	<p>
+		The setEventMessage tool is defined with <code>{ overwrite: true }</code>, so a module providing another notification library can replace it.
+		The script must be loaded after the Dolibarr context files (this is the case for module js files), otherwise the core tool would replace it:
+	</p>
+	<?php
+	$lines = array(
+		'<script nonce="<?php print getNonce() ?>" >',
+		'	document.addEventListener(\'Dolibarr:Init\', function(e) {',
+		'		Dolibarr.defineTool(\'setEventMessage\', (msg, status = \'mesgs\', sticky = false) => {',
+		'			// Call your notification library here',
+		'		}, { overwrite: true });',
+		'	});',
+		'</script>',
+	);
+	$documentation->showCode($lines, 'php');
+	?>
+	<p>
 		This means all developers can write features without worrying about frontend compatibility or future library replacements. Enjoy!
 
 	</p>
