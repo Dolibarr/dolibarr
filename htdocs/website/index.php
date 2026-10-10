@@ -4808,7 +4808,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		//print $langs->trans('InternalURLOfPage');
 		//print '</td><td>';
 		print ' &nbsp; - &nbsp; ';
-		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode((string) $pageid);
+		print '/public/website/index.php?website='.urlencode((string) $websitekey).'&pageid='.urlencode((string) $pageid);
 		//if ($objectpage->grabbed_from) print ' - <span class="opacitymedium">'.$langs->trans('InitiallyGrabbedFrom').' '.$objectpage->grabbed_from.'</span>';
 		print '</td></tr>';
 
