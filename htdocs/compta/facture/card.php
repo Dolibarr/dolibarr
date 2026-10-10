@@ -968,7 +968,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
+		$result = $object->set_ref_client(GETPOST('ref_client', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

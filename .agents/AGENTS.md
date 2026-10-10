@@ -16,6 +16,7 @@ Every modification must respect:
 - Do not introduce external dependencies without validation
 - Never rename existing functions or variables except if explicitly requested
 - Never remove commented code, even if it's deprecated, except if explicitly requested
+- Never add, change or translate keys into language files of other languages than English. Only `htdocs/langs/en_US/*.lang` may be modified. All other locales (fr_FR, de_DE, es_ES, ...) are managed by an external translation tool (Transifex) and must never be touched, even to add the translation of a new key or to fix a typo
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
@@ -112,7 +113,7 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
-- Language files must be placed in `htdocs/langs/en_US/` (Never change, update or translate other locales files, this is managed into an external tool)
+- Language files must be placed in `htdocs/langs/en_US/` (Never change, update or translate other locales files, this is managed into an external tool — see Critical Rules)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
 - All code comments and variables or functions names must be in English
@@ -268,6 +269,7 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 - Delete dead code
 - Add external dependencies (Composer packages, JS libraries) without prior validation
 - Modify the `ChangeLog` file (this file will be generated before the release from all commit titles)
+- Add, modify or translate any language file other than `htdocs/langs/en_US/` (fr_FR, de_DE, ... are managed by an external translation tool)
 - Commit or push without an explicit request from the user
 
 ---

@@ -265,6 +265,18 @@ $filereadme = $pathofwebsite.'/README.md';
 $filelicense = $pathofwebsite.'/LICENSE';
 $filemaster = $pathofwebsite.'/master.inc.php';
 
+// Get the archived version of the page to show (0 = current page).
+// Version files are the backup files page<pageid>.tpl.php.v<timestamp> saved by archiveOrBackupFile() each time the page is saved.
+$pageversion = GETPOSTINT('pageversion');
+$filetplversion = '';
+if ($pageid > 0 && $pageversion > 0) {
+	$filetplversion = $pathofwebsite.'/page'.((int) $pageid).'.tpl.php.v'.((int) $pageversion);
+	if (!dol_is_file($filetplversion)) {
+		$filetplversion = '';
+		$pageversion = 0;
+	}
+}
+
 $forceCSP = getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSP");
 
 // Define $urlwithroot
@@ -3521,6 +3533,45 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print $out;
 
+		// List of versions of page (the archived backup files saved each time the page content was saved)
+		if ($pageid > 0 && $websitekey && $websitekey != '-1') {
+			$listofpageversions = dol_dir_list($pathofwebsite, 'files', 0, '^page'.((int) $pageid).'\.tpl\.php\.v[0-9]+$', '', 'name', SORT_DESC);
+
+			$out = '';
+
+			$out .= '<span class="websiteselection nopaddingrightimp">';
+			$out .= '<select name="pageversion" id="pageversion" class="minwidth100 maxwidth200onsmartphone" title="'.dol_escape_htmltag($langs->trans("ListOfPageVersions")).'">';
+			$out .= '<option value="0"'.(empty($pageversion) ? ' selected' : '').' class="opacitymedium">';
+			$out .= $langs->trans("CurrentPageVersion");
+			$out .= '</option>';
+			foreach ($listofpageversions as $key => $fileversion) {
+				$versiontimestamp = (int) preg_replace('/^page'.((int) $pageid).'\.tpl\.php\.v/', '', $fileversion['name']);
+				if (empty($versiontimestamp)) {
+					continue;
+				}
+				$out .= '<option value="'.((int) $versiontimestamp).'"'.($pageversion == $versiontimestamp ? ' selected' : '').'>';
+				$out .= dol_print_date($versiontimestamp, 'dayhour', 'tzuser');
+				$out .= '</option>';
+			}
+			$out .= '</select>';
+			$out .= ajax_combobox('pageversion');
+
+			if (!empty($conf->use_javascript_ajax)) {
+				$out .= '<script type="text/javascript">';
+				$out .= 'jQuery(document).ready(function () {';
+				$out .= '	jQuery("#pageversion").change(function () {';
+				$out .= '		console.log("We select version "+jQuery("#pageversion option:selected").val());';
+				$out .= '		window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&pageid='.((int) $pageid).'&pageversion="+jQuery("#pageversion option:selected").val();';
+				$out .= '	});';
+				$out .= '});';
+				$out .= '</script>';
+			}
+
+			$out .= '</span>';
+
+			print $out;
+		}
+
 		// Button to switch status
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<span class="websiteselection">';
@@ -3674,7 +3725,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '</a>';
 
 				// Edit HTML content
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.($pageversion > 0 ? '&pageversion='.((int) $pageversion) : '').'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>';
 				print img_picto('', 'code');
 				print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</span>';
 				print '</a>';
@@ -5343,6 +5394,18 @@ if ($action == 'editsource') {
 	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
 
+	// If an archived version of the page is selected, we load its content into the editor,
+	// so saving the page will restore this old version as the current one
+	if (!empty($filetplversion)) {
+		$contentoffile = @file_get_contents($filetplversion);
+		if ($contentoffile) {
+			// Extract the body of the generated page to get the page content of the archived version
+			if (preg_match('/<body[^>]*>(.*)<\/body>/ims', $contentoffile, $reg)) {
+				$contentforedit = $reg[1];
+			}
+		}
+	}
+
 	// We set maxheightwin in px. We take the height of screen in px and we remove a part for the top banner and more
 	$maxheightwin = 480;
 	if (isset($_SESSION["dol_screenheight"])) {
@@ -5970,12 +6033,15 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 		$newcontent = $objectpage->content;
 
-		// If mode WEBSITE_SUBCONTAINERSINLINE is on
-		if (getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
+		// If mode WEBSITE_SUBCONTAINERSINLINE is on, or if we want to see an archived version of page
+		if (getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE') || !empty($filetplversion)) {
 			// TODO Check file $filephp exists, if not create it.
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+			if (!empty($filetplversion)) {
+				$filephp = $filetplversion;
+			}
 
 			// Get session info and obfuscate session cookie
 			$savsessionname = session_name();
@@ -6000,7 +6066,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
-		if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
+		// Note: We always remove the contenteditable when an archived version of page is displayed to avoid
+		// editing the current page from an old version.
+		if (!getDolGlobalString('WEBSITE_EDITINLINE') || !empty($filetplversion)) {
 			// Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section|header|main|footer)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		} else {
