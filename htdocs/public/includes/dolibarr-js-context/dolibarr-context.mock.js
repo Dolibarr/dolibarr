@@ -27,6 +27,45 @@ var Dolibarr = {
 		setEventMessage: function(msg, type, sticky) {},
 
 		/**
+		 * Send an ajax request to Dolibarr : anti CSRF token added for POST/PUT/PATCH/DELETE,
+		 * parameters sent as PHP expects them, response parsed, errors displayed and thrown.
+		 *
+		 * @param {string} url
+		 * @param {Object} [options] Any other option is passed to native fetch()
+		 * @param {string} [options.method='GET']
+		 * @param {Object|FormData|URLSearchParams} [options.data] Sent in query string for GET, in body otherwise
+		 * @param {*} [options.json] Body sent as JSON
+		 * @param {Object} [options.headers]
+		 * @param {boolean} [options.token] Add the anti CSRF token, default true except for GET and HEAD
+		 * @param {string} [options.responseType='auto'] 'auto', 'json', 'text' or 'response'
+		 * @param {boolean} [options.showErrors=true] Display errors with setEventMessage
+		 * @param {number} [options.timeout=0] Abort after this delay in ms
+		 * @returns {Promise<*>} Parsed response body, throws Dolibarr.tools.fetch.Error {message, status, data, response}
+		 */
+		fetch: Object.assign(function(url, options) {}, {
+			/**
+			 * GET request
+			 * @param {string} url
+			 * @param {Object} [data] Sent in query string
+			 * @param {Object} [options]
+			 * @returns {Promise<*>}
+			 */
+			get(url, data, options) {},
+
+			/**
+			 * POST request, token added automatically
+			 * @param {string} url
+			 * @param {Object|FormData} [data] Sent in body
+			 * @param {Object} [options]
+			 * @returns {Promise<*>}
+			 */
+			post(url, data, options) {},
+
+			/** Error thrown by Dolibarr.tools.fetch, with status, data and response properties */
+			Error: class extends Error {},
+		}),
+
+		/**
 		 * TThe langs tool
 		 */
 		langs: {

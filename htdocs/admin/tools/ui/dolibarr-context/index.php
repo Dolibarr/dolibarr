@@ -764,6 +764,8 @@ $documentation->showSidebar(); ?>
 
 		<?php include __DIR__ . '/inc_seteventmessage.php'; ?>
 
+		<?php include __DIR__ . '/inc_fetch.php'; ?>
+
 
 		<div class="documentation-section">
 			<h2 id="titlesection-contextvars" class="documentation-title">Set and use context vars</h2>

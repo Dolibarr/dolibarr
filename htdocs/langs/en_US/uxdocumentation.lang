@@ -197,6 +197,7 @@ JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - sequential execut
 ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new context tool
 JSContextCompatAndDeprecations = Backward compatibility and deprecations
 SetEventMessageTool = Dolibarr Tool : Set event message
+FetchTool = Dolibarr Tool : Fetch (ajax requests)
 
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.

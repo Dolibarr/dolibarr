@@ -256,6 +256,7 @@ class Documentation
 						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
 						'JSContextCompatAndDeprecations' => '#titlesection-compat',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+						'FetchTool' => '#titlesection-tool-fetch',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
 					),
 				),
