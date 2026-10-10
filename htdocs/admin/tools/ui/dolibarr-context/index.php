@@ -339,6 +339,39 @@ $documentation->showSidebar(); ?>
 				<li><code>Dolibarr:Ready</code> → DOM is ready, safe to manipulate elements and use tools defined in Init.</li>
 			</ul>
 			</p>
+
+			<h3 id="titlesection-late-scripts">Scripts loaded after Ready (sticky events)</h3>
+			<p>
+				<code>Init</code> and <code>Ready</code> are <strong>sticky</strong> events: a listener added with <code>Dolibarr.on()</code>
+				after they were executed (script loaded with ajax, lazy loaded module...) is called immediately with their data.
+				This is not possible with <code>document.addEventListener('Dolibarr:Ready')</code>: a DOM event is never replayed,
+				so prefer <code>Dolibarr.on()</code> or <code>Dolibarr.ready()</code>.
+			</p>
+			<ul>
+				<li><code>Dolibarr.ready(callback)</code> returns a promise resolved when the context is ready, even if called after the Ready event.</li>
+				<li><code>Dolibarr.whenTool(name, {timeout})</code> returns a promise resolved with the tool as soon as it is defined.</li>
+				<li><code>Dolibarr.on(name, callback, {once: true})</code> removes the listener after its first call.</li>
+				<li><code>Dolibarr.executeHook(name, data, {sticky: true})</code> makes your own one time event sticky (ex: your module is loaded).</li>
+			</ul>
+				<?php
+				$lines = array(
+					'<script>',
+					'	// Works before and after the Ready event',
+					'	Dolibarr.ready(function() {',
+					'		// DOM is ready, tools are defined',
+					'	});',
+					'',
+					'	// Or with await',
+					'	await Dolibarr.ready();',
+					'',
+					'	// Wait for a tool defined by another module, reject after 5 seconds',
+					'	const quickMemo = await Dolibarr.whenTool(\'quickMemo\', { timeout: 5000 });',
+					'',
+					'	// Make your own one time event sticky',
+					'	Dolibarr.executeHook(\'myModuleLoaded\', { version: \'1.0\' }, { sticky: true });',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<div class="documentation-section">

@@ -251,6 +251,7 @@ class Documentation
 						'ConsoleHelp' => '#titlesection-console-help',
 						'JSDolibarrhooks' => '#titlesection-hooks',
 						'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
+						'JSDolibarrhooksLateScripts' => '#titlesection-late-scripts',
 						'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
 						'JSDolibarrhooksAjaxSpecial' => '#titlesection-dom-initnewcontent',
 						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',

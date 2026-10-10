@@ -166,8 +166,10 @@ var Dolibarr = {
 	 * Executes a hook-like JS event with CustomEvent.
 	 * @param {string} hookName Hook identifier
 	 * @param {object} data Extra information passed to listeners
+	 * @param {Object} [options]
+	 * @param {boolean} [options.sticky=false] Keep data of this execution, listeners added later with Dolibarr.on() are called immediately with it
 	 */
-	executeHook(hookName, data = {}) {},
+	executeHook(hookName, data = {}, options = {}) {},
 
 	/**
 	 * Trigger a standardized Dolibarr DOM reload hook.
@@ -187,10 +189,30 @@ var Dolibarr = {
 
 	/**
 	 * Registers an event listener.
+	 * If the event is sticky and was already executed (ex: Init, Ready), the callback is called immediately with its data.
 	 * @param {string} eventName Event to listen to
 	 * @param {function} callback Listener function
+	 * @param {Object} [options]
+	 * @param {boolean} [options.once=false] Remove the listener after its first call
 	 */
-	on(eventName, callback) {},
+	on(eventName, callback, options = {}) {},
+
+	/**
+	 * Wait for the Dolibarr context to be ready (DOM loaded, Init done, tools defined).
+	 * Works even if called after the Ready event.
+	 * @param {function} [callback] Optional function called with the Ready data
+	 * @returns {Promise<Object>} Resolved with the Ready data
+	 */
+	ready(callback) {},
+
+	/**
+	 * Wait for a tool to be defined.
+	 * @param {string} name Tool name
+	 * @param {Object} [options]
+	 * @param {number} [options.timeout=0] Reject after this delay in ms, 0 to wait without limit
+	 * @returns {Promise<*>} Resolved with the tool
+	 */
+	whenTool(name, options = {}) {},
 
 	/**
 	 * Unregister an event listener
