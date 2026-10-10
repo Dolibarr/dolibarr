@@ -83,7 +83,6 @@ SorryWebsiteIsCurrentlyOffLine=Désolé, ce site est actuellement hors ligne. Ve
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activer le tableau pour stocker les comptes de sites Web (login/pass) pour chaque tiers
 OnlyEditionOfSourceForGrabbedContentFuture=Avertissement : Créer une page web en important une page web externe est réservé aux utilisateurs expérimentés et ne fonctionne qu'avec des pages HTML et CSS. L'importation de pages rendues par des frameworks JavaScript n'est PAS prise en charge. Selon la complexité de la page source, le résultat de l'importation sera probablement différent de la page d'origine. De plus, si la page source utilise des styles CSS courants ou du JavaScript conflictuel, l'apparence ou les fonctionnalités de l'éditeur de site web peuvent être altérées lors de son utilisation. Cette méthode est un moyen rapide de créer une page pour les utilisateurs très expérimentés lorsque la page source le permet, mais il est recommandé de créer votre nouvelle page de A à Z ou à partir d'un modèle de page suggéré.<br>Notez également que l'éditeur en ligne peut ne pas fonctionner correctement lorsqu'il est utilisé sur une page récupérée.
 GrabImagesInto=Récupérez également les images trouvées dans le CSS et la page.
-ImagesShouldBeSavedInto=Les images doivent être enregistrées dans le répertoire
 WebsiteRootOfImages=Répertoire racine pour les images du site Web
 AliasPageAlreadyExists=La page d'alias <strong>%s</strong> existe déjà
 CorporateHomePage=Page d'accueil de l'entreprise

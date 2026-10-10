@@ -8,7 +8,7 @@
  * Copyright (C) 2019       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -613,7 +613,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
@@ -893,6 +894,9 @@ class Project extends CommonObject
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'stocktransfer_stocktransfer') {
 			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize((string) $ids).") AND ms.type_mouvement = 1";
+		} elseif ($type == 'stock_mouvement') {
+			// Stock movements have no entity field (the warehouse has one), and the project is stored into fk_projet
+			$sql = "SELECT ms.rowid FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
@@ -1422,9 +1426,10 @@ class Project extends CommonObject
 	 *  @param  int<-1,1>	$save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	string		$morecss				  More css on a link
 	 *  @param	string		$save_pageforbacktolist	  Back to this page 'context:url'
+	 *  @param	int			$addlinktonotes			  1=Add link to notes
 	 * 	@return	string						          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '')
+	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '', $addlinktonotes = 0)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -1454,18 +1459,21 @@ class Project extends CommonObject
 
 		$url = '';
 		if ($option != 'nolink') {
+			$query = ['id' => $this->id];
 			if (preg_match('/\.php$/', $option)) {
-				$url = dol_buildpath($option, 1).'?id='.$this->id;
+				$baseurl = dol_buildpath($option, 1);
 			} elseif ($option == 'task') {
-				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/tasks.php';
 			} elseif ($option == 'preview') {
-				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/element.php';
 			} elseif ($option == 'eventorganization') {
-				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
+				$query = ['projectid' => $this->id];
 			} elseif ($option == 'mailing') {
-				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/comm/mailing/list.php';
+				$query = ['projectid' => $this->id];
 			} else {
-				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/card.php';
 			}
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1473,12 +1481,12 @@ class Project extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
-			$add_save_backpagefor = ($save_pageforbacktolist ? 1 : 0);
-			if ($add_save_backpagefor) {
-				$url .= "&save_pageforbacktolist=".urlencode($save_pageforbacktolist);
+			if ($save_pageforbacktolist) {
+				$query['save_pageforbacktolist'] = $save_pageforbacktolist;
 			}
+			$url = dolBuildUrl($baseurl, $query);
 		}
 
 		$linkclose = '';
@@ -1516,6 +1524,18 @@ class Project extends CommonObject
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($addlabel > 0 && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
+		}
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/projet/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
 		}
 
 		global $action;
@@ -2089,9 +2109,11 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project = NULL";
 			$sql .= " WHERE id = ".((int) $elementSelectId);
+			$sql .= " AND fk_project = ".((int) $this->id);
 		} else {
 			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
 			$sql .= " WHERE rowid = ".((int) $elementSelectId);
+			$sql .= " AND ".$this->db->sanitize($projectfield)." = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
@@ -2294,7 +2316,10 @@ class Project extends CommonObject
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
 
-		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
+		// The count and the number of late projects are computed by the database instead of reading every project. An open project
+		// is late when it has an end date and that date is before now minus the warning delay (the rule of hasDelay()).
+		$sql = "SELECT COUNT(p.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN p.datee IS NOT NULL AND p.datee < '".$this->db->idate(dol_now() - $conf->project->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 		$sql .= ")";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -2323,21 +2348,10 @@ class Project extends CommonObject
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$project_static = new Project($this->db);
-
-
-			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$project_static->statut = $obj->status;
-				$project_static->status = $obj->status;
-				$project_static->opp_status = $obj->fk_opp_status;
-				$project_static->date_end = $this->db->jdate($obj->datee);
-
-				if ($project_static->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

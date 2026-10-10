@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026  Braito                  <braito4@hotmail.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,16 +172,28 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Check read permission for technical email data.
 	 *
-	 * @return bool
+	 * @return bool True if user can read email data, false otherwise
 	 */
 	private function canReadEmailData(): bool
 	{
-		if (empty($this->user->id)) return false;
-		if (!is_object($this->conf) || !isModEnabled('ai')) return false;
-		if (!isModEnabled('emailcollector')) return false;
-		if (!getDolGlobalInt('AI_EMAILCLEANER_ENABLED', 0)) return false;
-		if (!empty($this->user->admin)) return true;
-		if (method_exists($this->user, 'hasRight') && $this->user->hasRight('emailcollector', 'read')) return true;
+		if (empty($this->user->id)) {
+			return false;
+		}
+		if (!is_object($this->conf) || !isModEnabled('ai')) {
+			return false;
+		}
+		if (!isModEnabled('emailcollector')) {
+			return false;
+		}
+		if (!getDolGlobalInt('AI_EMAILCLEANER_ENABLED', 0)) {
+			return false;
+		}
+		if (!empty($this->user->admin)) {
+			return true;
+		}
+		if (method_exists($this->user, 'hasRight') && $this->user->hasRight('emailcollector', 'read')) {
+			return true;
+		}
 		return false;
 	}
 
@@ -241,9 +254,9 @@ class ToolEmailCleaner extends McpTool
 		$items = array();
 		while ($obj = $this->db->fetch_object($resql)) {
 			$inputMetadata = $this->decodeJsonOrRaw((string) $obj->raw_request_payload);
-				$items[] = array(
-					'ai_request_log_id' => (int) $obj->rowid,
-					'cleaning_id' => (int) $obj->rowid,
+			$items[] = array(
+				'ai_request_log_id' => (int) $obj->rowid,
+				'cleaning_id' => (int) $obj->rowid,
 				'actioncomm_id' => (int) $obj->fk_actioncomm,
 				'collector_id' => (!empty($inputMetadata['collector_id']) ? (int) $inputMetadata['collector_id'] : null),
 				'message_id' => (!empty($inputMetadata['message_id']) ? (string) $inputMetadata['message_id'] : null),
@@ -255,7 +268,7 @@ class ToolEmailCleaner extends McpTool
 				'context_profile_version' => (!empty($inputMetadata['context_profile_version']) ? (string) $inputMetadata['context_profile_version'] : null),
 				'status' => (!empty($obj->status) ? (string) $obj->status : null),
 				'date_creation' => (!empty($obj->date_request) ? (string) $obj->date_request : null),
-				);
+			);
 		}
 		$this->db->free($resql);
 
@@ -425,7 +438,7 @@ class ToolEmailCleaner extends McpTool
 	 * Check if a table is available.
 	 *
 	 * @param string $tableWithoutPrefix SQL table name without DB prefix
-	 * @return bool
+	 * @return bool True if table exists, false otherwise
 	 */
 	private function isTableAvailable(string $tableWithoutPrefix): bool
 	{
@@ -449,7 +462,9 @@ class ToolEmailCleaner extends McpTool
 	private function decodeJsonOrRaw(string $raw)
 	{
 		$raw = trim($raw);
-		if ($raw === '') return array();
+		if ($raw === '') {
+			return array();
+		}
 		$dec = json_decode($raw, true);
 		if (json_last_error() === JSON_ERROR_NONE && is_array($dec)) {
 			return $dec;
@@ -461,13 +476,17 @@ class ToolEmailCleaner extends McpTool
 	 * Sanitize limit.
 	 *
 	 * @param mixed $raw User-provided limit
-	 * @return int
+	 * @return int Sanitized limit value (positive integer, defaults to 20 if invalid)
 	 */
 	private function sanitizeLimit($raw): int
 	{
 		$limit = (int) $raw;
-		if ($limit <= 0) $limit = 20;
-		if ($limit > 200) $limit = 200;
+		if ($limit <= 0) {
+			$limit = 20;
+		}
+		if ($limit > 200) {
+			$limit = 200;
+		}
 		return $limit;
 	}
 
@@ -475,14 +494,20 @@ class ToolEmailCleaner extends McpTool
 	 * Sanitize confidence value or return null.
 	 *
 	 * @param mixed $raw User-provided confidence value
-	 * @return float|null
+	 * @return float|null Sanitized confidence value (0.0-1.0) or null if invalid
 	 */
 	private function sanitizeConfidenceOrNull($raw): ?float
 	{
-		if ($raw === null || $raw === '') return null;
+		if ($raw === null || $raw === '') {
+			return null;
+		}
 		$val = (float) $raw;
-		if ($val < 0) $val = 0;
-		if ($val > 1) $val = 1;
+		if ($val < 0) {
+			$val = 0;
+		}
+		if ($val > 1) {
+			$val = 1;
+		}
 		return $val;
 	}
 

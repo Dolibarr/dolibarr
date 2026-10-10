@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
+$langs->loadLangs(array('admin', 'other', 'bills'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('situationinvoicesetup', 'globalsetup'));
@@ -128,6 +128,16 @@ if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') &&
 }
 $item->fieldInputOverride = $form->getSelectConditionsPaiements(getDolGlobalInt("INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID"), 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
 
+// decimals for situation invoice progress
+$item = $formSetup->newItem('INVOICE_SITUATION_PROGRESS_DECIMALS');
+$item->nameText = $langs->trans('SituationInvoiceProgressDecimals');
+$item->fieldAttr = array(
+	'type' => 'number',
+	'step' => '1',
+	'min' => 0,
+	'max' => 5
+);
+$item->defaultFieldValue = '2';
 
 /*
  * Actions

@@ -83,6 +83,12 @@ class pdf_strato extends ModelePDFContract
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * @var Societe|Contact|null 	Recipient company object
 	 */
 	public $recipient;

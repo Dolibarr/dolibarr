@@ -6,6 +6,7 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  */
+
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
@@ -80,7 +81,9 @@ export function initAiAssistant(container) {
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
-    const MAX_ATTACHED_DOCS = 5;  // context-size guard; the per-file/total size caps live server-side
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -1236,9 +1239,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
-    function appendMsg(type, html, actions = null) {
+    function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
+        // A provider failure ("service overloaded, retry") is noise as context:
+        // such a bubble starts, and stays, out of the window (still pinnable).
+        if (opts && opts.error) div.dataset.aiError = '1';
 
         if (type === 'user' || type === 'bot') {
             // Row layout: avatar + bubble (CSS reverses the row for the user)
@@ -1246,6 +1252,23 @@ export function initAiAssistant(container) {
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
             if (actions) bubble.appendChild(buildActions(actions));
+            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // default (sliding window), the user pins older ones explicitly or
+            // excludes recent ones - the token cost stays visible in the bar.
+            if (rawText) {
+                div.dataset.aiRaw = String(rawText).slice(0, 4000);
+                div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                const pin = document.createElement('button');
+                pin.type = 'button';
+                pin.className = 'ctx-pin';
+                pin.title = t('AIContextPinOff');
+                pin.innerHTML = '<span class="fas fa-thumbtack"></span>';
+                pin.onclick = (ev) => {
+                    ev.stopPropagation();
+                    toggleContextPin(div);
+                };
+                bubble.appendChild(pin);
+            }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
         } else {
@@ -1256,6 +1279,7 @@ export function initAiAssistant(container) {
 
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        if (div.dataset.aiRaw) refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1302,9 +1326,9 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
-    function handleResponse(message) {
+    function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', renderMarkdownLite(message));
+        appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1318,8 +1342,16 @@ export function initAiAssistant(container) {
 		}
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
-        let template = t('ConfirmAiAction');
-        let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        // A write tool sends a full sentence describing what it would write; it
+        // is the question itself, not a verb to slot into another sentence.
+        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        let messageHtml;
+        if (isSentence) {
+            messageHtml = `<strong>${action}</strong>`;
+        } else {
+            const template = t('ConfirmAiAction');
+            messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        }
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },
@@ -1369,11 +1401,21 @@ export function initAiAssistant(container) {
     }
 
     function cancelAction() {
+        // The question behind a cancelled action must not travel as context:
+        // left as an unanswered request in the window, the model re-proposes
+        // it on the next question (field case: "set the phone of X" answered
+        // by creating the thirdparty a cancelled request had named). Out of
+        // the window by default, like a failed answer; still pinnable by hand.
+        // (contextBubbles, not pastContextBubbles: at this point the question
+        // is the trailing bubble, which the latter leaves out on purpose.)
+        const asked = contextBubbles().filter((m) => m.dataset.aiRole === 'user').pop();
+        if (asked) asked.dataset.aiError = '1';
         if (confirmationRecognition) try { confirmationRecognition.stop(); } catch (e) { }
         const msg = chat.lastElementChild;
         if (msg && msg.classList.contains('confirmation')) msg.remove();
         appendMsg('system', t('ActionCancelled'));
         pendingIntent = null;
+        refreshContext();
     }
 
     function showVoiceFeedback(message) {
@@ -1410,15 +1452,178 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            let result = await aiJson(toolRes);
+            // After the user confirms the preview send the state back to complete the write.
+            if (result && result.resultType === 'input_required' && result.requestState) {
+                const confirmed = Object.assign({}, pendingIntent, {
+                    arguments: Object.assign({}, pendingIntent.arguments || {}, { requestState: result.requestState })
+                });
+                const secondRes = await fetch(epUrl('execute_tool.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(confirmed)
+                });
+                result = await aiJson(secondRes);
+            }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool));
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
+    }
+
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    // Compact, model-oriented snippet of a tool result for the pinned context:
+    // the model needs the shape and the ids, not the full rendered table.
+    function contextSnippetOf(result, toolName) {
+        let s = '';
+        try { s = JSON.stringify(result); } catch (e) { s = String(result); }
+        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        return '[' + (toolName || 'tool') + ' result] ' + s;
+    }
+
+    // Number of recent exchanges (question + answer) that follow the model by
+    // default. 0 = fully manual: nothing goes back unless the user pins it.
+    const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+
+    // Bubbles that can be sent back as context (they carry a plain-text form).
+    function contextBubbles() {
+        return Array.from(chat.querySelectorAll('.msg')).filter((m) => m.dataset.aiRaw);
+    }
+
+    // Same, without the question currently being answered: that one IS the
+    // query, it never travels as context.
+    function pastContextBubbles() {
+        const msgs = contextBubbles();
+        if (msgs.length && msgs[msgs.length - 1].dataset.aiRole === 'user') msgs.pop();
+        return msgs;
+    }
+
+    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
+    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
+    // pinned for good, 'off' is excluded. Recomputed after every change, so the
+    // window slides as the conversation grows while the pins stay put.
+    function refreshContext() {
+        const all = contextBubbles();
+        const msgs = pastContextBubbles();
+        // The question being answered is the query itself, never context: it
+        // waits outside the window until its answer arrives.
+        const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
+        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
+        let windowStart = msgs.length;
+        if (AUTO_CONTEXT > 0) {
+            let questions = 0;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
+                if (i === 0) windowStart = 0;
+            }
+        }
+        msgs.forEach((m, i) => {
+            const inWindow = i >= windowStart;
+            const state = m.dataset.ctx || '';
+            const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
+            m.dataset.ctxWindow = inWindow ? '1' : '';
+            m.classList.toggle('ctx-pinned', on);
+            const pin = m.querySelector('.ctx-pin');
+            if (pin) {
+                // Two glyphs: a planted blue pin (travels with the next question)
+                // or a grey pin struck through (does not) - see .ctx-pin-off in CSS.
+                pin.classList.toggle('ctx-pin-off', !on);
+                pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
+            }
+        });
+        updateContextBar();
+    }
+
+    // One click flips the bubble: inside the window it toggles between "follows
+    // the window" and "excluded"; outside it toggles the explicit pin.
+    function toggleContextPin(div) {
+        const on = div.classList.contains('ctx-pinned');
+        const inWindow = div.dataset.ctxWindow === '1';
+        if (on) div.dataset.ctx = inWindow ? 'off' : '';
+        else div.dataset.ctx = (inWindow && !div.dataset.aiError) ? '' : 'on';
+        refreshContext();
+    }
+
+    function collectPinnedContext() {
+        return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .filter((p) => p.text);
+    }
+
+    // Small bar above the input: how many exchanges are pinned and their rough
+    // token weight (chars/4) - the cost of the selected context stays visible.
+    function updateContextBar() {
+        let bar = container.querySelector('#ai-ctx-bar');
+        // Past exchanges the user can act on (the pending question is not one).
+        const past = pastContextBubbles();
+        const pinned = collectPinnedContext();
+        if (!past.length) { if (bar) bar.remove(); return; }
+        const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
+        // The setting counts exchanges (question + answer), so the bar says
+        // both: exchanges, then messages - one unit on its own misleads.
+        const exchanges = pinned.filter((p) => p.role === 'user').length;
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'ai-ctx-bar';
+            const pill = input.closest('.chat-input-pill') || input.parentElement;
+            pill.insertAdjacentElement('beforebegin', bar);
+        }
+        // "Auto (3)" is lit as long as every bubble simply follows the window
+        // (no manual pin, no exclusion): one glance says which mode is on.
+        const isDefault = past.every((m) => !m.dataset.ctx);
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
+            t('Statistics').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
+            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('AIContextClear') + '</a>';
+        const auto = bar.querySelector('#ai-ctx-auto');
+        if (auto) {
+            auto.onclick = (ev) => {
+                ev.preventDefault();
+                // Auto = back to the default: every bubble follows the window again.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
+                refreshContext();
+            };
+        }
+        const all = bar.querySelector('#ai-ctx-all');
+        if (all) {
+            all.onclick = (ev) => {
+                ev.preventDefault();
+                // All = every past exchange pinned for good (the bar shows the price).
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
+                refreshContext();
+            };
+        }
+        const clear = bar.querySelector('#ai-ctx-clear');
+        if (clear) {
+            clear.onclick = (ev) => {
+                ev.preventDefault();
+                // Clear = nothing goes back with the NEXT question: recent bubbles
+                // are excluded, older pins dropped. New exchanges re-enter the
+                // window on their own afterwards.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
+                refreshContext();
+            };
+        }
+    }
+
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
     }
 
     async function handleQuery() {
@@ -1441,7 +1646,7 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml);
+        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
         clearChip();
         input.value = '';
         input.style.height = '44px';
@@ -1457,6 +1662,11 @@ export function initAiAssistant(container) {
                 // ids against the user's rights before trusting them.
                 body: JSON.stringify(Object.assign(
                     chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+                        const pinned = collectPinnedContext();
+                        return pinned.length ? { history: pinned } : {};
+                    })(),
                     (function () {
                         const ctx = window.aiPageContext;
                         if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
@@ -1477,12 +1687,12 @@ export function initAiAssistant(container) {
                     })()
                 ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
             if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
@@ -1491,10 +1701,10 @@ export function initAiAssistant(container) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
                 input.disabled = false; input.focus(); return;
             }
 
@@ -1504,10 +1714,10 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool));
+            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
@@ -1583,12 +1793,42 @@ export function initAiAssistant(container) {
         api_orders: '/commande/card.php?id=%id%',
         api_projects: '/projet/card.php?id=%id%',
         api_contracts: '/contrat/card.php?id=%id%',
-        api_tickets: '/ticket/card.php?id=%id%'
+        api_tickets: '/ticket/card.php?id=%id%',
+        api_supplier_invoices: '/fourn/facture/card.php?facid=%id%',
+        api_supplier_orders: '/fourn/commande/card.php?id=%id%',
+        api_supplier_proposals: '/supplier_proposal/card.php?id=%id%',
+        api_categories: '/categories/card.php?id=%id%'
     };
+    // The picto of the object a card link points to, like getNomUrl() does in
+    // Dolibarr pages: the icons are the ones the core assigns to each object
+    // (see the picto table of img_picto()), keyed on the card's path.
+    const CARD_PICTOS = [
+        ['/societe/', 'building'], ['/compta/facture/', 'file-invoice-dollar'], ['/fourn/facture/', 'file-invoice-dollar'],
+        ['/commande/', 'file-invoice'], ['/fourn/commande/', 'file-invoice'], ['/comm/propal/', 'file-signature'],
+        ['/supplier_proposal/', 'file-signature'], ['/product/', 'cube'], ['/projet/', 'project-diagram'],
+        ['/contrat/', 'suitcase'], ['/ticket/', 'ticket-alt'], ['/fichinter/', 'ambulance'], ['/expedition/', 'dolly'],
+        ['/reception/', 'dolly'], ['/user/', 'user'], ['/contact/', 'address-book'], ['/adherents/', 'user-alt'],
+        ['/categories/', 'tag'], ['/document.php', 'file']
+    ];
+    function pictoForUrl(url) {
+        if (typeof url !== 'string') return '';
+        const hit = CARD_PICTOS.find((p) => url.indexOf(p[0]) >= 0);
+        return hit ? `<span class="fas fa-${hit[1]} chat-picto"></span>` : '';
+    }
+
     function cardUrlFor(tool, id) {
         if (!tool || !id) return null;
         const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
         return prefix ? (config.urlRoot || '') + TOOL_CARD_URLS[prefix].replace('%id%', encodeURIComponent(id)) : null;
+    }
+    // API payloads arrive with HTML entities already encoded ("Client
+    // g&eacute;n&eacute;rique..."): decode them BEFORE escaping, or accented
+    // names render as raw entities in the chat tables and answers.
+    function decodeHtmlEntities(s) {
+        if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+        const ta = document.createElement('textarea');
+        ta.innerHTML = s;
+        return ta.value;
     }
     function formatCell(k, v) {
         if (v === null || v === undefined || v === '') return '-';
@@ -1600,7 +1840,7 @@ export function initAiAssistant(container) {
         if (MONEY_FIELDS.has(k)) return fmtMoney(v);
         if (isDateField(k)) return fmtDate(v);
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
-        return escapeHtml(String(v));
+        return escapeHtml(decodeHtmlEntities(String(v)));
     }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
@@ -1621,7 +1861,7 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(names[id])}</a>`;
+                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
         } catch (e) { /* names stay as ids */ }
@@ -1640,7 +1880,11 @@ export function initAiAssistant(container) {
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
-            keys.forEach(k => content += `<th>${fieldLabel(k)}</th>`);
+            // Rows that are files (their url is a document.php download): the
+            // "name" column is the file, not a third party, and the file gets a
+            // magnifier opening Dolibarr's preview (same link, attachment=0).
+            const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -1648,7 +1892,11 @@ export function initAiAssistant(container) {
                     let val = formatCell(k, row[k]);
                     const cardUrl = row.url || cardUrlFor(toolName, row.id || row.rowid);
                     if (cardUrl && val.indexOf('<a ') !== 0 && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${val}</a>`;
+                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${pictoForUrl(cardUrl)}${val}</a>`;
+                        if (isFileList && k === 'name') {
+                            const previewUrl = cardUrl + (cardUrl.indexOf('attachment=') >= 0 ? '' : '&attachment=0');
+                            val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
+                        }
                     }
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
                         content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
@@ -1662,22 +1910,32 @@ export function initAiAssistant(container) {
         }
         else if (typeof data === 'object') {
             isObject = true;
-            objectUrl = data.url || null;
+            // A create answers with its new id and no url: build the card link from
+            // the tool name, so the user can open what was just written.
+            objectUrl = data.url || cardUrlFor(toolName, data.id || data.rowid) || null;
             content += '<div class="chat-object"><ul>';
+            let nested = '';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
+                // A list inside the answer is the answer: a tool that wraps its rows
+                // in {count, offset, limit, results} would otherwise show only the
+                // counters, and the rows would never reach the user.
+                else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
+                    nested += formatResult(value, true, toolName);
+                }
             }
             content += '</ul></div>';
+            content += nested;
         }
         else { return String(data); }
 
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('AIPdfReport')}"><span class="fas fa-file-pdf"></span> ${t('AIPdfReport')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fas fa-external-link-alt"></span> ${t('OpenVerb')}</a>`;
             }
             if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }

@@ -72,6 +72,25 @@ $mode     = GETPOST('mode', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Load unfiltered schema
+/**
+ * Whether a tool writes. A tool that asks for confirmation is a write whatever its
+ * name (the API bridge names its writes api_<endpoint>_create); otherwise the
+ * naming convention of ai/tools/* applies.
+ *
+ * @param	McpHandler	$handler	Handler with the tools loaded
+ * @param	string		$name		Tool name
+ * @return	bool
+ */
+function aiToolIsWrite($handler, $name)
+{
+	$tool = $handler->toolsByName[$name] ?? null;
+	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview') && $tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
+		return true;
+	}
+
+	return (bool) preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name);
+}
+
 $mcpHandler = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 $mcpHandler->loadTools();
 
@@ -154,10 +173,7 @@ if ($action == 'apply_preset' && !empty($toolcontext) && !empty($mode)) {
 		$resultSet = array();
 	} elseif ($mode === 'readonly') {
 		foreach ($allDiscoveredTools as $tName) {
-			// Tools starting with a mutating verb are write tools.
-			// This heuristic matches the naming convention used throughout ai/tools/*.
-			// External tool authors should follow the same convention.
-			if (!preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $tName)) {
+			if (!aiToolIsWrite($mcpHandler, $tName)) {
 				$resultSet[] = $tName;
 			}
 		}
@@ -178,7 +194,7 @@ if ($action == 'apply_preset' && !empty($toolcontext) && !empty($mode)) {
 $help_url = '';
 $title = 'AiSetup';
 
-llxHeader('', $langs->trans($title), '', '', 0, 0, array('/ai/js/ai.js'), array('/ai/css/ai.css'), '', 'mod-ai page-admin');
+llxHeader('', $langs->trans($title), '', '', 0, 0, array('/ai/js/ai.js'), array(), '', 'mod-ai page-admin');
 
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"') . '<span class="hideonsmartphone">' . $langs->trans("BackToModuleList") . '</span></a>';
 
@@ -188,24 +204,24 @@ $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 
 print '<!-- Tools quick setup -->';
-print '<span class="opacitymedium">' . $langs->trans("ToolAccessControlHelp") . '</span><br><br>';
+print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '</div>';
 
 print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
 // Presets For Chat Assistant
 print '<div>';
-print '<strong>' . $langs->trans('PresetsForChatAssistant') . ':</strong><br>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<strong>' . $langs->trans('PresetsForChatAssistant') . '</strong><br>';
 print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'none'), true) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
 print '</div>';
 
 // Presets For MCP Server
 print '<div>';
-print '<strong>' . $langs->trans('PresetsForMcpServer') . ':</strong><br>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<strong>' . $langs->trans('PresetsForMcpServer') . '</strong><br>';
 print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'none'), true) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
 print '</div>';
 
 print '</div>';
@@ -246,7 +262,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			$isAstOn = $isSystem ? true : in_array($name, $astAllowed, true);
 			$isMcpOn = $isSystem ? true : in_array($name, $mcpAllowed, true);
 
-			if (preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name)) {
+			if (aiToolIsWrite($mcpHandler, $name)) {
 				$type      = 'write';
 				$typeBadge = '<span class="badge badge-status2" style="display: inline-block;">' . $langs->trans('Modify') . '</span>';
 			} else {

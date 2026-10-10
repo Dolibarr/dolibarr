@@ -13,9 +13,9 @@
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025-2026	Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -908,8 +908,27 @@ class Reception extends CommonObject
 				$this->setErrorsFromObject($supplierorderdispatch);
 				return $ret;
 			} else {
+				// Lines of draft receptions are not received yet
+				$draft_lines = array();
+				$sql = "SELECT rb.rowid FROM ".MAIN_DB_PREFIX."receptiondet_batch as rb";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.rowid = rb.fk_reception";
+				$sql .= " WHERE rb.fk_element = ".((int) $this->origin_id);
+				$sql .= " AND r.fk_statut = ".self::STATUS_DRAFT;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+				while ($obj = $this->db->fetch_object($resql)) {
+					$draft_lines[(int) $obj->rowid] = (int) $obj->rowid;
+				}
+				$this->db->free($resql);
+
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
+					if (isset($draft_lines[(int) $dispatch_line->id])) {
+						continue;
+					}
 					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
 						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
 					} else {
@@ -981,6 +1000,11 @@ class Reception extends CommonObject
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		global $conf, $langs, $user;
 
 		$num = count($this->lines);
@@ -1419,6 +1443,7 @@ class Reception extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " fk_projet=".((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_warehouse=".((isset($this->fk_warehouse) && $this->fk_warehouse > 0) ? ((int) $this->fk_warehouse) : "null").",";
 		$sql .= " entity = ".((int) $conf->entity);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1604,6 +1629,40 @@ class Reception extends CommonObject
 		}
 	}
 
+	/**
+	 *	Delete a line of the reception. Only allowed while the reception is a draft.
+	 *
+	 *	@param	User	$user		User that deletes
+	 *	@param	int		$lineid		Id of the line to delete (llx_receptiondet_batch.rowid)
+	 *	@return	int					>0 if OK, <0 if KO
+	 */
+	public function deleteLine($user, $lineid)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new ReceptionLineBatch($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+		if ($line->fk_reception != $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
+		if ($line->delete($user) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+		$this->error = $line->error;
+		$this->db->rollback();
+		return -1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load lines
@@ -1612,6 +1671,11 @@ class Reception extends CommonObject
 	 */
 	public function fetch_lines()
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		// phpcs:enable
 		$this->lines = array();
 
@@ -1631,7 +1695,7 @@ class Reception extends CommonObject
 				// TODO Remove or keep this ?
 				$line->fetch_product();
 
-				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
+				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, localtax1_tx, localtax2_tx, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva, date_start, date_end, product_type';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$sql_commfourndet .= ' ORDER BY rang';
@@ -1644,6 +1708,8 @@ class Reception extends CommonObject
 					$line->desc = $obj->description;
 					$line->tva_tx = $obj->tva_tx;
 					$line->vat_src_code = $obj->vat_src_code;
+					$line->localtax1_tx = $obj->localtax1_tx;
+					$line->localtax2_tx = $obj->localtax2_tx;
 					$line->subprice = $obj->subprice;
 					$line->multicurrency_subprice = $obj->multicurrency_subprice;
 					$line->remise_percent = $obj->remise_percent;
@@ -1652,6 +1718,9 @@ class Reception extends CommonObject
 					$line->total_ht = $obj->total_ht;
 					$line->total_ttc = $obj->total_ttc;
 					$line->total_tva = $obj->total_tva;
+					$line->date_start = $this->db->jdate($obj->date_start);
+					$line->date_end = $this->db->jdate($obj->date_end);
+					$line->product_type = $obj->product_type;
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
@@ -2079,13 +2148,28 @@ class Reception extends CommonObject
 			dol_syslog(get_class($this)."::setClosed already in closed status", LOG_WARNING);
 			return 0;
 		}
+		// Only a validated reception can be closed (a draft reception must not move stock)
+		if ($this->statut != Reception::STATUS_VALIDATED) {
+			$langs->load("receptions");
+			$this->error = $langs->trans('StatusOfRefMustBe', $this->ref, $langs->transnoentitiesnoconv('StatusReceptionValidatedShort'));
+			dol_syslog(get_class($this)."::setClosed reception is not validated", LOG_WARNING);
+			return -1;
+		}
 
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut = '.self::STATUS_CLOSED;
-		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut = '.self::STATUS_VALIDATED;
 
 		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// Status in database is not validated (already closed or back to draft): no stock movement
+			$this->db->rollback();
+			$langs->load("receptions");
+			$this->error = $langs->trans('StatusOfRefMustBe', $this->ref, $langs->transnoentitiesnoconv('StatusReceptionValidatedShort'));
+			dol_syslog(get_class($this)."::setClosed reception is not validated in database", LOG_WARNING);
+			return -1;
+		}
 		if ($resql) {
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {

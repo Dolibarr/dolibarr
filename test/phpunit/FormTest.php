@@ -25,12 +25,13 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -503,5 +504,348 @@ class FormTest extends CommonClassTest
 
 		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
 		$db->rollback();
+	}
+
+	/**
+	 * testSelectcontactsLimitOffset
+	 *
+	 * selectcontacts() must cap the number of returned contacts to the $limit argument and
+	 * offset the result set by $limitoffset, so the contact/ajax/contact.php endpoint can page
+	 * through the list (select2 infinite scroll), the same way select_dolusers() already does.
+	 *
+	 * @return void
+	 */
+	public function testSelectcontactsLimitOffset()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestctclim'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		for ($i = 1; $i <= 3; $i++) {
+			$tmpcontact = new Contact($db);
+			$tmpcontact->lastname = $uniq.'Limit'.$i;
+			$tmpcontact->firstname = 'Contact';
+			$tmpcontact->statut = 1;
+			$this->assertGreaterThan(0, $tmpcontact->create($user), 'Failed to create test contact: '.$tmpcontact->error);
+		}
+
+		$form = new Form($db);
+		$filter = "(lastname:like:'".$uniq."%')";
+
+		// Without limit: the 3 contacts match the filter
+		$all = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter);
+		$this->assertIsArray($all);
+		$this->assertGreaterThanOrEqual(3, count($all), 'Expected at least the 3 created contacts without a limit');
+
+		// With limit=2: at most 2 rows are returned
+		$limited = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter, 2);
+		$this->assertIsArray($limited);
+		$this->assertLessThanOrEqual(2, count($limited), 'selectcontacts did not honour the $limit argument');
+
+		// Page 2 (offset 2): must still return the remaining contact(s), without repeating page 1's rows
+		$page2 = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter, 2, 2);
+		$this->assertIsArray($page2);
+		$this->assertNotEmpty($page2, 'the offset page must still return the remaining contact(s)');
+		$this->assertEmpty(
+			array_intersect(array_column($limited, 'key'), array_column($page2, 'key')),
+			'offset page must not repeat rows from page 1'
+		);
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectContactSingleSearchToSelectUsesSelect2Pagination
+	 *
+	 * Like select_dolusers(), select_contact()'s single-select "search to select" combo must use
+	 * select2 bound to contact/ajax/contact.php with page/pagination.more wiring, instead of the
+	 * old jQuery UI ajax_autocompleter() which has no pagination concept.
+	 *
+	 * @return void
+	 */
+	public function testSelectContactSingleSearchToSelectUsesSelect2Pagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		// socid=0 (no thirdparty scoping) so $nokeyifsocid never disables ajax mode
+		$out = $form->select_contact(0, '', 'contactid');
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('contact/ajax/contact.php', $out, 'single select-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('.select2({', $out, 'single select-to-select must use select2, not the old jQuery UI autocomplete');
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+		$this->assertStringNotContainsString('ui-autocomplete', $out, 'the old jQuery UI autocomplete markup must be gone');
+
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * testSelectContactMultipleSearchToSelect
+	 *
+	 * When CONTACT_USE_SEARCH_TO_SELECT is enabled, select_contact() in multiple mode must render
+	 * an ajax select2 bound to contact/ajax/contact.php with only the preselected contacts as
+	 * <option>, instead of loading the whole contact list - mirroring select_dolusers($multiple=true).
+	 *
+	 * @return void
+	 */
+	public function testSelectContactMultipleSearchToSelect()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+
+		$db->begin();
+
+		$uniq = 'zttestctcmul'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		$contact1 = new Contact($db);
+		$contact1->lastname = 'Selected'.$uniq;
+		$contact1->firstname = 'Contact';
+		$contact1->statut = 1;
+		$this->assertGreaterThan(0, $contact1->create($user), 'Failed to create test contact: '.$contact1->error);
+
+		$contact2 = new Contact($db);
+		$contact2->lastname = 'NotSelected'.$uniq;
+		$contact2->firstname = 'Contact';
+		$contact2->statut = 1;
+		$this->assertGreaterThan(0, $contact2->create($user), 'Failed to create test contact: '.$contact2->error);
+
+		$form = new Form($db);
+
+		// Ajax "search to select" mode ON
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 2;
+		$out = $form->select_contact(0, array($contact1->id), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+		$this->assertIsString($out);
+		$this->assertStringContainsString('name="socpeopleassigned[]"', $out, 'multiple mode must add [] to the element name');
+		$this->assertStringContainsString('multiple', $out, 'multiple attribute must be present');
+		$this->assertStringContainsString('contact/ajax/contact.php', $out, 'multiple + search-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('<option value="'.$contact1->id.'"', $out, 'the preselected contact must be rendered as an <option>');
+		$this->assertStringNotContainsString('<option value="'.$contact2->id.'"', $out, 'the full contact list must not be rendered in ajax mode');
+
+		// Ajax "search to select" mode OFF -> full list
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		$outfull = $form->select_contact(0, array($contact1->id), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+		$this->assertIsString($outfull);
+		$this->assertStringNotContainsString('contact/ajax/contact.php', $outfull, 'without the constant the ajax endpoint must not be used');
+		$this->assertStringContainsString('<option value="'.$contact2->id.'"', $outfull, 'without the constant the full contact list must be rendered');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectContactAjaxMultiplePagination
+	 *
+	 * The multiple contact "search to select" combo must let select2 page through the endpoint,
+	 * like select_dolusers($multiple=true) already does.
+	 *
+	 * @return void
+	 */
+	public function testSelectContactAjaxMultiplePagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		$out = $form->select_contact(0, array(), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * Check filtering, option keys and selection with shared, sales and purchase VAT rates.
+	 *
+	 * @param int|string|null $typevat Requested VAT type, null to omit the argument
+	 * @param int $mode Option key mode
+	 * @param bool $optionsonly Return only options
+	 * @param int[] $expectedids Expected VAT row IDs
+	 * @return void
+	 * @dataProvider loadTvaProvider
+	 */
+	public function testLoadTvaTypes($typevat, $mode, $optionsonly, $expectedids)
+	{
+		global $mysoc;
+
+		$form = $this->createVatForm();
+		$cache = $form->cache_vatrates;
+		$seller = clone $mysoc;
+		$seller->country_code = 'CH';
+		$seller->tva_assuj = 1;
+		$selectedcode = ($typevat == 2 ? 'IPMat' : 'TVADueOPT');
+		if ($typevat === null) {
+			$html = $form->load_tva('tva_tx', '8.1 ('.$selectedcode.')', $seller, null, 0, 0, 1, $optionsonly, $mode);
+		} else {
+			$html = $form->load_tva('tva_tx', '8.1 ('.$selectedcode.')', $seller, null, 0, 0, 1, $optionsonly, $mode, $typevat);
+		}
+
+		$document = new DOMDocument();
+		$document->loadHTML($html);
+		$actualkeys = array();
+		$selectedkeys = array();
+		foreach ($document->getElementsByTagName('option') as $option) {
+			$actualkeys[] = $option->getAttribute('value');
+			if ($option->hasAttribute('selected')) {
+				$selectedkeys[] = $option->getAttribute('value');
+			}
+		}
+		$expectedkeys = array();
+		$expectedselected = '';
+		foreach ($expectedids as $id) {
+			$rate = $cache[$id];
+			$key = ($mode < 0 ? (string) $id : $rate['txtva'].($rate['nprtva'] ? '*' : '').($mode > 0 && $rate['code'] ? ' ('.$rate['code'].')' : ''));
+			$expectedkeys[] = $key;
+			if ($rate['code'] == $selectedcode) {
+				$expectedselected = $key;
+			}
+		}
+		$this->assertSame($expectedkeys, $actualkeys);
+		$this->assertSame(array($expectedselected), $selectedkeys);
+		$this->assertSame(count($expectedids), $form->num);
+		$this->assertSame($optionsonly ? 0 : 1, $document->getElementsByTagName('select')->length);
+		$this->assertSame($cache, $form->cache_vatrates);
+	}
+
+	/**
+	 * Provide all supported VAT types and rendering modes, including an omitted type.
+	 *
+	 * @return array<string,array{0:int|string|null,1:int,2:bool,3:int[]}>
+	 */
+	public function loadTvaProvider()
+	{
+		$cases = array();
+		foreach (array('default' => null, 'all' => 0, 'string-zero' => '0', 'sales' => 1, 'purchases' => 2) as $name => $typevat) {
+			$ids = ($typevat == 1 ? array(1, 2, 3, 4) : ($typevat == 2 ? array(1, 2, 5, 6) : array(1, 2, 3, 4, 5, 6)));
+			foreach (array(0, 1, -1) as $mode) {
+				foreach (array(false, true) as $optionsonly) {
+					$cases[$name.'-'.$mode.'-'.(int) $optionsonly] = array($typevat, $mode, $optionsonly, $ids);
+				}
+			}
+		}
+		return $cases;
+	}
+
+	/**
+	 * Switching VAT types on the same Form must not discard cached rates.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaReusesAllCachedTypes()
+	{
+		$form = $this->createVatForm();
+		$cache = $form->cache_vatrates;
+		foreach (array(1 => 4, 2 => 4, 0 => 6) as $typevat => $count) {
+			$html = $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1, $typevat);
+			$this->assertSame($count, substr_count($html, '<option '));
+			$this->assertSame($count, $form->num);
+			$this->assertSame($cache, $form->cache_vatrates);
+		}
+	}
+
+	/**
+	 * A dictionary containing only shared rates must behave identically for every type.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSharedRates()
+	{
+		$form = $this->createVatForm();
+		$form->cache_vatrates = array_slice($form->cache_vatrates, 0, 2, true);
+		$expected = $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1);
+		foreach (array(0, 1, 2) as $typevat) {
+			$this->assertSame($expected, $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1, $typevat));
+		}
+	}
+
+	/**
+	 * Shared non-recoverable VAT must remain selectable by its numeric rate and NPR flag.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSharedNonRecoverableSelection()
+	{
+		$form = $this->createVatForm();
+		foreach (array(0, 1, 2) as $typevat) {
+			$html = $form->load_tva('tva_tx', '2.6', null, null, 0, 1, '', true, 1, $typevat);
+			$document = new DOMDocument();
+			$document->loadHTML($html);
+			$xpath = new DOMXPath($document);
+			$selected = $xpath->query('//option[@selected]');
+			$this->assertSame(1, $selected->length);
+			$this->assertSame('2.6*', $selected->item(0)->getAttribute('value'));
+		}
+	}
+
+	/**
+	 * Sellers not subject to VAT must still be restricted to a disabled zero-rate select.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSellerNotSubjectToVat()
+	{
+		global $conf, $mysoc;
+
+		$savedconf = $conf;
+		$conf = clone $conf;
+		$conf->global = clone $conf->global;
+		$conf->global->EXPENSEREPORT_OVERRIDE_VAT = 0;
+		$seller = clone $mysoc;
+		$seller->country_code = 'CH';
+		$seller->tva_assuj = 0;
+		$form = $this->createVatForm();
+		try {
+			foreach (array(0, 1, 2) as $typevat) {
+				$html = $form->load_tva('tva_tx', '0', $seller, null, 0, 0, '', false, 1, $typevat);
+				$document = new DOMDocument();
+				$document->loadHTML($html);
+				$this->assertTrue($document->getElementsByTagName('select')->item(0)->hasAttribute('disabled'));
+				$this->assertSame(1, $document->getElementsByTagName('option')->length);
+				$this->assertSame('0', $document->getElementsByTagName('option')->item(0)->getAttribute('value'));
+			}
+		} finally {
+			$conf = $savedconf;
+		}
+	}
+
+	/**
+	 * Build a populated cache without changing the VAT dictionary in the database.
+	 *
+	 * @return Form
+	 */
+	private function createVatForm()
+	{
+		$form = new Form($this->savdb);
+		foreach (array(array('0', '0', '', 0), array('0', '2.6', '', 1), array('1', '8.1', 'TVADue', 0), array('1', '8.1', 'TVADueOPT', 0), array('2', '8.1', 'IPInv', 0), array('2', '8.1', 'IPMat', 0)) as $index => $rate) {
+			$id = $index + 1;
+			$label = $rate[1].'%'.($rate[2] ? ' ('.$rate[2].')' : '');
+			$form->cache_vatrates[$id] = array('rowid' => $id, 'type_vat' => $rate[0], 'txtva' => $rate[1], 'code' => $rate[2], 'nprtva' => $rate[3], 'label' => $label, 'labelpositiverates' => $label);
+		}
+		return $form;
 	}
 }

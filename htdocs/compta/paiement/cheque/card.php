@@ -331,7 +331,7 @@ $formfile = new FormFile($db);
 if ($action == 'create2') {
 	$head = array();
 	$h = 0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new&token='.newToken();
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = (string) $h;
 	$h++;
@@ -827,7 +827,7 @@ if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->h
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->hasRight('banque', 'cheque')) {
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 }
 print '</div>';
 

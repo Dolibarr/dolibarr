@@ -103,13 +103,9 @@ class modAi extends DolibarrModules
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
-			'css' => array(
-				//    '/ai/css/ai.css.php',
-			),
+			'css' => array(),
 			// Set this to relative path of js file if module must load a js on all pages
-			'js' => array(
-				//   '/ai/js/ai.js.php',
-			),
+			'js' => array(),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array('all'),
 			// Set this to 1 if features of module are opened to external users
@@ -291,6 +287,26 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		// The full-page assistant (ai/assistant/index.php) was reachable only by
+		// typing its URL: the topbar popover opens the quick chat, but nothing in
+		// the menus leads to the page with the welcome screen and its ready-made
+		// prompts. One entry under Tools, hideable with AI_MENU_HIDE_TOOLSMENU
+		// and gated by the same ai->assistant->use right as the page itself.
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=tools',
+			'type' => 'left',
+			'titre' => 'AIAssistant',
+			'prefix' => img_picto('', 'fa-robot', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'tools',
+			'leftmenu' => 'ai',
+			'url' => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
+			'langs' => 'other',
+			'position' => 200,
+			'enabled' => 'isModEnabled("ai") && getDolGlobalString("AI_ASSISTANT_ENABLED") && getDolGlobalString("AI_MENU_SHOW_TOOLSMENU")',
+			'perms' => '$user->hasRight("ai", "assistant", "use")',
+			'target' => '',
+			'user' => 2,
+		);
 		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES

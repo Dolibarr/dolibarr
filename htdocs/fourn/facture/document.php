@@ -58,6 +58,12 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 
+$object = new FactureFournisseur($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -113,7 +119,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-ca
 
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$totalpaid = $object->getSommePaiement();
 

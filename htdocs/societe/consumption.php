@@ -38,6 +38,7 @@ require "../main.inc.php";
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
@@ -87,6 +88,11 @@ $sref = GETPOST("sref");
 $sprod_fulldescr = GETPOST("sprod_fulldescr");
 $month = GETPOSTINT('month');
 $year = GETPOSTINT('year');
+if (GETPOSTISARRAY('search_status')) {
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
+} else {
+	$search_status = GETPOST('search_status', 'intcomma');
+}
 
 // Clean up on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
@@ -94,6 +100,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$sprod_fulldescr = '';
 	$year = '';
 	$month = '';
+	$search_status = '';
 }
 
 // Customer or supplier selected in drop box
@@ -118,6 +125,7 @@ if ($reshook < 0) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formorder = new FormOrder($db);
 $productstatic = new Product($db);
 
 $title = $langs->trans("Referers", $object->name);
@@ -435,6 +443,9 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
+	if ($type_element == 'supplier_order' && $search_status !== '') {
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($search_status).")";
+	}
 
 	$parameters = array('type_element' => $type_element);
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -497,6 +508,9 @@ if ($sql_select && $sql !== '') {
 	if ($year) {
 		$param .= "&year=".urlencode((string) ($year));
 	}
+	if ($search_status !== '') {
+		$param .= "&search_status=".urlencode($search_status);
+	}
 	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -519,7 +533,10 @@ if ($sql_select && $sql !== '') {
 	if ($type_element == 'order' || $type_element == 'supplier_order' || $type_element == 'shipment') {
 		print '<td class="liste_titre center"></td>';
 	}
-	print '<th class="liste_titre center">';
+	print '<th class="liste_titre center parentonrightofpage">';
+	if ($type_element == 'supplier_order') {
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status', 'search_status width125 onrightofpage');
+	}
 	print '</th>';
 	print '<th class="liste_titre left">';
 	print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';

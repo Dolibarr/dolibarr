@@ -151,10 +151,12 @@ if ($enablepermissioncheck) {
 }
 
 // Security check (enable the most restrictive one)
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled("mymodule")) {
 	accessforbidden();
 }
@@ -191,7 +193,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_d
 // Show tabs
 $head = myobjectPrepareHead($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 // Build file list
@@ -249,10 +251,12 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'mymodule';
+//$modulepart = 'mymodule';
+$modulepart = 'myobject@mymodule';
 $param = '&id='.$object->id;
 //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
-$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+//$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 

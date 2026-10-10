@@ -249,7 +249,10 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 			$answer = preg_replace('/```$/', '', $answer);
 		}
 	} else {
-		$errors[] = 'Failed to convert document into TXT';
+		$langs->load("errors");
+		$error++;
+		$errors[] = $langs->trans("ErrorFailedToConvertFileInText");
+		$errors[] = $result['message'];
 	}
 }
 

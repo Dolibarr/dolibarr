@@ -109,7 +109,7 @@ class Bookmark extends CommonObject
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				Return integer <0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -125,6 +125,11 @@ class Bookmark extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+			if (!$obj) {
+				// Bookmark not found (unknown id, or bookmark of another entity)
+				$this->db->free($resql);
+				return 0;
+			}
 
 			$this->id = $obj->rowid;
 			$this->ref = $obj->rowid;
@@ -249,23 +254,6 @@ class Bookmark extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-	}
-
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
-	 * @param 	int 	$origin_id 	Old thirdparty id
-	 * @param 	int 	$dest_id 	New thirdparty id
-	 * @return 	bool
-	 */
-	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'bookmark'
-		);
-
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

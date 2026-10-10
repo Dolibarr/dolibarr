@@ -221,19 +221,18 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
-// Detection browser
-if (isset($_SERVER["HTTP_USER_AGENT"])) {
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
-	$conf->browser->name = $tmp['browsername'];
-	$conf->browser->os = $tmp['browseros'];
-	$conf->browser->version = $tmp['browserversion'];
-	$conf->browser->ua = $tmp['browserua'];
-	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
-	//var_dump($conf->browser);
+// Detection browser. A request without User-Agent header (script, monitoring tool...) gets the
+// default values ('unknown' browser, 'classic' layout), so $conf->browser is always complete.
+$tmp = getBrowserInfo((string) ($_SERVER["HTTP_USER_AGENT"] ?? ''));
+$conf->browser->name = $tmp['browsername'];
+$conf->browser->os = $tmp['browseros'];
+$conf->browser->version = $tmp['browserversion'];
+$conf->browser->ua = $tmp['browserua'];
+$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
+//var_dump($conf->browser);
 
-	if ($conf->browser->layout == 'phone') {
-		$conf->dol_no_mouse_hover = 1;
-	}
+if ($conf->browser->layout == 'phone') {
+	$conf->dol_no_mouse_hover = 1;
 }
 
 // If theme is forced
@@ -1541,7 +1540,9 @@ if (!function_exists("llxHeader")) {
 			$tmpcsstouse .= ' dol_openinpopup';
 		}
 
-		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+		// The spell checker of the browser is disabled for the whole page (the attribute is inherited by all the
+		// fields of all the forms). It is enabled back only on the fields where it is useful (free text, see DolEditor).
+		print '<body id="mainbody" class="'.$tmpcsstouse.'" spellcheck="false">'."\n";
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -2253,7 +2254,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->headerdone)) {
 		$disablenofollow = 0;
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
-		print '<body id="mainbody">';
+		print '<body id="mainbody" spellcheck="false">';
 	}
 
 	/*
@@ -2617,7 +2618,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	//else $dropdownBody .= yn(0);
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
-	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
+	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT'] ?? ''), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 	$dropdownBody .= ' <span class="opacitymedium">('.$conf->browser->layout.')</span>';
 	if (!empty($_SESSION["disablemodules"])) {
@@ -2797,8 +2798,11 @@ function top_menu_ai()
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
-	// the standalone page ai/assistant/index.php uses the same pattern).
-	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
+	// the standalone page ai/assistant/index.php uses the same pattern). Same
+	// filemtime cache-busting as the JS module below: a stylesheet cached for
+	// 15 minutes otherwise hides every CSS change of the chat behind a reload.
+	$aicssver = @filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css');
+	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css?v='.urlencode((string) ($aicssver ? $aicssver : DOL_VERSION)).'">';
 
 	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
 	// activation fires the click handler below, so it toggles the popover.
@@ -2885,6 +2889,9 @@ function top_menu_ai()
 			if (input) { input.focus(); }
 		}
 
+		// The expand button always opens the standalone full page
+		// (/ai/assistant/index.php) in the current tab. There is no small mode:
+		// the popover opens and stays in the large ("expanded") state.
 		toggle.addEventListener("click", function (event) {
 			console.log("Click on #topmenu-ai-toggle");
 			event.preventDefault();
@@ -2894,6 +2901,8 @@ function top_menu_ai()
 			positionPopover();
 			var isOpen = popover.classList.toggle("open");
 			if (isOpen) {
+				// Always open in the large ("expanded") state.
+				popover.classList.add("expanded");
 				loadChat();
 				if (loaded) { focusInput(); }
 			}
@@ -2906,10 +2915,9 @@ function top_menu_ai()
 			if (closeBtn) {
 				popover.classList.remove("open");
 			} else if (expandBtn) {
-				var expanded = popover.classList.toggle("expanded");
-				var icon = expandBtn.querySelector("i");
-				if (icon) { icon.className = expanded ? "fa fa-compress-alt" : "fa fa-expand-alt"; }
-				expandBtn.title = expanded ? (expandBtn.dataset.titleReduce || "") : (expandBtn.dataset.titleExpand || "");
+				// Open the standalone full page in the current tab.
+				var url = expandBtn.dataset.fullscreenUrl;
+				if (url) { window.location.href = url; }
 			}
 		});
 
@@ -4010,47 +4018,6 @@ if (!function_exists("llxFooter")) {
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
 			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang . '&' . $ext .'"></script>'."\n";
 		}
-
-		// JS wrapper to add an unalterable log when clicking on Download or Preview
-		// This is done on customer invoices only.
-		// This add a log and increase the pos_print_counter too (done by block-add.php).
-		/* NOTE: No more required, the trigger is now included into the call of the wrapper documents.php
-		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
-			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
-				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
-				?>
-				<script>
-				jQuery(document).ready(function () {
-					$('a.documentpreview').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentpreview (DOC_PREVIEW)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_PREVIEW'
-									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-					$('a.documentdownload').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentdownload (DOC_DOWNLOAD)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_DOWNLOAD'
-									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-				});
-				</script>
-				<?php
-			}
-		}
-		*/
 
 		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";

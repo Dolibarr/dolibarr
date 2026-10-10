@@ -231,6 +231,7 @@ if (GETPOSTINT('exportcsv') && $permissiontoread) {	// @phpstan-ignore-line
 if ($action == 'delete' && $permissiontocreate) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
+	$sql .= " AND fk_mailing = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -589,6 +590,11 @@ if ($object->fetch($id) >= 0) {
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
 				require_once $file;
+
+				if (!class_exists($classname)) {
+					dol_syslog("Emailing target selector class ".$classname." not found", LOG_WARNING);
+					continue;
+				}
 
 				$obj = new $classname($db);
 				'@phan-var-force MailingTargets $obj';

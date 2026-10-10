@@ -279,6 +279,10 @@ $arrayfields = array(
 	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
+if ($user->socid) {
+	unset($arrayfields['p.note_private']);
+}
+
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
  foreach ($object->fields as $key => $val) {
@@ -344,7 +348,6 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 }
 
 $objectclass = null;
-$search_code_client = '';
 
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -684,10 +687,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
-}
-// Search in 'code_client' when SOCIETE_ADD_REF_IN_LIST is set to 1
-if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
-	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);

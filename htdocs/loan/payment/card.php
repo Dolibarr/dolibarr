@@ -34,6 +34,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
@@ -62,6 +63,12 @@ if ($id > 0) {
 if (!$user->hasRight('loan', 'read')) {
 	accessforbidden();
 }
+// PaymentLoan::fetch() is a low-level by-id primitive (returns a record regardless of entity), so the
+// access restriction is enforced here in the caller, on the parent loan: restrictedArea() checks the
+// loan read right and that the loan belongs to an allowed entity.
+if ($payment->id > 0) {
+	restrictedArea($user, 'loan', $payment->fk_loan, '', '');
+}
 
 
 /*
@@ -71,9 +78,6 @@ if (!$user->hasRight('loan', 'read')) {
 // Delete payment
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
-	$db->query($sql);
 
 	$fk_loan = $payment->fk_loan;
 
@@ -137,7 +141,8 @@ print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$
 
 // Amount
 print '<tr><td>'.$langs->trans('LoanCapital').'</td><td>'.price($payment->amount_capital, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td>'.$langs->trans('Insurance').'</td><td>'.price($payment->amount_insurance, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+$loan->fetch($payment->fk_loan);
+print '<tr><td>'.loanChargeLabel($loan->charge_type, $langs).'</td><td>'.price($payment->amount_insurance, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note Private
@@ -240,7 +245,7 @@ print '<div class="tabsAction">';
 
 if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 	} else {
 		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 0);
 	}

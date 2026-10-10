@@ -10,6 +10,7 @@
  * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,55 +274,59 @@ $nowday = $nowarray['mday'];
 $listofextcals = array();
 
 // Define list of external calendars (global admin setup)
-$i = 0;
-while ($i < $MAXAGENDA) {
-	$i++;
-	$source = 'AGENDA_EXT_SRC'.$i;
-	$name = 'AGENDA_EXT_NAME'.$i;
-	$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
-	$color = 'AGENDA_EXT_COLOR'.$i;
-	$enabled = 'AGENDA_EXT_ENABLED'.$i;
-	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
-	$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-	if (getDolGlobalString($source) && getDolGlobalString($name) && getDolGlobalString($enabled)) {
-		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-		$listofextcals[] = array(
-			'type' => 'globalsetup',
-			'src' => getDolGlobalString($source),
-			'name' => dol_string_nohtmltag(getDolGlobalString($name)),
-			'offsettz' => (int) getDolGlobalInt($offsettz, 0),
-			'color' => dol_string_nohtmltag(getDolGlobalString($color)),
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
-		);
+if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
+	$i = 0;
+	while ($i < $MAXAGENDA) {
+		$i++;
+		$source = 'AGENDA_EXT_SRC'.$i;
+		$name = 'AGENDA_EXT_NAME'.$i;
+		$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
+		$color = 'AGENDA_EXT_COLOR'.$i;
+		$enabled = 'AGENDA_EXT_ENABLED'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
+		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
+		if (getDolGlobalString($source) && getDolGlobalString($name) && getDolGlobalString($enabled)) {
+			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+			$listofextcals[] = array(
+				'type' => 'globalsetup',
+				'src' => getDolGlobalString($source),
+				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
+				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
+				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
+			);
+		}
 	}
 }
 
 // Define list of external calendars (user setup)
-$i = 0;
-while ($i < $MAXAGENDA) {
-	$i++;
-	$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
-	$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
-	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
-	$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
-	$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
-	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
-	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
+	$i = 0;
+	while ($i < $MAXAGENDA) {
+		$i++;
+		$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
+		$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
+		$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
+		$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
+		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
+		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
-		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-		$listofextcals[] = array(
-			'type' => 'usersetup',
-			'src' => getDolUserString($source),
-			'name' => dol_string_nohtmltag(getDolUserString($name)),
-			'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-			'color' => dol_string_nohtmltag(getDolUserString($color)),
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			'default' => dol_string_nohtmltag(getDolUserString($default)),
-			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
-		);
+		if (getDolUserString($source) && getDolUserString($name)) {
+			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+			$listofextcals[] = array(
+				'type' => 'usersetup',
+				'src' => getDolUserString($source),
+				'name' => dol_string_nohtmltag(getDolUserString($name)),
+				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
+				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				'default' => dol_string_nohtmltag(getDolUserString($default)),
+				'buggedfile' => dol_string_nohtmltag($buggedfile)
+			);
+		}
 	}
 }
 
@@ -417,7 +422,7 @@ if ($status == 'todo') {
 */
 
 $param = '';
-if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
 			if ($str_action != '-1') {
@@ -524,7 +529,7 @@ $paramnoactionodate = preg_replace('/mode=[a-z_]+/', '', preg_replace('/action=[
 
 $head = calendars_prepare_head($paramnoaction);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -771,10 +776,8 @@ $MAXONSAMEPAGE = $agendaeventresult['maxonsamepage'];
 
 
 // BIRTHDATES CALENDAR
-// Complete $eventarray with birthdates
-if ($check_birthday) {
-	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents);
-}
+agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents, $firstdaytoshow, $lastdaytoshow);
+
 
 // LEAVE-HOLIDAY CALENDAR
 if ($user->hasRight("holiday", "read")) {
@@ -1550,8 +1553,11 @@ function sort_events_by_date($a, $b)
 	// datef => Event end time
 
 	// Events have different start time
+	// Note: datep may be empty or non numeric on an incomplete event. The (int) cast must be on each
+	// operand, not on the result, or PHP 8 throws "Unsupported operand types: string - int" before it
+	// is reached. datef is already guarded with is_numeric() below for the same reason.
 	if ($a->datep !== $b->datep) {
-		return (int) ($a->datep - $b->datep);
+		return (int) $a->datep - (int) $b->datep;
 	}
 
 	// Events have same start time and no end time

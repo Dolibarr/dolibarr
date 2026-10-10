@@ -930,8 +930,8 @@ if ($object->id > 0) {
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
-				$invoicetemplate->date_last_gen = $objp->date_last_gen;
-				$invoicetemplate->date_when = $objp->date_when;
+				$invoicetemplate->date_last_gen = $db->jdate($objp->date_last_gen);
+				$invoicetemplate->date_when = $db->jdate($objp->date_when);
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
@@ -1097,7 +1097,7 @@ if ($object->id > 0) {
 				if ($contrat->fk_project > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 					$project = new Project($db);
-					$project->fetch($contrat->fk_project);
+					$project->fetch((int) $contrat->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print "</td>\n";
@@ -1146,28 +1146,80 @@ if ($object->id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook)) {
-		if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "creer")) {
-			$langs->load("supplier_proposal");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierProposal'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+		// Tooltip to use on buttons when the thirdparty is closed
+		$thirdpartyclosedtitle = ($object->status == 1 ? '' : $langs->trans("ThirdPartyIsClosed"));
+
+		// Url to go back to the thirdparty card when clicking on the cancel button of the creation page
+		$backtopageforcancel = $_SERVER['PHP_SELF'].'?socid='.$object->id;
+
+		$arrayforbutaction = array();
+
+		// Create a supplier proposal
+		$arrayforbutaction[] = array(
+			'lang' => 'supplier_proposal',
+			'enabled' => isModEnabled('supplier_proposal'),
+			'perm' => ($object->status == 1 && $user->hasRight('supplier_proposal', 'creer')),
+			'label' => 'AddSupplierProposal',
+			'url' => '/supplier_proposal/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a supplier order
+		$arrayforbutaction[] = array(
+			'lang' => 'orders',
+			'enabled' => isModEnabled('supplier_order'),
+			'perm' => ($object->status == 1 && ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'))),
+			'label' => 'AddSupplierOrderShort',
+			'url' => '/fourn/commande/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a contract
+		$arrayforbutaction[] = array(
+			'lang' => 'contracts',
+			'enabled' => isModEnabled('contract'),
+			'perm' => ($object->status == 1 && $user->hasRight('contrat', 'creer')),
+			'label' => 'AddContract',
+			'url' => '/contrat/card.php?action=create&socid='.$object->id.'&contract_type=1&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a supplier invoice
+		$arrayforbutaction[] = array(
+			'lang' => 'bills',
+			'enabled' => isModEnabled('supplier_invoice'),
+			'perm' => ($object->status == 1 && ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'))),
+			'label' => 'AddBill',
+			'url' => '/fourn/facture/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Check if at least one object can be created
+		$permissiontocreateatleastone = 0;
+		foreach ($arrayforbutaction as $butaction) {
+			if (!empty($butaction['perm'])) {
+				$permissiontocreateatleastone = 1;
+				break;
 			}
 		}
 
-		if ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer')) {
-			$langs->load("orders");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierOrderShort'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+		// Show the "Create" button with a dropdown list of objects (or flat buttons if option MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY is set)
+		if (!empty($arrayforbutaction)) {
+			$createbuttontitle = '';
+			$createbuttonright = 1;
+			if ($object->status != 1) {
+				$createbuttontitle = $langs->trans("ThirdPartyIsClosed");
+				$createbuttonright = 0;
+			} elseif (empty($permissiontocreateatleastone)) {
+				$createbuttontitle = $langs->trans("NotAllowed");
+				$createbuttonright = 0;
 			}
-		}
 
-		if (isModEnabled('contract') && $user->hasRight('contrat', 'creer') && $object->status == 1) {
-			print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;socid='.$object->id.'&amp;contract_type=1', '');
-		} elseif (isModEnabled('contract') && $user->hasRight('contrat', 'creer')) {
-			print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddContract'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+			print dolGetButtonAction($createbuttontitle, $langs->trans("Create"), 'default', $arrayforbutaction, '', $createbuttonright, array('areDropdownButtons' => !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY")));
 		}
 
 		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
@@ -1184,15 +1236,6 @@ if ($object->id > 0) {
 				} else {
 					print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				}
-			}
-		}
-
-		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
-			$langs->load("bills");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddBill'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddBill'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
 		}
 
