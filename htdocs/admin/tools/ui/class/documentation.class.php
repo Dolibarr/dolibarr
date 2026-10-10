@@ -257,6 +257,8 @@ class Documentation
 						'JSContextCompatAndDeprecations' => '#titlesection-compat',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
 						'FetchTool' => '#titlesection-tool-fetch',
+						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
+						'ObjectTool' => '#titlesection-tool-object',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
 					),
 				),

@@ -69,6 +69,37 @@ var Dolibarr = {
 		}),
 
 		/**
+		 * Replace an element of the page, or its content, by html received in ajax.
+		 * Scripts of the html are executed and Dolibarr.initNewContent() is called on the new elements.
+		 * @param {HTMLElement|jQuery|string} target Element or CSS selector
+		 * @param {string|HTMLElement} content Html, or element of another document
+		 * @param {Object} [options]
+		 * @param {string} [options.mode='replace'] 'replace' the element, or 'inner' to replace its content
+		 * @param {boolean} [options.initNewContent=true]
+		 * @returns {HTMLElement|null}
+		 */
+		replaceContent(target, content, options) {},
+
+		/**
+		 * Get the controller of an object displayed on a card
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms, url}
+		 * @returns {{
+		 *   element: string, id: number, tms: number, url: string,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   reload: function({sections?: string[], lines?: number[]}, Object=): Promise<{sections: Object, lines: Object, document: Document}>,
+		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
+		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   on: function(string, function): function
+		 * }}
+		 */
+		object: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers */
+			Controller: class {},
+		}),
+
+		/**
 		 * TThe langs tool
 		 */
 		langs: {

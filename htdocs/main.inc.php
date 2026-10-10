@@ -1910,6 +1910,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Update fields and reload sections or lines of the object of a card
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
