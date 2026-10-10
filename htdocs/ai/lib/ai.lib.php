@@ -846,6 +846,7 @@ function getAiChatAssistantConfig()
 		'Preview',
 		'TypeResponse',
 		'OpenVerb',
+		'AIPdfReport',
 
 		// Voice Confirmation
 		'VoiceYesNo',
