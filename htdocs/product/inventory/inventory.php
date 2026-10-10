@@ -361,7 +361,7 @@ if (empty($reshook)) {
 	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
-	if (GETPOST('addline', 'alpha')) {
+	if (GETPOST('addline', 'alpha') && $permissiontoupdatestock && ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED)) {
 		$qty = (GETPOST('qtytoadd') != '' ? ((float) price2num(GETPOST('qtytoadd'), 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
