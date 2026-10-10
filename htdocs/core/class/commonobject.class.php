@@ -5768,13 +5768,17 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 
+		// Only lines of documents having sub lines declare fk_parent_line
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		$fk_parent_line = (empty($line->fk_parent_line) ? 0 : $line->fk_parent_line);
+
 		$reshook = 0;
 		if (is_object($hookmanager)) {
-			if (empty($line->fk_parent_line)) {
+			if (empty($fk_parent_line)) {
 				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
 				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			} else {
-				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $fk_parent_line, 'defaulttpldir' => $defaulttpldir);
 				$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			}
 		}
@@ -5787,7 +5791,7 @@ abstract class CommonObject
 	 *	Return the display context of the lines, as defined by the card of the object before printObjectLines() and formAddObjectLine().
 	 *	Override it in child classes when the card uses other values.
 	 *
-	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
 	 */
 	public function getObjectLinesDisplayContext()
 	{
@@ -5807,7 +5811,7 @@ abstract class CommonObject
 	 *	Init the display of the lines: set the global variables used by the line templates (objectline_xxx.tpl.php) from getObjectLinesDisplayContext()
 	 *	To call in the card before printObjectLines() and formAddObjectLine().
 	 *
-	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
 	 */
 	public function initObjectLinesDisplay()
 	{

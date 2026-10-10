@@ -4338,7 +4338,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
 	 *
-	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
 	 */
 	public function getObjectLinesDisplayContext()
 	{

@@ -1072,14 +1072,16 @@ class CommandeFournisseur extends CommonOrder
 	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
 	 *	On supplier documents, the supplier is the seller.
 	 *
-	 *	@return	array{seller:?Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
 	 */
 	public function getObjectLinesDisplayContext()
 	{
 		global $mysoc;
 
 		$context = parent::getObjectLinesDisplayContext();
-		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : null);
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
 		$context['buyer'] = $mysoc;
 		$context['forceall'] = 1;
 		$context['inputalsopricewithtax'] = 1;
