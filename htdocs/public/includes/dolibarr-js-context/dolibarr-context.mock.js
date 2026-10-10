@@ -31,14 +31,6 @@ var Dolibarr = {
 		 */
 		langs: {
 			/**
-			 * Load a single locale from cache or fetch
-			 * @param {string} domain
-			 * @param {string} locale
-			 * @returns {Promise<Object>} translation object
-			 */
-			loadLocale(domain, locale) {},
-
-			/**
 			 * Load translations for a domain (multiple locales)
 			 * @param {string} domain
 			 * @param {string} locales - comma-separated list
@@ -51,6 +43,20 @@ var Dolibarr = {
 			 * @param {string} locale
 			 */
 			setLocale(locale) {},
+
+			/**
+			 * Clear cached translations in IndexedDB
+			 * @param {boolean} clearMemory Also clear translations loaded in memory
+			 * @param {boolean} rebuildDatabase Delete the IndexedDB database
+			 * @returns {Promise<void>}
+			 */
+			clearCache(clearMemory = false, rebuildDatabase = false) {},
+
+			/**
+			 * Current locale used for translations
+			 * @type {string}
+			 */
+			currentLocale: '',
 
 			/**
 			 * Translate a key using current locale
@@ -77,14 +83,17 @@ var Dolibarr = {
 	},
 
 	/**
-	 * Defines a new secure tool.
+	 * Defines a new tool.
+	 * A tool defined without overwrite is protected : it can never be replaced.
+	 * A tool defined with overwrite = true can be replaced later by another call with overwrite = true.
+	 *
 	 * @param {string} name Name of the tool
 	 * @param {*} value Function, class or object
-	 * @param {boolean} overwrite Explicitly allow overwriting an existing tool
-	 *
-	 * See also dolibarr-context.mock.js for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.
+	 * @param {Object} [options]
+	 * @param {boolean} [options.overwrite=false] Allow this tool to replace an overwritable tool and to be replaced later
+	 * @param {boolean} [options.triggerHook=true] Execute the 'defineTool' hook
 	 */
-	defineTool(name, value, overwrite = false, triggerHook = true) {},
+	defineTool(name, value, options = {}) {},
 
 	/**
 	 * Check if tool exists
@@ -102,7 +111,7 @@ var Dolibarr = {
 	 * Defines a new context variable.
 	 * @param {string} key
 	 * @param {string|number|boolean} value
-	 * @param {boolean} overwrite Allow overwriting existing value
+	 * @param {boolean} overwrite Allow this var to replace an overwritable var and to be replaced later
 	 */
 	setContextVar(key, value, overwrite = false) {},
 
@@ -139,6 +148,19 @@ var Dolibarr = {
 	 * @param {string} msg
 	 */
 	log(msg) {},
+
+	/**
+	 * Report a deprecated usage, warning shown once per key
+	 * @param {string} key Unique key of the deprecated usage
+	 * @param {string} msg Message explaining what to use instead
+	 */
+	deprecated(key, msg) {},
+
+	/**
+	 * List deprecated usages reported since page load
+	 * @returns {Array<{key:string, msg:string, count:number}>}
+	 */
+	getDeprecations() {},
 
 	/**
 	 * Executes a hook-like JS event with CustomEvent.

@@ -1901,8 +1901,14 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$jsContextPathUrl = DOL_URL_ROOT . '/public/includes/dolibarr-js-context';
 		$jsContextFiles = [
 			'dolibarr-context.umd.js', // The js Dolibarr context definition
-			'dolibarr-tool.seteventmessage.js' // The first tools to help dev for easy event in js
 		];
+
+		// COMPAT-JSCONTEXT @deprecated since 25.0, remove in 27.0 : backward compatibility layer, must be loaded right after the context definition
+		if (!getDolGlobalInt('MAIN_JS_CONTEXT_DISABLE_COMPAT')) {
+			$jsContextFiles[] = 'dolibarr-context.compat.js';
+		}
+
+		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -1910,6 +1916,21 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
 			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
+		}
+
+		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
+		$parameters = array('jsContextVars' => $jsContextVars);
+		$reshook = $hookmanager->executeHooks('addJsContextVars', $parameters);
+		if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+			foreach ($hookmanager->resArray as $key => $value) {
+				if (array_key_exists($key, $jsContextVars)) {
+					dol_syslog("JS context var '".$key."' added by a module is already defined, it is ignored", LOG_WARNING);
+				} elseif (!is_scalar($value)) {
+					dol_syslog("JS context var '".$key."' added by a module must be a string, a number or a boolean, it is ignored", LOG_WARNING);
+				} else {
+					$jsContextVars[$key] = $value;
+				}
+			}
 		}
 
 		// Load context and all js tools
