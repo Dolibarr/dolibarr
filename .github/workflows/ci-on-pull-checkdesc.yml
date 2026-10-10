@@ -1,5 +1,5 @@
 ---
-# Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec)
+# Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)
 # and that the description of the PR does not contain the mention @eldy.
 # If this is not the case, the CI fails, so the PR is refused.
 # If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
@@ -24,12 +24,12 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec)[ #:]'; then
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)[ #:]'; then
             echo "Title of PR is valid: '$PR_TITLE'"
             exit 0
           fi
 
-          echo "::error::The title of the PR must start with one of the keywords (FIX|CLOSE|NEW|PERF|DOC|QUAL|SEC) followed by a space or ':', then a description (Description can be free or '#ID' with ID of issue). Current title: '$PR_TITLE'"
+          echo "::error::The title of the PR must start with one of the keywords (FIX|CLOSE|NEW|PERF|DOC|QUAL|SEC|UXUI) followed by a space or ':', then a description (Description can be free or '#ID' with ID of issue). Current title: '$PR_TITLE'"
           exit 1
 
       - name: Check PR type when the PR targets a branch other than develop
