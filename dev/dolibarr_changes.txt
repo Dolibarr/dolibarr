@@ -148,6 +148,78 @@ modified lines.
 
 
 ####################################################################################################
+# LIBRARY : FPDM
+# PATH    : htdocs/includes/fpdm
+####################################################################################################
+
+VERSION : 2.9.2 (tmw/fpdm fork of Olivier Plathey's original FPDM script 93, https://github.com/codeshell/fpdm).
+
+NOTES   :
+  - Fills the fields of an existing PDF AcroForm in pure PHP (no pdftk/Ghostscript binary needed).
+  - Upstream's own checkbox/radio button support (opt-in with $pdf->useCheckboxParser = true) and its field
+    name matching had several bugs that made it fail on real-world AcroForms, reproduced on two official
+    French forms that are plain AcroForms: Cerfa 16216*03/2041-MEC-SD (produced by LibreOffice) and Cerfa
+    15692*01 "Demande a la MDPH" (32 pages, 828 fields, 411 checkboxes/radio buttons, produced by Word).
+  - All changes are marked inline with "// @CHANGE DOL".
+
+==> FILE   : src/fpdm.php
+    REASON : The "down appearance" (/D) line detector used a 2-char prefix match that also matched /DA (Default
+             Appearance), present on nearly every field, so the checkbox "on"/"off" state names were never extracted.
+    DIFF   :
+        -   } elseif (!$ap_d_line && '/D' == substr($CurLine, 0, 2)) {
+        +   } elseif (!$ap_d_line && '/D' == rtrim($CurLine)) {
+
+==> FILE   : src/fpdm.php, parsePDFEntries(), set_field_value(), set_field_checkbox()
+    REASON : A field declared with the standard "field root + /Kids widgets" structure (radio groups, or a field
+             whose widgets are shared across several pages) was not recognized ("field ... not found"): a field
+             was registered only when /T and /Subtype /Widget were on the same object.
+    CHANGE : Capture of /Parent references, a pending-widget queue for parentless checkbox widgets, and a
+             resolution pass (once every object has been seen, since a widget can appear before or after its
+             parent field object) that attaches each widget's state to its field (new "checkbox_variants" branch
+             in set_field_checkbox()).
+
+==> FILE   : src/fpdm.php
+    REASON : A field name with an accented character stored as 8-bit Latin-1/WinAnsi (e.g. "Numero de dossier"
+             with an accent, common in Word-produced PDFs) was corrupted into "Num?ro de dossier" and could never
+             be matched: the conversion of object names to UTF-8 declared the wrong source encoding.
+    DIFF   :
+        -   $name = mb_convert_encoding($name, 'UTF-8', 'ASCII');
+        +   $name = mb_convert_encoding($name, 'UTF-8', 'ISO-8859-1');
+
+==> FILE   : src/fpdm.php
+    REASON : The "on"/"off" state names of a checkbox/radio widget were only read from its /D (optional "pressed"
+             appearance) sub-dictionary, so a widget defining only /N (the mandatory "normal" appearance) was never
+             extracted, and the "on" name was assumed to be the first of the two keys (both orders exist).
+    CHANGE : Either /D or /N anchors the extraction, and the two keys are told apart by comparing to "Off".
+
+==> FILE   : src/fpdm.php, ListFields()
+    REASON : New public method (not upstream) returning each field's name/type/maxlen/checkbox-or-radio "on" tokens
+             without merging data, so a caller can see what to pass to Load() without pdftk. It surfaced a bug in
+             the "field root without widget" branch: any named object without /Subtype was registered as a field
+             (/T is also used by tagged-PDF structure elements or markup annotations: 274 phantom fields on the
+             MDPH form). A field object is now also required to have /FT.
+
+==> FILE   : src/fpdm.php, decode_pdf_name()
+    REASON : A checkbox/radio "on" token with a space or an accented character is stored as a hex-escaped name
+             (e.g. /Accident#20vie#20priv#8ee), which the "name" regexp truncated at the first escape, so several
+             tokens of the same field became the same truncated value.
+    CHANGE : The "name" regexp captures the whole escaped token. decode_pdf_name() unescapes #XX and converts from
+             ISO-8859-1 to UTF-8; it is used for the comparison in set_field_checkbox() and for ListFields(), but
+             /AS is still written with the original escaped token (kept as checkbox_yes_raw/checkbox_no_raw/
+             variant["yes_raw"]): writing the decoded bytes is not a valid PDF name and corrupts the file.
+
+==> FILE   : src/filters/FilterASCIIHex.php
+    REASON : Syntax removed in PHP 8.
+    DIFF   :
+        -   $str{$i}
+        +   $str[$i]
+
+==> FILE   : fpdm.php (non-composer entry point)
+    REASON : require_once() paths made absolute (__DIR__-based) instead of relative to the include_path/CWD.
+
+
+
+####################################################################################################
 # LIBRARY : NUSOAP
 # PATH    : htdocs/includes/nusoap/lib
 ####################################################################################################
