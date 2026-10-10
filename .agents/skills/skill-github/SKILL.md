@@ -27,7 +27,7 @@ Default branch: `develop`. Stable branches are named `NN.0` (e.g. `21.0`).
 
 ## Project conventions (.github/CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md)
 
-- PR title/description prefixed with `FIX`, `CLOSE`, `NEW`, `UIUX`, `PERF`, `QUAL`
+- PR title/description prefixed with `FIX`, `CLOSE`, `NEW`, `UXUI`, `PERF`, `QUAL`
   (uppercase = goes into the ChangeLog, lowercase = does not). Security PRs use `SEC`.
 - A bugfix targets the oldest affected stable branch; a new feature targets `develop`.
 - The contributor must fix any CI error and any conflict, even outside their own lines (solidarity
@@ -42,20 +42,22 @@ Default branch: `develop`. Stable branches are named `NN.0` (e.g. `21.0`).
 To filter JSON output (`--json ...`), write the Python filter into a temporary script file and run
 it with `python3 -I script.py`, rather than a one-liner full of escaped quotes.
 
-* To find open PRs that are approved by at least one maintainer (an approving review from an `OWNER`, `MEMBER` or `COLLABORATOR` of the repository):
+* To find open PRs (draft PRs excluded) that are approved by at least one maintainer (an approving review from an `OWNER`, `MEMBER` or `COLLABORATOR` of the repository):
 
 ```bash
-gh pr list -R Repo/project --state open --limit 50 --json number,title,author,latestReviews \
-  --jq '.[] | select(any(.latestReviews[]; .state == "APPROVED")) | "#\(.number) \(.author.login) - \(.title) (approved by: \([.latestReviews[] | select(.state == "APPROVED") | .author.login] | join(", ")))"'
+gh pr list -R Repo/project --state open --limit 50 --json number,title,author,isDraft,latestReviews \
+  --jq '.[] | select(.isDraft | not) | select(any(.latestReviews[]; .state == "APPROVED")) | "#\(.number) \(.author.login) - \(.title) (approved by: \([.latestReviews[] | select(.state == "APPROVED") | .author.login] | join(", ")))"'
+# Draft PRs are excluded with select(.isDraft | not): they are still work in progress.
 # Do not use --search "review:approved": it relies on the review decision of the branch protection
 # rules and does not tell who approved.
 ```
 
-* List open PRs with a failing CI:
+* List open PRs (draft PRs excluded) with a failing CI:
 
 ```bash
-gh pr list -R Repo/project --state open --limit 200 --json number,title,author,updatedAt,statusCheckRollup \
-  --jq '.[] | . as $pr | ($pr.statusCheckRollup | group_by(.name // .context) | map(max_by(.startedAt // .createdAt // .updatedAt // ""))) as $latest | {n: $pr.number, a: $pr.author.login, d: $pr.updatedAt[:10], t: $pr.title, f: ([$latest[] | select((.conclusion // .state) | IN("FAILURE","ERROR","TIMED_OUT","STARTUP_FAILURE","ACTION_REQUIRED")) | (.name // .context)] | unique)} | select(.f | length > 0) | "#\(.n) \(.d) \(.a) - \(.t) (failing: \(.f | join(", ")))"'
+gh pr list -R Repo/project --state open --limit 200 --json number,title,author,isDraft,updatedAt,statusCheckRollup \
+  --jq '.[] | select(.isDraft | not) | . as $pr | ($pr.statusCheckRollup | group_by(.name // .context) | map(max_by(.startedAt // .createdAt // .updatedAt // ""))) as $latest | {n: $pr.number, a: $pr.author.login, d: $pr.updatedAt[:10], t: $pr.title, f: ([$latest[] | select((.conclusion // .state) | IN("FAILURE","ERROR","TIMED_OUT","STARTUP_FAILURE","ACTION_REQUIRED")) | (.name // .context)] | unique)} | select(.f | length > 0) | "#\(.n) \(.d) \(.a) - \(.t) (failing: \(.f | join(", ")))"'
+# Draft PRs are excluded with select(.isDraft | not): their CI failures are expected while in progress.
 # statusCheckRollup can contain several runs of the same check (re-runs, matrix jobs). The
 # group_by(name) | map(max_by(startedAt)) keeps only the latest run per check, so a check fixed
 # since the last commit no longer appears as failing.
