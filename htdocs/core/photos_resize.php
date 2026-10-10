@@ -581,12 +581,12 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '
 		      <div class="jc_coords">
 		         '.$langs->trans("NewSizeAfterCropping").':
-		         &nbsp; <label>X1=<input type="number" class="flat maxwidth50" id="x" name="x" /></label>
-		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth50" id="y" name="y" /></label>
-		         &nbsp; <label>X2=<input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
-		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
-		         &nbsp; <label>W=<input type="number" class="flat maxwidth50" id="w" name="w" /></label>
-		         &nbsp; <label>H=<input type="number" class="flat maxwidth50" id="h" name="h" /></label>
+		         &nbsp; <label>X1=<input type="number" class="flat maxwidth75 right" id="x" name="x" /></label>
+		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth75 right" id="y" name="y" /></label>
+		         &nbsp; <label>X2=<input type="number" class="flat maxwidth75 right" id="x2" name="x2" /></label>
+		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth75 right" id="y2" name="y2" /></label>
+		         &nbsp; <label>W=<input type="number" class="flat maxwidth75 right" id="w" name="w" /></label>
+		         &nbsp; <label>H=<input type="number" class="flat maxwidth75 right" id="h" name="h" /></label>
 		      </div>
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
