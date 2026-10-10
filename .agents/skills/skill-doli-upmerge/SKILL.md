@@ -1,5 +1,5 @@
 ---
-name: skill-upmerge
+name: skill-doli-upmerge
 description:
   Forward-port (upmerge) Dolibarr maintenance branches in cascade (n into n+1, up to develop) with dev/pullmerge.sh, and resolve merge conflicts without committing.
   Use when asked to do an upmerge, a forward port, a cascade merge, or to run pullmerge.sh.
