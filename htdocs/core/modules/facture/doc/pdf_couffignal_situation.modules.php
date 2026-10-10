@@ -2301,37 +2301,41 @@ class pdf_couffignal_situation extends ModelePDFFactures
                       $progress = 0;
                }
                // Compute VAT
-
-               $tvaligne = $sign * $line_amount_vat * $progress * ($prorata_effective_rate * ($object->lines[$i]->special_code != 10050172) );
-               if ($object->lines[$i]->situation_percent == 0 && $prev_progress > 0) {
-                   $tmp_totline = ($object->lines[$i]->qty * $object->lines[$i]->subprice) *$object->lines[$i]->tva_tx/100 ;
-                   $tvaligne = -1 * $sign * $tmp_totline * $prev_progress/100 * $prorata_effective_rate;
+               if ((!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($object->lines[$i])) && $object->lines[$i]->special_code != 10050172 ) {
+                    $prorata_effective_ratei = $prorata_effective_rate ;
+                } else {
+                    $prorata_effective_ratei = 1 ;
                 }
+            	$tvaligne = $sign * $line_amount_vat * $progress * $prorata_effective_ratei ;
+                if ($object->lines[$i]->situation_percent == 0 && $prev_progress > 0) {
+                    $tmp_totline = ($object->lines[$i]->qty * $object->lines[$i]->subprice) *$object->lines[$i]->tva_tx/100 ;
+                    $tvaligne = -1 * $sign * $tmp_totline * $prev_progress/100 * $prorata_effective_ratei ;
+				}
 
-                if (($object->lines[$i]->info_bits & 0x01) == 0x01)             $vatrate .= '*';
-                if (!isset($taxes['tva'][$vatrate]))                                            $taxes['tva'][$vatrate] = 0.0;
+                if (($object->lines[$i]->info_bits & 0x01) == 0x01)    $vatrate .= '*';
+                if (!isset($taxes['tva'][$vatrate]))                   $taxes['tva'][$vatrate] = 0.0;
                 $taxes['tva'][$vatrate] += $tvaligne;
-            // --- Manage Local taxes ---
-			$localtax1ligne = $object->lines[$i]->total_localtax1;
-			$localtax2ligne = $object->lines[$i]->total_localtax2;
-			$localtax1_rate = $object->lines[$i]->localtax1_tx;
-			$localtax2_rate = $object->lines[$i]->localtax2_tx;
-			$localtax1_type = $object->lines[$i]->localtax1_type;
-			$localtax2_type = $object->lines[$i]->localtax2_type;
+            	// --- Manage Local taxes ---
+				$localtax1ligne = $object->lines[$i]->total_localtax1;
+				$localtax2ligne = $object->lines[$i]->total_localtax2;
+				$localtax1_rate = $object->lines[$i]->localtax1_tx;
+				$localtax2_rate = $object->lines[$i]->localtax2_tx;
+				$localtax1_type = $object->lines[$i]->localtax1_type;
+				$localtax2_type = $object->lines[$i]->localtax2_type;
 
-			// Retrieve type from database for backward compatibility with old records
-			if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
-			&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) { // and there is local tax
-				$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-				$localtax1_type = $localtaxtmp_array[0];
-				$localtax2_type = $localtaxtmp_array[2];
+				// Retrieve type from database for backward compatibility with old records
+				if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
+				&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) { // and there is local tax
+					$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+					$localtax1_type = $localtaxtmp_array[0];
+					$localtax2_type = $localtaxtmp_array[2];
+				}
+
+				// Retrieve global local tax
+				if ($localtax1_type && $localtax1ligne != 0) $taxes['localtax1'][$localtax1_type][$localtax1_rate] += $localtax1ligne;
+				if ($localtax2_type && $localtax2ligne != 0) $taxes['localtax2'][$localtax2_type][$localtax2_rate] += $localtax2ligne;
 			}
-
-			// Retrieve global local tax
-			if ($localtax1_type && $localtax1ligne != 0) $taxes['localtax1'][$localtax1_type][$localtax1_rate] += $localtax1ligne;
-			if ($localtax2_type && $localtax2ligne != 0) $taxes['localtax2'][$localtax2_type][$localtax2_rate] += $localtax2ligne;
-		}
-		return $taxes;
+			return $taxes;
 	}
 
 	/**
