@@ -613,7 +613,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
@@ -893,6 +894,9 @@ class Project extends CommonObject
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'stocktransfer_stocktransfer') {
 			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize((string) $ids).") AND ms.type_mouvement = 1";
+		} elseif ($type == 'stock_mouvement') {
+			// Stock movements have no entity field (the warehouse has one), and the project is stored into fk_projet
+			$sql = "SELECT ms.rowid FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
@@ -2105,9 +2109,11 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project = NULL";
 			$sql .= " WHERE id = ".((int) $elementSelectId);
+			$sql .= " AND fk_project = ".((int) $this->id);
 		} else {
 			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
 			$sql .= " WHERE rowid = ".((int) $elementSelectId);
+			$sql .= " AND ".$this->db->sanitize($projectfield)." = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);

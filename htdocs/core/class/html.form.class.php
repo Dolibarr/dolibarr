@@ -159,7 +159,7 @@ class Form
 	 *
 	 * @param 	string				$text 			Text of label or key to translate
 	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
+	 * @param 	?string				$preselected 	Value to show/edit (not used in this function)
 	 * @param 	?object				$object 		Object (on the page we show)
 	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
@@ -3519,7 +3519,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return select list of resources. Selected resources are stored into session.
-	 * List of resources are provided into $_SESSION['assignedtoresource'].
+	 * List of resources are provided by $listofresourceid, or else into $_SESSION['assignedtoresource'].
 	 *
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
@@ -3547,7 +3547,12 @@ class Form
 		$resourcestatic = new Dolresource($this->db);
 
 		$out = '';
-		if (!empty($_SESSION['assignedtoresource'])) {
+		// The list of selected resources is provided by the caller through $listofresourceid.
+		// Fall back to the legacy global $_SESSION['assignedtoresource'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofresourceid)) {
+			$assignedtoresource = $listofresourceid;
+		} elseif (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 			if (!is_array($assignedtoresource)) {
 				$assignedtoresource = array();
@@ -3577,7 +3582,7 @@ class Form
 					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
 					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
 					$out .= '</span>';
-					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . (!empty($listofresourceid[$value['id']]['transparency']) ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -7014,9 +7019,9 @@ class Form
 	 * @param string 		$title 				Title
 	 * @param string 		$question 			Question
 	 * @param string 		$action 			Action
-	 * @param null|string|array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string}>|array{text:string,0?:array{name:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string},1?:array{name:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string}}	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'other', 'onecolumn' or 'hidden'...
+	 * @param null|string|array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string,datenow?:int<0,1>,hours?:int,minutes?:int}>|array{text:string,0?:array{name:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string,datenow?:int<0,1>,hours?:int,minutes?:int},1?:array{name:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>,tdclass?:string,datenow?:int<0,1>,hours?:int,minutes?:int}}	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int<0,1>|''|'no'|'yes'|'1'|'0'	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int<0,2>|string	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int|string 	$height 			Force height of box (0 = auto)
@@ -8519,10 +8524,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
@@ -9747,7 +9752,7 @@ class Form
 	 * @param stdClass 	$objp 		Result set of fetch
 	 * @param string 	$opt 		Option (var used for returned value in string option format)
 	 * @param array{}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
-	 * @phan-param array{key:string,value:string,type:string}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
+	 * @phan-param array{key?:string,value?:string,type?:string}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
 	 * @phpstan-param-out array{key:string,value:string,type:string}	$optJson
 	 * @param string 	$selected 	Preselected value
 	 * @param string 	$filterkey 	Filter key to highlight
@@ -13066,16 +13071,13 @@ class Form
 	 * @param 	array<int,string> 						$search_component_params 			Array of selected search criteria
 	 * @param 	string[] 								$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
 	 * @param 	string 									$search_component_params_hidden 	String with $search_component_params criteria
-	 * @param 	array<string,array{type:string}> 		$arrayoffiltercriterias 			Array of available filter criteria for an object and linked objects
+	 * @param 	array<string,array{type:string,bi?:int<0,1>}> 	$arrayoffiltercriterias 			Array of available filter criteria for an object and linked objects. Fields with attribute 'bi' set to 0 are not shown.
 	 * @return	string                                    									HTML component for advanced search
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '', $arrayoffiltercriterias = array())
 	{
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
-
-		//require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		//$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
@@ -13088,7 +13090,7 @@ class Form
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
-		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
+		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500 maxwidth300onsmartphone">';
 
 		// Show select fields as tags.
 		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
@@ -13133,7 +13135,7 @@ class Form
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// TODO : Use $arrayoffiltercriterias instead of $arrayofcriterias
-		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
+		// For compatibility with forms that show themselves the search criteria in addition of this component, we output these fields
 		foreach ($arrayofcriterias as $criteria) {
 			foreach ($criteria as $criteriafamilykey => $criteriafamilyval) {
 				if (in_array('search_' . $criteriafamilykey, $arrayofinputfieldsalreadyoutput)) {
@@ -13216,16 +13218,49 @@ class Form
 
 		// Convert $arrayoffiltercriterias into a json object that can be used in jquery to build the search component dynamically
 		$arrayoffiltercriterias_json = json_encode($arrayoffiltercriterias);
+
+		// Build $arrayoffilterelements that is an array of elements (tables) with the list of their fields,
+		// so we can show a single 2 levels combo: select first the element (the table), then the field appears
+		// into the same combo, in a second level shown under the element
+		$arrayoffilterelements = array();
+
+		foreach ($arrayoffiltercriterias as $key => $val) {
+			// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool).
+			// The array is flat, so this also discards the fields of the sub-elements (the sub-tables).
+			if (isset($val['bi']) && (int) $val['bi'] == 0) {
+				continue;
+			}
+			// The element (table) is the part of the field key before the last dot ('t.ref' -> 't', 't__fk_project.ref' -> 't__fk_project')
+			$tmpelementkey = preg_replace('/\.[^.]*$/', '', $key);
+			// Extrafields of an element are stored with the alias 'te', 'te__...', so we map them onto the same element than their parent table 't', 't__...'
+			$tmpelementkey = preg_replace('/^te(__|$)/', 't$1', $tmpelementkey);
+
+			$tmpelementlabel = $tmpelementkey;
+			$tmpelementpicto = '';
+			$tmpfieldlabel = $key;
+			if (!empty($val['labelnohtml'])) {
+				$tmpfieldlabel = $val['labelnohtml'];
+				// The labelnohtml is 'LabelOfElement: LabelOfField', so we extract the label of the element and the label of the field
+				$tmpmatch = array();
+				if (preg_match('/^(.+?): /', $val['labelnohtml'], $tmpmatch)) {
+					$tmpelementlabel = $tmpmatch[1];
+					$tmpfieldlabel = trim(substr($val['labelnohtml'], strlen($tmpelementlabel) + 1));
+				}
+				if (!empty($val['label'])) {
+					// The label is the picto of the element followed by the labelnohtml, so we extract the picto of the element
+					$tmpelementpicto = trim(str_replace($val['labelnohtml'], '', $val['label']));
+				}
+			}
+
+			if (!isset($arrayoffilterelements[$tmpelementkey])) {
+				$arrayoffilterelements[$tmpelementkey] = array('picto' => $tmpelementpicto, 'label' => $tmpelementlabel, 'fields' => array());
+			}
+			$arrayoffilterelements[$tmpelementkey]['fields'][$key] = array('label' => $tmpfieldlabel, 'type' => $val['type']);
+		}
 		$ret .= '<script>
 			var arrayoffiltercriterias = ' . $arrayoffiltercriterias_json . ';
 		</script>';
 
-
-		$arrayoffilterfieldslabel = array();
-		foreach ($arrayoffiltercriterias as $key => $val) {
-			$arrayoffilterfieldslabel[$key]['label'] = $val['label'];
-			$arrayoffilterfieldslabel[$key]['data-type'] = $val['type'];
-		}
 
 		// Adding the div for search assistance
 		$ret .= '<div class="search-component-assistance">';
@@ -13235,14 +13270,86 @@ class Form
 
 		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
 
-		$ret .= '<div class="operand">';
-		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width200 combolargeelem', 1);
+		// Combo with 2 levels to select the field: select first the element (the table), the list of fields of the element
+		// appears then under the element into the same combo, then select the field
+		// (this is a pure JS combo, we do not use select2 for this component)
+		$ret .= '<div class="operand valigntop">';
+		$ret .= '<div class="fieldcombo">';
+		// Hidden input to store the selected field ('' or a field key like 't.ref' or 't__fk_project.ref')
+		$ret .= '<input type="hidden" id="search_filter_field" name="search_filter_field" value="">';
+		// Button of the combo (show the placeholder "Fields" or the selected "element: field")
+		$ret .= '<button type="button" class="fieldcombo-toggle"><span class="fieldcombo-label opacitymedium">' . dol_escape_htmltag($langs->trans('Fields')) . '</span><span class="fas fa-caret-down fieldcombo-caret"></span></button>';
+		// Panel of the combo, with the list of elements (the root tables), and into each element, the list of
+		// its fields then the list of its sub-elements (sub-tables, indented, after the fields). The fields and
+		// the sub-elements are hidden by default and shown only after a search or a click on the element.
+		$ret .= '<div class="fieldcombo-panel" style="display:none">';
+		$ret .= '<div class="liinputsearch"><input type="text" class="fieldcombo-search noborderfocus" placeholder="' . dol_escape_htmltag($langs->trans('Search')) . '"></div>';
+		$ret .= '<div class="fieldcombo-list">';
+
+
+		// Recursive rendering of an element of the combo, with the list of its sub-elements (indented into it)
+		// and the list of its fields. A direct sub-element is an element whose key starts with the key of its parent
+		// element followed by '__', without any other '__' after (so 't__fk_soc' is a sub-element of 't',
+		// 't__fk_soc__fk_pays' is a sub-element of 't__fk_soc' and not a direct sub-element of 't')
+		/**
+		 * @param int|string $tmpelementkey
+		 * @return string
+		 */
+		$renderElementCombo = function ($tmpelementkey) use ($arrayoffilterelements, &$renderElementCombo) {
+			$tmpelementval = $arrayoffilterelements[$tmpelementkey];
+			$arrayofchildelementkeys = array();
+			foreach ($arrayoffilterelements as $tmpchildelementkey => $tmpchildelementval) {
+				if (strpos($tmpchildelementkey, $tmpelementkey.'__') === 0 && strpos(substr($tmpchildelementkey, strlen($tmpelementkey) + 2), '__') === false) {
+					$arrayofchildelementkeys[] = $tmpchildelementkey;
+				}
+			}
+			$out = '';
+			$out .= '<div class="fieldcombo-element" data-element="' . dolPrintHTMLForAttribute($tmpelementkey) . '">';
+			$out .= '<div class="fieldcombo-elementheader" tabindex="0"><span class="fieldcombo-elementlabel">' . $tmpelementval['picto'] . ' ' . dol_escape_htmltag($tmpelementval['label']) . '</span><span class="fas fa-caret-right fieldcombo-elementcaret"></span></div>';
+			// The list of fields is hidden by default, it is shown only after a search or a click on the element
+			$out .= '<div class="fieldcombo-fields" style="display:none">';
+			foreach ($tmpelementval['fields'] as $tmpfieldkey => $tmpfieldval) {
+				$out .= '<div class="fieldcombo-field" tabindex="0" data-field="' . dolPrintHTMLForAttribute($tmpfieldkey) . '" data-type="' . dolPrintHTMLForAttribute($tmpfieldval['type']) . '">' . dol_escape_htmltag($tmpfieldval['label']) . '</div>';
+			}
+			$out .= '</div>';
+			if (!empty($arrayofchildelementkeys)) {
+				// The list of sub-elements is shown after the fields, it is hidden by default and it is shown
+				// (indented) only after a search or a click on the element
+				$out .= '<div class="fieldcombo-children" style="display:none">';
+				foreach ($arrayofchildelementkeys as $tmpchildelementkey) {
+					$out .= $renderElementCombo($tmpchildelementkey);
+				}
+				$out .= '</div>';
+			}
+			$out .= '</div>';
+			return $out;
+		};
+
+
+		// Render the list of fields we can use as filter
+		foreach ($arrayoffilterelements as $tmpelementkey => $tmpelementval) {
+			// The parent element is the part of the key before the last '__' ('t__fk_soc' -> 't', 't__fk_soc__fk_pays' -> 't__fk_soc')
+			$tmpparentkey = '';
+			if (strpos($tmpelementkey, '__') !== false) {
+				$tmparrayofkey = explode('__', $tmpelementkey);
+				array_pop($tmparrayofkey);
+				$tmpparentkey = implode('__', $tmparrayofkey);
+			}
+			// At root level, we render only the elements without parent element (or with a parent not found into
+			// the list), the sub-elements are rendered recursively into their parent element
+			if ($tmpparentkey == '' || !isset($arrayoffilterelements[$tmpparentkey])) {
+				$ret .= $renderElementCombo($tmpelementkey);
+			}
+		}
+		$ret .= '</div>';
+		$ret .= '</div>';
+		$ret .= '</div>';
 		$ret .= '</div>';
 
 		$ret .= '<span class="separator"></span>';
 
 		// Operator selector (will be populated dynamically)
-		$ret .= '<div class="operator">';
+		$ret .= '<div class="operator valigntop">';
 		$ret .= '<select class="operator-selector width150" id="operator-selector"">';
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
@@ -13254,7 +13361,7 @@ class Form
 
 		$ret .= '<span class="separator"></span>';
 
-		$ret .= '<div class="value">';
+		$ret .= '<div class="value valigntop">';
 		// Input field for entering values
 		$ret .= '<input type="text" class="flat width100 value-input" placeholder="' . dolPrintHTML($langs->trans('Value')) . '">';
 
@@ -13310,13 +13417,131 @@ class Form
 
 		$ret .= '<script>
 			$(document).ready(function() {
-				$(".search_filter_field").on("change", function() {
+				// Reset and hide all the value input fields (this does not clear the operator selector)
+				function resetValueInputs() {
+					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
+					$("#datemonth, #dateyear").val(null).trigger("change.select2");
+					$("#dateone").datepicker("setDate", null);
+					$(".date-one, .date-month, .date-year").hide();
+					$("#value-selector").val("").hide();
+					$("#value-selector").next(".select2-container").hide();
+					$("#value-selector").val(null).trigger("change.select2");
+				}
+
+				// Clear the operator selector and reset and hide all the value input fields
+				function resetOperatorAndValueInputs() {
+					$(".operator-selector").empty();
+					resetValueInputs();
+				}
+
+				// JS code of the 2 levels combo to select first the element (the table) then the field
+				// Click on the toggle button: show/hide the panel of the combo
+				$(".fieldcombo-toggle").on("click", function(e) {
+					e.stopPropagation();
+					$(this).closest(".fieldcombo").find(".fieldcombo-panel").toggle();
+					// Reset the search input and the filter, so the panel always opens with the first level open
+					// (the fields and the sub-tables of the main object are shown, the deeper levels stay closed)
+					$(this).closest(".fieldcombo").find(".fieldcombo-search").val("").trigger("keyup");
+				});
+
+				// Click on an element (a table): show the list of its sub-elements (indented) and the list of its fields.
+				// We close all the other elements before, except the parent elements of the clicked element (else it would be hidden)
+				$(".fieldcombo-elementheader").on("click", function(e) {
+					e.stopPropagation();
+					const elementdiv = $(this).closest(".fieldcombo-element");
+					const wasopen = elementdiv.hasClass("open");
+					$(".fieldcombo-element").removeClass("open");
+					$(".fieldcombo-fields, .fieldcombo-children").hide();
+					$(".fieldcombo-field").show();
+					elementdiv.parents(".fieldcombo-element").addClass("open").show().children(".fieldcombo-fields, .fieldcombo-children").show();
+					if (!wasopen) {
+						elementdiv.addClass("open").show().children(".fieldcombo-fields, .fieldcombo-children").show();
+					}
+				});
+
+				// Click on a field (second level of the combo): select the field and close the combo
+				$(".fieldcombo-field").on("click", function(e) {
+					e.stopPropagation();
+					const fieldlabel = $(this).text();
+					const elementlabelhtml = $(this).closest(".fieldcombo-element").find(".fieldcombo-elementlabel").html();
+					$(".fieldcombo-field").removeClass("selected");
+					$(this).addClass("selected");
+					$(".fieldcombo-label").html(elementlabelhtml).removeClass("opacitymedium").append(document.createTextNode(": " + fieldlabel));
+					$("#search_filter_field").attr("data-type", $(this).attr("data-type")).val($(this).attr("data-field"));
+					$(".fieldcombo-panel").hide();
+					$("#search_filter_field").trigger("change");
+				});
+
+				// Type something into the search input to filter the list of elements and fields
+				$(".fieldcombo-search").on("keyup change", function() {
+					const term = $(this).val().toLowerCase();
+					// Without search term, we show the first level (the main object) open, so its fields and
+					// its sub-tables are shown, but the deeper levels stay closed
+					if (term === "") {
+						$(".fieldcombo-element").removeClass("open").show();
+						$(".fieldcombo-fields, .fieldcombo-children").hide();
+						$(".fieldcombo-field").show();
+						$(".fieldcombo-list > .fieldcombo-element").addClass("open").children(".fieldcombo-fields, .fieldcombo-children").show();
+						return;
+					}
+					// With a search term, we show the elements matching by their label or their fields, and we also
+					// show the matching sub-elements into their parent element, so we open the parents of the matches
+					$(".fieldcombo-element").each(function() {
+						const elementmatch = $(this).children(".fieldcombo-elementheader").find(".fieldcombo-elementlabel").text().toLowerCase().indexOf(term) > -1;
+						let hasfieldmatch = false;
+						$(this).children(".fieldcombo-fields").children(".fieldcombo-field").each(function() {
+							const fieldmatch = elementmatch || $(this).text().toLowerCase().indexOf(term) > -1;
+							$(this).toggle(fieldmatch);
+							if (fieldmatch) {
+								hasfieldmatch = true;
+							}
+						});
+						$(this).toggleClass("open", elementmatch || hasfieldmatch);
+						$(this).children(".fieldcombo-fields").toggle(elementmatch || hasfieldmatch);
+					});
+					$(".fieldcombo-element").each(function() {
+						if ($(this).hasClass("open")) {
+							// The element matches, so we show it and we open its parent elements to make it visible into them
+							$(this).show();
+							$(this).parents(".fieldcombo-element").addClass("open").show().children(".fieldcombo-children").show();
+						} else {
+							$(this).hide();
+						}
+					});
+				});
+
+				// Press Escape to close the combo, press Enter on a row to activate it
+				$(document).on("keydown", function(e) {
+					if (e.which === 27) {
+						$(".fieldcombo-panel").hide();
+					}
+				});
+				$(".fieldcombo-elementheader, .fieldcombo-field").on("keydown", function(e) {
+					if (e.which === 13) {
+						e.preventDefault();
+						$(this).trigger("click");
+					}
+				});
+
+				// Close the combo when we click outside of it
+				$(document).on("click", function(e) {
+					if (!$(e.target).closest(".fieldcombo").length) {
+						$(".fieldcombo-panel").hide();
+					}
+				});
+
+				$("#search_filter_field").on("change", function() {
 					console.log("We change search_filter_field");
 
 					let maybenull = 0;
-					const selectedField = $(this).find(":selected");
-					let fieldType = selectedField.data("type");
-					const selectedFieldValue = selectedField.val();
+					let fieldType = $(this).attr("data-type");
+					const selectedFieldValue = $(this).val();
+
+					// If the selected option is the placeholder (no field selected), then we reset the operator and value fields
+					if (arrayoffiltercriterias[selectedFieldValue] === undefined) {
+						resetOperatorAndValueInputs();
+						return;
+					}
 
 					// If the selected field has an array of values then ask toshow the value selector instead of the value input
 					if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
@@ -13340,14 +13565,8 @@ class Form
 
 					operatorSelector.trigger("change.select2");
 
-					// Clear and hide all input elements initially
-					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
-					$("#datemonth, #dateyear").val(null).trigger("change.select2");
-					$("#dateone").datepicker("setDate", null);
-					$(".date-one, .date-month, .date-year").hide();
-					$("#value-selector").val("").hide();
-					$("#value-selector").next(".select2-container").hide();
-					$("#value-selector").val(null).trigger("change.select2");
+					// Clear and hide all the value input elements initially (the operator selector has just been populated, we do not clear it)
+					resetValueInputs();
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
 						$(".date-one").show();
@@ -13393,10 +13612,10 @@ class Form
 
 					event.preventDefault();
 
-					const field = $(".search_filter_field").val();
+					const field = $("#search_filter_field").val();
 					const operator = $(".operator-selector").val();
 					let value = $(".value-input").val();
-					const fieldType = $(".search_filter_field").find(":selected").data("type");
+					const fieldType = $("#search_filter_field").attr("data-type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
 						const year = $("#dateoneyear").val().toString().padStart(4, "0");;
@@ -13407,7 +13626,7 @@ class Form
 					}
 
 					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 
@@ -13419,7 +13638,7 @@ class Form
 					const filterString = generateFilterString(field, operator, value, fieldType);
 
 					// Submit the form
-					if (filterString !== "" && field !== "" && operator !== "" && value !== "") {
+					if (filterString !== "" && field !== "" && field !== "-1" && field !== null && operator !== "" && operator !== null && value !== "" && value !== null) {
 						$("#search_component_params_input").val($("#search_component_params_input").val() + " " + filterString);
 						$("#search_component_params_input").closest("form").submit();
 					} else {
@@ -13587,9 +13806,9 @@ class Form
 
 				// If translation exists, we use it, otherwise we take the default wording
 				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != "InvoiceSubtype" . $obj->rowid) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
-				$this->cache_invoice_subtype[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cache_invoice_subtype[$obj->rowid]['code'] = $obj->code;
-				$this->cache_invoice_subtype[$obj->rowid]['label'] = $label;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['rowid'] = (int) $obj->rowid;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['code'] = (string) $obj->code;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['label'] = (string) $label;
 				$i++;
 			}
 

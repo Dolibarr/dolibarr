@@ -317,8 +317,8 @@ class DolibarrApiAccess implements iAuthenticate
 					$sqlforcounter = "UPDATE ".$this->db->prefix()."oauth_token SET ";
 					$sqlforcounter .= " apicount_total = apicount_total + 1,";
 					$sqlforcounter .= " apicount_month = apicount_month + 1,";
-					// if last access was done during previous month, we save pageview_month into pageviews_previous_month
-					$sqlforcounter .= " pageviews_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
+					// if last access was done during previous month, we save apicount_month into apicount_previous_month
+					$sqlforcounter .= " apicount_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
 					$sqlforcounter .= " lastaccess = '".$this->db->idate(dol_now('gmt'), 'gmt')."'";
 					$sqlforcounter .= " WHERE rowid = ".((int) $token_rowid);
 

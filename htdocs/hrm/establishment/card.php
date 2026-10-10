@@ -290,12 +290,12 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 			// Ref
 			print "<tr>";
 			print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-			print $object->id;
+			print dolPrintHTML($object->id);
 			print '</td></tr>';
 
 			// Name
 			print '<tr><td>'.$form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-			print '<input name="label" id="label" class="flat" value="'.$object->label.'">';
+			print '<input name="label" id="label" class="flat" value="'.dolPrintHTMLForAttribute($object->label).'">';
 			print '</td></tr>';
 
 			// Entity
@@ -442,7 +442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 	// Delete
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

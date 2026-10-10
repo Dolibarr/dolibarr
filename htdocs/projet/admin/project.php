@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'projects'));
+$langs->loadLangs(array('admin', 'other', 'projects'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -137,6 +137,7 @@ if ($action == 'updateMaskTask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -173,6 +174,7 @@ if ($action == 'updateMaskTask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -395,6 +397,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			if (is_dir($dir)) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
+					$filelist = array();
 					while (($file = readdir($handle)) !== false) {
 						$filelist[] = $file;
 					}

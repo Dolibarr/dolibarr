@@ -1805,7 +1805,7 @@ function onKanbanColumnChange(item, newColumn) {
 	var originalColumn = item.data('original-column');
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/savekanbanfield.php',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php',
 		data: {
 			field: 'editval_'+newColumn.data('groupbyfield'),
 			element: item.data('element'),
@@ -1863,6 +1863,11 @@ if (typeof jQuery.fn.on === 'function') {
  * Intuitive table selection (with keyboard selection)
  */
 $(function() {
+
+	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
+	// a .row-with-select row (not on a link/button/field) also toggles its
+	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
+	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
 
 	/**
 	 * @param {jQuery}  el
@@ -1946,6 +1951,13 @@ $(function() {
 				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+
+		if (!e.ctrlKey && !e.metaKey && !e.shiftKey && rowSingleClickToSelect) {
+			if (!$(e.target).closest('a, button, input, select, textarea, label').length) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
 				setLastClickedRowStatus($(this), 1);
 			}
 		}

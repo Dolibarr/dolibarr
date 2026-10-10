@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 
-$langs->loadLangs(array("members", "errors"));
+$langs->loadLangs(array("members"));
 
 // Choice of printing year or current year.
 $now = dol_now();
@@ -259,6 +259,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 		if (empty($mode) || $mode == 'card') {
 			if (!count($arrayofmembers)) {
+				$langs->load('errors');
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
 			if (empty($modelcard) || $modelcard == '-1') {
@@ -269,6 +270,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			}
 		} elseif ($mode == 'cardlogin') {
 			if (!count($arrayofmembers)) {
+				$langs->load('errors');
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
 			if (empty($model) || $model == '-1') {
@@ -279,6 +281,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {
+				$langs->load('errors');
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
 			if (empty($modellabel) || $modellabel == '-1') {

@@ -1064,15 +1064,15 @@ class Expedition extends CommonObject
 		}
 
 		// Change status of order to "shipment in process"
-		$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
-		if ($this->origin == 'commande') {
-			$triggerKey .= 'ORDER_SHIPMENTONPROCESS';
-		} else {
-			$triggerKey .= strtoupper($this->origin).'_SHIPMENTONPROCESS';
-		}
-
-		// TODO : load the origin object to trigger the right setStatus according to origin object
 		if (!$error) {
+			$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
+			if ($this->origin == 'commande') {
+				$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
+			} else {
+				$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+			}
+
+			// TODO : load the origin object to trigger the right setStatus according to origin object
 			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
 			if (!$ret) {
 				$error++;
@@ -2587,6 +2587,12 @@ class Expedition extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
+			if ($this->id > 0 && (int) $line->fk_expedition !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
 			if ($line->delete($user) > 0) {
 				//$this->update_price(1);
 
@@ -3126,7 +3132,7 @@ class Expedition extends CommonObject
 				if ($shipments_match_order) {
 					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
 					// We close the order
-					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
+					$order->cloture($user, 0, 0);		// 0 = do not check the close permission: this is an automatic action of the shipment closing. Note this may also create an invoice if module workflow ask it
 				}
 			}
 
@@ -3185,6 +3191,9 @@ class Expedition extends CommonObject
 
 		$langs->load("agenda");
 
+		// Label is stored into llx_stock_mouvement.label, so it must not be HTML encoded
+		$labelmvt = $langs->transnoentitiesnoconv($labelmovement, $this->ref);
+
 		// Loop on each product line to add a stock movement
 		$sql = "SELECT";
 		$sql .= " ed.rowid as edid, ed.fk_product, ed.qty, ed.fk_entrepot";
@@ -3228,7 +3237,7 @@ class Expedition extends CommonObject
 					// line without batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref));
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3238,7 +3247,7 @@ class Expedition extends CommonObject
 					// line with batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt, '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3435,7 +3444,7 @@ class Expedition extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3445,7 +3454,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3499,7 +3508,7 @@ class Expedition extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'rouget';
+			$modele = 'espadon';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;

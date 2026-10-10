@@ -337,7 +337,7 @@ class Client {
             $this->connection->setProxy($this->proxy);
         }else{
             if (extension_loaded('imap') === false) {
-                throw new ConnectionFailedException("connection setup failed - no imap function", 0, new ProtocolNotSupportedException($protocol." is an unsupported protocol"));
+                throw new ConnectionFailedException("connection setup failed - no imap function", 0, new ProtocolNotSupportedException($protocol." is an unsupported protocol"));	// @CHANGE DOL
             }
             $this->connection = new LegacyProtocol($this->validate_cert, $this->encryption);
             if (strpos($protocol, "legacy-") === 0) {
@@ -349,9 +349,9 @@ class Client {
         try {
             $this->connection->connect($this->host, $this->port);
         } catch (ErrorException $e) {
-            throw new ConnectionFailedException("connection setup failed - connect exception", 0, $e);
+            throw new ConnectionFailedException("connection setup failed - connect exception", 0, $e);	// @CHANGE DOL
         } catch (Exceptions\RuntimeException $e) {
-            throw new ConnectionFailedException("connection setup failed - run exception", 0, $e);
+            throw new ConnectionFailedException("connection setup failed - run exception", 0, $e);	// @CHANGE DOL
         }
 
         $this->authenticate();
@@ -374,7 +374,7 @@ class Client {
                 throw new AuthFailedException();
             }
         } catch (AuthFailedException $e) {
-            throw new ConnectionFailedException("connection setup failed - authenticate", 0, $e);
+            throw new ConnectionFailedException("connection setup failed - authenticate", 0, $e);	// @CHANGE DOL
         }
     }
 

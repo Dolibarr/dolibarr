@@ -50,7 +50,7 @@ function dol_basename($pathfile)
  * @param	string			$types        			Can be "directories", "files", or "all"
  * @param	int				$recursive				Determines whether subdirectories are searched
  * @param	string|string[]|null	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    		but must NOT contains the start and end '/'. Filter is checked into basename only.
+ *                  	                    		but must NOT contains the start and end '/'. Filter is checked into the basename onlyof each entry (so '^xxx' include dirscanned/xxx and dirscanned/dirscanned2/xxx).
  * @param	string|string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  * @param	string			$sortcriteria			Sort criteria ('','fullname','relativename','name','date','size' or 'type,fullname')
  * @param	int 			$sortorder				Sort order (SORT_ASC, SORT_DESC)
@@ -2699,7 +2699,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				}
 
 				// Create recursive directory iterator
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
@@ -2972,7 +2972,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 				// Create recursive directory iterator
 				// This does not return symbolic links
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
@@ -3359,6 +3359,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
+	} elseif ($modulepart == 'contractstats' && !empty($conf->contract->dir_temp)) {
+		// Wrapping for statistics images of contracts
+		if ($fuser->hasRight('contrat', $lire)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->contract->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'orderstats' && !empty($conf->order->dir_temp)) {
 		// Wrapping for statistics images of orders
 		if ($fuser->hasRight('commande', $lire)) {
@@ -4290,11 +4296,9 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 			}
 		}
 
-		// Add the latest file to the sorted list and remove it from the original list
-		if ($latest_file !== null) {
-			$sorted_files[] = $latest_file['file'];
-			unset($files_with_timestamps[$latest_index]);
-		}
+		// Add the latest file to the sorted list and remove it from the original list (the list is never empty here, so a latest file was always found)
+		$sorted_files[] = $latest_file['file'];
+		unset($files_with_timestamps[$latest_index]);
 	}
 
 	// Delete the oldest files to keep only the allowed number of versions

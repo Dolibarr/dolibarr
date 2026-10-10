@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
+$langs->loadLangs(array('admin', 'other', 'bills'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -136,6 +137,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -169,6 +171,40 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setribchq') {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
+
+	// Structured payment reference mode, see core/lib/paymentref.lib.php
+	$payrefmode = GETPOST('INVOICE_PAYMENT_REF_MODE', 'aZ09');
+	if (!in_array($payrefmode, array('', 'company', 'thirdparty', 'invoice'))) {
+		$payrefmode = '';
+	}
+	// Refuse a mode that cannot produce a reference, otherwise invoices would be
+	// validated with an empty one and nobody would notice until the bank did.
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+	$payrefblocker = dolPayRefGetSetupWarning($mysoc->country_code, $payrefmode);
+	if ($payrefmode != '' && $payrefblocker != '') {
+		setEventMessages($langs->trans($payrefblocker), null, 'errors');
+	} else {
+		dolibarr_set_const($db, "INVOICE_PAYMENT_REF_MODE", $payrefmode, 'chaine', 0, '', $conf->entity);
+	}
+
+	// Parts combined to build a per invoice reference
+	$payrefparts = array();
+	foreach (GETPOST('INVOICE_PAYMENT_REF_PARTS', 'array') as $payrefpart) {
+		if (in_array($payrefpart, array('invoice_ref', 'customer_code', 'contract_ref'))) {
+			$payrefparts[] = $payrefpart;
+		}
+	}
+	if (empty($payrefparts)) {
+		$payrefparts[] = 'invoice_ref';
+	}
+	dolibarr_set_const($db, "INVOICE_PAYMENT_REF_PARTS", implode(',', $payrefparts), 'chaine', 0, '', $conf->entity);
+
+	// Field the per third party reference is built from
+	$payrefbase = GETPOST('INVOICE_PAYMENT_REF_TP_BASE', 'aZ09');
+	if (!in_array($payrefbase, array('code_client', 'code_fournisseur', 'rowid'))) {
+		$payrefbase = 'code_client';
+	}
+	dolibarr_set_const($db, "INVOICE_PAYMENT_REF_TP_BASE", $payrefbase, 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
@@ -422,10 +458,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForInvoices").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}
@@ -437,10 +475,12 @@ foreach ($arrayofmodules as $module) {
 				$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
 				if ($nextval) {
 					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$langs->load('errors');
 						$nextval = $langs->trans($nextval);
 					}
 					$htmltooltip .= $nextval.'<br>';
 				} else {
+					$langs->load('errors');
 					$htmltooltip .= $langs->trans($module->error).'<br>';
 				}
 			}
@@ -452,10 +492,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForCreditNotes").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}
@@ -466,10 +508,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForDeposit").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval;
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error);
 			}
 		}
@@ -644,6 +688,57 @@ print "</select>";
 print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
+
+// Structured payment reference
+// The scheme is chosen from the country of the company - See core/lib/paymentref.lib.php
+print '<tr class="oddeven"><td>' . $langs->trans("InvoicePaymentReferenceMode") . '&nbsp;';
+print $form->textwithpicto('', $langs->trans("InvoicePaymentReferenceModeHelp"), 1, 'help') . '</td>';
+print '<td class="left" colspan="2">';
+$arraypayrefmode = array(
+	'' => $langs->trans("None"),
+	'company' => $langs->trans("PaymentRefModeCompany"),
+	'thirdparty' => $langs->trans("PaymentRefModeThirdparty"),
+	'invoice' => $langs->trans("PaymentRefModeInvoice"),
+);
+print $form->selectarray("INVOICE_PAYMENT_REF_MODE", $arraypayrefmode, getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+print '</td></tr>';
+
+// Some schemes need a value assigned by the bank, warn while it is missing
+include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+$payrefwarning = dolPayRefGetSetupWarning($mysoc->country_code);
+if ($payrefwarning != '') {
+	print '<tr class="oddeven"><td colspan="3">';
+	print '<span class="warning">'.img_warning().' '.$langs->trans($payrefwarning).'</span>';
+	print '</td></tr>';
+}
+
+// Parts combined into the reference, only useful in the per invoice mode
+if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'invoice') {
+	print '<tr class="oddeven"><td>' . $langs->trans("PaymentRefParts") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("PaymentRefPartsHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	$arraypayrefparts = array(
+		'invoice_ref' => $langs->trans("InvoiceRef"),
+		'customer_code' => $langs->trans("CustomerCode"),
+		'contract_ref' => $langs->trans("RefContract"),
+	);
+	print $form->multiselectarray("INVOICE_PAYMENT_REF_PARTS", $arraypayrefparts, explode(',', getDolGlobalString('INVOICE_PAYMENT_REF_PARTS', 'invoice_ref')), 0, 0, 'minwidth200');
+	print '</td></tr>';
+}
+
+// Field the per third party reference is built from
+if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'thirdparty') {
+	print '<tr class="oddeven"><td>' . $langs->trans("PaymentRefBase") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("PaymentRefBaseHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	$arraypayrefbase = array(
+		'code_client' => $langs->trans("CustomerCode"),
+		'code_fournisseur' => $langs->trans("SupplierCode"),
+		'rowid' => $langs->trans("Id"),
+	);
+	print $form->selectarray("INVOICE_PAYMENT_REF_TP_BASE", $arraypayrefbase, getDolGlobalString('INVOICE_PAYMENT_REF_TP_BASE', 'code_client'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '</td></tr>';
+}
 
 // Structured communication
 // Specific to Belgium - See core/lib/functions_be.lib.php

@@ -87,7 +87,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -119,14 +119,17 @@ $ws = GETPOST("ws", "aZ09"); // Website reference where the newpayment page is e
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
 	if (is_numeric($amount) && !GETPOST("tag", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
 	if ($source && !GETPOST("ref", 'alpha')) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
 	}
@@ -426,6 +429,33 @@ dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, L
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	// Payment account information
+	$accountid = 0;
+	if ($paymentmethod == 'paybox') {
+		$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'paypal') {
+		$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'stripe') {
+		$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	// Get bank account for a specific paymentmedthod
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['bankaccountid'])) {
+			dol_syslog('accountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+			$accountid = $hookmanager->resArray['bankaccountid'];
+		}
+	}
+	if (isModEnabled('bank') && $accountid < 0) {
+		$mesg = 'Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
+		$action = '';
+	}
+
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
@@ -547,6 +577,9 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$error = 0;
 	$errormessage = '';
 	$stripeacc = null;
+	$customer = null;
+	$charge = null;
+	$paymentintent = null;
 
 	// When using the old Charge API architecture
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
@@ -1979,6 +2012,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		} else {
 			print '<input type="text" class="width75 amount" name="newamount" id="newamount" value="'.price($amount, 1, $langs, 1, -1, -1).'">';
 		}
+		print $langs->trans("Currency".$conf->currency);
 	} else {
 		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		if ($minimumamount > $amount) {
@@ -1987,7 +2021,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
-	print '<input type="hidden" name="currency" value="'.$currency.'">'.$langs->trans("Currency".$conf->currency);
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -2079,7 +2113,7 @@ if ($source == 'donation') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2"><b>';
-	if ($don->morphy == 'mor' && !empty($don->societe)) {
+	if (!empty($don->societe)) {
 		print $don->societe;
 	} else {
 		print $don->getFullName($langs);
@@ -2369,6 +2403,7 @@ if ($source == 'boothlocation') {
 }
 
 if (!$found && !$mesg) {
+	$langs->load('errors');
 	$mesg = $langs->trans("ErrorBadParameters");
 }
 

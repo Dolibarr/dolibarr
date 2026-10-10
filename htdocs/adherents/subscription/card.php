@@ -69,7 +69,7 @@ $permissiontoedit = $user->hasRight('adherent', 'cotisation', 'creer'); // Used 
 $hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'subscription', 0); // TODO Check on object id
+$result = restrictedArea($user, 'subscription', $rowid);
 
 
 /*
@@ -383,7 +383,7 @@ if ($rowid && $action != 'edit') {
 
 	// Delete
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."</div>\n";
 	}
 
 	print '</div>';

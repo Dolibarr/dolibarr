@@ -289,7 +289,6 @@ ErrorsProductsMerge=Erreurs dans la fusion des produits
 SwitchOnSaleStatus=Activer le statut de vente
 SwitchOnPurchaseStatus=Passer à l'état d'achat
 StockMouvementExtraFields=Champs supplémentaires (mouvement des stocks)
-InventoryExtraFields=Champs supplémentaires (inventaire)
 ScanOrTypeOrCopyPasteYourBarCodes=Scannez, saisissez ou copiez/collez vos codes-barres
 PuttingPricesUpToDate=Mettre à jour les prix avec les prix actuels connus
 PMPExpected=PMP attendu

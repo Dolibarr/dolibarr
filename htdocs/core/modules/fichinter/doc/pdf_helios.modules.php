@@ -71,6 +71,11 @@ class pdf_helios extends ModelePDFFicheinter
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
 
 	/**
 	 *	Constructor

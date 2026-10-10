@@ -368,7 +368,6 @@ Permission2503=Dokumente bestätigen oder löschen
 Permission23001=anzeigen cronjobs
 Permission23002=erstellen/ändern cronjobs
 Permission23003=cronjobs löschen
-Permission23004=cronjobs ausführen
 Permission55002=Abstimmung erstellen/ändern
 Permission59002=Gewinspanne definieren
 Permission63001=Ressourcen anzeigen
