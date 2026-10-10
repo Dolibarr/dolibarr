@@ -10369,6 +10369,7 @@ abstract class CommonObject
 	 * including computed or technical fields (ref, status, totals...). Exposing it to the user interface
 	 * would let a user change them, so the user interface requires an explicit opt-in on each field
 	 * with the "uieditable" attribute, in addition to all rules of isFieldEditAllowed().
+	 * The private note is always hidden to external users, so it is never editable by them.
 	 *
 	 * @param User   $user  User to check rights
 	 * @param string $field Field name to check
@@ -10378,6 +10379,10 @@ abstract class CommonObject
 	public function isFieldEditableFromUi(User $user, $field)
 	{
 		if (!$this->isFieldDefined($field) || empty($this->fields[$field]['uieditable'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
 			return false;
 		}
 

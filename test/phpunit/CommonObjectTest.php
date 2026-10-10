@@ -1114,6 +1114,14 @@ class CommonObjectTest extends CommonClassTest
 			$this->assertFalse($object->hasUserWritePermissionOnField($user, ''), $classname.' empty field must be refused');
 		}
 
+		// The private note is never editable by an external user, even with the write permission
+		$externaluser = clone $user;
+		$externaluser->socid = 1;
+		$propal = new Propal($db);
+		$propal->status = $propal->statut = Propal::STATUS_DRAFT;
+		$this->assertFalse($propal->isFieldEditableFromUi($externaluser, 'note_private'), 'Private note must not be editable from UI by an external user');
+		$this->assertSame((bool) $user->hasRight('propal', 'creer'), $propal->isFieldEditableFromUi($externaluser, 'note_public'), 'Public note follows the write permission for an external user');
+
 		$product = new Product($db);
 		$product->type = Product::TYPE_PRODUCT;
 		$product->status = 1;
