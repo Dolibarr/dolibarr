@@ -2636,15 +2636,24 @@ class Facture extends CommonInvoice
 	public function tvaOnProrata()
 	{
 		global $conf;
+       public function tvaOnProrata()
+        {
+        $this->fetch_lines();
+        for ($i=0; $i < count($this->lines); $i++) {
+             if ((!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($this->lines[$i])) && $this->lines[$i]->special_code != 10050172 ) {
+                   $previousprogress=0;
+                   if (getDolGlobalInt('INVOICE_USE_SITUATION') !=0) {
+                       $previousprogress = $this->lines[$i]->get_Prev_Progress($this->lines[$i]->fk_facture) / 100;
+                   }
+              $totalHTwospecialcode += $this->lines[$i]->total_ht * (1-$previousprogress) ;
+              $totalTVA += $this->lines[$i]->tva_tx /100 * $this->lines[$i]->total_ht * (1-$previousprogress) ;
+              }
+         }
+var_dump($totalTVA);
+var_dump($totalHTwospecialcode);
 
-		if ($this->total_ht != 0) {
-			$avg_vat_rate = $this->total_tva / $this->total_ht;
-		} else {
-			$avg_vat_rate = 0;
-		}
-
-		return round($this->prorata_discount * $avg_vat_rate, 2);
-	}
+                return round($this->prorata_discount * $totalTVA/$totalHTwospecialcode, 2);
+        }
 
 	/**
 	 * Provide the "BTP" TTC: TTC - prorata - VAT on prorata - retained warranty
