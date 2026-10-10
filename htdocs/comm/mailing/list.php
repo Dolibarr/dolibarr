@@ -269,7 +269,7 @@ if ($filteremail) {
 	$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 }
 
-llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
