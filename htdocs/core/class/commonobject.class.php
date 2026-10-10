@@ -2412,7 +2412,9 @@ abstract class CommonObject
 	 * @param User 		$user					The user attempting to modify the field.
 	 * @param string 	$fieldKey 	 			The name of the field to modify.
 	 * @param mixed 	$value 					The value to assign to the field.
-	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value
+	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value.
+	 *                                         	Only user rights are skipped, field and object state checks still apply.
+	 *                                         	When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
 	 *
 	 * @return bool Returns true if the value was successfully set, false otherwise.
 	 */
@@ -10264,6 +10266,10 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Check if user has write permission on a field of this object.
+	 * Generic check based on the "write" permission of getRightsForUser() (objects built with ModuleBuilder).
+	 * Child classes using another permission (ex: "creer") or needing per field rules must override it.
+	 *
 	 * @param User   $user User to check rights
 	 * @param string $field Field name to check
 	 *
@@ -10310,7 +10316,9 @@ abstract class CommonObject
 	 *
 	 * @param User   $user  User to check rights
 	 * @param string $field Field name to check
-	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value
+	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value.
+	 *                                     Only user rights are skipped, field and object state checks still apply.
+	 *                                     When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
 	 *
 	 * @return bool True if the field is editable, false otherwise
 	 */
@@ -10358,7 +10366,7 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if the field exists in the object definition, false otherwise
 	 */
-	private function isFieldDefined($field)
+	protected function isFieldDefined($field)
 	{
 		return !empty($this->fields)
 			&& is_array($this->fields)
@@ -10371,7 +10379,7 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if the field is disabled, false otherwise
 	 */
-	private function isFieldDisabled($field)
+	protected function isFieldDisabled($field)
 	{
 		return !empty($this->fields[$field]['disabled']);
 	}
@@ -10382,7 +10390,7 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if validation is required, false otherwise
 	 */
-	private function isFieldValidationRequired($field)
+	protected function isFieldValidationRequired($field)
 	{
 		return !empty($this->fields[$field]['validate']);
 	}
@@ -10396,7 +10404,7 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if the field is enabled, false otherwise
 	 */
-	private function isFieldEnabled($field)
+	protected function isFieldEnabled($field)
 	{
 		return !isset($this->fields[$field]['enabled']) || (bool) (int) dol_eval((string) $this->fields[$field]['enabled']);
 	}
@@ -10407,14 +10415,17 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if the field is not editable, false otherwise
 	 */
-	private function isFieldMarkedNotEditable($field)
+	protected function isFieldMarkedNotEditable($field)
 	{
 		return !empty($this->fields[$field]['noteditable']);
 	}
 
 	/**
 	 * Check if the field is blocked by the current object state.
-	 * In non-draft states, fields are locked unless "alwayseditable" is set.
+	 * For objects having a draft status (class constant STATUS_DRAFT), fields are locked
+	 * when the object is not in draft, unless "alwayseditable" is set.
+	 * Objects without STATUS_DRAFT (ex: Product, Societe) have no status meaning "draft",
+	 * so their fields are never blocked by state here. Override in child classes for specific rules.
 	 *
 	 * Note:
 	 * This method is kept generic for CommonObject compatibility.
@@ -10423,12 +10434,20 @@ abstract class CommonObject
 	 * @param string $field Field name to check
 	 * @return bool True if the field is blocked by object state, false otherwise
 	 */
-	private function isFieldBlockedByObjectState($field)
+	protected function isFieldBlockedByObjectState($field)
 	{
-		return (
-			($this->status != 0 || $this->statut != 0)
-			&& (empty($this->fields[$field]['alwayseditable']))
-		);
+		if (!empty($this->fields[$field]['alwayseditable'])) {
+			return false;
+		}
+
+		if (!defined(static::class.'::STATUS_DRAFT')) {
+			return false;
+		}
+
+		$draftStatus = (int) constant(static::class.'::STATUS_DRAFT');
+
+		return (isset($this->status) && (int) $this->status !== $draftStatus)
+			|| (isset($this->statut) && (int) $this->statut !== $draftStatus);
 	}
 
 	/**

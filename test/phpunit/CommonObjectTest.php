@@ -231,7 +231,7 @@ class CommonObjectTest extends CommonClassTest
 		$localobject->origin_object = null;
 		$localobject->totalpaid = 100;
 
-		$result = $localobject->setFieldValue($user, 'ref', 'AA2501-0001', true);
+		$result = $localobject->setFieldValue($user, 'ref', 'AA2501-0001', /* byPassUserPermission */ true);
 
 		$this->assertTrue($result);
 		$this->assertSame('AA2501-0001', $localobject->ref);
@@ -286,7 +286,7 @@ class CommonObjectTest extends CommonClassTest
 			}
 		};
 
-		$result = $localobject->setFieldValue($user, 'status', 2, true);
+		$result = $localobject->setFieldValue($user, 'status', 2, /* byPassUserPermission */ true);
 
 		$this->assertTrue($result);
 		$this->assertSame(2, $localobject->status);
@@ -356,7 +356,7 @@ class CommonObjectTest extends CommonClassTest
 			}
 		};
 
-		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, true);
+		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, /* byPassUserPermission */ true);
 
 		$this->assertTrue($result);
 		$this->assertSame(100.0, $localobject->total_ht);
@@ -426,14 +426,14 @@ class CommonObjectTest extends CommonClassTest
 				$this->hookCallCount++;
 
 				if ($fieldKey === 'total_ht') {
-					$this->setFieldValue($user, 'total_ttc', ((float) $value) * 1.2, true);
+					$this->setFieldValue($user, 'total_ttc', ((float) $value) * 1.2, /* byPassUserPermission */ true);
 				} elseif ($fieldKey === 'total_ttc') {
-					$this->setFieldValue($user, 'total_ht', ((float) $value) / 1.2, true);
+					$this->setFieldValue($user, 'total_ht', ((float) $value) / 1.2, /* byPassUserPermission */ true);
 				}
 			}
 		};
 
-		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, true);
+		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, /* byPassUserPermission */ true);
 
 		$this->assertTrue($result, 'the initial call must still succeed');
 		$this->assertSame(2, $localobject->hookCallCount, 'the loop must be broken after the second (recursive) call');
@@ -515,7 +515,7 @@ class CommonObjectTest extends CommonClassTest
 		};
 
 		// Set the old property value
-		$result = $localobject->setFieldValue($user, $oldProp, $value, true);
+		$result = $localobject->setFieldValue($user, $oldProp, $value, /* byPassUserPermission */ true);
 
 		$this->assertTrue($result, "setFieldValue should succeed for deprecated property $oldProp");
 		$this->assertSame($value, $localobject->{$oldProp}, "Old property $oldProp should have the set value");
@@ -611,19 +611,19 @@ class CommonObjectTest extends CommonClassTest
 		};
 
 		// Test child-specific deprecated property: old_field (not declared) -> new_field (declared)
-		$result1 = $localobject->setFieldValue($user, 'old_field', 'deprecated_value', true);
+		$result1 = $localobject->setFieldValue($user, 'old_field', 'deprecated_value', /* byPassUserPermission */ true);
 		$this->assertTrue($result1, 'setFieldValue should succeed for child deprecated property old_field');
 		$this->assertSame('deprecated_value', $localobject->old_field, 'old_field should have the set value via magic method');
 		$this->assertSame('deprecated_value', $localobject->new_field, 'new_field should be synchronized with old_field');
 
 		// Test another child-specific deprecated property: legacy_name (not declared) -> current_name (declared)
-		$result2 = $localobject->setFieldValue($user, 'legacy_name', 'legacy_value', true);
+		$result2 = $localobject->setFieldValue($user, 'legacy_name', 'legacy_value', /* byPassUserPermission */ true);
 		$this->assertTrue($result2, 'setFieldValue should succeed for child deprecated property legacy_name');
 		$this->assertSame('legacy_value', $localobject->legacy_name, 'legacy_name should have the set value via magic method');
 		$this->assertSame('legacy_value', $localobject->current_name, 'current_name should be synchronized with legacy_name');
 
 		// Test that parent deprecated properties still work (statut -> status, inherited from CommonObject)
-		$result3 = $localobject->setFieldValue($user, 'statut', 1, true);
+		$result3 = $localobject->setFieldValue($user, 'statut', 1, /* byPassUserPermission */ true);
 		$this->assertTrue($result3, 'setFieldValue should succeed for parent deprecated property statut');
 		$this->assertSame(1, $localobject->statut, 'statut should have the set value');
 		$this->assertSame(1, $localobject->status, 'status should be synchronized with statut');
@@ -713,7 +713,7 @@ class CommonObjectTest extends CommonClassTest
 			}
 		};
 
-		$result = $localobject->isFieldEditAllowed($user, $fieldName, true);
+		$result = $localobject->isFieldEditAllowed($user, $fieldName, /* byPassUserPermission */ true);
 
 		$this->assertSame($expectedResult, $result, "isFieldEditAllowed should return $expectedResult for field $fieldName with config: " . json_encode($fieldConfig));
 
@@ -738,6 +738,7 @@ class CommonObjectTest extends CommonClassTest
 
 		// Test 1: Both status and statut are 0 (draft) - field should NOT be blocked
 		$obj1 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
 			public $element = 'testobject';
 			public $table_element = 'testobject';
 			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
@@ -755,7 +756,7 @@ class CommonObjectTest extends CommonClassTest
 			}
 		};
 
-		// Use reflection to test private method
+		// Use reflection to test protected method
 		$reflection = new ReflectionClass($obj1);
 		$method = $reflection->getMethod('isFieldBlockedByObjectState');
 		$method->setAccessible(true);
@@ -765,6 +766,7 @@ class CommonObjectTest extends CommonClassTest
 
 		// Test 2: status is non-zero, statut is 0 - field SHOULD be blocked
 		$obj2 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
 			public $element = 'testobject';
 			public $table_element = 'testobject';
 			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
@@ -788,6 +790,7 @@ class CommonObjectTest extends CommonClassTest
 
 		// Test 3: status is 0, statut is non-zero - field SHOULD be blocked
 		$obj3 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
 			public $element = 'testobject';
 			public $table_element = 'testobject';
 			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
@@ -811,6 +814,7 @@ class CommonObjectTest extends CommonClassTest
 
 		// Test 4: Both are non-zero - field SHOULD be blocked
 		$obj4 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
 			public $element = 'testobject';
 			public $table_element = 'testobject';
 			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
@@ -834,6 +838,7 @@ class CommonObjectTest extends CommonClassTest
 
 		// Test 5: Field with alwayseditable flag should NEVER be blocked
 		$obj5 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
 			public $element = 'testobject';
 			public $table_element = 'testobject';
 			public $fields = array(
@@ -856,6 +861,50 @@ class CommonObjectTest extends CommonClassTest
 		$method->setAccessible(true);
 		$result5 = $method->invoke($obj5, 'ref');
 		$this->assertFalse($result5, 'Field with alwayseditable=1 should NEVER be blocked');
+
+		// Test 6: Object without STATUS_DRAFT constant (no draft concept) - field should NOT be blocked
+		$obj6 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 1;
+			public $statut = 1;
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$result6 = $method->invoke($obj6, 'ref');
+		$this->assertFalse($result6, 'Field should NOT be blocked when object has no STATUS_DRAFT constant');
+
+		// Test 7: Only status is set (ModuleBuilder objects never fill statut) - field SHOULD be blocked
+		$obj7 = new class ($db) extends CommonObject {
+			const STATUS_DRAFT = 0;
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 1;
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$result7 = $method->invoke($obj7, 'ref');
+		$this->assertTrue($result7, 'Field SHOULD be blocked when status is non-draft and statut is null');
 
 		print __METHOD__." OK\n";
 	}
@@ -1013,12 +1062,73 @@ class CommonObjectTest extends CommonClassTest
 				}
 			};
 
-			$result = $localobject->setFieldValue($user, 'test_field', $value, true);
+			$result = $localobject->setFieldValue($user, 'test_field', $value, /* byPassUserPermission */ true);
 			$this->assertTrue($result, "setFieldValue should succeed for $type");
 			$this->assertTrue($localobject->hookCalled, "onFieldValueChanged should be called for $type");
 			$this->assertSame('test_field', $localobject->lastFieldKey, "Field key should be 'test_field' for $type");
 			$this->assertSame($value, $localobject->lastValue, "Value should match for $type");
 		}
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * isFieldBlockedByObjectState() and hasUserWritePermissionOnField() on core child classes.
+	 * Documents (Commande, Facture, Propal) are locked outside draft, Product and Societe have no draft status.
+	 * Their write permission is "creer", not the generic "write" of ModuleBuilder objects.
+	 *
+	 * @return void
+	 */
+	public function testFieldEditRulesOnCoreChildClasses()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+		$documents = array(
+			'Commande' => array(new Commande($db), 'commande'),
+			'Facture' => array(new Facture($db), 'facture'),
+			'Propal' => array(new Propal($db), 'propal'),
+		);
+		foreach ($documents as $classname => $def) {
+			list($object, $module) = $def;
+			$method = new ReflectionMethod($object, 'isFieldBlockedByObjectState');
+			$method->setAccessible(true);
+
+			$object->status = $object->statut = $object::STATUS_DRAFT;
+			$this->assertFalse($method->invoke($object, 'ref_client'), $classname.' draft must not be blocked');
+
+			$object->status = $object->statut = $object::STATUS_VALIDATED;
+			$this->assertTrue($method->invoke($object, 'ref_client'), $classname.' validated must be blocked');
+
+			$this->assertSame((bool) $user->hasRight($module, 'creer'), $object->hasUserWritePermissionOnField($user, 'ref_client'), $classname.' must use the creer permission');
+			$this->assertFalse($object->hasUserWritePermissionOnField($user, ''), $classname.' empty field must be refused');
+		}
+
+		$product = new Product($db);
+		$product->type = Product::TYPE_PRODUCT;
+		$product->status = 1;
+		$method = new ReflectionMethod($product, 'isFieldBlockedByObjectState');
+		$method->setAccessible(true);
+		$this->assertFalse($method->invoke($product, 'label'), 'Product on sale must not be blocked by state');
+		$this->assertSame((bool) $user->hasRight('produit', 'creer'), $product->hasUserWritePermissionOnField($user, 'label'));
+		$product->type = Product::TYPE_SERVICE;
+		$this->assertSame((bool) $user->hasRight('service', 'creer'), $product->hasUserWritePermissionOnField($user, 'label'));
+
+		$societe = new Societe($db);
+		$societe->status = 1;
+		$method = new ReflectionMethod($societe, 'isFieldBlockedByObjectState');
+		$method->setAccessible(true);
+		$this->assertFalse($method->invoke($societe, 'name_alias'), 'Active thirdparty must not be blocked by state');
+		$this->assertSame((bool) $user->hasRight('societe', 'creer'), $societe->hasUserWritePermissionOnField($user, 'name_alias'));
 
 		print __METHOD__." OK\n";
 	}
