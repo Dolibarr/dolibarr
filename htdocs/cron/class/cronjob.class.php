@@ -1604,8 +1604,14 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
-			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			// The label of a job is a translation key, with the lang file to load after ':' (as in cron/list.php)
+			$reg = array();
+			if (preg_match('/:(.*)$/', $this->label, $reg)) {
+				$langs->load($reg[1]);
+			}
+			$labeltoshow = $langs->transnoentitiesnoconv(preg_replace('/:.*$/', '', $this->label));
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow);
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow);
 			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
 			$result = $cmailfile->sendfile();	// Do not test result
