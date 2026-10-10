@@ -24,7 +24,7 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec)\b'; then
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec)[ #:]'; then
             echo "Title of PR is valid: '$PR_TITLE'"
             exit 0
           fi
@@ -42,7 +42,7 @@ jobs:
             exit 0
           fi
 
-          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Sec|Doc)\b'; then
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Sec|Doc)[ #:]'; then
             echo "Type of PR is valid for the branch '$PR_TARGET_BRANCH': '$PR_TITLE'"
             exit 0
           fi
