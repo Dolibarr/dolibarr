@@ -94,6 +94,7 @@ if ($tms > 0 && !empty($object->date_modification) && $object->date_modification
 
 // Get the value with a filter matching the type of field
 $type = $object->fields[$field]['type'];
+$value = null;
 if ($type == 'html') {
 	$value = dol_html_entity_decode(GETPOST('value', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1);
 } elseif (preg_match('/^(varchar|text)\b/', $type)) {

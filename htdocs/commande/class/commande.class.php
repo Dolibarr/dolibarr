@@ -480,7 +480,7 @@ class Commande extends CommonOrder
 	protected function persistFieldValue(User $user, $field)
 	{
 		if ($field == 'ref_client') {
-			return $this->set_ref_client($user, $this->ref_client);
+			return $this->set_ref_client($user, (string) $this->ref_client);
 		}
 
 		return parent::persistFieldValue($user, $field);
