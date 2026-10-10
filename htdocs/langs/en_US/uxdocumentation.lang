@@ -188,6 +188,7 @@ DocTitleMoreContentDescription=You can further customize the headings by adding 
 DocTitleWithFilters=Display title with filters, buttons or navigation
 DocTitleWithFiltersDescription=If you want to display a title with many navigation options like on list pages, you can use the print_barre_liste() function which is a bit more complex. See code below or core/lib/functions.lib.php file to see how it works.
 JSDolibarrhooksReadyVsInit = Difference between Dolibarr:Init and Dolibarr:Ready
+JSDolibarrhooksLateScripts = Scripts loaded after Ready (sticky events)
 SetAndUseContextVars = Set and use context vars
 
 
@@ -195,6 +196,7 @@ ConsoleHelp = Console help
 JSDolibarrhooks = JS Dolibarr hooks
 JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - sequential execution
 ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new context tool
+JSContextCompatAndDeprecations = Backward compatibility and deprecations
 SetEventMessageTool = Dolibarr Tool : Set event message
 
 ContextLangToolTest = This text is in english

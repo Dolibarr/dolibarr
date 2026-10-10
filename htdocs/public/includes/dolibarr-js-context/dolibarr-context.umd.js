@@ -40,11 +40,17 @@
 		return window.Dolibarr;
 	}
 
-	// Private storage for secure tools (non-replaceable)
-	const _tools = {};
+	// Private storage for tools : name => {value, overwritable}
+	const _tools = new Map();
 
-	// Private storage for secure context vars or constants (non-replaceable)
-	const _contextVars = {};
+	// Private storage for context vars or constants : key => {value, overwritable}
+	const _contextVars = new Map();
+
+	// Deprecated usages already reported : key => {key, msg, count}
+	const _deprecations = new Map();
+
+	// Arguments adapters registered by the backward compatibility layer (dolibarr-context.compat.js) : method => [fn]
+	const _argsAdapters = {};
 
 	// Internal map to track proxies for events
 	const _proxies = new Map();
@@ -53,6 +59,12 @@
 	const _events = new EventTarget();
 
 	const _awaitHooks = {};  // Async hooks storage
+
+	// Data of the last execution of sticky hooks, replayed to late listeners : hookName => data
+	const _stickyHooks = new Map();
+
+	// Pending Dolibarr.whenTool() calls : toolName => [resolve]
+	const _toolWaiters = new Map();
 
 	// Debug flag (disabled by default)
 	let _debug = false;
@@ -63,6 +75,51 @@
 	function _ensureEvent(name) { if (!_awaitHooks[name]) _awaitHooks[name] = []; }
 	function _generateId() { return 'hook_' + Math.random().toString(36).slice(2); }
 	function _idExists(name, id) { return _awaitHooks[name].some(h => h.id === id); }
+
+	/**
+	 * Pass arguments of a public method through the adapters of the backward compatibility layer
+	 * @param {string} method Method name
+	 * @param {Array} args Arguments as received
+	 * @returns {Array} Adapted arguments
+	 */
+	function _adaptArgs(method, args) {
+		(_argsAdapters[method] || []).forEach(fn => { args = fn(args); });
+		return args;
+	}
+
+	/**
+	 * Store an entry in a protected registry (tools or context vars).
+	 * An existing entry can only be replaced if it was stored with overwrite = true
+	 * and if the new call also asks for overwrite = true.
+	 * @param {Map} registry
+	 * @param {string} label Used in error messages
+	 * @param {string} name
+	 * @param {*} value
+	 * @param {boolean} overwrite
+	 */
+	function _storeEntry(registry, label, name, value, overwrite) {
+		const existing = registry.get(name);
+		if (existing) {
+			if (!existing.overwritable) {
+				throw new Error(`Dolibarr: ${label} '${name}' already defined and protected`);
+			}
+			if (!overwrite) {
+				throw new Error(`Dolibarr: ${label} '${name}' already defined, set overwrite to true to replace it`);
+			}
+		}
+		registry.set(name, { value, overwritable: !!overwrite });
+	}
+
+	/**
+	 * Build a frozen plain object from a registry
+	 * @param {Map} registry
+	 * @returns {Object}
+	 */
+	function _registryToObject(registry) {
+		const obj = {};
+		registry.forEach((entry, name) => { obj[name] = entry.value; });
+		return Object.freeze(obj);
+	}
 
 	/**
 	 * Insert a new hook entry in the array respecting optional before/after lists
@@ -105,33 +162,38 @@
 		 * Tools cannot be modified or replaced from outside.
 		 */
 		get tools() {
-			return Object.freeze({ ..._tools });
+			return _registryToObject(_tools);
 		},
 
 		/**
-		 * Defines a new secure tool.
+		 * Defines a new tool.
+		 * A tool defined without overwrite is protected : it can never be replaced.
+		 * A tool defined with overwrite = true can be replaced later by another call with overwrite = true.
+		 *
 		 * @param {string} name Name of the tool
 		 * @param {*} value Function, class or object
-		 * @param {boolean} overwrite Explicitly allow overwriting an existing tool
+		 * @param {Object} [options]
+		 * @param {boolean} [options.overwrite=false] Allow this tool to replace an overwritable tool and to be replaced later
+		 * @param {boolean} [options.triggerHook=true] Execute the 'defineTool' hook
 		 *
 		 * See also dolibarr-context.mock.js for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.
 		 */
-		defineTool(name, value, overwrite = false, triggerHook = true) {
-			// Prevent silent overrides unless "overwrite" is true
-			if (!overwrite && this.checkToolExist(name)) {
-				throw new Error(`Dolibarr: Tool '${name}' already defined`);
+		defineTool(...args) {
+			const [name, value, options = {}, ...rest] = _adaptArgs('defineTool', args);
+			if (options === null || typeof options !== 'object' || rest.length > 0) {
+				throw new TypeError(`Dolibarr: defineTool('${name}') third parameter must be an options object {overwrite, triggerHook}`);
 			}
 
-			// Define the tool as read-only and non-configurable
-			Object.defineProperty(_tools, name, {
-				value,
-				writable: false,
-				configurable: false,
-				enumerable: true,
-			});
+			const { overwrite = false, triggerHook = true } = options;
+
+			_storeEntry(_tools, 'Tool', name, value, overwrite);
+
+			// Resolve pending whenTool() calls, even if the hook is not triggered
+			(_toolWaiters.get(name) || []).forEach(resolve => resolve(value));
+			_toolWaiters.delete(name);
 
 			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}, overwrite: ${overwrite} `);
-			if(triggerHook) {
+			if (triggerHook) {
 				this.executeHook('defineTool', { toolName: name, overwrite });
 			}
 		},
@@ -142,21 +204,24 @@
 		 * @returns {boolean} true if exists
 		 */
 		checkToolExist(name) {
-			return Object.prototype.hasOwnProperty.call(_tools, name);
+			return _tools.has(name);
 		},
 
 		/**
 		 * Get read-only snapshot of context variables
 		 */
 		get ContextVars() {
-			return Object.freeze({ ..._contextVars });
+			return _registryToObject(_contextVars);
 		},
 
 		/**
 		 * Defines a new context variable.
+		 * A var defined without overwrite is protected : it can never be replaced.
+		 * A var defined with overwrite = true can be replaced later by another call with overwrite = true.
+		 *
 		 * @param {string} key
 		 * @param {string|number|boolean} value
-		 * @param {boolean} overwrite Allow overwriting existing value
+		 * @param {boolean} overwrite Allow this var to replace an overwritable var and to be replaced later
 		 */
 		setContextVar(key, value, overwrite = false) {
 			// Accept only string, number, or boolean
@@ -165,16 +230,7 @@
 				throw new TypeError(`Dolibarr: ContextVar '${key}' must be a string, number, or boolean`);
 			}
 
-			if (!overwrite && _contextVars.hasOwnProperty(key)) {
-				throw new Error(`Dolibarr: ContextVar '${key}' already defined`);
-			}
-
-			Object.defineProperty(_contextVars, key, {
-				value,
-				writable: false,
-				configurable: false,
-				enumerable: true
-			});
+			_storeEntry(_contextVars, 'ContextVar', key, value, overwrite);
 
 			this.log(`ContextVar set: ${key} = ${value} (overwrite: ${overwrite})`);
 			this.executeHook('setContextVar', { key, value, overwrite });
@@ -203,7 +259,7 @@
 		 * @returns {*}
 		 */
 		getContextVar(key, fallback = null) {
-			return _contextVars.hasOwnProperty(key) ? _contextVars[key] : fallback;
+			return _contextVars.has(key) ? _contextVars.get(key).value : fallback;
 		},
 
 		/**
@@ -247,12 +303,62 @@
 		},
 
 		/**
+		 * Report a deprecated usage.
+		 * The warning is always shown (not only in debug mode) but only once per key,
+		 * so module developers can see what they have to migrate.
+		 *
+		 * @param {string} key Unique key of the deprecated usage
+		 * @param {string} msg Message explaining what to use instead
+		 */
+		deprecated(key, msg) {
+			const entry = _deprecations.get(key);
+			if (entry) {
+				entry.count++;
+				return;
+			}
+			_deprecations.set(key, { key, msg, count: 1 });
+			console.warn(`Dolibarr deprecated: ${msg}`);
+		},
+
+		/**
+		 * List deprecated usages reported since page load
+		 * @returns {Array<{key:string, msg:string, count:number}>}
+		 */
+		getDeprecations() {
+			return Array.from(_deprecations.values(), entry => ({ ...entry }));
+		},
+
+		/**
+		 * Internal API used only by the backward compatibility layer (dolibarr-context.compat.js).
+		 * Do not use it in modules.
+		 */
+		_compat: Object.freeze({
+			/**
+			 * Register a function receiving the arguments array of a public method and returning adapted arguments
+			 * @param {string} method Method name (ex: 'defineTool')
+			 * @param {function(Array): Array} fn
+			 */
+			addArgsAdapter(method, fn) {
+				if (!_argsAdapters[method]) _argsAdapters[method] = [];
+				_argsAdapters[method].push(fn);
+			}
+		}),
+
+		/**
 		 * Executes a hook-like JS event with CustomEvent.
 		 * @param {string} hookName Hook identifier
 		 * @param {object} data Extra information passed to listeners
+		 * @param {Object} [options]
+		 * @param {boolean} [options.sticky=false] Keep data of this execution, listeners added later with Dolibarr.on()
+		 *                                         are called immediately with it (used for one time events like Init or Ready)
 		 */
-		executeHook(hookName, data = {}) {
+		executeHook(hookName, data = {}, options = {}) {
 			this.log(`Hook executed: ${hookName}`);
+
+			// Stored before dispatch : listeners added during dispatch are not called by EventTarget, they get the replay instead
+			if (options.sticky) {
+				_stickyHooks.set(hookName, data);
+			}
 
 			const ev = new CustomEvent(hookName, { detail: data });
 
@@ -263,10 +369,6 @@
 			if (typeof document !== "undefined") {
 				document.dispatchEvent(new CustomEvent('Dolibarr:' + hookName, { detail: data }));
 			}
-
-			// Notify Dolibarr.on() listeners with data directly
-			const listeners = _events.listeners?.[hookName] || [];
-			listeners.forEach(fn => fn(data));
 		},
 
 		/**
@@ -361,12 +463,24 @@
 
 		/**
 		 * Registers an event listener.
+		 * If the event is sticky and was already executed (ex: Init, Ready), the callback is called immediately with its data.
+		 *
 		 * @param {string} eventName Event to listen to
 		 * @param {function} callback Listener function
+		 * @param {Object} [options]
+		 * @param {boolean} [options.once=false] Remove the listener after its first call
 		 */
-		on(eventName, callback) {
+		on(eventName, callback, options = {}) {
+			const once = !!options.once;
+
+			if (once && _stickyHooks.has(eventName)) {
+				callback(_stickyHooks.get(eventName));
+				return;
+			}
+
 			// Create a proxy to extract e.detail
-			const proxy = function(e) {
+			const proxy = (e) => {
+				if (once) this.off(eventName, callback);
 				callback(e.detail);
 			};
 
@@ -376,6 +490,61 @@
 
 			// Attach proxy to the internal EventTarget
 			_events.addEventListener(eventName, proxy);
+
+			// Replay sticky event already executed
+			if (_stickyHooks.has(eventName)) {
+				callback(_stickyHooks.get(eventName));
+			}
+		},
+
+		/**
+		 * Wait for the Dolibarr context to be ready (DOM loaded, Init done, tools defined).
+		 * Works even if called after the Ready event.
+		 *
+		 * @param {function} [callback] Optional function called with the Ready data
+		 * @returns {Promise<Object>} Resolved with the Ready data
+		 */
+		ready(callback) {
+			return new Promise(resolve => {
+				this.on('Ready', data => {
+					if (typeof callback === 'function') callback(data);
+					resolve(data);
+				}, { once: true });
+			});
+		},
+
+		/**
+		 * Wait for a tool to be defined.
+		 * Works even if the tool is defined without triggering the defineTool hook.
+		 *
+		 * @param {string} name Tool name
+		 * @param {Object} [options]
+		 * @param {number} [options.timeout=0] Reject after this delay in ms, 0 to wait without limit
+		 * @returns {Promise<*>} Resolved with the tool
+		 */
+		whenTool(name, options = {}) {
+			if (_tools.has(name)) {
+				return Promise.resolve(_tools.get(name).value);
+			}
+
+			return new Promise((resolve, reject) => {
+				let timer = null;
+				const waiter = value => {
+					if (timer) clearTimeout(timer);
+					resolve(value);
+				};
+
+				if (!_toolWaiters.has(name)) _toolWaiters.set(name, []);
+				_toolWaiters.get(name).push(waiter);
+
+				if (options.timeout > 0) {
+					timer = setTimeout(() => {
+						const waiters = _toolWaiters.get(name) || [];
+						waiters.splice(waiters.indexOf(waiter), 1);
+						reject(new Error(`Dolibarr: tool '${name}' not defined after ${options.timeout} ms`));
+					}, options.timeout);
+				}
+			});
 		},
 
 		/**
@@ -459,7 +628,7 @@
 	(function triggerDolibarrHooks() {
 		// Fire Init first
 		const fireInit = () => {
-			Dolibarr.executeHook('Init', { context: Dolibarr });
+			Dolibarr.executeHook('Init', { context: Dolibarr }, { sticky: true });
 			Dolibarr.log('Context Init done');
 
 			// Only after Init is done, fire Ready
@@ -467,7 +636,7 @@
 		};
 
 		const fireReady = () => {
-			Dolibarr.executeHook('Ready', { context: Dolibarr });
+			Dolibarr.executeHook('Ready', { context: Dolibarr }, { sticky: true });
 			Dolibarr.log('Context Ready done');
 		};
 
@@ -529,9 +698,19 @@
 
 		console.groupEnd();
 
+		// DEPRECATIONS
+		console.groupCollapsed("Deprecations");
+
+		console.log(
+			"List deprecated usages reported on this page : %cDolibarr.getDeprecations();",
+			"font-weight: bold;"
+		);
+
+		console.groupEnd();
+
 
 		console.groupEnd(); // END MAIN GROUP
-	}, false, false);
+	}, { triggerHook: false });
 
 
 
