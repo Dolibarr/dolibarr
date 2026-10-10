@@ -2508,6 +2508,78 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Update a field from the user interface (ajax edition of cards...) and save it into database.
+	 * The field must be allowed by isFieldEditableFromUi(), the value is checked and set by setFieldValue(),
+	 * then only this field is saved by persistFieldValue().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @param mixed  $value New value
+	 * @return int          Return integer <0 if KO (error into $this->error and $this->errors), >0 if OK
+	 */
+	public function updateFieldFromUi(User $user, $field, $value)
+	{
+		global $langs;
+
+		if (!$this->isFieldEditableFromUi($user, $field)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorFieldIsNotEditable');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$oldvalue = property_exists($this, $field) ? $this->$field : null;
+
+		if (!$this->setFieldValue($user, $field, $value)) {
+			if (empty($this->error)) {
+				$this->error = $this->getFieldError($field);
+			}
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		$result = $this->persistFieldValue($user, $field);
+		if ($result <= 0) {
+			// Keep the object consistent with the database
+			$this->$field = $oldvalue;
+			if (empty($this->error) && !empty($this->errors)) {
+				$this->error = implode(', ', $this->errors);
+			}
+			return -3;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * By default, notes are saved with update_note() and other fields with setValueFrom(), with the trigger XXX_MODIFY.
+	 * Override in child classes to use a dedicated method holding business rules (ex: set_ref_client()).
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'note_public' || $field == 'note_private') {
+			return $this->update_note((string) $this->$field, $field == 'note_public' ? '_public' : '_private');
+		}
+
+		$type = $this->fields[$field]['type'];
+		if (preg_match('/^(int|integer)\b/', $type)) {
+			$format = 'int';
+		} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			$format = 'date';
+		} else {
+			$format = 'text';
+		}
+		$trigkey = (property_exists($this, 'TRIGGER_PREFIX') && !empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)).'_MODIFY';
+
+		return $this->setValueFrom($field, $this->$field, '', null, $format, '', $user, $trigkey);
+	}
+
+	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
 	 *
