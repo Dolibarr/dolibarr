@@ -442,6 +442,7 @@ if ($action == 'presend') {
 	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;
 	$formmail->withfile = 2;
+	$formmail->objfilearray = dol_dir_list($diroutput.'/'.dol_sanitizeFileName($object->ref), "files", 0, '', '(\.meta|_preview.*\.png)$');
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
