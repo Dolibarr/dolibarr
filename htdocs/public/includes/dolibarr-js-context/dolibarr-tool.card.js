@@ -489,19 +489,21 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 *
 		 * @param {Document|null} [doc] Card loaded after the action (see postCard()), the card without lines is loaded if not given
 		 * @param {Object} [options] See reload()
+		 * @param {string[]} [options.sections] Selectors of the sections to refresh, all the sections of the card if not given
 		 * @returns {Promise<Object<string, HTMLElement|null>>} New sections
 		 */
 		async refreshSections(doc = null, options = {}) {
-			const selectors = this.getSections().filter(selector => {
+			const { sections: only = null, ...fetchOptions } = options;
+			const selectors = (only || this.getSections()).filter(selector => {
 				const el = document.querySelector(selector);
 				return el && !el.matches('[data-dol-editing]') && !el.querySelector('[data-dol-editing]');
 			});
 			if (selectors.length === 0) return {};
 
-			const loaded = doc || await this.fetchCardWithoutLines(options);
+			const loaded = doc || await this.fetchCardWithoutLines(fetchOptions);
 
-			// Sections up to date: a lazy refresh scheduled before is not needed anymore
-			if (!this.lazySections.loading) {
+			// Sections up to date: a lazy refresh scheduled before is not needed anymore (unless only some sections are refreshed)
+			if (!only && !this.lazySections.loading) {
 				this.lazySections.scheduled = false;
 				if (this.lazySections.observer) {
 					this.lazySections.observer.disconnect();
@@ -599,10 +601,23 @@ document.addEventListener('Dolibarr:Init', function(e) {
 					clearTimeout(state.timer);
 					state.timer = null;
 					const form = document.querySelector('form#builddoc_form');
-					if (form && navigator.sendBeacon) navigator.sendBeacon(this.getPostUrl(), new FormData(form));
+					if (form && navigator.sendBeacon) navigator.sendBeacon(this.getPostUrl(), this.getDocumentBuildData(form));
 				};
 				window.addEventListener('pagehide', state.onPageHide);
 			}
+		}
+
+		/**
+		 * Data of the form of generation, without the message "File generated" of the card: the document is generated again automatically,
+		 * like the cards do after a change (errors are still displayed)
+		 * @param {HTMLFormElement} form
+		 * @returns {FormData}
+		 */
+		getDocumentBuildData(form) {
+			const data = new FormData(form);
+			data.set('nosuccessmessage', '1');
+
+			return data;
 		}
 
 		/**
@@ -622,9 +637,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 			state.building = true;
 			try {
-				const doc = await this.postCard(new FormData(form), { showErrors: false });
+				const doc = await this.postCard(this.getDocumentBuildData(form), { showErrors: false });
 				if (doc) {
-					await this.refreshSections(doc, { showErrors: false });
+					// Only the list of the documents: the banner and the buttons were refreshed after the change, refreshing them again would move the page
+					await this.refreshSections(doc, { showErrors: false, sections: ['#builddoc_form'] });
 				} else {
 					this.scheduleSectionsRefresh(); // Card redirected after the generation
 				}
