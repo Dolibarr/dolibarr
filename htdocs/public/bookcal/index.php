@@ -63,7 +63,7 @@ if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
 
-$langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
+$langs->loadLangs(array("main", "other", "dict", "agenda", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
@@ -290,7 +290,7 @@ llxHeaderVierge('BookingCalendar');
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
 if ($object->status == $object::STATUS_DRAFT) {
-	$langs->trans("errors");
+	$langs->load("errors");
 	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
 }
 

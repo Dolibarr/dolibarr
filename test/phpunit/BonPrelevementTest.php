@@ -67,6 +67,7 @@ class BonPrelevementTest extends CommonClassTest
 	const IBAN_B_SPECIFIC = 'FR7630001007941234567890476'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
 	const XSD_PAIN_008    = __DIR__.'/../assets/xsd/pain.008.001.02.xsd';
+	const XSD_PAIN_008_V8 = __DIR__.'/../assets/xsd/pain.008.001.08.xsd';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -284,6 +285,61 @@ class BonPrelevementTest extends CommonClassTest
 
 
 		return $result;
+	}
+
+	/**
+	 * Test SEPA pain.008.001.08 generation when PRELEVEMENT_SEPA_SCHEMA_VERSION is set to '8'.
+	 *
+	 * @return void
+	 */
+	public function testGenerateWithSepaSchemaVersion8()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+
+		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
+		$demAId = $this->createPaymentRequest($facA, 100.0, self::$ribASpecificId);
+
+		$conf->global->PRELEVEMENT_SEPA_SCHEMA_VERSION = '8';
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+						   array($demAId), self::$fkBankAccount);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+
+		// The generated file must declare the pain.008.001.08 namespace
+		$content = file_get_contents($bon->filename);
+		$this->assertStringContainsString('urn:iso:std:iso:20022:tech:xsd:pain.008.001.08', $content,
+			'SEPA XML must declare the pain.008.001.08 namespace when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+		$this->assertStringContainsString('<BICFI>', $content,
+			'SEPA XML must use BICFI elements when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+		$this->assertStringNotContainsString('<BIC>', $content,
+			'SEPA XML must not use BIC elements when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+
+		// The generated file must validate against the official pain.008.001.08 XSD
+		$this->assertFileExists($bon->filename, 'SEPA XML file does not exist: '.$bon->filename);
+		$this->assertFileExists(self::XSD_PAIN_008_V8, 'XSD schema file not found: '.self::XSD_PAIN_008_V8);
+		$dom = new DOMDocument();
+		$loaded = $dom->load($bon->filename);
+		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$bon->filename);
+		libxml_use_internal_errors(true);
+		$valid = $dom->schemaValidate(self::XSD_PAIN_008_V8);
+		$errors = libxml_get_errors();
+		libxml_clear_errors();
+		libxml_use_internal_errors(false);
+		$messages = array();
+		foreach ($errors as $error) {
+			$messages[] = trim($error->message).' (line '.$error->line.')';
+		}
+		$this->assertTrue($valid, 'SEPA XML does not validate against pain.008.001.08 XSD: '.implode('; ', $messages));
+
+		unset($conf->global->PRELEVEMENT_SEPA_SCHEMA_VERSION);
 	}
 
 	/**

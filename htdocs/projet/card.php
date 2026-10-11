@@ -139,6 +139,7 @@ if (empty($reshook)) {
 	// Cancel
 	if ($cancel) {
 		if (GETPOST("comefromclone") == 1) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				header("Location: index.php");
@@ -549,6 +550,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
@@ -1073,7 +1075,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			6 => array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
 		);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $text, "confirm_clone", $formquestion, '', 1, 400, 590);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $text, "confirm_clone", $formquestion, '', 1, 0, 600);
 	}
 
 	// Call Hook formConfirm
@@ -1771,16 +1773,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Clone
 			if ($user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '', true, array('attr' => array('class' => 'reposition')));
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF']. '#', '', false, array('attr' => array('class' => 'reposition')));
 				}
 			}
 
 			// Delete
 			if ($user->hasRight('projet', 'supprimer') || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
 				if ($userDelete > 0 || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF']. '#', '', false);
 				}

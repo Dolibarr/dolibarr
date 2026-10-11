@@ -1343,6 +1343,15 @@ class Account extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -1682,11 +1691,13 @@ class Account extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/compta/bank/card.php';
+		$query = ['id' => $this->id];
 		if ($mode == 'transactions') {
-			$url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/bankentries_list.php';
 		} elseif ($mode == 'receipts') {
-			$url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/releve.php';
+			$query = ['account' => $this->id];
 		}
 
 		if ($option != 'nolink') {
@@ -1696,9 +1707,10 @@ class Account extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -2608,14 +2620,24 @@ class AccountLine extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->db->commit();
-			return 1;
-		} else {
+		if (!$resql) {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 
@@ -2649,12 +2671,13 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user			Object user making update
-	 *	@param 	int		$cat			Category id
-	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user			Object user making update
+	 *	@param 	int			$cat			Category id
+	 *	@param	int			$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
+	 *	@param	int<0,1>	$notrigger		1=Disable triggers
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_conciliation(User $user, $cat, $conciliated = 1)
+	public function update_conciliation(User $user, $cat, $conciliated = 1, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -2698,6 +2721,16 @@ class AccountLine extends CommonObjectLine
 			}
 
 			$this->rappro = (int) $conciliated;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
 
 			$this->db->commit();
 			return 1;

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
@@ -88,6 +88,10 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
+		$error++;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 	if (empty($splitamounts)) {
 		$error++;
@@ -161,6 +165,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 				exit;
 			} else {
 				$db->rollback();
+				setEventMessages($discount->error, $discount->errors, 'errors');
 			}
 		} else {
 			$db->rollback();
@@ -181,6 +186,10 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
+		$error++;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
 		$error++;
@@ -211,6 +220,13 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 			exit;
 		} else {
 			$db->rollback();
+			if ($res <= 0) {
+				setEventMessages($discount->error, $discount->errors, 'errors');
+			} elseif ($newid1 <= 0) {
+				setEventMessages($newdiscount1->error, $newdiscount1->errors, 'errors');
+			} else {
+				setEventMessages($newdiscount2->error, $newdiscount2->errors, 'errors');
+			}
 		}
 	}
 }
@@ -257,7 +273,13 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 
 	$discount = new DiscountAbsolute($db);
 	$result = $discount->fetch(GETPOSTINT("remid"));
-	$result = $discount->delete($user);
+	if ($result > 0 && $discount->fk_soc == $socid) {
+		$result = $discount->delete($user);
+	} else {
+		// The discount must belong to the thirdparty of the page
+		$result = -1;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
 	if ($result > 0) {
 		$db->commit();
 		header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id])); // To avoid pb with back

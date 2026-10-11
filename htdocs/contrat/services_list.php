@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 // Get parameters
+$action ='';
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -394,7 +395,7 @@ if ($socid > 0) {
 $filter_dateouvertureprevue = '';
 $filter_date1 = '';
 $filter_date2 = '';
-$sqlfilter_opcloture = '';
+$filter_date_cloture = '';
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 $filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);

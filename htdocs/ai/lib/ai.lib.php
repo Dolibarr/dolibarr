@@ -76,13 +76,13 @@ function getListOfAIServices()
 			'label'           => 'ChatGPT (OpenAI)',
 			'url'             => 'https://api.openai.com/v1/',
 			'setup'           => 'https://platform.openai.com/account/api-keys',
-			'textgeneration'  => array('default' => 'gpt-5.2'),             // Flagship model released late 2025, updated Feb 2026
-			'imagegeneration' => array('default' => 'gpt-image-1.5'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
+			'textgeneration'  => array('default' => 'gpt-5.6'),             //  updated Oct 2026
+			'imagegeneration' => array('default' => 'gpt-image-2'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
 			'audiogeneration' => array('default' => 'gpt-audio-1.5'),       // New Feb 23, 2026 release for high-fidelity audio out
 			'videogeneration' => array('default' => 'sora-2'),              // OpenAI's standard API video model
-			'transcription'   => array('default' => 'whisper-large-v3-turbo'), // The current speed/accuracy benchmark for ASR
-			'translation'     => array('default' => 'whisper-large-v3-turbo'), // Still the best for multi-language audio translation
-			'docparsing'      => array('default' => 'gpt-5.2'),             // Uses the new Responses API / Vision capabilities
+			'transcription'   => array('default' => 'gpt-transcribe'), 		// Dedicated model
+			'translation'     => array('default' => 'gpt-5.6'),				 // Still the best for multi-language audio translation
+			'docparsing'      => array('default' => 'gpt-5.6'),             // Uses the new Responses API / Vision capabilities
 			'adapter_type'    => 'openai'
 		),
 		'groq' => array(
@@ -168,13 +168,13 @@ function getListOfAIServices()
 			'label' => 'Anthropic (Claude)',
 			'url' => 'https://api.anthropic.com/v1/',
 			'setup' => 'https://console.anthropic.com/',
-			'textgeneration' => array('default' => 'claude-opus-4-6'),    // Released Feb 2026; features a 1M context window
+			'textgeneration' => array('default' => 'claude-opus-5'),    // Current Anthropic flagship; 1M context window
 			'imagegeneration' => array('default' => 'na'),              // Anthropic remains focused on text/code logic
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'claude-opus-4-6'),      // Leading model for "Computer Use" and PDF analysis
+			'docparsing' => array('default' => 'claude-opus-5'),      // Leading model for "Computer Use" and PDF analysis
 			'adapter_type' => 'anthropic'
 		),
 		'google' => array(
@@ -611,6 +611,46 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Resolve the text model used by the AI Assistant when the picker is on "Auto"
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The model id, or '' if no service is configured
+ */
+function getAiAssistantDefaultModel()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+	$prefix = 'AI_API_'.strtoupper($serviceKey);
+	$model = getDolGlobalString($prefix.'_MODEL_TEXT')
+		?: getDolGlobalString($prefix.'_MODEL')
+		?: ($services[$serviceKey]['textgeneration']['default'] ?? '');
+
+	return is_string($model) ? $model : '';
+}
+
+/**
+ * Resolve the API URL used by the AI Assistant for the configured provider
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The API base URL, or '' if no service is configured
+ */
+function getAiAssistantProviderUrl()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+
+	return (string) (getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: ($services[$serviceKey]['url'] ?? ''));
+}
+
+/**
  * Return the list of model ids offered by the configured AI provider, with a
  * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
  * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
@@ -752,7 +792,7 @@ function getAiChatAssistantConfig()
 		'Download',
 		'Show',
 		'Confirm',
-		'ConfirmAiAction',
+		'ConfirmAiAction', 'ConfirmAiWrite',
 		'ClearChatHistoryTitle',
 		'HistoryCleared',
 		'Send',
@@ -820,8 +860,11 @@ function getAiChatAssistantConfig()
 		'FetchingData',
 		'GeneratingLink',
 		'Found',
+		'File',
+		'Preview',
 		'TypeResponse',
 		'OpenVerb',
+		'AIPdfReport',
 
 		// Voice Confirmation
 		'VoiceYesNo',
@@ -877,9 +920,14 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window);
-		// 0 keeps the context strictly opt-in.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 3),
+		// Recent exchanges that follow the model by default (sliding window).
+		// Off (0) until an administrator decides otherwise: past answers carry
+		// business content the privacy masking does not cover, so sending them
+		// back on every request is not a default the module takes by itself.
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
+		// model list by a name heuristic that is not reliable, so hidden by default.
+		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
@@ -942,9 +990,21 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="header-controls">';
 	// Model picker pill: 'Auto' (provider default) + presets + the dynamic model
 	// list fetched from ajax/list_models.php by the JS. Choice kept in localStorage.
-	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($langs->trans("AIModelToUse")).'">';
-	$out .= '<option value="">'.$langs->transnoentitiesnoconv("AIModelAuto").'</option>';
+	$modelSelectTitle = $langs->transnoentitiesnoconv("AIModelToUse");
+	$aiproviderurl = getAiAssistantProviderUrl();
+	if ($aiproviderurl !== '') {
+		$modelSelectTitle .= "\n".$langs->transnoentitiesnoconv("URL").': '.$aiproviderurl;
+	}
+	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($modelSelectTitle, 0, 1).'">';
+	$autoLabel = $langs->transnoentitiesnoconv("AIModelAuto");
+	$defaultModel = getAiAssistantDefaultModel();
+	if ($defaultModel !== '') {
+		$autoLabel .= ' ('.$defaultModel.')';
+	}
+	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
+	//$out .= ajax_combobox("model-select");
+
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';

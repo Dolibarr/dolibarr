@@ -38,6 +38,11 @@ abstract class McpTool
 	 */
 	const RIGHTS_UNDECLARED = 'undeclared';
 
+	/**
+	 * Returned by writeConfirmationPreview() when the tool writes nothing.
+	 */
+	const NO_WRITE = '';
+
 	/** @var DoliDB Database handler */
 	protected $db;
 
@@ -132,5 +137,21 @@ abstract class McpTool
 	public function getRequiredRights(string $toolName)
 	{
 		return self::RIGHTS_UNDECLARED;
+	}
+	/**
+	 * Preview of what a call would write, or NO_WRITE for a read tool.
+	 *
+	 * A tool returning a preview does not execute on the first call: the handler
+	 * answers with that text and a confirmation state, and runs the tool only when
+	 * the caller comes back with it. The text is what a human is asked to approve,
+	 * so it names the records and amounts involved rather than dumping arguments.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or self::NO_WRITE when nothing is written.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		return self::NO_WRITE;
 	}
 }

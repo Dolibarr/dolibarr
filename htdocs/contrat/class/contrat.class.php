@@ -1727,6 +1727,11 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters
@@ -1895,6 +1900,15 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		if ($this->statut >= 0) {
+			if ($this->id > 0) {
+				// The line must belong to this contract
+				$contractline = new ContratLigne($this->db);
+				if ($contractline->fetch($idline) <= 0 || (int) $contractline->fk_contrat !== (int) $this->id) {
+					$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+					return -1;
+				}
+			}
+
 			// Call trigger
 			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
@@ -3217,7 +3231,8 @@ class Contrat extends CommonObject
 							$nbko++;
 							$listoflinesko[$contractline->id] = $contractline->id;
 
-							break;
+							// Do not break here: a template issue for one contract line (ex: not found for its language) must not
+							// prevent the reminder from being sent for the other contract lines due the same day.
 						}
 					}
 

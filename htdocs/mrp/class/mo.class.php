@@ -311,10 +311,12 @@ class Mo extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -995,6 +997,16 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+
+		// The line must belong to this MO (checked before any stock movement is reversed)
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_mo = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql || !$this->db->num_rows($resql)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$productstatic = new Product($this->db);
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
@@ -1011,7 +1023,12 @@ class Mo extends CommonObject
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
-			$moline = array_shift($TArrayMoLine);
+			$moline = is_array($TArrayMoLine) ? array_shift($TArrayMoLine) : null;
+			if (!is_object($moline) || (int) $moline->fk_mo !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);

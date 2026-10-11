@@ -566,7 +566,12 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
 
-					if ($this->getColumnStatus('desc')) {
+					if ($this->getColumnStatus('desc') && $object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
+						// Title or subtotal line: colored banner, like on other documents (pdf_render_subtotals() manages its own transaction)
+						$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
+						pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
+						$posYAfterDescription = $pdf->GetY();
+					} elseif ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction();
 						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
 
@@ -1238,7 +1243,9 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$w = 110;
+
+		$posx = $this->page_largeur - $this->marge_droite - $w;
 		$posy = $this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
@@ -1254,7 +1261,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SupplierProposal")." ".$outputlangs->convToOutputCharset($object->ref);
-		$pdf->MultiCell(100, 3, $title, '', 'R');
+		$pdf->MultiCell($w, 3, $title, '', 'R');
 		$posy += 1;
 
 		if ($object->ref_supplier) {
@@ -1262,7 +1269,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".$outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefSupplier")." : ".$outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
 			$posy += 1;
 		}
 
@@ -1274,7 +1281,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1286,7 +1293,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 
@@ -1294,12 +1301,12 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Draft"), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Draft"), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1317,7 +1324,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		// Get contact
@@ -1330,7 +1337,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1340,7 +1347,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$top_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
 		}
@@ -1512,21 +1519,21 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -1540,7 +1547,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'title' => array(
 				'textkey' => 'VAT'
 			),
@@ -1554,7 +1561,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -1569,7 +1576,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -1580,7 +1587,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
-			'width' => 11, // in mm
+			'width' => 11.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -1594,7 +1601,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
-			'width' => 13, // in mm
+			'width' => 13.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ReductionShort'
@@ -1608,7 +1615,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'TotalHT'

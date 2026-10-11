@@ -574,7 +574,7 @@ if (!empty($force_install_noedit)) {
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label"><label for="db_create_user"><?php echo $langs->trans("CreateUser"); ?></label></td>
+		<td class="label"><label for="db_create_user"><?php echo $langs->trans("CreateDatabaseUser"); ?></label></td>
 		<td class="label">
 			<input type="checkbox"
 				   id="db_create_user"

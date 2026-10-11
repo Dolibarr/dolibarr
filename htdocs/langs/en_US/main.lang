@@ -856,6 +856,7 @@ Before=Before
 After=After
 IPAddress=IP address
 Frequency=Frequency
+UnitFrequency=Unit of frequency
 InstantMessaging=Instant messaging
 NewAttribute=New attribute
 AttributeCode=Attribute code

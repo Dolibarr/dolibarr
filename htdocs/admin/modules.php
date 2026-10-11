@@ -67,7 +67,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "modulebuilder"));
+$langs->loadLangs(array("admin", "modulebuilder"));
 
 $action = GETPOST('action', 'aZ09');
 $page = GETPOSTINT('page');
@@ -246,7 +246,7 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$original_file) {
-		$langs->load("Error");
+		$langs->load("errors");
 		if ($isExternalDownload) {
 			setEventMessages($langs->trans("ErrorFailToDownloadModuleFromSource", $producttoinstall['name']), null, 'warnings');
 		} else {
@@ -297,6 +297,7 @@ if ($action == 'install' && $allowonlineinstall) {
 					$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example ./htdocs/mymodule
 					//var_dump($modulenamedir);
 					if (!dol_is_dir($modulenamedir)) {
+						$langs->load("errors");
 						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>'.$langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat2", $modulename, 'htdocs/'.$modulename), null, 'errors');
 						$error++;
 					}
@@ -406,6 +407,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile).' - code = '.$result, null, 'errors');
 			$error++;
 		}
@@ -1080,6 +1082,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($checkRes > 0) {
 				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'warnings');
 			} elseif ($checkRes < 0) {
+				$langs->load("errors");
 				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}
 		}
@@ -1683,6 +1686,7 @@ if ($mode == 'deploy') {
 			}
 
 			if ($maxmin > 0) {
+				$langs->load("errors");
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {

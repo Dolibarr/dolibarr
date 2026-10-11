@@ -124,7 +124,7 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'picto' => 'user', 'help' => 'LinkToUserCreated', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => -1, 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'ContractSigned', 8 => 'Refused', 9 => 'Canceled')),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'RecruitmentContractSigned', 8 => 'Refused', 9 => 'Canceled')),
 		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => 1, 'position' => 700, 'notnull' => 0, "visible" => 0, "comment" => "ip used to create record (for public submission page)"),
 	);
 
@@ -915,14 +915,14 @@ class RecruitmentCandidature extends CommonObject
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received').' ('.$langs->transnoentitiesnoconv("InterviewToDo").')';
 			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
-			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('RecruitmentContractSigned');
 			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Received');
 			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->transnoentitiesnoconv('ContractProposed');
-			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->transnoentitiesnoconv('RecruitmentContractSigned');
 			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->transnoentitiesnoconv('ContractRefused');
 			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');

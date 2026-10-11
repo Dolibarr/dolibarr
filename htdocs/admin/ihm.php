@@ -276,6 +276,10 @@ if ($action == 'update') {
 			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"), 'chaine', 0, '', $conf->entity);
 		}
 
+		if (GETPOSTISSET("MAIN_ROW_SINGLECLICK_TOSELECT")) {
+			dolibarr_set_const($db, "MAIN_ROW_SINGLECLICK_TOSELECT", GETPOSTINT("MAIN_ROW_SINGLECLICK_TOSELECT"), 'chaine', 0, '', $conf->entity);
+		}
+
 		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -480,6 +484,12 @@ if ($mode == 'other') {
 	// Display checkboxes and fields menu left / right
 	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
 	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Single click to select/unselect a list row
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("RowSingleClickToSelect"), $langs->trans("RowSingleClickToSelectDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_ROW_SINGLECLICK_TOSELECT", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
 	print '</td>';
 	print '</tr>';
 

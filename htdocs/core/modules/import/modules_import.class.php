@@ -1159,6 +1159,7 @@ class ModeleImports
 
 											// If duplicate record found
 											if (!($classinstance->id != '') && $result == -2) {
+												$langs->load('errors');
 												$this->errors[$error]['lib'] = $langs->trans('ErrorMultipleRecordFoundFromRef', $newval);
 												$this->errors[$error]['type'] = 'FOREIGNKEY';
 												$errorforthistable++;
@@ -1177,6 +1178,7 @@ class ModeleImports
 												$newval = $classinstance->id;
 											} elseif (! $error) {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													$langs->load('errors');
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', num2Alpha($key - 1), $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
@@ -1220,6 +1222,7 @@ class ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													$langs->load('errors');
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -1258,6 +1261,7 @@ class ModeleImports
 											$newval = $scaleorid ? $scaleorid : 0;
 										} else {
 											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+												$langs->load('errors');
 												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 											} else {
 												$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -1418,6 +1422,7 @@ class ModeleImports
 										if (!empty($filter)) {
 											$tableforerror .= ':'.$filter;
 										}
+										$langs->load('errors');
 										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
@@ -1426,6 +1431,7 @@ class ModeleImports
 								} elseif (!preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
+									$langs->load('errors');
 									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', num2Alpha($key - 1), $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
@@ -1436,6 +1442,7 @@ class ModeleImports
 							// Check HTML injection
 							$inj = testSqlAndScriptInject($newval, 0);
 							if ($inj) {
+								$langs->load('errors');
 								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', num2Alpha($key - 1), dol_trunc($newval, 100));
 								$this->errors[$error]['type'] = 'HTMLINJECTION';
 								$errorforthistable++;

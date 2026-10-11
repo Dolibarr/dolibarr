@@ -61,7 +61,6 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -84,9 +83,11 @@ if (!$sortfield) {
 $object = new SupplierProposal($db);
 $object->fetch($id, $ref);
 if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
+$result = restrictedArea($user, 'supplier_proposal', $id);
 
 $permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 $usercancreate = $permissiontoadd;
@@ -148,7 +149,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= ' - '.$proj->title;

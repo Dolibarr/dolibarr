@@ -170,13 +170,14 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Create a receipt to send cheques
 	 *
-	 *	@param	User	$user 			User making creation
-	 *	@param  int		$account_id 	Bank account for cheque receipt
-	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	int[]	$toRemise		array with cheques to remise
+	 *	@param	User		$user 			User making creation
+	 *	@param  int			$account_id 	Bank account for cheque receipt
+	 *  @param  int			$limit          Limit ref of cheque to this
+	 *  @param	int[]		$toRemise		array with cheques to remise
+	 *  @param	int<0,1>	$notrigger		1=Disable triggers
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function create($user, $account_id, $limit, $toRemise)
+	public function create($user, $account_id, $limit, $toRemise, $notrigger = 0)
 	{
 		global $conf;
 
@@ -306,6 +307,15 @@ class RemiseCheque extends CommonObject
 			//if ($res < 0) $error++;
 		}
 
+		if (!$this->errno && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_CREATE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
+		}
+
 		if (!$this->errno) {
 			$this->db->commit();
 			dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
@@ -320,10 +330,11 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Delete deposit from database
 	 *
-	 *	@param  User	$user 		User that delete
+	 *	@param  User		$user 		User that delete
+	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -355,6 +366,15 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 				}
 			}
+		}
+
+		if ($this->errno === 0 && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_DELETE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
 		}
 
 		if ($this->errno === 0) {

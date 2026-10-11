@@ -174,6 +174,31 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // We want response
+
+	// Accept a compressed response (gzip, deflate, br... whatever this libcurl supports): libcurl decodes it, so 'content' is the
+	// plain body. Note that the response headers (HEAD, MAIN_CURL_GET_RESPONSE_HEADER) still show the Content-Encoding.
+	curl_setopt($ch, CURLOPT_ENCODING, '');
+
+	$responsebuffer = '';
+	$responsetoolarge = false;
+	if ($maxsize) {
+		// CURLOPT_MAXFILESIZE counts the bytes received on the wire, so a compressed response can decode into much more than the
+		// limit: the decoded bytes are counted too, and the transfer is aborted as soon as they exceed the limit.
+		/**
+		 * @param	CurlHandle|resource	$curl	The curl handle (a resource before PHP 8)
+		 * @param	string				$data	Chunk of decoded body (and of header when CURLOPT_HEADER is set)
+		 * @return	int							Number of bytes handled, less than strlen($data) aborts the transfer
+		 */
+		$writefunction = function ($curl, $data) use (&$responsebuffer, &$responsetoolarge, $maxsize) {
+			if (strlen($responsebuffer) + strlen($data) > $maxsize * 1024) {
+				$responsetoolarge = true;
+				return 0;	// Less than strlen($data): libcurl aborts the transfer with CURLE_WRITE_ERROR (23)
+			}
+			$responsebuffer .= $data;
+			return strlen($data);
+		};
+		curl_setopt($ch, CURLOPT_WRITEFUNCTION, $writefunction);
+	}
 	if ($postorget == 'POST') {
 		curl_setopt($ch, CURLOPT_POST, true); // POST
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // Setting param x=a&y=z as POST fields
@@ -338,7 +363,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
+		$responsebuffer = '';
+		$responsetoolarge = false;
 		$response = curl_exec($ch);		// return false on error, result on success
+		if ($maxsize) {
+			// With a write function, curl_exec() returns true instead of the response: the response is what the function collected
+			$response = ($response === false || $responsetoolarge) ? false : $responsebuffer;
+		}
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
@@ -397,6 +428,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['http_code'] = 0;
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
+		if ($responsetoolarge) {
+			// The transfer was aborted by our write function (error 23): report it like libcurl does for its own size check
+			$rep['curl_error_no'] = 63;	// CURLE_FILESIZE_EXCEEDED
+			$rep['curl_error_msg'] = 'Maximum file size exceeded';
+		}
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
 

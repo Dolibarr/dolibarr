@@ -93,6 +93,11 @@ try {
 		$status = 'Error';
 		$errorMsg = isset($result['error']) ? (string) $result['error'] : '';
 	}
+	// A write answers its first call with a confirmation request, which is not an
+	// execution: log it as a confirmation, as parse_intent.php does, not as a success.
+	if (is_array($result) && ($result['resultType'] ?? '') === 'input_required') {
+		$status = 'Confirm';
+	}
 	ai_log_request(
 		$db,
 		$user,

@@ -838,7 +838,7 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 1, 0, 0, '', $morecss, 1, '', 0, 0);
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -1540,7 +1540,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax300" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8

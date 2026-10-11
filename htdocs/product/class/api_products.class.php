@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,7 +428,9 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 2);
+		$this->product->oldcopy = dol_clone($this->product, 1);
+
+		$oldproduct = $this->product->oldcopy;
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -2141,6 +2144,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url PUT variants/{id}
 	 */
@@ -2151,7 +2155,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->fetch((int) $id);
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'rowid') {
@@ -2183,6 +2189,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url DELETE variants/{id}
 	 */
@@ -2193,7 +2200,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->id = (int) $id;
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 		$result = $prodcomb->delete(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, "Error deleting variant");

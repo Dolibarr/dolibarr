@@ -103,6 +103,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$object->fetch($id);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -220,6 +221,12 @@ if ($result > 0) {
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
 	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';
+	print '</td></tr>';
+
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment numero
@@ -392,7 +399,7 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 			} else {
 				print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 			}

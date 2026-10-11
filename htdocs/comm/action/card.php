@@ -2113,7 +2113,8 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		// Title
-		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td>';
+		print '<td><input type="text" name="label" class="soixantepercent" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		// Type of event
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && $object->elementtype != "ticket") {
@@ -2934,13 +2935,13 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', 'card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			if ($usercandelete) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}

@@ -35,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassPerso extends ModeleGenPassword
 {
 	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+	/**
 	 * @var string ID
 	 */
 	public $id;

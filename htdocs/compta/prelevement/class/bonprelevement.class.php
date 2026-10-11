@@ -8,7 +8,8 @@
  * Copyright (C) 2019       JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2026	Guillaume de Wellenstein	<guillaume@tecneo.fr>
+ * Copyright (C) 2026	   Guillaume de Wellenstein	<guillaume@tecneo.fr>
+ * Copyright (C) 2026	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +109,11 @@ class BonPrelevement extends CommonObject
 	 * @var string
 	 */
 	public $emetteur_ics;
+
+	/**
+	 * @var string		SEPA schema version for direct debit files ('2' = pain.008.001.02, '8' = pain.008.001.08)
+	 */
+	public $sepa_schema_version = '2';
 
 	/**
 	 * @var int
@@ -220,11 +226,11 @@ class BonPrelevement extends CommonObject
 		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
 		'date_trans' => array('type' => 'datetime', 'label' => 'TransData', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
 		'method_trans' => array('type' => 'smallint(6)', 'label' => 'Methodtrans', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusertrans', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserTransfer', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'date_credit' => array('type' => 'datetime', 'label' => 'CreditDate', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
-		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
 	/**
 	 * @var int
@@ -321,6 +327,7 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_numero_compte = "";
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
+		$this->sepa_schema_version = '2';
 		$this->sepa_xml_pti_in_ctti = false;
 
 		$this->emetteur_iban = "";
@@ -1896,6 +1903,8 @@ class BonPrelevement extends CommonObject
 	{
 		global $conf, $langs, $mysoc;
 
+		$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+
 		if ($type !== 'bank-transfer') {
 			$format = strtoupper($format);
 			if (!in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
@@ -2056,7 +2065,9 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-				fwrite($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
+				$sepaSchemaVersion = $this->sepa_schema_version;
+				$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
+				fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
@@ -2573,7 +2584,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
 				if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
-					$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+					$XML_DEBITOR .= '						' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $row_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				}
 				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
@@ -2588,15 +2599,42 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				</DbtrAcct>' . $CrLf;
 				$XML_DEBITOR .= '				<RmtInf>' . $CrLf;
 
-				// Structured data for Belgium
-				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
+				// Structured payment reference, see core/lib/paymentref.lib.php
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_creditorref.lib.php';
+
+				$invoicestatic = new Facture($this->db);
+				$invoicestatic->fetch($row_idfac);
+
+				$paymentref = empty($invoicestatic->payment_reference) ? '' : (string) $invoicestatic->payment_reference;
+
+				// Invoices issued before the reference was stored still get one here
+				if ($paymentref === '' && getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
+					$paymentref = dolBECalculateStructuredCommunication($invoicestatic->ref, $invoicestatic->type);
+				}
 
-					$invoicestatic = new Facture($this->db);
-					$invoicestatic->fetch($row_idfac);
+				$scheme = dolPayRefDetectScheme($paymentref);
 
-					$invoicePaymentKey = dolBECalculateStructuredCommunication($invoicestatic->ref, $invoicestatic->type);
-					$XML_DEBITOR .= '					<strd>' . $invoicePaymentKey . '</strd>' . $CrLf;
+				if ($scheme == 'SCOR' || $scheme == 'BBA') {
+					// ISO 20022 needs the reference inside a CdtrRefInf block. SCOR is the
+					// code for ISO 11649, BBA the proprietary scheme of the belgian banks.
+					$XML_DEBITOR .= '					<Strd>' . $CrLf;
+					$XML_DEBITOR .= '						<CdtrRefInf>' . $CrLf;
+					$XML_DEBITOR .= '							<Tp>' . $CrLf;
+					$XML_DEBITOR .= '								<CdOrPrtry>' . $CrLf;
+					if ($scheme == 'SCOR') {
+						$XML_DEBITOR .= '									<Cd>SCOR</Cd>' . $CrLf;
+					} else {
+						$XML_DEBITOR .= '									<Prtry>BBA</Prtry>' . $CrLf;
+					}
+					$XML_DEBITOR .= '								</CdOrPrtry>' . $CrLf;
+					$XML_DEBITOR .= '							</Tp>' . $CrLf;
+					$XML_DEBITOR .= '							<Ref>' . dolEscapeXML(dolPayRefStrip($paymentref)) . '</Ref>' . $CrLf;
+					$XML_DEBITOR .= '						</CdtrRefInf>' . $CrLf;
+					$XML_DEBITOR .= '					</Strd>' . $CrLf;
+				} elseif ($scheme == 'FI') {
+					// A finnish national reference has no ISO 20022 code, it travels as free text
+					$XML_DEBITOR .= '					<Ustrd>' . dolEscapeXML($paymentref) . '</Ustrd>' . $CrLf;
 				} else {
 					// A string with some information on payment - 140 max
 					$XML_DEBITOR .= '					<Ustrd>' . getDolGlobalString('PRELEVEMENT_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstuctured data - 140 max
@@ -2846,7 +2884,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CdtrAgt>' . $CrLf;
 				$XML_SEPA_INFO .= '				<FinInstnId>' . $CrLf;
-				$XML_SEPA_INFO .= '					<BIC>' . $this->emetteur_bic . '</BIC>' . $CrLf;
+				$XML_SEPA_INFO .= '				' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				$XML_SEPA_INFO .= '				</FinInstnId>' . $CrLf;
 				$XML_SEPA_INFO .= '			</CdtrAgt>' . $CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;

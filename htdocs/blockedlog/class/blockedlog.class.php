@@ -1797,7 +1797,7 @@ class BlockedLog
 				throw new Exception('Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of an old version');
 			}
 
-			// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+			// Here we have the crypted or obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
 			$hmac_secret_key = '';
 			try {
 				$hmac_secret_key = $this->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
@@ -1822,8 +1822,8 @@ class BlockedLog
 
 			// Last check on validity of key
 			if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
-				//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
-				throw new Exception('buildFinalSignatureHash Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
+				//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the crypted or obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+				throw new Exception('buildFinalSignatureHash Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the crypted or obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
 			}
 
 			// Here the $hmac_secret_key is in memory with the correct value.
@@ -2076,8 +2076,13 @@ class BlockedLog
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
 		}
 
+		if (preg_match('/^BLOCKEDLOGHMAC/', $hmac_encoded_secret_key)) {
+			// If key was not encoded in db yet (old version before migration)
+			$hmac_secret_key = $hmac_encoded_secret_key;
+		}
+
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
-			throw new Exception('getClearHMACSecretKey Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).'.($errormsg ? ' Additional message: '.$errormsg : ''));
+			throw new Exception('getClearHMACSecretKey Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the decrypt or obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).'.($errormsg ? ' Additional message: '.$errormsg : ''));
 		}
 
 		return $hmac_secret_key;

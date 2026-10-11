@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin', 'products', 'margins'));
+$langs->loadLangs(array('exports', 'compta', 'projects', 'admin', 'products', 'margins'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('imports'));
@@ -210,6 +210,9 @@ if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 	if (GETPOSTINT("id")) {
 		$objimport->fetch(GETPOSTINT("id"));
 		$result = $objimport->delete($user);
+		if ($result < 0) {
+			setEventMessages($objimport->error, $objimport->errors, 'errors');
+		}
 	}
 }
 
@@ -280,6 +283,7 @@ if ($step == 2 && $datatoimport) {
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
 		header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
@@ -511,7 +515,7 @@ if ($step == 2 && $datatoimport) {
 
 
 	if ($format == 'xlsx' && !class_exists('XMLWriter')) {
-		$langs->load("install");
+		$langs->loadLangs(array("install", "errors"));
 		print info_admin($langs->trans("ErrorPHPDoesNotSupport", 'php-xml'), 0, 0, '1', 'error');
 	}
 
@@ -2019,6 +2023,7 @@ if ($step == 4 && $datatoimport) {
 		// Show Errors
 		//var_dump($arrayoferrors);
 		if (count($arrayoferrors)) {
+			$langs->load('errors');
 			print img_error().' <b>'.$langs->trans("ErrorsOnXLines", count($arrayoferrors)).'</b><br>';
 			print '<table width="100%" class="border"><tr><td>';
 			foreach ($arrayoferrors as $key => $val) {
@@ -2039,6 +2044,7 @@ if ($step == 4 && $datatoimport) {
 		// Show Warnings
 		//var_dump($arrayoferrors);
 		if (count($arrayofwarnings)) {
+			$langs->load('errors');
 			print img_warning().' <b>'.$langs->trans("WarningsOnXLines", count($arrayofwarnings)).'</b><br>';
 			print '<table width="100%" class="border"><tr><td>';
 			foreach ($arrayofwarnings as $key => $val) {
