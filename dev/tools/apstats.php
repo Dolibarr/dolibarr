@@ -71,7 +71,7 @@ if (!is_dir($outputdir)) {
 
 $dirscc = '';
 $dirphpstan = '';
-$dir_phan = '';
+$dirphan = '';
 $datatable_script = '';
 $url_root = '';
 $url_site = '';
@@ -86,7 +86,7 @@ while ($i < $argc) {
 	} elseif (preg_match('/^--dir-phpstan=(.*)$/', $argv[$i], $reg)) {
 		$dirphpstan = $reg[1];
 	} elseif (preg_match('/^--dir-phan=(.*)$/', $argv[$i], $reg)) {
-		$dir_phan = $reg[1];
+		$dirphan = $reg[1];
 	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
 		$url_root = $reg[1];
 	} elseif (preg_match('/^--url-site=(.*)$/', $argv[$i], $reg)) {
@@ -110,7 +110,7 @@ $PHAN_MEMORY_OPT = "--memory-limit 5G";
 if (!is_readable($PHAN_CONFIG)) {
 	print "Skipping phan - configuration not found\n";
 	// Disable phan while not integrated yet
-	$dir_phan = 'disabled';
+	$dirphan = 'disabled';
 }
 
 
@@ -146,7 +146,7 @@ if ($dirphpstan != 'disabled') {
 	$resexecver = 0;
 	exec($commandcheck, $output_arrver, $resexecver);
 }
-$phpstanversion = $output_arrver[0];
+$phpstanversion = (empty($output_arrver) ? '' : $output_arrver[0]);
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
@@ -158,17 +158,17 @@ if ($dirphpstan != 'disabled') {
 
 // Get technical debt with Phan
 $output_arrverphan = array();
-if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '') .'phan --version';
+if ($dirphan != 'disabled') {
+	$commandcheck = ($dirphan ? $dirphan.DIRECTORY_SEPARATOR : '') .'phan --version';
 	print 'Execute Phan to get the version: '.$commandcheck."\n";
 	$resexecverphan = 0;
 	exec($commandcheck, $output_arrverphan, $resexecverphan);
 }
-$phpphanversion = $output_arrverphan[0];
+$phpphanversion = (empty($output_arrverphan) ? '' : $output_arrverphan[0]);
 
 $output_phan_json = array();
 $res_exec_phan = 0;
-if ($dir_phan != 'disabled') {
+if ($dirphan != 'disabled') {
 	if (is_readable($PHAN_BASELINE)) {
 		$PHAN_BASELINE_OPT = "-B '{$PHAN_BASELINE}'";
 	} else {
@@ -176,7 +176,7 @@ if ($dir_phan != 'disabled') {
 	}
 	// Get technical debt (phan)
 	$commandcheck
-		= ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '')
+		= ($dirphan ? $dirphan.DIRECTORY_SEPARATOR : '')
 		  ."phan --output-mode json $PHAN_MEMORY_OPT -k '$PHAN_CONFIG' $PHAN_BASELINE_OPT --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
 	print 'Execute Phan to get the technical debt: '.$commandcheck."\n";
 	exec($commandcheck, $output_phan_json, $res_exec_phan);
@@ -600,7 +600,7 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
 			$html .= '<td class="nowrap">';
-			$percent = (float) $val['Lines'] / (int) $arrayofmax['Lines'];
+			$percent = (empty($arrayofmax['Lines']) ? 0 : (float) $val['Lines'] / (int) $arrayofmax['Lines']);
 			$widthbar = round(200 * $percent);
 			$html .= '<div class="bargraph" style="width: '.max(1, $widthbar).'px">&nbsp;</div>';
 			$html .= '</td>';
@@ -753,10 +753,10 @@ $html .= '<div class="box inline-box back1">';
 $html .= 'COCOMO value<br><span class="small opacitymedium">(Basic/Semi-detached model)</span><br>';
 $html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
-if (array_key_exists('proj', $arraycocomo)) {
+if (array_key_exists('proj', $arraycocomo) || array_key_exists('dep', $arraycocomo)) {
 	$html .= '<div class="box inline-box back2">';
 	$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic/Semi-detached model)</span><br>';
-	$html .= '<b>'.formatNumber((int) $arraycocomo['proj']['people'] * (float) $arraycocomo['proj']['effort'] + (int) $arraycocomo['dep']['people'] * (float) $arraycocomo['dep']['effort']);
+	$html .= '<b>'.formatNumber((empty($arraycocomo['proj']['people']) ? 0 : (int) $arraycocomo['proj']['people']) * (empty($arraycocomo['proj']['effort']) ? 0 : (float) $arraycocomo['proj']['effort']) + (empty($arraycocomo['dep']['people']) ? 0 : (int) $arraycocomo['dep']['people']) * (empty($arraycocomo['dep']['effort']) ? 0 : (float) $arraycocomo['dep']['effort']));
 	$html .= ' months people</b>';
 	$html .= '</div>';
 }
@@ -794,6 +794,10 @@ $tmpphan = '';
 $phan_nblines = 0;
 if (count($output_phan_json) != 0) {
 	$phan_notices = json_decode($output_phan_json[count($output_phan_json) - 1], true);
+	if (!is_array($phan_notices)) {
+		// Phan failed or its output is not JSON
+		$phan_notices = array();
+	}
 	// Info: result code is $res_exec_phan
 	'@phan-var-force array<array{type:string,type_id:int,check_name:string,description:string,severity:int,location:array{path:string,lines:array{begin:int,end:int}}}> $phan_notices';
 	$phan_items = [];
@@ -1034,7 +1038,7 @@ if ($dirphpstan != 'disabled') {
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
 	$html .= $tmpstan;
-	$html .= '<tbody></table>';
+	$html .= '</tbody></table>';
 	// Disabled, no more required as list is managed with datatable
 	//$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
 	$html .= '</div></div>';
@@ -1045,7 +1049,7 @@ if ($dirphpstan != 'disabled') {
 
 // Technical debt Phan
 
-if ($dir_phan != 'disabled') {
+if ($dirphan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
  let phantable = new DataTable("#technicaldebtphan table", {
@@ -1114,26 +1118,7 @@ if ($fh) {
  */
 function formatNumber($number, $nbdec = 0)
 {
-	return number_format($number, 0, '.', ' ');
-}
-
-/**
- * cleanVal
- *
- * @param object 	$val		Array of a PR
- * @return array{url:string,number:string,title:string,created_at:string,updated_at:string}	Array of a PR
- */
-function cleanVal($val)
-{
-	$tmpval = array();
-
-	$tmpval['url'] = $val->url;
-	$tmpval['number'] = $val->number;
-	$tmpval['title'] = $val->title;
-	$tmpval['created_at'] = $val->created_at;
-	$tmpval['updated_at'] = $val->updated_at;
-
-	return $tmpval;
+	return number_format($number, $nbdec, '.', ' ');
 }
 
 /**
