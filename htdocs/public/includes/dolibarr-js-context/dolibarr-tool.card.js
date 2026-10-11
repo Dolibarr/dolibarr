@@ -4,7 +4,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * -------------------
 	 * Controller of the card of an object displayed in the page, to update the page in ajax without reloading it.
 	 * Built on Dolibarr.tools.object (the data of the object), it changes the page:
-	 * - setField() saves a field and refreshes the fields displayed changed by the update
+	 * - setField() saves a field and refreshes the fields displayed changed by the update, with a light feedback on them (see showUpdatedFeedback())
 	 * - refreshFields() refreshes the values of fields displayed in containers [data-dol-field] (ex: totals)
 	 * - reload() reloads sections and document lines of the card, the elements are replaced by their new version with Dolibarr.tools.replaceContent():
 	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1).
@@ -114,6 +114,38 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Show that a displayed value was updated: a reflection sweeping it once (.updated-feedback of input-feedback.css), limited to its text
+	 * so it crosses the text at the same speed whatever the width of the element. The class is removed at the end of the animation,
+	 * so it can be shown again.
+	 * @param {HTMLElement} el
+	 * @param {Object} [options]
+	 * @param {boolean} [options.soft=false] Lighter, for the values changed as a consequence (computed fields)
+	 */
+	function showUpdatedFeedback(el, options = {}) {
+		const { soft = false } = options;
+		el.classList.remove('updated-feedback', '--soft');
+
+		// Box of the text, relative to the padding box of the element (origin of the reflection ::after)
+		const range = document.createRange();
+		range.selectNodeContents(el);
+		const textRect = range.getBoundingClientRect();
+		const rect = el.getBoundingClientRect();
+		if (textRect.width > 0) {
+			el.style.setProperty('--updated-feedback-left', (textRect.left - rect.left - el.clientLeft) + 'px');
+			el.style.setProperty('--updated-feedback-width', textRect.width + 'px');
+		}
+
+		void el.offsetWidth; // Restarts the animation when it is running
+		el.classList.add('updated-feedback');
+		if (soft) el.classList.add('--soft');
+		el.addEventListener('animationend', () => {
+			el.classList.remove('updated-feedback', '--soft');
+			el.style.removeProperty('--updated-feedback-left');
+			el.style.removeProperty('--updated-feedback-width');
+		}, { once: true });
+	}
+
+	/**
 	 * Controller of the card of an object displayed in the page
 	 */
 	class DolibarrCardController {
@@ -185,6 +217,13 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				Dolibarr.tools.replaceContent(target, data.html, { mode: 'inner' });
 			}
 			this.updateFields(data.fields, { except: target ? [field] : [], tms: data.tms ? parseInt(data.tms, 10) : null });
+
+			// The other fields changed by the update (computed fields), the field itself is shown by its editor (see card.fields)
+			Object.keys(data.fields || {}).filter(name => name !== field).forEach(name => {
+				this.getFieldContainers(name).forEach(el => {
+					if (!el.dataset.dolEditing) showUpdatedFeedback(el, { soft: true });
+				});
+			});
 
 			// The document shows the field, generated again like the cards do after a change (unless MAIN_DISABLE_PDF_AUTOUPDATE)
 			if (data.builddoc) this.scheduleDocumentBuild();
@@ -732,6 +771,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	card.sections = sections;
 	card.register = register;
 	card.definePart = definePart;
+	card.showUpdatedFeedback = showUpdatedFeedback;
 
 	Dolibarr.defineTool('card', card);
 });

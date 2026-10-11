@@ -121,6 +121,29 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Fields of the editor seen by the user, for the feedback of input-feedback.css (a list replaced by select2 is seen as its select2 box)
+	 * @param {HTMLElement} inputs
+	 * @returns {HTMLElement[]}
+	 */
+	function getVisibleInputs(inputs) {
+		return [...inputs.querySelectorAll('input:not([type="hidden"]), textarea, select, .select2-selection')];
+	}
+
+	/**
+	 * Show a feedback of input-feedback.css on the fields of the editor once (ex: fail-feedback), removed at the end of its animation
+	 * @param {HTMLElement} inputs
+	 * @param {string} className
+	 */
+	function showInputsFeedback(inputs, className) {
+		getVisibleInputs(inputs).forEach(el => {
+			el.classList.remove(className);
+			void el.offsetWidth; // Restarts the animation when it is running
+			el.classList.add(className);
+			el.addEventListener('animationend', () => el.classList.remove(className), { once: true });
+		});
+	}
+
+	/**
 	 * Place the popover over the value of the field, its inputs at the place of the value, in the width of the page
 	 * @param {HTMLElement} popover
 	 * @param {HTMLElement} container Container of the value
@@ -237,18 +260,31 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			link.style.visibility = '';
 		};
 
+		// While saving: the fields can not be changed (inert), they show the processing feedback, the save button turns into a spinner
+		const saveIcon = saveButton.querySelector('.fa');
+		const setSaving = saving => {
+			state.saving = saving;
+			saveButton.disabled = saving;
+			cancelButton.disabled = saving;
+			inputs.inert = saving;
+			editor.setAttribute('aria-busy', saving ? 'true' : 'false');
+			saveIcon.classList.toggle('fa-check', !saving);
+			saveIcon.classList.toggle('fa-circle-notch', saving);
+			saveIcon.classList.toggle('fa-spin', saving);
+			getVisibleInputs(inputs).forEach(el => el.classList.toggle('processing-feedback', saving));
+		};
+
 		const save = async() => {
-			saveButton.disabled = true;
-			cancelButton.disabled = true;
-			state.saving = true;
+			const value = getEditorValue(editor, field);
+			setSaving(true);
 			let result;
 			try {
-				result = await controller.setField(field, getEditorValue(editor, field));
+				result = await controller.setField(field, value);
 			} catch (error) {
 				// Error already displayed, the user can correct the value
-				state.saving = false;
-				saveButton.disabled = false;
-				cancelButton.disabled = false;
+				setSaving(false);
+				showInputsFeedback(inputs, 'fail-feedback');
+				focusFirstInput(inputs);
 				return;
 			}
 			if (result === null) {
@@ -257,6 +293,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 
 			close(result.html);
+			Dolibarr.tools.card.showUpdatedFeedback(container);
 			// Status, action buttons and documents may depend on the field, refreshed when visible
 			controller.scheduleSectionsRefresh();
 		};
