@@ -550,7 +550,7 @@ if ($managedfor == "member") {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		dol_banner_tab($adhstat, 'rowid', $linkback);
 
 		print '<div class="fichecenter">';
 
@@ -559,7 +559,7 @@ if ($managedfor == "member") {
 
 		// Login
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adhstat->login.'&nbsp;</td></tr>';
 		}
 
 		// Type
@@ -1081,6 +1081,33 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
+
+		// End of subscription date
+		if ($managedfor == 'member') {
+			print '<td class="nowrap center endofsubscriptiondate">';
+			$result = $adherent->fetch($object->fk_member);
+			if ($result) {
+				$datefin = $adherent->datefin;
+				if ($datefin) {
+					print dol_print_date($datefin, 'day');
+					if ($adherent->hasDelay()) {
+						$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+					}
+				} else {
+					if (!empty($adherent->need_subscription)) {
+						print $langs->trans("SubscriptionNotReceived");
+						if ($adherent->status > 0) {
+							print " ".img_warning();
+						}
+					} else {
+						print '&nbsp;';
+					}
+				}
+			}
+			print '</td>';
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

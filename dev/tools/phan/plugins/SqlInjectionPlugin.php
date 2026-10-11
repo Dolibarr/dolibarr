@@ -36,7 +36,7 @@ final class SqlInjectionPlugin extends PluginV3 implements PostAnalyzeNodeCapabi
 	 * @var bool If true, enable debug ('debug' option for plugin)
 	 * @internal
 	 */
-	public static bool $debugEnabled = false;
+	public static $debugEnabled = false;
 
 	/**
 	 * Constructor

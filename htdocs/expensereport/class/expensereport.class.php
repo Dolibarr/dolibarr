@@ -570,9 +570,11 @@ class ExpenseReport extends CommonObject
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		$this->fk_user_valid = 0;
+		$this->fk_user_approve = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
+		$this->date_approve = '';
 
 		// Remove link on lines to a joined file
 		if (is_array($this->lines) && count($this->lines) > 0) {
@@ -1225,6 +1227,19 @@ class ExpenseReport extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
+
+		// Refuse to delete a report that has payments: they would be left without their expense report
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."payment_expensereport WHERE fk_expensereport = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if ($obj && $obj->nb > 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -2250,6 +2265,11 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			$this->db->begin();
 
@@ -2369,6 +2389,17 @@ class ExpenseReport extends CommonObject
 	public function deleteLine($rowid, $fuser = null, $notrigger = 0)
 	{
 		$error = 0;
+
+		if ($this->id > 0) {
+			// The line must belong to this expense report
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $rowid)." AND fk_expensereport = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 

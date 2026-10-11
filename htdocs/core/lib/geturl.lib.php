@@ -297,8 +297,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
+			// Format is "host:port:ip:port". Port fields MUST use %s, not %d: an empty port (default 80/443) must stay empty so it matches "any port" and pins to the same port. With %d the empty string becomes 0 ("host:0:ip:0"), never matches the real port, and libcurl ignores the pin, re-opening a DNS-rebinding SSRF bypass.
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%s:%s:%s", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);

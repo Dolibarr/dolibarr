@@ -63,6 +63,7 @@ if (is_numeric($objectId)) {
 	$objectId = 0;
 }
 $object = fetchObjectByElement($objectId, $objectType, $element_ref);
+/** @var CommonObject $object */
 if (empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id=' . $objectId . ', objecttype=' . $objectType . ')');
 }
@@ -77,8 +78,12 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 }
 // print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
-restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
-
+// Security check with mode 'write', so restrictedArea() tests the write permission and not only the read
+// permission, because this page makes a write operation on the object (update of an extrafield value).
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
 
 
 

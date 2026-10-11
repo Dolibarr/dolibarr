@@ -226,7 +226,9 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
-		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		if (GETPOSTISSET("civility_code")) {
+			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		}
 		$object->poste = (string) GETPOST("poste", 'alpha');
 		$object->address = (string) GETPOST("address", 'alpha');
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
@@ -396,7 +398,8 @@ if (empty($reshook)) {
 						$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-						if (!($result > 0)) {
+						// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+						if (!is_numeric($result) || $result <= 0) {
 							$errors[] = "ErrorFailedToSaveFile";
 						} else {
 							$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -425,7 +428,9 @@ if (empty($reshook)) {
 			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
-			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			if (GETPOSTISSET("civility_code")) {
+				$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			}
 			$object->poste = (string) GETPOST("poste", 'alpha');
 
 			$object->address = (string) GETPOST("address", 'alpha');

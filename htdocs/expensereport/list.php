@@ -356,7 +356,11 @@ if ($search_status != '' && $search_status >= 0) {
 // RESTRICT RIGHTS
 if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
 	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
+	$sql .= " AND (d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")";
+	if ($user->hasRight('expensereport', 'approve')) {
+		$sql .= " OR d.fk_user_validator = ".((int) $user->id);	// The user designated to approve the expense report
+	}
+	$sql .= ")\n";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

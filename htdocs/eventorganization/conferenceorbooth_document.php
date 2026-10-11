@@ -413,7 +413,7 @@ if ($object->id) {
 	 */
 	$head = conferenceorboothPrepareHead($object, $withproject);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("ConferenceOrBooth"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

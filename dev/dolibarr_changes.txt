@@ -30,6 +30,42 @@ with:
       	self::setLastErrors(parent::getLastErrors());
 	}
 
+* In htdocs/includes/webklex/php-imap/src/Header.php, function getBoundary() (fix #40907: the greedy regex
+  also captured the next Content-Type parameters, e.g. boundary="X"; type="text/html", so MIME parts were not split)
+
+Replace:
+	$boundary = $this->find("/boundary\=(.*)/i");
+
+	if ($boundary === null) {
+		return null;
+	}
+
+	return $this->clearBoundaryString($boundary);
+with:
+	if (!preg_match('/boundary\s*=\s*(?:"([^"]*)"|([^;\s]+))/i', $this->raw, $matches)) {
+		return null;
+	}
+
+	$boundary = (isset($matches[2]) && $matches[2] !== '') ? $matches[2] : $matches[1];
+	$boundary = $this->clearBoundaryString($boundary);
+
+	return $boundary !== '' ? $boundary : null;
+
+* In htdocs/includes/webklex/php-imap/src/Client.php, functions connect() and authenticate(), to know which step
+  of the connection failed, add a suffix to the 4 messages "connection setup failed":
+	" - no imap function" (imap extension not loaded), " - connect exception" (ErrorException),
+	" - run exception" (RuntimeException), " - authenticate" (AuthFailedException)
+
+* In htdocs/includes/webklex/php-imap/src/Connection/Protocols/Protocol.php, function createStream(), to avoid a
+  hang when $stream is empty (the timeout is set a few lines after, once $stream is checked), replace:
+	stream_set_timeout($stream, $timeout);
+with:
+	//stream_set_timeout($stream, $timeout);
+
+* In htdocs/includes/webklex/php-imap/src/Query/WhereQuery.php, backport of where() and push_search_criteria()
+  from php-imap 3.0.0-alpha: in 2.7.2, where() with an array of criteria returned after the first element, so only
+  the first criterion was applied. Now where() loops on all criteria and calls the new push_search_criteria().
+
 
 
 PHP CKEDITOR:

@@ -61,7 +61,6 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -84,9 +83,11 @@ if (!$sortfield) {
 $object = new SupplierProposal($db);
 $object->fetch($id, $ref);
 if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
+$result = restrictedArea($user, 'supplier_proposal', $id);
 
 $permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 $usercancreate = $permissiontoadd;
@@ -115,7 +116,7 @@ if ($object->id > 0) {
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 	$head = supplier_proposal_prepare_head($object);
-	print dol_get_fiche_head($head, 'document', $langs->trans('CommRequest'), -1, 'supplier_proposal');
+	print dol_get_fiche_head($head, 'document', $langs->trans('CommRequest'), -1, 'supplier_proposal', 0, '', '', 0, '', 1);
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

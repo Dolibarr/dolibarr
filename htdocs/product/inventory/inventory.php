@@ -808,7 +808,12 @@ if ($action == 'updatebyscaning') {
 									type: \'POST\',
 									async: false,
 									success: function(response) {
-										response = JSON.parse(response);
+										if (typeof response == "object") {
+											console.log("response is already type object, no need to parse it");
+										} else {
+											console.log("response is type "+(typeof response));
+											response = JSON.parse(response);
+										}
 										if(response.status == "success"){
 											console.log(response.message);
 											$("<input type=\'text\' value=\'"+product.Qty+"\' />")
@@ -879,7 +884,12 @@ if ($action == 'updatebyscaning') {
 					type: \'POST\',
 					async: false,
 					success: function(response) {
-						response = JSON.parse(response);
+						if (typeof response == "object") {
+							console.log("response is already type object, no need to parse it");
+						} else {
+							console.log("response is type "+(typeof response));
+							response = JSON.parse(response);
+						}
 						if (response.status == "success"){
 							console.log(response.message);
 							if(!newproductrow){
@@ -1335,7 +1345,7 @@ print '<script type="text/javascript">
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record&token='.newToken().'";
        					 	}});
 							return false;
 						});

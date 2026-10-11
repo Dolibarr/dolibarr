@@ -361,7 +361,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
-		'htdocs/install/doctemplates/websites/',
+		'htdocs/install/doctemplates/',
 		'htdocs/core/class/lessc.class.php', // External library
 		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
@@ -370,6 +370,7 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
+		.'|dev/tools/.*'  // Ignore all files in dev tools @phpstan-ignore-line
 		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line

@@ -352,9 +352,11 @@ if ($result) {
 					while ($obj2 = $db->fetch_object($resql2)) {
 						$customerDiscount = new DiscountAbsolute($db);
 						$customerDiscount->fetch($obj2->rowid);
-						$tabCustomerDiscountHT[$obj->rowid][$accountCustomerDeposit] = -$customerDiscount->total_ht;
-						$tabCustomerDiscountVAT[$obj->rowid][$accountCustomerDepositVAT] = -$customerDiscount->total_tva;
-						$tabCustomerDiscountTTC[$obj->rowid][$compta_soc] = -$customerDiscount->total_ttc;
+						// Accumulate: an invoice can consume several deposits, and the (DEPOSIT) lines are
+						// excluded from the main query, so this reversal is their only trace in the journal.
+						$tabCustomerDiscountHT[$obj->rowid][$accountCustomerDeposit] -= $customerDiscount->total_ht;
+						$tabCustomerDiscountVAT[$obj->rowid][$accountCustomerDepositVAT] -= $customerDiscount->total_tva;
+						$tabCustomerDiscountTTC[$obj->rowid][$compta_soc] -= $customerDiscount->total_ttc;
 					}
 				}
 				$db->free($resql2);

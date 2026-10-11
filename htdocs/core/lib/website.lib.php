@@ -1612,19 +1612,43 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
  */
 function getNewsDetailsById($postId)
 {
-	global $db;
+	global $db, $user, $langs;
 
 	if (empty($postId)) {
 		return -1;
 	}
 
-	$sql = "SELECT p.title, p.description, p.date_creation, p.image
-            FROM ".MAIN_DB_PREFIX."website_page as p
-            WHERE p.rowid = ".(intval($postId));
+	// Security: Filter by entity and published status
+	// Join with website table to get entity, and filter by entity and status
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid";
+	$sql .= " WHERE p.rowid = ".((int) $postId);
+
+	// Add entity filter
+	$sql .= " AND w.entity IN (".getEntity('website').")";
+
+	// Only show published pages (status = 1) unless user has write permission
+	if (!$user->hasRight('website', 'write')) {
+		$sql .= " AND p.status = 1";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		return $db->fetch_array($resql);
+		$row = $db->fetch_array($resql);
+		if ($row) {
+			// Load user fullname for the creator
+			if (!empty($row['fk_user_creat'])) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$user_creat = new User($db);
+				$user_creat->fetch($row['fk_user_creat']);
+				$row['user_fullname'] = $user_creat->getFullName($langs, 0, 1);
+			} else {
+				$row['user_fullname'] = '';
+			}
+			return $row;
+		}
+		return -1;
 	} else {
 		return -1;
 	}

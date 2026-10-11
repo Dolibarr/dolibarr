@@ -110,7 +110,7 @@ if ($object->id) {
 
 	$head = loan_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'money-bill-alt');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan

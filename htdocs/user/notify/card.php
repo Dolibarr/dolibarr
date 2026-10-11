@@ -138,7 +138,9 @@ if ($action == 'add' && $permissiontoadd) {
 
 // Remove a notification (edit a user)
 if ($action == 'delete' && $permissiontoadd) {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT("actid");
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+	$sql .= " WHERE rowid = ".GETPOSTINT("actid");
+	$sql .= " AND fk_user = ".((int) $id);
 	$db->query($sql);
 }
 

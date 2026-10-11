@@ -413,6 +413,9 @@ if ($search_zip) {
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
 }
+if ($search_state) {
+	$sql .= natural_search(array('state.nom'), $search_state);
+}
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
@@ -590,7 +593,9 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country on (country.rowid = s.fk_pays)', '', $sqlforcount);
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
-		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		if (!$search_state) {	// The join is required by the filter on the state name
+			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		}
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
 		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
@@ -779,6 +784,15 @@ if ($search_user > 0) {
 }
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+}
+if ($search_town != '') {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_zip != '') {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state != '') {
+	$param .= '&search_state='.urlencode($search_state);
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
@@ -1058,7 +1072,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
 	$arrayofoperators = array('0' => '', '=' => '=', '<=' => '<=', '>=' => '>=');
 	print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth50imp');
-	print '</br>';
+	print '<br>';
 	print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 	print ' ';
 	print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');

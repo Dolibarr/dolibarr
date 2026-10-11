@@ -133,9 +133,9 @@ if (GETPOSTISSET('formfilteraction')) {
 
 $searchCategoryProjectOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryUserOperator = GETPOSTINT('search_category_project_operator');
+	$searchCategoryProjectOperator = GETPOSTINT('search_category_project_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT')) {
-	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
+	$searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
 }
 
 /*
@@ -1368,7 +1368,8 @@ $moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$fo
 
 $moreforfilter .= '</div>';
 
-// If the user can view thirdparties other than his'
+// If the user can view thirdparties other than his', we offer the filter assigned to
+// TODO This must be moved on the dedicated column "Assigned to".
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -2123,7 +2124,7 @@ while ($i < $imaxinloop) {
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
-			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall spantitle">';
 			print dolPrintHTML($obj->title);
 			print '</div>';
 			print '</td>';

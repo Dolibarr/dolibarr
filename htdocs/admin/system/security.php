@@ -412,7 +412,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, ls').')</span>';
 print '<br>';
 
 

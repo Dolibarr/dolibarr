@@ -32,6 +32,8 @@ print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
 print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
+print "DOL_CTI_ADMIN_LOGIN: ".getenv('DOL_CTI_ADMIN_LOGIN')."\n";
+print "DOL_CTI_ADMIN_PASSWORD: ".substr(getenv('DOL_CTI_ADMIN_PASSWORD'), 0, 3).'...'."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -42,7 +44,7 @@ if (! defined('NOREQUIREUSER')) {
 	define('PHPUNIT_MODE', 1);
 }
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -53,21 +55,39 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (isModEnabled('debugbar')) {
-	print "Error: Debugbar module should not be enabled. It generates troubles in db management.\n";
+
+// Check required and forbidden modules for tests
+$phpunit_modules_check = array(
+	// module name => array('required' => bool, 'blocking' => bool, 'message' => string)
+	'member' => array('required' => true, 'blocking' => true, 'message' => 'Module member must be enabled to have significant results.'),
+	'debugbar' => array('required' => false, 'blocking' => true, 'message' => 'Debugbar module should not be enabled. It generates troubles in db management.'),
+	'ldap' => array('required' => false, 'blocking' => true, 'message' => 'LDAP module should not be enabled.'),
+	// other external modules
+	'cabinetmed' => array('required' => false, 'blocking' => true, 'message' => 'DoliMed module should not be enabled.'),
+	'einvoicing' => array('required' => false, 'blocking' => true, 'message' => 'EInvoicing module should not be enabled.'),
+	'google' => array('required' => false, 'blocking' => true, 'message' => 'Google module should not be enabled.'),
+	'numberwords' => array('required' => false, 'blocking' => false, 'message' => 'Numberwords module should not be enabled.'),
+);
+
+$error = 0;
+foreach ($phpunit_modules_check as $module => $config) {
+	$enabled = isModEnabled($module);
+	if ($config['required'] && !$enabled) {
+		print "Error: ".$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	} elseif (!$config['required'] && $enabled) {
+		print ($config['blocking'] ? "Error: " : "Warning: ").$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	}
+}
+if ($error) {
 	exit(1);
 }
-if (!isModEnabled('member')) {
-	print "Error: Module member must be enabled to have significant results.\n";
-	exit(1);
-}
-if (isModEnabled('ldap')) {
-	print "Error: LDAP module should not be enabled.\n";
-	exit(1);
-}
-if (isModEnabled('google')) {
-	print "Warning: Google module should not be enabled.\n";
-}
+
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);

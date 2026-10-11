@@ -557,7 +557,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/project/".$valdir);
@@ -565,6 +564,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -714,6 +714,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			if (is_dir($dir)) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
+					$filelist = array();
 					while (($file = readdir($handle)) !== false) {
 						$filelist[] = $file;
 					}

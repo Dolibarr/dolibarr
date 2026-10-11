@@ -45,7 +45,7 @@ $langs->load("admin");
 
 $mode = GETPOST('mode', 'aZ09');
 
-if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
+if (!$user->admin && !$user->hasRight('blockedlog', 'read')) {
 	accessforbidden();
 }
 
@@ -55,6 +55,7 @@ $error = 0;
 $versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
 if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
 	// Can add an edditional mention
+	$langs->load("blockedlog");
 	$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
 }
 $versionbadge .= '</span>';

@@ -234,7 +234,8 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		if (!dol_strlen($model)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
 			return 0;
 		}
 
@@ -255,15 +256,18 @@ class Salary extends CommonObject
 				if ($result > 0) {
 					return 1;
 				} else {
-					setEventMessages($module->error, $module->errors, 'errors');
+					$this->error = $module->error;
+					$this->errors = $module->errors;
 					return 0;
 				}
 			} else {
-				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
 				return 0;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
 			return 0;
 		}
 	}
@@ -280,11 +284,11 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
+		$this->amount = trim((string) $this->amount);
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
+		$this->note_private = trim((string) $this->note_private);
+		$this->note_public = trim((string) $this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -477,9 +481,9 @@ class Salary extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
+		$this->amount = price2num(trim((string) $this->amount));
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;

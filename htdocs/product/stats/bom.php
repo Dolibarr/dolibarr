@@ -52,6 +52,7 @@ $search_year = GETPOSTINT('search_year');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -79,8 +80,6 @@ if (!$sortfield) {
 	$sortfield = "b.date_valid";
 }
 
-$socid = 0;
-
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
@@ -102,7 +101,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-stats_bom');
+	llxHeader("", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-stats_bom');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);

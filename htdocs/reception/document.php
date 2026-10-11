@@ -144,7 +144,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = reception_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, $object->picto);
+		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 		// Build file list

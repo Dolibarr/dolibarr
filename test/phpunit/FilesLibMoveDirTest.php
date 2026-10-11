@@ -61,7 +61,7 @@ class FilesLibMoveDirTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		parent::setup();
+		parent::setUp();
 
 		global $conf;
 		$this->sourceDir = $conf->admin->dir_temp."/source Dir";

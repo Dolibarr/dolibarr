@@ -378,7 +378,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$parameters = array(
 					'datesubscription' => $datesubscription,
 					'amount' => $amount,
-					'ccountid' => $accountid,
+					'accountid' => $accountid,
+					'ccountid' => $accountid,	// Deprecated key (typo), kept for the hooks that already read it
 					'operation' => $operation,
 					'label' => $label,
 					'num_chq' => $num_chq,
@@ -400,7 +401,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 
@@ -1195,7 +1196,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		$formmail = new FormMail($db);
 		// Set output language
 		$outputlangs = new Translate('', $conf);
-		$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+		$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template

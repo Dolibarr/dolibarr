@@ -830,7 +830,7 @@ if ($object->id > 0) {
 		if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened) {
 			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 		}
-		$text = $langs->trans("CurrentOutstandingBill");
+		$text = $langs->transnoentitiesnoconv("CurrentOutstandingBill");
 
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
@@ -851,7 +851,7 @@ if ($object->id > 0) {
 			if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpenedLate) {
 				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
-			$text = $langs->trans("CurrentOutstandingBillLate");
+			$text = $langs->transnoentitiesnoconv("CurrentOutstandingBillLate");
 
 			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';
@@ -860,7 +860,7 @@ if ($object->id > 0) {
 			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
 			} else {
 				$boxstat .= $boxstattmp;
 			}
@@ -1532,8 +1532,8 @@ if ($object->id > 0) {
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
-				$invoicetemplate->date_last_gen = $objp->date_last_gen;
-				$invoicetemplate->date_when = $objp->date_when;
+				$invoicetemplate->date_last_gen = $db->jdate($objp->date_last_gen);
+				$invoicetemplate->date_when = $db->jdate($objp->date_when);
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';

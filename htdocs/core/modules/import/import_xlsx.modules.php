@@ -363,7 +363,8 @@ class ImportXlsx extends ModeleImports
 				$val = $dateValue->format('Y-m-d H:i:s');
 			}
 
-			$array[$col]['val'] = trim($val);
+			// getValue() returns null on an empty cell, and trim(null) is deprecated since PHP 8.1.
+			$array[$col]['val'] = trim((string) $val);
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;

@@ -150,6 +150,16 @@ if ($action == 'create' && $subaction == 'delete' && $usercancreate) {	// We cli
 $prodcomb = new ProductCombination($db);
 $prodcomb2val = new ProductCombination2ValuePair($db);
 
+// The combination to edit or delete must be a variant of the product shown
+if ($combination_id > 0) {
+	$tmpcomb = new ProductCombination($db);
+	if ($tmpcomb->fetch($combination_id) <= 0 || $tmpcomb->fk_product_parent != $object->id) {
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+		$combination_id = 0;
+		$action = '';
+	}
+}
+
 $productCombination2ValuePairs1 = array();
 
 if (($action == 'add' || $action == 'create') && $usercancreate && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
@@ -215,13 +225,25 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 
 		$db->rollback();
 	}
-} elseif (!empty($massaction)) {
+} elseif (!empty($massaction) && ($massaction == 'delete' ? $usercandelete : $usercancreate)) {
 	$bulkaction = $massaction;
 	$error = 0;
+
+	// The mass action can only target the variants of this product
+	$childids = array();
+	$tmpcombinations = $prodcomb->fetchAllByFkProductParent($object->id);
+	if (is_array($tmpcombinations)) {
+		foreach ($tmpcombinations as $tmpcombination) {
+			$childids[] = (int) $tmpcombination->fk_product_child;
+		}
+	}
 
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
+		if (!in_array((int) $prodid, $childids)) {
+			continue;
+		}
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
 		if ($prodstatic->fetch($prodid) < 0) {

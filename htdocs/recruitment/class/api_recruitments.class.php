@@ -155,7 +155,7 @@ class Recruitments extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		$restrictonsocid = 1; // RecruitmentJobPosition::$fields has a 'fk_soc' field
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -178,7 +178,10 @@ class Recruitments extends DolibarrApi
 			if ($search_sale == -2) {
 				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				// fk_soc is optional on RecruitmentJobPosition (a position isn't necessarily tied to a
+				// customer's site), so a row with no linked thirdparty must still be visible to the sales
+				// rep rather than being hidden by an EXISTS check that can never match a null fk_soc.
+				$sql .= " AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 			}
 		}
 		if ($sqlfilters) {

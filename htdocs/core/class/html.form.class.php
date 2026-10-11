@@ -1151,7 +1151,8 @@ class Form
 
 		$sql = "SELECT rowid, code, label, phone_code, favorite, trunk_prefix";
 		$sql .= " FROM ".$this->db->prefix()."c_country";
-		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != ''";
+		// phone_code is an integer column, comparing it to an empty string fails on PostgreSQL
+		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != 0";
 
 		dol_syslog(get_class($this)."::selectPhoneCode", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3043,7 +3044,12 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		if (!empty($_SESSION['assignedtouser'])) {
+		// The list of selected users is provided by the caller through $listofuserid (owner first).
+		// Fall back to the legacy global $_SESSION['assignedtouser'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofuserid)) {
+			$assignedtouser = $listofuserid;
+		} elseif (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 			if (!is_array($assignedtouser)) {
 				$assignedtouser = array();
@@ -3140,7 +3146,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return select list of resources. Selected resources are stored into session.
-	 * List of resources are provided into $_SESSION['assignedtoresource'].
+	 * List of resources are provided by $listofresourceid, or else into $_SESSION['assignedtoresource'].
 	 *
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
@@ -3168,7 +3174,12 @@ class Form
 		$resourcestatic = new Dolresource($this->db);
 
 		$out = '';
-		if (!empty($_SESSION['assignedtoresource'])) {
+		// The list of selected resources is provided by the caller through $listofresourceid.
+		// Fall back to the legacy global $_SESSION['assignedtoresource'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofresourceid)) {
+			$assignedtoresource = $listofresourceid;
+		} elseif (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 			if (!is_array($assignedtoresource)) {
 				$assignedtoresource = array();
@@ -3198,7 +3209,7 @@ class Form
 					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
 					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
 					$out .= '</span>';
-					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . (!empty($listofresourceid[$value['id']]['transparency']) ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -7158,7 +7169,7 @@ class Form
 					$out .= $label;
 				} else {
 					$langs->load('errors');
-					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions', $selected);
 				}
 			} else {
 				$out .= '&nbsp;';
@@ -8100,10 +8111,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}

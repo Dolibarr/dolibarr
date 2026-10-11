@@ -506,15 +506,13 @@ if (empty($reshook)) {
 							$entrepot_id = 0;
 						}
 
-						$eatby = GETPOST($eatby, 'alpha');
-						$sellby = GETPOST($sellby, 'alpha');
-						$eatbydate = str_replace('/', '-', $eatby);
-						$sellbydate = str_replace('/', '-', $sellby);
+						$eatbydate = dol_mktime(12, 0, 0, GETPOSTINT($eatby.'month'), GETPOSTINT($eatby.'day'), GETPOSTINT($eatby.'year'));
+						$sellbydate = dol_mktime(12, 0, 0, GETPOSTINT($sellby.'month'), GETPOSTINT($sellby.'day'), GETPOSTINT($sellby.'year'));
 
 						if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
 						} else {
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch));
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch));
 						}
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -748,7 +746,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'classifyclosed' && $permissiontoread) {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -875,15 +873,11 @@ if (empty($reshook)) {
 							$batch = "batch".$line_id;
 							$dlc = "dlc".$line_id;
 							$dluo = "dluo".$line_id;
-							// EATBY <-> DLUO
-							$eatby = GETPOST($dluo, 'alpha');
-							$eatbydate = str_replace('/', '-', $eatby);
-							// SELLBY <-> DLC
-							$sellby = GETPOST($dlc, 'alpha');
-							$sellbydate = str_replace('/', '-', $sellby);
 							$line->batch = GETPOST($batch, 'alpha');
-							$line->eatby = strtotime($eatbydate);
-							$line->sellby = strtotime($sellbydate);
+							// EATBY <-> DLUO
+							$line->eatby = dol_mktime(12, 0, 0, GETPOSTINT($dluo.'month'), GETPOSTINT($dluo.'day'), GETPOSTINT($dluo.'year'));
+							// SELLBY <-> DLC
+							$line->sellby = dol_mktime(12, 0, 0, GETPOSTINT($dlc.'month'), GETPOSTINT($dlc.'day'), GETPOSTINT($dlc.'year'));
 						}
 
 						if ($line->update($user) < 0) {
@@ -2080,7 +2074,7 @@ if ($action == 'create' && $permissiontoadd) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
-	if (($typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
+	if (($typeobject == 'order_supplier' || $typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
@@ -2167,7 +2161,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if (($typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("propal")) {
+	if (($typeobject == 'order_supplier' || $typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -2572,11 +2566,23 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
+		$origin = (string) $origin;
+
+		// The origin may arrive as 'order_supplier' from some callers, while the table name below is
+		// built from 'supplier_order'. Normalise it or the query targets a table that does not exist.
 		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
 
+		// List of allowed value of $origin
+		if (!in_array($origin, array('supplier_proposal', 'supplier_order', 'commande_fournisseur', 'facture_fourn', 'propal', 'commande', 'facture'))) {
+			dol_print_error($db, 'Bad value for parameter origin in reception/card.php');
+			exit;
+		}
+
 		if ($origin_id > 0) {
+			$tablenametouse = (($origin == 'supplier_order') ? 'commande_fournisseur' : (($origin == 'facture_fourn') ? 'facture_fourn_' : $origin));
+
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
 			$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
@@ -2584,7 +2590,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";  // @phan-suppress-current-line SqlInjection
+			$sql .= ", ".MAIN_DB_PREFIX.$db->sanitize($tablenametouse)."det as obj";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
@@ -2683,7 +2689,8 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
-			if ($origin && $origin_id > 0) {
+			// Note: here $origin is always a non-empty string (normalized above), so only $origin_id needs to be tested
+			if ($origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				$htmltooltip = '';
 				$qtyalreadyreceived = 0;
@@ -2739,7 +2746,7 @@ if ($action == 'create' && $permissiontoadd) {
 							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'</br>';
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'<br>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print $langs->trans('EatByDate').' : ';

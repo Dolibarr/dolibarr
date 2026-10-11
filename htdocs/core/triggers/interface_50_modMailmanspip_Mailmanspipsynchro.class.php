@@ -69,11 +69,15 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		if ($action == 'CATEGORY_MODIFY' && $object instanceof Categorie) {
+			'@phan-var-force Categorie $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 1;
 
 			// We add subscription if we change category (new category may means more mailing-list to subscribe)
+			// The call is guarded by is_object() and method_exists() earlier in the same condition,
+			// but the plugin cannot infer a type out of the mixed context array.
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0) {
 				$this->error = $object->context['linkto']->error;
 				$this->errors = $object->context['linkto']->errors;
@@ -81,6 +85,9 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
+			// The call is guarded by is_object() and method_exists() earlier in the same condition,
+			// but the plugin cannot infer a type out of the mixed context array.
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0) {
 				$this->error = $object->context['unlinkoff']->error;
 				$this->errors = $object->context['unlinkoff']->errors;

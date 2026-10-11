@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
