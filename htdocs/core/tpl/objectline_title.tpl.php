@@ -149,12 +149,8 @@ print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 //ShippableStatus
 if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
-	if (getDolGlobalString('ORDER_SHIPPABLE_SHOW_STOCK_QTY')) {
-		$langs->load("stocks");
-		print '<th class="linecolstock center nowraponall" title="'.dol_escape_htmltag($langs->trans("Stock").' / '.$langs->trans("VirtualStock")).'">'.$langs->trans("ShippableStatus").'</th>';
-	} else {
-		print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
-	}
+	$langs->load("stocks");
+	print '<th class="linecolstock center nowraponall" title="'.dol_escape_htmltag($langs->trans("Stock").' / '.$langs->trans("VirtualStock")).'">'.$langs->trans("ShippableStatus").'</th>';
 }
 
 // Unit

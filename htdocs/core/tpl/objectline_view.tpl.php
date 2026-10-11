@@ -529,8 +529,7 @@ print '</td>';
 //Shippable Status
 if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
 	$coldisplay++;
-	$showstockqty = getDolGlobalString('ORDER_SHIPPABLE_SHOW_STOCK_QTY');
-	print '<td class="linecolstock center'.($showstockqty ? ' nowraponall' : '').'">';
+	print '<td class="linecolstock center nowraponall">';
 
 	if ($line->fk_product > 0 && $line->product_type == 0) {
 		static $productstatcache = array();
@@ -554,16 +553,14 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 			} else {
 				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
 			}
-			if ($showstockqty) {
-				// Show the real and the virtual stock quantities next to the icon (option ORDER_SHIPPABLE_SHOW_STOCK_QTY)
-				$langs->load("stocks");
-				$tooltip = $langs->trans("Stock").': '.$stock.' - '.$langs->trans("VirtualStock").': '.$stockvirtual;
-				print ' <span class="small nowraponall" title="'.dol_escape_htmltag($tooltip).'">';
-				print '<span class="'.($stock >= $reliquat ? 'ok' : 'error').'">'.price2num($stock, 'MS').'</span>';
-				print ' <span class="opacitymedium">/</span> ';
-				print '<span class="'.($stockvirtual >= $reliquat ? 'ok' : 'error').'">'.price2num($stockvirtual, 'MS').'</span>';
-				print '</span>';
-			}
+			// The real and the virtual stock quantities next to the icon: already computed, shown at no cost
+			$langs->load("stocks");
+			$tooltip = $langs->trans("Stock").': '.$stock.' - '.$langs->trans("VirtualStock").': '.$stockvirtual;
+			print ' <span class="small nowraponall" title="'.dol_escape_htmltag($tooltip).'">';
+			print '<span class="'.($stock >= $reliquat ? 'ok' : 'error').'">'.price2num($stock, 'MS').'</span>';
+			print ' <span class="opacitymedium">/</span> ';
+			print '<span class="'.($stockvirtual >= $reliquat ? 'ok' : 'error').'">'.price2num($stockvirtual, 'MS').'</span>';
+			print '</span>';
 		} else {
 			print img_picto($langs->trans("Shipped"), 'statut5');
 		}
