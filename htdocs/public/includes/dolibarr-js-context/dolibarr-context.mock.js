@@ -40,8 +40,9 @@ var Dolibarr = {
 		 * @param {boolean} [options.token] Add the anti CSRF token, default true except for GET and HEAD
 		 * @param {string} [options.responseType='auto'] 'auto', 'json', 'text' or 'response'
 		 * @param {boolean} [options.showErrors=true] Display errors with setEventMessage
+		 * @param {boolean} [options.showEventMessages=true] For a JsonResponse, display its eventMessages (PHP setEventMessages())
 		 * @param {number} [options.timeout=0] Abort after this delay in ms
-		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug}, return only data
+		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug, eventMessages}, return only data
 		 * @returns {Promise<*>} Parsed response body, throws Dolibarr.tools.fetch.Error {message, status, data, response}
 		 */
 		fetch: Object.assign(function(url, options) {}, {
