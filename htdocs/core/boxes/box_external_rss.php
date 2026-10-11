@@ -135,6 +135,9 @@ class box_external_rss extends ModeleBoxes
 				//$item['dc']['publisher']
 			}
 			if ($rssparser->getFormat() == 'atom') {	// If Atom
+				if (!$date && !empty($item['pubDate'])) {
+					$date = $item['pubDate'];
+				}
 				if (!$date && isset($item['issued'])) {
 					$date = $item['issued'];
 				}
