@@ -476,7 +476,16 @@ class Documentation
 		}
 
 		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
-			print '<div class="summary-wrapper" data-toc-title="'.dolPrintHTMLForAttribute($langs->transnoentities('DocPageSummary')).'" data-toc-backtop="'.dolPrintHTMLForAttribute($langs->transnoentities('DocBackToTop')).'">';
+			// Summary with links to sections of the page: shown in a sticky column on large screens (see documentation.css and documentation.js)
+			$hasanchors = false;
+			foreach ($menu_entry['summary'] ?? [] as $summary_link) {
+				if (strpos($summary_link, '#') === 0) {
+					$hasanchors = true;
+					break;
+				}
+			}
+
+			print '<div class="summary-wrapper'.($hasanchors ? ' summary-toc' : '').'" data-toc-title="'.dolPrintHTMLForAttribute($langs->transnoentities('DocPageSummary')).'" data-toc-backtop="'.dolPrintHTMLForAttribute($langs->transnoentities('DocBackToTop')).'">';
 			$this->displaySummary($menu_entry);
 			print '</div>';
 		}

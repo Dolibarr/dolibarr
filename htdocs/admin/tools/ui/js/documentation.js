@@ -35,12 +35,12 @@ function showscroll()
 (function () {
     let docWrapper = document.querySelector('.doc-wrapper');
     let contentWrapper = docWrapper ? docWrapper.querySelector('.doc-content-wrapper') : null;
-    let summaryWrapper = contentWrapper ? contentWrapper.querySelector('.summary-wrapper') : null;
+    let summaryWrapper = contentWrapper ? contentWrapper.querySelector('.summary-wrapper.summary-toc') : null;
     if (!summaryWrapper) {
         return;
     }
 
-    // Only for summaries with links to sections of the current page
+    // Summary with links to sections of the current page (summary-toc class set in PHP)
     let items = [];
     summaryWrapper.querySelectorAll('a[href^="#"]').forEach(function (link) {
         let target = document.getElementById(decodeURIComponent(link.getAttribute('href').substring(1)));
@@ -75,7 +75,6 @@ function showscroll()
     toc.appendChild(tocHeader);
     toc.appendChild(summaryWrapper.firstElementChild.cloneNode(true));
     contentWrapper.after(toc);
-    docWrapper.classList.add('has-toc');
 
     items.forEach(function (item) {
         item.link = toc.querySelector('a[href="' + CSS.escape(item.href) + '"]');
