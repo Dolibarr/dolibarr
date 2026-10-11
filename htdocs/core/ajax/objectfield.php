@@ -20,6 +20,8 @@
  *       \brief     Read or update fields of an object from the user interface (ajax edition of cards).
  *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
  *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
+ *                  With fields empty, it returns only the date of modification and the event messages waiting in session
+ *                  (ex: kept by an action of the card posted in ajax).
  *                  With parameter input=1, it also returns the input html of the fields editable from the user interface
  *                  (CommonObject::ajaxInputField()), to open the edition of a field on the card.
  *                  POST with parameter field and the inputs of this field (named ajaxfield_<field>..., read by
@@ -74,7 +76,7 @@ if (!$isupdate && $_SERVER['REQUEST_METHOD'] !== 'GET') {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_METHOD_NOT_ALLOWED);
 	$jsonResponse->output();
 }
-if (empty($element) || empty($id) || ($isupdate ? empty($field) : empty($fieldlist))) {
+if (empty($element) || empty($id) || ($isupdate ? empty($field) : !GETPOSTISSET('fields'))) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
 	$jsonResponse->output();
 }

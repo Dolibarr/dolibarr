@@ -660,6 +660,19 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
+		 * Display now the event messages kept in session by the card (see postCard()), ex: the errors of the generation of the document,
+		 * instead of on the next page. Any json response of Dolibarr returns them, the fields of the object are not read (fields empty).
+		 * @returns {Promise<void>}
+		 */
+		async showWaitingEventMessages() {
+			try {
+				await this.object.fetchFields([], { showErrors: false });
+			} catch (error) {
+				// The messages stay in session, displayed by the next page
+			}
+		}
+
+		/**
 		 * Generate now the document scheduled by scheduleDocumentBuild(), then refresh the generated documents
 		 * @returns {Promise<void>}
 		 */
@@ -677,6 +690,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			state.building = true;
 			try {
 				const doc = await this.postCard(this.getDocumentBuildData(form), { showErrors: false });
+				await this.showWaitingEventMessages();
 				if (doc) {
 					// Only the list of the documents: the banner and the buttons were refreshed after the change, refreshing them again would move the page
 					await this.refreshSections(doc, { showErrors: false, sections: ['#builddoc_form'] });
