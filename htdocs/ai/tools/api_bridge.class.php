@@ -1308,16 +1308,17 @@ class ToolApiBridge extends McpTool
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
-				$pdesc = $paramDocs[$pname]['desc'];
-				if (in_array($pname, ['sqlfilters'], true) && !empty($this->commonParamDocs[$pname])) {
+				$pdesc = (string) $paramDocs[$pname]['desc'];
+				$commonDoc = (string) ($this->commonParamDocs[(string) $pname] ?? '');
+				if ($pname === 'sqlfilters' && $commonDoc !== '') {
 					$keptdesc = preg_replace('/.*Syntax example/', 'Example', rtrim($pdesc));
-					$pdesc = $this->commonParamDocs[$pname];
+					$pdesc = $commonDoc;
 					if ($keptdesc) {
 						$pdesc .= "\n".$keptdesc;
 					}
 				}
-				if (in_array($pname, ['sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
-					$pdesc = rtrim($pdesc, '. ').'. '.$this->commonParamDocs[$pname];
+				if ($pname === 'sortfield' && $commonDoc !== '') {
+					$pdesc = rtrim($pdesc, '. ').'. '.$commonDoc;
 				}
 			} else {
 				$pdesc = $this->commonParamDocs[$pname] ?? '';
