@@ -172,6 +172,10 @@ UxDolibarrContextKnowsHooks = Common JS Hooks list
 
 UxMenuTooltipTheme = Tooltips & themes
 TooltipThemesAndOrientation = Tooltip Themes and orientation
+UxMenuAjaxCardEdition = Ajax edition of cards
+AjaxCardEditionEnable = How to enable it
+AjaxCardEditionWhat = What is edited in ajax
+AjaxCardEditionDev = For developers
 
 # Start experiements menu title
 ExperimentalUxInputAjaxFeedback = Input feedback
