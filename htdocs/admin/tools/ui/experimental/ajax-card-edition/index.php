@@ -168,6 +168,14 @@ $documentation->showSidebar(); ?>
 				After a value of a line is changed, the document is generated again once, a few seconds after the last change, like after a change of a field.
 			</p>
 
+			<h3>Undo</h3>
+			<p class="documentation-text">
+				After a field or a value of a line is saved, a message shows the change (label, value before &rarr; value after) with a button <i>Undo</i>, for 6 seconds (it stays while the mouse is over it).
+				<kbd>Ctrl</kbd> + <kbd>Z</kbd> undoes the change too while the message is visible, outside of the inputs (they keep their own undo).
+				Only the last change can be undone. The value before is saved again like a new change: the rules of the card are applied again (triggers...), nothing is rolled back.
+				The undo is refused if the object was modified since, by another page or user.
+			</p>
+
 			<h3>What is refreshed</h3>
 			<ul>
 				<li>The value of the field or the line, and the lines next to the lines added or deleted (arrows to move the lines, numbers of the lines).</li>
@@ -195,6 +203,7 @@ $documentation->showSidebar(); ?>
 				<li>When the answer of the update asks it (<code>builddoc</code>, unless <code>MAIN_DISABLE_PDF_AUTOUPDATE</code>), the controller of the card generates the document again with <code>scheduleDocumentBuild()</code>: the form of generation of the page (<code>form#builddoc_form</code>, same model, language and options as the button Generate) is posted to the card <code>DOCUMENT_BUILD_DELAY</code> ms (3 s) after the last change, once at a time, and once again after if the object changed during the generation. A generation still waiting when the page is left is sent with <code>navigator.sendBeacon()</code>.</li>
 				<li>One field at a time: opening another field cancels the edition in progress (unless it is being saved). A click outside the popover closes it only when the value was not changed. Clicks in the layers of the inputs (dropdown of select2, date picker, dialogs of the rich text editor) are not outside.</li>
 				<li>The value is saved with <code>setField()</code> of the controller of the card (<code>Dolibarr.tools.card</code>), refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed, and the sections of the card (status, action buttons, documents) when they are visible (<code>scheduleSectionsRefresh()</code>).</li>
+				<li>After a save, the change can be undone with <code>Dolibarr.tools.card.setUndo()</code> (see the Line edit tool): the value before is saved again with <code>setField()</code>.</li>
 				<li><code>Dolibarr.tools.card.fields.open(link)</code> opens the edition of the field of an edit link. <code>Dolibarr.tools.card.fields.openPopover(container, options)</code> opens a field popover over any value (used for the values of the lines): <code>content</code> (html or node of the inputs), <code>getValue(inputs)</code>, <code>save(value, popover)</code> (an error thrown keeps the popover open), optional <code>onClose()</code>, <code>onKeydown(event, popover)</code> and <code>autoSave</code> (compact popover without buttons, exactly over the value, saved when a list is changed with the mouse or when the changed input is left).</li>
 			</ul>
 			<p class="documentation-text">
@@ -229,6 +238,11 @@ $documentation->showSidebar(); ?>
 				<li>The result of an action is read from the object, not from the messages: a line saved, added or deleted is displayed even if an error happened after the action (ex: document not generated), like in the card.</li>
 				<li><code>Dolibarr.tools.card.lines.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.card.lines.close()</code> cancels the edition in progress, <code>editCell(cell)</code> opens the edition of a value of a line. <code>addLine(button)</code> and <code>deleteLine(link)</code> add and delete lines like the button Add and the delete links.</li>
 			</ul>
+			<p class="documentation-text">
+				<b>Undo:</b> <code>Dolibarr.tools.card.setUndo({controller, label, from, to, undo})</code> remembers the last change of a value of the page (one level for the page) and shows the undo message, <code>undo()</code> being the function that saves the value before again.
+				<code>Dolibarr.tools.card.undo()</code> undoes it (button of the message, or <kbd>Ctrl</kbd> + <kbd>Z</kbd> outside of the inputs while the message is visible). It is refused if the date of modification of the object is newer than the one known by the controller of the card.
+				For a value of a line, the value before is posted with the edit form of the line loaded before the change, so the other values of the line are the ones before too.
+			</p>
 			<p class="documentation-text">
 				Modules can add the selectors of their own sections of the cards to <code>Dolibarr.tools.card.sections</code>, or for one element with <code>Dolibarr.tools.card.register()</code>, so they are refreshed after a change.
 			</p>

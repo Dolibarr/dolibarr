@@ -378,3 +378,53 @@ td[data-dol-line-field] .dol-line-value:hover {
 	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 	outline: none;
 }
+
+/* Dolibarr.tools.card: message of the last change of a value, with the button to undo it */
+.dol-undo-toast {
+	position: fixed;
+	z-index: 1001;
+	left: 50%;
+	bottom: 1.5rem;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	max-width: calc(100vw - 2rem);
+	box-sizing: border-box;
+	padding: 0.5rem 0.5rem 0.5rem 0.875rem;
+	color: var(--tooltip-txt-color);
+	background-color: var(--tooltip-bg-color);
+	border: 1px solid var(--tooltip-border-color);
+	border-radius: 0.375rem;
+	box-shadow: 0 1px 20px rgba(0, 0, 0, 0.12);
+}
+.dol-undo-toast[hidden] {
+	display: none;
+}
+.dol-undo-toast.--dark-mode {
+	color: var(--tooltip-txt-color-dark-theme);
+	background-color: var(--tooltip-bg-color-dark-theme);
+	border-color: var(--tooltip-border-color-dark-theme);
+}
+.dol-undo-toast .dol-undo-toast-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.dol-undo-toast button {
+	flex: 0 0 auto;
+	padding: 0.25rem 0.5rem;
+	color: inherit;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 0.375rem;
+	cursor: pointer;
+}
+.dol-undo-toast .dol-undo-toast-undo {
+	font-weight: bold;
+	color: var(--colortextlink, #4a7c9b);
+}
+.dol-undo-toast button:hover,
+.dol-undo-toast button:focus-visible {
+	background-color: rgba(0, 0, 0, 0.06);
+}

@@ -730,6 +730,7 @@ Currency=Currency
 InfoAdmin=Information for administrators
 Undo=Undo
 Redo=Redo
+ChangeUndone=Change undone
 ExpandAll=Expand all
 UndoExpandAll=Undo expand
 SeeAll=See all

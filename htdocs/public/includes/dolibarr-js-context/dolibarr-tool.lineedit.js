@@ -635,6 +635,76 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Save a value of a line with the action updateline of the card, then refresh the line, the fields displayed and the sections of the card
+	 * @param {Object} controller
+	 * @param {HTMLElement} row Line in the page
+	 * @param {number} lineId
+	 * @param {{form: HTMLFormElement, tms: number}} loaded Edit form of the line, and date of modification of the object when it was loaded
+	 * @param {string} field
+	 * @param {string} value
+	 * @returns {Promise<void>} Rejected if the line was not saved (error already displayed)
+	 */
+	async function saveCellValue(controller, row, lineId, loaded, field, value) {
+		const doc = await controller.postCard(getCellFormData(row, loaded.form, field, value));
+		// Messages of the action are returned with the line
+		const data = await controller.fetchLines([lineId]);
+		const errors = (data.eventMessages && data.eventMessages.errors) || [];
+		// The line is saved if the object was modified, even with an error after the update
+		const changed = !loaded.tms || !data.tms || parseInt(data.tms, 10) !== loaded.tms;
+		if (errors.length > 0 && !changed) throw new Error('Line not saved');
+
+		await applyLines(controller, data, [lineId], doc);
+		if (data.builddoc) controller.scheduleDocumentBuild();
+	}
+
+	/**
+	 * Label of a value of a line for the undo message: number of the line and title of the column
+	 * @param {HTMLElement} cell
+	 * @param {HTMLElement} row
+	 * @returns {{number: string, column: string}}
+	 */
+	function getCellLabel(cell, row) {
+		const table = row.closest('table');
+		const column = Array.from(cell.classList).find(className => className.startsWith('linecol'));
+		const title = column && table ? table.querySelector(`tr.liste_titre .${CSS.escape(column)}`) : null;
+		const numCell = row.querySelector('td.linecolnum');
+		const number = numCell && numCell.innerText.trim() ? numCell.innerText.trim() : String(getPageLineIds(table).indexOf(parseInt(row.id.slice(4), 10)) + 1);
+		const columnLabel = title && title.innerText.trim() ? title.innerText.replace(/\s+/g, ' ').trim() : cell.dataset.dolLineField;
+
+		return { number, column: columnLabel };
+	}
+
+	/**
+	 * The change of a value of a line can be undone (Dolibarr.tools.card.setUndo()): the value before is saved again with the edit form
+	 * loaded before the change, so the other values of the line are the ones before too
+	 * @param {Object} controller
+	 * @param {number} lineId
+	 * @param {string} field
+	 * @param {{number: string, column: string}} label See getCellLabel()
+	 * @param {string} from Value displayed before
+	 * @param {HTMLFormElement} editForm Edit form of the line loaded before the change
+	 * @param {string} oldValue Value of the input before the change
+	 */
+	async function setCellUndo(controller, lineId, field, label, from, editForm, oldValue) {
+		const cell = findCell(lineId, field);
+		if (!cell) return;
+		const lineLabel = await trans('main', 'Line');
+		Dolibarr.tools.card.setUndo({
+			controller,
+			label: lineLabel + ' ' + label.number + ' \u00b7 ' + label.column,
+			from,
+			to: (cell.querySelector('.dol-line-value') || cell).innerText.trim(),
+			undo: async() => {
+				const row = document.getElementById('row-' + lineId);
+				if (!row) throw new Error('Line not found');
+				const before = getDisplayedTexts(controller, row);
+				await saveCellValue(controller, row, lineId, { form: editForm, tms: controller.tms }, field, oldValue);
+				showCellFeedback(controller, lineId, field, before);
+			},
+		});
+	}
+
+	/**
 	 * Open the edition of a value of a line in its cell
 	 * @param {HTMLElement} cell td[data-dol-line-field]
 	 * @returns {Promise<boolean>} True if opened, or if the edition is not possible now (a line is being edited, error displayed)
@@ -670,7 +740,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const content = document.createElement('div');
 		content.append(input);
 
+		input.dataset.dolInitialValue = input.value; // Value before the change, to undo it
 		const before = getDisplayedTexts(controller, row);
+		const label = getCellLabel(cell, row);
+		const valueText = (cell.querySelector('.dol-line-value') || cell).innerText.trim();
 		let saved = false;
 		let next = null;
 
@@ -681,17 +754,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			className: '--line-value',
 			getValue: () => input.value,
 			save: async value => {
-				const doc = await controller.postCard(getCellFormData(row, loaded.form, field, value));
-				// Messages of the action are returned with the line
-				const data = await controller.fetchLines([lineId]);
-				const errors = (data.eventMessages && data.eventMessages.errors) || [];
-				// The line is saved if the object was modified, even with an error after the update
-				const changed = !loaded.tms || !data.tms || parseInt(data.tms, 10) !== loaded.tms;
-				if (errors.length > 0 && !changed) throw new Error('Line not saved');
-
+				await saveCellValue(controller, row, lineId, loaded, field, value);
 				saved = true;
-				await applyLines(controller, data, [lineId], doc);
-				if (data.builddoc) controller.scheduleDocumentBuild();
 			},
 			onKeydown: (event, popover) => {
 				if (event.key !== 'Tab' || popover.saving) return;
@@ -704,7 +768,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				}
 			},
 			onClose: () => {
-				if (saved) showCellFeedback(controller, lineId, field, before);
+				if (saved) {
+					showCellFeedback(controller, lineId, field, before);
+					setCellUndo(controller, lineId, field, label, valueText, loaded.form, input.dataset.dolInitialValue);
+				}
 				const nextCell = next ? findCell(next.lineId, next.field) : null;
 				next = null;
 				if (nextCell) setTimeout(() => editCell(nextCell), 0);

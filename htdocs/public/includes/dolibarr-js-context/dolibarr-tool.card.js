@@ -146,6 +146,145 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Delay while the last change can be undone (ms), the undo message stays while the mouse is over it
+	 */
+	const UNDO_DELAY = 6000;
+
+	/**
+	 * Last change of a value of the page that can be undone (one level), see setUndo()
+	 * @type {{controller: DolibarrCardController, label: string, from: string, to: string, undo: function(): Promise<void>}|null}
+	 */
+	let lastChange = null;
+
+	/** Undo message, created when first shown */
+	let undoToast = null;
+	let undoTimer = null;
+
+	/**
+	 * Translate a label of a domain
+	 * @param {string} domain
+	 * @param {string} key
+	 * @param {string} [fallback] Text used when the key is not translated (new key not yet translated in the language of the user),
+	 *                            the key itself if not given
+	 * @returns {Promise<string>}
+	 */
+	async function trans(domain, key, fallback = key) {
+		if (!Dolibarr.checkToolExist('langs')) return fallback;
+		try {
+			await Dolibarr.tools.langs.load(domain);
+			const text = Dolibarr.tools.langs.transNoEntities(key); // Used as text, not html
+
+			return text === key ? fallback : text;
+		} catch (error) {
+			return fallback;
+		}
+	}
+
+	/**
+	 * Hide the undo message, the last change can not be undone anymore
+	 */
+	function hideUndoToast() {
+		clearTimeout(undoTimer);
+		lastChange = null;
+		if (undoToast) undoToast.hidden = true;
+	}
+
+	/**
+	 * Show the undo message
+	 * @param {string} text
+	 * @param {boolean} withUndo With the button Undo
+	 */
+	async function showUndoToast(text, withUndo) {
+		if (!undoToast) {
+			undoToast = document.createElement('div');
+			undoToast.className = 'dol-undo-toast --light-mode';
+			undoToast.setAttribute('role', 'status');
+			undoToast.addEventListener('mouseenter', () => clearTimeout(undoTimer));
+			undoToast.addEventListener('mouseleave', () => {
+				clearTimeout(undoTimer);
+				undoTimer = setTimeout(hideUndoToast, 3000);
+			});
+			document.body.append(undoToast);
+		}
+
+		const label = document.createElement('span');
+		label.className = 'dol-undo-toast-text';
+		label.textContent = text;
+		undoToast.replaceChildren(label);
+		if (withUndo) {
+			const undoButton = document.createElement('button');
+			undoButton.type = 'button';
+			undoButton.className = 'dol-undo-toast-undo';
+			undoButton.textContent = await trans('main', 'Undo');
+			undoButton.title = 'Ctrl + Z';
+			undoButton.addEventListener('click', () => undo());
+			undoToast.append(undoButton);
+		}
+		const closeButton = document.createElement('button');
+		closeButton.type = 'button';
+		closeButton.className = 'dol-undo-toast-close';
+		closeButton.setAttribute('aria-label', await trans('main', 'CloseWindowShort'));
+		const picto = document.createElement('span');
+		picto.className = 'fa fa-times';
+		picto.setAttribute('aria-hidden', 'true');
+		closeButton.append(picto);
+		closeButton.addEventListener('click', hideUndoToast);
+		undoToast.append(closeButton);
+
+		undoToast.hidden = false;
+		clearTimeout(undoTimer);
+		undoTimer = setTimeout(hideUndoToast, withUndo ? UNDO_DELAY : 2500);
+	}
+
+	/**
+	 * Remember the last change of a value of the page, so it can be undone (one level): a message shows the change
+	 * with a button Undo (Ctrl + Z while it is visible, outside the inputs). Used by the parts fields and lines of the card tool.
+	 * @param {Object} change
+	 * @param {DolibarrCardController} change.controller Controller of the card of the object changed
+	 * @param {string} change.label Label of the value (field or column, with the line)
+	 * @param {string} change.from Value displayed before
+	 * @param {string} change.to Value displayed after
+	 * @param {function(): Promise<void>} change.undo Save the value before again and refresh the page. An error thrown is already displayed.
+	 */
+	function setUndo(change) {
+		lastChange = change;
+		showUndoToast(change.label + ' : ' + change.from + ' \u2192 ' + change.to, true);
+	}
+
+	/**
+	 * Undo the last change of a value of the page (see setUndo()). Refused if the object was modified since, by another page or user.
+	 * @returns {Promise<boolean>} True if undone
+	 */
+	async function undo() {
+		const change = lastChange;
+		if (!change) return false;
+		hideUndoToast();
+
+		try {
+			const data = await change.controller.object.fetchFields([], { showErrors: false });
+			if (data.tms && change.controller.tms && parseInt(data.tms, 10) > change.controller.tms) {
+				Dolibarr.tools.setEventMessage(await trans('errors', 'ErrorRecordModifiedSinceDisplay'), 'errors');
+				return false;
+			}
+			await change.undo();
+		} catch (error) {
+			return false; // Error already displayed
+		}
+		showUndoToast(await trans('main', 'ChangeUndone', 'Change undone'), false);
+
+		return true;
+	}
+
+	// Ctrl + Z undoes the last change while its message is visible, not in the inputs (their own undo) nor while a value is edited
+	document.addEventListener('keydown', event => {
+		if (!lastChange || !undoToast || undoToast.hidden || !(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== 'z') return;
+		const target = event.target instanceof Element ? event.target : null;
+		if ((target && target.closest('input, textarea, select, [contenteditable="true"]')) || document.querySelector('.dol-field-popover')) return;
+		event.preventDefault();
+		undo();
+	});
+
+	/**
 	 * Controller of the card of an object displayed in the page
 	 */
 	class DolibarrCardController {
@@ -786,6 +925,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	card.register = register;
 	card.definePart = definePart;
 	card.showUpdatedFeedback = showUpdatedFeedback;
+	card.setUndo = setUndo;
+	card.undo = undo;
 
 	Dolibarr.defineTool('card', card);
 });

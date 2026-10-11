@@ -251,7 +251,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {string} [options.className] Classes added to the popover
 	 * @param {boolean} [options.autoSave=false] Compact popover without buttons, saved when the value is changed: choice in a list with the mouse,
 	 *        leaving the input (click outside, focus elsewhere) when the value was changed. Used for the values of the lines.
-	 * @returns {Promise<Object>} Popover: {container, editor, inputs, saving, isChanged(), save(), close()}
+	 * @returns {Promise<Object>} Popover: {container, editor, inputs, saving, initialValue, isChanged(), save(), close()}
 	 */
 	async function openPopover(container, options) {
 		const { content, getValue, onClose = null, onKeydown = null, className = '', autoSave = false } = options;
@@ -290,7 +290,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		focusFirstInput(inputs);
 
 		// Value when opened, a click outside the popover closes it only when nothing was changed
-		const initialValue = JSON.stringify(getValue(inputs));
+		const initial = getValue(inputs);
+		const initialValue = JSON.stringify(initial);
 		const onOutsideClick = event => {
 			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || popover.saving) return;
 			if (!popover.isChanged()) {
@@ -320,6 +321,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			inputs,
 			saving: false,
 			closed: false,
+			/** Value of the inputs when the popover was opened (to undo a change) */
+			initialValue: initial,
 			/**
 			 * @returns {boolean} True if the value was changed since the popover was opened
 			 */
@@ -408,6 +411,22 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Label of the field of an edit link: the text of the first cell around it with a text (Form::editfieldkey() prints the label
+	 * and the link in a table of their own), the name of the field if none
+	 * @param {HTMLElement} link
+	 * @param {string} field
+	 * @returns {string}
+	 */
+	function getFieldLabel(link, field) {
+		for (let cell = link.closest('td'); cell; cell = cell.parentElement ? cell.parentElement.closest('td') : null) {
+			const text = cell.innerText.replace(/\s+/g, ' ').trim();
+			if (text) return text;
+		}
+
+		return field;
+	}
+
+	/**
 	 * Open the edition of the field of an edit link, in place of its value
 	 * @param {HTMLElement} link Edit link printed by Form::editfieldkey()
 	 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
@@ -438,12 +457,13 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		const valueHtml = container.innerHTML;
+		const valueText = container.innerText.trim();
 		let html = valueHtml; // Html displayed when the popover is closed: the new value once saved
 		let saved = false;
 		// Hidden but keeps its place, so the row does not move
 		link.style.visibility = 'hidden';
 
-		await openPopover(container, {
+		const popover = await openPopover(container, {
 			content: input,
 			getValue: inputs => getEditorValue(inputs, field),
 			save: async value => {
@@ -457,7 +477,23 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			onClose: () => {
 				Dolibarr.tools.replaceContent(container, html, { mode: 'inner' });
 				link.style.visibility = '';
-				if (saved) Dolibarr.tools.card.showUpdatedFeedback(container);
+				if (!saved) return;
+				Dolibarr.tools.card.showUpdatedFeedback(container);
+				// The change can be undone: the value before is saved again
+				const oldValue = popover.initialValue;
+				Dolibarr.tools.card.setUndo({
+					controller,
+					label: getFieldLabel(link, field),
+					from: valueText,
+					to: container.innerText.trim(),
+					undo: async() => {
+						const result = await controller.setField(field, oldValue);
+						if (result === null) return; // Cancelled by a hook
+						if (!container.dataset.dolEditing) Dolibarr.tools.replaceContent(container, result.html, { mode: 'inner' });
+						Dolibarr.tools.card.showUpdatedFeedback(container);
+						controller.scheduleSectionsRefresh();
+					},
+				});
 			},
 		});
 
