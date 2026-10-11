@@ -660,6 +660,8 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.entity = ".((int) $conf->entity);
+// FULLY DIRTY : supprime les conneries de T2F. Attention aux effets de bords
+		$sql .= " AND t.code_journal <> 'REALIG' " ;
 		if (is_array($cpt)) {
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
