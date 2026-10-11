@@ -820,7 +820,11 @@ class SMTPs
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$_retVal = $this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$data = $this->getHeader().$this->getBodyContent();
+				// Dot-stuffing (RFC 5321 4.5.2): a line starting with a "." gets a second one, that the server removes.
+				// Without it, a line with only "." ends the data and the next lines are read by the server as SMTP commands.
+				$data = preg_replace('/^\./m', '..', $data);
+				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				fwrite($this->socket, 'QUIT');
