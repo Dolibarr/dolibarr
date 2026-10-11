@@ -7,6 +7,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - reload() reloads sections and document lines of the card, the elements are replaced by their new version with Dolibarr.tools.replaceContent() :
 	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1)
 	 * - postCard() posts data to the card like a form of the card (ex: action=updateline), see Dolibarr.tools.lineEdit
+	 * - refreshCardSections() refreshes the sections of the card that change with the object (banner with the status, action buttons,
+	 *   generated documents), see Dolibarr.tools.object.cardSections. scheduleCardSectionsRefresh() does it when a section is visible (lazy load).
 	 * - refreshFields() refreshes the values of fields displayed in containers [data-dol-field] (ex: totals), with core/ajax/objectfield.php.
 	 *   When lines are reloaded, the fields displayed are refreshed too, so the totals follow the changes of the lines.
 	 *
@@ -59,6 +61,31 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		document.querySelectorAll(`a[href*="token=${oldToken}"]`).forEach(link => {
 			link.setAttribute('href', link.getAttribute('href').split(`token=${oldToken}`).join(`token=${newToken}`));
 		});
+	}
+
+	/**
+	 * Sections of the cards that change with the object, refreshed by refreshCardSections():
+	 * banner (ref, status...), action buttons and generated documents. Modules can add the selectors of their sections.
+	 * @type {string[]}
+	 */
+	const cardSections = ['div.arearef', 'div.tabsAction', '#builddoc_form'];
+
+	/**
+	 * Lazy refresh of the sections of the cards, by object (key element:id, shared by all the controllers of an object):
+	 * the card is loaded only when a section out of date is visible, once for several changes in a row
+	 * @type {Map<string, {observer: IntersectionObserver|null, loading: boolean, pending: boolean, controller: DolibarrObjectController}>}
+	 */
+	const lazySections = new Map();
+
+	/**
+	 * Check if an element is visible in the window
+	 * @param {HTMLElement} el
+	 * @returns {boolean}
+	 */
+	function isInViewport(el) {
+		const rect = el.getBoundingClientRect();
+
+		return rect.bottom > 0 && rect.top < window.innerHeight && rect.width > 0;
 	}
 
 	/**
@@ -437,6 +464,97 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
+		 * Refresh the sections of the card that change with the object (Dolibarr.tools.object.cardSections): banner with the status,
+		 * action buttons, generated documents. Sections not in the page, or with an edition in progress, are not changed.
+		 *
+		 * @param {Document|Promise<Document|null>|null} [doc] Card loaded after the action (see postCard()), the card without lines is loaded if not given
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<Object<string, HTMLElement|null>>} New sections
+		 */
+		async refreshCardSections(doc = null, options = {}) {
+			const selectors = cardSections.filter(selector => {
+				const el = document.querySelector(selector);
+				return el && !el.matches('[data-dol-editing]') && !el.querySelector('[data-dol-editing]');
+			});
+			if (selectors.length === 0) return {};
+
+			const loaded = (await doc) || await this.fetchCardWithoutLines(options);
+
+			// Sections up to date: a lazy refresh scheduled before is not needed anymore
+			const state = lazySections.get(this.element + ':' + this.id);
+			if (state && !state.loading) {
+				if (state.observer) state.observer.disconnect();
+				lazySections.delete(this.element + ':' + this.id);
+			}
+			const result = {};
+			selectors.forEach(selector => {
+				const node = this.replaceFrom(loaded, selector);
+				result[selector] = node;
+				if (node) {
+					Dolibarr.executeHook('object:SectionReloaded', this.hookData({ selector, node }));
+				}
+			});
+
+			return result;
+		}
+
+		/**
+		 * Refresh the sections of the card that change with the object later, when one of them is visible (lazy load).
+		 * Use it when the card must be loaded only for these sections (ex: after an update of a field): several changes in a row
+		 * load the card once, and not at all while the sections are out of the window.
+		 */
+		scheduleCardSectionsRefresh() {
+			const key = this.element + ':' + this.id;
+			const state = lazySections.get(key) || { observer: null, loading: false, pending: false, controller: this };
+			state.controller = this;
+			lazySections.set(key, state);
+
+			if (state.loading) {
+				state.pending = true; // Changed during the loading: loaded again after
+				return;
+			}
+
+			const elements = cardSections.map(selector => document.querySelector(selector)).filter(el => el);
+			if (elements.length === 0) return;
+			if (elements.some(el => isInViewport(el)) || typeof IntersectionObserver === 'undefined') {
+				this.flushCardSections();
+				return;
+			}
+
+			if (!state.observer) {
+				state.observer = new IntersectionObserver(entries => {
+					if (entries.some(entry => entry.isIntersecting)) state.controller.flushCardSections();
+				});
+			}
+			elements.forEach(el => state.observer.observe(el));
+		}
+
+		/**
+		 * Refresh now the sections of the card scheduled by scheduleCardSectionsRefresh()
+		 * @returns {Promise<void>}
+		 */
+		async flushCardSections() {
+			const key = this.element + ':' + this.id;
+			const state = lazySections.get(key);
+			if (!state || state.loading) return;
+
+			if (state.observer) {
+				state.observer.disconnect();
+				state.observer = null;
+			}
+			state.loading = true;
+			try {
+				await this.refreshCardSections(null, { showErrors: false });
+			} catch (error) {
+				// Sections stay as they are, the page can be reloaded
+			} finally {
+				state.loading = false;
+				lazySections.delete(key);
+				if (state.pending) this.scheduleCardSectionsRefresh();
+			}
+		}
+
+		/**
 		 * Reload one section of the card
 		 * @param {string} selector
 		 * @param {Object} [options] See reload()
@@ -503,6 +621,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	object.Controller = DolibarrObjectController;
+	object.cardSections = cardSections;
 
 	Dolibarr.defineTool('object', object);
 });

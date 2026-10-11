@@ -91,6 +91,9 @@ var Dolibarr = {
 		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
 		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
 		 *   postCard: function(FormData|Object, Object=): Promise<Document|null>,
+		 *   refreshCardSections: function((Document|null)=, Object=): Promise<Object>,
+		 *   scheduleCardSectionsRefresh: function(): void,
+		 *   flushCardSections: function(): Promise<void>,
 		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
 		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
 		 *   on: function(string, function): function
@@ -99,6 +102,9 @@ var Dolibarr = {
 		object: Object.assign(function(element, id, options) {}, {
 			/** Class of the controllers */
 			Controller: class {},
+
+			/** Selectors of the sections of the cards that change with the object, see refreshCardSections() */
+			cardSections: ['div.arearef', 'div.tabsAction', '#builddoc_form'],
 		}),
 
 		/**

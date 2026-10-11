@@ -110,7 +110,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		formData.set('save', submitter && submitter.name === 'save' ? submitter.value : '1');
 
 		try {
-			await controller.postCard(formData);
+			const doc = await controller.postCard(formData);
 			// Messages of the action are returned with the line
 			const data = await controller.fetchLines([lineId]);
 			const errors = (data.eventMessages && data.eventMessages.errors) || [];
@@ -124,13 +124,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 
 			close();
-			const html = data.lines[lineId];
-			if (typeof html === 'string') {
-				controller.replaceLine(lineId, html, data.lineids.map(id => parseInt(id, 10)));
-			} else {
-				controller.removeLine(lineId);
-			}
-			await controller.refreshFields();
+			await applyLines(controller, data, [lineId], doc);
 		} catch (error) {
 			// Error already displayed
 			if (current === edition) {
@@ -260,11 +254,14 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 	/**
 	 * Replace or remove the lines of the page with the lines loaded by core/ajax/objectline.php, then refresh the fields displayed (totals...)
+	 * and the sections of the card (status, action buttons, documents): with the card returned by the action, or later when a section
+	 * is visible if the card redirected after the action (lazy load, see scheduleCardSectionsRefresh())
 	 * @param {Object} controller
 	 * @param {Object} data Answer of fetchLines()
 	 * @param {number[]} lineIds Lines asked
+	 * @param {Document|null} doc Card returned by postCard()
 	 */
-	async function applyLines(controller, data, lineIds) {
+	async function applyLines(controller, data, lineIds, doc) {
 		const allLineIds = data.lineids.map(id => parseInt(id, 10));
 		lineIds.forEach(lineId => {
 			const html = data.lines[lineId];
@@ -275,6 +272,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 		});
 		await controller.refreshFields();
+		if (doc) {
+			await controller.refreshCardSections(doc);
+		} else {
+			controller.scheduleCardSectionsRefresh();
+		}
 	}
 
 	/**
@@ -349,7 +351,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		formData.set(button.name, button.value);
 
 		try {
-			await controller.postCard(formData);
+			const doc = await controller.postCard(formData);
 			// Messages of the action and order of the lines, read with the last line of the page
 			const result = await controller.fetchLines([before[before.length - 1]]);
 			const allLineIds = result.lineids.map(id => parseInt(id, 10));
@@ -359,7 +361,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			if (added.length === 0) return true;
 
 			const lineIds = getLinesToRefresh(added, allLineIds, table);
-			await applyLines(controller, await controller.fetchLines(lineIds, { showEventMessages: false }), lineIds);
+			await applyLines(controller, await controller.fetchLines(lineIds, { showEventMessages: false }), lineIds, doc);
 			resetAddForm(table);
 		} catch (error) {
 			// Error already displayed
@@ -421,14 +423,14 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		row.dataset.dolDeleting = '1';
 
 		try {
-			await controller.postCard({ action: 'confirm_deleteline', confirm: 'yes', lineid: lineId });
+			const doc = await controller.postCard({ action: 'confirm_deleteline', confirm: 'yes', lineid: lineId });
 			const data = await controller.fetchLines(lineIds);
 			// Line still there: not deleted, error already displayed. A line deleted is removed even with an error after the action.
 			if (typeof data.lines[lineId] === 'string') {
 				delete row.dataset.dolDeleting;
 				return true;
 			}
-			await applyLines(controller, data, lineIds);
+			await applyLines(controller, data, lineIds, doc);
 		} catch (error) {
 			// Error already displayed
 			delete row.dataset.dolDeleting;

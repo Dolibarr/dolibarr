@@ -184,6 +184,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			close(result.html);
 			link.dataset.dolTms = String(controller.tms);
 			controller.updateFields(result.fields, { except: [field] });
+			// Status, action buttons and documents may depend on the field, refreshed when visible
+			controller.scheduleCardSectionsRefresh();
 		};
 
 		saveButton.addEventListener('click', save);
