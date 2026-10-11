@@ -276,6 +276,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		const save = async() => {
 			const value = getEditorValue(editor, field);
+			// Nothing changed: nothing to save
+			if (JSON.stringify(value) === initialValue) {
+				close(valueHtml);
+				return;
+			}
 			setSaving(true);
 			let result;
 			try {
@@ -308,6 +313,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				close(valueHtml);
 			} else if (event.key === 'Enter' && event.target.tagName === 'INPUT' && event.target.type === 'text') {
 				event.preventDefault();
+				// The value typed is committed first: the change event comes after the keydown, and the date inputs fill their hidden parts on change
+				event.target.dispatchEvent(new Event('change', { bubbles: true }));
 				save();
 			}
 		});
