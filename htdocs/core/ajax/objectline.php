@@ -57,6 +57,8 @@ $page = GETPOST('page', 'alphanohtml');
 
 $langs->loadLangs(array('errors', 'companies', 'bills', 'products', 'orders', 'propal', 'compta', 'other'));
 
+top_httphead('application/json');
+
 $jsonResponse = new JsonResponse();
 
 // Read only, lines are updated by the actions of the card
