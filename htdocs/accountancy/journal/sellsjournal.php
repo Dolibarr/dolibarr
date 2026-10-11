@@ -353,7 +353,7 @@ if ($result) {
 		}
 
 		// Move a part of the prorata discount/charge into the account for prorata charges
-		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && $obj->prorata_discount > 0) {
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && $obj->prorata_discount != 0) {
 			$prorata_discount = $prorata_rate * $obj->total_ht * $situation_ratio;	
 			$tabprorata[$obj->rowid][$compta_soc] += $prorata_discount;
 			$total_ttc -= $prorata_discount; // Remove ht value for prorata
