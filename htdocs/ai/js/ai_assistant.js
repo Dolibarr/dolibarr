@@ -1638,18 +1638,16 @@ export function initAiAssistant(container) {
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
         // "/status" is answered locally (no AI call): statistics of the whole
-        // conversation, then of the context selected for the next question.
-        // Both bubbles have no raw text so they never travel as context.
+        // conversation (the bar above the input already shows the selected
+        // context). Both bubbles have no raw text so they never travel as context.
         if (query.toLowerCase() === '/status' && !readyDocs.length) {
-            const countStats = (items) => [
-                items.filter((p) => p.role === 'user').length,
-                items.length,
-                Math.round(items.reduce((n, p) => n + p.text.length, 0) / 4)
-            ];
-            const fillStats = (s) => t('AIContextCounter').replace('%s', String(s[0])).replace('%s', String(s[1])).replace('%s', String(s[2]));
             const whole = pastContextBubbles().map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }));
+            const stats = t('AIContextCounter')
+                .replace('%s', String(whole.filter((p) => p.role === 'user').length))
+                .replace('%s', String(whole.length))
+                .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
             appendMsg('user', escapeHtml(query));
-            appendMsg('bot', escapeHtml(fillStats(countStats(whole))) + '<br>' + escapeHtml(fillStats(countStats(collectPinnedContext()))));
+            appendMsg('bot', escapeHtml(stats));
             input.value = '';
             input.style.height = '44px';
             input.focus();
