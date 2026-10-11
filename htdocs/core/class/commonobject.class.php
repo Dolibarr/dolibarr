@@ -5753,7 +5753,7 @@ abstract class CommonObject
 	 *	Used by printObjectLines() and getObjectLineHtml()
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param	CommonObjectLine	$line		Line to print
+	 *	@param	CommonObjectLine|CommonObject|stdClass	$line	Line to print
 	 *	@param	int			$num				Number of lines
 	 *	@param	int			$i					Index of the line in $this->lines
 	 *	@param	int			$dateSelector		1=Show also date range input fields
