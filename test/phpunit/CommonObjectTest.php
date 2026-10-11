@@ -96,6 +96,46 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 *  testGetRightsWhenModuleIsSet
+	 *  The module of the object is set by fetchObjectByElement(). A core permission named like the element
+	 *  (commande->commande->export) must not be returned as the permissions of the object.
+	 *
+	 *  @return void
+	 */
+	public function testGetRightsWhenModuleIsSet()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertTrue(isModEnabled('order'), 'Module order must be enabled for this test');
+
+		$savrights = isset($user->rights->commande) ? $user->rights->commande : null;
+
+		$localobject = new Commande($db);
+		$localobject->module = 'commande'; // As set by fetchObjectByElement()
+
+		$user->rights->commande = new stdClass();
+		$user->rights->commande->lire = 1;
+		$user->rights->commande->creer = 1;
+		$user->rights->commande->commande = new stdClass();
+		$user->rights->commande->commande->export = 1;
+		$rights = $localobject->getRights();
+		$this->assertSame($user->rights->commande, $rights, 'Permissions of the core module');
+
+		// Object of a module built with ModuleBuilder, named like its module
+		$user->rights->commande->commande->read = 1;
+		$user->rights->commande->commande->write = 1;
+		$this->assertSame($user->rights->commande->commande, $localobject->getRights(), 'Permissions of the object of a ModuleBuilder module');
+
+		$user->rights->commande = $savrights;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testFetchThirdParty
 	 *
 	 *  @return void
