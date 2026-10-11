@@ -64,6 +64,8 @@ $object->fetch($id, $ref);
 
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
+$permissionnote = $usercancreate || ($user->hasRight("fournisseur", "commande", "approuver") || $user->hasRight("supplier_order", "approuver"));
+
 
 /*
  * Actions

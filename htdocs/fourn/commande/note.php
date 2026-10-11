@@ -66,7 +66,7 @@ $object->fetch($id, $ref);
 // Permissions
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
-
+$permissionnote = $usercancreate || ($user->hasRight("fournisseur", "commande", "approuver") || $user->hasRight("supplier_order", "approuver"));
 
 /*
  * Actions
