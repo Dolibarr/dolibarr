@@ -7347,8 +7347,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
