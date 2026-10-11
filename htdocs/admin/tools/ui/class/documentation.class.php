@@ -259,6 +259,7 @@ class Documentation
 						'FetchTool' => '#titlesection-tool-fetch',
 						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
 						'ObjectTool' => '#titlesection-tool-object',
+						'CardTool' => '#titlesection-tool-card',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
 					),
 				),

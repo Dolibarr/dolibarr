@@ -260,7 +260,7 @@ class Form
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm && is_object($object)) {
 				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '"';
 				if ($ajaxfieldedit && $object instanceof CommonObject) {
-					// The link opens the edition of the field on the card (Dolibarr.tools.fieldEdit), the url is used without javascript
+					// The link opens the edition of the field on the card (Dolibarr.tools.card.fields), the url is used without javascript
 					$ret .= ' data-dol-edit-field="' . dolPrintHTMLForAttribute($htmlname) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '"';
 					$ret .= ' data-dol-tms="' . (empty($object->date_modification) ? 0 : (int) $object->date_modification) . '"';
 				}

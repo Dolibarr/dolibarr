@@ -81,74 +81,112 @@ var Dolibarr = {
 		replaceContent(target, content, options) {},
 
 		/**
-		 * Get the controller of an object displayed on a card
+		 * Get a controller of an object, to read and update it in ajax (data only, the page is not changed)
 		 * @param {string} element Element of the object, ex: 'propal'
 		 * @param {number} id
-		 * @param {Object} [options] {tms, url}
+		 * @param {Object} [options] {tms}
 		 * @returns {{
-		 *   element: string, id: number, tms: number, url: string,
+		 *   element: string, id: number, tms: number,
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
-		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
-		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
-		 *   postCard: function(FormData|Object, Object=): Promise<Document|null>,
-		 *   refreshCardSections: function((Document|null)=, Object=): Promise<Object>,
-		 *   scheduleCardSectionsRefresh: function(): void,
-		 *   flushCardSections: function(): Promise<void>,
-		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
-		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   fetchFields: function(string[], Object=): Promise<{element: string, id: number, fields: Object, tms: number|null}>,
+		 *   fetchLines: function(number[], Object=): Promise<{lines: Object, lineids: number[], tms: number|null, eventMessages: Object}>,
 		 *   on: function(string, function): function
 		 * }}
 		 */
 		object: Object.assign(function(element, id, options) {}, {
 			/** Class of the controllers */
 			Controller: class {},
-
-			/** Selectors of the sections of the cards that change with the object, see refreshCardSections() */
-			cardSections: ['div.arearef', 'div.tabsAction', '#builddoc_form'],
 		}),
 
 		/**
-		 * Edition of the fields of a card in ajax, see Form::isAjaxFieldEdit()
+		 * Get the controller of the card of an object displayed in the page (one controller by card, shared by all the scripts)
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms, url}
+		 * @returns {{
+		 *   element: string, id: number, tms: number, url: string, object: Object,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, eventMessages: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
+		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
+		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
+		 *   updateFields: function(Object, Object=): void,
+		 *   fetchLines: function(number[], Object=): Promise<Object>,
+		 *   replaceLine: function(number, string, number[]): HTMLElement|null,
+		 *   removeLine: function(number): null,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document|null>,
+		 *   fetchCardWithoutLines: function(Object=): Promise<Document>,
+		 *   getSections: function(): string[],
+		 *   refreshSections: function((Document|null)=, Object=): Promise<Object>,
+		 *   scheduleSectionsRefresh: function(): void,
+		 *   flushSections: function(): Promise<void>,
+		 *   on: function(string, function): function
+		 * }}
 		 */
-		fieldEdit: {
-			/**
-			 * Open the edition of the field of an edit link printed by Form::editfieldkey()
-			 * @param {HTMLElement} link
-			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
-			 */
-			open: function(link) {},
-		},
+		card: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers, to extend with Dolibarr.tools.card.register() */
+			Controller: class {},
 
-		/**
-		 * Edition of the document lines of a card in ajax, see CommonObject::isAjaxLineEdit()
-		 */
-		lineEdit: {
-			/**
-			 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
-			 * @param {HTMLElement} link
-			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
-			 */
-			open: function(link) {},
+			/** Selectors of the sections of all the cards that change with the object, see refreshSections() */
+			sections: ['div.arearef', 'div.tabsAction', '#builddoc_form'],
 
 			/**
-			 * Cancel the edition of the line in progress
+			 * Specialize the cards of an element
+			 * @param {string} element
+			 * @param {{sections?: string[], Controller?: Function}} specialization
 			 */
-			close: function() {},
+			register(element, specialization) {},
 
 			/**
-			 * Add a line with the form to add a line, like its button Add (input[data-dol-add-line])
-			 * @param {HTMLElement} button
-			 * @returns {Promise<boolean>} False if the line can not be added here (the form must then be submitted)
+			 * Define a part of the card tool, available as Dolibarr.tools.card.<name>
+			 * @param {string} name
+			 * @param {Object} api
 			 */
-			addLine: function(button) {},
+			definePart(name, api) {},
 
 			/**
-			 * Delete the line of a delete link (a[data-dol-delete-line]), after a confirmation
-			 * @param {HTMLElement} link
-			 * @returns {Promise<boolean>} False if the line can not be deleted here (the url of the link must then be used)
+			 * Part fields: edition of the fields of a card in ajax (experimental), see Form::isAjaxFieldEdit()
 			 */
-			deleteLine: function(link) {},
-		},
+			fields: {
+				/**
+				 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+			},
+
+			/**
+			 * Part lines: edition of the document lines of a card in ajax (experimental), see CommonObject::isAjaxLineEdit()
+			 */
+			lines: {
+				/**
+				 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+
+				/**
+				 * Cancel the edition of the line in progress
+				 */
+				close: function() {},
+
+				/**
+				 * Add a line with the form to add a line, like its button Add (input[data-dol-add-line])
+				 * @param {HTMLElement} button
+				 * @returns {Promise<boolean>} False if the line can not be added here (the form must then be submitted)
+				 */
+				addLine: function(button) {},
+
+				/**
+				 * Delete the line of a delete link (a[data-dol-delete-line]), after a confirmation
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the line can not be deleted here (the url of the link must then be used)
+				 */
+				deleteLine: function(link) {},
+			},
+		}),
 
 		/**
 		 * TThe langs tool

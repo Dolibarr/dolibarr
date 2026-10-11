@@ -6117,7 +6117,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Return if the lines of the card are edited in ajax, without reloading the page (Dolibarr.tools.lineEdit).
+	 *	Return if the lines of the card are edited in ajax, without reloading the page (Dolibarr.tools.card.lines).
 	 *	Lines can be edited only on a draft. Enabled with MAIN_FEATURES_LEVEL >= 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT.
 	 *	The edit link of the lines must still be shown only if the user can edit them, the url of the link is used without javascript.
 	 *

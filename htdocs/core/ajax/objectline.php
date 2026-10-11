@@ -24,7 +24,7 @@
  *                  Answer is a JsonResponse, data contains the html of each line (null if the line does not exist anymore)
  *                  and the ids of all the lines of the object in the order of the card, to insert or remove lines.
  *                  With action=editline (one line, write permission, object in draft), the html is the edit form of the line
- *                  (rows of objectline_edit.tpl.php), to edit the line in ajax (Dolibarr.tools.lineEdit).
+ *                  (rows of objectline_edit.tpl.php), to edit the line in ajax (Dolibarr.tools.card.lines).
  *                  The event messages kept in session by a card loaded with noflusheventmessages=1 are returned in the answer.
  */
 

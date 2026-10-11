@@ -625,7 +625,7 @@ if ($nolinesbefore) {
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button reposition" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline"<?php
 		if (method_exists($object, 'isAjaxLineEdit') && $object->isAjaxLineEdit()) {
-			// Line added in ajax by Dolibarr.tools.lineEdit, the form is submitted without javascript
+			// Line added in ajax by Dolibarr.tools.card.lines, the form is submitted without javascript
 			print ' data-dol-add-line="1" data-dol-element="'.dolPrintHTMLForAttribute($object->element).'" data-dol-id="'.((int) $object->id).'"';
 		} ?>>
 	</td>
