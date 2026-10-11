@@ -578,8 +578,21 @@ class ExternalModules
 			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
 				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
 				$compatible = 'NotCompatible';
-			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
-				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
+			} else {
+				// A min or max version set to '', 'auto' or 'unknown' is an unknown version
+				$minknown = (!empty($product["dolibarr_min"]) && !in_array($product["dolibarr_min"], array('auto', 'unknown')));
+				$maxknown = (!empty($product["dolibarr_max"]) && !in_array($product["dolibarr_max"], array('auto', 'unknown')));
+
+				if ($minknown && $this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) > 0) {
+					// Need update of Dolibarr (current version is lower than min)
+					$version = '<span class="compatibleafterupdate">'.$langs->trans(
+						'CompatibleAfterUpdate',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				} elseif ($maxknown && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					// Compatible
 					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
 						'CompatibleUpTo',
@@ -589,29 +602,9 @@ class ExternalModules
 					).'</span>';
 					$compatible = '';
 				} else {
-					// Never compatible, module expired
+					// Not compatible (current version is higher than max, or max is unknown)
 					$version = '<span class="warning">'.$langs->trans(
 						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				}
-			} else {
-				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
-					// Never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
-						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				} else {
-					// Need update
-					$version = '<span class="compatibleafterupdate">'.$langs->trans(
-						'CompatibleAfterUpdate',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
 						$product["dolibarr_max"]
@@ -678,7 +671,7 @@ class ExternalModules
 					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
 					$download_link .= img_picto('', 'url', 'class="size2x"');
 					$download_link .= '</a>';
-					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+					$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
 					$download_link .= '</a>';
 				}
@@ -1069,7 +1062,18 @@ class ExternalModules
 				if ($this->categorie != 0) {
 					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
 				}
-				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
+				// URL to go to another page (without no_page). Used when pressing Enter into the page input field.
+				$param_array = array();
+				if (!empty($this->search)) {
+					$param_array['search_keyword'] = $this->search;
+				}
+				if ($this->categorie != 0) {
+					$param_array['categorie'] = $this->categorie;
+				}
+				$urlforpage = $this->url.($param_array ? '&'.http_build_query($param_array) : '');
+				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" data-url="'.dol_escape_htmltag($urlforpage).'"';
+				$pagelist .= ' oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'"';
+				$pagelist .= ' onkeydown="if (event.key === \'Enter\') { event.preventDefault(); var p = parseInt(this.value, 10); if (isNaN(p) || p < 1) { p = 1; } window.location.href = this.dataset.url + \'&no_page=\' + p; }">';
 				$pagelist .= ' / '.$nbpages;
 				$pagelist .= '</li>';
 
