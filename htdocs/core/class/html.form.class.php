@@ -180,6 +180,43 @@ class Form
 	}
 
 	/**
+	 * Return the attributes of the edit link of a field edited in ajax on the card (Dolibarr.tools.card.fields),
+	 * for cards printing their own edit link instead of editfieldkey(). The url of the link is used without javascript.
+	 *
+	 * @param	?object				$object		Object shown on the page
+	 * @param	string				$field		Field name of $object->fields
+	 * @param	int<0,1>|boolean	$perm		Permission to edit the field
+	 * @return	string						Attributes with a leading space, '' if the field is not edited in ajax
+	 */
+	public function getAjaxFieldEditAttributes($object, $field, $perm)
+	{
+		if (!$this->isAjaxFieldEdit($object, $field, $perm) || !$object instanceof CommonObject) {
+			return '';
+		}
+
+		return ' data-dol-edit-field="' . dolPrintHTMLForAttribute($field) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '" data-dol-tms="' . (empty($object->date_modification) ? 0 : (int) $object->date_modification) . '"';
+	}
+
+	/**
+	 * Return the attributes of the container of the value of a field edited in ajax on the card (Dolibarr.tools.card.fields),
+	 * for cards printing the value themselves instead of editfieldval(). The content of the container is replaced
+	 * by the editor of the field, then by its new value (CommonObject::ajaxOutputField()).
+	 *
+	 * @param	?object				$object		Object shown on the page
+	 * @param	string				$field		Field name of $object->fields
+	 * @param	int<0,1>|boolean	$perm		Permission to edit the field
+	 * @return	string						Attributes with a leading space, '' if the field is not edited in ajax
+	 */
+	public function getAjaxFieldValueAttributes($object, $field, $perm)
+	{
+		if (!$this->isAjaxFieldEdit($object, $field, $perm) || !$object instanceof CommonObject) {
+			return '';
+		}
+
+		return ' data-dol-field="' . dolPrintHTMLForAttribute($field) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '"';
+	}
+
+	/**
 	 * Output key field for an editable field
 	 *
 	 * @param 	string				$text 			Text of label or key to translate
@@ -259,11 +296,8 @@ class Form
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm && is_object($object)) {
 				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '"';
-				if ($ajaxfieldedit && $object instanceof CommonObject) {
-					// The link opens the edition of the field on the card (Dolibarr.tools.card.fields), the url is used without javascript
-					$ret .= ' data-dol-edit-field="' . dolPrintHTMLForAttribute($htmlname) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '"';
-					$ret .= ' data-dol-tms="' . (empty($object->date_modification) ? 0 : (int) $object->date_modification) . '"';
-				}
+				// The link opens the edition of the field on the card (Dolibarr.tools.card.fields), the url is used without javascript
+				$ret .= $this->getAjaxFieldEditAttributes($object, $htmlname, $perm);
 				$ret .= '>';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
@@ -503,8 +537,8 @@ class Form
 				}
 
 				// Container of the value, replaced by the editor of the field and by its new value after an ajax edition
-				if ($ajaxfieldedit && $object instanceof CommonObject) {
-					$ret = '<span data-dol-field="' . dolPrintHTMLForAttribute($htmlname) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '">' . $ret . '</span>';
+				if ($ajaxfieldedit) {
+					$ret = '<span' . $this->getAjaxFieldValueAttributes($object, $htmlname, $perm) . '>' . $ret . '</span>';
 				}
 			}
 		}

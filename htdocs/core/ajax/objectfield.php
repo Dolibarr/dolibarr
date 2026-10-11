@@ -103,7 +103,7 @@ if (!$result) {
 function objectFieldGetOutput($object, $fieldname)
 {
 	return array(
-		'value' => property_exists($object, $fieldname) ? $object->$fieldname : null,
+		'value' => $object->getFieldUiValue($fieldname),
 		'html' => $object->ajaxOutputField($fieldname),
 	);
 }
@@ -162,7 +162,7 @@ if ($value === null) {
 $valuesbefore = array();
 foreach (array_keys($object->fields) as $fieldname) {
 	if ($object->isFieldReadableFromUi($user, $fieldname)) {
-		$valuesbefore[$fieldname] = property_exists($object, $fieldname) ? $object->$fieldname : null;
+		$valuesbefore[$fieldname] = $object->getFieldUiValue($fieldname);
 	}
 }
 
@@ -181,7 +181,7 @@ if (is_object($reloadedobject) && $reloadedobject->id > 0) {
 // The updated field and the other fields changed by the update
 $fields = array($field => objectFieldGetOutput($object, $field));
 foreach ($valuesbefore as $fieldname => $valuebefore) {
-	$valueafter = property_exists($object, $fieldname) ? $object->$fieldname : null;
+	$valueafter = $object->getFieldUiValue($fieldname);
 	if ($fieldname != $field && $valueafter !== $valuebefore) {
 		$fields[$fieldname] = objectFieldGetOutput($object, $fieldname);
 	}

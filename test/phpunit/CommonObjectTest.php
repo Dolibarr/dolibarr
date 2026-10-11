@@ -1426,7 +1426,7 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertStringContainsString('<b>Bold</b>', $localobject->getFieldValueFromAjaxPost('note'));
 		$this->assertStringNotContainsString('<script', $localobject->getFieldValueFromAjaxPost('note'), 'html is filtered with restricthtml');
 		$this->assertSame(12, $localobject->getFieldValueFromAjaxPost('qty'));
-		$this->assertEquals(dol_mktime(0, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'));
+		$this->assertEquals(dol_mktime(12, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'), 'Dates at noon like the cards');
 		$this->assertEquals(dol_mktime(14, 30, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_end'));
 		$this->assertSame(1, $localobject->getFieldValueFromAjaxPost('fk_soc'), 'Links are read as an id');
 		$this->assertNull($localobject->getFieldValueFromAjaxPost('amount'), 'Amounts are not supported yet');
@@ -1578,6 +1578,86 @@ class CommonObjectTest extends CommonClassTest
 		}
 
 		$otherobject->delete($user);
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Fields of the header of a proposal (dates, dictionaries) are read in their properties, edited with the selectors
+	 * of the card and saved with the setters of the card, with the end of validity following the date
+	 *
+	 * @return void
+	 */
+	public function testUpdateHeaderFieldsFromUiOnProposal()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+		// Ids of the dictionaries of the test database
+		$getid = function ($table, $field = 'rowid') use ($db) {
+			$resql = $db->query("SELECT MIN(".$field.") as id FROM ".MAIN_DB_PREFIX.$table." WHERE active = 1");
+			$obj = $resql ? $db->fetch_object($resql) : null;
+			return $obj ? (int) $obj->id : 0;
+		};
+		$condid = $getid('c_payment_term');
+		$modeid = $getid('c_paiement', 'id');
+		$availabilityid = $getid('c_availability');
+
+		$localobject = new Propal($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Propal($db);
+		$localobject->fetch($id);
+
+		// Fields read in the properties used by the cards
+		$this->assertSame($localobject->date, $localobject->getFieldUiValue('datep'));
+		$localobject->cond_reglement_id = $condid;
+		$this->assertSame($condid, $localobject->getFieldUiValue('fk_cond_reglement'));
+		$this->assertSame($localobject->availability_id, $localobject->getFieldUiValue('fk_availability'), 'Deprecated property fk_availability is not used');
+
+		// Inputs named ajaxfield_<field>, with the selectors of the card
+		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_cond_reglement"/', $localobject->ajaxInputField('fk_cond_reglement'));
+		$this->assertStringContainsString('name="ajaxfield_fk_cond_reglement_deposit_percent"', $localobject->ajaxInputField('fk_cond_reglement'), 'Deposit percent of proposals');
+		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_mode_reglement"/', $localobject->ajaxInputField('fk_mode_reglement'));
+		$this->assertMatchesRegularExpression('/<select[^>]*name="ajaxfield_fk_availability"/', $localobject->ajaxInputField('fk_availability'));
+		$this->assertStringContainsString('name="ajaxfield_fin_validiteday"', $localobject->ajaxInputField('fin_validite'));
+		$this->assertStringNotContainsString('name="ajaxfield_fin_validitehour"', $localobject->ajaxInputField('fin_validite'), 'End of validity is a day');
+
+		// Saved with the setters of the card
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_cond_reglement', $condid), (string) $localobject->error);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_mode_reglement', $modeid), (string) $localobject->error);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_availability', $availabilityid), (string) $localobject->error);
+		$deliverydate = dol_mktime(12, 0, 0, 4, 1, 2026);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'date_livraison', $deliverydate), (string) $localobject->error);
+
+		// The end of validity follows the date, with the same validity duration
+		$localobject->duree_validite = 15;
+		$date = dol_mktime(12, 0, 0, 3, 10, 2026);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'datep', $date), (string) $localobject->error);
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'datep', ''), 'Date is required');
+
+		$checkobject = new Propal($db);
+		$checkobject->fetch($id);
+		$this->assertEquals($condid, $checkobject->cond_reglement_id);
+		$this->assertEquals($modeid, $checkobject->mode_reglement_id);
+		$this->assertEquals($availabilityid, $checkobject->availability_id);
+		$this->assertSame(dol_print_date($deliverydate, 'day'), dol_print_date($checkobject->delivery_date, 'day'));
+		$this->assertSame(dol_print_date($date, 'day'), dol_print_date($checkobject->date, 'day'));
+		$this->assertSame(dol_print_date($date + 15 * 24 * 3600, 'day'), dol_print_date($checkobject->fin_validite, 'day'));
+
+		// Output like the card, with the label of the dictionary
+		$this->assertSame($checkobject->ajaxOutputField('fk_cond_reglement'), (new Form($db))->form_conditions_reglement('', (string) $condid, 'none', 0, '', -1, (float) $checkobject->deposit_percent, 1));
+		$this->assertNotSame('&nbsp;', $checkobject->ajaxOutputField('fk_availability'));
+
 		$localobject->delete($user);
 
 		print __METHOD__." OK\n";
