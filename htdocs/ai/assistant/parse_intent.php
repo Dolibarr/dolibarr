@@ -120,7 +120,7 @@ try {
 	// endpoint flagged with needs_followup: the result is the last history turn.
 	$isFollowup = !empty($data['followup']);
 
-	dol_syslog("parse_intent.php isFollowup=".($isFollowup ? '1' : '0'), LOG_DEBUG, 0, '_ai');
+	dol_syslog("parse_intent.php isFollowup=".($isFollowup ? 1 : 0), LOG_DEBUG, 0, '_ai');
 
 	// --- Page context (optional): posted by the chat JS from the value the
 	// printCommonFooter hook emitted on the page being viewed. The POST is
@@ -548,12 +548,10 @@ try {
 			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
 			$s .= '<ul class="small">';
 			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
-				$nbInFamily = 0;
-				foreach ($mcp->toolsByName as $instance) {
-					if ($instance === $familyInstance) {
-						$nbInFamily++;
-					}
-				}
+				/** @param object $instance */
+				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
+					return $instance === $familyInstance;
+				}));
 				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
 			}
 			$s .= '</ul>';
