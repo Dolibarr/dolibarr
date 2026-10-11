@@ -120,6 +120,8 @@ try {
 	// endpoint flagged with needs_followup: the result is the last history turn.
 	$isFollowup = !empty($data['followup']);
 
+	dol_syslog("parse_intent.php isFollowup=".$isFollowup, LOG_DEBUG, 0, '_ai');
+
 	// --- Page context (optional): posted by the chat JS from the value the
 	// printCommonFooter hook emitted on the page being viewed. The POST is
 	// client-controlled, so nothing here is trusted: the element must be on
@@ -523,9 +525,11 @@ try {
 		$allToolsSchema = $mcp->getToolsSchema();
 		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
+		$s = '';
+
 		// Special case we ask debug info
 		if ($query == '/tools') {
-			$s = '----- loadedTools (scan of family tools, not tools)'."\n";
+			$s .= '----- loadedTools (scan of family tools, not tools)'."\n";
 			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 			$s .= "\n";
 			$s .= "\n";
@@ -533,22 +537,8 @@ try {
 			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 			$s .= "\n";
 			$s .= "\n";
-			$s .= '----- allToolsSchema (non system + system)'."\n";
-			$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-
-			$finalResponse = [
-				"tool" => "respond_to_user",
-				"arguments" => [
-					"message" => $s
-				]
-			];
-
-			// Log the low confidence response
-			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
-
-			ob_end_clean();
-			echo json_encode($finalResponse);
-			exit;
+			//$s .= '----- allToolsSchema (non system + system before filtering)'."\n";
+			//$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
@@ -594,43 +584,92 @@ try {
 		$isLargeSchema = count($toolsSchema) > 100;
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
-		// Build System Prompt
-		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
 
-		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
-		$systemRules .= 'Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
-		$systemRules .= "ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language. ";
-		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. ";
-		$systemRules .= "If you need to do a search before an action, answer with a search tool.";
+		// Special case we ask debug info
+		if ($query == '/tools') {
+			$s .= '----- toolsForLLM'."\n";
+			$s .= '<pre>' . json_encode($toolsForLLM, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= "\n";
+			$s .= "\n";
+
+			$finalResponse = [
+				"tool" => "respond_to_user",
+				"arguments" => [
+					"message" => $s
+				]
+			];
+
+			// Log the low confidence response
+			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+			ob_end_clean();
+			echo json_encode($finalResponse);
+			exit;
+		}
+
+
+
+		// Build System Prompt
+		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
+		$systemPrompt .= "\n\n";
+
+		$systemRules = "## Rules:\n";
+		$systemRules .= "* Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
+		$systemRules .= '* Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
+		$systemRules .= "* ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language.\n";
+		$systemRules .= "* When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed.\n";
 		if (!$isFollowup) {
 			// The chat runs the search, then calls back with its result so the action can follow.
-			$systemRules .= " When this search only fetches data (an id, a ref...) you need to perform the action the user asked, add \"needs_followup\": true at the top level of the JSON, next to \"tool\": the result of the search is then sent back to you to perform the action. Do not add it when the search result is itself the answer.";
+			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it the requested search is itself the FINAL answer.";
 		}
-		$systemRules .= "Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available. ";
+		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available.\n";
+		$systemRules .= "\n";
 
-
+		$systemPrompt .= $systemRules;
 
 		// If option is on, we disable all tools
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
 		}
 
-		$systemPrompt = $basePrompt . "\n\n";
-		$systemPrompt .= "Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		$systemPrompt .= "## Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
+		$systemPrompt .= "\n";
+
+		$systemPrompt .= "### sqlfilters format\n";
+		$systemPrompt .= "- Criterion: (field:operator:value). Each criterion has its own parentheses.\n";
+		$systemPrompt .= "- field: [a-zA-Z0-9_.]+ (e.g. t.ref).\n";
+		$systemPrompt .= "- operator: = != < > <= >= like notlike in notin is isnot.\n";
+		$systemPrompt .= "- value:\n";
+		$systemPrompt .= "  - 'text' or 'date' in single quotes, number, NULL, __NOW__ or __USER_ID__;\n";
+		$systemPrompt .= "  - never ( ) or a quote inside;\n";
+		$systemPrompt .= "  - like/notlike: % and _ wildcards;\n";
+		$systemPrompt .= "  - in/notin: comma-separated list, no parentheses (1,2,3);\n";
+		$systemPrompt .= "  - is/isnot: NULL only.\n";
+		$systemPrompt .= "- Combining: terms joined only by AND or OR (uppercase, surrounded by spaces).\n";
+		$systemPrompt .= "  Free nesting with balanced parentheses. No NOT.\n";
+		$systemPrompt .= "  Do not mix AND and OR at the same level without parentheses.\n";
+		$systemPrompt .= "\n";
+		$systemPrompt .= "Valid:   ((t.client:=:1) OR (t.client:in:2,3)) AND (t.nom:like:'a%')\n";
+		$systemPrompt .= "Invalid: t.ref:=:'A' | (t.ref = 'A') | (t.status:in:(1,2)) | NOT (t.status:=:1) | ((t.a:=:1)\n";
+		$systemPrompt .= "\n";
+
 		// When redaction is active, the model sees [[TYPE_N]] placeholders where
 		// PII was. Without this rule it refuses tasks needing those values
 		// with it, placeholders travel verbatim through tool arguments and are restored server-side
 		// (unmaskAiResponse on the raw intent JSON) before execution, so the
 		// cloud never sees the data and the task still completes.
 		if ($doRedact) {
-			$systemRules .= " Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masked real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+			$systemPrompt .= "## Privacy rules\n";
+			$systemPrompt .= "Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masking real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+			$systemPrompt .= "\n";
 		}
 
 		// A bare date is not enough for weaker models: state explicitly that
 		// relative periods are the assistant's job to resolve, not the user's.
 		// Use date ISO 8601
 		$date = new DateTime('now', new DateTimeZone('UTC'));
-		$systemPrompt .= $systemRules . " Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".";
+		$systemPrompt .= "## Context\n";
+		$systemPrompt .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -641,9 +680,9 @@ try {
 			if (!empty($doRedact) && !empty($guard)) {
 				$aiPageContextLine = $guard->mask($guard->maskNames($aiPageContextLine, $ctxNamesToMask));
 			}
-			$systemPrompt .= "\n\nPage context: ".$aiPageContextLine;
+			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
 		}
-		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
+		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();
@@ -759,18 +798,19 @@ try {
 				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
 			}
 
-			//dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
+			dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
 			dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
+
 			// Sent as separate messages, so not in the systemPrompt (masked when privacy masking is on).
 			dol_syslog('parse_intent.php history = '.json_encode($history, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOG_DEBUG, 0, '_ai');
 
 			// Call LLM and get answer string
-			dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step 2: followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
+			dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step ".count($history).": followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
-			dol_syslog('parse_intent.php rawResponse='.var_export($rawResponse, true), LOG_DEBUG, 0, '_ai');
-
+			// Commented for production version, the raw response can already be seen into dolibarr_curl.log
+			//dol_syslog('parse_intent.php rawResponse='.var_export($rawResponse, true), LOG_DEBUG, 0, '_ai');
 			//var_dump($rawResponse);exit;
 
 			// Capture logs
@@ -1133,8 +1173,12 @@ try {
 		&& !in_array($toolName, $systemTools, true)
 		&& !aiIsWriteTool($mcp, $toolName, (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array())
 		&& ($llmAsksFollowup || aiQueryAsksForWrite($query, $langs))) {
-		dol_syslog("parse_intent.php needs_followup on ".$toolName." (".($llmAsksFollowup ? 'asked by the model' : 'write asked, read answered').")", LOG_DEBUG, 0, '_ai');
 		$intentJSON['needs_followup'] = 1;
+	}
+	if (!empty($intentJSON['needs_followup'])) {
+		dol_syslog("parse_intent.php needs_followup on ".$toolName." (".($llmAsksFollowup ? 'asked by the model' : 'write asked, read answered').")", LOG_DEBUG, 0, '_ai');
+	} else {
+		dol_syslog("parse_intent.php needs_followup off ".$toolName, LOG_DEBUG, 0, '_ai');
 	}
 
 	if ($resolvedLabel !== '') {
