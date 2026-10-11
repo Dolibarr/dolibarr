@@ -48,6 +48,7 @@ if (!is_readable("{$path}../../htdocs/config/config.php")) {
 }
 require_once $path.'../../htdocs/core/lib/files.lib.php';
 require_once $path.'../../htdocs/core/lib/functions.lib.php';
+require_once $path.'../../htdocs/core/lib/html.lib.php';
 require_once $path.'../../htdocs/core/lib/geturl.lib.php';
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
@@ -663,14 +664,14 @@ $html .= '<div class="boxallwidth">'."\n";
 
 $html .= <<<END
 <!-- Copy-paste in your Readme.md file -->
-
+<!--
 <a href="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
 <img alt="Pushes and Commits of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
 </picture>
 </a>
-
+-->
 <!-- Made with [OSS Insight](https://ossinsight.io/) -->
 
 

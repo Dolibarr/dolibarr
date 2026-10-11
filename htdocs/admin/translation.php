@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "products", "admin", "sms", "other", "errors"));
+$langs->loadLangs(array("companies", "products", "admin", "sms", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -155,6 +155,7 @@ if ($action == 'update') {
 		} else {
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
 			} else {
 				setEventMessages($db->lasterror(), null, 'errors');
@@ -193,6 +194,7 @@ if ($action == 'add') {
 		} else {
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
 			} else {
 				setEventMessages($db->lasterror(), null, 'errors');

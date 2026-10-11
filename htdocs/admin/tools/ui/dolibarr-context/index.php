@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025 Anthony Damhet <a.damhet@progiseize.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,7 +498,13 @@ $documentation->showSidebar(); ?>
 						animation: highlightfortest 1s ease-out;
 					}
 				</style>
-				<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" style="display: none" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec elit venenatis, bibendum dui in, tristique dolor. In hac habitasse platea dictumst. Vestibulum consectetur quam non felis fringilla mollis pretium vel nibh. Pellentesque congue risus et laoreet blandit. Aliquam orci ipsum, gravida id leo eget, molestie pulvinar sem. Nulla sed felis et lacus tristique finibus. Cras ornare tincidunt. Aenean hendrerit volutpat efficitur. Integer vestibulum dui eget lectus pulvinar, vel mattis odio facilisis. Etiam convallis scelerisque lobortis. Mauris tristique, quam dignissim sollicitudin sodales, elit ligula venenatis neque, sit amet interdum lacus tellus id tellus. Mauris eu pretium turpis. Proin porta sem eget nisl vulputate vehicula.</div>
+				<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" style="display: none" >
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec elit venenatis, bibendum dui in, tristique dolor. In hac habitasse platea dictumst.
+					Vestibulum consectetur quam non felis fringilla mollis pretium vel nibh. Pellentesque congue risus et laoreet blandit. Aliquam orci ipsum, gravida id leo eget, molestie pulvinar sem.
+					Nulla sed felis et lacus tristique finibus. Cras ornare tincidunt. Aenean hendrerit volutpat efficitur. Integer vestibulum dui eget lectus pulvinar, vel mattis odio facilisis.
+					Etiam convallis scelerisque lobortis. Mauris tristique, quam dignissim sollicitudin sodales, elit ligula venenatis neque, sit amet interdum lacus tellus id tellus.
+					Mauris eu pretium turpis. Proin porta sem eget nisl vulputate vehicula.
+				</div>
 				<script nonce="<?php print getNonce() ?>">
 					document.addEventListener('Dolibarr:Ready', function(e) {
 						const container = document.getElementById('initNewContent-test-container');
@@ -676,9 +682,11 @@ $documentation->showSidebar(); ?>
 				$lines = array(
 				'<script>',
 					'document.addEventListener(\'Dolibarr:Init\', function(e) {',
-					'	// Define a simple tool',
-					'	let overwrite = false; // Once a tool is defined, it cannot be replaced.',
-					'	Dolibarr.defineTool(\'alertUser\', (msg) => alert(\'[Dolibarr] \' + msg), overwrite);',
+					'	// Define a simple protected tool : once defined, it cannot be replaced.',
+					'	Dolibarr.defineTool(\'alertUser\', (msg) => alert(\'[Dolibarr] \' + msg));',
+					'',
+					'	// Define an overwritable tool : it can be replaced later by another call with overwrite: true',
+					'	Dolibarr.defineTool(\'notifyUser\', (msg) => console.log(msg), { overwrite: true });',
 					'});',
 					'',
 					'document.addEventListener(\'Dolibarr:Ready\', function(e) {',
@@ -691,14 +699,16 @@ $documentation->showSidebar(); ?>
 
 			<h3>Protected Tools</h3>
 			<p>
-				Once a tool is defined on overwrite false, it cannot be replaced. Attempting to redefine it without overwrite will throw an error:
+				A tool defined without <code>overwrite</code> is protected: it can never be replaced, even with <code>{ overwrite: true }</code>.
+				A tool defined with <code>{ overwrite: true }</code> can be replaced, but only by another call using <code>{ overwrite: true }</code>.
+				Any other attempt throws an error:
 			</p>
 
 				<?php
 				$lines = array(
 					'<script>',
 					'	try {',
-					'		Dolibarr.defineTool(\'alertUser\', () => {});',
+					'		Dolibarr.defineTool(\'alertUser\', () => {}, { overwrite: true }); // alertUser is protected',
 					'	} catch (e) {',
 					'		console.error(e.message);',
 					'	}',
@@ -722,7 +732,39 @@ $documentation->showSidebar(); ?>
 
 		</div>
 
+		<div class="documentation-section">
+			<h2 id="titlesection-compat" class="documentation-title">Backward compatibility and deprecations</h2>
+			<p>
+				When the behavior of the context changes, old usages keep working thanks to a backward compatibility layer
+				(<code>dolibarr-context.compat.js</code>, loaded right after the context definition).
+				Each old usage shows a warning in the browser console, once per page.
+			</p>
+			<ul>
+				<li>The backward compatibility layer is enabled in Dolibarr 25.0 and 26.0, and will be removed in Dolibarr 27.0.</li>
+				<li>Set the hidden constant <code>MAIN_JS_CONTEXT_DISABLE_COMPAT</code> to 1 to test your modules without it.</li>
+				<li>List the deprecated usages of the current page with <code>Dolibarr.getDeprecations()</code>.</li>
+				<li>Tools can report their own deprecated usages with <code>Dolibarr.deprecated(key, message)</code>.</li>
+			</ul>
+			<p>Deprecated usages:</p>
+			<ul>
+				<li><code>Dolibarr.defineTool(name, value, overwrite, triggerHook)</code>: use <code>Dolibarr.defineTool(name, value, { overwrite, triggerHook })</code>.</li>
+			</ul>
+				<?php
+				$lines = array(
+					'<script>',
+					'	// Report a deprecated usage in your own tool',
+					'	Dolibarr.deprecated(\'myTool.oldMethod\', \'myTool.oldMethod() is deprecated, use myTool.newMethod() instead\');',
+					'',
+					'	// List deprecated usages reported on this page',
+					'	console.table(Dolibarr.getDeprecations());',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php'); ?>
+		</div>
+
 		<?php include __DIR__ . '/inc_seteventmessage.php'; ?>
+
+		<?php include __DIR__ . '/inc_fetch.php'; ?>
 
 
 		<div class="documentation-section">
@@ -743,6 +785,11 @@ $documentation->showSidebar(); ?>
 			</p>
 
 			<h3>Add  context var (overridable or not)</h3>
+			<p>
+				A context var set without <code>overwrite</code> is protected: it can never be replaced.
+				A context var set with <code>overwrite</code> to <code>true</code> can be replaced, but only by another call with <code>overwrite</code> to <code>true</code>.
+				Any other attempt throws an error.
+			</p>
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>" >',
@@ -752,6 +799,9 @@ $documentation->showSidebar(); ?>
 					'',
 					'    	// Add overridable context var',
 					'       Dolibarr.setContextVar(\'yourKey2\', \'YourValue\', true);',
+					'',
+					'    	// Replace the overridable context var',
+					'       Dolibarr.setContextVar(\'yourKey2\', \'YourNewValue\', true);',
 					'    });',
 					'</script>',
 				);

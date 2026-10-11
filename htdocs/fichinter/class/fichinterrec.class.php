@@ -212,8 +212,8 @@ class FichinterRec extends Fichinter
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($fichintsrc->duration) ? ((int) $fichintsrc->duration) : '0');
 			$sql .= ", ".(!empty($this->description) ? ("'".$this->db->escape($this->description)."'") : "null");
-			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
-			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
+			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape((string) $fichintsrc->note_private)."'") : "null");
+			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape((string) $fichintsrc->note_public)."'") : "null");
 			$sql .= ", ".((int) $user->id);
 			// If the company is the same, keep the links to the project and the contract
 			if ($this->socid == $fichintsrc->socid) {
@@ -243,7 +243,6 @@ class FichinterRec extends Fichinter
 				 */
 				$num = count($fichintsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
-					//var_dump($fichintsrc->lines[$i]);
 					$result_insert = $this->addLineRec(
 						$fichintsrc->lines[$i]->desc,
 						$fichintsrc->lines[$i]->duration,

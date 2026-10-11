@@ -33,7 +33,7 @@ class CommonSellistField extends CommonField
 	/**
 	 * @var string    Url of the AJAX page for get options of the sellist
 	 */
-	public static $ajaxUrl = DOL_URL_ROOT . '/core/ajax/ajaxfield.php';
+	public static $ajaxUrl = DOL_URL_ROOT . '/core/ajax/ajaxsellistfield.php';
 
 	/**
 	 * @var array<string,array<string,array{label:string,parent:string}>>	Options cached

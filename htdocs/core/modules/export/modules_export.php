@@ -123,7 +123,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle = opendir($dir);
 
-		// Recherche des fichiers drivers exports disponibles
+		// Search for available export driver files
 		$i = 0;
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {

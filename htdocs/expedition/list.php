@@ -163,6 +163,10 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -627,30 +631,24 @@ if (empty($reshook)) {
 	}
 
 	// If massaction is close
-	if ($massaction == 'classifyclose') {
+	if ($massaction == 'classifyclose' && $permissiontoadd) {
 		$error = 0;
 		$selectids = GETPOST('toselect', 'array:int');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);
 			$result = $object->setClosed();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		$massaction = $action = 'classifyclose';
 
-		if ($result < 0) {
-			$error++;
-		}
-
-
 		if (!$error) {
-			$db->commit();
-
 			setEventMessage($langs->trans("Close Done"));
 			header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		} else {
-			$db->rollback();
 			exit;
 		}
 	}
@@ -809,9 +807,9 @@ if ($search_all) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('e.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('e.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -1048,9 +1046,11 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if ($user->hasRight('expedition', 'creer')) {
+	$arrayofmassactions['classifyclose'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close");
+}
 if ($user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }
@@ -1547,7 +1547,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $object->getNomUrl(1);
+			print $object->getNomUrl(1, '', 0, 0, 0, -1, 1);
 			$filedir = ($conf->expedition->multidir_output[$object->entity ?? $conf->entity] ? $conf->expedition->multidir_output[$object->entity ?? $conf->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);

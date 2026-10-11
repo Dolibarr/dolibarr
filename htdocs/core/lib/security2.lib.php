@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -468,6 +468,38 @@ function encodedecode_dbpassconf($level = 0)
 }
 
 /**
+ * Return if the 'none' password generation model (the one that applies no rule at all) is
+ * forbidden on this installation. It is locked by the conf.php variable
+ * $dolibarr_main_restrict_password_generation_none (exposed as
+ * $conf->file->restrict_password_generation_none), which can only be changed by editing the
+ * config file on the server.
+ * When forbidden, the model is hidden from the admin screen, cannot be selected, and any value
+ * already set to 'none' falls back to the 'standard' model at generation/validation time.
+ *
+ * @return	int		1 if the 'none' model must not be used, 0 otherwise
+ */
+function isPasswordGenerationNoneForbidden()
+{
+	global $conf;
+
+	return empty($conf->file->restrict_password_generation_none) ? 0 : 1;
+}
+
+/**
+ * Return the lowest value allowed for the minimum length (first field of USER_PASSWORD_PATTERN) of
+ * the 'Perso' password generation model. When the 'none' model is forbidden on this installation
+ * (see isPasswordGenerationNoneForbidden()), the Perso model must not be tuned down to a weak
+ * value either, so a floor of 10 characters is enforced in the admin screen, when saving the
+ * pattern, and at generation/validation time.
+ *
+ * @return	int		Minimum allowed value for the Perso model minimum length
+ */
+function getPasswordPatternMinLength()
+{
+	return isPasswordGenerationNoneForbidden() ? 10 : 1;
+}
+
+/**
  * Return a generated password using default module
  *
  * @param		bool			$generic				true=Create a generic key (32 chars/numbers), false=Create a password using the configured password generation module.
@@ -475,6 +507,7 @@ function encodedecode_dbpassconf($level = 0)
  * @param       int        		$length                	Length of random string (Used only if $generic is true)
  * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
@@ -535,14 +568,20 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		}
 		$generated_password = implode('', $passwordArray);
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
-		$nomclass = "modGeneratePass".ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
-		$nomfichier = $nomclass.".class.php";
-		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
-		$genhandler = new $nomclass($db, $conf, $langs, $user);
-		'@phan-var-force ModeleGenPassword $genhandler';
-		$generated_password = $genhandler->getNewGeneratedPassword();
-		unset($genhandler);
+		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/modules_genpassword.php";
+		$genhandler = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $db, $conf, $langs, $user);
+		if (!$genhandler) {
+			// Configured generator class could not be resolved (e.g. the module that provided it
+			// was disabled/removed after being selected) — fall back to the always-available
+			// 'standard' generator rather than silently generating and persisting an empty password.
+			dol_syslog("getRandomPassword: generator class for USER_PASSWORD_GENERATED='".getDolGlobalString('USER_PASSWORD_GENERATED')."' not found, falling back to standard", LOG_WARNING);
+			$genhandler = ModeleGenPassword::loadAndInstantiate('standard', $db, $conf, $langs, $user);
+		}
+		if ($genhandler) {
+			'@phan-var-force ModeleGenPassword $genhandler';
+			$generated_password = $genhandler->getNewGeneratedPassword();
+			unset($genhandler);
+		}
 	}
 
 	// Do we have to discard some alphabetic characters ? (usually $replaceambiguouschars is empty)
@@ -580,19 +619,19 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= "\n".'<!-- Js code to suggest a security key -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 		$out .= 'jQuery(document).ready(function () {
-            jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+            jQuery(\'#'.dol_escape_js($htmlnameofbutton).'\').click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log(\'dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is \'+currenttoken+\'. We will fill '.dol_escape_js($htmlname).'\');
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
 					token: currenttoken
 				},
 				function(result) {
-					if (jQuery("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
-						jQuery("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					if (jQuery(\'input#'.dol_escape_js($htmlname).'\').attr("type") == "password") {
+						jQuery(\'input#'.dol_escape_js($htmlname).'\').attr("type", "text");
 					}
-					jQuery("#'.dol_escape_js($htmlname).'").val(result);
+					jQuery(\'#'.dol_escape_js($htmlname).'\').val(result);
 				});
             });
 		});'."\n";

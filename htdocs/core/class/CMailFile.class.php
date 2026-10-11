@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
@@ -586,7 +586,8 @@ class CMailFile
 				$smtps->setInReplyTo($this->in_reply_to);
 			}
 			if (!empty($this->references)) {
-				$smtps->setReferences($this->references);
+				// SMTPs expects the list of Message-IDs as an array
+				$smtps->setReferences(preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY));
 			}
 
 			if (!empty($moreinheader)) {
@@ -690,12 +691,17 @@ class CMailFile
 			}
 
 			// Add 'In-Reply-To:' header
+			// Swift adds the angle brackets itself and rejects an id that still has them
 			if (!empty($this->in_reply_to)) {
-				$headers->addIdHeader('In-Reply-To', $this->in_reply_to);
+				$headers->addIdHeader('In-Reply-To', trim($this->in_reply_to, " \t<>"));
 			}
 			// Add 'References:' header
 			if (!empty($this->references)) {
-				$headers->addIdHeader('References', $this->references);
+				$references = array();
+				foreach (preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY) as $reference) {
+					$references[] = trim($reference, '<>');
+				}
+				$headers->addIdHeader('References', $references);
 			}
 
 			if (!empty($moreinheader)) {
@@ -1115,6 +1121,14 @@ class CMailFile
 
 				$port = getDolGlobalInt($keyforsmtpport);
 
+				$tmpresult = $this->checkSmtpTargetAllowed($server, $port);
+				if ($tmpresult) {
+					$this->error = $tmpresult;
+					$this->errors[] = $this->error;
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
+					return false;
+				}
+
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($port); // 25, 465...;
 
@@ -1162,6 +1176,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1172,6 +1187,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1208,7 +1226,8 @@ class CMailFile
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
-							$this->error = "Token not found";
+							$this->error = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".$this->error, LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1306,6 +1325,14 @@ class CMailFile
 					$secure = 'tls';
 				}
 
+				$tmpresult = $this->checkSmtpTargetAllowed($server, getDolGlobalInt($keyforsmtpport));
+				if ($tmpresult) {
+					$this->error = $tmpresult;
+					$this->errors[] = $this->error;
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
+					return false;
+				}
+
 				$this->transport = new Swift_SmtpTransport($server, getDolGlobalInt($keyforsmtpport), $secure);
 
 				if (getDolGlobalString($keyforsmtpid)) {
@@ -1349,6 +1376,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1359,6 +1387,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1393,8 +1424,8 @@ class CMailFile
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
-							$this->errors[] = "Token not found";
-							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
+							$this->errors[] = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".end($this->errors), LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1435,6 +1466,8 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+
+				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -1548,8 +1581,14 @@ class CMailFile
 
 			if ($fp) {
 				if ($this->sendmode == 'mail') {
+					fwrite($fp, 'Param 1 (dest) for mail(): Not yet available in dump');
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 2 (topic) for mail(): '.$this->subject);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 4 (headers) for mail():'."\n");
 					fwrite($fp, $this->headers);
 					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 3 (message) for mail():'."\n");
 					fwrite($fp, $this->message);
 				} elseif ($this->sendmode == 'smtps') {
 					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
@@ -1953,33 +1992,44 @@ class CMailFile
 		return $out;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Try to create a socket connection
+	 * Check that the SMTP target (host and port) is allowed.
+	 * Only standard SMTP ports are allowed and private or reserved IPs are refused, unless the
+	 * variable $dolibarr_mail_allow_unrestricted_smtp_target is defined into the conf.php file
+	 * (for example to use an internal SMTP relay).
+	 * This is used to prevent the email setup to be used to scan the internal network.
 	 *
-	 * @param 	string							$host		Add ssl:// for SSL/TLS.
-	 * @param 	int								$port		Example: 25, 465
-	 * @return	int|array<string,int|string>				Socket id if OK, = 0 if KO
+	 * @param	string		$host		Host name or IP. Can contain a protocol prefix like ssl:// and a port is not expected here.
+	 * @param	int|string	$port		Port number, example: 25, 465
+	 * @return	string					Empty string if allowed, error message if refused
 	 */
-	public function check_server_port($host, $port)
+	public function checkSmtpTargetAllowed($host, $port)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		// phpcs:enable
-		$_retVal = 0;
-		$timeout = 5; // Timeout in seconds
+		global $dolibarr_mail_allow_unrestricted_smtp_target;
 
-		// Parse $newUrl
-		$newUrlArray = parse_url($host);
-		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		if (!empty($dolibarr_mail_allow_unrestricted_smtp_target)) {
+			return '';
+		}
+
+		$listofallowedports = array('25', '465', '587', '2525');
+		if ($host && !in_array((string) $port, $listofallowedports)) {
+			return 'Error bad SMTP port. Only ports '.implode(', ', $listofallowedports).' are allowed. You can set the parameter dolibarr_mail_allow_unrestricted_smtp_target into the conf.php file to remove this restriction.';
+		}
+
+		// Parse $host
+		$newUrlArray = parse_url((string) $host);
+		$hosttocheck = $newUrlArray['host'] ?? ($newUrlArray['path'] ?? '');
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		if (empty($hosttocheck)) {
+			return '';
+		}
 
 		// Deny some reserved host names
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
-			$info = array();
-			$info['http_code'] = 400;
-			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
-			return $info;
+			return 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
@@ -2002,11 +2052,33 @@ class CMailFile
 			$tmpresult = isIPAllowed($iptocheck, $localurl);
 
 			if ($tmpresult) {
-				$info = array();
-				$info['http_code'] = 400;
-				$info['content'] = $tmpresult;
-				return $info;
+				return $tmpresult;
 			}
+		}
+
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Try to create a socket connection
+	 *
+	 * @param 	string							$host		Add ssl:// for SSL/TLS.
+	 * @param 	int								$port		Example: 25, 465
+	 * @return	int|array<string,int|string>				Socket id if OK, = 0 if KO
+	 */
+	public function check_server_port($host, $port)
+	{
+		// phpcs:enable
+		$_retVal = 0;
+		$timeout = 5; // Timeout in seconds
+
+		$tmpresult = $this->checkSmtpTargetAllowed((string) $host, (int) $port);
+		if ($tmpresult) {
+			$info = array();
+			$info['http_code'] = 400;
+			$info['content'] = $tmpresult;
+			return $info;
 		}
 
 		if (function_exists('fsockopen')) {
@@ -2171,7 +2243,7 @@ class CMailFile
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
-							// On garde que le nom de l'image
+							// Keep only the image name
 							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];

@@ -235,6 +235,11 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('expensereport').')';
+		if (is_object($user) && !$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = $user->getAllChildIds(1);
+			$this->export_sql_end[$r] .= ' AND d.fk_user_author IN ('.$this->db->sanitize(implode(',', $childids)).')';
+		}
 	}
 
 	/**

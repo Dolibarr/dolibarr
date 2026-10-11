@@ -5,6 +5,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,13 @@ if ($action == 'update') {
 	if (GETPOSTISSET('AI_ASK_FOR_CONFIRMATION')) {
 		$res = dolibarr_set_const($db, "AI_ASK_FOR_CONFIRMATION", GETPOSTINT("AI_ASK_FOR_CONFIRMATION"), 'int', 0, '', $conf->entity);
 		if ($res <= 0) $error++;
+	}
+
+	if (GETPOSTISSET('AI_CHAT_CONTEXT_AUTO_EXCHANGES')) {
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_AUTO_EXCHANGES", max(0, GETPOSTINT("AI_CHAT_CONTEXT_AUTO_EXCHANGES")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
 	}
 
 	if (GETPOSTISSET('AI_LOG_RETENTION')) {
@@ -184,7 +192,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'assistant', "MCP Server", -1, "ai");
 
-print '<span class="opacitymedium">' . $langs->trans("ConfigAssistantHelp") . '</span><br><br>';
+//print '<span class="opacitymedium">' . $langs->trans("ConfigAssistantHelp") . '</span><br><br>';
 
 $form = new Form($db);
 
@@ -272,6 +280,20 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	];
 	print $form->selectarray('AI_ASK_FOR_CONFIRMATION', $confirmation_options, getDolGlobalInt('AI_ASK_FOR_CONFIRMATION', 1), 0, 0, 0);
 	print '</td>';
+	print '</tr>';
+
+	// Second step: a write asked, a read answered -> run the read, then the write
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIChatTwoStepWrite"), $langs->trans("AIChatTwoStepWriteHelp")) . '</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_CHAT_TWO_STEP_WRITE');
+	print '</td>';
+	print '</tr>';
+
+	// Context window of the chat
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
+	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0) . '"></td>';
 	print '</tr>';
 
 	// Logging

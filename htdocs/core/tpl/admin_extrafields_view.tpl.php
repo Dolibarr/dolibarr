@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		    <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,17 @@
  *
  * @var string $action
  * @var string $elementtype
+ * @var ?string $pagekey
  * @var string $textobject
  * @var string[] $type2label
  */
+'
+@phan-var-force string $action
+@phan-var-force string $elementtype
+@phan-var-force ?string $pagekey
+@phan-var-force string $textobject
+@phan-var-force string[] $type2label
+';
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
@@ -44,11 +52,15 @@ if (empty($langs) || !is_object($langs)) {
 }
 global $action, $form, $langs;
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
+
 $langs->load("modulebuilder");
 
 if ($action == 'delete') {
 	$attributekey = GETPOST('attrname', 'aZ09');
-	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey", $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey&elementtype=".urlencode($pagekeyforurl), $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
 }
 
 ?>
@@ -59,7 +71,7 @@ if ($action == 'delete') {
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '' : $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create&elementtype='.urlencode($pagekeyforurl), '', 1);
 /*} else {
 	$newcardbutton = '';
 }*/
@@ -128,10 +140,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Actions
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'">'.img_delete().'</a>';
 			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
-				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
 			}
 			print '</td>'."\n";
 		}
@@ -151,9 +163,12 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Key
 		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type
-		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
+		$fieldtype = $extrafields->attributes[$elementtype]['type'][$key];
+		// $type2label may not contain the type of an already existing field when that type has been
+		// disabled by config (icon => MAIN_USE_EXTRAFIELDS_ICON, point/polygon/... => MAIN_USE_GEOPHP)
+		$typetoshow = $type2label[$fieldtype] ?? $fieldtype;
 		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
-		print getPictoForType($extrafields->attributes[$elementtype]['type'][$key]);
+		print getPictoForType($fieldtype);
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
@@ -206,10 +221,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Actions
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="right nowraponall">';
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'">'.img_delete().'</a>';
 			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
-				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
 			}
 			print '</td>'."\n";
 		}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -261,9 +261,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						$sendtoid[] = ((int) $val);
 					}
-				} elseif ($val) {	// $val is the Id of a contact
+				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
+				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
+					$tmparray[] = sanitizeVal($val, 'alphawithlgt');
 				}
 			}
 		}
@@ -303,9 +305,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					// Recipient was provided from combo list
 					$tmparray[] = dol_string_nospecial((string) $contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
-				} elseif ($val) {				// $val is the Id of a contact
+				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
+				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
+					$tmparray[] = sanitizeVal($val, 'alphawithlgt');
 				}
 			}
 		}
@@ -354,12 +358,12 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$emailsendersignature = $obj->signature;
 				}
 			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
-				$sql = "SELECT rowid, ".$db->sanitize($email_from)." FROM ".MAIN_DB_PREFIX."c_email_templates";
+				$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates";
 				$sql .= " WHERE rowid = ".(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$email_from = $obj->$email_from;
+					$email_from = $obj->email_from;
 				}
 			} else {
 				$email_from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
@@ -380,7 +384,26 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// <img alt="" src="'.$urlwithroot.'viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 			$message = preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $message);
 
-			$sendtobcc = GETPOST('sendtoccc', 'alphawithlgt');
+			$tmparrayccc = array();
+			if (trim(GETPOST('sendtoccc', 'alphawithlgt'))) {
+				$tmparrayccc[] = trim(GETPOST('sendtoccc', 'alphawithlgt'));
+			}
+			$receiverccc = GETPOST('receiverccc', 'alphawithlgt');
+			if (!is_array($receiverccc)) {
+				$receiverccc = ($receiverccc && $receiverccc != '-1') ? array($receiverccc) : array();
+			}
+			foreach ($receiverccc as $val) {
+				if ($val == 'thirdparty') {	// Key selected means current thirdparty
+					$tmparrayccc[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				} elseif ($val == 'contact') {	// Key selected means current contact
+					$tmparrayccc[] = dol_string_nospecial((string) $contact->name, ' ', array(",")).' <'.$contact->email.'>';
+				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
+					$tmparrayccc[] = $thirdparty->contact_get_property((int) $val, 'email');
+				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
+					$tmparrayccc[] = sanitizeVal($val, 'alphawithlgt');
+				}
+			}
+			$sendtobcc = implode(',', $tmparrayccc);
 			// Autocomplete the $sendtobcc
 			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
 			if (!empty($autocopy)) {
@@ -472,14 +495,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// TODO Fix this: Such properties does not exists on all objects
 						$object->context['email_msgid'] = $mailfile->msgid;
-						$object->context['$email_from'] = $email_from;
+						$object->context['email_from'] = $email_from;
 						$object->context['email_subject'] = $subject;
 						$object->context['email_to'] = $sendto;
 						$object->context['email_tocc'] = $sendtocc;
 						$object->context['email_tobcc'] = $sendtobcc;
 
 						$object->email_msgid = $mailfile->msgid; // @todo Set msgid into $mailfile after sending
-						$object->$email_from = $email_from;
+						$object->email_from = $email_from;
 						$object->email_subject = $subject;
 						$object->email_to = $sendto;
 						$object->email_tocc = $sendtocc;

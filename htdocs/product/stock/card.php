@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -202,6 +202,7 @@ if (empty($reshook)) {
 	// Delete warehouse
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
 		$object->fetch(GETPOSTINT('id'));
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
@@ -382,12 +383,12 @@ if ($action == 'create') {
 
 	// Phone / Fax
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+	print $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+	print '</td></tr>';
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+	print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+	print '</td></tr>';
 
 	// Warehouse usage
 	if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
@@ -625,7 +626,7 @@ if ($action == 'create') {
 					}
 
 					if ($user->hasRight('stock', 'supprimer')) {
-						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
 					}
@@ -719,7 +720,10 @@ if ($action == 'create') {
 			$sql .= "p.accountancy_code_buy_export,";
 			$sql .= 'p.barcode,';
 			if ($separatedPMP) {
-				$sql .= " pa.pmp as ppmp,";
+				// COALESCE: a product may have no row yet in llx_product_perentity (rows are created
+				// on the first stock movement), so fall back on the global p.pmp like Product::fetch()
+				// does, instead of showing an empty AWP.
+				$sql .= " COALESCE(pa.pmp, p.pmp) as ppmp,";
 			} else {
 				$sql .= " p.pmp as ppmp,";
 			}
@@ -727,7 +731,13 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
-			$sql .= ", (ps.reel * p.pmp) as svalue";
+			// svalue is the sort key of the "estimated value" column, so it must use the same AWP
+			// as ppmp above (the displayed value is recomputed in PHP from ppmp).
+			if ($separatedPMP) {
+				$sql .= ", (ps.reel * COALESCE(pa.pmp, p.pmp)) as svalue";
+			} else {
+				$sql .= ", (ps.reel * p.pmp) as svalue";
+			}
 			// Add fields from hooks
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -738,7 +748,9 @@ if ($action == 'create') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 
 			if ($separatedPMP) {
-				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+				// LEFT JOIN (not an inner join): a product with no llx_product_perentity row must
+				// still be listed in the warehouse content, falling back on the global p.pmp.
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = ".((int) $conf->entity);
 			}
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
@@ -751,9 +763,6 @@ if ($action == 'create') {
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
 
-			if ($separatedPMP) {
-				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
-			}
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
@@ -932,7 +941,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent">';
 
 			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" class="width200" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" class="minwidth300" value="'.$object->lieu.'"></td></tr>';
 
@@ -982,11 +991,11 @@ if ($action == 'create') {
 
 			// Phone / Fax
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+			print $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+			print '</td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+			print '</td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

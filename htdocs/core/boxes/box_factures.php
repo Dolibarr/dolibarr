@@ -91,28 +91,27 @@ class box_factures extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
-			$sql .= ", SUM(pf.amount) as am";
+			// Amount already paid is computed only for the invoices returned (subquery), not with a join + GROUP BY
+			// on all invoices, so the database can stop after reading the $max last rows of the date index.
+			$sql .= ", (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture,";
-			$sql .= " ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
-				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			}
+			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.fk_statut > 0";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+				// EXISTS and not a join: a sale representative can be linked several times to the same thirdparty
+				// (one row per contact type), and there is no more GROUP BY to remove the duplicates
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $user->id).")";
 			}
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
-			$sql .= " f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datef, f.paye, f.fk_statut, f.datec, f.tms, f.date_lim_reglement";
+			// Second sort key is f.rowid (part of every index) and not f.ref, so the index on datef or tms can be used
 			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
-				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+				$sql .= " ORDER BY f.datef DESC, f.rowid DESC ";
 			} else {
-				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+				$sql .= " ORDER BY f.tms DESC, f.rowid DESC ";
 			}
 			$sql .= $this->db->plimit($max, 0);
 

@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
-	/** @var mysqli Database object */
+	/** @var false|mysqli Database object */
 	public $db;
 	//! Database type
 	public $type = 'mysqli';
@@ -58,8 +58,9 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$pass		Password of database user
 	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
+	 *	@param	    bool	$forcenew	Not used by this driver: mysqli always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter, constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -132,7 +133,7 @@ class DoliDBMysqli extends DoliDB
 						// To upgrade database default, you can do: ALTER DATABASE databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
-					} catch (Exception $e) {
+					} catch (Throwable $e) {
 						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
 						print "<br>\n";
@@ -172,18 +173,12 @@ class DoliDBMysqli extends DoliDB
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
-				if (preg_match('/utf8mb4/', $clientmustbe)) {
-					$clientmustbe = 'utf8';
-				}
 
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
+					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci or utf8mb4_unicode_ci
 
 					$collation = (string) $conf->db->dolibarr_main_db_collation;
 					if (preg_match('/latin1/', $collation)) {
-						$collation = 'utf8_unicode_ci';
-					}
-					if (preg_match('/utf8mb4/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
 
@@ -236,7 +231,7 @@ class DoliDBMysqli extends DoliDB
 		$result = false;
 		try {
 			$result = $this->db->select_db($database);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			// Nothing done on error
 		}
 		return $result;
@@ -251,10 +246,11 @@ class DoliDBMysqli extends DoliDB
 	 * @param   string          $passwd         Password
 	 * @param   string          $name           Name of database (not used for mysql, used for pgsql)
 	 * @param   integer         $port           Port of database server
+	 * @param   bool            $forcenew       Not used by this driver: mysqli always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 * @return  mysqli|mysqliDoli|false         Database access object
 	 * @see close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
@@ -271,7 +267,7 @@ class DoliDBMysqli extends DoliDB
 			} else {
 				$tmp = new mysqli($host, $login, $passwd, $name, $port);
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
 		return $tmp;
@@ -359,7 +355,7 @@ class DoliDBMysqli extends DoliDB
 
 		try {
 			$ret = $this->db->query($query, $result_mode);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
 			$ret = false;
 		}
@@ -514,7 +510,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset is provided, free memory
+		// If resultset is provided, free memory
 		if (is_object($resultset)) {
 			$resultset->free_result();
 		}
@@ -551,7 +547,7 @@ class DoliDBMysqli extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert a MySql error code to a generic Dolibarr error code
@@ -981,7 +977,7 @@ class DoliDBMysqli extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1021,6 +1017,15 @@ class DoliDBMysqli extends DoliDB
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if ($this->query($sql)) {
 			return 1;
+		}
+		// A table where columns were added and dropped many times refuses any new one with "Row size too
+		// large" (error 1118), because the space the dropped columns took in the physical record is only
+		// given back by a table rebuild. Rebuilding needs privileges the database user of the application
+		// may not have, so we only tell the administrator which command recovers the table.
+		if ($this->lasterrno == 'DB_ERROR_1118') {
+			$hint = "Table ".$table." must be rebuilt by your database administrator with the command: ALTER TABLE ".$table." FORCE";
+			dol_syslog(get_class($this)."::DDLAddField ".$hint, LOG_WARNING);
+			$this->lasterror .= ' - '.$hint;
 		}
 		return -1;
 	}
@@ -1342,10 +1347,11 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
-	 * Prepare a SQL statement for execution
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
 	 *
-	 * @param string $sql SQL query to prepare
+	 * @param string $sql SQL query with '?' placeholders
 	 * @return false|mysqli_stmt
+	 * @see execute()
 	 */
 	public function prepare($sql)
 	{
@@ -1353,14 +1359,103 @@ class DoliDBMysqli extends DoliDB
 			$this->lasterror = 'Not connected to database';
 			return false;
 		}
-		$stmt = $this->db->prepare($sql);
-		if ($stmt === false) {
-			$this->lasterror = $this->db->error;
+		dol_syslog(get_class($this)."::prepare sql=".$sql, LOG_DEBUG);
+		try {
+			$stmt = $this->db->prepare($sql);
+		} catch (Throwable $e) {
+			// With MYSQLI_REPORT_STRICT, mysqli::prepare() throws instead of returning false
+			$stmt = false;
+			$this->lasterror = $e->getMessage();
+		}
+		if (!($stmt instanceof mysqli_stmt)) {
+			if (empty($this->lasterror)) {
+				$this->lasterror = $this->db->error;
+			}
 			$this->lastqueryerror = $sql;
 			return false;
 		}
 
 		return $stmt;
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param mysqli_stmt      $stmt   Statement returned by prepare()
+	 * @param array<int,mixed> $params Ordered list of values for the '?' placeholders
+	 * @return mysqli_result|bool      A mysqli_result (usable with fetch_object()/num_rows()/free())
+	 *                                 for a SELECT, true for another successful statement, false on error
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		if (!($stmt instanceof mysqli_stmt)) {
+			$this->lasterror = 'execute() called with an invalid statement';
+			return false;
+		}
+
+		$this->lasterror = '';
+		$this->lastqueryerror = '';
+
+		$params = array_values($params);
+		if (count($params) > 0) {
+			$types = '';
+			foreach ($params as $k => $v) {
+				if (is_int($v) || is_bool($v)) {
+					$types .= 'i';
+					$params[$k] = (int) $v;
+				} elseif (is_float($v)) {
+					$types .= 'd';
+				} else {
+					$types .= 's'; // string; a null value is bound as NULL by mysqli
+				}
+			}
+			// mysqli_stmt::bind_param() binds by reference, so pass references
+			$bind = array($types);
+			foreach ($params as $k => $v) {
+				$bind[] = &$params[$k];
+			}
+			try {
+				$ok = call_user_func_array(array($stmt, 'bind_param'), $bind);
+			} catch (Throwable $e) {
+				$ok = false;
+				$this->lasterror = $e->getMessage();
+			}
+			if (!$ok) {
+				if (empty($this->lasterror)) {
+					$this->lasterror = $stmt->error;
+				}
+				$this->lastqueryerror = $stmt->sqlstate;
+				return false;
+			}
+		}
+
+		dol_syslog(get_class($this)."::execute (".count($params)." bound param(s))", LOG_DEBUG);
+
+		try {
+			$ok = $stmt->execute();
+		} catch (Throwable $e) {
+			// With MYSQLI_REPORT_STRICT, mysqli_stmt::execute() throws instead of returning false
+			$ok = false;
+			$this->lasterror = $e->getMessage();
+		}
+		if (!$ok) {
+			if (empty($this->lasterror)) {
+				$this->lasterror = $stmt->error;
+			}
+			$this->lastqueryerror = $stmt->sqlstate;
+			return false;
+		}
+
+		$res = $stmt->get_result();
+		if ($res instanceof mysqli_result) {
+			$this->_results = $res;
+			return $res;
+		}
+
+		// Not a result-returning statement (INSERT/UPDATE/DELETE...). affected_rows() reads
+		// $this->db->affected_rows which mysqlnd updates after a prepared execute().
+		return true;
 	}
 }
 

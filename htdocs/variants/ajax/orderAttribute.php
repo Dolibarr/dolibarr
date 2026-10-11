@@ -56,6 +56,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 $result = restrictedArea($user, 'variants');
+if (!$user->hasRight('variants', 'write')) {
+	accessforbidden();
+}
 
 
 /*

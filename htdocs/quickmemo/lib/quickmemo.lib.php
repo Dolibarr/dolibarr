@@ -40,13 +40,13 @@ function quickmemoAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl(DOL_DOCUMENT_ROOT."/quickmemo/admin/setup.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/quickmemo/admin/setup.php");
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
 
-	//  $head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/memo_extrafields.php", 1));
+	//  $head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'quickmemo_memo'));
 	//  $head[$h][1] = $langs->trans("ExtraFields");
 	//  $nbExtrafields = (isset($extrafields->attributes['memo']['label']) && is_countable($extrafields->attributes['memo']['label'])) ? count($extrafields->attributes['memo']['label']) : 0;
 	//  if ($nbExtrafields > 0) {

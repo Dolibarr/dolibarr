@@ -264,7 +264,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of interventions would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('text/calendar', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -290,7 +291,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -313,7 +315,8 @@ if ($format == 'rss') {
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of interventions would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('application/rss+xml', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -328,7 +331,7 @@ if ($format == 'rss') {
 			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {
@@ -344,7 +347,8 @@ if ($format == 'rss') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));

@@ -179,7 +179,22 @@ print '</th>';
 
 // Fields for situation invoice
 if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-	print '<th class="linecolcycleref right">'.$langs->trans('CumulativeProgression').'</th>';
+	print '<th class="linecolcycleref right">';
+	print $langs->trans('CumulativeProgression');
+
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+	if ($object->element == 'facture' && $object->status == $object::STATUS_DRAFT) {
+		if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'progressforalllines') {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=progressforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickprogressforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+		}
+		if (GETPOST('mode', 'aZ09') == 'progressforalllines') {
+			print '<div class="progressforalllines inline-block nowraponall">';
+			print '<input class="inline-block smallpaddingimp width50 right" name="progressforalllines" value="" placeholder="%">';
+			print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+			print '</div>';
+		}
+	}
+	print '</th>';
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
 	}

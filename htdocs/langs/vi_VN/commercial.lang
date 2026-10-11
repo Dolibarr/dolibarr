@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Đây là thông tin can thiệp đ�
 ThisIsInformationOnDocumentToSignSociete_rib=Đây là thông tin về SEPA Ủy quyền ký
 ThisIsInformationOnDocumentToSignExpedition= Đây là thông tin về lô hàng cần ký
 SignatureProposalRef=Chữ ký của báo giá / đề xuất thương mại %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Chữ ký hợp đồng %s
 SignatureFichinterRef=Chữ ký can thiệp %s
 SignatureSociete_ribRef=Chữ ký của Ủy quyền SEPA %s

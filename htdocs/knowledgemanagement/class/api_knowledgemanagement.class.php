@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 
 dol_include_once('/knowledgemanagement/class/knowledgerecord.class.php');
 dol_include_once('/categories/class/categorie.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -174,9 +175,9 @@ class KnowledgeManagement extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select products of given category
@@ -336,7 +337,7 @@ class KnowledgeManagement extends DolibarrApi
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->knowledgerecord->error);
+			throw new RestException(500, $this->knowledgerecord->errorsToString());
 		}
 	}
 
@@ -367,7 +368,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		if (!$this->knowledgerecord->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->errorsToString());
 		}
 
 		return array(
@@ -475,7 +476,7 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);
@@ -512,7 +513,7 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);

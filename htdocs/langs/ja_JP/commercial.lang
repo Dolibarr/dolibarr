@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=署名すべき出張に関して
 ThisIsInformationOnDocumentToSignSociete_rib=これは 署名すべきSEPA委任状に関する情報
 ThisIsInformationOnDocumentToSignExpedition= これは署名する出荷に関する情報
 SignatureProposalRef=見積書/商取引提案%s の署名
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=契約書の署名 %s
 SignatureFichinterRef=出張の署名 %s
 SignatureSociete_ribRef=SEPA 委任状の署名 %s

@@ -48,6 +48,7 @@
 			$tmpcrit = preg_replace('/^.*(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '\1', $tmpcrit);	// the condition after the name of the field
 			$user->rights->accounting->mouvements = new stdClass();
 			// mise a jour des reponses utilisateurs dans la base
+			if ($inHeader && ($trim === '' || preg_match('/^(?:from|de|da|von|van|sent|enviado|enviada|date|fecha|data|to|para|subject|asunto|assunto|objet|betreff|onderwerp|message-id|in-reply-to|references)\s*:/iu', $trim))) {
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
 			jQuery("#mouvement").change(function() {

@@ -239,6 +239,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 2) {
 		$inj += preg_match('/[:;"\'<>\?\(\){}\$%#]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/\.\./', $val); // PHP_SELF is a file system (or url path without parameters). It must not contains '..'
 	}
 
 	return $inj;

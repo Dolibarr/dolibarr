@@ -24,7 +24,7 @@
  *      \remarks    To run this script as CLI: phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning
@@ -169,7 +169,8 @@ class DAVLibTest extends CommonClassTest
 			$this->assertSame(8, strlen($expectedKey), "CDAV_URI_KEY for host '$host' should be 8 characters");
 
 			// Check that the generated key is alphanumeric (hex)
-			$this->assertMatchesRegularExpression('/^[0-9a-f]{8}$/', $expectedKey, "CDAV_URI_KEY for host '$host' should be hex");
+			$match = preg_match('/^[0-9a-f]{8}$/', $expectedKey);
+			$this->assertSame(1, $match, "CDAV_URI_KEY for host '$host' should be hex");
 		}
 
 		print __METHOD__." OK\n";

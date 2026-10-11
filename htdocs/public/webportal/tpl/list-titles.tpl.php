@@ -52,7 +52,7 @@ $formList->nbColumn = 0;
 
 	// Hook fields
 	$parameters = array('sortList' => $sortList);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalPrintFieldListTitle', $parameters, $context);
 	print $hookmanager->resPrint;
 
 	// Remain to pay

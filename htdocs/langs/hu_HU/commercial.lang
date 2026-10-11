@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Ez az aláírandó beavatkozásra von
 ThisIsInformationOnDocumentToSignSociete_rib=Ez az aláírandó SEPA megbízásról szóló információ
 ThisIsInformationOnDocumentToSignExpedition= Ez az aláírandó szállítmányra vonatkozó információ
 SignatureProposalRef=Árajánlat aláírása: %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Szerződés aláírása %s
 SignatureFichinterRef=A beavatkozás aláírása %s
 SignatureSociete_ribRef=A SEPA megbízás aláírása %s

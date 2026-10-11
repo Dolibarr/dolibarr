@@ -57,7 +57,7 @@ llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 ?>
 
 <!-- CSS & JS INCLUDES -->
-<link rel="stylesheet" href="<?php echo dol_buildpath('/ai/css/ai_assistant.css', 1); ?>">
+<link rel="stylesheet" href="<?php echo dol_buildpath('/ai/css/ai_assistant.css', 1).'?v='.urlencode((string) (@filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css') ?: DOL_VERSION)); ?>">
 
 <script type="module" src="<?php echo dol_buildpath('/ai/js/ai_assistant.js', 1).'?v='.urlencode((string) (@filemtime(DOL_DOCUMENT_ROOT.'/ai/js/ai_assistant.js') ?: DOL_VERSION)); ?>"></script>
 

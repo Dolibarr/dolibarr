@@ -155,9 +155,6 @@ ErrNoZipEngine=এই PHP-এ %s ফাইল জিপ/আনজিপ কর�
 ErrorFileMustBeADolibarrPackage=ফাইল %s অবশ্যই একটি ডলিবার জিপ প্যাকেজ হতে হবে
 ErrorModuleFileRequired=আপনাকে অবশ্যই একটি Dolibarr মডিউল প্যাকেজ ফাইল নির্বাচন করতে হবে
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL ইনস্টল করা নেই, পেপালের সাথে কথা বলার জন্য এটি অপরিহার্য
 ErrorFailedToAddToMailmanList=মেইলম্যান তালিকা %s বা SPIP বেসে রেকর্ড %s যোগ করতে ব্যর্থ হয়েছে
 ErrorFailedToRemoveToMailmanList=মেইলম্যান তালিকা %s বা SPIP বেস থেকে রেকর্ড %s সরাতে ব্যর্থ হয়েছে
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=%s এর মতো সন্দেহজনক অ-অফিসিয়াল প্ল্যাটফর্ম থেকে মডিউল (প্রদত্ত বা বিনামূল্যে) কেনার সময় সতর্ক থাকুন।
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = সুইসকিউআর ইনভয়েস শুধুমাত্র ক্রেডিট ট্রান্সফার পেমেন্টের সাথে প্রদান করা সেট ইনভয়েসে যোগ করা যেতে পারে।
 SwissQrCreditorAddressInvalid = পাওনাদারের ঠিকানা অবৈধ (জিপ এবং শহর সেট আছে? (%s)

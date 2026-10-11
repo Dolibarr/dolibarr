@@ -290,7 +290,7 @@ class QuickMemo {
 		// note.style.background = memo.color || '#fff8a6';
 		// note.style.setProperty('--memo-color', memo.color || '#fff8a6');
 		this.setMemoColor(note, memo.color);
-		if (parseInt(memo.id) === 0) { // Uniquement pour les nouvelles notes en cours de création
+		if (parseInt(memo.id) === 0) { // Only for new notes being created
 			const maxZ = this.memos.length > 0 ? Math.max(...this.memos.map(x => parseInt(x.memo.pos_z) || 0)) : 0;
 			memo.pos_z = maxZ + 1;
 		}
@@ -777,10 +777,10 @@ class QuickMemo {
 		btn.innerHTML = `<i class="fa ${iconClass}" style="pointer-events: none;"></i>${sub}`;
 		btn.title = title;
 
-		// On empêche le bouton de voler le focus définitivement,
-		// mais on le laisse être le "relatedTarget"
+		// We prevent the button from permanently stealing focus,
+		// but we let it be the "relatedTarget"
 		btn.addEventListener('mousedown', (e) => {
-			e.preventDefault(); // Empêche le curseur de quitter le textarea
+			e.preventDefault(); // Prevent the cursor from leaving the textarea
 			this.applyMarkdown(textarea, type, toolbar);
 		});
 
@@ -975,7 +975,7 @@ class QuickMemo {
 		// Check that it is a 6-character hex
 		let c = color.startsWith('#') ? color.substring(1) : color;
 		if (c.length !== 6 || !/^[0-9a-fA-F]{6}$/.test(c)) {
-			// invalide → considère clair par défaut
+			// invalid -> treat as light by default
 			note.classList.remove('--memo-is-dark');
 			return;
 		}
@@ -1071,8 +1071,8 @@ class QuickMemo {
 
 		let startX, startY;
 		let dragTimeout = null;
-		const startDragDelay = 300; // ms : temps d'attente au click avant de passer en mode drag
-		const selectionThreshold = 5; // px : distance en pixels qui désactive le drag pour passer en mode selection
+		const startDragDelay = 300; // ms: wait time on click before switching to drag mode
+		const selectionThreshold = 5; // px: distance in pixels that disables drag to switch to selection mode
 		const textarea = el.querySelector('textarea');
 
 		// Auto-scroll configuration
@@ -1571,21 +1571,21 @@ class QuickMemo {
 	 * @param {HTMLElement} note
 	 */
 	async updateMemoTxt(memo, note) {
-		// Sélectionne les éléments existants
+		// Select the existing elements
 		const userCreateEl = note.querySelector('.quickmemo-info__user-create-name');
 		const dateCreateEl = note.querySelector('.quickmemo-info__date_create');
 		const dateUpdateEl = note.querySelector('.quickmemo-info__date_update');
 		const userChangeEl = note.querySelector('.quickmemo-info__user-change-name');
 
-		// Mets à jour la création
+		// Update the creation info
 		if (userCreateEl) userCreateEl.textContent = memo.user_name || '';
 		if (dateCreateEl) dateCreateEl.textContent = memo.date_creation || '';
 
-		// Détermine si des changements existent
+		// Determine whether any changes exist
 		const hasDateChange = memo.date_change && memo.date_change.trim() !== '' && memo.date_creation !== memo.date_change;
 		const hasUserChange = memo.user_change_name && memo.user_change_name.trim() !== '' && memo.user_name !== memo.user_change_name;
 
-		// Mets à jour ou vide les infos de mise à jour
+		// Update or clear the update info
 		if (dateUpdateEl) {
 			dateUpdateEl.textContent = hasDateChange ? `${await Dolibarr.tools.langs.transNoEntities('QuickMemoModified')} : ${memo.date_change}` : '';
 		}
@@ -1635,7 +1635,7 @@ class QuickMemo {
 		// 	this.initTooltips(btn);
 		// }
 
-		// ===== création du bouton delete =====
+		// ===== create the delete button =====
 		const deleteBtn = document.createElement('span');
 		deleteBtn.className = 'quickmemo-model-delete';
 		deleteBtn.title = Dolibarr.tools.langs.transNoEntities('QuickMemoDeleteModel')
@@ -1737,7 +1737,7 @@ class QuickMemo {
 			root.removeAttribute('title');
 		}
 
-		// Mise à jour à chaque survol (si le title a été modifié dynamiquement)
+		// Update on every hover (in case the title was changed dynamically)
 		const syncTitle = () => {
 			const currentTitle = root.getAttribute('title');
 			if (currentTitle) {
@@ -1750,7 +1750,7 @@ class QuickMemo {
 		root.addEventListener('mouseenter', syncTitle);
 		root.addEventListener('focus', syncTitle);
 
-		// Stocker les handlers pour pouvoir les retirer proprement
+		// Store the handlers so they can be removed cleanly
 		root._quickmemoTooltipSync = syncTitle;
 
 		// JQUERY STYLE
@@ -1815,7 +1815,7 @@ class QuickMemo {
 
 		this._modelReorderContainer = container;
 
-		// Placeholder unique pour tout le container
+		// Single placeholder for the whole container
 		if (!this._modelReorderPlaceholder) {
 			this._modelReorderPlaceholder = document.createElement('div');
 			this._modelReorderPlaceholder.className = 'quickmemo-model-placeholder';
@@ -1831,11 +1831,11 @@ class QuickMemo {
 	 */
 	attachDragEventsForModelReorder(btn) {
 
-		if (btn.dataset.reorderInit) return; // évite double bind
+		if (btn.dataset.reorderInit) return; // avoid double bind
 		btn.dataset.reorderInit = '1';
 
 		const container = this._modelReorderContainer;
-		const placeholder = this._modelReorderPlaceholder; // utiliser le placeholder unique
+		const placeholder = this._modelReorderPlaceholder; // use the single placeholder
 
 		btn.setAttribute('draggable', true);
 
@@ -1884,12 +1884,12 @@ class QuickMemo {
 		const container = document.getElementById(this.param.menuDropDownModelListContainerId);
 		const buttons = [...container.querySelectorAll('.quickmemo-model-btn')];
 
-		// recalcul complet des positions à partir du DOM
+		// full recalculation of positions from the DOM
 		const orderData = buttons.map((btn, index) => {
 
-			const newRank = buttons.length - index; // cohérent avec ton ORDER BY rank DESC
+			const newRank = buttons.length - index; // consistent with your ORDER BY rank DESC
 
-			// on met à jour le dataset pour rester cohérent en mémoire
+			// update the dataset to stay consistent in memory
 			btn.dataset.rank = newRank;
 
 			return {
@@ -1900,7 +1900,7 @@ class QuickMemo {
 
 		const payload = {order: orderData};
 
-		// si on veut envoyer moved, on calcule sa vraie position
+		// if we want to send moved, calculate its real position
 		if (movedId !== null) {
 
 			const newIndex = buttons.findIndex(
@@ -2133,25 +2133,25 @@ class QuickMemo {
 	 * @param {Object} model - The template data.
 	 */
 	async createMemoFromModel(model) {
-		// 1. Trouver le z-index maximum actuel parmi les notes affichées
-		const allMemos = this.container.querySelectorAll('.quick-memo-note'); // Adaptez le sélecteur si besoin
+		// 1. Find the current maximum z-index among the displayed notes
+		const allMemos = this.container.querySelectorAll('.quick-memo-note'); // Adjust the selector if needed
 		let maxZ = 0;
 		allMemos.forEach(el => {
 			const z = parseInt(el.style.zIndex) || 0;
 			if (z > maxZ) maxZ = z;
 		});
 
-		// La nouvelle note doit être au-dessus de tout le monde
+		// The new note must be on top of everything else
 		const newZ = maxZ + 1;
 
 
-		// Crée un objet memo minimal à partir du modèle
+		// Create a minimal memo object from the model
 		const memo = {
-			id: 0, // rowid temporaire avant sauvegarde
+			id: 0, // temporary rowid before save
 			deleteBtn: false,
 			note: model.note || '',
-			pos_w: model.pos_w || 250,   // largeur par défaut
-			pos_h: model.pos_h || 250,  // hauteur par défaut
+			pos_w: model.pos_w || 250,   // default width
+			pos_h: model.pos_h || 250,  // default height
 			pos_x: model.pos_x || 0,
 			pos_y: model.pos_y || 0,
 			pos_z: newZ || 0,
@@ -2169,11 +2169,11 @@ class QuickMemo {
 		memo.pos_x = Math.max(32, (containerWidth - memo.pos_w) / 2);
 		memo.pos_y = scrollY + Math.max(32, (viewportHeight - memo.pos_h) / 2);
 
-		// Render le memo
+		// Render the memo
 		const noteEl = await this.renderMemo(memo);
 		this.bringToTop(noteEl);
 
-		// Focus sur le textarea
+		// Focus on the textarea
 		const textarea = noteEl.querySelector('textarea');
 		if (textarea) {
 			textarea.focus();
@@ -2683,14 +2683,14 @@ class QuickMemo {
 
 		document.body.appendChild(dialog);
 
-		// Quand le dialog se ferme (Esc, cancel, close()), on le détruit
+		// When the dialog closes (Esc, cancel, close()), destroy it
 		dialog.addEventListener('close', () => {
 			dialog.remove();
 		});
 
-		// Empêche le close automatique
+		// Prevent the automatic close
 		dialog.addEventListener('cancel', (e) => {
-			e.preventDefault(); // optionnel
+			e.preventDefault(); // optional
 			dialog.close();
 		});
 
@@ -2762,7 +2762,7 @@ class QuickMemo {
 						'errors'
 					);
 
-					console.error('Erreur fetch création modèle', err);
+					console.error('Error fetching model creation', err);
 
 				} finally {
 					dialog.close();
@@ -2820,7 +2820,7 @@ class QuickMemo {
 				close: true,
 				confirm: true,
 				cancel: false,
-				...(options.btn || {}) // Merge seulement les boutons précisés dans options
+				...(options.btn || {}) // Only merge the buttons specified in options
 			}
 		};
 

@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionUnknown=Desconocido
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir

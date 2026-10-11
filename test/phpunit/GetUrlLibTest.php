@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -273,6 +273,43 @@ class GetUrlLibTest extends CommonClassTest
 
 
 	/**
+	 * testGetURLContentHostParsing
+	 *
+	 * How getURLContent() reads the host of the URL before the anti SSRF check: numeric forms, host names that look numeric,
+	 * malformed URLs, IPv6.
+	 *
+	 * @return void
+	 */
+	public function testGetURLContentHostParsing()
+	{
+		$url = 'https://0X7F000001';	// Upper case hex integer
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", $tmp['curl_error_msg'], 'An upper case hex integer is a numeric address too');
+
+		// A single label host name made of hex letters is a host name, not a numeric address (it may or may not resolve here)
+		$url = 'http://db/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2, -1, 2, 3);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertStringNotContainsString('numeric address', $tmp['curl_error_msg'], 'db is a host name, not a numeric address');
+
+		// A malformed URL (parse_url() returns false) must be refused without any PHP warning
+		$url = 'http:///foo';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code']);
+		$this->assertStringStartsWith('Bad URL', $tmp['curl_error_msg']);
+
+		// An IPv6 target must reach curl with a valid CURLOPT_CONNECT_TO (error 49 was "No valid port number in connect to host string")
+		$url = 'http://[::1]:8/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 1, -1, 2, 3);		// Only local URL
+		print __METHOD__." url=".$url." curl_error_no=".$tmp['curl_error_no']." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertNotEquals(400, $tmp['http_code'], 'A local IPv6 URL must pass the anti SSRF check when local URLs are allowed');
+		$this->assertNotEquals(49, $tmp['curl_error_no'], 'CURLOPT_CONNECT_TO must be valid for an IPv6: '.$tmp['curl_error_msg']);
+	}
+
+
+	/**
 	 * testGetURLContent
 	 *
 	 * @return int
@@ -354,6 +391,57 @@ class GetUrlLibTest extends CommonClassTest
 		print __METHOD__." url=".$url."\n";
 		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
 
+		// Cloud metadata servers must be refused even when local URLs are allowed (the reserved range check does not apply then)
+		$url = 'http://169.254.169.254/latest/meta-data/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);		// Local and external URL allowed
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the AWS/GCP/Azure metadata IP should be refused when local URLs are allowed');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// 168.63.129.16 (Azure) is in the public address space, so only the metadata list can catch it
+		$url = 'http://168.63.129.16/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the Azure metadata IP should be refused');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// The reserved host name check must not depend on the case
+		$url = 'http://METADATA.GOOGLE.INTERNAL/computeMetadata/v1/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to metadata.google.internal should be refused whatever the case of the host name');
+		$this->assertStringContainsString('Google metadata', $tmp['curl_error_msg']);
+
 		return 0;
+	}
+
+	/**
+	 * testRemoveCredentialHeaders
+	 *
+	 * @return	void
+	 */
+	public function testRemoveCredentialHeaders()
+	{
+		$headers = [
+			'Accept: application/json',
+			'Authorization: Bearer secret',
+			'authorization: Basic c2VjcmV0',
+			'Proxy-Authorization: Basic c2VjcmV0',
+			'Cookie: DOLSESSID_xxx=secret',
+			'X-Api-Key: secret',
+			'api-key: secret',
+			'DOLAPIKEY: secret',
+			'x-goog-api-key: secret',
+			'X-Custom: kept',
+			'Content-Type: application/json',
+			'malformed header without colon',
+		];
+
+		$result = removeCredentialHeaders($headers);
+
+		$this->assertSame(['Accept: application/json', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+
+		$this->assertSame([], removeCredentialHeaders([]));
+		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
 	}
 }

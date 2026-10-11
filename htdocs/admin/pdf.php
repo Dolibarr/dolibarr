@@ -232,9 +232,9 @@ $arraydetailsforpdffoot = array(
 );
 
 $arraylistofpdfformat = array(
-	0 => $langs->transnoentitiesnoconv('PDF 1.7'),
-	1 => $langs->transnoentitiesnoconv('PDF/A-1b'),
-	3 => $langs->transnoentitiesnoconv('PDF/A-3b'),
+	0 => 'PDF 1.7 ('.$langs->transnoentitiesnoconv("Recommended").')',
+	1 => 'PDF 1.4/A-1b',
+	3 => 'PDF 1.7/A-3b',
 );
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
@@ -284,7 +284,7 @@ print "<br>\n";
 
 $noCountryCode = empty($mysoc->country_code);
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 

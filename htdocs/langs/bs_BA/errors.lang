@@ -155,9 +155,6 @@ ErrNoZipEngine=No engine to zip/unzip %s file in this PHP
 ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
 ErrorModuleFileRequired=You must select a Dolibarr module package file
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
 ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
 ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Budite oprezni prilikom nabavljanja modula (plaćenog ili besplatnog) sa sumnjive neslužbene platforme poput %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR faktura se može dodati samo na fakture postavljene da se plaćaju plaćanjem kreditnim transferom.
 SwissQrCreditorAddressInvalid = Adresa kreditora je nevažeća (da li je ZIP i postavljen na grad? (%s)

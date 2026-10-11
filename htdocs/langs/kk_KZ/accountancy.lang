@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Қайырымдылықтарды тіркеу үшін пайдаланылатын шот (шот жоспарынан) (Қайырымдылық модулі)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Мүшелік жазылымдарын тіркеу үшін пайдаланылатын тіркелгі (шот жоспарынан) (мүшелік модулі – егер мүшелік шот-фактурасыз жазылған болса)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Клиент депозитін тіркеу үшін әдепкі шот ретінде пайдаланылатын шот (шот жоспарынан).
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Клиент шотын жеке шот ретінде бастапқы төлемдер жолына арналған қосалқы кітапшада сақтаңыз (егер өшірілсе, бастапқы төлем жолдарының жеке шоты бос қалады)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Жеткізуші шотын бастапқы төлемдер жолына арналған еншілес кітаптағы жеке шот ретінде сақтаңыз (егер өшірілсе, бастапқы төлем жолдарының жеке шоты бос қалады)
