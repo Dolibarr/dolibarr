@@ -156,14 +156,17 @@ abstract class McpTool
 	}
 
 	/**
-	 * Why a write cannot be done with these arguments, said before the user is
-	 * asked to confirm it (a record it needs is missing, unknown or ambiguous).
+	 * Reason why a write cannot run at all, checked before any confirmation.
+	 *
+	 * A write bound to fail (target record missing, in a status that refuses the
+	 * change, product not found) is refused here, so the user is not asked to
+	 * approve something that would only fail afterwards.
 	 *
 	 * @param string $toolName Tool that would run.
 	 * @param array<string,mixed> $args Arguments it would run with.
-	 * @return string Reason shown instead of the confirmation, or '' to proceed.
+	 * @return string Error message, or '' when the write may proceed to confirmation.
 	 */
-	public function writeRefusal(string $toolName, array $args)
+	public function writePrecheck(string $toolName, array $args)
 	{
 		return '';
 	}
