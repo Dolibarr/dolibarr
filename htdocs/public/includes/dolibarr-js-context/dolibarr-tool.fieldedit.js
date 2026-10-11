@@ -9,6 +9,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * A click on the link replaces the value by the input of the field (core/ajax/objectfield.php, CommonObject::ajaxInputField()).
 	 * The value is saved with Dolibarr.tools.object().setField(), then the value and the other fields changed by the update
 	 * (containers [data-dol-field] of the page) are refreshed.
+	 * When fields of the object are refreshed by another controller (object:FieldsRefreshed, ex: totals after a change of lines),
+	 * the date of modification known by the edition is updated, so the next update is not refused.
 	 */
 
 	/**
@@ -92,26 +94,6 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		if (!window.CKEDITOR || !window.CKEDITOR.instances) return;
 		Object.values(window.CKEDITOR.instances).forEach(instance => {
 			if (instance.element && el.contains(instance.element.$)) instance.destroy(true);
-		});
-	}
-
-	/**
-	 * Refresh the other fields changed by an update, displayed in containers [data-dol-field] of the page
-	 * @param {string} element
-	 * @param {number} id
-	 * @param {Object} fields {field: {value, html}} returned by core/ajax/objectfield.php
-	 * @param {string} editedField Field already refreshed
-	 */
-	function refreshFields(element, id, fields, editedField) {
-		Object.entries(fields || {}).forEach(([field, data]) => {
-			if (field === editedField || typeof data.html !== 'string') return;
-
-			document.querySelectorAll(`[data-dol-field="${CSS.escape(field)}"]`).forEach(el => {
-				// Containers without element are the ones of the object of the card
-				if (el.dataset.dolElement && (el.dataset.dolElement !== element || parseInt(el.dataset.dolId, 10) !== id)) return;
-				if (el.dataset.dolEditing) return;
-				Dolibarr.tools.replaceContent(el, data.html, { mode: 'inner' });
-			});
 		});
 	}
 
@@ -201,7 +183,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 			close(result.html);
 			link.dataset.dolTms = String(controller.tms);
-			refreshFields(element, id, result.fields, field);
+			controller.updateFields(result.fields, { except: [field] });
 		};
 
 		saveButton.addEventListener('click', save);
@@ -218,6 +200,16 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		return true;
 	}
+
+	// Values displayed refreshed by another controller: they are the ones of the object at this date of modification
+	Dolibarr.on('object:FieldsRefreshed', data => {
+		if (!data || !data.tms) return;
+		const controller = controllers.get(data.element + ':' + data.id);
+		if (controller && data.tms > controller.tms) controller.tms = data.tms;
+		document.querySelectorAll(`a[data-dol-edit-field][data-dol-element="${CSS.escape(data.element)}"][data-dol-id="${CSS.escape(String(data.id))}"]`).forEach(link => {
+			if ((parseInt(link.dataset.dolTms, 10) || 0) < data.tms) link.dataset.dolTms = String(data.tms);
+		});
+	});
 
 	// Edit links printed by Form::editfieldkey() for fields edited in ajax
 	document.addEventListener('click', event => {

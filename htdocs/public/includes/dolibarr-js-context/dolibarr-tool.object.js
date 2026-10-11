@@ -6,9 +6,14 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - setField() saves one field with core/ajax/objectfield.php (only fields editable from UI, see CommonObject::isFieldEditableFromUi())
 	 * - reload() reloads sections and document lines of the card, the elements are replaced by their new version with Dolibarr.tools.replaceContent() :
 	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1)
+	 * - refreshFields() refreshes the values of fields displayed in containers [data-dol-field] (ex: totals), with core/ajax/objectfield.php.
+	 *   When lines are reloaded, the fields displayed are refreshed too, so the totals follow the changes of the lines.
+	 *
+	 * Containers of fields are [data-dol-field][data-dol-element][data-dol-id] (see Form::editfieldval()), or [data-dol-field]
+	 * without element for the object of the card (ex: totals of the cards).
 	 *
 	 * Hooks : object:BeforeFieldUpdate (await hook, can change the value or cancel), object:FieldUpdated, object:FieldUpdateError,
-	 * object:SectionReloaded, object:LineReloaded, object:LineRemoved, and reloadDocumentLine for each line reloaded.
+	 * object:FieldsRefreshed, object:SectionReloaded, object:LineReloaded, object:LineRemoved, and reloadDocumentLine for each line reloaded.
 	 */
 
 	/**
@@ -150,35 +155,47 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * - lines with core/ajax/objectline.php, only the lines asked are rendered.
 		 *   A line not in the page yet is inserted at its place, a line deleted is removed from the page.
 		 * - sections with the card loaded without its lines (nolines=1), only if sections are asked
+		 * - fields with core/ajax/objectfield.php, by default the fields displayed in the page when lines are reloaded (totals...)
 		 *
 		 * @param {Object} what
-		 * @param {string[]} [what.sections] CSS selectors of the sections, ex: ['#builddoc', '[data-dol-field="total_ht"]']
+		 * @param {string[]} [what.sections] CSS selectors of the sections, ex: ['#builddoc']
 		 * @param {number[]} [what.lines] Ids of the lines (rows tr#row-{id})
+		 * @param {string[]|null} [what.fields=null] Fields to refresh, see refreshFields(). Default null: the fields displayed in the page
+		 *                                           if lines are reloaded, none otherwise. [] to refresh no field.
 		 * @param {Object} [options]
 		 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
 		 * @param {AbortSignal} [options.signal]
-		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, lineids: number[]|null, tms: number|null, document: Document|null}>}
-		 *          New elements (null if not found, or line deleted), ids of all the lines of the object in the order of the card and
-		 *          date of modification of the object (null if no line asked), and the card loaded to use other parts of it (null if no section asked)
+		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>}
+		 *          New elements (null if not found, or line deleted), fields refreshed {field: {value, html}}, ids of all the lines of the object
+		 *          in the order of the card and date of modification of the object (null if no line nor field asked),
+		 *          and the card loaded to use other parts of it (null if no section asked)
 		 */
 		async reload(what = {}, options = {}) {
-			const { sections = [], lines = [] } = what;
+			const { sections = [], lines = [], fields = null } = what;
 			const { showErrors = true, signal = undefined } = options;
 
 			const lineIds = lines.map(lineId => parseInt(lineId, 10)).filter(lineId => lineId > 0);
+			const fieldNames = fields === null ? (lineIds.length > 0 ? this.getDisplayedFields() : []) : fields;
 
-			const [linesData, doc] = await Promise.all([
+			const [linesData, doc, fieldsData] = await Promise.all([
 				lineIds.length > 0 ? this.fetchLines(lineIds, { showErrors, signal }) : null,
 				sections.length > 0 ? this.fetchCardWithoutLines({ showErrors, signal }) : null,
+				fieldNames.length > 0 ? this.fetchFields(fieldNames, { showErrors, signal }) : null,
 			]);
 
+			const tms = (linesData && linesData.tms) || (fieldsData && fieldsData.tms);
 			const result = {
 				sections: {},
 				lines: {},
+				fields: fieldsData ? fieldsData.fields : {},
 				lineids: linesData ? linesData.lineids.map(lineId => parseInt(lineId, 10)) : null,
-				tms: linesData && linesData.tms ? parseInt(linesData.tms, 10) : null,
+				tms: tms ? parseInt(tms, 10) : null,
 				document: doc,
 			};
+
+			if (fieldsData) {
+				this.updateFields(fieldsData.fields, { tms: result.tms });
+			}
 
 			sections.forEach(selector => {
 				const node = this.replaceFrom(doc, selector);
@@ -194,6 +211,81 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			});
 
 			return result;
+		}
+
+		/**
+		 * Refresh the values of fields displayed in the page, in containers [data-dol-field] of the object.
+		 * Only fields readable from UI are returned by core/ajax/objectfield.php (see CommonObject::isFieldReadableFromUi()).
+		 * The values displayed are then the ones of the object saved: the date of modification of the controller is updated.
+		 *
+		 * @param {string[]|null} [fields=null] Field names, null for all the fields displayed in the page
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<Object>} Fields refreshed {field: {value, html}}
+		 */
+		async refreshFields(fields = null, options = {}) {
+			const fieldNames = fields === null ? this.getDisplayedFields() : fields;
+			if (fieldNames.length === 0) return {};
+
+			const data = await this.fetchFields(fieldNames, options);
+			this.updateFields(data.fields, { tms: data.tms ? parseInt(data.tms, 10) : null });
+
+			return data.fields;
+		}
+
+		/**
+		 * Load the values of fields with core/ajax/objectfield.php
+		 * @param {string[]} fields
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<{element: string, id: number, fields: Object, tms: number|null}>}
+		 */
+		fetchFields(fields, options = {}) {
+			return Dolibarr.tools.fetch.get(Dolibarr.getContextVar('DOL_URL_ROOT') + '/core/ajax/objectfield.php', {
+				element: this.element,
+				id: this.id,
+				fields: fields.join(','),
+			}, { responseType: 'json', unwrap: true, ...options });
+		}
+
+		/**
+		 * Containers [data-dol-field] of the fields of this object in the page, the ones without element are the object of the card
+		 * @param {string} [field] Field name, all fields if not set
+		 * @returns {HTMLElement[]}
+		 */
+		getFieldContainers(field) {
+			const selector = field ? `[data-dol-field="${CSS.escape(field)}"]` : '[data-dol-field]';
+
+			return Array.from(document.querySelectorAll(selector)).filter(el => !el.dataset.dolElement
+				|| (el.dataset.dolElement === this.element && parseInt(el.dataset.dolId, 10) === this.id));
+		}
+
+		/**
+		 * Names of the fields of this object displayed in the page
+		 * @returns {string[]}
+		 */
+		getDisplayedFields() {
+			return [...new Set(this.getFieldContainers().map(el => el.dataset.dolField))];
+		}
+
+		/**
+		 * Replace the values displayed of fields by their new html, containers in edition (data-dol-editing) are not changed
+		 * @param {Object} fields {field: {value, html}} returned by core/ajax/objectfield.php
+		 * @param {Object} [options]
+		 * @param {string[]} [options.except] Fields not to replace (ex: a field already refreshed)
+		 * @param {number|null} [options.tms] Date of modification of the object, the values displayed are the ones of this date
+		 */
+		updateFields(fields, options = {}) {
+			const { except = [], tms = null } = options;
+
+			Object.entries(fields || {}).forEach(([field, data]) => {
+				if (except.includes(field) || !data || typeof data.html !== 'string') return;
+				this.getFieldContainers(field).forEach(el => {
+					if (el.dataset.dolEditing) return;
+					Dolibarr.tools.replaceContent(el, data.html, { mode: 'inner' });
+				});
+			});
+
+			if (tms) this.tms = tms;
+			Dolibarr.executeHook('object:FieldsRefreshed', this.hookData({ fields, tms: this.tms }));
 		}
 
 		/**

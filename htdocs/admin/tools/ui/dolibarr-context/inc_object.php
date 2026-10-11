@@ -67,15 +67,16 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	</p>
 	<ul>
 		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, tms}</code>, where <code>html</code> is the new value formatted for display. For a field with several inputs, like a date, <code>value</code> is an object with the suffixes of the inputs of <code>showInputField()</code>: <code>{day: 15, month: 10, year: 2026}</code>.</li>
-		<li><code>reload({sections, lines}, options)</code> replaces the sections (CSS selectors) and the document lines (rows <code>tr#row-{id}</code>) by their new version. The lines are loaded alone with <code>core/ajax/objectline.php</code>, the sections with the card loaded without its lines (<code>nolines=1</code>), the two requests in parallel. A line not in the page yet is inserted at its place, a line deleted is removed from the page. <code>reloadSection(selector)</code> and <code>reloadLine(lineId)</code> are shortcuts.</li>
+		<li><code>reload({sections, lines}, options)</code> replaces the sections (CSS selectors) and the document lines (rows <code>tr#row-{id}</code>) by their new version. The lines are loaded alone with <code>core/ajax/objectline.php</code>, the sections with the card loaded without its lines (<code>nolines=1</code>), the two requests in parallel. A line not in the page yet is inserted at its place, a line deleted is removed from the page. <code>reloadSection(selector)</code> and <code>reloadLine(lineId)</code> are shortcuts. When lines are reloaded, the fields displayed in the page (totals...) are refreshed in the same time, see below: give <code>fields</code> to choose them, <code>[]</code> for none.</li>
+		<li><code>refreshFields(fields, options)</code> refreshes the values of fields displayed in the page with <code>core/ajax/objectfield.php</code>, all the fields displayed when <code>fields</code> is not given. Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. A value is displayed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>, or <code>[data-dol-field]</code> without element for the object of the card, like the totals of the cards: <code>&lt;td data-dol-field="total_ht"&gt;</code>. The values are output by <code>CommonObject::ajaxOutputField()</code>, the totals with their currency.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>object:*</code> hooks of this object only, and returns a function to remove the listener.</li>
 	</ul>
 	<p>
-		Options of the controller: <code>tms</code> is the date of modification of the object displayed. When given, an update is refused (HTTP 409) if the object was modified since. It is updated after each update.
+		Options of the controller: <code>tms</code> is the date of modification of the object displayed. When given, an update is refused (HTTP 409) if the object was modified since. It is updated after each update and each refresh of fields.
 		<code>url</code> is the url of the card used to reload sections, the current page without action parameters by default.
 	</p>
 	<p>
-		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines are asked), and <code>document</code> the card loaded (when sections are asked).
+		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>fields</code> the fields refreshed <code>{field: {value, html}}</code>, <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines or fields are refreshed), and <code>document</code> the card loaded (when sections are asked).
 	</p>
 	<p>
 		<b>Note:</b> loading the card renews the anti CSRF token of the session. The tokens of the page (meta tags, and forms if the token is renewed on each call) are updated with the ones of the card loaded.
@@ -97,8 +98,11 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		'			}',
 		'		}',
 		'',
-		'		// Reload a line and the totals, with one request',
-		'		await propal.reload({ lines: [345], sections: [\'[data-dol-field="total_ht"]\', \'[data-dol-field="total_ttc"]\'] });',
+		'		// Reload a line changed, the totals displayed are refreshed in the same time',
+		'		await propal.reload({ lines: [345] });',
+		'',
+		'		// Refresh only some fields',
+		'		await propal.refreshFields([\'total_ht\', \'total_ttc\']);',
 		'',
 		'		// Listen to updates of this object only',
 		'		const stop = propal.on(\'FieldUpdated\', ({ field, value }) => Dolibarr.log(field + \' saved\'));',
@@ -112,6 +116,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<li><code>object:BeforeFieldUpdate</code> (await hook, see <code>Dolibarr.onAwait()</code>): <code>{element, id, field, value}</code>. A listener returns the data, with another <code>value</code> if needed, or <code>false</code> to cancel the update.</li>
 		<li><code>object:FieldUpdated</code>: <code>{element, id, field, value, data}</code>.</li>
 		<li><code>object:FieldUpdateError</code>: <code>{element, id, field, value, error}</code>.</li>
+		<li><code>object:FieldsRefreshed</code>: <code>{element, id, fields, tms}</code>, when values of fields displayed are refreshed (also after an update). <code>tms</code> is the date of modification of the object for these values.</li>
 		<li><code>object:SectionReloaded</code>: <code>{element, id, selector, node}</code>.</li>
 		<li><code>object:LineReloaded</code>: <code>{element, id, lineId, node}</code>. The hook <code>reloadDocumentLine</code> <code>{lineId, lineElement}</code> is also executed for each line: modules adding cells or behaviors to the lines must listen to it.</li>
 		<li><code>object:LineRemoved</code>: <code>{element, id, lineId}</code>, when a line deleted is removed from the page.</li>
