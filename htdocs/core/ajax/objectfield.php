@@ -61,6 +61,8 @@ $isupdate = ($_SERVER['REQUEST_METHOD'] === 'POST');
 
 $langs->load('errors');
 
+top_httphead('application/json');
+
 $jsonResponse = new JsonResponse();
 
 // Update only with POST, so the CSRF token is always checked. An invalid token empties $_POST, so $field is empty.
