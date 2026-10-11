@@ -328,24 +328,19 @@ class JsonResponse
 	}
 
 	/**
-	 * Send the JSON response to the client (JSON content-type header, HTTP response code and payload),
-	 * close the database handler and stop the script.
+	 * Send the JSON response to the client (JSON content-type header, HTTP response code and payload)
+	 * and stop the script. The database handler is closed by dol_shutdown().
 	 *
 	 * @return void
 	 */
 	public function output()
 	{
-		global $db;
-
 		if (!headers_sent()) {
 			top_httphead('application/json');
 		}
 
 		print $this->getResponse();
 
-		if (is_object($db)) {
-			$db->close();
-		}
 		exit;
 	}
 }
