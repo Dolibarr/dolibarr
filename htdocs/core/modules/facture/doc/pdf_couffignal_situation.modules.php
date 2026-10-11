@@ -992,13 +992,13 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		// Store every page tab_height for clean grid display
 		$tab_height_in_page = array();
 
-		for ($i = 0; $i < $nblignes; $i++) {
 			/***** Manage taxes *****/
 			$taxes = $this->get_taxes($object, $this->sign);
 			$this->tva = $taxes["tva"];
 			$this->localtax1 = $taxes["localtax1"];
 			$this->localtax2 = $taxes["localtax2"];
 
+		for ($i = 0; $i < $nblignes; $i++) {
 			/**** Support for special endlines (internal) ****/
 			if ($object->lines[$i]->special_code == 10050172) {
 				// Only ensure proper VAT management
