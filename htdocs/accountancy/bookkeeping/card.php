@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "bills", "compta", "errors"));
+$langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -291,6 +291,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (dol_strlen(GETPOST('ref', 'alpha')) > 30) {	// Size of field ref in database
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -440,6 +441,7 @@ if (empty($reshook)) {
 	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 		$newref = GETPOST('ref', 'alpha');
 		if (dol_strlen($newref) > 30) {	// Size of field ref in database
+			$langs->load('errors');
 			$result = -1;
 			$object->error = $langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref"));
 			$object->errors = array();

@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'mails', 'contracts'));
 
 // Security check
 if (!$user->admin) { // after this test, $user->admin is always true
@@ -211,6 +211,7 @@ print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
 if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail(getDolGlobalString('NOTIFICATION_EMAIL_FROM'))) {
+	$langs->load('errors');
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
@@ -500,6 +501,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 			}
 		}
 		if (getDolGlobalString($param) && $showwarning) {
+			$langs->load('errors');
 			$s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
 		}
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseAuthorKeyword"), 1, 'help', '', 0, 2);

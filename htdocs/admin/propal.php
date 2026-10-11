@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "errors", "propal"));
+$langs->loadLangs(array("admin", "other", "propal"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -122,6 +122,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -484,6 +485,16 @@ if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
 	print '</td></tr>';
 }
 */
+
+// Reminder by email before a commercial proposal expires
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendReminderForExpiringProposalsTitle").'</td>';
+	print '<td class="right">';
+	print '<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendReminderForExpiringProposalsTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 
 // Notifications
 print '<tr class="oddeven">';

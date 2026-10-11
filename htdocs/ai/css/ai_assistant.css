@@ -5,7 +5,7 @@
  * popover (#topmenu-ai-popover shell emitted by top_menu_ai() in main.inc.php).
  *
  * Colors are mapped onto the theme CSS custom properties defined by the theme
- * (htdocs/theme/eldy/global.inc.php) so the chat follows the active palette,
+ * (htdocs/theme/eldy/styles.inc.php) so the chat follows the active palette,
  * including dark mode, with hardcoded values only as fallbacks.
  * ======================================================================== */
 
@@ -821,6 +821,10 @@ body.ai-fullpage {
     color: var(--ai-accent);
     text-decoration: none;
     font-weight: 600;
+	max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .chat-link:hover {
@@ -868,6 +872,9 @@ body.ai-fullpage {
     align-items: center;
     gap: 5px;
     transition: all 0.2s;
+}
+a.msg-action-btn.primary span {
+    color: unset;
 }
 
 .msg-action-btn:hover {
@@ -1169,3 +1176,26 @@ body.ai-fullpage {
 .ai-history-ren { border: 0; background: none; cursor: pointer; font-size: .85em; opacity: .5; color: inherit; }
 .ai-history-ren:hover { opacity: 1; color: #2c62ac; }
 #ai-history-panel .ai-sidebar-rename { flex: 1 1 auto; min-width: 0; }
+
+/* /tools debug output: one folded block per tool, parameters as indented JSON */
+.ai-tools-debug ul {
+    margin: 4px 0 10px;
+    padding-left: 18px;
+}
+.ai-tools-tool {
+    margin: 2px 0;
+}
+.ai-tools-tool summary {
+    cursor: pointer;
+}
+.ai-tools-tool > div,
+.ai-tools-tool > pre {
+    margin: 4px 0 8px 18px;
+}
+.ai-tools-tool > pre {
+    white-space: pre;
+    overflow-x: auto;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}

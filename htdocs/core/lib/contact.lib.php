@@ -96,7 +96,7 @@ function contact_prepare_head(Contact $object)
 	// Related items
 	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/consumption.php', ['id' => $object->id]);
-		$head[$tab][1] = $langs->trans("Referers");
+		$head[$tab][1] = $langs->trans("ReferringItems");
 		$head[$tab][2] = 'consumption';
 		$tab++;
 	}

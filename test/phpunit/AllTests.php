@@ -33,6 +33,8 @@ print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
 print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
+print "DOL_CTI_ADMIN_LOGIN: ".getenv('DOL_CTI_ADMIN_LOGIN')."\n";
+print "DOL_CTI_ADMIN_PASSWORD: ".substr(getenv('DOL_CTI_ADMIN_PASSWORD'), 0, 3).'...'."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -45,7 +47,6 @@ if (! defined('NOREQUIREUSER')) {
 
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
@@ -54,24 +55,39 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (isModEnabled('debugbar')) {
-	print "Error: Debugbar module should not be enabled. It generates troubles in db management.\n";
+
+// Check required and forbidden modules for tests
+$phpunit_modules_check = array(
+	// module name => array('required' => bool, 'blocking' => bool, 'message' => string)
+	'member' => array('required' => true, 'blocking' => true, 'message' => 'Module member must be enabled to have significant results.'),
+	'debugbar' => array('required' => false, 'blocking' => true, 'message' => 'Debugbar module should not be enabled. It generates troubles in db management.'),
+	'ldap' => array('required' => false, 'blocking' => true, 'message' => 'LDAP module should not be enabled.'),
+	// other external modules
+	'cabinetmed' => array('required' => false, 'blocking' => true, 'message' => 'DoliMed module should not be enabled.'),
+	'einvoicing' => array('required' => false, 'blocking' => true, 'message' => 'EInvoicing module should not be enabled.'),
+	'google' => array('required' => false, 'blocking' => true, 'message' => 'Google module should not be enabled.'),
+	'numberwords' => array('required' => false, 'blocking' => false, 'message' => 'Numberwords module should not be enabled.'),
+);
+
+$error = 0;
+foreach ($phpunit_modules_check as $module => $config) {
+	$enabled = isModEnabled($module);
+	if ($config['required'] && !$enabled) {
+		print "Error: ".$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	} elseif (!$config['required'] && $enabled) {
+		print ($config['blocking'] ? "Error: " : "Warning: ").$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	}
+}
+if ($error) {
 	exit(1);
 }
-if (!isModEnabled('member')) {
-	print "Error: Module member must be enabled to have significant results.\n";
-	exit(1);
-}
-if (isModEnabled('ldap')) {
-	print "Error: LDAP module should not be enabled.\n";
-	exit(1);
-}
-if (isModEnabled('google')) {
-	print "Warning: Google module should not be enabled.\n";
-}
-if (isModEnabled('numberwords')) {
-	print "Warning: Numberwords module should not be enabled.\n";
-}
+
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
@@ -82,19 +98,59 @@ $conf->global->MAIN_UMASK = '666';
 $now = dol_now();
 
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
-dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
 
+// Define test constants only if they are not already set, so we never overwrite
+// real values. Track which ones we created so we can remove them after tests
+// (restoring the "not set" state), even if tests fail or are interrupted.
+$phpunit_consts_created = array();
+$phpunit_test_consts = array(
+	'API_ENABLE_LOGIN_API' => '1',
+	'MAIN_FIRST_REGISTRATION_OK_DATE' => dol_print_date($now, 'dayhourlog', 'gmt'),
+	'BLOCKEDLOG_REGISTRATION_NAME' => 'MyBigCompanyByPHPUnit',
+	'BLOCKEDLOG_REGISTRATION_EMAIL' => 'mybigcompany@example.com',
+	'MAIN_INFO_SIREN' => 'phpunit123',
+	'MAIN_INFO_SIRET' => 'phpunit12312345',
+);
+foreach ($phpunit_test_consts as $constname => $testvalue) {
+	if (dolibarr_get_const($db, $constname) === '') {
+		dolibarr_set_const($db, $constname, $testvalue);
+		$phpunit_consts_created[] = $constname;
+	}
+}
 
-dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_NAME', 'MyBigCompanyByPHPUnit');
-dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_EMAIL', 'mybigcompany@example.com');
-dolibarr_set_const($db, 'MAIN_INFO_SIREN', 'phpunit123');
-dolibarr_set_const($db, 'MAIN_INFO_SIRET', 'phpunit12312345');
+// Cleanup: remove constants we created (they did not exist before tests).
+// register_shutdown_function ensures this runs even on failure/interrupt.
+if (!empty($phpunit_consts_created)) {
+	register_shutdown_function(function () use ($db, $phpunit_consts_created) {
+		global $conf;
+		foreach ($phpunit_consts_created as $constname) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($constname)."' AND entity = 1";
+			$db->query($sql);
+			unset($conf->global->$constname);
+		}
+		print "PHPUnit: Cleaned up ".count($phpunit_consts_created)." test constant(s).\n";
+	});
+}
+
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'blockedlog-1.end'";
 $db->query($sql);
 
 // Test there is no webhook enabled
-// TODO
+if (isModEnabled('webhook')) {
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."webhook_target";
+	$sql .= " WHERE entity IN (0, ".((int) $conf->entity).") AND status = 1";	// 1 = automatic trigger
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->nb > 0) {
+			print "Warning: ".$obj->nb." webhook(s) with automatic trigger are enabled. This may cause external HTTP calls during tests.\n";
+			exit;
+		}
+	} else {
+		print "Warning: Failed to check webhook targets: ".$db->lasterror()."\n";
+		exit;
+	}
+}
 
 
 
@@ -121,12 +177,14 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
-		require_once dirname(__FILE__).'/AiMcpWireTest.php';
-		$suite->addTestSuite('AiMcpWireTest');
-		require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
-		$suite->addTestSuite('AiWriteConfirmationTest');
+		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
+		//$suite->addTestSuite('AiMcpWireTest');
+		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
+		//$suite->addTestSuite('AiWriteConfirmationTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
+		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
+		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';

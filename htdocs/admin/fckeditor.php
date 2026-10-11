@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'fckeditor', 'errors', 'website'));
+$langs->loadLangs(array('admin', 'fckeditor', 'website'));
 
 $action = GETPOST('action', 'aZ09');
 // Possible modes are:
@@ -147,6 +147,7 @@ if (GETPOST('save', 'alpha')) {
 	if ($error == 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} elseif ($error == -1) {
+		$langs->load('errors');
 		setEventMessages($langs->trans("EmptyMessageNotAllowedError"), null, 'warnings');
 	} else {
 		setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');

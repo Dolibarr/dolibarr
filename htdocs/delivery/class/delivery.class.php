@@ -1152,7 +1152,7 @@ class Delivery extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'typhon';
+			$modele = 'storm';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "contracts"));
+$langs->loadLangs(array("admin", "contracts"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -118,6 +118,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}

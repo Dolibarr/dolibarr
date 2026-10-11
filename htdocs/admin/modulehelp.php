@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
+$langs->loadLangs(array('admin', 'modulebuilder', 'exports'));
 
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'aZ09');

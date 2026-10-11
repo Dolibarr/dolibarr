@@ -219,7 +219,7 @@ class Subscription extends CommonObject
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
-		$sql .= " '".$this->db->escape($this->note_private)."',";
+		$sql .= " '".$this->db->escape((string) $this->note_private)."',";
 		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
 		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
@@ -234,6 +234,16 @@ class Subscription extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->fk_type = $type;
+		}
+
+		// Update the denormalized end date of subscription of the member, like update() and delete() do
+		if (!$error) {
+			$result = $member->update_end_date($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $member->error;
+				$this->errors[] = $this->error;
+			}
 		}
 
 		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects

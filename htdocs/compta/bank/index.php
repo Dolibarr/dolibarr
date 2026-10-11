@@ -23,9 +23,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -33,6 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(['bankindex']);
@@ -50,18 +49,8 @@ $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHO
  * Actions
  */
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 
 /*
@@ -108,7 +97,7 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="2">'.$langs->trans("BankAccounts");
-	$lastmodified = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?search_status=opened" title="'.$langs->trans("FullList").'">';
+	$lastmodified = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/compta/bank/list.php', ['search_status' => 'opened']).'" title="'.$langs->trans("FullList").'">';
 	$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
 	$lastmodified .= '</a>';
 	print $lastmodified;
@@ -142,8 +131,10 @@ if ($resql) {
 			print '<td>'.$accountstatic->getNomUrl(1).'</td>';
 			print '<td>'.dol_escape_htmltag($obj->number).'</td>';
 			print '<td class="nowraponall right amount">';
-			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.((int) $obj->rowid).'">';
+			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/compta/bank/bankentries_list.php', ['id' => (int) $obj->rowid]).'">';
+			print '<span class="amount">';
 			print price($solde, 0, $langs, 1, -1, -1, $currency_code);
+			print '</span>';
 			print '</a>';
 			print '</td>';
 			print '</tr>';
@@ -194,7 +185,7 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="3">'.$langs->trans("LatestBankTransactionsModified", $max);
-	$lastmodified = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?sortfield=b.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastmodified = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/compta/bank/bankentries_list.php', ['sortfield' => 'b.tms', 'sortorder' => 'DESC']).'" title="'.$langs->trans("FullList").'">';
 	$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
 	$lastmodified .= '</a>';
 	print $lastmodified;

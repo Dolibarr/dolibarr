@@ -266,6 +266,7 @@ class Salary extends CommonObject
 				return 0;
 			}
 		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorModuleNotFound", $model);
 			$this->errors[] = $this->error;
 			return 0;

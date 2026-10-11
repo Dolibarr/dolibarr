@@ -68,6 +68,10 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
@@ -156,6 +160,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	}
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && !empty($tmptype[1]) && !empty($tmptype[2])) {
@@ -221,6 +230,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['measure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
@@ -325,6 +338,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -386,6 +404,10 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['isameasure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
@@ -490,6 +512,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -517,11 +544,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	$arrayoffields	Array of fields already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	$arrayoffields	Array of fields already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	Array of fields
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	Array of fields
  */
 function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayoffields, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -584,6 +611,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			if ((!isset($val['isamesaure']) || $val['isamesaure'] != 1) && (!isset($val['notnull']) || $val['notnull'] != '1')) {
 				$arrayoffields[$tablealias.'.'.$key]['maybenull'] = 1;
 			}
+			// Keep the attribute 'bi' of the field so the search component can discard the fields hidden on BI tool
+			if (isset($val['bi'])) {
+				$arrayoffields[$tablealias.'.'.$key]['bi'] = (int) $val['bi'];
+			}
 		}
 	}
 
@@ -610,6 +641,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {

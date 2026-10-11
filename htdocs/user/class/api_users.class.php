@@ -682,7 +682,7 @@ class Users extends DolibarrApi
 			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
-		$result = $this->useraccount->SetInGroup($group, $entity);
+		$result = $this->useraccount->setInGroup($group, $entity);
 		if (!($result > 0)) {
 			throw new RestException(500, $this->useraccount->errorsToString());
 		}
@@ -803,18 +803,28 @@ class Users extends DolibarrApi
 	 */
 	public function removeUserFromGroup($id, $group)
 	{
+		global $conf;
+
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only admin can remove users from groups');
 		}
 
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
-		$sql .= " WHERE fk_user = " . ((int) $id);
-		$sql .= " AND fk_usergroup = " . ((int) $group);
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found');
+		}
 
-		$resql = $this->db->query($sql);
+		// Same entity resolution as setGroup(): the action is done on the entity of the logged user, so an
+		// admin of one entity can not remove the group link of a user in another entity.
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && empty(DolibarrApiAccess::$user->entity)) {
+			$entity = $conf->entity;
+		} else {
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-		if (!$resql) {
-			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		$result = $this->useraccount->removeFromGroup($group, $entity);
+		if (!($result > 0)) {
+			throw new RestException(500, $this->useraccount->error);
 		}
 
 		return [

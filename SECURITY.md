@@ -12,16 +12,22 @@ Security reports are valid only on any current stable version for the last 2 maj
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Submit only 1 report per vulnerability. Reports combining several vulnerabilities, as well as reports generated using AI, will be rejected. 
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues (Due to trouble to manage issue, we do not use GitHub security Advisories). 
 
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 
-- Or send an email to security@dolibarr.org with clear textual (txt or md format) description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+- Or send an email to security@dolibarr.org with clear textual description of the report (TXT or MD format, do not submit archive, audio or video files) along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+  In such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager. A mention of your name/pseudo may be added in the commit message (no guarantee for this, our project is maintain by volunteers and they may forgot it sometimes).
 
-NOTE: Both processes are private vulnerability report processes: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
+
+NOTES:
+
+Submit only 1 report per vulnerability. Reports combining several vulnerabilities are automatically rejected.
+ 
+For both processes, advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
 
 Also, note that we are a project developed by volunteers and have no funds for bounties.
 

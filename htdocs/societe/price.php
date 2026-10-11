@@ -759,7 +759,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
-		$option = '&search_prod='.$search_prod.'&id='.$object->id.'&label='.$search_label.'&price='.$search_price.'&price_ttc='.$search_price_ttc;
+		$option = '&search_prod='.urlencode($search_prod).'&id='.$object->id.'&search_label='.urlencode($search_label).'&search_price='.urlencode($search_price).'&search_price_ttc='.urlencode($search_price_ttc);
 
 		print '<!-- view specific price for each product -->'."\n";
 

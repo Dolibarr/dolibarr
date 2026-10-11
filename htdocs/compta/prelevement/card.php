@@ -220,6 +220,10 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
+if (($id > 0 || $ref) && $object->id <= 0) {
+	recordNotFound('', 0);
+}
+
 if ($id > 0 || $ref) {
 	$head = prelevement_prepare_head($object);
 

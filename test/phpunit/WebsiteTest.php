@@ -188,6 +188,18 @@ class WebsiteTest extends CommonClassTest
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 
+		$t = '';
+		$s = '<?php $pid = pcntl_fork(); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $pid = pcntl_fork(); if (!$pid) { pcntl_exec("/usr/bin/touch", array("/tmp/totouch")); } ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
 		// Dangerous but legitimate due to option WEBSITE_PHP_ALLOW_EXEC
 
 		$conf->global->WEBSITE_PHP_ALLOW_EXEC = 1;

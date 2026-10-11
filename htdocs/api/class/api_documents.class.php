@@ -8,6 +8,7 @@
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
- * API class for receive files
+ * API class to receive files
  *
  * @since	6.0.0	Initial implementation
  *
@@ -529,6 +530,10 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
+			}
+		} elseif ($modulepart == 'reception') {
+			if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {

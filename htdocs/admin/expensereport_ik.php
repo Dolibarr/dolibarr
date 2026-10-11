@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
+$langs->loadLangs(array("admin", "trips", "other", "dict"));
 
 $error = 0;
 

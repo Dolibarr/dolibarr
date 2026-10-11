@@ -65,7 +65,7 @@ $checksok = 1;
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "admin"));
 
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;
@@ -262,6 +262,7 @@ if (!empty($extensionok)) {
 }
 if (!empty($extensionko)) {
 	//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	$langs->load('errors');
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPDoesNotSupport", '<b>'.implode(', ', $extensionko).'</b>')."<br>\n";
 }

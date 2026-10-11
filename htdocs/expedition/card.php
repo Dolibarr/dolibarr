@@ -2858,7 +2858,7 @@ if ($action == 'create' && $usercancreate) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -3634,7 +3634,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-						} elseif (count($lines[$i]->detail_children ?? []) > 1) {
+						} elseif (is_array($lines[$i]->detail_children) && count($lines[$i]->detail_children) > 1) {
 							$detail = '';
 							foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 								foreach ($child_stock_list as $warehouse_id => $total_qty) {

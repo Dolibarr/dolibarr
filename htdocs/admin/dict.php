@@ -103,7 +103,7 @@ const DICT_PRODUCTBATCH_QCSTATUS = 43;
 const DICT_ASSET_DISPOSAL_TYPE = 44;
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
+$langs->loadLangs(array("admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -290,7 +290,7 @@ $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom a
 $tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.phone_code, c.trunk_prefix, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
-$tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
+$tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible as deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.module, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, t.einvoice_vatex, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM "
@@ -388,7 +388,7 @@ $tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
 $tabfield[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfield[DICT_CIVILITY] = "code,label";
 $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[DICT_TYPENT] = "code,libelle,module,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[DICT_CURRENCIES] = "code,label,unicode";
 $tabfield[DICT_TVA] = "country_id,country,department_buyer_id,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
@@ -439,7 +439,7 @@ $tabfieldmain[DICT_REGIONS] = "code,libelle,country";
 $tabfieldmain[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldmain[DICT_CIVILITY] = "code,label";
 $tabfieldmain[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfieldmain[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfieldmain[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldmain[DICT_TYPENT] = "code,libelle,module,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldmain[DICT_CURRENCIES] = "code,label,unicode";
 $tabfieldmain[DICT_TVA] = "country,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default";
@@ -485,7 +485,7 @@ $tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
 $tabfieldvalue[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldvalue[DICT_CIVILITY] = "code,label";
 $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
 $tabfieldvalue[DICT_TVA] = "country,department_buyer_id,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
@@ -532,7 +532,7 @@ $tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
 $tabfieldinsert[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldinsert[DICT_CIVILITY] = "code,label";
 $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
+$tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
 $tabfieldinsert[DICT_TVA] = "fk_pays,fk_department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note,entity";
@@ -997,14 +997,17 @@ if (empty($reshook)) {
 		}
 		if (($id == DICT_REGIONS || $id == DICT_PRODUCT_NATURE) && !is_numeric(GETPOST("code")) && GETPOST('actionadd')) {
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_COUNTRY && strlen(GETPOST("code")) != 2) {  // 2 char on code for country code
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorCountryCodeMustBe2Char", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_PAIEMENT && strlen(GETPOST("code")) >= 6) {  // 6 char max on code for payment mode codes
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
 
@@ -1116,6 +1119,7 @@ if (empty($reshook)) {
 				$_POST = array('id' => $id);
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load('errors');
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db);
@@ -2378,7 +2382,7 @@ if ($id > 0) {
 							if (empty($arrayfields[$value]['checked'])) {
 								$showfield = 0; // Column was not selected to be displayed
 							}
-							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
 							if ($value == 'entity') {

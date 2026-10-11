@@ -54,12 +54,11 @@ Note also that, to fight against excessive AI reports, there is a quota of PR pe
 
 As the PR Maintainer:
 
-7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you 
-to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
+8. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
 
 As the Release Maintainer:
 
-8. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
+9. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
 Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
@@ -124,6 +123,7 @@ The keyword can be omitted only if your commit does not fit in any of the follow
 - Perf/PERF:   for a performance enhancement
 - Doc/DOC:     for documentation
 - Qual/QUAL:   for quality code enhancement or re-engineering
+- Uxui/UXUI:   for a user interface or user experience enhancement
 - Sec/SEC:     for a security vulnerability fix
 
 #### ISSUENUM
@@ -149,7 +149,7 @@ FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID 
 or
 CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. The "Close" must be in upper case to appear into ChangeLog)
 or
-NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
+NEW|New|QUAL|Qual|PERF|Perf|UXUI|Uxui Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
 Short description (only when the commit is not introducing a feature nor closing a bug)
 

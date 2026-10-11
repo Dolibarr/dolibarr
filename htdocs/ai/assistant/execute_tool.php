@@ -62,6 +62,14 @@ if (!$user->hasRight('ai', 'assistant', 'use')) {
 // another site. Must stay after the login is done by main.inc.php (the session is needed).
 aiCheckCsrfToken('ai/assistant/execute_tool.php');
 
+
+
+/*
+ * View
+ */
+
+dol_syslog("execute_tool.php ***** BEGIN", LOG_INFO, 0, '_ai');
+
 top_httphead('application/json');
 
 
@@ -79,19 +87,10 @@ try {
 	$mcp->loadTools();
 
 	$tStart = microtime(true);
-	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
-	// A write answers with a confirmation request instead of running. This
-	// endpoint is only reached after the user pressed the confirmation button of
-	// the chat, on a CSRF-checked request, so the round trip is completed here
-	// rather than asking the same human twice. The state is still issued, bound
-	// to these arguments and consumed once, so the write leaves its trace in
-	// llx_ai_write_confirmation like any other.
-	if (is_array($result) && ($result['resultType'] ?? '') === 'input_required' && !empty($result['requestState'])) {
-		$confirmedargs = $input['arguments'] ?? [];
-		$confirmedargs['requestState'] = $result['requestState'];
-		$result = $mcp->executeTool($input['tool'], $confirmedargs);
-	}
+	dol_syslog("execute_tool.php tool = ".$input['tool'].", arguments = ".json_encode($input['arguments'] ?? []), LOG_DEBUG, 0, '_ai');
+
+	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
 	// This endpoint runs the executions the user confirmed - the calls that actually
 	// create, update or delete data - so they must land in the audit table just like
@@ -104,6 +103,11 @@ try {
 	if ((array_key_exists('success', $result) && empty($result['success'])) || !empty($result['error'])) {
 		$status = 'Error';
 		$errorMsg = isset($result['error']) ? (string) $result['error'] : '';
+	}
+	// A write answers its first call with a confirmation request, which is not an
+	// execution: log it as a confirmation, as parse_intent.php does, not as a success.
+	if (is_array($result) && ($result['resultType'] ?? '') === 'input_required') {
+		$status = 'Confirm';
 	}
 	ai_log_request(
 		$db,
@@ -118,6 +122,9 @@ try {
 		$raw,
 		(string) json_encode($result)
 	);
+
+	dol_syslog("execute_tool.php answer = ".var_export($result, true), LOG_DEBUG, 0, '_ai');
+	dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_INFO, 0, '_ai');
 
 	echo json_encode($result);
 } catch (Throwable $e) {

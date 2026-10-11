@@ -3231,7 +3231,8 @@ class Contrat extends CommonObject
 							$nbko++;
 							$listoflinesko[$contractline->id] = $contractline->id;
 
-							break;
+							// Do not break here: a template issue for one contract line (ex: not found for its language) must not
+							// prevent the reminder from being sent for the other contract lines due the same day.
 						}
 					}
 

@@ -47,6 +47,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 70;
+
 
 	/**
 	 *	Constructor

@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
+$langs->loadLangs(array("admin", "other", "supplier_proposal"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -124,6 +124,7 @@ if ($action == 'specimen') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}

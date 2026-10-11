@@ -1213,6 +1213,9 @@ if ($action == 'create') {
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 	print '<input type="hidden" name="contract_type" value="'.GETPOSTINT('contract_type').'">';
 
 	print dol_get_fiche_head();
@@ -2402,6 +2405,16 @@ if ($action == 'create') {
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
+				if (isModEnabled('intervention') && $object->status > 0) {
+					$langs->load("interventions");
+					$arrayofcreatebutton[] = array(
+						'url' => '/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('AddIntervention'),
+						'lang' => 'interventions',
+						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}

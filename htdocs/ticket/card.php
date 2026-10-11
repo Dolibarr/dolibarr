@@ -359,7 +359,6 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$action = $ifErrorAction;

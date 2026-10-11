@@ -118,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->batch, 16);
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_mo');
@@ -188,7 +188,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
+		$sql .= " AND cd.batch = '".($db->escape((string) $object->batch))."'";
 		if (!empty($search_month)) {
 			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize((string) $search_month).')';
 		}
