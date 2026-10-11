@@ -249,7 +249,10 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		if ($totalamount != 0) { // On accepte les montants negatifs
+		if (($totalamount != 0) || (getDolGlobalString('PAYMENT_ALLOW_0_FOR_REPRISEACOMPTE'))) { // On accepte les montants negatifs
+			if ($totalamount == 0) {
+				setEventMessages($langs->trans("WarningTotalIsNull"), null, 'warnings');
+			}
 			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 
 			if ($way == 'dolibarr') {
@@ -429,8 +432,7 @@ class PaiementFourn extends Paiement
 			dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 			$error++;
 		}
-
-		if ($totalamount != 0 && $error == 0) { // On accepte les montants negatifs
+		if (($totalamount != 0 || (getDolGlobalString('PAYMENT_ALLOW_0_FOR_REPRISEACOMPTE'))) && $error == 0) { // On accepte les montants negatifs
 			$this->amount = $total;
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;
