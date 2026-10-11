@@ -504,6 +504,8 @@ if (empty($reshook)) {
 				$res = $objecttmp->create($user);
 
 				if ($res > 0) {
+					$objecttmp->user_creation_id = $user->id;
+
 					$nb_bills_created++;
 					$lastref = $objecttmp->ref;
 					$lastid = $objecttmp->id;

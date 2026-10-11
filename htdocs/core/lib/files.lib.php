@@ -1866,7 +1866,9 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
-						dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file
+						if (!is_link(dol_osencode("$dir/$item"))) {
+							dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file (chmod would follow a symlink and change its target)
+						}
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -3359,6 +3361,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
+	} elseif ($modulepart == 'contractstats' && !empty($conf->contract->dir_temp)) {
+		// Wrapping for statistics images of contracts
+		if ($fuser->hasRight('contrat', $lire)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->contract->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'orderstats' && !empty($conf->order->dir_temp)) {
 		// Wrapping for statistics images of orders
 		if ($fuser->hasRight('commande', $lire)) {

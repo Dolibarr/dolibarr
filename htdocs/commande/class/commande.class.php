@@ -453,6 +453,23 @@ class Commande extends CommonOrder
 	}
 
 	/**
+	 * Check if user has write permission on a field of this object.
+	 * Override of CommonObject::hasUserWritePermissionOnField(): orders use the "creer" permission.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if user has right to write this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return (bool) $user->hasRight('commande', 'creer');
+	}
+
+	/**
 	 *  Returns the reference to the following non used Order depending on the active numbering module
 	 *  defined into COMMANDE_ADDON
 	 *
@@ -1176,6 +1193,16 @@ class Commande extends CommonOrder
 						$this->db->rollback();
 						return -1;
 					}
+
+					// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+					// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+					if ($result > 0 && !empty($line->extraparams)) {
+						$newline = new OrderLine($this->db);
+						$newline->id = $result;
+						$newline->extraparams = $line->extraparams;
+						$newline->setExtraParameters();
+					}
+
 					// Defined the new fk_parent_line
 					if ($result > 0 && $line->product_type == 9) {
 						$fk_parent_line = $result;
@@ -1874,7 +1901,7 @@ class Commande extends CommonOrder
 					} else {
 						// Loop on all lines of parent object
 						foreach ($this->lines as $tmpline) {
-							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+							if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
 								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}

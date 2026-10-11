@@ -485,6 +485,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 						// This case contains a lot of false positive, for example when the quote is in javascript world,
 						// for example with javascript like: console.log('<php code>');
 
+						/*
 						// Standalone call - always flag it as it needs wrapping
 						$methodDisplay = $this->getNodeVarForMethodCall($node);
 						// @phpstan-ignore-next-line method.notFound
@@ -495,6 +496,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 							'Function %s output (standalone PHP code) must be wrapped in %s quotes (may be false positive if quote is in javascript world)',
 							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 						);
+						*/
 					}
 				} else {
 					// No quote requirement (e.g., mode 3 for dol_escape_js), so don't flag

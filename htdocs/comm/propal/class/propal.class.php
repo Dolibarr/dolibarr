@@ -468,6 +468,23 @@ class Propal extends CommonObject
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
+	/**
+	 * Check if user has write permission on a field of this object.
+	 * Override of CommonObject::hasUserWritePermissionOnField(): proposals use the "creer" permission.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if user has right to write this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return (bool) $user->hasRight('propal', 'creer');
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1420,6 +1437,15 @@ class Propal extends CommonObject
 
 						// Set the id on created row
 						$line->id = $result;
+
+						// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+						// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+						if ($result > 0 && !empty($line->extraparams)) {
+							$newline = new PropaleLigne($this->db);
+							$newline->id = $result;
+							$newline->extraparams = $line->extraparams;
+							$newline->setExtraParameters();
+						}
 
 						// Defined the new fk_parent_line
 						if ($result > 0 && $line->product_type == 9) {

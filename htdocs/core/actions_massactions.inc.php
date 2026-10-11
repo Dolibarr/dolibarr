@@ -1817,18 +1817,21 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 
