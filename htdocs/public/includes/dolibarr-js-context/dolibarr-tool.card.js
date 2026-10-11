@@ -197,7 +197,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	async function showUndoToast(text, withUndo) {
 		if (!undoToast) {
 			undoToast = document.createElement('div');
-			undoToast.className = 'dol-undo-toast --light-mode';
+			undoToast.className = 'dol-undo-toast';
 			undoToast.setAttribute('role', 'status');
 			undoToast.addEventListener('mouseenter', () => clearTimeout(undoTimer));
 			undoToast.addEventListener('mouseleave', () => {
