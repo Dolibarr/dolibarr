@@ -459,6 +459,8 @@ class Documentation
 	 */
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
 	{
+		global $langs;
+
 		$i = 0;
 		$menu_entry = [];
 		if (!empty($this->view)) {
@@ -474,7 +476,7 @@ class Documentation
 		}
 
 		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
-			print '<div class="summary-wrapper">';
+			print '<div class="summary-wrapper" data-toc-title="'.dolPrintHTMLForAttribute($langs->transnoentities('DocPageSummary')).'" data-toc-backtop="'.dolPrintHTMLForAttribute($langs->transnoentities('DocBackToTop')).'">';
 			$this->displaySummary($menu_entry);
 			print '</div>';
 		}
