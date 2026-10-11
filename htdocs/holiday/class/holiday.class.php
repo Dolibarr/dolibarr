@@ -172,6 +172,9 @@ class Holiday extends CommonObject
 	 */
 	public $holiday = array();
 
+	/**
+	 * @var array<mixed>	Not filled by core
+	 */
 	public $events = array();
 
 	/**
