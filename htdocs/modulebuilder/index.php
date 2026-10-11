@@ -5165,10 +5165,8 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<textarea name="proparrayofkeyval">';
-										if (isset($proparrayofkeyval)) {
-											if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
-												print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
-											}
+										if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
+											print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
 										}
 										print '</textarea>';
 										print '</td>';
