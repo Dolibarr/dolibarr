@@ -86,7 +86,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * Save the value of one field of the object
 		 *
 		 * @param {string} field Field name, must be editable from UI ('uieditable' in $fields)
-		 * @param {*} value New value
+		 * @param {*} value New value. For a field with several inputs (like a date), an object {suffix: value}
+		 *                  with the suffixes of the inputs of showInputField() (ex: {day: 15, month: 10, year: 2026})
 		 * @param {Object} [options]
 		 * @param {HTMLElement|jQuery|string} [options.target] Element whose content is replaced by the html of the new value
 		 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
@@ -107,7 +108,16 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				value = hookResult.value;
 			}
 
-			const params = { element: this.element, id: this.id, field, value };
+			// Inputs are named like the ones of showInputField() with the key prefix 'ajaxfield_'
+			// (read by CommonObject::getFieldValueFromAjaxPost()). An empty value must be posted to empty the field.
+			const params = { element: this.element, id: this.id, field };
+			if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+				Object.entries(value).forEach(([suffix, val]) => {
+					params['ajaxfield_' + field + suffix] = val ?? '';
+				});
+			} else {
+				params['ajaxfield_' + field] = value ?? '';
+			}
 			if (this.tms) params.tms = this.tms;
 
 			let data;

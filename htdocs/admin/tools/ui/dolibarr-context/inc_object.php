@@ -66,7 +66,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		It is generic: the rules are on the server side, in the class of the object.
 	</p>
 	<ul>
-		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, tms}</code>, where <code>html</code> is the new value formatted for display.</li>
+		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, tms}</code>, where <code>html</code> is the new value formatted for display. For a field with several inputs, like a date, <code>value</code> is an object with the suffixes of the inputs of <code>showInputField()</code>: <code>{day: 15, month: 10, year: 2026}</code>.</li>
 		<li><code>reload({sections, lines}, options)</code> loads the card again in background and replaces the sections (CSS selectors) and the document lines (rows <code>tr#row-{id}</code>) by their new version, with one request. <code>reloadSection(selector)</code> and <code>reloadLine(lineId)</code> are shortcuts.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>object:*</code> hooks of this object only, and returns a function to remove the listener.</li>
 	</ul>
