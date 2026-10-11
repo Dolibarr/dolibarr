@@ -120,7 +120,7 @@ try {
 	// endpoint flagged with needs_followup: the result is the last history turn.
 	$isFollowup = !empty($data['followup']);
 
-	dol_syslog("parse_intent.php isFollowup=".$isFollowup, LOG_DEBUG, 0, '_ai');
+	dol_syslog("parse_intent.php isFollowup=".($isFollowup ? '1' : '0'), LOG_DEBUG, 0, '_ai');
 
 	// --- Page context (optional): posted by the chat JS from the value the
 	// printCommonFooter hook emitted on the page being viewed. The POST is
@@ -663,6 +663,7 @@ try {
 		$systemPrompt .= "- Combining: terms joined only by AND or OR (uppercase, surrounded by spaces).\n";
 		$systemPrompt .= "  Free nesting with balanced parentheses. No NOT.\n";
 		$systemPrompt .= "  Do not mix AND and OR at the same level without parentheses.\n";
+		$systemPrompt .= "- No sub-query (SELECT ...): to filter on a third party, use thirdparty_ids or (t.fk_soc:=:id) with its id.\n";
 		$systemPrompt .= "\n";
 		$systemPrompt .= "Valid:   ((t.client:=:1) OR (t.client:in:2,3)) AND (t.nom:like:'a%')\n";
 		$systemPrompt .= "Invalid: t.ref:=:'A' | (t.ref = 'A') | (t.status:in:(1,2)) | NOT (t.status:=:1) | ((t.a:=:1)\n";
@@ -675,7 +676,7 @@ try {
 		// cloud never sees the data and the task still completes.
 		if ($doRedact) {
 			$systemPrompt .= "## Privacy rules\n";
-			$systemPrompt .= "Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masking real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+			$systemPrompt .= "Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]], [[NAME_6]] are masking real data, and socid:N is a third party given by its id. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
 			$systemPrompt .= "\n";
 		}
 
