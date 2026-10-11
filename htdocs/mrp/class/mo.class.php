@@ -978,7 +978,7 @@ class Mo extends CommonObject
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);
 			$productstatic->fetch($movement->product_id);
-			$qtytoprocess = $movement->qty;
+			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
 			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
@@ -987,7 +987,7 @@ class Mo extends CommonObject
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
 			} else {
-				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
 				$this->error++;
@@ -1013,7 +1013,7 @@ class Mo extends CommonObject
 				if ($qtytoprocess >= 0) {
 					$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
@@ -1362,7 +1362,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1400,7 +1400,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
