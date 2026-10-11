@@ -76,6 +76,43 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Layers of inputs displayed outside the popover (dropdown of select2, date picker, dialogs of the rich text editor):
+	 * a click on them is not a click outside the popover
+	 */
+	const POPOVER_LAYERS = '.select2-container, .select2-dropdown, .ui-datepicker, .ui-dialog, .ui-widget-overlay, .cke_dialog, .cke_panel, .cke_dialog_background_cover';
+
+	/**
+	 * Place the popover over the value of the field, its inputs at the place of the value, in the width of the page
+	 * @param {HTMLElement} popover
+	 * @param {HTMLElement} container Container of the value
+	 */
+	function placePopover(popover, container) {
+		const rect = container.getBoundingClientRect();
+		const style = getComputedStyle(popover);
+		const offsetX = parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth);
+		const offsetY = parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth);
+		const pageWidth = document.documentElement.clientWidth;
+		const margin = 8;
+
+		let left = rect.left - offsetX;
+		// A multiline editor (notes) takes at least 600px
+		const width = Math.max(rect.width + 2 * offsetX, popover.classList.contains('--multiline') ? 600 : 0);
+		popover.style.minWidth = Math.min(width, pageWidth - 2 * margin) + 'px';
+		popover.style.maxWidth = (pageWidth - 2 * margin) + 'px';
+		// Kept in the page when the value is near the right edge
+		left = Math.max(margin, Math.min(left, pageWidth - margin - popover.offsetWidth));
+
+		popover.style.left = (left + window.scrollX) + 'px';
+		popover.style.top = (rect.top - offsetY + window.scrollY) + 'px';
+	}
+
+	/**
+	 * Edition opened on the page, only one at a time: opening another field cancels it
+	 * @type {{container: HTMLElement, cancel: function, saving: boolean}|null}
+	 */
+	let current = null;
+
+	/**
 	 * Open the edition of the field of an edit link, in place of its value
 	 * @param {HTMLElement} link Edit link printed by Form::editfieldkey()
 	 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
@@ -84,6 +121,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const container = findValueContainer(link);
 		if (!container) return false;
 		if (container.dataset.dolEditing) return true;
+
+		// Cancel the edition of another field, unless it is being saved
+		if (current && current.container !== container && !current.saving) current.cancel();
 
 		const field = link.dataset.dolEditField;
 		const element = link.dataset.dolElement;
@@ -108,46 +148,73 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const [saveLabel, cancelLabel] = await Promise.all([transMain('Save'), transMain('Cancel')]);
 
 		const valueHtml = container.innerHTML;
-		link.style.display = 'none';
+		// Hidden but keeps its place, so the row does not move
+		link.style.visibility = 'hidden';
 
-		const editor = document.createElement('span');
-		editor.className = 'dol-field-editor';
-		const inputs = document.createElement('span');
+		// The editor is a popover placed over the value, so the layout of the card does not change
+		const editor = document.createElement('div');
+		editor.className = 'dol-field-popover --light-mode';
+		const inputs = document.createElement('div');
+		inputs.className = 'dol-field-popover-inputs';
+		const actions = document.createElement('div');
+		actions.className = 'dol-field-popover-actions';
 		const saveButton = document.createElement('input');
 		saveButton.type = 'button';
-		saveButton.className = 'button smallpaddingimp nomargingtop nomarginbottom';
+		saveButton.className = 'button smallpaddingimp';
 		saveButton.value = saveLabel;
 		const cancelButton = document.createElement('input');
 		cancelButton.type = 'button';
-		cancelButton.className = 'button button-cancel smallpaddingimp nomargingtop nomarginbottom';
+		cancelButton.className = 'button button-cancel smallpaddingimp';
 		cancelButton.value = cancelLabel;
-		editor.append(inputs, ' ', saveButton, ' ', cancelButton);
-		container.replaceChildren(editor);
+		actions.append(saveButton, cancelButton);
+		editor.append(inputs, actions);
+		container.classList.add('dol-field-editing');
+		document.body.append(editor);
 		Dolibarr.tools.replaceContent(inputs, input, { mode: 'inner' });
-		// A multiline editor takes the whole width, its buttons go below it
-		if (inputs.querySelector('textarea')) {
-			editor.style.display = 'block';
-			inputs.style.display = 'block';
-		}
+		// A multiline editor takes more width
+		if (inputs.querySelector('textarea')) editor.classList.add('--multiline');
+
+		const place = () => placePopover(editor, container);
+		place();
+		window.addEventListener('resize', place);
 
 		const firstInput = inputs.querySelector('input:not([type="hidden"]), textarea, select');
 		if (firstInput) firstInput.focus();
 
+		const state = { container, cancel: () => close(valueHtml), saving: false };
+		current = state;
+
+		// Value when opened, a click outside the popover closes it only when nothing was changed
+		const initialValue = JSON.stringify(getEditorValue(editor, field));
+		const onOutsideClick = event => {
+			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || state.saving) return;
+			if (JSON.stringify(getEditorValue(editor, field)) === initialValue) close(valueHtml);
+		};
+		// Not the click that opened the popover
+		setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 0);
+
 		const close = html => {
+			if (current === state) current = null;
+			document.removeEventListener('mousedown', onOutsideClick);
+			window.removeEventListener('resize', place);
 			destroyEditors(editor);
+			editor.remove();
 			delete container.dataset.dolEditing;
+			container.classList.remove('dol-field-editing');
 			Dolibarr.tools.replaceContent(container, html, { mode: 'inner' });
-			link.style.display = '';
+			link.style.visibility = '';
 		};
 
 		const save = async() => {
 			saveButton.disabled = true;
 			cancelButton.disabled = true;
+			state.saving = true;
 			let result;
 			try {
 				result = await controller.setField(field, getEditorValue(editor, field));
 			} catch (error) {
 				// Error already displayed, the user can correct the value
+				state.saving = false;
 				saveButton.disabled = false;
 				cancelButton.disabled = false;
 				return;
