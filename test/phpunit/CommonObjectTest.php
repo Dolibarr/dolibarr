@@ -1372,6 +1372,102 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * getFieldValueFromAjaxPost() reads the inputs named ajaxfield_<field> with a filter matching the type of field
+	 *
+	 * @return void
+	 */
+	public function testGetFieldValueFromAjaxPost()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 10),
+				'note' => array('type' => 'html', 'label' => 'Note', 'enabled' => 1, 'visible' => 1, 'position' => 20),
+				'qty' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'position' => 30),
+				'date_start' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 40),
+				'date_end' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 50),
+				'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 60),
+				'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'position' => 70),
+			);
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$savpost = $_POST;
+		$_POST = array(
+			'ajaxfield_label' => 'My <b>label</b>',
+			'ajaxfield_note' => '<b>Bold</b><script>alert(1)</script>',
+			'ajaxfield_qty' => '12',
+			'ajaxfield_date_startday' => '15', 'ajaxfield_date_startmonth' => '3', 'ajaxfield_date_startyear' => '2026',
+			'ajaxfield_date_endday' => '15', 'ajaxfield_date_endmonth' => '3', 'ajaxfield_date_endyear' => '2026', 'ajaxfield_date_endhour' => '14', 'ajaxfield_date_endmin' => '30',
+			'ajaxfield_fk_soc' => '1',
+			'ajaxfield_amount' => '10',
+			'value' => 'Not read, inputs are prefixed',
+		);
+
+		$this->assertSame('My label', $localobject->getFieldValueFromAjaxPost('label'), 'varchar is filtered with alphanohtml');
+		$this->assertStringContainsString('<b>Bold</b>', $localobject->getFieldValueFromAjaxPost('note'));
+		$this->assertStringNotContainsString('<script', $localobject->getFieldValueFromAjaxPost('note'), 'html is filtered with restricthtml');
+		$this->assertSame(12, $localobject->getFieldValueFromAjaxPost('qty'));
+		$this->assertEquals(dol_mktime(0, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'));
+		$this->assertEquals(dol_mktime(14, 30, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_end'));
+		$this->assertSame(1, $localobject->getFieldValueFromAjaxPost('fk_soc'), 'Links are read as an id');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('amount'), 'Amounts are not supported yet');
+
+		$_POST = array('ajaxfield_label' => '');
+		$this->assertSame('', $localobject->getFieldValueFromAjaxPost('label'), 'An empty input empties the field');
+
+		$_POST = array('value' => 'Not read');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('label'), 'A missing input must never empty a field');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('date_start'));
+
+		$_POST = $savpost;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * ajaxOutputField() returns the output of showOutputField(), also for fields hidden from generic forms like notes
+	 *
+	 * @return void
+	 */
+	public function testAjaxOutputField()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		$propal->ref_client = 'REF<CLIENT>';
+		$propal->note_public = '<b>Public note</b>';
+
+		$this->assertSame($propal->showOutputField($propal->fields['ref_client'], 'ref_client', $propal->ref_client), $propal->ajaxOutputField('ref_client'));
+		$this->assertStringNotContainsString('<CLIENT>', $propal->ajaxOutputField('ref_client'), 'Output is escaped');
+		$this->assertStringContainsString('<b>Public note</b>', $propal->ajaxOutputField('note_public'), 'Note (visible = 0) is output');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
 	 *
 	 * @return void
