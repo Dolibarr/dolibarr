@@ -1901,8 +1901,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$jsContextPathUrl = DOL_URL_ROOT . '/public/includes/dolibarr-js-context';
 		$jsContextFiles = [
 			'dolibarr-context.umd.js', // The js Dolibarr context definition
-			'dolibarr-tool.seteventmessage.js' // The first tools to help dev for easy event in js
 		];
+
+		// COMPAT-JSCONTEXT @deprecated since 25.0, remove in 27.0 : backward compatibility layer, must be loaded right after the context definition
+		if (!getDolGlobalInt('MAIN_JS_CONTEXT_DISABLE_COMPAT')) {
+			$jsContextFiles[] = 'dolibarr-context.compat.js';
+		}
+
+		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
+		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
