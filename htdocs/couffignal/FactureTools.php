@@ -36,9 +36,9 @@ class FactureTools
 		}
 		$orders = CommandeTools::sortOrdersByDateAndRef($orders);
 		if ($load_obj) {
-			return array_map(static fn ($o) => ['ref_client' => $o->ref_ext . '(' .$o->ref.')', 'total_ht' => $o->total_ht, 'obj' => $o], $orders);
+			return array_map(static fn ($o) => ['ref_client' => $o->ref_client . '(' .$o->ref.')', 'total_ht' => $o->total_ht, 'obj' => $o], $orders);
 		}
-		return array_map(static fn ($o) => ['ref_client' => $o->ref_ext . '(' .$o->ref.')', 'total_ht' => $o->total_ht], $orders);
+		return array_map(static fn ($o) => ['ref_client' => $o->ref_client . '(' .$o->ref.')', 'total_ht' => $o->total_ht], $orders);
 	}
 
 	/**
