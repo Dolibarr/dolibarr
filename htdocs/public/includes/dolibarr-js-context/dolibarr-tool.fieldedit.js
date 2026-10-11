@@ -144,6 +144,31 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Box of the value of a field: the content box of its container (without the padding of a cell), so the value is at the same place
+	 * whatever its container. An empty inline container (no value) has no height, its top is the middle of the line: the box is then
+	 * the height of a line of text around it.
+	 * @param {HTMLElement} container
+	 * @param {boolean} [contentBox=true] False for the border box (the pseudo field of a value of a line, covered by the input)
+	 * @returns {{left: number, top: number, right: number, width: number, height: number}}
+	 */
+	function getValueRect(container, contentBox = true) {
+		const rect = container.getBoundingClientRect();
+		const style = getComputedStyle(container);
+		if (rect.height === 0) {
+			const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.2;
+			return { left: rect.left, top: rect.top - lineHeight / 2, right: rect.right, width: rect.width, height: lineHeight };
+		}
+		if (!contentBox) return rect;
+
+		const left = rect.left + parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft);
+		const right = rect.right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight);
+		const top = rect.top + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop);
+		const bottom = rect.bottom - parseFloat(style.borderBottomWidth) - parseFloat(style.paddingBottom);
+
+		return { left, top, right, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+	}
+
+	/**
 	 * Place the popover over the value of the field, its inputs at the place of the value, in the width of the page
 	 * @param {HTMLElement} popover
 	 * @param {HTMLElement} container Container of the value
@@ -153,7 +178,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			placeCompactPopover(popover, container);
 			return;
 		}
-		const rect = container.getBoundingClientRect();
+		const rect = getValueRect(container);
 		const style = getComputedStyle(popover);
 		const offsetX = parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth);
 		const offsetY = parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth);
@@ -168,8 +193,14 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		// Kept in the page when the value is near the right edge
 		left = Math.max(margin, Math.min(left, pageWidth - margin - popover.offsetWidth));
 
+		// Inputs centered on the value, a multiline editor (notes) starts at the top of the value
+		const inputs = popover.querySelector('.dol-field-popover-inputs');
+		const top = popover.classList.contains('--multiline') || !inputs
+			? rect.top - offsetY
+			: rect.top + rect.height / 2 - (inputs.offsetTop + inputs.offsetHeight / 2);
+
 		popover.style.left = (left + window.scrollX) + 'px';
-		popover.style.top = (rect.top - offsetY + window.scrollY) + 'px';
+		popover.style.top = (top + window.scrollY) + 'px';
 	}
 
 	/**
@@ -179,7 +210,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {HTMLElement} container Container of the value
 	 */
 	function placeCompactPopover(popover, container) {
-		const rect = container.getBoundingClientRect();
+		const rect = getValueRect(container, false);
 		const inputs = popover.querySelector('.dol-field-popover-inputs');
 		const alignRight = ['right', 'end'].includes(getComputedStyle(container.parentElement || container).textAlign);
 		const pageWidth = document.documentElement.clientWidth;

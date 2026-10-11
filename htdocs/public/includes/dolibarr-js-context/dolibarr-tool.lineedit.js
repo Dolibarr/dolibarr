@@ -587,6 +587,28 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Mode of edition of a value: 'instant' (saved when changed, no buttons) for a value entered in one input,
+	 * 'confirm' (buttons save and cancel) for a value entered in several parts, saved only when confirmed:
+	 * several inputs, date (the card posts its parts: day, month, year...), text on several lines, list with several choices.
+	 * The mode given by the server on the cell (data-dol-edit-mode) is used first.
+	 * @param {HTMLElement} cell
+	 * @param {HTMLElement} content Inputs of the value
+	 * @param {HTMLFormElement} editForm Edit form of the line
+	 * @param {string} field
+	 * @returns {string} 'instant' or 'confirm'
+	 */
+	function getCellEditMode(cell, content, editForm, field) {
+		if (['instant', 'confirm'].includes(cell.dataset.dolEditMode)) return cell.dataset.dolEditMode;
+
+		const inputs = content.querySelectorAll('input:not([type="hidden"]), select, textarea');
+		const input = inputs[0];
+		const severalParts = inputs.length !== 1 || input.tagName === 'TEXTAREA' || input.multiple
+			|| ['date', 'datetime-local', 'time'].includes(input.type) || !!editForm.querySelector(`[name="${CSS.escape(field + 'day')}"]`);
+
+		return severalParts ? 'confirm' : 'instant';
+	}
+
+	/**
 	 * Cell of a value of a line in the page
 	 * @param {number} lineId
 	 * @param {string} field
@@ -652,10 +674,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		let saved = false;
 		let next = null;
 
-		// Placed over the value (span.dol-line-value), saved when changed like a cell of a spreadsheet
+		// Placed over the value (span.dol-line-value), saved when changed like a cell of a spreadsheet, unless the value has several parts
 		await Dolibarr.tools.card.fields.openPopover(cell.querySelector('.dol-line-value') || cell, {
 			content,
-			autoSave: true,
+			autoSave: getCellEditMode(cell, content, loaded.form, field) === 'instant',
 			className: '--line-value',
 			getValue: () => input.value,
 			save: async value => {
