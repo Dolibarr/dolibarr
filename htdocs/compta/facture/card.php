@@ -4477,7 +4477,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// Then print the box
+/*			// Then print the box
 			// With no projectid or no prev_invoice, makes no sense
 			if (is_null($projectid)) {
 				dol_syslog('Create new invoice - COUFFIGNAL feat - Pas de chantier lié', LOG_INFO);
@@ -4486,7 +4486,7 @@ if ($action == 'create') {
 			} else {
 				print '<tr><td>'.$langs->trans('Avenant à ajouter').'</td><td colspan="2">'.$form->select_new_orders_in_project($projectid, $prev_invoice)."</td></tr>";		
 			}
-			
+*/			
 		}
 
 		print "</table>\n";
