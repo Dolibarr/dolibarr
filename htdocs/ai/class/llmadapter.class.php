@@ -306,6 +306,22 @@ class UniversalLLMAdapter
 	}
 
 	/**
+	 * Tell if a provider error message says the requested model is unknown,
+	 * retired or not available (not a quota/auth/network error).
+	 *
+	 * @param string $msg      Error message returned by the provider
+	 * @return bool
+	 */
+	public static function isModelUnavailableError(string $msg): bool
+	{
+		// Only errors that talk about the model itself, not quota/auth/network ones.
+		if (!preg_match('/model/i', $msg)) {
+			return false;
+		}
+		return (bool) preg_match('/not.?found|does not exist|not exist|unsupported|not supported|not available|unavailable|deprecated|no longer|retired|invalid/i', $msg);
+	}
+
+	/**
 	 * Record a "model not found / retired" type provider failure into the constant
 	 * AI_MODEL_RUNTIME_FAILURE, displayed as a warning banner on the models admin
 	 * page. Runtime is the only fully reliable signal for a retired model: a
@@ -323,11 +339,7 @@ class UniversalLLMAdapter
 		if (!is_object($db) || !is_object($conf)) {
 			return;	// no Dolibarr runtime (defensive: adapter may be unit-tested standalone)
 		}
-		// Only errors that talk about the model itself, not quota/auth/network ones.
-		if (!preg_match('/model/i', $msg)) {
-			return;
-		}
-		if (!preg_match('/not.?found|does not exist|not exist|unsupported|not supported|not available|unavailable|deprecated|no longer|retired|invalid/i', $msg)) {
+		if (!self::isModelUnavailableError($msg)) {
 			return;
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -437,8 +449,17 @@ class UniversalLLMAdapter
 			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
-		if (isset($json['error'])) {
-			$msg = $json['error']['message'] ?? json_encode($json['error']);
+		// Error formats: {"error":{"message":...}} (OpenAI, Anthropic, Gemini) or
+		// {"object":"error","message":...} (Mistral), with no 'error' key.
+		if (isset($json['error']) || (is_array($json) && ($json['object'] ?? '') === 'error')) {
+			if (isset($json['error'])) {
+				$msg = $json['error']['message'] ?? json_encode($json['error']);
+			} else {
+				$msg = $json['message'] ?? json_encode($json);
+			}
+			if (!is_string($msg)) {
+				$msg = json_encode($msg);
+			}
 			$this->recordModelFailure($httpCode, (string) $msg);
 			dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
 			return "Error: API " . $msg;

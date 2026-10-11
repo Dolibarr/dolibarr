@@ -160,6 +160,7 @@ class JsonResponse
 		global $dolibarr_main_prod;
 
 		if (!headers_sent()) {
+			header('Content-Type: application/json; charset=utf-8');
 			http_response_code($this->getHttpResponseCode());
 		}
 

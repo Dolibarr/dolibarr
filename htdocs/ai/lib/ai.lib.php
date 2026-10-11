@@ -633,6 +633,24 @@ function getAiAssistantDefaultModel()
 }
 
 /**
+ * Resolve the API URL used by the AI Assistant for the configured provider
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The API base URL, or '' if no service is configured
+ */
+function getAiAssistantProviderUrl()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+
+	return (string) (getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: ($services[$serviceKey]['url'] ?? ''));
+}
+
+/**
  * Return the list of model ids offered by the configured AI provider, with a
  * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
  * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
@@ -907,6 +925,9 @@ function getAiChatAssistantConfig()
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
+		// model list by a name heuristic that is not reliable, so hidden by default.
+		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
@@ -969,7 +990,12 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="header-controls">';
 	// Model picker pill: 'Auto' (provider default) + presets + the dynamic model
 	// list fetched from ajax/list_models.php by the JS. Choice kept in localStorage.
-	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($langs->trans("AIModelToUse")).'">';
+	$modelSelectTitle = $langs->transnoentitiesnoconv("AIModelToUse");
+	$aiproviderurl = getAiAssistantProviderUrl();
+	if ($aiproviderurl !== '') {
+		$modelSelectTitle .= "\n".$langs->transnoentitiesnoconv("URL").': '.$aiproviderurl;
+	}
+	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($modelSelectTitle, 0, 1).'">';
 	$autoLabel = $langs->transnoentitiesnoconv("AIModelAuto");
 	$defaultModel = getAiAssistantDefaultModel();
 	if ($defaultModel !== '') {
@@ -977,6 +1003,8 @@ function getAiChatAssistantHtml($mode = 'page')
 	}
 	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
+	//$out .= ajax_combobox("model-select");
+
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
