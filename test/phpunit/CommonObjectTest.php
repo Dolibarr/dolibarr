@@ -1778,6 +1778,73 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * Project of a business document, edited like on the card: projects of the thirdparty, saved with setProject(),
+	 * shown with Form::form_project(), editable whatever the status
+	 *
+	 * @return void
+	 */
+	public function testUpdateProjectFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		if (!isModEnabled('project')) {
+			$this->markTestSkipped('Module project must be enabled');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+		$localobject = new Propal($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Propal($db);
+		$localobject->fetch($id);
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$project->ref = 'PJTESTAJAX'.$id;
+		$project->title = 'Test ajax edition';
+		$project->socid = $localobject->socid;
+		$projectid = $project->create($user);
+		$this->assertGreaterThan(0, $projectid, 'create project: '.$project->error);
+
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_projet'));
+		$this->assertStringContainsString('name="ajaxfield_fk_projet"', $localobject->ajaxInputField('fk_projet'));
+
+		// Saved with setProject(), in the property fk_project
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_projet', $projectid), (string) $localobject->error);
+		$this->assertSame($projectid, $localobject->getFieldUiValue('fk_projet'));
+		$checkobject = new Propal($db);
+		$checkobject->fetch($id);
+		$this->assertEquals($projectid, $checkobject->fk_project);
+
+		// Output like the card
+		$this->assertSame((new Form($db))->form_project('', $checkobject->socid, (string) $projectid, 'none', 0, 0, 0, 1, '', 'maxwidth300'), $checkobject->ajaxOutputField('fk_projet'));
+		$this->assertStringContainsString('PJTESTAJAX'.$id, $checkobject->ajaxOutputField('fk_projet'));
+
+		// Editable on a validated proposal, like on the card, and emptied
+		$checkobject->statut = Propal::STATUS_VALIDATED;
+		$checkobject->status = Propal::STATUS_VALIDATED;
+		$this->assertTrue($checkobject->isFieldEditableFromUi($user, 'fk_projet'));
+		$this->assertGreaterThan(0, $checkobject->updateFieldFromUi($user, 'fk_projet', 0), (string) $checkobject->error);
+		$checkobject->fetch($id);
+		$this->assertEmpty($checkobject->fk_project);
+		$this->assertStringNotContainsString('PJTESTAJAX', $checkobject->ajaxOutputField('fk_projet'));
+
+		$localobject->delete($user);
+		$project->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void

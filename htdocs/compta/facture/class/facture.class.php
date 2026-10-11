@@ -363,7 +363,7 @@ class Facture extends CommonInvoice
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 115, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'isameasure' => 1),
 		'fk_facture_source' => array('type' => 'integer', 'label' => 'SourceInvoice', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 1, 'visible' => -1, 'position' => 175),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 175, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 180, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190, 'uieditable' => 1, 'alwayseditable' => 1),

@@ -76,10 +76,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Layers of inputs displayed outside the popover (dropdown of select2, date picker, dialogs of the rich text editor):
-	 * a click on them is not a click outside the popover
+	 * Layers of inputs displayed outside the popover (dropdown of select2, suggestions of ajax_autocompleter(), date picker,
+	 * dialogs of the rich text editor): a click on them is not a click outside the popover
 	 */
-	const POPOVER_LAYERS = '.select2-container, .select2-dropdown, .ui-datepicker, .ui-dialog, .ui-widget-overlay, .cke_dialog, .cke_panel, .cke_dialog_background_cover';
+	const POPOVER_LAYERS = '.select2-container, .select2-dropdown, .ui-autocomplete, .ui-datepicker, .ui-dialog, .ui-widget-overlay, .cke_dialog, .cke_panel, .cke_dialog_background_cover';
 
 	/**
 	 * Button of the popover with an icon, its label as tooltip
@@ -264,6 +264,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		saveButton.addEventListener('click', save);
 		cancelButton.addEventListener('click', () => close(valueHtml));
 		editor.addEventListener('keydown', event => {
+			// Not the keys used by the suggestions of ajax_autocompleter() (default prevented by the autocomplete)
+			if (event.defaultPrevented) return;
 			if (event.key === 'Escape') {
 				event.preventDefault();
 				close(valueHtml);

@@ -142,7 +142,7 @@ $documentation->showSidebar(); ?>
 				Only the fields declared editable from the user interface, with <code>'uieditable' => 1</code> in <code>$fields</code> of the class.
 				In core: customer ref and notes of proposals, orders and invoices, notes of third parties and products,
 				and the fields of the header of proposals, orders and invoices: dates, payment term and mode, delivery delay, shipping method, source,
-				bank account. They are editable in the same statuses as on the cards (draft only for proposals, dates of orders and invoices),
+				bank account, and the project shown under the ref (projects of the thirdparty, like on the cards). They are editable in the same statuses as on the cards (draft only for proposals, dates of orders and invoices),
 				and the fields depending on them are computed like on the cards: end of validity of a proposal following its date,
 				due date of an invoice following its date and payment term.
 				Other fields keep the edition by reloading the page.<br>

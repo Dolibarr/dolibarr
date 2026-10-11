@@ -2633,6 +2633,9 @@ abstract class CommonObject
 				return $this->setShippingMethod((int) $value, 0, $user);
 			case 'fk_account':
 				return $this->setBankAccount((int) $value, 0, $user);
+			case 'fk_projet':
+			case 'fk_project':
+				return $this->setProject((int) $value);
 		}
 
 		$type = $this->fields[$field]['type'];
@@ -2729,8 +2732,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Return the output html of the fields of business documents chosen in a dictionary (payment term, payment mode...),
-	 * like the cards show them (Form::form_conditions_reglement()... with htmlname 'none').
+	 * Return the output html of the fields of business documents chosen in a dictionary (payment term, payment mode...)
+	 * or linked to another object (project), like the cards show them (Form::form_conditions_reglement()... with htmlname 'none').
 	 *
 	 * @param	string	$field	Field name
 	 * @param	mixed	$value	Value of the field
@@ -2746,6 +2749,10 @@ abstract class CommonObject
 				return $form->form_conditions_reglement('', (string) $value, 'none', 0, '', -1, $this->hasPaymentTermDepositPercent() ? (float) $this->deposit_percent : -1, 1);
 			case 'fk_mode_reglement':
 				return $form->form_modes_reglement('', (string) $value, 'none', '', 1, 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $form->form_project('', property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 		}
 
 		// Methods printing their output
@@ -2808,6 +2815,13 @@ abstract class CommonObject
 				return $form->selectAvailabilityDelay((string) $value, $htmlname, '', 1, '', 1);
 			case 'fk_account':
 				return (string) $form->select_comptes((string) $value, $htmlname, 0, '', 1, '', 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// Projects of the thirdparty, like Form::form_project() on the cards
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+				$formproject = new FormProjets($this->db);
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $formproject->select_projects(property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, $htmlname, 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth300');
 			case 'fk_input_reason':
 			case 'fk_shipping_method':
 				// Methods printing their output

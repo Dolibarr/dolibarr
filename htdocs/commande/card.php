@@ -3084,9 +3084,10 @@ if ($action == 'create' && $usercancreate) {
 			if ($usercancreate) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+					$morehtmlref .= '<a class="editfielda"'.$form->getAjaxFieldEditAttributes($object, 'fk_projet', (int) $usercancreate).' href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= '<span'.$form->getAjaxFieldValueAttributes($object, 'fk_projet', (int) $usercancreate).'>'.
+					$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300').'</span>';
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
