@@ -872,6 +872,9 @@ body.ai-fullpage {
     gap: 5px;
     transition: all 0.2s;
 }
+a.msg-action-btn.primary span {
+    color: unset;
+}
 
 .msg-action-btn:hover {
     background: var(--ai-surface-2);

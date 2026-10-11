@@ -1,5 +1,5 @@
 ---
-name: skill-website-edit
+name: skill-doli-website-edit
 description:
   Handles instructions to edit a Dolibarr website loaded into the database.
   Use when the user tries to modify a website, a website template or the content of a website page.
