@@ -2732,6 +2732,19 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Load the translations of the labels of the dictionaries of business documents (payment terms and modes, availability,
+	 * input reasons, shipping methods), loaded by the cards but not by core/ajax/objectfield.php
+	 *
+	 * @return void
+	 */
+	protected function loadAjaxDictionaryLangs()
+	{
+		global $langs;
+
+		$langs->loadLangs(array('bills', 'dict', 'propal', 'sendings'));
+	}
+
+	/**
 	 * Return the output html of the fields of business documents chosen in a dictionary (payment term, payment mode...)
 	 * or linked to another object (project), like the cards show them (Form::form_conditions_reglement()... with htmlname 'none').
 	 *
@@ -2741,6 +2754,8 @@ abstract class CommonObject
 	 */
 	protected function ajaxOutputDictionaryField($field, $value)
 	{
+		$this->loadAjaxDictionaryLangs();
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		$form = new Form($this->db);
 
@@ -2802,6 +2817,7 @@ abstract class CommonObject
 		}
 
 		// Fields of business documents chosen in a dictionary, with the same selectors as their cards (with ajax_combobox())
+		$this->loadAjaxDictionaryLangs();
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		$form = new Form($this->db);
