@@ -36,6 +36,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	const sections = ['div.arearef', 'div.tabsAction', '#builddoc_form'];
 
 	/**
+	 * Delay before generating again the document of the card after a change (ms): changes in a row generate it once
+	 */
+	const DOCUMENT_BUILD_DELAY = 3000;
+
+	/**
 	 * Specializations of the cards by element, see card.register()
 	 * @type {Map<string, {sections: string[], Controller: Function|null}>}
 	 */
@@ -127,6 +132,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			this.url = options.url || getCurrentCardUrl();
 			/** State of the lazy refresh of the sections, see scheduleSectionsRefresh() */
 			this.lazySections = { scheduled: false, observer: null, loading: false, pending: false };
+			/** State of the delayed generation of the document, see scheduleDocumentBuild() */
+			this.documentBuild = { timer: null, building: false, pending: false, onPageHide: null };
 		}
 
 		/**
@@ -178,6 +185,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				Dolibarr.tools.replaceContent(target, data.html, { mode: 'inner' });
 			}
 			this.updateFields(data.fields, { except: target ? [field] : [], tms: data.tms ? parseInt(data.tms, 10) : null });
+
+			// The document shows the field, generated again like the cards do after a change (unless MAIN_DISABLE_PDF_AUTOUPDATE)
+			if (data.builddoc) this.scheduleDocumentBuild();
 
 			return data;
 		}
@@ -414,11 +424,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @returns {Promise<Document|null>} Card loaded after the action, null if the card redirected
 		 */
 		async postCard(data, options = {}) {
-			const url = new URL(this.url, window.location.href);
-			url.searchParams.set('nolines', '1');
-			url.searchParams.set('noflusheventmessages', '1');
-
-			const response = await Dolibarr.tools.fetch.post(url.toString(), data, { ...options, responseType: 'response', redirect: 'manual' });
+			const response = await Dolibarr.tools.fetch.post(this.getPostUrl(), data, { ...options, responseType: 'response', redirect: 'manual' });
 			if (response.type === 'opaqueredirect') {
 				// The token of the session was renewed by the card and is unknown: it is read from the card loaded without lines
 				if (isTokenRenewedOnEachCall()) await this.fetchCardWithoutLines(options);
@@ -429,6 +435,18 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			syncCsrfToken(doc);
 
 			return doc;
+		}
+
+		/**
+		 * Url used to post data to the card (see postCard()): without its lines, event messages kept in session
+		 * @returns {string}
+		 */
+		getPostUrl() {
+			const url = new URL(this.url, window.location.href);
+			url.searchParams.set('nolines', '1');
+			url.searchParams.set('noflusheventmessages', '1');
+
+			return url.toString();
 		}
 
 		/**
@@ -554,6 +572,69 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				if (state.pending) {
 					state.pending = false;
 					this.scheduleSectionsRefresh();
+				}
+			}
+		}
+
+		/**
+		 * Generate again the document of the card later, with the form of generation of the page (form#builddoc_form, action builddoc
+		 * of the card: same model, language and options as the button Generate). The requests are stacked: the document is generated
+		 * DOCUMENT_BUILD_DELAY ms after the last change, once at a time, and once again after if the object changed during the generation.
+		 * A generation still waiting when the page is left is sent with navigator.sendBeacon().
+		 */
+		scheduleDocumentBuild() {
+			const state = this.documentBuild;
+			if (!document.querySelector('form#builddoc_form')) return;
+			if (state.building) {
+				state.pending = true; // Changed during the generation: generated again after
+				return;
+			}
+
+			clearTimeout(state.timer);
+			state.timer = setTimeout(() => this.flushDocumentBuild(), DOCUMENT_BUILD_DELAY);
+
+			if (!state.onPageHide) {
+				state.onPageHide = () => {
+					if (!state.timer) return;
+					clearTimeout(state.timer);
+					state.timer = null;
+					const form = document.querySelector('form#builddoc_form');
+					if (form && navigator.sendBeacon) navigator.sendBeacon(this.getPostUrl(), new FormData(form));
+				};
+				window.addEventListener('pagehide', state.onPageHide);
+			}
+		}
+
+		/**
+		 * Generate now the document scheduled by scheduleDocumentBuild(), then refresh the generated documents
+		 * @returns {Promise<void>}
+		 */
+		async flushDocumentBuild() {
+			const state = this.documentBuild;
+			clearTimeout(state.timer);
+			state.timer = null;
+			if (state.building) {
+				state.pending = true;
+				return;
+			}
+			const form = document.querySelector('form#builddoc_form');
+			if (!form) return;
+
+			state.building = true;
+			try {
+				const doc = await this.postCard(new FormData(form), { showErrors: false });
+				if (doc) {
+					await this.refreshSections(doc, { showErrors: false });
+				} else {
+					this.scheduleSectionsRefresh(); // Card redirected after the generation
+				}
+			} catch (error) {
+				// The document can be generated with the button of the card
+			} finally {
+				state.building = false;
+				if (state.pending) {
+					state.pending = false;
+					this.scheduleDocumentBuild();
 				}
 			}
 		}

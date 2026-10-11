@@ -195,6 +195,8 @@ $jsonResponse->data = array(
 	'html' => $fields[$field]['html'],
 	'fields' => $fields,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
+	// The document of the object shows the field: the page generates it again, like the cards do after a change
+	'builddoc' => !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && method_exists($object, 'generateDocument'),
 );
 
 // Messages set by the update (triggers, hooks...) are displayed now by the ajax caller, not on the next page

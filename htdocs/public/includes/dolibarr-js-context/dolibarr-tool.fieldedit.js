@@ -82,6 +82,45 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	const POPOVER_LAYERS = '.select2-container, .select2-dropdown, .ui-datepicker, .ui-dialog, .ui-widget-overlay, .cke_dialog, .cke_panel, .cke_dialog_background_cover';
 
 	/**
+	 * Button of the popover with an icon, its label as tooltip
+	 * @param {string} className
+	 * @param {string} icon Class of the Font Awesome icon
+	 * @param {string} label
+	 * @returns {HTMLButtonElement}
+	 */
+	function createIconButton(className, icon, label) {
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'dol-field-popover-button ' + className;
+		button.title = label;
+		button.setAttribute('aria-label', label);
+		const picto = document.createElement('span');
+		picto.className = 'fa ' + icon;
+		picto.setAttribute('aria-hidden', 'true');
+		button.append(picto);
+
+		return button;
+	}
+
+	/**
+	 * Give the focus to the first input of the editor. A list replaced by select2 (ajax_combobox()) gets the focus on its select2 box,
+	 * initialized by the script of the input once it is in the page
+	 * @param {HTMLElement} inputs
+	 */
+	function focusFirstInput(inputs) {
+		const first = inputs.querySelector('input:not([type="hidden"]), textarea, select');
+		if (!first) return;
+		if (first.tagName !== 'SELECT') {
+			first.focus();
+			return;
+		}
+		setTimeout(() => {
+			const select2 = first.nextElementSibling && first.nextElementSibling.matches('.select2-container') ? first.nextElementSibling.querySelector('.select2-selection') : null;
+			(select2 || first).focus();
+		}, 0);
+	}
+
+	/**
 	 * Place the popover over the value of the field, its inputs at the place of the value, in the width of the page
 	 * @param {HTMLElement} popover
 	 * @param {HTMLElement} container Container of the value
@@ -158,14 +197,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		inputs.className = 'dol-field-popover-inputs';
 		const actions = document.createElement('div');
 		actions.className = 'dol-field-popover-actions';
-		const saveButton = document.createElement('input');
-		saveButton.type = 'button';
-		saveButton.className = 'button smallpaddingimp';
-		saveButton.value = saveLabel;
-		const cancelButton = document.createElement('input');
-		cancelButton.type = 'button';
-		cancelButton.className = 'button button-cancel smallpaddingimp';
-		cancelButton.value = cancelLabel;
+		const saveButton = createIconButton('dol-field-popover-save', 'fa-check', saveLabel);
+		const cancelButton = createIconButton('dol-field-popover-cancel', 'fa-times', cancelLabel);
 		actions.append(saveButton, cancelButton);
 		editor.append(inputs, actions);
 		container.classList.add('dol-field-editing');
@@ -178,8 +211,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		place();
 		window.addEventListener('resize', place);
 
-		const firstInput = inputs.querySelector('input:not([type="hidden"]), textarea, select');
-		if (firstInput) firstInput.focus();
+		focusFirstInput(inputs);
 
 		const state = { container, cancel: () => close(valueHtml), saving: false };
 		current = state;
