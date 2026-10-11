@@ -123,7 +123,8 @@ try {
 		(string) json_encode($result)
 	);
 
-	dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_DEBUG, 0, '_ai');
+	dol_syslog("execute_tool.php answer = ".var_export($result, true), LOG_DEBUG, 0, '_ai');
+	dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_INFO, 0, '_ai');
 
 	echo json_encode($result);
 } catch (Throwable $e) {

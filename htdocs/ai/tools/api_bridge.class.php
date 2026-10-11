@@ -156,13 +156,73 @@ class ToolApiBridge extends McpTool
 	 *
 	 * @var array<string, array{label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>}>}>
 	 */
-	private $enrichments = [
-		'thirdparties' => [
+	private $enrichments = [];
+
+	/**
+	 * Fallback docs for parameters shared by most API index()/get() methods, used
+	 * when neither the per-method 'params' enrichment nor the docblock provides a
+	 * usable description. Kept in one place so every bridged list tool documents
+	 * the pagination/filter contract the same way.
+	 *
+	 * @var array<string, string>
+	 */
+	private $commonParamDocs = [
+		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec'). Use the SQL column names: creation date is 't.datec' (NEVER 'date_creation') and last modification 't.tms' (never 'date_modification').",
+		'sortorder' => "Sort direction: 'ASC' or 'DESC'.",
+		'limit' => "Maximum number of records to return.",
+		'page' => "Zero-based page index for pagination.",
+		'sqlfilters' => "Universal Search Filter (see 'sqlfilters format' in instructions): (t.field:operator:'value') combined with AND/OR and parentheses. E.g. \"(t.ref:like:'AB%') AND (t.datefield:>=:'2026-01-01')\"",
+		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
+		'id' => "Integer technical ID of the record."
+	];
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Acting user provided by McpHandler (the caller; tool calls run with this user's rights)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
+	 */
+	public function __construct($db, $user = null, $conf = null)
+	{
+		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
+
+		// Note: the list of parameters for each tool is described into "params" to overload the one found into the API.
+		// They are completed with descriptions like for searchfields, pagination_data, ... if the parameter exists in the API. using the content
+		// found into $this->commonParamDocs.
+
+
+		// Third parties
+		$descriptioncreate = "Create a third party (customer, prospect or supplier). The user must confirms before anything is written.";
+
+		$descriptionlist = "List third parties (prospects, customers, suppliers,...).";
+		$descriptionlist .= "Use parameter 'mode' to restrict to a nature of third party (0=all, 1=only customers, 2=only prospects, 3=neither customer nor prospect, 4=suppliers).\n";
+		$descriptionlist .= "To find one company by name use sqlfilters on t.nom or t.name_alias (e.g. \"((t.nom:like:'%acme%') OR (t.alias_name:like:'%acme%'))\").\n";
+		$descriptionlist .= "Prefer a small 'limit' and 'properties' (e.g. 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status') to keep answers short.\n";
+		$descriptionlist .= "List of useful sqlfilters or output fields with type:\n";
+		$descriptionlist .= "- t.nom : string (thirdparty name)\n";
+		$descriptionlist .= "- t.name_alias : string (thirdparty alternative name)\n";
+		$descriptionlist .= "- t.email : string (thirdparty email)\n";
+		$descriptionlist .= "- t.town : string (thirdparty email)\n";
+		$descriptionlist .= "- t.zip : string (thirdparty email)\n";
+		$descriptionlist .= "- t.fk_pays : integer (thirdparty country ID)\n";
+		$descriptionlist .= "- t.status : integer enum (status ID) among 1=open, 0=closed.";
+		$descriptionlist .= "\n";
+
+		$descriptionfetch = "Fetch the full record of a given thirdparty with main properties (name, name_alias, email, address, status, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit).";
+		$descriptionfetch .= "Fetch is done from ID.\n";
+		$descriptionfetch .= "In the result 'client' is 1=customer, 2=prospect, 3=both; 'fournisseur' is 1 when supplier.";
+
+		$this->enrichments['thirdparties'] = [
 			'label' => 'third parties (customers, prospects, suppliers)',
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a third party (customer, prospect or supplier). The user confirms before anything is written.",
+					'description' => $descriptioncreate,
 					'write' => [
 						'preview' => 'AIPreviewCreateThirdparty',
 						'required' => ['name'],
@@ -171,12 +231,14 @@ class ToolApiBridge extends McpTool
 						'right' => ['societe', 'creer']
 					],
 					'params' => [
-						"name" => "Company or person name.", "client" => "1 customer, 2 prospect, 3 both, 0 none.", "fournisseur" => "1 when the third party is a supplier."
+						"name" => "Company or person name.",
+						"client" => "1 customer, 2 prospect, 3 both, 0 none.",
+						"fournisseur" => "1 when the third party is a supplier."
 					]
 				],
 				'index' => [
-					'default_properties' => 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status',
-					'description' => "Use 'mode' to restrict to a nature of third party instead of filtering on names. To find one company by name use sqlfilters on t.nom (e.g. \"(t.nom:like:'%acme%')\"); other useful fields: t.name_alias, t.code_client, t.code_fournisseur, t.email, t.town, t.zip, t.fk_pays (country rowid), t.status (1=open, 0=closed). Prefer a small 'limit' and 'properties' (e.g. 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status') to keep answers short.",
+					'default_properties' => 'id,name,name_alias,code_client,code_fournisseur,email,town,client,fournisseur,status',
+					'description' => $descriptionlist,
 					'params' => [
 						'mode' => "Nature filter: 0=all (default), 1=customers/prospects, 2=prospects only, 3=neither customer nor prospect, 4=suppliers.",
 						'category' => "Rowid of a third-party category (tag) to restrict the list to.",
@@ -184,7 +246,7 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "Returns the full record: address, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit. In the result 'client' is 1=customer, 2=prospect, 3=both; 'fournisseur' is 1 when supplier."
+					'description' => $descriptionfetch
 				],
 				'getByEmail' => [
 					'suffix' => 'get_by_email',
@@ -207,8 +269,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['mode' => "'customer' (default) or 'supplier'."]
 				]
 			]
-		],
-		'categories' => [
+		];
+
+		$this->enrichments['categories'] = [
 			'label' => 'categories / tags',
 			'methods' => [
 				'post' => [
@@ -243,8 +306,9 @@ class ToolApiBridge extends McpTool
 					]
 				]
 			]
-		],
-		'supplier_invoices' => [
+		];
+
+		$this->enrichments['supplier_invoices'] = [
 			'label' => 'supplier invoices (vendor bills)',
 			'methods' => [
 				'index' => [
@@ -276,8 +340,9 @@ class ToolApiBridge extends McpTool
 					]
 				]
 			]
-		],
-		'supplier_orders' => [
+		];
+
+		$this->enrichments['supplier_orders'] = [
 			'label' => 'supplier order (purchase order)',
 			'methods' => [
 				'post' => [
@@ -303,8 +368,9 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => ['description' => "Get one record by rowid, with its lines."]
 			]
-		],
-		'supplier_proposals' => [
+		];
+
+		$this->enrichments['supplier_proposals'] = [
 			'label' => 'supplier proposal (price request)',
 			'methods' => [
 				'post' => [
@@ -330,8 +396,9 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => ['description' => "Get one record by rowid, with its lines."]
 			]
-		],
-		'invoices' => [
+		];
+
+		$this->enrichments['invoices'] = [
 			'label' => 'customer invoices',
 			'methods' => [
 				'post' => [
@@ -384,13 +451,29 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the invoice."]
 				]
 			]
-		],
-		'orders' => [
+		];
+
+		// Sale orders
+		$descriptioncreate = "Create a DRAFT sale order (customer order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. The third party is mandatory, so ask the user for their ID or name beforehand if you don't already have it. You can give also the lines that name its product_ref and quantity. The user confirms before anything is written.";
+
+		$descriptionlist = "Return a list of sale orders with properties: id, ref, socid, date_commande, delivery_date, total_ht, total_ttc, statut. ";
+		$descriptionlist .= "Useful sqlfilters fields with type:\n";
+		$descriptionlist .= "- t.ref : string (sale order ref)\n";
+		$descriptionlist .= "- t.fk_soc : integer (thirdparty ID),\n";
+		$descriptionlist .= "- t.date_commande : timestamp (order date),\n";
+		$descriptionlist .= "- t.total_ht : float, t.total_ttc : float,\n";
+		$descriptionlist .= "- t.fk_statut : integer enum (status ID) among -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed).";
+
+		$descriptionfetch = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from ID.";
+
+		$descriptionfetchref = "Fetch one order with its lines (product, qty, unit price, discount, line totals), status and dates. Fetch is done from exact REF (e.g. 'CO2401-0001').";
+
+		$this->enrichments['orders'] = [
 			'label' => 'sale orders',
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a DRAFT sale order (customer order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. The third party is mandatory, so ask the user for their ID or name beforehand if you don't already have it. You can give also the lines that name its product_ref and quantity. The user confirms before anything is written.",
+					'description' => $descriptioncreate,
 					'write' => [
 						'preview' => 'AIPreviewCreateOrder',
 						'required' => ['socid'],
@@ -403,13 +486,13 @@ class ToolApiBridge extends McpTool
 						'defaults' => ['date' => 'now']
 					],
 					'params' => [
-						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'socid' => "Rowid of the customer, or its name: a name is resolved here, so a separate lookup call can be avoided here.",
 						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
 					]
 				],
 				'index' => [
 					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
-					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'description' => $descriptionlist,
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
 						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
@@ -417,17 +500,18 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'description' => $descriptionfetch,
 					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				],
 				'getByRef' => [
 					'suffix' => 'get_by_ref',
-					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'description' => $descriptionfetchref,
 					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				]
 			]
-		],
-		'proposals' => [
+		];
+
+		$this->enrichments['proposals'] = [
 			'label' => 'commercial proposals (quotes / devis)',
 			'methods' => [
 				'post' => [
@@ -466,8 +550,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['ref' => "Exact proposal reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
 				]
 			]
-		],
-		'tickets' => [
+		];
+
+		$this->enrichments['tickets'] = [
 			'label' => 'support tickets',
 			'methods' => [
 				'index' => [
@@ -493,8 +578,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['ref' => "Exact ticket reference."]
 				]
 			]
-		],
-		'projects' => [
+		];
+
+		$this->enrichments['project'] = [
 			'label' => 'projects (including opportunities/leads)',
 			'methods' => [
 				'index' => [
@@ -515,8 +601,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['ref' => "Exact project reference."]
 				]
 			]
-		],
-		'tasks' => [
+		];
+
+		$this->enrichments['tasks'] = [
 			'label' => 'project tasks',
 			'methods' => [
 				'index' => [
@@ -537,8 +624,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the task."]
 				]
 			]
-		],
-		'agendaevents' => [
+		];
+
+		$this->enrichments['agendaevents'] = [
 			'label' => 'agenda / calendar events (meetings, calls)',
 			'methods' => [
 				'index' => [
@@ -553,8 +641,9 @@ class ToolApiBridge extends McpTool
 					'description' => "One event with its type, start/end dates, owner, linked third party/contact and note."
 				]
 			]
-		],
-		'interventions' => [
+		];
+
+		$this->enrichments['interventions'] = [
 			'label' => 'field service interventions',
 			'methods' => [
 				'index' => [
@@ -569,8 +658,9 @@ class ToolApiBridge extends McpTool
 					'description' => "One intervention with its lines (each line = one on-site work entry with date, duration in seconds and description)."
 				]
 			]
-		],
-		'contracts' => [
+		];
+
+		$this->enrichments['contracts'] = [
 			'label' => 'contracts (recurring services)',
 			'methods' => [
 				'index' => [
@@ -592,8 +682,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the contract."]
 				]
 			]
-		],
-		'members' => [
+		];
+
+		$this->enrichments['members'] = [
 			'label' => 'foundation/association members',
 			'methods' => [
 				'index' => [
@@ -614,12 +705,13 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the member."]
 				]
 			]
-		],
-		'subscriptions' => [
-			'label' => 'member subscriptions',
+		];
+
+		$this->enrichments['subscriptions'] = [
+			'label' => 'subscriptions',
 			'methods' => [
 				'index' => [
-					'description' => "All membership fee payments across members: fk_adherent (member rowid), dateh (period start), datef (period end), amount. NB: the default sortfield here is 'dateadh' WITHOUT the 't.' prefix (API quirk). To get the fees of one member prefer api_members_subscriptions_list.",
+					'description' => "All membership subscriptions (with fee payments or not) across members: fk_adherent (member rowid), dateh (period start), datef (period end), amount. NB: the default sortfield here is 'dateadh' WITHOUT the 't.' prefix (API quirk). To get the fees of one member prefer api_members_subscriptions_list.",
 					'params' => [
 						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
 					]
@@ -628,8 +720,9 @@ class ToolApiBridge extends McpTool
 					'description' => "One subscription payment with its member, period and amount."
 				]
 			]
-		],
-		'stockmovements' => [
+		];
+
+		$this->enrichments['stockmovements'] = [
 			'label' => 'stock movements (in/out/transfer history)',
 			'methods' => [
 				'index' => [
@@ -641,8 +734,9 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => []
 			]
-		],
-		'warehouses' => [
+		];
+
+		$this->enrichments['warehouses'] = [
 			'label' => 'warehouses',
 			'methods' => [
 				'index' => [
@@ -656,8 +750,9 @@ class ToolApiBridge extends McpTool
 					'description' => "One warehouse with its address, status and description."
 				]
 			]
-		],
-		'shipments' => [
+		];
+
+		$this->enrichments['shipments'] = [
 			'label' => 'customer shipments (expéditions, goods sent)',
 			'methods' => [
 				'index' => [
@@ -677,8 +772,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the shipment."]
 				]
 			]
-		],
-		'receptions' => [
+		];
+
+		$this->enrichments['receptions'] = [
 			'label' => 'supplier receptions (réceptions, goods received)',
 			'methods' => [
 				'index' => [
@@ -698,8 +794,9 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => "Rowid of the reception."]
 				]
 			]
-		],
-		'expensereports' => [
+		];
+
+		$this->enrichments['expensereports'] = [
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => [
 				'index' => [
@@ -714,13 +811,32 @@ class ToolApiBridge extends McpTool
 					'description' => "One expense report with its lines: per line the date, expense type code (type_fees_code: TRA_TRIP=transport, TRA_MEAL=meal, ...), VAT and amounts."
 				]
 			]
-		],
-		'products' => [
+		];
+
+		// Sale orders
+		$descriptioncreate = "Create a product or service in the catalog. The user must confirm before anything is written.";
+
+		$descriptionlist = "Search products using the sqlfilters (e.g. \"(t.label:like:'%screw%')\").\n";
+		$descriptionlist .= "Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.\n";
+
+		$descriptionlist .= "Useful sqlfilters fields with type:\n";
+		$descriptionlist .= "- t.ref : string (sale order ref)\n";
+		$descriptionlist .= "- t.label : string (product label)\n";
+		$descriptionlist .= "- t.fk_soc : integer (thirdparty ID),\n";
+		$descriptionlist .= "- t.date_commande : timestamp (order date),\n";
+		$descriptionlist .= "- t.price_ttc : float (default customer price), t.tva_tx : float (default vat rate),\n";
+		$descriptionlist .= "- t.status : integer (status For Sale) among 0=not for sale, 1=for sale\n";
+		$descriptionlist .= "- t.status_buy : integer (status For purchase) among 0=not for purchase, 1=for purchase\n";
+		$descriptionlist .= "- t.stock_reel : float (qty in stock, output only when param includestockdata=1)\n";
+
+		$descriptionfetch = "Fetch full product record (description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products), status and dates. Fetch is done from ID.";
+
+		$this->enrichments['products'] = [
 			'label' => 'products and services catalog',
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a product or service in the catalog. The user confirms before anything is written.",
+					'description' => $descriptioncreate,
 					'write' => [
 						'preview' => 'AIPreviewCreateProduct',
 						'required' => ['ref', 'label'],
@@ -734,7 +850,7 @@ class ToolApiBridge extends McpTool
 				],
 				'index' => [
 					'default_properties' => 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy',
-					'description' => "Search by name with sqlfilters on t.label, by reference on t.ref (e.g. \"(t.label:like:'%screw%')\"). Result fields: type (0=product, 1=service), price (sale price excl. tax), price_ttc, tva_tx (VAT rate), status (1=for sale), status_buy (1=for purchase), stock_reel (only with includestockdata=1). Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.",
+					'description' => $descriptionlist,
 					'params' => [
 						'mode' => "0=all (default), 1=products only, 2=services only.",
 						'category' => "Rowid of a product category to restrict the list to.",
@@ -745,7 +861,7 @@ class ToolApiBridge extends McpTool
 					]
 				],
 				'get' => [
-					'description' => "Full product record: description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products.",
+					'description' => $descriptionfetch,
 					'params' => [
 						'includestockdata' => "1 to load stock_reel, stock_theorique and per-warehouse stock (requires the Stock module).",
 						'includesubproducts' => "true to load the kit/BOM components (sub-products).",
@@ -780,10 +896,11 @@ class ToolApiBridge extends McpTool
 					'params' => ['id' => 'Rowid of the PARENT product.', 'includestock' => "1 to add stock data on each variant."]
 				]
 			]
-		],
+		];
+
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
-		'documents' => [
+		$this->enrichments['documents'] = [
 			'label' => 'documents attached to business objects',
 			'methods' => [
 				'getDocumentsListByElement' => [
@@ -796,41 +913,7 @@ class ToolApiBridge extends McpTool
 					]
 				]
 			]
-		],
-	];
-
-	/**
-	 * Fallback docs for parameters shared by most API index()/get() methods, used
-	 * when neither the per-method 'params' enrichment nor the docblock provides a
-	 * usable description. Kept in one place so every bridged list tool documents
-	 * the pagination/filter contract the same way.
-	 *
-	 * @var array<string, string>
-	 */
-	private $commonParamDocs = [
-		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec'). Use the SQL column names: creation date is 't.datec' (NEVER 'date_creation') and last modification 't.tms' (never 'date_modification').",
-		'sortorder' => "Sort direction: 'ASC' or 'DESC'.",
-		'limit' => "Maximum number of records to return.",
-		'page' => "Zero-based page index for pagination.",
-		'sqlfilters' => "Universal search filter. Syntax: (t.field:operator:'value'); operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". 'like' is case-insensitive; the IN operator is NOT supported (use 'or'); dates as 'YYYY-MM-DD'. Sub-queries (SELECT ...) are refused: to filter on a third party use thirdparty_ids, or (t.fk_soc:=:id), with its id.",
-		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
-		'id' => "Rowid (numeric technical id) of the record."
-	];
-
-	/**
-	 * 	Constructor
-	 *
-	 * 	@param	DoliDB		$db			Database handler
-	 * 	@param	User|null	$user		Acting user provided by McpHandler (the caller; tool calls run with this user's rights)
-	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
-	 */
-	public function __construct($db, $user = null, $conf = null)
-	{
-		$this->db = $db;
-		$this->user = $user;
-		if ($conf !== null) {
-			$this->conf = $conf;
-		}
+		];
 	}
 
 	/**
@@ -1226,7 +1309,14 @@ class ToolApiBridge extends McpTool
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
 				$pdesc = $paramDocs[$pname]['desc'];
-				if (in_array($pname, ['sqlfilters', 'sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
+				if (in_array($pname, ['sqlfilters'], true) && !empty($this->commonParamDocs[$pname])) {
+					$keptdesc = preg_replace('/.*Syntax example/', 'Example', rtrim($pdesc));
+					$pdesc = $this->commonParamDocs[$pname];
+					if ($keptdesc) {
+						$pdesc .= "\n".$keptdesc;
+					}
+				}
+				if (in_array($pname, ['sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
 					$pdesc = rtrim($pdesc, '. ').'. '.$this->commonParamDocs[$pname];
 				}
 			} else {
@@ -1303,8 +1393,9 @@ class ToolApiBridge extends McpTool
 		}
 
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
+		// When an explicit description is given, it has priority on auto-generated description
 		if (!empty($meta['description'])) {
-			$description = rtrim($description) . ' ' . $meta['description'];
+			$description = $meta['description'];
 		}
 
 		return [
