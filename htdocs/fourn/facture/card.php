@@ -143,8 +143,6 @@ $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRigh
 // Permissions for includes
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
-//$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-if (getDolGlobalString('MAIN_FACTUREFOURN_VALIDATE_SUPERSEED_CREATE')) {$permissiontoadd = $usercanvalidate ; } else { $permissiontoadd = $usercancreate; }
 $permissiontodelete = $usercandelete;
 if (getDolGlobalString('MAIN_FACTUREFOURN_VALIDATE_SUPERSEED_CREATE')) {$permissiontoadd = $usercanvalidate or $usercancreate ; } else { $permissiontoadd = $usercancreate; }
 
