@@ -603,6 +603,10 @@ class Facture extends CommonInvoice
 	 */
 	protected function onFieldValueChanged($fieldKey, $value)
 	{
+		if ($fieldKey == 'fk_cond_reglement') {
+			// Like on the card: the code of the previous payment term is used before its id by calculate_date_lim_reglement()
+			$this->cond_reglement_code = '';
+		}
 		if (($fieldKey == 'datef' || $fieldKey == 'fk_cond_reglement') && !empty($this->date)) {
 			$duedate = $this->calculate_date_lim_reglement();
 			if ($duedate) {
