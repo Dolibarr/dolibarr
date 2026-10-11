@@ -107,7 +107,7 @@ if (!$assistantEnabled) {
 	exit;
 }
 
-dol_syslog("parse_intent.php BEGIN", LOG_INFO, 0, '_ai');
+dol_syslog("parse_intent.php ***** BEGIN", LOG_INFO, 0, '_ai');
 
 set_time_limit($timeout + 5);
 
@@ -116,6 +116,9 @@ try {
 	$raw_input = file_get_contents('php://input');
 	$data = json_decode($raw_input, true);
 	$query = isset($data['query']) ? trim($data['query']) : '';
+	// Set by the chat when it calls back after running the read tool this
+	// endpoint flagged with needs_followup: the result is the last history turn.
+	$isFollowup = !empty($data['followup']);
 
 	// --- Page context (optional): posted by the chat JS from the value the
 	// printCommonFooter hook emitted on the page being viewed. The POST is
@@ -595,10 +598,14 @@ try {
 		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
 
 		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
-		$systemRules .= "Answer JSON format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
+		$systemRules .= 'Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
 		$systemRules .= "ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language. ";
 		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. ";
-		$systemRules .= "If you need to to a search before an action answer with a search tool.";
+		$systemRules .= "If you need to do a search before an action, answer with a search tool.";
+		if (!$isFollowup) {
+			// The chat runs the search, then calls back with its result so the action can follow.
+			$systemRules .= " When this search only fetches data (an id, a ref...) you need to perform the action the user asked, add \"needs_followup\": true at the top level of the JSON, next to \"tool\": the result of the search is then sent back to you to perform the action. Do not add it when the search result is itself the answer.";
+		}
 		$systemRules .= "Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available. ";
 
 
@@ -623,7 +630,7 @@ try {
 		// relative periods are the assistant's job to resolve, not the user's.
 		// Use date ISO 8601
 		$date = new DateTime('now', new DateTimeZone('UTC'));
-		$systemPrompt .= $systemRules . " Current date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".";
+		$systemPrompt .= $systemRules . " Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -748,11 +755,17 @@ try {
 			if (!empty($history)) {
 				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
+			if ($isFollowup) {
+				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
+			}
 
-			dol_syslog('parse_intent.php systemPrompt='.$systemPrompt, LOG_DEBUG, 0, '_ai');
-			dol_syslog('parse_intent.php query='.$query, LOG_DEBUG, 0, '_ai');
+			//dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
+			dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
+			// Sent as separate messages, so not in the systemPrompt (masked when privacy masking is on).
+			dol_syslog('parse_intent.php history = '.json_encode($history, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOG_DEBUG, 0, '_ai');
 
 			// Call LLM and get answer string
+			dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step 2: followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
@@ -1002,7 +1015,7 @@ try {
 		}
 	}
 
-	// ask_for_confirmation is ours, built below around a real tool call; a model
+	// Ask_for_confirmation is ours, built below around a real tool call; a model
 	// that emits it by itself (it does, on a follow-up question: "do you really
 	// want to update the phone of X?") sends the client a confirmation with
 	// nothing to confirm, which it rejects as malformed. Hand the question to
@@ -1037,6 +1050,8 @@ try {
 	// question, an error) ends the turn on the first answer, unchanged. There
 	// is no third call whatever the model answers.
 	$twoStepLabel = '';
+	// Tools answered by the chat itself, never a step of a write.
+	$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page', 'generate_navigation_url');
 	// Only on the model path: the shortcut paths above (classifier, page
 	// context...) answer without $adapter / $mcp / $history / $systemPrompt.
 	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter, $mcp, $history, $systemPrompt, $toolsSchema) && is_object($adapter) && is_object($mcp) && is_array($history) && is_array($toolsSchema)) {
@@ -1045,19 +1060,8 @@ try {
 		 * @param array<string,mixed> $args Tool arguments
 		 * @return bool                     True when the tool writes
 		 */
-		$isWriteTool = function ($name, array $args) use ($mcp) {
-			if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
-				return true;
-			}
-			$inst = $mcp->toolsByName[$name] ?? null;
-			if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
-				return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
-			}
-			return false;
-		};
 		$readArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
-		$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page');
-		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !$isWriteTool($toolName, $readArgs)) {
+		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !aiIsWriteTool($mcp, $toolName, $readArgs)) {
 			$readResult = $mcp->executeTool($toolName, $readArgs);
 			if (is_array($readResult) && !isset($readResult['error']) && (($readResult['resultType'] ?? '') !== 'input_required')) {
 				// The first call is a step of its own in the log (tokens included).
@@ -1078,6 +1082,7 @@ try {
 				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
 
 				// Call LLM
+				dol_syslog("parse_intent.php call LLM - step additional (AI_CHAT_TWO_STEP_WRITE): server-side followup with the result of the read tool ".$toolName, LOG_DEBUG, 0, '_ai');
 				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
 
 				$rawRequestLog = $adapter->lastRequest;
@@ -1106,7 +1111,7 @@ try {
 					}
 				}
 				$args2 = (is_array($intent2) && isset($intent2['arguments']) && is_array($intent2['arguments'])) ? $intent2['arguments'] : array();
-				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && $isWriteTool($intent2['tool'], $args2)) {
+				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && aiIsWriteTool($mcp, $intent2['tool'], $args2)) {
 					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
 					$intentJSON = $intent2;
 					$toolName = $intent2['tool'];
@@ -1197,6 +1202,22 @@ try {
 		$intentJSON['arguments']['_confidence_note'] = "I'm moderately confident about this interpretation. Please verify the results.";
 	}
 
+	// The model answered with a read that is only a step toward the action
+	// asked: either it says so itself (needs_followup in its JSON), or a write
+	// was asked and it answered with a read (a search for the id of the object
+	// to change). Tell the chat to send the result of that read back here, with
+	// followup=1, so the model can perform the action.
+	// Never on a followup call itself: one extra round at most, no loop.
+	$llmAsksFollowup = !empty($intentJSON['needs_followup']);
+	unset($intentJSON['needs_followup']);
+	if (!$isFollowup && !getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && isset($mcp) && is_object($mcp)
+		&& !in_array($toolName, $systemTools, true)
+		&& !aiIsWriteTool($mcp, $toolName, (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array())
+		&& ($llmAsksFollowup || aiQueryAsksForWrite($query, $langs))) {
+		dol_syslog("parse_intent.php needs_followup on ".$toolName." (".($llmAsksFollowup ? 'asked by the model' : 'write asked, read answered').")", LOG_DEBUG, 0, '_ai');
+		$intentJSON['needs_followup'] = 1;
+	}
+
 	// Success!
 	$finalResponse = $intentJSON;
 	$execTime = microtime(true) - $startTime;
@@ -1268,6 +1289,26 @@ function aiQueryAsksForWrite($query, $langs)
 	}
 	$pattern = '/(^|[^\p{L}])('.implode('|', $escaped).')([^\p{L}]|$)/iu';
 	return (bool) preg_match($pattern, dol_strtolower((string) $query));
+}
+
+/**
+ * Does the tool write (create / update / delete / ...)?
+ *
+ * @param McpHandler          $mcp  MCP handler with tools loaded
+ * @param string              $name Tool name
+ * @param array<string,mixed> $args Tool arguments
+ * @return bool                     True when the tool writes
+ */
+function aiIsWriteTool($mcp, $name, array $args)
+{
+	if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
+		return true;
+	}
+	$inst = $mcp->toolsByName[$name] ?? null;
+	if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
+		return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
+	}
+	return false;
 }
 
 /**

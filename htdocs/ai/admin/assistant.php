@@ -283,12 +283,14 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '</tr>';
 
 	// Second step: a write asked, a read answered -> run the read, then the write
+	/* Disabled, not the good architecture solution for sequenced requests.
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIChatTwoStepWrite"), $langs->trans("AIChatTwoStepWriteHelp")) . '</td>';
 	print '<td>';
 	print ajax_constantonoff('AI_CHAT_TWO_STEP_WRITE');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	// Context window of the chat
 	print '<tr class="oddeven">';

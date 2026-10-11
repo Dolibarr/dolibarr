@@ -427,8 +427,7 @@ class UniversalLLMAdapter
 		// a bare "Invalid JSON response from API." with an empty body.
 		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
-		dol_syslog('curl answer received, size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
-		dol_syslog('curl answer received, HTTP = '.$httpCode, LOG_DEBUG, 0, '_ai');
+		dol_syslog('curl answer received, HTTP = '.$httpCode.', size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
 
 		if (!empty($result['curl_error_no'])) {
 			dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
@@ -437,8 +436,8 @@ class UniversalLLMAdapter
 
 		$json = json_decode($body, true);
 
-		dol_syslog("Result body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
-		dol_syslog("Result json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
+		dol_syslog("curl answer body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
+		dol_syslog("curl answer json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page

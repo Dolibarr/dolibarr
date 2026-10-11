@@ -62,6 +62,14 @@ if (!$user->hasRight('ai', 'assistant', 'use')) {
 // another site. Must stay after the login is done by main.inc.php (the session is needed).
 aiCheckCsrfToken('ai/assistant/execute_tool.php');
 
+
+
+/*
+ * View
+ */
+
+dol_syslog("execute_tool.php ***** BEGIN", LOG_INFO, 0, '_ai');
+
 top_httphead('application/json');
 
 
@@ -79,6 +87,9 @@ try {
 	$mcp->loadTools();
 
 	$tStart = microtime(true);
+
+	dol_syslog("execute_tool.php tool = ".$input['tool'].", arguments = ".json_encode($input['arguments'] ?? []), LOG_DEBUG, 0, '_ai');
+
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
 	// This endpoint runs the executions the user confirmed - the calls that actually
@@ -111,6 +122,8 @@ try {
 		$raw,
 		(string) json_encode($result)
 	);
+
+	dol_syslog("execute_tool.php answer = ".count($result)." lines", LOG_DEBUG, 0, '_ai');
 
 	echo json_encode($result);
 } catch (Throwable $e) {

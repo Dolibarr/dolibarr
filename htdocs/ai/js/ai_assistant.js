@@ -1656,73 +1656,100 @@ export function initAiAssistant(container) {
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
-        const loadingMsg = chat.lastElementChild;
+        let loadingMsg = chat.lastElementChild;
         try {
             const chosenModel = resolveModel();
-            const intentRes = await fetch(epUrl('parse_intent.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                // Page context (set by the printCommonFooter hook on card pages)
-                // lets the server resolve "this invoice" - it re-validates the
-                // ids against the user's rights before trusting them.
-                body: JSON.stringify(Object.assign(
-                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
-                    (function () {
-                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
-                        return pinned.length ? { history: pinned } : {};
-                    })(),
-                    (function () {
-                        const ctx = window.aiPageContext;
-                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
-                        // On list pages, the mass-action checkboxes carry the row
-                        // ids: checked ones are the user's live selection.
-                        if (ctx.list) {
-                            // The mass-action checkboxes carry rowids by core
-                            // convention on every list - a uniform source that
-                            // sidesteps the per-list SQL alias zoo server-side.
-                            const all = Array.from(document.querySelectorAll('.checkforselect'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
-                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
-                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
-                            if (sel.length) ctx.selected = sel;
-                        }
-                        return { context: ctx };
-                    })()
-                ))
-            });
-            const intent = await aiJson(intentRes);
-            loadingMsg.remove();
-            if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+            // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+            const pinned = collectPinnedContext();
+            // Result of the read flagged needs_followup, sent back on the second round.
+            let followupSnippet = null;
+            // Two rounds at most: the server never flags a followup round itself.
+            for (let round = 0; round < 2; round++) {
+                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                const intentRes = await fetch(epUrl('parse_intent.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    // Page context (set by the printCommonFooter hook on card pages)
+                    // lets the server resolve "this invoice" - it re-validates the
+                    // ids against the user's rights before trusting them.
+                    body: JSON.stringify(Object.assign(
+                        chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        (function () {
+                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1 };
+                            return pinned.length ? { history: pinned } : {};
+                        })(),
+                        (function () {
+                            const ctx = window.aiPageContext;
+                            if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                            // On list pages, the mass-action checkboxes carry the row
+                            // ids: checked ones are the user's live selection.
+                            if (ctx.list) {
+                                // The mass-action checkboxes carry rowids by core
+                                // convention on every list - a uniform source that
+                                // sidesteps the per-list SQL alias zoo server-side.
+                                const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                                if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                                const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                                if (sel.length) ctx.selected = sel;
+                            }
+                            return { context: ctx };
+                        })()
+                    ))
+                });
+                const intent = await aiJson(intentRes);
+                loadingMsg.remove();
+                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
-            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'generate_navigation_url') {
-                appendMsg('system', t('GeneratingLink'));
-                const loadingNav = chat.lastElementChild;
-                const navRes = await fetch(epUrl('execute_tool.php'), {
+                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'generate_navigation_url') {
+                    appendMsg('system', t('GeneratingLink'));
+                    const loadingNav = chat.lastElementChild;
+                    const navRes = await fetch(epUrl('execute_tool.php'), {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(intent)
+                    });
+                    const nav = await aiJson(navRes);
+                    loadingNav.remove();
+                    if (nav.error) { appendMsg('error', nav.error); }
+                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                    input.disabled = false; input.focus(); return;
+                }
+
+                appendMsg('system', t('FetchingData'));
+                const loadingData = chat.lastElementChild;
+                const toolRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await aiJson(navRes);
-                loadingNav.remove();
-                if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                input.disabled = false; input.focus(); return;
+                const result = await aiJson(toolRes);
+                loadingData.remove();
+                // The read only fetched the ids the asked action needs: hand its result
+                // back to the model instead of showing it, and let it perform the action.
+                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                    appendMsg('system', t('AISearchDoneNowPreparingAction'));
+                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    continue;
+                }
+                // A write tool does not write on its first call: it answers with the
+                // sentence to confirm and a requestState. Ask the user, the write runs
+                // when executePendingIntent() sends the state back.
+                if (result && result.resultType === 'input_required' && result.requestState) {
+                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+                    const confirmed = Object.assign({}, intent, {
+                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+                    });
+                    delete confirmed.needs_followup;
+                    handleConfirmation(req.prompt || intent.tool, '', { arguments: { original_intent: confirmed } });
+                    input.disabled = false; input.focus(); return;
+                }
+                lastResult = { data: result, tool: intent.tool, query: query };
+                appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
+                resolveThirdpartyNames(chat.lastElementChild);
+                break;
             }
-
-            appendMsg('system', t('FetchingData'));
-            const loadingData = chat.lastElementChild;
-            const toolRes = await fetch(epUrl('execute_tool.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(intent)
-            });
-            const result = await aiJson(toolRes);
-            loadingData.remove();
-            lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
-            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
