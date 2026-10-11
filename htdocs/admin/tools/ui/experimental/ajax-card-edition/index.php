@@ -141,8 +141,10 @@ $documentation->showSidebar(); ?>
 			<p class="documentation-text">
 				Only the fields declared editable from the user interface, with <code>'uieditable' => 1</code> in <code>$fields</code> of the class.
 				In core: customer ref and notes of proposals, orders and invoices, notes of third parties and products,
-				and the fields of the header of a draft proposal: dates (proposal, end of validity, delivery), payment term and mode, delivery delay,
-				shipping method, source and bank account. The end of validity follows the date of the proposal, like on the card.
+				and the fields of the header of proposals, orders and invoices: dates, payment term and mode, delivery delay, shipping method, source,
+				bank account. They are editable in the same statuses as on the cards (draft only for proposals, dates of orders and invoices),
+				and the fields depending on them are computed like on the cards: end of validity of a proposal following its date,
+				due date of an invoice following its date and payment term.
 				Other fields keep the edition by reloading the page.<br>
 				A click on the edit picto of the field opens its input in a popover placed over the value, so the card does not move. <kbd>Enter</kbd> saves, <kbd>Escape</kbd> cancels.
 				Only one field is edited at a time: opening another field cancels the first one. A click outside the popover closes it when the value was not changed.<br>
@@ -182,7 +184,8 @@ $documentation->showSidebar(); ?>
 				<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_FIELD_EDIT</code>, see <code>Form::isAjaxFieldEdit()</code>.</li>
 				<li>Only for the fields of a <code>CommonObject</code> editable from the user interface (<code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>). Other fields keep the edition by reloading the page.</li>
 				<li>The edit link gets the attributes <code>data-dol-edit-field</code>, <code>data-dol-element</code>, <code>data-dol-id</code> and <code>data-dol-tms</code>, its url is still used without javascript. The value is printed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>.
-					Cards printing their own edit link and value (lists of dictionaries...) add these attributes with <code>Form::getAjaxFieldEditAttributes()</code> and <code>Form::getAjaxFieldValueAttributes()</code>.</li>
+					Cards printing their own edit link and value (lists of dictionaries...) add these attributes with <code>Form::getAjaxFieldEditAttributes()</code> and <code>Form::getAjaxFieldValueAttributes()</code>.
+					When the name given to <code>editfieldkey()</code> is not the field of <code>$fields</code> (ex: <code>'conditions'</code>), the field is given by its last parameter <code>$ajaxfield</code> (ex: <code>'fk_cond_reglement'</code>).</li>
 				<li>On the server, the field is read in the property used by the cards (<code>CommonObject::getFieldUiValue()</code>, ex: <code>fk_cond_reglement</code> in <code>cond_reglement_id</code>), edited with the selector of the card (<code>ajaxInputField()</code>), shown like on the card (<code>ajaxOutputField()</code>) and saved with the setter of the card (<code>persistFieldValue()</code>, ex: <code>setPaymentTerms()</code>). The fields depending on it are recomputed by <code>onFieldValueChanged()</code>, then refreshed on the page.</li>
 				<li>A click on the link opens the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>), in a <b>field popover</b> <code>.dol-field-popover</code> placed over the value (light theme of the tooltips, <code>--light-mode</code> or <code>--dark-mode</code>): the layout of the card does not move. <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
 				<li>The popover has icon buttons (save, cancel, labels as tooltips). A list replaced by select2 gets the focus on its select2 box.</li>

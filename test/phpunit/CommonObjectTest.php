@@ -1664,6 +1664,120 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * Fields of the header of an order: date in the property date, delivery date with a time, setters of the card,
+	 * fields editable on a validated order like on the card (except the date)
+	 *
+	 * @return void
+	 */
+	public function testUpdateHeaderFieldsFromUiOnOrder()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+		$resql = $db->query("SELECT MIN(rowid) as id FROM ".MAIN_DB_PREFIX."c_availability WHERE active = 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$availabilityid = $obj ? (int) $obj->id : 0;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$localobject->ref_client = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+
+		$this->assertSame($localobject->date, $localobject->getFieldUiValue('date_commande'));
+		$this->assertStringContainsString('name="ajaxfield_date_livraisonhour"', $localobject->ajaxInputField('date_livraison'), 'Delivery date has a time');
+
+		$date = dol_mktime(12, 0, 0, 3, 10, 2026);
+		$deliverydate = dol_mktime(14, 30, 0, 4, 1, 2026);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'date_commande', $date), (string) $localobject->error);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'date_livraison', $deliverydate), (string) $localobject->error);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_availability', $availabilityid), (string) $localobject->error);
+
+		$checkobject = new Commande($db);
+		$checkobject->fetch($id);
+		$this->assertSame(dol_print_date($date, 'day'), dol_print_date($checkobject->date, 'day'));
+		$this->assertSame(dol_print_date($deliverydate, 'dayhour'), dol_print_date($checkobject->delivery_date, 'dayhour'));
+		$this->assertEquals($availabilityid, $checkobject->availability_id);
+		$this->assertStringContainsString(dol_print_date($deliverydate, 'dayhour'), $checkobject->ajaxOutputField('date_livraison'));
+
+		// Validated order: the date is locked, the delivery date can still be changed like on the card
+		$localobject->status = $localobject->statut = Commande::STATUS_VALIDATED;
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'date_commande'));
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'date_livraison'));
+
+		$localobject->status = $localobject->statut = Commande::STATUS_DRAFT;
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Fields of the header of an invoice: the due date follows the date and the payment term, like on the card,
+	 * and a credit note has no payment term
+	 *
+	 * @return void
+	 */
+	public function testUpdateHeaderFieldsFromUiOnInvoice()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module customer invoice must be enabled');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+		// A payment term with a delay
+		$resql = $db->query("SELECT MIN(rowid) as id FROM ".MAIN_DB_PREFIX."c_payment_term WHERE active = 1 AND nbjour > 0");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$condid = $obj ? (int) $obj->id : 0;
+		$this->assertGreaterThan(0, $condid, 'A payment term with a delay is needed');
+
+		$localobject = new Facture($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Facture($db);
+		$localobject->fetch($id);
+
+		$date = dol_mktime(12, 0, 0, 3, 10, 2026);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'datef', $date), (string) $localobject->error);
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_cond_reglement', $condid), (string) $localobject->error);
+
+		$checkobject = new Facture($db);
+		$checkobject->fetch($id);
+		$this->assertSame(dol_print_date($date, 'day'), dol_print_date($checkobject->date, 'day'));
+		$this->assertEquals($condid, $checkobject->cond_reglement_id);
+		$this->assertSame(dol_print_date($checkobject->calculate_date_lim_reglement($condid), 'day'), dol_print_date($checkobject->date_lim_reglement, 'day'), 'Due date follows the payment term');
+
+		// A due date before the date of the invoice is computed again
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'date_lim_reglement', $date - 10 * 24 * 3600), (string) $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertGreaterThanOrEqual(dol_print_date($date, '%Y%m%d'), dol_print_date($checkobject->date_lim_reglement, '%Y%m%d'));
+
+		$localobject->type = Facture::TYPE_CREDIT_NOTE;
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'fk_cond_reglement'), 'No payment term on a credit note');
+		$localobject->type = Facture::TYPE_STANDARD;
+
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void

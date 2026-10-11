@@ -5887,10 +5887,10 @@ if ($action == 'create') {
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		if ($action != 'editinvoicedate' && $object->status == $object::STATUS_DRAFT && $usercancreate && !getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&facid='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'datef', $object->status == $object::STATUS_DRAFT && $usercancreate).'>'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'datef', $object->status == $object::STATUS_DRAFT && $usercancreate).'>';
 		if ($action == 'editinvoicedate') {
 			$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
 		} else {
@@ -5913,10 +5913,10 @@ if ($action == 'create') {
 			print $langs->trans('DatePointOfTax');
 			print '</td>';
 			if ($editable) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_pointoftax&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_pointoftax&token='.newToken().'&facid='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'date_pointoftax', $editable).'>'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td>';
+			print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'date_pointoftax', $editable).'>';
 			if ($action == 'editdate_pointoftax' && $editable) {
 				$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date_pointoftax, 'date_pointoftax');
 			} else {
@@ -5928,8 +5928,8 @@ if ($action == 'create') {
 		// Source reason (why we have an invoice)
 		if (!getDolGlobalInt('INVOICE_DISABLE_SOURCE')) {
 			print '<tr><td>';
-			print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate, 'string', '', 0, 0, 'id', '', 'fk_input_reason');
+			print '</td><td class="valuefield"'.$form->getAjaxFieldValueAttributes($object, 'fk_input_reason', (int) $usercancreate).'>';
 			if ($action == 'editinput_reason') {
 				$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1, 'maxwidth250 widthcentpercentminusx');
 			} else {
@@ -5944,10 +5944,10 @@ if ($action == 'create') {
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&facid='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'fk_cond_reglement', (int) $usercancreate).'>'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'fk_cond_reglement', (int) $usercancreate).'>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 			if ($action == 'editconditions') {
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id');
@@ -5963,10 +5963,10 @@ if ($action == 'create') {
 		print $langs->trans('DateMaxPayment');
 		print '</td>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&token='.newToken().'&facid='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'date_lim_reglement', (int) $usercancreate).'>'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'date_lim_reglement', (int) $usercancreate).'>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 			if ($action == 'editpaymentterm') {
 				$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date_lim_reglement, 'paymentterm');
@@ -5985,10 +5985,10 @@ if ($action == 'create') {
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&facid='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'fk_mode_reglement', (int) $usercancreate).'>'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'fk_mode_reglement', (int) $usercancreate).'>';
 		if ($action == 'editmode') {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		} else {
@@ -6032,10 +6032,10 @@ if ($action == 'create') {
 			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if (($action != 'editbankaccount') && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'"'.$form->getAjaxFieldEditAttributes($object, 'fk_account', (int) $usercancreate).'>'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td>';
+			print '</td><td'.$form->getAjaxFieldValueAttributes($object, 'fk_account', (int) $usercancreate).'>';
 			if ($action == 'editbankaccount') {
 				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 			} else {

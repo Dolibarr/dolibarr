@@ -3261,14 +3261,16 @@ if ($action == 'create') {
 		// Date of proposal
 		print '<tr>';
 		print '<td>';
+		// print '<table class="nobordernopadding" width="100%"><tr><td>';
+		// print $langs->trans('DatePropal');
+		// print '</td>';
+		// if ($action != 'editdate' && $usercancreate && $caneditfield) {
+		// 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+		// }
+
+		// print '</tr></table>';
 		$editenable = $usercancreate && $caneditfield && $object->status == Propal::STATUS_DRAFT;
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('DatePropal');
-		print '</td>';
-		if ($action != 'editdate' && $editenable) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdate&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'datep', $editenable) . '>' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
-		}
-		print '</tr></table>';
+		print $form->editfieldkey("DatePropal", 'date', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'datep');
 		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'datep', $editenable) . '>';
 		if ($action == 'editdate' && $usercancreate && $caneditfield) {
 			print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';

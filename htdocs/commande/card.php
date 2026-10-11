@@ -3183,8 +3183,8 @@ if ($action == 'create' && $usercancreate) {
 			// Date
 			print '<tr><td>';
 			$editenable = $usercancreate && $object->status == Commande::STATUS_DRAFT;
-			print $form->editfieldkey("Date", 'date', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey("Date", 'date', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'date_commande');
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'date_commande', $editenable) . '>';
 			if ($action == 'editdate') {
 				print '<form name="setdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 				print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -3194,10 +3194,7 @@ if ($action == 'create' && $usercancreate) {
 				print '<input type="submit" class="button button-edit" value="' . $langs->trans('Modify') . '">';
 				print '</form>';
 			} else {
-				print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
-				if ($object->hasDelay() && empty($object->delivery_date)) {	// If there is a delivery date planned, warning should be on this date
-					print ' ' . img_picto($langs->trans("Late") . ' : ' . $object->showDelay(), "warning");
-				}
+				print $object->getCardDateHtml('date_commande');
 			}
 			print '</td>';
 			print '</tr>';
@@ -3206,7 +3203,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("DateDeliveryPlanned", 'date_livraison', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'date_livraison', $editenable) . '>';
 			if ($action == 'editdate_livraison') {
 				print '<form name="setdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 				print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -3216,24 +3213,7 @@ if ($action == 'create' && $usercancreate) {
 				print '<input type="submit" class="button button-edit" value="' . $langs->trans('Modify') . '">';
 				print '</form>';
 			} else {
-				print $object->delivery_date ? dol_print_date($object->delivery_date, 'dayhour') : '&nbsp;';
-				if ($object->hasDelay() && !empty($object->delivery_date)) {
-					print ' ' . img_picto($langs->trans("Late") . ' : ' . $object->showDelay(), "warning");
-				}
-			}
-			// --- SHIPPABLE icon ---
-			if (isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && !empty($object->delivery_date)) {
-				$shippableInfos = $object->getShippableInfos();
-
-				if (!empty($shippableInfos['has_product'])) {
-					print ' ';
-					print $form->textwithtooltip('', $shippableInfos['textinfo'], 2, 1, $shippableInfos['texticon'], '', 2);
-
-					if (!empty($shippableInfos['warning'])) {
-						print ' ';
-						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
-					}
-				}
+				print $object->getCardDateHtml('date_livraison');
 			}
 			print '</td>';
 			print '</tr>';
@@ -3241,8 +3221,8 @@ if ($action == 'create' && $usercancreate) {
 			// Delivery delay
 			print '<tr class="fielddeliverydelay"><td>';
 			$editenable = $usercancreate;
-			print $form->editfieldkey("AvailabilityPeriod", 'availability', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey("AvailabilityPeriod", 'availability', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_availability');
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_availability', $editenable) . '>';
 			if ($action == 'editavailability') {
 				$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->availability_id, 'availability_id', 1);
 			} else {
@@ -3254,8 +3234,8 @@ if ($action == 'create' && $usercancreate) {
 			if (isModEnabled('shipping')) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
-				print $form->editfieldkey("SendingMethod", 'shippingmethod', '', $object, (int) $editenable);
-				print '</td><td class="valuefield">';
+				print $form->editfieldkey("SendingMethod", 'shippingmethod', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_shipping_method');
+				print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_shipping_method', $editenable) . '>';
 				if ($action == 'editshippingmethod') {
 					$form->formSelectShippingMethod($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->shipping_method_id, 'shipping_method_id', 1);
 				} else {
@@ -3284,8 +3264,8 @@ if ($action == 'create' && $usercancreate) {
 			// Source reason (why we have an order)
 			print '<tr><td>';
 			$editenable = $usercancreate;
-			print $form->editfieldkey("Source", 'demandreason', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey("Source", 'demandreason', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_input_reason');
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_input_reason', $editenable) . '>';
 			if ($action == 'editdemandreason') {
 				$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->demand_reason_id, 'demand_reason_id', 1);
 			} else {
@@ -3296,8 +3276,8 @@ if ($action == 'create' && $usercancreate) {
 			// Terms of payment
 			print '<tr><td>';
 			$editenable = $usercancreate;
-			print $form->editfieldkey("PaymentConditionsShort", 'conditions', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey("PaymentConditionsShort", 'conditions', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_cond_reglement');
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_cond_reglement', $editenable) . '>';
 			if ($action == 'editconditions') {
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 1, '', 1, $object->deposit_percent);
 			} else {
@@ -3310,8 +3290,8 @@ if ($action == 'create' && $usercancreate) {
 			// Mode of payment
 			print '<tr><td>';
 			$editenable = $usercancreate;
-			print $form->editfieldkey("PaymentMode", 'mode', '', $object, (int) $editenable);
-			print '</td><td class="valuefield">';
+			print $form->editfieldkey("PaymentMode", 'mode', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_mode_reglement');
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_mode_reglement', $editenable) . '>';
 			if ($action == 'editmode') {
 				$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 			} else {
@@ -3370,8 +3350,8 @@ if ($action == 'create' && $usercancreate) {
 			if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
-				print $form->editfieldkey("BankAccount", 'bankaccount', '', $object, (int) $editenable);
-				print '</td><td class="valuefield">';
+				print $form->editfieldkey("BankAccount", 'bankaccount', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'fk_account');
+				print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_account', $editenable) . '>';
 				if ($action == 'editbankaccount') {
 					$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->fk_account, 'fk_account', 1);
 				} else {
