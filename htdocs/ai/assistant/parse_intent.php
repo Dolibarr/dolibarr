@@ -622,7 +622,7 @@ try {
 			// The chat runs the search, then calls back with its result so the action can follow.
 			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it the requested search is itself the FINAL answer.";
 		}
-		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available.\n";
+		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
 		$systemRules .= "\n";
 
 		$systemPrompt .= $systemRules;
@@ -792,7 +792,7 @@ try {
 			// single tool call per answer the model picks the older one - field
 			// case: "set the phone of X" answered by creating "X bis".
 			if (!empty($history)) {
-				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
 			if ($isFollowup) {
 				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
@@ -868,11 +868,22 @@ try {
 					$intentJSON = json_decode($clean, true);
 					dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 
-					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user' && empty($intentJSON['arguments']['message'])) {
-						// If answer is tool=respond_to_user but without message
-						dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
+					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user') {
+						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
+							// If answer is tool=respond_to_user but without message
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
 
-						$intentJSON['arguments']['message'] = 'I could not produce an answer for this request. Please rephrase or add details.';
+							$intentJSON['arguments']['message'] = "I don't understand the answer produced by the IA for this request. Please rephrase or add details.";
+						} else {
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a messageor content', LOG_DEBUG, 0, '_ai');
+
+							$intentJSON = [
+								"tool" => "respond_to_user",
+								'arguments' => [
+									"message" => $intentJSON['arguments']['message'] ?? ($intentJSON['arguments']['content'] ?? '')
+								]
+							];
+						}
 					} elseif (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'ask_for_clarification' && empty($intentJSON['arguments']['question'])) {
 						// If answer is tool=ask_for_clarification but without message
 						dol_syslog('parse_intent.php clean response is "ask_for_clarification" with a question', LOG_DEBUG, 0, '_ai');

@@ -1347,8 +1347,9 @@ export function initAiAssistant(container) {
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
         // A write tool sends a full sentence describing what it would write; it
-        // is the question itself, not a verb to slot into another sentence.
-        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        // is the question itself, not a verb to slot into another sentence. More
+        // than 2 words is a sentence too: a label may follow its final dot.
+        const isSentence = typeof action === 'string' && (/[.!?]\s*$/.test(action.trim()) || action.trim().split(/\s+/).length > 2);
         let messageHtml;
         if (isSentence) {
             messageHtml = `<strong>${action}</strong>`;
@@ -1583,7 +1584,7 @@ export function initAiAssistant(container) {
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = past.every((m) => !m.dataset.ctx);
         bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
-            t('Statistics').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
             ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('AIContextClear') + '</a>';
@@ -1635,6 +1636,25 @@ export function initAiAssistant(container) {
         const readyDocs = attachedDocs.filter((d) => !d.error);
         if (!query && !readyDocs.length) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
+
+        // "/status" is answered locally (no AI call): statistics of the whole
+        // conversation, then of the context selected for the next question.
+        // Both bubbles have no raw text so they never travel as context.
+        if (query.toLowerCase() === '/status' && !readyDocs.length) {
+            const countStats = (items) => [
+                items.filter((p) => p.role === 'user').length,
+                items.length,
+                Math.round(items.reduce((n, p) => n + p.text.length, 0) / 4)
+            ];
+            const fillStats = (s) => t('AIContextCounter').replace('%s', String(s[0])).replace('%s', String(s[1])).replace('%s', String(s[2]));
+            const whole = pastContextBubbles().map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }));
+            appendMsg('user', escapeHtml(query));
+            appendMsg('bot', escapeHtml(fillStats(countStats(whole))) + '<br>' + escapeHtml(fillStats(countStats(collectPinnedContext()))));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
 
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
         let sentQuery = query;
