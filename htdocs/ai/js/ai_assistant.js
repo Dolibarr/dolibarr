@@ -1722,6 +1722,12 @@ export function initAiAssistant(container) {
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
                 if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+                    // Debug output of /tools, built and escaped server side: shown as is,
+                    // never sent back as context. Only for that query: an 'html' argument
+                    // coming from the model is never trusted.
+                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
+                }
                 if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'generate_navigation_url') {

@@ -527,18 +527,18 @@ try {
 
 		$s = '';
 
-		// Special case we ask debug info
+		// Special case we ask debug info: the tool families found into ai/tools/
 		if ($query == '/tools') {
-			$s .= '----- loadedTools (scan of family tools, not tools)'."\n";
-			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			$s .= '----- toolsByName'."\n";
-			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			//$s .= '----- allToolsSchema (non system + system before filtering)'."\n";
-			//$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= '<div class="ai-tools-debug">';
+			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
+			$s .= '<ul class="small">';
+			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
+				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance) {
+					return $instance === $familyInstance;
+				}));
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+			}
+			$s .= '</ul>';
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
@@ -587,15 +587,30 @@ try {
 
 		// Special case we ask debug info
 		if ($query == '/tools') {
-			$s .= '----- toolsForLLM'."\n";
-			$s .= '<pre>' . json_encode($toolsForLLM, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
+			// Then the tools as sent to the LLM, one folded block per tool, its
+			// parameters as indented JSON.
+			$s .= '<strong>Tools sent to the LLM ('.count($toolsForLLM).')</strong>';
+			foreach ($toolsForLLM as $toolDef) {
+				$toolName = (string) ($toolDef['name'] ?? '');
+				$s .= '<details class="ai-tools-tool">';
+				$s .= '<summary><strong>'.dol_escape_htmltag($toolName).'</strong>';
+				if (isset($mcp->toolsByName[$toolName])) {
+					$s .= ' <span class="opacitymedium small">'.dol_escape_htmltag(get_class($mcp->toolsByName[$toolName])).'</span>';
+				}
+				$s .= '</summary>';
+				$s .= '<div class="small">'.dol_nl2br(dol_escape_htmltag((string) ($toolDef['description'] ?? ''), 1, 1)).'</div>';
+				$s .= '<pre class="small">'.dol_escape_htmltag((string) json_encode($toolDef['parameters'] ?? array(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, 1).'</pre>';
+				$s .= '</details>';
+			}
+			$s .= '</div>';
 
+			// 'html': already escaped here, shown as is by the chat instead of
+			// going through its markdown rendering.
 			$finalResponse = [
 				"tool" => "respond_to_user",
 				"arguments" => [
-					"message" => $s
+					"message" => count($toolsForLLM)." tool(s)",
+					"html" => $s
 				]
 			];
 
