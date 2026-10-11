@@ -333,6 +333,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			 */
 			save: async() => {
 				if (popover.saving || popover.closed) return false;
+				// Nothing changed: nothing to save
+				if (!popover.isChanged()) {
+					popover.close();
+					return false;
+				}
 				const value = getValue(inputs);
 				setSaving(true);
 				try {
@@ -403,6 +408,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				popover.close();
 			} else if (event.key === 'Enter' && ((event.target.tagName === 'INPUT' && event.target.type === 'text') || event.target.tagName === 'SELECT')) {
 				event.preventDefault();
+				// The value typed is committed first: the change event comes after the keydown, and the date inputs fill their hidden parts on change
+				if (event.target.tagName === 'INPUT') event.target.dispatchEvent(new Event('change', { bubbles: true }));
 				popover.save();
 			}
 		});
