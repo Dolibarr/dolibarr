@@ -379,14 +379,14 @@ td[data-dol-line-field] .dol-line-value:hover {
 	outline: none;
 }
 
-/* Dolibarr.tools.card: message of the last change of a value, with the button to undo it.
+/* Dolibarr.tools.card: messages of the card tool (last change with the button to undo it, edition in progress), with buttons.
    In contrast with the page: dark when Dolibarr is light, light when Dolibarr is dark */
-.dol-undo-toast {
-	--undo-toast-txt-color: var(--tooltip-txt-color-dark-theme);
-	--undo-toast-bg-color: var(--tooltip-bg-color-dark-theme);
-	--undo-toast-border-color: var(--tooltip-border-color-dark-theme);
-	--undo-toast-link-color: #93c5fd;
-	--undo-toast-hover-color: rgba(255, 255, 255, 0.12);
+.dol-card-toast {
+	--card-toast-txt-color: var(--tooltip-txt-color-dark-theme);
+	--card-toast-bg-color: var(--tooltip-bg-color-dark-theme);
+	--card-toast-border-color: var(--tooltip-border-color-dark-theme);
+	--card-toast-link-color: #93c5fd;
+	--card-toast-hover-color: rgba(255, 255, 255, 0.12);
 	position: fixed;
 	z-index: 1001;
 	left: 50%;
@@ -398,9 +398,9 @@ td[data-dol-line-field] .dol-line-value:hover {
 	max-width: calc(100vw - 2rem);
 	box-sizing: border-box;
 	padding: 0.5rem 0.5rem 0.5rem 0.875rem;
-	color: var(--undo-toast-txt-color);
-	background-color: var(--undo-toast-bg-color);
-	border: 1px solid var(--undo-toast-border-color);
+	color: var(--card-toast-txt-color);
+	background-color: var(--card-toast-bg-color);
+	border: 1px solid var(--card-toast-border-color);
 	border-radius: 0.375rem;
 	box-shadow: 0 1px 20px rgba(0, 0, 0, 0.2);
 }
@@ -408,25 +408,25 @@ td[data-dol-line-field] .dol-line-value:hover {
 if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	// Same condition as the dark mode of the theme (style.css.php)
 	print getDolGlobalInt('THEME_DARKMODEENABLED') != 2 ? "@media (prefers-color-scheme: dark) {\n" : "@media not print {\n";
-	print ".dol-undo-toast {
-	--undo-toast-txt-color: #1f2937;
-	--undo-toast-bg-color: #ffffff;
-	--undo-toast-border-color: #d1d5db;
-	--undo-toast-link-color: #1d4ed8;
-	--undo-toast-hover-color: rgba(0, 0, 0, 0.06);
+	print ".dol-card-toast {
+	--card-toast-txt-color: #1f2937;
+	--card-toast-bg-color: #ffffff;
+	--card-toast-border-color: #d1d5db;
+	--card-toast-link-color: #1d4ed8;
+	--card-toast-hover-color: rgba(0, 0, 0, 0.06);
 }
 }\n";
 }
 ?>
-.dol-undo-toast[hidden] {
+.dol-card-toast[hidden] {
 	display: none;
 }
-.dol-undo-toast .dol-undo-toast-text {
+.dol-card-toast .dol-card-toast-text {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.dol-undo-toast button {
+.dol-card-toast button {
 	flex: 0 0 auto;
 	padding: 0.25rem 0.5rem;
 	color: inherit;
@@ -435,11 +435,11 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	border-radius: 0.375rem;
 	cursor: pointer;
 }
-.dol-undo-toast .dol-undo-toast-undo {
+.dol-card-toast .dol-card-toast-button.--primary {
 	font-weight: bold;
-	color: var(--undo-toast-link-color);
+	color: var(--card-toast-link-color);
 }
-.dol-undo-toast button:hover,
-.dol-undo-toast button:focus-visible {
-	background-color: var(--undo-toast-hover-color);
+.dol-card-toast button:hover,
+.dol-card-toast button:focus-visible {
+	background-color: var(--card-toast-hover-color);
 }

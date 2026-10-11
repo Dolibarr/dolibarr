@@ -156,9 +156,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 */
 	let lastChange = null;
 
-	/** Undo message, created when first shown */
-	let undoToast = null;
-	let undoTimer = null;
+	/** Message of the card tool (undo, edition in progress), created when first shown */
+	let toast = null;
+	let toastTimer = null;
+	let toastDelay = 0;
 
 	/**
 	 * Translate a label of a domain
@@ -181,59 +182,63 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Hide the undo message, the last change can not be undone anymore
+	 * Hide the message of the card tool, the last change can not be undone anymore
 	 */
-	function hideUndoToast() {
-		clearTimeout(undoTimer);
+	function hideMessage() {
+		clearTimeout(toastTimer);
 		lastChange = null;
-		if (undoToast) undoToast.hidden = true;
+		if (toast) toast.hidden = true;
 	}
 
 	/**
-	 * Show the undo message
+	 * Show a message of the card tool at the bottom of the page (in contrast with the theme), with buttons, replacing the previous one.
+	 * It is hidden after a delay, not while the mouse is over it.
 	 * @param {string} text
-	 * @param {boolean} withUndo With the button Undo
+	 * @param {Array<{label: string, title?: string, primary?: boolean, onClick: function(): void}>} [buttons]
+	 * @param {number} [delay] Delay before it is hidden (ms), 0 to keep it until closed
 	 */
-	async function showUndoToast(text, withUndo) {
-		if (!undoToast) {
-			undoToast = document.createElement('div');
-			undoToast.className = 'dol-undo-toast';
-			undoToast.setAttribute('role', 'status');
-			undoToast.addEventListener('mouseenter', () => clearTimeout(undoTimer));
-			undoToast.addEventListener('mouseleave', () => {
-				clearTimeout(undoTimer);
-				undoTimer = setTimeout(hideUndoToast, 3000);
+	async function showMessage(text, buttons = [], delay = 2500) {
+		if (!toast) {
+			toast = document.createElement('div');
+			toast.className = 'dol-card-toast';
+			toast.setAttribute('role', 'status');
+			toast.addEventListener('mouseenter', () => clearTimeout(toastTimer));
+			toast.addEventListener('mouseleave', () => {
+				clearTimeout(toastTimer);
+				if (toastDelay) toastTimer = setTimeout(hideMessage, 3000);
 			});
-			document.body.append(undoToast);
+			document.body.append(toast);
 		}
 
 		const label = document.createElement('span');
-		label.className = 'dol-undo-toast-text';
+		label.className = 'dol-card-toast-text';
 		label.textContent = text;
-		undoToast.replaceChildren(label);
-		if (withUndo) {
-			const undoButton = document.createElement('button');
-			undoButton.type = 'button';
-			undoButton.className = 'dol-undo-toast-undo';
-			undoButton.textContent = await trans('main', 'Undo');
-			undoButton.title = 'Ctrl + Z';
-			undoButton.addEventListener('click', () => undo());
-			undoToast.append(undoButton);
-		}
+		const nodes = [label];
+		buttons.forEach(({ label: buttonLabel, title = '', primary = false, onClick }) => {
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'dol-card-toast-button' + (primary ? ' --primary' : '');
+			button.textContent = buttonLabel;
+			if (title) button.title = title;
+			button.addEventListener('click', onClick);
+			nodes.push(button);
+		});
 		const closeButton = document.createElement('button');
 		closeButton.type = 'button';
-		closeButton.className = 'dol-undo-toast-close';
+		closeButton.className = 'dol-card-toast-close';
 		closeButton.setAttribute('aria-label', await trans('main', 'CloseWindowShort'));
 		const picto = document.createElement('span');
 		picto.className = 'fa fa-times';
 		picto.setAttribute('aria-hidden', 'true');
 		closeButton.append(picto);
-		closeButton.addEventListener('click', hideUndoToast);
-		undoToast.append(closeButton);
+		closeButton.addEventListener('click', hideMessage);
+		nodes.push(closeButton);
+		toast.replaceChildren(...nodes);
 
-		undoToast.hidden = false;
-		clearTimeout(undoTimer);
-		undoTimer = setTimeout(hideUndoToast, withUndo ? UNDO_DELAY : 2500);
+		toast.hidden = false;
+		clearTimeout(toastTimer);
+		toastDelay = delay;
+		if (delay) toastTimer = setTimeout(hideMessage, delay);
 	}
 
 	/**
@@ -246,9 +251,12 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {string} change.to Value displayed after
 	 * @param {function(): Promise<void>} change.undo Save the value before again and refresh the page. An error thrown is already displayed.
 	 */
-	function setUndo(change) {
+	async function setUndo(change) {
+		const undoLabel = await trans('main', 'Undo');
+		await showMessage(change.label + ' : ' + change.from + ' → ' + change.to, [
+			{ label: undoLabel, title: 'Ctrl + Z', primary: true, onClick: () => undo() },
+		], UNDO_DELAY);
 		lastChange = change;
-		showUndoToast(change.label + ' : ' + change.from + ' \u2192 ' + change.to, true);
 	}
 
 	/**
@@ -258,7 +266,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	async function undo() {
 		const change = lastChange;
 		if (!change) return false;
-		hideUndoToast();
+		hideMessage();
 
 		try {
 			const data = await change.controller.object.fetchFields([], { showErrors: false });
@@ -270,19 +278,82 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		} catch (error) {
 			return false; // Error already displayed
 		}
-		showUndoToast(await trans('main', 'ChangeUndone', 'Change undone'), false);
+		showMessage(await trans('main', 'ChangeUndone', 'Change undone'));
 
 		return true;
 	}
 
 	// Ctrl + Z undoes the last change while its message is visible, not in the inputs (their own undo) nor while a value is edited
 	document.addEventListener('keydown', event => {
-		if (!lastChange || !undoToast || undoToast.hidden || !(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== 'z') return;
+		if (!lastChange || !toast || toast.hidden || !(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== 'z') return;
 		const target = event.target instanceof Element ? event.target : null;
 		if ((target && target.closest('input, textarea, select, [contenteditable="true"]')) || document.querySelector('.dol-field-popover')) return;
 		event.preventDefault();
 		undo();
 	});
+
+	/**
+	 * Form of a classic edition in progress in the page: the card was loaded to edit a field or a line by reloading the page.
+	 * Cards follow the same convention: the edit link has an action edit... (edittags, editconditions, editline...),
+	 * the form shown posts an action set... or update... (settags, setconditions, updateline...).
+	 * @returns {{form: HTMLFormElement|null}|null} Null if no classic edition is in progress, form null if it is not found
+	 */
+	function getClassicEdition() {
+		const action = new URL(window.location.href).searchParams.get('action') || '';
+		if (!/^edit/i.test(action)) return null;
+
+		const form = Array.from(document.querySelectorAll('form')).find(el => {
+			const input = el.querySelector('input[type="hidden"][name="action"]');
+			return el.id !== 'builddoc_form' && input && /^(set|update)/i.test(input.value);
+		});
+
+		return { form: form || null };
+	}
+
+	/**
+	 * Show the form of the classic edition in progress: scrolled into the window if needed, its inputs blink once (fail-feedback)
+	 * @param {HTMLFormElement|null} form
+	 */
+	function showClassicEdition(form) {
+		if (!form) return;
+		const inputs = Array.from(form.querySelectorAll('input:not([type="hidden"]):not([type="submit"]), textarea, select, .select2-selection'))
+			.filter(el => el.getClientRects().length > 0);
+		const first = inputs[0] || form;
+		if (!isInViewport(first)) first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+		inputs.forEach(el => {
+			el.classList.remove('fail-feedback');
+			void el.offsetWidth; // Restarts the animation when it is running
+			el.classList.add('fail-feedback');
+			el.addEventListener('animationend', () => el.classList.remove('fail-feedback'), { once: true });
+		});
+		const focusable = inputs.find(el => el.matches('input, textarea, select')) || inputs[0];
+		if (focusable) focusable.focus({ preventScroll: true });
+	}
+
+	/**
+	 * Check that no classic edition is in progress before an edition in ajax: one edition at a time, the classic one must be saved or
+	 * cancelled first, else the user could forget it. If one is in progress, it is shown, with a message to go to it or to discard it
+	 * (the card is loaded again without action, nothing is saved, like its button Cancel).
+	 * Used by the parts fields and lines of the card tool before opening an edition.
+	 * @returns {boolean} True if an edition in ajax can be opened
+	 */
+	function checkNoClassicEdition() {
+		const edition = getClassicEdition();
+		if (!edition) return true;
+
+		showClassicEdition(edition.form);
+		Promise.all([
+			trans('main', 'AnotherEditionInProgress', 'Another change is in progress, save or cancel it first'),
+			trans('main', 'GoToEdition', 'Go to it'),
+			trans('main', 'DiscardEdition', 'Discard it'),
+		]).then(([text, goLabel, discardLabel]) => {
+			const buttons = [{ label: discardLabel, onClick: () => { window.location.href = getCurrentCardUrl(); } }];
+			if (edition.form) buttons.unshift({ label: goLabel, primary: true, onClick: () => showClassicEdition(edition.form) });
+			showMessage(text, buttons, 0);
+		});
+
+		return false;
+	}
 
 	/**
 	 * Controller of the card of an object displayed in the page
@@ -927,6 +998,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	card.showUpdatedFeedback = showUpdatedFeedback;
 	card.setUndo = setUndo;
 	card.undo = undo;
+	card.showMessage = showMessage;
+	card.hideMessage = hideMessage;
+	card.checkNoClassicEdition = checkNoClassicEdition;
 
 	Dolibarr.defineTool('card', card);
 });

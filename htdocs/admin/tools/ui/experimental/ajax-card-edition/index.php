@@ -176,6 +176,13 @@ $documentation->showSidebar(); ?>
 				The undo is refused if the object was modified since, by another page or user.
 			</p>
 
+			<h3>Classic edition in progress</h3>
+			<p class="documentation-text">
+				A field not edited in ajax is still edited by reloading the page (classic edition). While a classic edition is in progress, the editions in ajax do not open:
+				one edition at a time, the classic one must be saved or cancelled first, else it could be forgotten. A click on another edit picto or value shows the form of the classic edition
+				(scrolled into the window, its inputs blink) with a message to go to it or to discard it (the card is loaded again without action, nothing is saved).
+			</p>
+
 			<h3>What is refreshed</h3>
 			<ul>
 				<li>The value of the field or the line, and the lines next to the lines added or deleted (arrows to move the lines, numbers of the lines).</li>
@@ -238,6 +245,12 @@ $documentation->showSidebar(); ?>
 				<li>The result of an action is read from the object, not from the messages: a line saved, added or deleted is displayed even if an error happened after the action (ex: document not generated), like in the card.</li>
 				<li><code>Dolibarr.tools.card.lines.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.card.lines.close()</code> cancels the edition in progress, <code>editCell(cell)</code> opens the edition of a value of a line. <code>addLine(button)</code> and <code>deleteLine(link)</code> add and delete lines like the button Add and the delete links.</li>
 			</ul>
+			<p class="documentation-text">
+				<b>Messages:</b> <code>Dolibarr.tools.card.showMessage(text, buttons, delay)</code> shows a message of the card tool at the bottom of the page, in contrast with the theme (<code>.dol-card-toast</code>), with buttons <code>{label, title, primary, onClick}</code>, hidden after <code>delay</code> ms (0 to keep it until closed) but not while the mouse is over it. <code>hideMessage()</code> hides it.
+			</p>
+			<p class="documentation-text">
+				<b>Classic edition in progress:</b> <code>Dolibarr.tools.card.checkNoClassicEdition()</code>, called before opening an edition in ajax, returns false when the page was loaded for a classic edition: the url has an action <code>edit...</code> (convention of the edit links: <code>edittags</code>, <code>editconditions</code>, <code>editline</code>...). The form of this edition, the one posting an action <code>set...</code> or <code>update...</code>, is then shown with a message to go to it or to discard it.
+			</p>
 			<p class="documentation-text">
 				<b>Undo:</b> <code>Dolibarr.tools.card.setUndo({controller, label, from, to, undo})</code> remembers the last change of a value of the page (one level for the page) and shows the undo message, <code>undo()</code> being the function that saves the value before again.
 				<code>Dolibarr.tools.card.undo()</code> undoes it (button of the message, or <kbd>Ctrl</kbd> + <kbd>Z</kbd> outside of the inputs while the message is visible). It is refused if the date of modification of the object is newer than the one known by the controller of the card.

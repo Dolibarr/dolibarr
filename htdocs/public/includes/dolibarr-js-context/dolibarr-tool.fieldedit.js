@@ -435,6 +435,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const container = findValueContainer(link);
 		if (!container) return false;
 		if (container.dataset.dolEditing) return true;
+		// One edition at a time: a classic edition in progress (page loaded to edit another field) must be saved or cancelled first
+		if (!Dolibarr.tools.card.checkNoClassicEdition()) return true;
 
 		const field = link.dataset.dolEditField;
 		const element = link.dataset.dolElement;

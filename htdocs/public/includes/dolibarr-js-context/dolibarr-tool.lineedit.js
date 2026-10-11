@@ -142,8 +142,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
 	 */
 	async function open(link) {
-		// One line at a time, like in the card
-		if (current) return true;
+		// One line at a time, like in the card, and not during a classic edition (page loaded to edit a field or a line)
+		if (current || !Dolibarr.tools.card.checkNoClassicEdition()) return true;
 
 		const lineId = parseInt(link.dataset.dolEditLine, 10);
 		const row = document.getElementById('row-' + lineId);
@@ -712,6 +712,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	async function editCell(cell) {
 		// One edition of a line at a time, like in the card
 		if (current || cell.dataset.dolEditing || cell.querySelector('[data-dol-editing]') || !Dolibarr.tools.card.fields) return true;
+		// Not during a classic edition (page loaded to edit a field or a line)
+		if (!Dolibarr.tools.card.checkNoClassicEdition()) return true;
 		const context = getCellContext(cell);
 		if (!context) return false;
 		const { row, link, lineId, field, controller } = context;
