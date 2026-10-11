@@ -7339,8 +7339,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/** @var Societe $object */
 				'@phan-var-force Societe $object';
 				$substitutionarray['__THIRDPARTY_ID__'] = ($object->id > 0 ? $object->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_NAME__'] = (string) $object->name;
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (string) $object->name_alias;
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
