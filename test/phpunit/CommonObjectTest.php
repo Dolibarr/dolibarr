@@ -1739,12 +1739,6 @@ class CommonObjectTest extends CommonClassTest
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-		// A payment term with a delay
-		$resql = $db->query("SELECT MIN(rowid) as id FROM ".MAIN_DB_PREFIX."c_payment_term WHERE active = 1 AND nbjour > 0");
-		$obj = $resql ? $db->fetch_object($resql) : null;
-		$condid = $obj ? (int) $obj->id : 0;
-		$this->assertGreaterThan(0, $condid, 'A payment term with a delay is needed');
-
 		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
@@ -1752,6 +1746,12 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
 		$localobject = new Facture($db);
 		$localobject->fetch($id);
+
+		// A payment term with a delay, other than the one of the invoice (its code must not be used to compute the due date)
+		$resql = $db->query("SELECT MIN(rowid) as id FROM ".MAIN_DB_PREFIX."c_payment_term WHERE active = 1 AND nbjour > 0 AND rowid <> ".((int) $localobject->cond_reglement_id));
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$condid = $obj ? (int) $obj->id : 0;
+		$this->assertGreaterThan(0, $condid, 'A payment term with a delay is needed');
 
 		$date = dol_mktime(12, 0, 0, 3, 10, 2026);
 		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'datef', $date), (string) $localobject->error);
