@@ -542,18 +542,21 @@ try {
 
 		$s = '';
 
-		// Special case we ask debug info
+		// Special case we ask debug info: the tool families found into ai/tools/
 		if ($query == '/tools') {
-			$s .= '----- loadedTools (scan of family tools, not tools)'."\n";
-			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			$s .= '----- toolsByName'."\n";
-			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			//$s .= '----- allToolsSchema (non system + system before filtering)'."\n";
-			//$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= '<div class="ai-tools-debug">';
+			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
+			$s .= '<ul class="small">';
+			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
+				$nbInFamily = 0;
+				foreach ($mcp->toolsByName as $instance) {
+					if ($instance === $familyInstance) {
+						$nbInFamily++;
+					}
+				}
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+			}
+			$s .= '</ul>';
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
@@ -602,15 +605,30 @@ try {
 
 		// Special case we ask debug info
 		if ($query == '/tools') {
-			$s .= '----- toolsForLLM'."\n";
-			$s .= '<pre>' . json_encode($toolsForLLM, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
+			// Then the tools as sent to the LLM, one folded block per tool, its
+			// parameters as indented JSON.
+			$s .= '<strong>Tools sent to the LLM ('.count($toolsForLLM).')</strong>';
+			foreach ($toolsForLLM as $toolDef) {
+				$toolName = (string) ($toolDef['name'] ?? '');
+				$s .= '<details class="ai-tools-tool">';
+				$s .= '<summary><strong>'.dol_escape_htmltag($toolName).'</strong>';
+				if (isset($mcp->toolsByName[$toolName])) {
+					$s .= ' <span class="opacitymedium small">'.dol_escape_htmltag(get_class($mcp->toolsByName[$toolName])).'</span>';
+				}
+				$s .= '</summary>';
+				$s .= '<div class="small">'.dol_nl2br(dol_escape_htmltag((string) ($toolDef['description'] ?? ''), 1, 1)).'</div>';
+				$s .= '<pre class="small">'.dol_escape_htmltag((string) json_encode($toolDef['parameters'] ?? array(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, 1).'</pre>';
+				$s .= '</details>';
+			}
+			$s .= '</div>';
 
+			// 'html': already escaped here, shown as is by the chat instead of
+			// going through its markdown rendering.
 			$finalResponse = [
 				"tool" => "respond_to_user",
 				"arguments" => [
-					"message" => $s
+					"message" => count($toolsForLLM)." tool(s)",
+					"html" => $s
 				]
 			];
 
@@ -637,7 +655,7 @@ try {
 			// The chat runs the search, then calls back with its result so the action can follow.
 			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it the requested search is itself the FINAL answer.";
 		}
-		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say the feature is not available.\n";
+		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
 		$systemRules .= "\n";
 
 		$systemPrompt .= $systemRules;
@@ -813,11 +831,16 @@ try {
 			// single tool call per answer the model picks the older one - field
 			// case: "set the phone of X" answered by creating "X bis".
 			if (!empty($history)) {
-				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
 			if ($isFollowup) {
 				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
 			}
+
+			// The rules come before the long tools list. Small models weigh what is
+			// near the question far more, and drift to another language when this
+			// rule is only up there: repeat it last.
+			$systemPrompt .= "\n\nREMINDER: write all user-facing text (message, question, answer) in the SAME LANGUAGE as the user's message.";
 
 			dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
 			dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
@@ -889,11 +912,22 @@ try {
 					$intentJSON = json_decode($clean, true);
 					dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 
-					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user' && empty($intentJSON['arguments']['message'])) {
-						// If answer is tool=respond_to_user but without message
-						dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
+					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user') {
+						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
+							// If answer is tool=respond_to_user but without message
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
 
-						$intentJSON['arguments']['message'] = 'I could not produce an answer for this request. Please rephrase or add details.';
+							$intentJSON['arguments']['message'] = "I don't understand the answer produced by the IA for this request. Please rephrase or add details.";
+						} else {
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a messageor content', LOG_DEBUG, 0, '_ai');
+
+							$intentJSON = [
+								"tool" => "respond_to_user",
+								'arguments' => [
+									"message" => $intentJSON['arguments']['message'] ?? ($intentJSON['arguments']['content'] ?? '')
+								]
+							];
+						}
 					} elseif (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'ask_for_clarification' && empty($intentJSON['arguments']['question'])) {
 						// If answer is tool=ask_for_clarification but without message
 						dol_syslog('parse_intent.php clean response is "ask_for_clarification" with a question', LOG_DEBUG, 0, '_ai');
@@ -1131,7 +1165,7 @@ try {
 	if ($needsConfirmation && isset($mcp) && is_object($mcp)) {
 		$gatedTool = $mcp->toolsByName[$toolName] ?? null;
 		$gatedArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
-		$refusal = ($gatedTool instanceof McpTool) ? (string) $gatedTool->writeRefusal($toolName, $gatedArgs) : '';
+		$refusal = ($gatedTool instanceof McpTool) ? (string) $gatedTool->writePrecheck($toolName, $gatedArgs) : '';
 		if ($refusal !== '') {
 			$finalResponse = array('tool' => 'respond_to_user', 'arguments' => array('message' => $refusal));
 			ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'Error', $refusal, $rawRequestLog, $rawResponseLog, $usageContext);
