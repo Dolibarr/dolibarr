@@ -100,6 +100,18 @@ var Dolibarr = {
 		}),
 
 		/**
+		 * Edition of the fields of a card in ajax, see Form::isAjaxFieldEdit()
+		 */
+		fieldEdit: {
+			/**
+			 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+			 * @param {HTMLElement} link
+			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+			 */
+			open: function(link) {},
+		},
+
+		/**
 		 * TThe langs tool
 		 */
 		langs: {

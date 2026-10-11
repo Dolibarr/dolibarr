@@ -129,3 +129,23 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	);
 	$documentation->showCode($lines, 'php'); ?>
 </div>
+
+<div class="documentation-section">
+	<h2 id="titlesection-tool-fieldedit" class="documentation-title">Field edit tool</h2>
+
+	<p>
+		<code>Dolibarr.tools.fieldEdit</code> edits the fields of a card in ajax, without reloading the page. There is no code to write in the card:
+		<code>Form::editfieldkey()</code> and <code>Form::editfieldval()</code> print the markup when the field is edited in ajax.
+	</p>
+	<ul>
+		<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_FIELD_EDIT</code>, see <code>Form::isAjaxFieldEdit()</code>.</li>
+		<li>Only for the fields of a <code>CommonObject</code> editable from the user interface (<code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>). Other fields keep the edition by reloading the page.</li>
+		<li>The edit link gets the attributes <code>data-dol-edit-field</code>, <code>data-dol-element</code>, <code>data-dol-id</code> and <code>data-dol-tms</code>, its url is still used without javascript. The value is printed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>.</li>
+		<li>A click on the link replaces the value by the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>). <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
+		<li>The value is saved with <code>setField()</code> of <code>Dolibarr.tools.object</code>, refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed.</li>
+		<li><code>Dolibarr.tools.fieldEdit.open(link)</code> opens the edition of the field of an edit link.</li>
+	</ul>
+	<p>
+		<b>Note:</b> the hidden option <code>MAIN_USE_EDIT_IN_PLACE</code> (jeditable) is deprecated, the ajax edition of fields replaces it.
+	</p>
+</div>

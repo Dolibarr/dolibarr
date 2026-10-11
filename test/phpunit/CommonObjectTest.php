@@ -1470,6 +1470,40 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * ajaxInputField() returns inputs named ajaxfield_<field>, read back by getFieldValueFromAjaxPost(), also for notes
+	 *
+	 * @return void
+	 */
+	public function testAjaxInputField()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		$propal->ref_client = 'REF"CLIENT';
+		$propal->note_public = 'Public note';
+
+		$input = $propal->ajaxInputField('ref_client');
+		$this->assertStringContainsString('name="ajaxfield_ref_client"', $input);
+		$this->assertStringContainsString('value="REF&quot;CLIENT"', $input, 'Value is escaped');
+
+		// Constant used by DolEditor, defined by main.inc.php only
+		if (!defined('ROWS_3')) {
+			define('ROWS_3', 3);
+		}
+		$input = $propal->ajaxInputField('note_public');
+		$this->assertMatchesRegularExpression('/<textarea[^>]*name="ajaxfield_note_public"/', $input, 'Note (visible = 0) has an input');
+		$this->assertStringContainsString('Public note', $input);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
 	 *
 	 * @return void

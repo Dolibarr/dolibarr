@@ -20,6 +20,8 @@
  *       \brief     Read or update fields of an object from the user interface (ajax edition of cards).
  *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
  *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
+ *                  With parameter input=1, it also returns the input html of the fields editable from the user interface
+ *                  (CommonObject::ajaxInputField()), to open the edition of a field on the card.
  *                  POST with parameter field and the inputs of this field (named ajaxfield_<field>..., read by
  *                  CommonObject::getFieldValueFromAjaxPost()) updates one field allowed by CommonObject::isFieldEditableFromUi()
  *                  (attribute "uieditable"). The value is saved with CommonObject::updateFieldFromUi(), so triggers are called.
@@ -56,6 +58,7 @@ $id = GETPOSTINT('id');
 $field = GETPOST('field', 'aZ09');
 $fieldlist = GETPOST('fields', 'aZ09comma');
 $tms = GETPOSTINT('tms');
+$withinput = GETPOSTINT('input');
 
 $isupdate = ($_SERVER['REQUEST_METHOD'] === 'POST');
 
@@ -111,6 +114,10 @@ if (!$isupdate) {
 		// Fields not readable are ignored, the page may display fields not defined in $fields
 		if ($fieldname !== '' && $object->isFieldReadableFromUi($user, $fieldname)) {
 			$fields[$fieldname] = objectFieldGetOutput($object, $fieldname);
+			// Input only for fields the user can change, so the page opens the edition of a field only when it can be saved
+			if ($withinput) {
+				$fields[$fieldname]['input'] = $object->isFieldEditableFromUi($user, $fieldname) ? $object->ajaxInputField($fieldname) : null;
+			}
 		}
 	}
 
