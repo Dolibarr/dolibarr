@@ -1663,6 +1663,7 @@ export function initAiAssistant(container) {
             const pinned = collectPinnedContext();
             // Result of the read flagged needs_followup, sent back on the second round.
             let followupSnippet = null;
+            let followupResult = null;
             // Two rounds at most: the server never flags a followup round itself.
             for (let round = 0; round < 2; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
@@ -1674,7 +1675,8 @@ export function initAiAssistant(container) {
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
                         (function () {
-                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1 };
+                            // followup_result: only to name the object in the confirmation, never sent to the model.
+                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
                             return pinned.length ? { history: pinned } : {};
                         })(),
                         (function () {
@@ -1731,6 +1733,7 @@ export function initAiAssistant(container) {
                 if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
                     appendMsg('system', t('AISearchDoneNowPreparingAction'));
                     followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupResult = result;
                     continue;
                 }
                 // A write tool does not write on its first call: it answers with the
@@ -1742,7 +1745,10 @@ export function initAiAssistant(container) {
                         arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
                     });
                     delete confirmed.needs_followup;
-                    handleConfirmation(req.prompt || intent.tool, '', { arguments: { original_intent: confirmed } });
+                    delete confirmed.resolved_label;
+                    // The id came from a search the user never saw: say which object it is.
+                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
                     input.disabled = false; input.focus(); return;
                 }
                 lastResult = { data: result, tool: intent.tool, query: query };

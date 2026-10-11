@@ -1033,96 +1033,15 @@ try {
 		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
 	}
 
-	dol_syslog("parse_intent.php AI_CHAT_TWO_STEP_WRITE=" . getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE'), LOG_DEBUG, 0, '_ai');
-
-	// --- Second step: a write was asked, a read was answered -------------------
-	// "Set the phone of X", "delete the draft order of Y": when the object's id
-	// is neither in the message nor in the context, the model answers with a
-	// READ tool (a search). The chat runs one tool per turn, so it would show
-	// the search result and stop, and the user has to ask again with the id.
-	// When the administrator allows it, that read is executed here (rights and
-	// allow-list apply exactly as for a client call), its result goes back to
-	// the model as one extra assistant turn, and the write it then produces
-	// lands in the confirmation gate below like a direct call would.
-	//
-	// SAFETY PROPERTY - ONE STEP, NEVER A LOOP: the second answer is taken only
-	// when it is a write tool of the schema; anything else (another read, a
-	// question, an error) ends the turn on the first answer, unchanged. There
-	// is no third call whatever the model answers.
-	$twoStepLabel = '';
 	// Tools answered by the chat itself, never a step of a write.
 	$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page', 'generate_navigation_url');
-	// Only on the model path: the shortcut paths above (classifier, page
-	// context...) answer without $adapter / $mcp / $history / $systemPrompt.
-	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter, $mcp, $history, $systemPrompt, $toolsSchema) && is_object($adapter) && is_object($mcp) && is_array($history) && is_array($toolsSchema)) {
-		/**
-		 * @param string              $name Tool name
-		 * @param array<string,mixed> $args Tool arguments
-		 * @return bool                     True when the tool writes
-		 */
-		$readArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
-		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !aiIsWriteTool($mcp, $toolName, $readArgs)) {
-			$readResult = $mcp->executeTool($toolName, $readArgs);
-			if (is_array($readResult) && !isset($readResult['error']) && (($readResult['resultType'] ?? '') !== 'input_required')) {
-				// The first call is a step of its own in the log (tokens included).
-				ai_log_request($db, $user, $query, $intentJSON, $providerUsed, microtime(true) - $startTime, $confidence, 'Step1', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-				// Compact result, capped like a pinned tool result, and passed
-				// through the privacy guard exactly like the pinned history is.
-				$snippet = (string) json_encode($readResult, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-				if (dol_strlen($snippet) > 1500) {
-					$snippet = dol_substr($snippet, 0, 1500).' ...';
-				}
-				$snippet = '['.$toolName.' result] '.$snippet;
-				if ($guard) {
-					$snippet = $guard->mask($snippet);
-				}
-				$history2 = $history;
-				$history2[] = array('role' => 'assistant', 'text' => $snippet);
-				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
-
-				// Call LLM
-				dol_syslog("parse_intent.php call LLM - step additional (AI_CHAT_TWO_STEP_WRITE): server-side followup with the result of the read tool ".$toolName, LOG_DEBUG, 0, '_ai');
-				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
-
-				$rawRequestLog = $adapter->lastRequest;
-				$rawResponseLog = $adapter->lastResponse;
-				if (!empty($adapter->lastUsage)) {
-					$usageContext = array(
-						'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
-						'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
-						'model' => (string) ($adapter->lastUsage['model'] ?? (isset($model) ? $model : '')),
-					);
-				}
-
-				$intent2 = null;
-				if (is_string($rawResponse2) && strpos($rawResponse2, 'Error:') !== 0) {
-					$clean2 = trim((string) preg_replace('/```json\s*|\s*```/s', '', $rawResponse2));
-					$m2 = array();
-					if (preg_match('/\{.*\}/s', $clean2, $m2)) {
-						$clean2 = $m2[0];
-					}
-					if ($guard) {
-						$clean2 = $guard->unmaskAiResponse($clean2);
-					}
-					$intent2 = json_decode((string) preg_replace('/[\r\n]/', ' ', $clean2), true);
-					if (is_array($intent2) && $guard && isset($intent2['arguments'])) {
-						$intent2['arguments'] = recursiveUnmaskValues($intent2['arguments'], $guard);
-					}
-				}
-				$args2 = (is_array($intent2) && isset($intent2['arguments']) && is_array($intent2['arguments'])) ? $intent2['arguments'] : array();
-				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && aiIsWriteTool($mcp, $intent2['tool'], $args2)) {
-					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
-					$intentJSON = $intent2;
-					$toolName = $intent2['tool'];
-					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), (string) $rawResponse2);
-					// The preview must name the object the read resolved, not an id.
-					$twoStepLabel = aiLabelOfResolvedObject($readResult, $args2);
-				} else {
-					dol_syslog("parse_intent.php two-step: second answer is not a write, the turn ends on the read ".$toolName, LOG_INFO);
-				}
-			}
-		}
+	// Followup round: name the object the search resolved, so the confirmation
+	// says "NLTechno (id 10)" and not only "socid 10". The search result is sent
+	// back by the chat for this display only, it never goes to the model.
+	$resolvedLabel = '';
+	if ($isFollowup && !empty($data['followup_result']) && is_array($data['followup_result']) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) {
+		$resolvedLabel = aiLabelOfResolvedObject($data['followup_result'], $intentJSON['arguments']);
 	}
 
 	if ($askForConfirmation > 0) {
@@ -1158,9 +1077,9 @@ try {
 				$action = $preview;
 			}
 		}
-		if (!empty($twoStepLabel)) {
-			// The id came from a read the user never saw: say which object it is.
-			$action .= ' - '.$twoStepLabel;
+		if ($resolvedLabel !== '') {
+			// The id came from a search the user never saw: say which object it is.
+			$action .= ' - '.dol_escape_htmltag($resolvedLabel);
 		}
 
 		$confirmationResponse = [
@@ -1210,12 +1129,17 @@ try {
 	// Never on a followup call itself: one extra round at most, no loop.
 	$llmAsksFollowup = !empty($intentJSON['needs_followup']);
 	unset($intentJSON['needs_followup']);
-	if (!$isFollowup && !getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && isset($mcp) && is_object($mcp)
+	if (!$isFollowup && isset($mcp) && is_object($mcp)
 		&& !in_array($toolName, $systemTools, true)
 		&& !aiIsWriteTool($mcp, $toolName, (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array())
 		&& ($llmAsksFollowup || aiQueryAsksForWrite($query, $langs))) {
 		dol_syslog("parse_intent.php needs_followup on ".$toolName." (".($llmAsksFollowup ? 'asked by the model' : 'write asked, read answered').")", LOG_DEBUG, 0, '_ai');
 		$intentJSON['needs_followup'] = 1;
+	}
+
+	if ($resolvedLabel !== '') {
+		// For the confirmation the chat shows when the write tool asks for it.
+		$intentJSON['resolved_label'] = $resolvedLabel;
 	}
 
 	// Success!
@@ -1313,20 +1237,15 @@ function aiIsWriteTool($mcp, $name, array $args)
 
 /**
  * Name of the object a write targets, taken from the read result that
- * produced its id (so the confirmation names "Dupont SA", not "socid 2305").
+ * produced its id (so the confirmation names "Dupont SA (id 2305)", not "socid 2305").
  *
  * @param array<mixed> $readResult Result of the read tool (a row, a list of rows, or {data:[...]})
  * @param array<mixed> $writeArgs  Arguments of the write tool
- * @return string                  Name / ref / label of the matching row, '' when not found
+ * @return string                  Name / ref / label of the matching row followed by its id, '' when not found
  */
 function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
 {
-	$ids = array();
-	foreach ($writeArgs as $k => $v) {
-		if ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
-			$ids[] = (int) $v;
-		}
-	}
+	$ids = aiIdsOfArguments($writeArgs);
 	if (empty($ids)) {
 		return '';
 	}
@@ -1345,12 +1264,38 @@ function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
 		if ($rowid > 0 && in_array($rowid, $ids, true)) {
 			foreach (array('name', 'nom', 'ref', 'label', 'subject', 'title', 'login') as $key) {
 				if (!empty($row[$key]) && is_string($row[$key])) {
-					return dol_trunc($row[$key], 80);
+					return dol_trunc($row[$key], 80).' (id '.$rowid.')';
 				}
 			}
 		}
 	}
 	return '';
+}
+
+/**
+ * Ids passed to a tool: values of the id-like keys (id, *_id, socid, fk_*),
+ * also inside nested arrays and JSON encoded arguments (request_data).
+ *
+ * @param array<mixed> $args Arguments of the tool
+ * @return int[]             Ids found
+ */
+function aiIdsOfArguments(array $args)
+{
+	$ids = array();
+	foreach ($args as $k => $v) {
+		if (is_string($v) && preg_match('/^\s*\{/', $v)) {
+			$decoded = json_decode($v, true);
+			if (is_array($decoded)) {
+				$v = $decoded;
+			}
+		}
+		if (is_array($v)) {
+			$ids = array_merge($ids, aiIdsOfArguments($v));
+		} elseif ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
+			$ids[] = (int) $v;
+		}
+	}
+	return $ids;
 }
 
 /**
