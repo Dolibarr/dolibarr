@@ -25,11 +25,10 @@
  */
 
 
-$sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = dirname(__FILE__) . '/';
 
-// Test si mode batch
+// Check if we run in CLI (batch) mode
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
@@ -64,8 +63,8 @@ $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
 $outputfilerss = preg_replace('/\.\w+$/i', '', $outputfile).'-security.rss';	// Replace the .html by -security.rss
 
-if (!is_dir($outputdir)) {
-	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
+if (!is_dir($outputdir) || !is_writable($outputdir)) {
+	print 'Error: dir '.$outputdir.' does not exist or is not writable'."\n";
 	exit(1);
 }
 
@@ -472,16 +471,16 @@ th,td {
 	display: inline;
 }
 .box.inline-box {
-    display: inline-block;
+	display: inline-block;
 	text-align: center;
 	margin-left: 10px;
 }
 .boxallwidth {
-    border-radius: 9px;
-    border-color: #000;
-    border-width: 2px;
-    padding: 5px;
-    border-style: solid;
+	border-radius: 9px;
+	border-color: #000;
+	border-width: 2px;
+	padding: 5px;
+	border-style: solid;
 	background-color: #f8f8f8;
 }
 .back1 {
@@ -500,25 +499,25 @@ th,td {
 	cursor: pointer;
 }
 div.fiche>form>div.div-table-responsive {
-    min-height: 392px;
+	min-height: 392px;
 }
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-    overflow-x: auto;
+	overflow-x: auto;
 }
 .div-table-responsive {
-    line-height: 120%;
+	line-height: 120%;
 }
 .div-table-responsive, .div-table-responsive-no-min {
-    overflow-x: auto;
-    min-height: 0.01%;
+	overflow-x: auto;
+	min-height: 0.01%;
 }
 .list_technical_debt {
 	/* font-size: smaller */
 }
 .pictofixedwidth {
 	font-size: smaller;
-    width: 28px;
-    vertical-align: middle;
+	width: 28px;
+	vertical-align: middle;
 }
 .bargraph {
 	background-color: #358;
@@ -538,7 +537,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 		margin-right: 5px;
 	}
 	.boxallwidth picture img {
-	    width: 100%;
+		width: 100%;
 	}
 }
 
@@ -1147,7 +1146,7 @@ function cleanVal2($val)
 		$tmpval['issueid'] = $reg[1];
 	}
 	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
-		$tmpval['issueidcve'] = preg_replace('/^\-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
+		$tmpval['issueidcve'] = preg_replace('/^-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
 	}
 	if (preg_match('/#(yogosha\d+)/i', $tmpval['title'], $reg)) {
 		$tmpval['issueidvdp'] = strtolower($reg[1]);
