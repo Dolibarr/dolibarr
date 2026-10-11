@@ -110,3 +110,4 @@ docs/superpowers/
 
 # Agent-managed git worktrees
 .worktrees/
+/AGENTS.md
