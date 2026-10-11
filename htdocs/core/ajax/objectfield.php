@@ -20,10 +20,11 @@
  *       \brief     Read or update fields of an object from the user interface (ajax edition of cards).
  *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
  *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
- *                  POST with parameters field and value updates one field allowed by CommonObject::isFieldEditableFromUi()
+ *                  POST with parameter field and the inputs of this field (named ajaxfield_<field>..., read by
+ *                  CommonObject::getFieldValueFromAjaxPost()) updates one field allowed by CommonObject::isFieldEditableFromUi()
  *                  (attribute "uieditable"). The value is saved with CommonObject::updateFieldFromUi(), so triggers are called.
- *                  Answer is a JsonResponse, data contains the values and their output html. After an update, it also contains
- *                  the other fields changed by the update (computed fields, triggers...).
+ *                  Answer is a JsonResponse, data contains the values and their output html (CommonObject::ajaxOutputField()).
+ *                  After an update, it also contains the other fields changed by the update (computed fields, triggers...).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -95,13 +96,10 @@ if (!$result) {
  */
 function objectFieldGetOutput($object, $fieldname)
 {
-	// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
-	// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
-	$fielddef = $object->fields[$fieldname];
-	$fielddef['visible'] = 1;
-	$value = property_exists($object, $fieldname) ? $object->$fieldname : null;
-
-	return array('value' => $value, 'html' => $object->showOutputField($fielddef, $fieldname, $value));
+	return array(
+		'value' => property_exists($object, $fieldname) ? $object->$fieldname : null,
+		'html' => $object->ajaxOutputField($fieldname),
+	);
 }
 
 // Read the values of fields
@@ -137,18 +135,11 @@ if ($tms > 0 && !empty($object->date_modification) && $object->date_modification
 	$jsonResponse->output();
 }
 
-// Get the value with a filter matching the type of field
-$type = $object->fields[$field]['type'];
-$value = null;
-if ($type == 'html') {
-	$value = dol_html_entity_decode(GETPOST('value', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1);
-} elseif (preg_match('/^(varchar|text)\b/', $type)) {
-	$value = GETPOST('value', 'alphanohtml');
-} elseif (preg_match('/^(int|integer)\b/', $type)) {
-	$value = GETPOSTINT('value');
-} else {
-	// Other types (dates, lists, links...) are not supported yet
-	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorFieldIsNotEditable'), JsonResponse::HTTP_BAD_REQUEST);
+// Get the posted value, the object knows the inputs of its fields
+$value = $object->getFieldValueFromAjaxPost($field);
+if ($value === null) {
+	// Input not posted or type of field not supported
+	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
 	$jsonResponse->output();
 }
 
