@@ -148,9 +148,7 @@ class Ccountry extends CommonDict
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."c_country");
-		}
+		// Note: the rowid of c_country is not auto incremented, $this->id is the id given
 
 		// Commit or rollback
 		if ($error) {
