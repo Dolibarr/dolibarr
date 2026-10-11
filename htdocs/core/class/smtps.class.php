@@ -1644,7 +1644,7 @@ class SMTPs
 			$_msgData = $_msgData[$_types[0]];
 
 			$content = 'Content-Type: '.$_msgData['mimeType'].'; charset="'.$this->getCharSet().'"'."\r\n"
-			. 'Content-Transfer-Encoding: '.$this->getTransEncodeType()."\r\n"
+			. 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_msgData['data'])."\r\n"
 			. 'Content-Disposition: inline'."\r\n"
 			. 'Content-Description: Message'."\r\n";
 
@@ -1726,6 +1726,7 @@ class SMTPs
 				} else {
 					if (array_key_exists('image', $this->_msgContent)) {
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n";
 						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 						$content .= 'Content-Type: multipart/related; boundary="'.$this->_getBoundary('related').'"'."\r\n";
@@ -1740,6 +1741,7 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'])."\r\n";
 						$content .= "\r\n".$_content['dataText']."\r\n";
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
@@ -1747,6 +1749,7 @@ class SMTPs
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
 					$content .= "\r\n";
+					$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['data'])."\r\n";
 
 					if ($this->getMD5flag()) {
 						$content .= 'Content-MD5: '.$_content['md5']."\r\n";
@@ -1769,6 +1772,23 @@ class SMTPs
 		}
 
 		return $content;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Content-Transfer-Encoding of a text part: the text is sent as is, so it is '8bit' when it has non ASCII
+	 * characters (UTF-8 accents...), '7bit' is valid only for an ASCII text (RFC 2045).
+	 *
+	 * @param	string	$text	Text of the part
+	 * @return	string			Content-Transfer-Encoding
+	 */
+	private function _getTextTransferEncoding($text)
+	{
+		// phpcs:enable
+		if (preg_match('/[^\x00-\x7F]/', $text)) {
+			return '8bit';
+		}
+		return $this->getTransEncodeType();
 	}
 
 	/**
