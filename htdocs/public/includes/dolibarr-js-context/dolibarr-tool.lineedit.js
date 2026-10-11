@@ -13,7 +13,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 	/**
 	 * Line in edition, only one at a time like in the card
-	 * @type {{controller: Object, lineId: number, row: HTMLElement, form: HTMLFormElement, nodes: Node[], addRows: Array<{row: HTMLElement, placeholder: Comment}>, onSubmit: function, onKeydown: function, saving: boolean}|null}
+	 * @type {{controller: Object, lineId: number, row: HTMLElement, form: HTMLFormElement, nodes: Node[], addRows: Array<{row: HTMLElement, placeholder: Comment}>, onSubmit: function, onKeydown: function, saving: boolean, tms: number}|null}
 	 */
 	let current = null;
 
@@ -101,7 +101,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			// Messages of the action are returned with the line
 			const data = await controller.fetchLines([lineId]);
 			const errors = (data.eventMessages && data.eventMessages.errors) || [];
-			if (errors.length > 0) {
+			// The line is saved if the object was modified, even with an error after the update (ex: document not generated)
+			const saved = !edition.tms || !data.tms || parseInt(data.tms, 10) !== edition.tms;
+			if (errors.length > 0 && !saved) {
 				// Line not saved, error already displayed, the user can correct the values
 				edition.saving = false;
 				setButtonsDisabled(false);
@@ -185,7 +187,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 		};
 
-		current = { controller, lineId, row, form, nodes, addRows, onSubmit, onKeydown, saving: false };
+		// Date of modification of the object when the edition is opened, to know if the line was saved
+		const tms = data.tms ? parseInt(data.tms, 10) : 0;
+		current = { controller, lineId, row, form, nodes, addRows, onSubmit, onKeydown, saving: false, tms };
 		form.addEventListener('submit', onSubmit);
 		form.addEventListener('keydown', onKeydown);
 
