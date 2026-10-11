@@ -468,6 +468,23 @@ class Propal extends CommonObject
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
+	/**
+	 * Check if user has write permission on a field of this object.
+	 * Override of CommonObject::hasUserWritePermissionOnField(): proposals use the "creer" permission.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if user has right to write this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return (bool) $user->hasRight('propal', 'creer');
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
