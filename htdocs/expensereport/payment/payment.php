@@ -310,7 +310,7 @@ if ($action == 'create' || empty($action)) {
 		print '<td class="right">'.price($sumpaid)."</td>";
 		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
 		print '<td class="center">';
-		if ($sumpaid < $objp->total_ttc) {
+		if (($sumpaid < $objp->total_ttc) || (getDolGlobalString('EXPENSEREPORT_FORCE_PAYMENT_EVEN_IF_PAID'))) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount

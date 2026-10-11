@@ -101,7 +101,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 		}
 	}
 
-	if ($amounts[key($amounts)] <= 0) {
+	if (($amounts[key($amounts)] <= 0) && (!getDolGlobalString('SALARY_FORCE_PAYMENT_EVEN_IF_PAID'))) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
@@ -295,7 +295,7 @@ if ($action == 'create') {
 		print '<td class="right">'.price((float) $objp->amount - $sumpaid)."</td>";
 
 		print '<td class="center">';
-		if ($sumpaid < $objp->amount) {
+		if (($sumpaid < $objp->amount) || (getDolGlobalString('SALARY_FORCE_PAYMENT_EVEN_IF_PAID'))) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default

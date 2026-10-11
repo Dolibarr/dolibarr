@@ -2873,7 +2873,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	// If bank module is used
 	if ($user->hasRight('expensereport', 'to_paid') && isModEnabled("bank") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
-		if ($remaintopay == 0) {
+        if (($remaintopay == 0) && (!getDolGlobalString('EXPENSEREPORT_FORCE_PAYMENT_EVEN_IF_PAID'))) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id='.$object->id.'&action=create">'.$langs->trans('DoPayment').'</a></div>';
