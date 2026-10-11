@@ -855,7 +855,7 @@ foreach ($arrayofalerts as $key => $alert) {
 		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
 	}
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($vdp ? ' VDP #'.$vdp.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
-	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+	$arrayofalerts[$key]['title'] .= (empty($alert['issueid']) ? 'Fix committed as: '.dol_trunc($alert['commitid'], 8) : 'Fix for GitHub #'.$alert['issueid']);
 
 	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
 
@@ -978,7 +978,7 @@ if ($fh) {
 		$arrayuniquetmp = array_unique($alert['branch']);
 		if (count($arrayuniquetmp) == 1 && in_array('develop', $arrayuniquetmp)) {
 			// The alert has been fixed into develop only, so we discard it for RSS alert
-			print 'The alert with key '.$tmpkey.' is fixed into branch develop only, so we discard it for RSS'."\n";
+			print 'The alert with key '.$tmpkey.' is fixed into branch develop ONLY, so we discard it for RSS'."\n";
 			unset($arrayofalerts[$tmpkey]);
 		}
 	}
@@ -987,14 +987,18 @@ if ($fh) {
 	foreach ($arrayofalerts as $alert) {
 		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 
+		// Use the GitHub issue as reference when it exists, otherwise the commit
+		$refid = !empty($alert['issueid']) ? $alert['issueid'] : $alert['commitid'];
+		$refurl = !empty($alert['issueid']) ? 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'] : $alert['url_commit'];
+
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
 		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
-		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
+		fwrite($fh, '<link>' . htmlspecialchars($refurl) . '</link>'."\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
-		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($refid).']]></guid>'."\n");	// A hidden unique ID
 
 		fwrite($fh, '</item>'."\n");
 	}
