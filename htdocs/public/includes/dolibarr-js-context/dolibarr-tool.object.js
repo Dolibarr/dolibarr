@@ -130,8 +130,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			if (page) params.page = page;
 			if (action) params.action = action;
 
+			// A GET with an action needs the anti CSRF token (MAIN_SECURITY_CSRF_WITH_TOKEN = 3 by default)
 			const response = await Dolibarr.tools.fetch.get(Dolibarr.getContextVar('DOL_URL_ROOT') + '/core/ajax/objectline.php', params, {
-				responseType: 'json', ...fetchOptions, unwrap: false,
+				responseType: 'json', token: !!action, ...fetchOptions, unwrap: false,
 			});
 
 			return { ...response.data, eventMessages: response.eventMessages || {} };
