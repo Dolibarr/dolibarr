@@ -1354,22 +1354,23 @@ class ToolApiBridge extends McpTool
 			// over — and hide — the full syntax contract (operators, and/or, the
 			// unsupported IN, the datec/tms column names), so there the common doc
 			// is APPENDED to the docblock description instead of being shadowed.
+			$commondesc = (string) ($this->commonParamDocs[$pname] ?? '');
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
 				$pdesc = $paramDocs[$pname]['desc'];
-				if (in_array($pname, ['sqlfilters'], true) && !empty($this->commonParamDocs[$pname])) {
+				if ($pname === 'sqlfilters' && $commondesc !== '') {
 					$keptdesc = preg_replace('/.*Syntax example/', 'Example', rtrim($pdesc));
-					$pdesc = $this->commonParamDocs[$pname];
+					$pdesc = $commondesc;
 					if ($keptdesc) {
 						$pdesc .= "\n".$keptdesc;
 					}
 				}
-				if (in_array($pname, ['sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
-					$pdesc = rtrim($pdesc, '. ').'. '.$this->commonParamDocs[$pname];
+				if ($pname === 'sortfield' && $commondesc !== '') {
+					$pdesc = rtrim((string) $pdesc, '. ').'. '.$commondesc;
 				}
 			} else {
-				$pdesc = $this->commonParamDocs[$pname] ?? '';
+				$pdesc = $commondesc;
 			}
 			// The API docblocks carry Restler's inline validation tags. They are
 			// markup, not prose: left in place they reach the model as noise
