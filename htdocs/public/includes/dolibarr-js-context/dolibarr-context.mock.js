@@ -90,7 +90,7 @@ var Dolibarr = {
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
 		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
 		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
-		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document|null>,
 		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
 		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
 		 *   on: function(string, function): function
@@ -128,6 +128,20 @@ var Dolibarr = {
 			 * Cancel the edition of the line in progress
 			 */
 			close: function() {},
+
+			/**
+			 * Add a line with the form to add a line, like its button Add (input[data-dol-add-line])
+			 * @param {HTMLElement} button
+			 * @returns {Promise<boolean>} False if the line can not be added here (the form must then be submitted)
+			 */
+			addLine: function(button) {},
+
+			/**
+			 * Delete the line of a delete link (a[data-dol-delete-line]), after a confirmation
+			 * @param {HTMLElement} link
+			 * @returns {Promise<boolean>} False if the line can not be deleted here (the url of the link must then be used)
+			 */
+			deleteLine: function(link) {},
 		},
 
 		/**

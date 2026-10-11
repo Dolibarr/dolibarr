@@ -1735,7 +1735,9 @@ class CommonObjectTest extends CommonClassTest
 
 		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '1';
 		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with the hidden option');
-		$this->assertStringContainsString('data-dol-edit-line="'.$lineid.'"', $localobject->getObjectLineHtml($lineid), 'Edit link marked for the ajax edition');
+		$linehtml = $localobject->getObjectLineHtml($lineid);
+		$this->assertStringContainsString('data-dol-edit-line="'.$lineid.'"', $linehtml, 'Edit link marked for the ajax edition');
+		$this->assertStringContainsString('data-dol-delete-line="'.$lineid.'"', $linehtml, 'Delete link marked for the ajax deletion');
 
 		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
 		$conf->global->MAIN_FEATURES_LEVEL = 2;

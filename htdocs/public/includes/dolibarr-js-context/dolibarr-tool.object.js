@@ -62,6 +62,18 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Check if the anti CSRF token of the session is renewed on each call (MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL):
+	 * the current token and the next one printed by the page are then different
+	 * @returns {boolean}
+	 */
+	function isTokenRenewedOnEachCall() {
+		const current = document.querySelector('meta[name="anti-csrf-currenttoken"]');
+		const next = document.querySelector('meta[name="anti-csrf-newtoken"]');
+
+		return !!(current && next && current.getAttribute('content') !== next.getAttribute('content'));
+	}
+
+	/**
 	 * Controller of an object
 	 */
 	class DolibarrObjectController {
@@ -321,31 +333,41 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * The card answers without its lines (nolines=1), and keeps the event messages of the action in session
 		 * (noflusheventmessages=1): they are returned by the next call of fetchLines() or reload() with lines.
 		 * The anti CSRF tokens of the page are updated with the ones of the card.
+		 * When the card redirects after the action (most cards after adding or deleting a line), the redirect is not followed:
+		 * the messages of the action stay in session.
 		 *
 		 * @param {FormData|Object} data Data posted, the anti CSRF token is added if missing
 		 * @param {Object} [options] See reload()
-		 * @returns {Promise<Document>} Card loaded after the action
+		 * @returns {Promise<Document|null>} Card loaded after the action, null if the card redirected
 		 */
 		async postCard(data, options = {}) {
 			const url = new URL(this.url, window.location.href);
 			url.searchParams.set('nolines', '1');
 			url.searchParams.set('noflusheventmessages', '1');
 
-			const html = await Dolibarr.tools.fetch.post(url.toString(), data, { responseType: 'text', ...options });
-			const doc = new DOMParser().parseFromString(html, 'text/html');
+			const response = await Dolibarr.tools.fetch.post(url.toString(), data, { ...options, responseType: 'response', redirect: 'manual' });
+			if (response.type === 'opaqueredirect') {
+				// The token of the session was renewed by the card and is unknown: it is read from the card loaded without lines
+				if (isTokenRenewedOnEachCall()) await this.fetchCardWithoutLines(options);
+				return null;
+			}
+
+			const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
 			syncCsrfToken(doc);
 
 			return doc;
 		}
 
 		/**
-		 * Load the card without its lines, faster than the whole card on documents with many lines
+		 * Load the card without its lines, faster than the whole card on documents with many lines.
+		 * The event messages waiting in session are not displayed by the card loaded in background, they stay in session (noflusheventmessages=1).
 		 * @param {Object} [options] See reload()
 		 * @returns {Promise<Document>}
 		 */
 		async fetchCardWithoutLines(options = {}) {
 			const url = new URL(this.url, window.location.href);
 			url.searchParams.set('nolines', '1');
+			url.searchParams.set('noflusheventmessages', '1');
 
 			const html = await Dolibarr.tools.fetch.get(url.toString(), null, { responseType: 'text', ...options });
 			const doc = new DOMParser().parseFromString(html, 'text/html');
