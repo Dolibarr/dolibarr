@@ -341,11 +341,42 @@ body[dir="rtl"] .dol-tooltip::after {
 .dol-field-editing {
 	opacity: 0.4;
 }
-/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): a light field look on hover */
+/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): the value gets the look of a field on hover,
+   its padding is compensated by negative margins so the value does not move */
 td[data-dol-line-field] {
-	cursor: pointer;
+	cursor: text;
 }
-td[data-dol-line-field]:hover {
-	box-shadow: inset 0 0 0 1px var(--inputbordercolor, rgba(0, 0, 0, 0.15));
-	border-radius: 0.25rem;
+td[data-dol-line-field] .dol-line-value {
+	display: inline-block;
+	min-width: 2.5em;
+	margin: -4px -5px;
+	padding: 3px 4px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+td[data-dol-line-field]:hover .dol-line-value {
+	background-color: rgba(0, 0, 0, 0.03);
+	border-color: rgba(0, 0, 0, 0.18);
+}
+/* Compact popover (values of the lines): only the input, exactly over the value */
+.dol-field-popover.--compact {
+	padding: 0;
+	border: none;
+	background: transparent;
+	box-shadow: none;
+}
+.dol-field-popover.--compact input:not([type="hidden"]),
+.dol-field-popover.--compact select {
+	box-sizing: border-box;
+	max-width: none;
+	margin: 0;
+	padding: 3px 4px;
+	font: inherit;
+	color: inherit;
+	background-color: var(--colorbackbody, #fff);
+	border: 1px solid var(--colorbackhmenu1, #6c757d);
+	border-radius: 4px;
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+	outline: none;
 }

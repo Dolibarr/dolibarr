@@ -425,6 +425,9 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 // not for credit lines and lines of situation invoices (edited with the edit form of the line)
 $ajaxlinefields = ($this->isAjaxLineEdit() && $this->getRights()->creer && $action != 'selectlines' && ($line->info_bits & 2) != 2 && empty($disableedit)
 	&& empty($line->fk_remise_except) && $line->special_code != 3 && empty($this->situation_cycle_ref));
+// The value is in a span: it gets the look of a field on hover, its input is placed over it
+$ajaxlinevalue = ($ajaxlinefields ? '<span class="dol-line-value">' : '');
+$ajaxlinevalueend = ($ajaxlinefields ? '</span>' : '');
 
 // VAT Rate
 print '<td class="linecolvat nowrap right"'.($ajaxlinefields ? ' data-dol-line-field="tva_tx"' : '').'>';
@@ -442,9 +445,9 @@ if (price2num($line->localtax2_tx)) {
 if (empty($positiverates)) {
 	$positiverates = '0';
 }
-print $tooltiponprice;
+print $ajaxlinevalue.$tooltiponprice;
 print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
-print $tooltiponpriceend;
+print $tooltiponpriceend.$ajaxlinevalueend;
 print '</td>';
 ?>
 
@@ -452,7 +455,7 @@ print '</td>';
 	<?php
 	$coldisplay++;
 	if (empty($line->fk_remise_except)) {
-		print price($sign * $line->subprice);
+		print $ajaxlinevalue.price($sign * $line->subprice).$ajaxlinevalueend;
 	} else {
 		print '<!-- '.price($sign * $line->subprice).' -->';
 	}
@@ -494,7 +497,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
 	}
 	if (empty($line->fk_remise_except)) {
-		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+		print $ajaxlinevalue.(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice)).$ajaxlinevalueend;
 	}	// if upinctax can't be known, we show subprice excl ta
 	?>
 	</td>
@@ -525,7 +528,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+	print $ajaxlinevalue.price($line->qty, 0, '', 0, 0).$ajaxlinevalueend; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 } else {
 	print '&nbsp;';
 	print '<!-- '.price($line->qty, 0, '', 0, 0).' -->';	// discount may be aggregation of several lines, so showing qty may lead to misunderstanding, but we put it in comment for information
@@ -568,17 +571,17 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left"'.($ajaxlinefields ? ' data-dol-line-field="units"' : '').'>';
 	$label = $line->getLabelOfUnit('short', $langs);
-	print $label;
+	print $ajaxlinevalue.$label.$ajaxlinevalueend;
 	print '</td>';
 }
 if (!empty($line->remise_percent) && $line->special_code != 3) {
 	print '<td class="linecoldiscount right"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	print dol_print_reduction((float) $line->remise_percent, $langs);
+	print $ajaxlinevalue.dol_print_reduction((float) $line->remise_percent, $langs).$ajaxlinevalueend;
 	print '</td>';
 } else {
-	print '<td class="linecoldiscount"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>&nbsp;</td>';
+	print '<td class="linecoldiscount"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>'.$ajaxlinevalue.'&nbsp;'.$ajaxlinevalueend.'</td>';
 	$coldisplay++;
 }
 
@@ -607,7 +610,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if ($user->hasRight('margins', 'creer')) { ?>
-		<td class="linecolmargin1 nowrap margininfos right"<?php print $ajaxlinefields ? ' data-dol-line-field="buying_price"' : ''; ?>><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
+		<td class="linecolmargin1 nowrap margininfos right"<?php print $ajaxlinefields ? ' data-dol-line-field="buying_price"' : ''; ?>><?php $coldisplay++; ?><?php print $ajaxlinevalue.price($line->pa_ht).$ajaxlinevalueend; ?></td>
 	<?php }
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print(($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>

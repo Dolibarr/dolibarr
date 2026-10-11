@@ -149,6 +149,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {HTMLElement} container Container of the value
 	 */
 	function placePopover(popover, container) {
+		if (popover.classList.contains('--compact')) {
+			placeCompactPopover(popover, container);
+			return;
+		}
 		const rect = container.getBoundingClientRect();
 		const style = getComputedStyle(popover);
 		const offsetX = parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth);
@@ -166,6 +170,32 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		popover.style.left = (left + window.scrollX) + 'px';
 		popover.style.top = (rect.top - offsetY + window.scrollY) + 'px';
+	}
+
+	/**
+	 * Place a compact popover (autoSave, no buttons) exactly over the value: its input centered on the value, aligned like the value
+	 * (right for the amounts, left for the texts), at least as wide as the value
+	 * @param {HTMLElement} popover
+	 * @param {HTMLElement} container Container of the value
+	 */
+	function placeCompactPopover(popover, container) {
+		const rect = container.getBoundingClientRect();
+		const inputs = popover.querySelector('.dol-field-popover-inputs');
+		const alignRight = ['right', 'end'].includes(getComputedStyle(container.parentElement || container).textAlign);
+		const pageWidth = document.documentElement.clientWidth;
+		const margin = 8;
+
+		popover.querySelectorAll('input:not([type="hidden"]), select').forEach(input => {
+			input.style.minWidth = rect.width + 'px';
+			input.style.textAlign = alignRight ? 'right' : 'left';
+		});
+
+		let left = alignRight ? rect.right - (inputs.offsetLeft + inputs.offsetWidth) : rect.left - inputs.offsetLeft;
+		left = Math.max(margin, Math.min(left, pageWidth - margin - popover.offsetWidth));
+		const top = rect.top + rect.height / 2 - (inputs.offsetTop + inputs.offsetHeight / 2);
+
+		popover.style.left = (left + window.scrollX) + 'px';
+		popover.style.top = (top + window.scrollY) + 'px';
 	}
 
 	/**
@@ -188,10 +218,12 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {function(): void} [options.onClose] Called when the popover is closed
 	 * @param {function(KeyboardEvent, Object): void} [options.onKeydown] Called first for the keys pressed in the popover, can prevent the default
 	 * @param {string} [options.className] Classes added to the popover
+	 * @param {boolean} [options.autoSave=false] Compact popover without buttons, saved when the value is changed: choice in a list with the mouse,
+	 *        leaving the input (click outside, focus elsewhere) when the value was changed. Used for the values of the lines.
 	 * @returns {Promise<Object>} Popover: {container, editor, inputs, saving, isChanged(), save(), close()}
 	 */
 	async function openPopover(container, options) {
-		const { content, getValue, onClose = null, onKeydown = null, className = '' } = options;
+		const { content, getValue, onClose = null, onKeydown = null, className = '', autoSave = false } = options;
 
 		// Cancel the edition of another value, unless it is being saved
 		if (current && current.container !== container && !current.saving) current.close();
@@ -199,7 +231,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const [saveLabel, cancelLabel] = await Promise.all([transMain('Save'), transMain('Cancel')]);
 
 		const editor = document.createElement('div');
-		editor.className = 'dol-field-popover --light-mode' + (className ? ' ' + className : '');
+		editor.className = 'dol-field-popover --light-mode' + (autoSave ? ' --compact' : '') + (className ? ' ' + className : '');
 		const inputs = document.createElement('div');
 		inputs.className = 'dol-field-popover-inputs';
 		const actions = document.createElement('div');
@@ -207,7 +239,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const saveButton = createIconButton('dol-field-popover-save', 'fa-check', saveLabel);
 		const cancelButton = createIconButton('dol-field-popover-cancel', 'fa-times', cancelLabel);
 		actions.append(saveButton, cancelButton);
-		editor.append(inputs, actions);
+		editor.append(inputs);
+		if (!autoSave) editor.append(actions);
 		container.dataset.dolEditing = '1';
 		container.classList.add('dol-field-editing');
 		document.body.append(editor);
@@ -229,7 +262,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const initialValue = JSON.stringify(getValue(inputs));
 		const onOutsideClick = event => {
 			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || popover.saving) return;
-			if (!popover.isChanged()) popover.close();
+			if (!popover.isChanged()) {
+				popover.close();
+			} else if (autoSave) {
+				popover.save();
+			}
 		};
 
 		// While saving: the fields can not be changed (inert), they show the processing feedback, the save button turns into a spinner
@@ -300,6 +337,27 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			if (!popover.closed) document.addEventListener('mousedown', onOutsideClick);
 		}, 0);
 
+		if (autoSave) {
+			// Focus moved out of the popover (not to the layers of the inputs): saved if changed
+			editor.addEventListener('focusout', event => {
+				const target = event.relatedTarget;
+				if (!target || editor.contains(target) || target.closest(POPOVER_LAYERS) || popover.saving || popover.closed) return;
+				if (popover.isChanged()) {
+					popover.save();
+				} else {
+					popover.close();
+				}
+			});
+			// A choice in a list saves at once, unless it is changed with the arrow keys (saved by Enter, Tab or leaving it)
+			let keyboardChange = false;
+			editor.addEventListener('keydown', event => {
+				if (event.target.tagName === 'SELECT') keyboardChange = event.key.startsWith('Arrow') || event.key.length === 1;
+			}, true);
+			editor.addEventListener('change', event => {
+				if (event.target.tagName === 'SELECT' && !keyboardChange && popover.isChanged()) popover.save();
+				keyboardChange = false;
+			});
+		}
 		saveButton.addEventListener('click', () => popover.save());
 		cancelButton.addEventListener('click', () => popover.close());
 		editor.addEventListener('keydown', event => {

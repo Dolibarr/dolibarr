@@ -444,8 +444,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	/**
 	 * Edition of the values of the lines in their cell
 	 * ------------------------------------------------
-	 * A click on a value of a line (cells td[data-dol-line-field], see objectline_view.tpl.php) opens a field popover over it
-	 * (Dolibarr.tools.card.fields.openPopover()) with the input of the edit form of the line, the one of the card: same lists and formats.
+	 * A click on a value of a line (cells td[data-dol-line-field], see objectline_view.tpl.php) opens a compact field popover exactly over it
+	 * (Dolibarr.tools.card.fields.openPopover() with autoSave) with the input of the edit form of the line, the one of the card: same lists and formats.
+	 * The value is saved when it is changed: choice in a list, Enter, Tab, or leaving the input (click outside). Escape cancels.
 	 * The value is saved with the action updateline of the card, posted with all the values of the edit form of the line, like the
 	 * button Save: all the rules of the card are applied. The document is generated again later, once after the last change
 	 * (Dolibarr.tools.card scheduleDocumentBuild()). Tab saves and opens the next value (Shift + Tab the previous one).
@@ -615,7 +616,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 */
 	async function editCell(cell) {
 		// One edition of a line at a time, like in the card
-		if (current || cell.dataset.dolEditing || !Dolibarr.tools.card.fields) return true;
+		if (current || cell.dataset.dolEditing || cell.querySelector('[data-dol-editing]') || !Dolibarr.tools.card.fields) return true;
 		const context = getCellContext(cell);
 		if (!context) return false;
 		const { row, link, lineId, field, controller } = context;
@@ -648,8 +649,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		let saved = false;
 		let next = null;
 
-		await Dolibarr.tools.card.fields.openPopover(cell, {
+		// Placed over the value (span.dol-line-value), saved when changed like a cell of a spreadsheet
+		await Dolibarr.tools.card.fields.openPopover(cell.querySelector('.dol-line-value') || cell, {
 			content,
+			autoSave: true,
 			className: '--line-value',
 			getValue: () => input.value,
 			save: async value => {
