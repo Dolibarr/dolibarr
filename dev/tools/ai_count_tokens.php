@@ -98,11 +98,34 @@ $totalFiles = 0;
 
 $files = [];
 
-$iterator = new RecursiveIteratorIterator(
+$excludedDirs = array_map(function ($dir) {
+	return trim(str_replace('\\', '/', $dir), '/');
+}, $excludedDirs);
+
+// Prune excluded dirs before descending into them (also avoids errors on unreadable dirs like documents/)
+$filter = new RecursiveCallbackFilterIterator(
 	new RecursiveDirectoryIterator(
 		$root,
 		FilesystemIterator::SKIP_DOTS
-	)
+	),
+	function ($current) use ($root, $excludedDirs) {
+		if (!$current->isDir()) {
+			return true;
+		}
+		$relativePathUnix = str_replace(DIRECTORY_SEPARATOR, '/', str_replace($root . DIRECTORY_SEPARATOR, '', $current->getPathname()));
+		foreach ($excludedDirs as $dir) {
+			if ($relativePathUnix === $dir || strpos($relativePathUnix, $dir . '/') === 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+);
+
+$iterator = new RecursiveIteratorIterator(
+	$filter,
+	RecursiveIteratorIterator::LEAVES_ONLY,
+	RecursiveIteratorIterator::CATCH_GET_CHILD	// Skip unreadable dirs instead of throwing
 );
 
 foreach ($iterator as $file) {
@@ -119,7 +142,6 @@ foreach ($iterator as $file) {
 	$excluded = false;
 
 	foreach ($excludedDirs as $dir) {
-		$dir = trim(str_replace('\\', '/', $dir), '/');
 		if (
 			$relativePathUnix === $dir ||
 			strpos($relativePathUnix, $dir . '/') === 0
