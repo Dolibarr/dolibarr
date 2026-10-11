@@ -2326,7 +2326,8 @@ if ($action == 'create') {
 		// Display context of lines, also sets the global variables used by the line templates
 		$linesContext = $object->initObjectLinesDisplay();
 
-		if (!empty($object->lines)) {
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
 			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
