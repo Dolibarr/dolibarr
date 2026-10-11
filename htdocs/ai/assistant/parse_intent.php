@@ -677,7 +677,6 @@ try {
 			$systemPrompt .= "## Privacy rules\n";
 			$systemPrompt .= "Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masking real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
 			$systemPrompt .= "\n";
-
 		}
 
 		// A bare date is not enough for weaker models: state explicitly that
