@@ -1122,3 +1122,26 @@ a.msg-action-btn.primary span {
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
 #ai-ctx-bar a.ai-ctx-active { font-weight: 600; text-decoration: none; padding: 1px 6px; border-radius: 8px; background: rgba(44, 98, 172, 0.15); }
+
+/* /tools debug output: one folded block per tool, parameters as indented JSON */
+.ai-tools-debug ul {
+    margin: 4px 0 10px;
+    padding-left: 18px;
+}
+.ai-tools-tool {
+    margin: 2px 0;
+}
+.ai-tools-tool summary {
+    cursor: pointer;
+}
+.ai-tools-tool > div,
+.ai-tools-tool > pre {
+    margin: 4px 0 8px 18px;
+}
+.ai-tools-tool > pre {
+    white-space: pre;
+    overflow-x: auto;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
