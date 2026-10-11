@@ -44,6 +44,7 @@ if (empty($argv[1])) {
 	print "You must run this tool at the root of the project.\n";
 	print 'Usage:   '.constant('PRODUCT').".php  pathto/outputfile.html  [--dir-scc=pathtoscc|disabled] [--dir-phpstan=pathtophpstan|disabled] [--dir-phan=path/to/phan|disabled] [--repo=owner/repo] [--project-name=name] [--url-root=url] [--url-site=url]\n";
 	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin --dir-phan=~/vendor/bin/phan --url-site=https://www.dolibarr.org';
+	print "\n";
 	exit(0);
 }
 
@@ -1114,7 +1115,7 @@ if ($fh) {
 } else {
 	print 'Failed to open '.$outputpath." for output.\n";
 }
-
+print "\n";
 
 
 /**
