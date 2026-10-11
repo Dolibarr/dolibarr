@@ -916,11 +916,9 @@ try {
 						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
 							// If answer is tool=respond_to_user but without message
 							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
-
 							$intentJSON['arguments']['message'] = "I don't understand the answer produced by the IA for this request. Please rephrase or add details.";
 						} else {
 							dol_syslog('parse_intent.php clean response is "respond_to_user" with a messageor content', LOG_DEBUG, 0, '_ai');
-
 							$intentJSON = [
 								"tool" => "respond_to_user",
 								'arguments' => [

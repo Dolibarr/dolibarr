@@ -496,6 +496,18 @@ class UniversalLLMAdapter
 			$answer = $json['choices'][0]['message']['content'] ?? null;
 		}
 
+		// A reasoning model (e.g. through GLM) may send the content as a list
+		// of chunks, a 'thinking' one before the 'text' one: keep only the text.
+		if (is_array($answer)) {
+			$text = '';
+			foreach ($answer as $chunk) {
+				if (is_array($chunk) && ($chunk['type'] ?? '') === 'text' && is_string($chunk['text'] ?? null)) {
+					$text .= $chunk['text'];
+				}
+			}
+			$answer = ($text !== '') ? $text : null;
+		}
+
 		// When answer was into the tool_calls instead of message
 		if (empty($answer) && !empty($json['choices'][0]['message']['tool_calls'])) {
 			$answer = json_encode($json['choices'][0]['message']['tool_calls']);

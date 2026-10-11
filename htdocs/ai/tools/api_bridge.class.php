@@ -1942,7 +1942,7 @@ class ToolApiBridge extends McpTool
 			}
 			unset($line['product_ref']);
 		}
-		// Unit: the one the user named ("4 pieces"), else the product's own,
+		// Unit: the one the user named else the product's own,
 		// as the card would. A name matching no unit, or several, is dropped
 		// rather than guessed.
 		if (isset($line['unit']) || (isset($line['fk_unit']) && !is_numeric($line['fk_unit']))) {
@@ -1957,6 +1957,21 @@ class ToolApiBridge extends McpTool
 			if ($unitprod instanceof Product && !empty($unitprod->fk_unit)) {
 				$line['fk_unit'] = (int) $unitprod->fk_unit;
 			}
+			if (!$found && !isset($line['desc'])) {
+				// Unknown or ambiguous: keep what the user called it, so the
+				// line reads "popularpt" instead of appearing blank.
+				$line['desc'] = $wanted;
+			}
+			if (!$found) {
+				$this->unresolvedProducts[] = $wanted;
+			}
+			unset($line['product_ref']);
+		}
+		// A line with no rate is written at 0 %: ask core for the rate that
+		// applies between the two companies for this product, which is what
+		// the card would have filled in.
+		if (!isset($line['tva_tx']) && $socid > 0) {
+			$line['tva_tx'] = $this->defaultVatRate($socid, (int) ($line['fk_product'] ?? 0), $buy);
 		}
 		// A line with no rate is written at 0 %: ask core for the rate that
 		// applies between the two companies for this product, which is what
