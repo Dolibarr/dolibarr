@@ -69,6 +69,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<li><code>setField(field, value, options)</code> saves one field with <code>core/ajax/objectfield.php</code>. Only fields editable from the UI can be saved: <code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>. Returns the data of the response <code>{element, id, field, value, html, tms}</code>, where <code>html</code> is the new value formatted for display. For a field with several inputs, like a date, <code>value</code> is an object with the suffixes of the inputs of <code>showInputField()</code>: <code>{day: 15, month: 10, year: 2026}</code>.</li>
 		<li><code>reload({sections, lines}, options)</code> replaces the sections (CSS selectors) and the document lines (rows <code>tr#row-{id}</code>) by their new version. The lines are loaded alone with <code>core/ajax/objectline.php</code>, the sections with the card loaded without its lines (<code>nolines=1</code>), the two requests in parallel. A line not in the page yet is inserted at its place, a line deleted is removed from the page. <code>reloadSection(selector)</code> and <code>reloadLine(lineId)</code> are shortcuts. When lines are reloaded, the fields displayed in the page (totals...) are refreshed in the same time, see below: give <code>fields</code> to choose them, <code>[]</code> for none.</li>
 		<li><code>refreshFields(fields, options)</code> refreshes the values of fields displayed in the page with <code>core/ajax/objectfield.php</code>, all the fields displayed when <code>fields</code> is not given. Only fields readable from the UI are returned, see <code>CommonObject::isFieldReadableFromUi()</code>. A value is displayed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>, or <code>[data-dol-field]</code> without element for the object of the card, like the totals of the cards: <code>&lt;td data-dol-field="total_ht"&gt;</code>. The values are output by <code>CommonObject::ajaxOutputField()</code>, the totals with their currency.</li>
+		<li><code>postCard(data, options)</code> posts data to the card, like a form of the card submitted (ex: <code>action=updateline</code>), without reloading the page. The card answers without its lines (<code>nolines=1</code>) and keeps the event messages of the action in session (<code>noflusheventmessages=1</code>): they are returned and displayed by the next call of <code>fetchLines()</code> or <code>reload()</code> with lines, in <code>eventMessages</code>.</li>
 		<li><code>on(eventName, callback)</code> listens to the <code>object:*</code> hooks of this object only, and returns a function to remove the listener.</li>
 	</ul>
 	<p>
@@ -76,7 +77,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<code>url</code> is the url of the card used to reload sections, the current page without action parameters by default.
 	</p>
 	<p>
-		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>fields</code> the fields refreshed <code>{field: {value, html}}</code>, <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines or fields are refreshed), and <code>document</code> the card loaded (when sections are asked).
+		<code>reload()</code> returns the new elements (<code>null</code> if not found, or line deleted), <code>fields</code> the fields refreshed <code>{field: {value, html}}</code>, <code>eventMessages</code> the messages kept in session by <code>postCard()</code> (when lines are asked), <code>lineids</code> the ids of all the lines of the object in the order of the card and <code>tms</code> its date of modification (when lines or fields are refreshed), and <code>document</code> the card loaded (when sections are asked).
 	</p>
 	<p>
 		<b>Note:</b> loading the card renews the anti CSRF token of the session. The tokens of the page (meta tags, and forms if the token is renewed on each call) are updated with the ones of the card loaded.
@@ -152,5 +153,25 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	</ul>
 	<p>
 		<b>Note:</b> the hidden option <code>MAIN_USE_EDIT_IN_PLACE</code> (jeditable) is deprecated, the ajax edition of fields replaces it.
+	</p>
+</div>
+
+<div class="documentation-section">
+	<h2 id="titlesection-tool-lineedit" class="documentation-title">Line edit tool</h2>
+
+	<p>
+		<code>Dolibarr.tools.lineEdit</code> edits the document lines of a card in ajax, without reloading the page. There is no code to write in the card:
+		the edit link of the lines printed by <code>objectline_view.tpl.php</code> is used.
+	</p>
+	<ul>
+		<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_LINE_EDIT</code>, only on a draft: see <code>CommonObject::isAjaxLineEdit()</code>.</li>
+		<li>The edit link of a line gets the attributes <code>data-dol-edit-line</code>, <code>data-dol-element</code> and <code>data-dol-id</code>, its url is still used without javascript.</li>
+		<li>A click on the link replaces the line by its edit form, the one of the card: <code>core/ajax/objectline.php</code> with <code>action=editline</code> (<code>CommonObject::getObjectLineHtml($lineid, 'editline')</code>). The form to add a line is removed from the page during the edition, it uses the same names and ids of inputs. One line is edited at a time, <kbd>Escape</kbd> cancels.</li>
+		<li>The form is saved by the action <code>updateline</code> of the card, posted with <code>postCard()</code> of <code>Dolibarr.tools.object</code>: all the rules of the card are applied (prices, taxes, hooks, triggers, document regenerated...).</li>
+		<li>If the card returns an error, it is displayed and the form stays open. Otherwise the line and the fields displayed (totals...) are refreshed.</li>
+		<li><code>Dolibarr.tools.lineEdit.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.lineEdit.close()</code> cancels the edition in progress.</li>
+	</ul>
+	<p>
+		<b>Note:</b> a page loaded with the parameter <code>noflusheventmessages=1</code> does not display the event messages, they are kept in session for the next <code>JsonResponse</code> (<code>JsonResponse::addSessionEventMessages()</code>).
 	</p>
 </div>

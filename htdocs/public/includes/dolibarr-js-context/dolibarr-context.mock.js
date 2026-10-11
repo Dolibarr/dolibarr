@@ -90,6 +90,7 @@ var Dolibarr = {
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
 		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
 		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
 		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
 		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
 		 *   on: function(string, function): function
@@ -110,6 +111,23 @@ var Dolibarr = {
 			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
 			 */
 			open: function(link) {},
+		},
+
+		/**
+		 * Edition of the document lines of a card in ajax, see CommonObject::isAjaxLineEdit()
+		 */
+		lineEdit: {
+			/**
+			 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
+			 * @param {HTMLElement} link
+			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+			 */
+			open: function(link) {},
+
+			/**
+			 * Cancel the edition of the line in progress
+			 */
+			close: function() {},
 		},
 
 		/**

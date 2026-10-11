@@ -1679,10 +1679,76 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertNull($form, 'Global $form of the caller must be restored');
 		$this->assertSame(0, $inputalsopricewithtax, 'Global variables of the line templates must be restored');
 
+		// Edit form of the line, the order is a draft. Constants of the editors are defined by main.inc.php only.
+		for ($i = 1; $i <= 10; $i++) {
+			if (!defined('ROWS_'.$i)) {
+				define('ROWS_'.$i, $i);
+			}
+		}
+		$edithtml = $localobject->getObjectLineHtml($lineid, 'editline');
+		$this->assertStringContainsString('name="lineid" value="'.$lineid.'"', $edithtml, 'Edit form of the line');
+		$this->assertStringContainsString('name="save"', $edithtml);
+
 		// Unknown line
 		$this->assertSame('', $localobject->getObjectLineHtml(-1));
 		$this->assertSame('ErrorRecordNotFound', $localobject->error);
 
+		$this->assertGreaterThan(0, $localobject->delete($user));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testIsAjaxLineEdit
+	 *  Lines of a draft are edited in ajax with MAIN_FEATURES_LEVEL 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT,
+	 *  the edit link of the lines then gets the attributes used by Dolibarr.tools.lineEdit
+	 *
+	 *  @return void
+	 */
+	public function testIsAjaxLineEdit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savfeatureslevel = getDolGlobalString('MAIN_FEATURES_LEVEL');
+		$savoption = getDolGlobalString('MAIN_USE_AJAX_LINE_EDIT');
+		$savajax = $conf->use_javascript_ajax;
+		$conf->use_javascript_ajax = 1;
+		$conf->global->MAIN_FEATURES_LEVEL = 0;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$localobject->fetch_thirdparty();
+		$localobject->getLinesArray();
+		$lineid = $localobject->lines[0]->id;
+
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Disabled by default');
+		$this->assertStringNotContainsString('data-dol-edit-line', $localobject->getObjectLineHtml($lineid));
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '1';
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with the hidden option');
+		$this->assertStringContainsString('data-dol-edit-line="'.$lineid.'"', $localobject->getObjectLineHtml($lineid), 'Edit link marked for the ajax edition');
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+		$conf->global->MAIN_FEATURES_LEVEL = 2;
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with MAIN_FEATURES_LEVEL 2');
+
+		$localobject->status = Commande::STATUS_VALIDATED;
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Only on a draft');
+
+		$conf->use_javascript_ajax = $savajax;
+		$conf->global->MAIN_FEATURES_LEVEL = $savfeatureslevel;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = $savoption;
+
+		$localobject->status = Commande::STATUS_DRAFT;
 		$this->assertGreaterThan(0, $localobject->delete($user));
 
 		print __METHOD__." OK\n";

@@ -1913,6 +1913,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
 		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Update fields and reload sections or lines of the object of a card
 		$jsContextFiles[] = 'dolibarr-tool.fieldedit.js'; // Edition of the fields of a card in ajax, see Form::isAjaxFieldEdit()
+		$jsContextFiles[] = 'dolibarr-tool.lineedit.js'; // Edition of the document lines of a card in ajax, see CommonObject::isAjaxLineEdit()
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -3931,7 +3932,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1) keeps them in session:
+		// they are returned to the ajax tool by the next JsonResponse (JsonResponse::addSessionEventMessages()).
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists

@@ -66,6 +66,43 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Wrappers to parse html in the context of a table element: parsed alone, table rows and cells after another tag
+	 * (a script, a comment printed by a template...) are removed by the html parser
+	 * @type {Object<string, {open: string, close: string, depth: number}>} depth = level of the container of the content in the wrapper
+	 */
+	const TABLE_WRAPPERS = {
+		table: { open: '<table>', close: '</table>', depth: 0 },
+		thead: { open: '<table><thead>', close: '</thead></table>', depth: 1 },
+		tbody: { open: '<table><tbody>', close: '</tbody></table>', depth: 1 },
+		tfoot: { open: '<table><tfoot>', close: '</tfoot></table>', depth: 1 },
+		tr: { open: '<table><tbody><tr>', close: '</tr></tbody></table>', depth: 2 },
+	};
+
+	/**
+	 * Parse html into nodes, in the context of the element that will contain them
+	 * Scripts parsed in a template are never executed by the browser, see executeScripts().
+	 * @param {string} html
+	 * @param {Element|null} contextEl Parent of the new nodes
+	 * @returns {Node[]}
+	 */
+	function parseHtml(html, contextEl) {
+		const template = document.createElement('template');
+		const wrapper = contextEl && contextEl.tagName ? TABLE_WRAPPERS[contextEl.tagName.toLowerCase()] : null;
+		if (!wrapper) {
+			template.innerHTML = html;
+			return Array.from(template.content.childNodes);
+		}
+
+		template.innerHTML = wrapper.open + html + wrapper.close;
+		let container = template.content.querySelector('table');
+		for (let i = 0; i < wrapper.depth && container; i++) {
+			container = container.firstElementChild;
+		}
+
+		return container ? Array.from(container.childNodes) : [];
+	}
+
+	/**
 	 * Replace an element of the page, or its content, by html
 	 *
 	 * @param {HTMLElement|jQuery|string} target Element or CSS selector, only the first element found is used
@@ -84,10 +121,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			return null;
 		}
 
-		// A template parses any html, even table rows
-		const template = document.createElement('template');
-		template.innerHTML = (content instanceof Element) ? content.outerHTML : String(content);
-		const newNodes = Array.from(template.content.childNodes);
+		// Parsed in the context of the parent, so table rows and cells are kept
+		const newNodes = parseHtml((content instanceof Element) ? content.outerHTML : String(content), mode === 'inner' ? targetEl : targetEl.parentElement);
 
 		rememberLoadedScripts();
 		if (mode === 'inner') {

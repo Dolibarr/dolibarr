@@ -6117,15 +6117,33 @@ abstract class CommonObject
 	}
 
 	/**
+	 *	Return if the lines of the card are edited in ajax, without reloading the page (Dolibarr.tools.lineEdit).
+	 *	Lines can be edited only on a draft. Enabled with MAIN_FEATURES_LEVEL >= 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT.
+	 *	The edit link of the lines must still be shown only if the user can edit them, the url of the link is used without javascript.
+	 *
+	 *	@return	bool
+	 */
+	public function isAjaxLineEdit()
+	{
+		global $conf;
+
+		if (empty($conf->use_javascript_ajax) || empty($this->id) || empty($this->table_element_line) || $this->status != 0) {
+			return false;
+		}
+
+		return getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('MAIN_USE_AJAX_LINE_EDIT');
+	}
+
+	/**
 	 *	Return the HTML of a line as printed in the card by printObjectLines(), hooks printObjectLine and printObjectSubLine included.
-	 *	Used to reload a line with ajax. The line is always in view mode.
+	 *	Used to reload a line with ajax. The line is in view mode, or in edit mode with the action 'editline' (if the object is a draft).
 	 *	The lines must be loaded into $this->lines (for example with getLinesArray()).
 	 *	Note: the caller must init the hook context of the card (key 'hookcontext' of getObjectLinesDisplayContext()) so modules hooking it render the line as in the card.
 	 *	The global variables of the caller used for the rendering ($object, $form, ...) are restored at the end.
 	 *
 	 *	@param	int		$lineid		Id of the line
-	 *	@param	string	$action		Action code
-	 *	@return	string				HTML of the line (<tr id="row-...">), empty string if line not found (error in $this->error)
+	 *	@param	string	$action		Action code, 'editline' for the edit form of the line (objectline_edit.tpl.php)
+	 *	@return	string				HTML of the line (<tr id="row-...">, or the rows of the edit form), empty string if line not found (error in $this->error)
 	 */
 	public function getObjectLineHtml($lineid, $action = '')
 	{
@@ -6166,7 +6184,7 @@ abstract class CommonObject
 		$this->prepareObjectLinesDisplay();
 
 		ob_start();
-		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], 0, $extrafields, '/core/tpl');
+		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], ($action == 'editline' ? (int) $line->id : 0), $extrafields, '/core/tpl');
 		$out = ob_get_clean();
 
 		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;

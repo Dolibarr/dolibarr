@@ -23,6 +23,9 @@
  *                  like /comm/propal/card.php, so the links of the lines are the ones of the card).
  *                  Answer is a JsonResponse, data contains the html of each line (null if the line does not exist anymore)
  *                  and the ids of all the lines of the object in the order of the card, to insert or remove lines.
+ *                  With action=editline (one line, write permission, object in draft), the html is the edit form of the line
+ *                  (rows of objectline_edit.tpl.php), to edit the line in ajax (Dolibarr.tools.lineEdit).
+ *                  The event messages kept in session by a card loaded with noflusheventmessages=1 are returned in the answer.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -41,6 +44,7 @@ if (!defined('NOREDIRECTBYMAINTOLOGIN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/jsonResponse.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Lines and edit forms use the ajax combo boxes, not loaded with NOREQUIREAJAX
 
 /**
  * @var Conf $conf
@@ -54,6 +58,8 @@ $element = GETPOST('element', 'aZ09');
 $id = GETPOSTINT('id');
 $lineids = GETPOST('lineids', 'intcomma');
 $page = GETPOST('page', 'alphanohtml');
+$action = GETPOST('action', 'aZ09');
+$editline = ($action == 'editline'); // Test on permission done later, write permission checked by restrictedArea()
 
 $langs->loadLangs(array('errors', 'companies', 'bills', 'products', 'orders', 'propal', 'compta', 'other'));
 
@@ -66,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_METHOD_NOT_ALLOWED);
 	$jsonResponse->output();
 }
-if (empty($element) || empty($id) || $lineids === '') {
+if (empty($element) || empty($id) || $lineids === '' || (!empty($action) && !$editline)) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
 	$jsonResponse->output();
 }
@@ -78,8 +84,8 @@ if (!is_object($object) || $object->id <= 0) {
 	$jsonResponse->output();
 }
 
-// Security check, restrictedArea() tests the read permission and the access of external users
-$result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1);
+// Security check, restrictedArea() tests the read permission (write permission for the edit form) and the access of external users
+$result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, $editline ? 'write' : 'read');
 if (!$result) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
 	$jsonResponse->output();
@@ -111,10 +117,21 @@ $context = $object->getObjectLinesDisplayContext();
 $hookmanager->initHooks(array($context['hookcontext'], 'globalcard'));
 
 $lines = array();
-foreach (array_unique(explode(',', $lineids)) as $lineid) {
-	if ((int) $lineid > 0) {
-		$html = $object->getObjectLineHtml((int) $lineid);
-		$lines[(int) $lineid] = ($html === '' ? null : $html);
+if ($editline) {
+	// Edit form of one line, only on a draft like in the card
+	$lineid = (int) $lineids;
+	if (strpos($lineids, ',') !== false || $lineid <= 0 || !$object->isAjaxLineEdit()) {
+		$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorBadParameters'), JsonResponse::HTTP_BAD_REQUEST);
+		$jsonResponse->output();
+	}
+	$html = $object->getObjectLineHtml($lineid, 'editline');
+	$lines[$lineid] = ($html === '' ? null : $html);
+} else {
+	foreach (array_unique(explode(',', $lineids)) as $lineid) {
+		if ((int) $lineid > 0) {
+			$html = $object->getObjectLineHtml((int) $lineid);
+			$lines[(int) $lineid] = ($html === '' ? null : $html);
+		}
 	}
 }
 
@@ -130,6 +147,9 @@ $jsonResponse->data = array(
 	'lineids' => $alllineids,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
 );
+
+// Messages of the actions of a card loaded in background (noflusheventmessages=1), ex: error when a line is saved
+$jsonResponse->addSessionEventMessages();
 
 $jsonResponse->setSuccess();
 $jsonResponse->output();
