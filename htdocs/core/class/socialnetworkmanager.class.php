@@ -74,6 +74,12 @@ class SocialNetworkManager
 	 */
 	private function initializeHandler($authParams)
 	{
+		// Load the file of the handler (only the handlers provided with Dolibarr, the platform is the name given in setup)
+		$handlerFile = strtolower((string) $this->platform);
+		if (in_array($handlerFile, array('mastodon', 'diaspora', 'reddit'))) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/'.$handlerFile.'handler.class.php';
+		}
+
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
 		if (class_exists($handlerClass)) {
 			$this->handler = new $handlerClass($authParams);
