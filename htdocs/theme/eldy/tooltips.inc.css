@@ -341,13 +341,10 @@ body[dir="rtl"] .dol-tooltip::after {
 .dol-field-editing {
 	opacity: 0.4;
 }
-/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): the value gets the look of a field on hover,
-   its padding is compensated by negative margins so the value does not move */
-td[data-dol-line-field] {
-	cursor: text;
-}
+/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): the value, in the width of the column, is the zone that opens
+   its edition and gets the look of a field on hover. Its padding is compensated by negative margins so the value does not move. */
 td[data-dol-line-field] .dol-line-value {
-	display: inline-block;
+	display: block;
 	min-width: 2.5em;
 	margin: -4px -5px;
 	padding: 3px 4px;
@@ -355,7 +352,8 @@ td[data-dol-line-field] .dol-line-value {
 	border-radius: 4px;
 	transition: border-color 0.15s ease, background-color 0.15s ease;
 }
-td[data-dol-line-field]:hover .dol-line-value {
+td[data-dol-line-field] .dol-line-value:hover {
+	cursor: text;
 	background-color: rgba(0, 0, 0, 0.03);
 	border-color: rgba(0, 0, 0, 0.18);
 }

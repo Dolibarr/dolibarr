@@ -444,7 +444,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	/**
 	 * Edition of the values of the lines in their cell
 	 * ------------------------------------------------
-	 * A click on a value of a line (cells td[data-dol-line-field], see objectline_view.tpl.php) opens a compact field popover exactly over it
+	 * A click on a value of a line (span.dol-line-value of the cells td[data-dol-line-field], see objectline_view.tpl.php) opens a compact field popover exactly over it
 	 * (Dolibarr.tools.card.fields.openPopover() with autoSave) with the input of the edit form of the line, the one of the card: same lists and formats.
 	 * The value is saved when it is changed: choice in a list, Enter, Tab, or leaving the input (click outside). Escape cancels.
 	 * The value is saved with the action updateline of the card, posted with all the values of the edit form of the line, like the
@@ -454,6 +454,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 	/** Cells of the values edited in their cell */
 	const CELL_SELECTOR = 'td[data-dol-line-field]';
+
+	/** Value of a cell, the zone that opens its edition (it gets the look of a field on hover) */
+	const CELL_VALUE_SELECTOR = CELL_SELECTOR + ' .dol-line-value';
 
 	/**
 	 * Edit forms of the lines loaded for the edition of their values (not in the page), by id of line.
@@ -693,8 +696,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	['card:FieldsRefreshed', 'card:LineReloaded', 'card:LineRemoved'].forEach(hookName => Dolibarr.on(hookName, () => cellForms.clear()));
 
 	// Values of the lines printed by objectline_view.tpl.php when the lines are edited in ajax
+	// Only the value opens the edition, not the rest of the cell
 	document.addEventListener('click', event => {
-		const cell = event.target.closest(CELL_SELECTOR);
+		const value = event.target.closest(CELL_VALUE_SELECTOR);
+		const cell = value ? value.closest(CELL_SELECTOR) : null;
 		if (!cell || event.ctrlKey || event.metaKey || event.shiftKey || event.target.closest('a, button, input, select, textarea')) return;
 		// Text selected by the user
 		if (String(window.getSelection()) !== '') return;
@@ -705,7 +710,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	// The edit form of a line is loaded when the mouse stays on one of its values, so the edition opens at once
 	let preloadTimer = null;
 	document.addEventListener('pointerover', event => {
-		const cell = event.target.closest && event.target.closest(CELL_SELECTOR);
+		const value = event.target.closest && event.target.closest(CELL_VALUE_SELECTOR);
+		const cell = value ? value.closest(CELL_SELECTOR) : null;
 		clearTimeout(preloadTimer);
 		if (!cell || current) return;
 		preloadTimer = setTimeout(() => {
