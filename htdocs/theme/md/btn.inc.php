@@ -310,7 +310,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	text-transform: uppercase;
 	font-weight: bold !important;
 
-	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;

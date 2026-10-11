@@ -39,6 +39,11 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
+'
+@phan-var-force AssetAccountancyCodes $assetaccountancycodes
+@phan-var-force array<string,mixed> $parameters
+';
+
 if (!is_object($form)) {
 	$form = new Form($db);
 }

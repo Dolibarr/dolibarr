@@ -254,7 +254,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 
@@ -434,7 +439,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 		if (!$error) {
@@ -503,6 +513,28 @@ class ProductAttribute extends CommonObject
 				$error++;
 			}
 			// End call triggers
+		}
+
+		if (!$error) {
+			// Delete extrafields of values
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line . "_extrafields";
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element_line . " WHERE " . $this->fk_element . " = " . ((int) $this->id) . ")";
+
+			dol_syslog(__METHOD__ . ' - Delete extrafields of values', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = "Error " . $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			// Delete extrafields of the attribute
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
 		}
 
 		if (!$error) {

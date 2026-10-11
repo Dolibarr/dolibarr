@@ -404,7 +404,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("RecommendedAmount").'</th>';
+			print '<th class="center">'.$langs->trans("Amount").'</th>';
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
@@ -617,7 +617,9 @@ if ($action == 'create') {
 	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : ($minimumamount ? price($minimumamount): '')).'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
+	print '<tr><td>'.$langs->trans("Amount");
+
+	print '</td><td>';
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
 	print '</td></tr>';
 
@@ -701,12 +703,18 @@ if ($rowid > 0) {
 		print yn($object->caneditamount);
 		print '</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
-		$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
-		print $minimumamount;
-		print '</tr>';
+		if (!empty($object->caneditamount)) {
+			print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
+			$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+			print $minimumamount;
+			print '</tr>';
+		}
 
-		print '<tr><td class="titlefield">'.$langs->trans("RecommendedAmount").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Amount");
+		if (!empty($object->caneditamount)) {
+			print ' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>';
+		}
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<span class="amount">'.$amount.'</span>';
 		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
@@ -714,6 +722,10 @@ if ($rowid > 0) {
 		}
 		if ($amount && $minimumamount && $amount < $minimumamount) {
 			print ' '.img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+		}
+		if (empty($object->caneditamount) && empty($object->amount)) {
+			$langs->load("errors");
+			print img_warning($langs->trans("WarningAmountRequiredIfFreeAmountNotAllowed"));
 		}
 		print '</tr>';
 
@@ -1165,7 +1177,8 @@ if ($rowid > 0) {
 		print '">';
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
+		print '<tr><td>'.$langs->trans("Amount");
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
 		print $amount;

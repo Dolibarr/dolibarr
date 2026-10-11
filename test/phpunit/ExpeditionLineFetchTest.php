@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
+class ExpeditionLineFetchTest extends CommonClassTest
 {
 	/** @var Conf|null Original configuration */
 	private $savedConf;

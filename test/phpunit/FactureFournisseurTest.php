@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -199,5 +200,34 @@ class FactureFournisseurTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
+	}
+
+	/**
+	 * testFactureFournisseurRecGetNextDate
+	 *
+	 * @return	void
+	 */
+	public function testFactureFournisseurRecGetNextDate()
+	{
+		global $db;
+
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('Europe/Paris');
+
+		try {
+			$localobject = new FactureFournisseurRec($db);
+			$localobject->frequency = 1;
+			$localobject->unit_frequency = 'm';
+
+			// Midnight of the 1st after a month of 30 days is the last day of the previous month in UTC
+			foreach (array('2026-10-01' => '2026-11-01', '2026-12-01' => '2027-01-01', '2026-03-01' => '2026-04-01') as $day => $expected) {
+				$localobject->date_when = dol_stringtotime($day.' 00:00:00', 0);
+				$result = dol_print_date($localobject->getNextDate(), '%Y-%m-%d %H:%M:%S', 'tzserver');
+				print __METHOD__." day=".$day." result=".$result."\n";
+				$this->assertEquals($expected.' 00:00:00', $result);
+			}
+		} finally {
+			date_default_timezone_set($savtz);
+		}
 	}
 }

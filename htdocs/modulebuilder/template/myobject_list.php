@@ -228,10 +228,12 @@ if ($enablepermissioncheck) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, 0, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled("mymodule")) {
 	accessforbidden('Module mymodule not enabled');
 }

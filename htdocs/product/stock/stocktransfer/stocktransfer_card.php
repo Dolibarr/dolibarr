@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
+$langs->loadLangs(array("stocks", "other", "productbatch", "companies", "products"));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }

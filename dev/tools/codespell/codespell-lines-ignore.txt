@@ -38,7 +38,6 @@
 			$field = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:).*$/', '', $tmpcrit);		// the name of the field
 			$newcrit = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '', $tmpcrit);
 			$object->periode = $dateperiod;
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
@@ -54,7 +53,6 @@
 			jQuery("#mouvement").change(function() {
 			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		"sme",
 		$action = 'transfert';
 		$cle_rib = strtolower(checkES($rib, $CCC));
@@ -64,8 +62,6 @@
 		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$datesubscription = dol_mktime(0, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		$ensemblereponses = $obj->reponses;
-		$head[$h][1] = $langs->trans("Referers");
-		$head[$tab][1] = $langs->trans("Referers");
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
 		$reday = GETPOSTINT('reday');
 		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
@@ -79,8 +75,6 @@
 		$test = "<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 		$test = '/javas:cript/google.com';
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
-		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
-		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
 		$user->rights->accounting->mouvements->export = $savpermexport;
 		$user->rights->accounting->mouvements->export = 0;
 		$user->rights->accounting->mouvements->export = 1;
@@ -95,7 +89,6 @@
 	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"), 'tzuserrel');
 	$ensemblereponses = $obj->reponses;
-	$head[$h][1] = $langs->trans('Referers');
 	$infp = fopen($infilename, "rt");
 	$inj += preg_match('/on(dblclick|drag|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
@@ -112,7 +105,6 @@
 	$sql.= " AND nd.fk_action = ad.rowid";
 	$sql.= " WHERE u.rowid = nd.fk_user";
 	$sql.= " nd.rowid, ad.code, ad.label";
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
 	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
 	// Ligne de la periode d'analyse du rapport
@@ -126,7 +118,6 @@
 	if (empty($infp)) {
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print ajax_combobox("mouvement");
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
 	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
@@ -159,7 +150,6 @@ $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode as pe
 $sql = "SELECT id_users, nom as name, id_sondage, reponses";
 $sql = "SELECT id_users, nom as name, id_sondage, reponses, tms, date_creation";
 $sql = 'SELECT nom as name, reponses';
-$title = $langs->trans("Referers", $object->name);
 $usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
 $usercancreate = (($user->hasRight('stock', 'mouvement', 'creer')));
 $usercandelete = $user->hasRight('stock', 'mouvement', 'creer');
@@ -182,7 +172,6 @@ function checkES($IentOfi, $InumCta)
 if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 if (!empty($arrayfields['cs.periode']['checked'])) {
 if ($action == "transfert") {
-print $langs->trans("Developpers").':';
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,

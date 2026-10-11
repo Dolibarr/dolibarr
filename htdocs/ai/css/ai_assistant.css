@@ -5,7 +5,7 @@
  * popover (#topmenu-ai-popover shell emitted by top_menu_ai() in main.inc.php).
  *
  * Colors are mapped onto the theme CSS custom properties defined by the theme
- * (htdocs/theme/eldy/global.inc.php) so the chat follows the active palette,
+ * (htdocs/theme/eldy/styles.inc.php) so the chat follows the active palette,
  * including dark mode, with hardcoded values only as fallbacks.
  * ======================================================================== */
 
@@ -820,6 +820,10 @@ body.ai-fullpage {
     color: var(--ai-accent);
     text-decoration: none;
     font-weight: 600;
+	max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .chat-link:hover {

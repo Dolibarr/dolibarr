@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
+$langs->loadLangs(array("mrp", "stocks", "other", "products", "productbatch"));
 
 // Get parameters
 $id = GETPOSTINT('id');

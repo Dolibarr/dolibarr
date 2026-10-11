@@ -121,7 +121,7 @@ class Utils
 					if ($choice == 'tempfilesold') {
 						foreach ($filesarray as $key => $val) {
 							if ($val['date'] > ($now - ($nbsecondsold))) {
-								unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
+								unset($filesarray[$key]); // Discard temp dir if modified during the last $nbsecondsold
 							}
 						}
 					}

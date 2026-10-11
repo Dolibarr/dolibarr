@@ -534,8 +534,15 @@ if (!$error && $massaction == 'confirm_presend') {
 					if ($obj) {
 						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
+				} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+					$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates WHERE rowid = ".(int) $reg[1];
+					$resql = $db->query($sql);
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$email_from = $obj->email_from;
+					}
 				} else {
-					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail', 'email').'>';
 				}
 
 				$replyto = $email_from;
@@ -1199,6 +1206,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 	$nbok = 0;
 	$nbignored = 0;
 	/** @var string[] $TMsg */
@@ -1293,9 +1302,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	// Complete with classes that use this massaction
-	<<<'EOPHAN'
-@phan-var-force 'Commande'|'CommandeFournisseur'|'Contrat'|'Expedition'|'ExpenseReport'|'Facture'|'FactureFournisseur'|'Fichinter'|'Project'|'Propal'|'SupplierProposal' $objectclass
-EOPHAN;
+	'@phan-var-force \'Commande\'|\'CommandeFournisseur\'|\'Contrat\'|\'Expedition\'|\'ExpenseReport\'|\'Facture\'|\'FactureFournisseur\'|\'Fichinter\'|\'Project\'|\'Propal\'|\'SupplierProposal\' $objectclass';
 
 	$db->begin();
 	$nbok = 0;
@@ -1810,18 +1817,21 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 

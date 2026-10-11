@@ -837,7 +837,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= " ref = '".$this->db->escape((string) $this->ref)."'";
 		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
 		$sql .= ", civility = ".($this->civility_code ? "'".$this->db->escape($this->civility_code)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
@@ -1622,7 +1622,7 @@ class Adherent extends CommonObject
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
-		$sql .= " GREATEST(d.tms, aef.tms) as datem,";
+		$sql .= " GREATEST(d.tms, COALESCE(aef.tms, d.tms)) as datem,";
 		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
@@ -2091,7 +2091,27 @@ class Adherent extends CommonObject
 				$vattouse = 0;
 				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				} elseif (getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS') > 0) {
+					$sql = "SELECT t.taux as vat_default_rate, t.code as vat_default_code, einvoice_vatex";
+					$sql .= " FROM " . $this->db->prefix() . "c_tva as t";
+					//$sql .= " INNER JOIN " . $this->db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
+					$sql .= " WHERE t.active > 0";
+					$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+					$sql .= " AND t.rowid = ".(getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS'));
+
+					$res = $this->db->query($sql);
+					if ($res) {
+						if ($this->db->num_rows($res)) {
+							$obj = $this->db->fetch_object($res);
+
+							$vattouse = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+						}
+						$this->db->free($res);
+					} else {
+						dol_print_error($this->db);
+					}
 				}
+
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
@@ -2700,9 +2720,9 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription === 0) {
+			if (empty($need_subscription)) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("SubscriptionNotNeeded");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
@@ -3138,7 +3158,7 @@ class Adherent extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec as datec,';
 		$sql .= ' a.datevalid as datev,';
-		$sql .= ' GREATEST(a.tms, aef.tms) as datem,';
+		$sql .= ' GREATEST(a.tms, COALESCE(aef.tms, a.tms)) as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';

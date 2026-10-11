@@ -19,7 +19,8 @@ To report a vulnerability, for a private report, you can:
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 
-- Or send an email to security@dolibarr.org with clear textual description of the report (TXT or MD format, do not submit archive, audio or video files) along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+- Or send an email to security@dolibarr.org with clear textual description of the report (TXT or MD format, do not submit archive, audio or video files) along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+  In such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager. A mention of your name/pseudo may be added in the commit message (no guarantee for this, our project is maintain by volunteers and they may forgot it sometimes).
 
 
 NOTES:

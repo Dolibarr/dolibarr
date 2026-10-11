@@ -838,6 +838,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	$params = explode('&', $tableandshare);
 	$dbtablename = (!empty($params[0]) ? $params[0] : '');
 	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
+	$tablegivenbycaller = !empty($params[0]);	// The table of the object given by the caller must not be replaced by the default table of the feature
 
 	foreach ($featuresarray as $feature) {
 		$sql = '';
@@ -861,25 +862,25 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'bank') {
 			$feature = 'banque';
 		}
-		if ($feature == 'contract') {
+		if (!$tablegivenbycaller && $feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
-		if ($feature == 'mrp') {
+		if (!$tablegivenbycaller && $feature == 'mrp') {
 			$dbtablename = 'mrp_mo';
 		}
-		if ($feature == 'order_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'order_supplier')) {
+		if (!$tablegivenbycaller && ($feature == 'order_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'order_supplier'))) {
 			$dbtablename = 'commande_fournisseur';
 		}
-		if ($feature == 'invoice_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'invoice_supplier')) {
+		if (!$tablegivenbycaller && ($feature == 'invoice_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'invoice_supplier'))) {
 			$dbtablename = 'facture_fourn';
 		}
-		if ($feature == 'produit') {
+		if (!$tablegivenbycaller && $feature == 'produit') {
 			$dbtablename = 'product';
 		}
-		if ($feature == 'ficheinter') {
+		if (!$tablegivenbycaller && $feature == 'ficheinter') {
 			$dbtablename = 'fichinter';
 		}
-		if ($feature == 'banque') {
+		if (!$tablegivenbycaller && $feature == 'banque') {
 			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
 			$dbtablename = 'bank_account';
 		}
@@ -889,7 +890,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
 			$feature = 'project_task';
 		}
-		if ($feature == 'stock') {
+		if (!$tablegivenbycaller && $feature == 'stock') {
 			$dbtablename = 'entrepot';
 		}
 		if ($feature == 'task' || $feature == 'projet_task') {
@@ -907,7 +908,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = "chargesociales";
 			$objectid = (string) $object->fk_charge;
 		}
-		if ($feature == 'workstation') {
+		if (!$tablegivenbycaller && $feature == 'workstation') {
 			$dbtablename = 'workstation_workstation';
 		}
 
@@ -1199,7 +1200,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
 				if (!$user->hasRight('expensereport', 'readall')) {
-					if (!in_array($useridtocheck, $childids)) {
+					if (!in_array($useridtocheck, $childids) && !($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id)) {
 						return false;
 					}
 				}
@@ -1229,6 +1230,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 		}
 
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
+				return false;
+			}
+		}
+
 		if ($sql) {
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -1252,7 +1269,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
  * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
  * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
- * Only the types of objects linked to a third party or to a project are checked, an empty array is returned for the others.
+ * Only the types of objects linked to a third party or to a project, and expense reports (author in the hierarchy of the user),
+ * are checked, an empty array is returned for the others.
  *
  * @param	User			$user		User
  * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
@@ -1289,6 +1307,38 @@ function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 			$feature = 'project_task';
 			break;
+		case 'expensereport':
+			// Not linked to a third party but to its author, who must be in the hierarchy of the user unless he can read
+			// all expense reports (same rule as checkUserAccessToObject() with the object, and expensereport/card.php).
+			// checkUserAccessToObject() can't check it with an id only, so all ids are checked with one request.
+			global $db;
+			$sanitizedids = [];
+			foreach ($ids as $id) {
+				if ((int) $id > 0) {
+					$sanitizedids[] = (int) $id;
+				}
+			}
+			if (empty($sanitizedids)) {
+				return [];
+			}
+			$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."expensereport as t";
+			$sql .= " WHERE t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+			$sql .= " AND (t.entity NOT IN (".getEntity('expensereport', 1).")";
+			if (!$user->hasRight('expensereport', 'readall')) {
+				$sql .= " OR t.fk_user_author NOT IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+			}
+			$sql .= ")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+				return $sanitizedids;
+			}
+			$refusedids = [];
+			while ($obj = $db->fetch_object($resql)) {
+				$refusedids[] = (int) $obj->rowid;
+			}
+			$db->free($resql);
+			return $refusedids;
 	}
 	if (empty($feature)) {
 		return [];
