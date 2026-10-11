@@ -82,6 +82,12 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 	<p>
 		<b>Note:</b> loading the card renews the anti CSRF token of the session. The tokens of the page (meta tags, and forms if the token is renewed on each call) are updated with the ones of the card loaded.
 	</p>
+	<p>
+		<b>Note:</b> a page loaded with the parameter <code>noflusheventmessages=1</code> does not display the event messages, they are kept in session for the next <code>JsonResponse</code> (<code>JsonResponse::addSessionEventMessages()</code>).
+	</p>
+	<p>
+		The ajax edition of the cards (experimental, see <a href="<?php echo dol_buildpath($documentation->baseUrl.'/experimental/ajax-card-edition/index.php', 1); ?>">Experimental UX - Ajax edition of cards</a>) is built with this tool.
+	</p>
 
 	<?php
 	$lines = array(
@@ -134,44 +140,4 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		'</script>',
 	);
 	$documentation->showCode($lines, 'php'); ?>
-</div>
-
-<div class="documentation-section">
-	<h2 id="titlesection-tool-fieldedit" class="documentation-title">Field edit tool</h2>
-
-	<p>
-		<code>Dolibarr.tools.fieldEdit</code> edits the fields of a card in ajax, without reloading the page. There is no code to write in the card:
-		<code>Form::editfieldkey()</code> and <code>Form::editfieldval()</code> print the markup when the field is edited in ajax.
-	</p>
-	<ul>
-		<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_FIELD_EDIT</code>, see <code>Form::isAjaxFieldEdit()</code>.</li>
-		<li>Only for the fields of a <code>CommonObject</code> editable from the user interface (<code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>). Other fields keep the edition by reloading the page.</li>
-		<li>The edit link gets the attributes <code>data-dol-edit-field</code>, <code>data-dol-element</code>, <code>data-dol-id</code> and <code>data-dol-tms</code>, its url is still used without javascript. The value is printed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>.</li>
-		<li>A click on the link replaces the value by the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>). <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
-		<li>The value is saved with <code>setField()</code> of <code>Dolibarr.tools.object</code>, refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed.</li>
-		<li><code>Dolibarr.tools.fieldEdit.open(link)</code> opens the edition of the field of an edit link.</li>
-	</ul>
-	<p>
-		<b>Note:</b> the hidden option <code>MAIN_USE_EDIT_IN_PLACE</code> (jeditable) is deprecated, the ajax edition of fields replaces it.
-	</p>
-</div>
-
-<div class="documentation-section">
-	<h2 id="titlesection-tool-lineedit" class="documentation-title">Line edit tool</h2>
-
-	<p>
-		<code>Dolibarr.tools.lineEdit</code> edits the document lines of a card in ajax, without reloading the page. There is no code to write in the card:
-		the edit link of the lines printed by <code>objectline_view.tpl.php</code> is used.
-	</p>
-	<ul>
-		<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_LINE_EDIT</code>, only on a draft: see <code>CommonObject::isAjaxLineEdit()</code>.</li>
-		<li>The edit link of a line gets the attributes <code>data-dol-edit-line</code>, <code>data-dol-element</code> and <code>data-dol-id</code>, its url is still used without javascript.</li>
-		<li>A click on the link replaces the line by its edit form, the one of the card: <code>core/ajax/objectline.php</code> with <code>action=editline</code> (<code>CommonObject::getObjectLineHtml($lineid, 'editline')</code>). The form to add a line is removed from the page during the edition, it uses the same names and ids of inputs. One line is edited at a time, <kbd>Escape</kbd> cancels.</li>
-		<li>The form is saved by the action <code>updateline</code> of the card, posted with <code>postCard()</code> of <code>Dolibarr.tools.object</code>: all the rules of the card are applied (prices, taxes, hooks, triggers, document regenerated...).</li>
-		<li>If the card returns an error, it is displayed and the form stays open. Otherwise the line and the fields displayed (totals...) are refreshed.</li>
-		<li><code>Dolibarr.tools.lineEdit.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.lineEdit.close()</code> cancels the edition in progress.</li>
-	</ul>
-	<p>
-		<b>Note:</b> a page loaded with the parameter <code>noflusheventmessages=1</code> does not display the event messages, they are kept in session for the next <code>JsonResponse</code> (<code>JsonResponse::addSessionEventMessages()</code>).
-	</p>
 </div>
