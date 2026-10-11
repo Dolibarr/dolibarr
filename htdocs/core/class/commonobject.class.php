@@ -2616,14 +2616,29 @@ abstract class CommonObject
 
 	/**
 	 * Return the output html of a field for an ajax refresh of the card (core/ajax/objectfield.php).
-	 * By default, it is the output of showOutputField(). Override in child classes only for fields
-	 * the card does not show with showOutputField(), so a refreshed value always looks like the displayed one.
+	 * By default, it is the output of showOutputField(). The totals of the object are shown like on the cards,
+	 * with their currency (main currency, or currency of the object for the multicurrency totals).
+	 * Override in child classes only for fields the card does not show with showOutputField(),
+	 * so a refreshed value always looks like the displayed one.
 	 *
 	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
 	 * @return	string			Output html
 	 */
 	public function ajaxOutputField($field)
 	{
+		global $conf, $langs;
+
+		// Totals are declared as double in $fields, showOutputField() would show them without currency
+		if (preg_match('/^(multicurrency_)?total_(ht|tva|localtax1|localtax2|ttc)$/', $field)) {
+			$value = property_exists($this, $field) ? $this->$field : null;
+			if (is_null($value) || $value === '') {
+				return '';
+			}
+			$currency = (strpos($field, 'multicurrency_') === 0 && !empty($this->multicurrency_code)) ? $this->multicurrency_code : $conf->currency;
+
+			return price((float) $value, 0, $langs, 1, -1, -1, $currency);
+		}
+
 		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
 		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
 		$fielddef = $this->fields[$field];

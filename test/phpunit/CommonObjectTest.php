@@ -1464,6 +1464,14 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertStringNotContainsString('<CLIENT>', $propal->ajaxOutputField('ref_client'), 'Output is escaped');
 		$this->assertStringContainsString('<b>Public note</b>', $propal->ajaxOutputField('note_public'), 'Note (visible = 0) is output');
 
+		// Totals are output with their currency, like on the cards
+		$propal->total_ht = 1234.5;
+		$propal->multicurrency_total_ht = 1500;
+		$propal->multicurrency_code = 'USD';
+		$this->assertSame(price(1234.5, 0, $langs, 1, -1, -1, $conf->currency), $propal->ajaxOutputField('total_ht'), 'Total in main currency');
+		$this->assertSame(price(1500, 0, $langs, 1, -1, -1, 'USD'), $propal->ajaxOutputField('multicurrency_total_ht'), 'Multicurrency total in currency of the object');
+		$this->assertNotSame($propal->ajaxOutputField('multicurrency_total_ht'), price(1500, 0, $langs, 1, -1, -1, $conf->currency), 'Currency of the object is not the main one');
+
 		print __METHOD__." OK\n";
 	}
 
