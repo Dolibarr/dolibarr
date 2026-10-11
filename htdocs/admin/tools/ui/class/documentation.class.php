@@ -259,8 +259,6 @@ class Documentation
 						'FetchTool' => '#titlesection-tool-fetch',
 						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
 						'ObjectTool' => '#titlesection-tool-object',
-						'FieldEditTool' => '#titlesection-tool-fieldedit',
-						'LineEditTool' => '#titlesection-tool-lineedit',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
 					),
 				),
@@ -310,7 +308,8 @@ class Documentation
 						'Introduction' => '#ajax-card-edition-introduction',
 						'AjaxCardEditionEnable' => '#ajax-card-edition-enable',
 						'AjaxCardEditionWhat' => '#ajax-card-edition-what',
-						'AjaxCardEditionDev' => '#ajax-card-edition-dev',
+						'FieldEditTool' => '#titlesection-tool-fieldedit',
+						'LineEditTool' => '#titlesection-tool-lineedit',
 					),
 				),
 			)
