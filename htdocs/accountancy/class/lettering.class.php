@@ -599,7 +599,7 @@ class Lettering extends BookKeeping
 			}
 
 			// Check balance amount
-			if (!$group_error && !$unlettering && price2num($total) < 0.01) {
+			if (!$group_error && !$unlettering && price2num($total) != 0) {
 				$this->errors[] = $langs->trans('AccountancyErrorMismatchBalanceAmount', $total);
 				$group_error++;
 			}
