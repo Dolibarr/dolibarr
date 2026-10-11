@@ -4,11 +4,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * ---------------------
 	 * Controller of an object (CommonObject) displayed on a card, to update it in ajax without reloading the page :
 	 * - setField() saves one field with core/ajax/objectfield.php (only fields editable from UI, see CommonObject::isFieldEditableFromUi())
-	 * - reload() reloads sections and document lines of the card : the card is loaded again in background
-	 *   and the elements are replaced by their new version with Dolibarr.tools.replaceContent()
+	 * - reload() reloads sections and document lines of the card, the elements are replaced by their new version with Dolibarr.tools.replaceContent() :
+	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1)
 	 *
 	 * Hooks : object:BeforeFieldUpdate (await hook, can change the value or cancel), object:FieldUpdated, object:FieldUpdateError,
-	 * object:SectionReloaded, object:LineReloaded, and reloadDocumentLine for each line reloaded.
+	 * object:SectionReloaded, object:LineReloaded, object:LineRemoved, and reloadDocumentLine for each line reloaded.
 	 */
 
 	/**
@@ -64,7 +64,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {number} id Id of the object
 		 * @param {Object} [options]
 		 * @param {number} [options.tms=0] Date of modification of the object displayed (timestamp), to refuse an update if the object was modified since
-		 * @param {string} [options.url] Url of the card used to reload sections and lines, default is the current page without action parameters
+		 * @param {string} [options.url] Url of the card used to reload sections, default is the current page without action parameters
 		 */
 		constructor(element, id, options = {}) {
 			this.element = String(element);
@@ -146,7 +146,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
-		 * Reload sections and document lines of the card, with one request
+		 * Reload sections and document lines of the card, the lines and the sections are loaded in parallel :
+		 * - lines with core/ajax/objectline.php, only the lines asked are rendered.
+		 *   A line not in the page yet is inserted at its place, a line deleted is removed from the page.
+		 * - sections with the card loaded without its lines (nolines=1), only if sections are asked
 		 *
 		 * @param {Object} what
 		 * @param {string[]} [what.sections] CSS selectors of the sections, ex: ['#builddoc', '[data-dol-field="total_ht"]']
@@ -154,18 +157,28 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {Object} [options]
 		 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
 		 * @param {AbortSignal} [options.signal]
-		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, document: Document}>}
-		 *          New elements (null if not found in the page or in the card loaded), and the card loaded to use other parts of it
+		 * @returns {Promise<{sections: Object<string, HTMLElement|null>, lines: Object<number, HTMLElement|null>, lineids: number[]|null, tms: number|null, document: Document|null}>}
+		 *          New elements (null if not found, or line deleted), ids of all the lines of the object in the order of the card and
+		 *          date of modification of the object (null if no line asked), and the card loaded to use other parts of it (null if no section asked)
 		 */
 		async reload(what = {}, options = {}) {
 			const { sections = [], lines = [] } = what;
 			const { showErrors = true, signal = undefined } = options;
 
-			const html = await Dolibarr.tools.fetch.get(this.url, null, { responseType: 'text', showErrors, signal });
-			const doc = new DOMParser().parseFromString(html, 'text/html');
-			syncCsrfToken(doc);
+			const lineIds = lines.map(lineId => parseInt(lineId, 10)).filter(lineId => lineId > 0);
 
-			const result = { sections: {}, lines: {}, document: doc };
+			const [linesData, doc] = await Promise.all([
+				lineIds.length > 0 ? this.fetchLines(lineIds, { showErrors, signal }) : null,
+				sections.length > 0 ? this.fetchCardWithoutLines({ showErrors, signal }) : null,
+			]);
+
+			const result = {
+				sections: {},
+				lines: {},
+				lineids: linesData ? linesData.lineids.map(lineId => parseInt(lineId, 10)) : null,
+				tms: linesData && linesData.tms ? parseInt(linesData.tms, 10) : null,
+				document: doc,
+			};
 
 			sections.forEach(selector => {
 				const node = this.replaceFrom(doc, selector);
@@ -175,18 +188,103 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				}
 			});
 
-			lines.forEach(lineId => {
-				lineId = parseInt(lineId, 10);
-				const node = this.replaceFrom(doc, '#row-' + lineId);
-				result.lines[lineId] = node;
-				if (node) {
-					// Same data as when triggered by external modules, listened by ajaxrow.tpl.php for drag and drop of lines
-					Dolibarr.executeHook('reloadDocumentLine', { lineId, lineElement: node.dataset.element || '' });
-					Dolibarr.executeHook('object:LineReloaded', this.hookData({ lineId, node }));
-				}
+			lineIds.forEach(lineId => {
+				const html = linesData.lines[lineId];
+				result.lines[lineId] = (typeof html === 'string') ? this.replaceLine(lineId, html, result.lineids) : this.removeLine(lineId);
 			});
 
 			return result;
+		}
+
+		/**
+		 * Load the html of document lines with core/ajax/objectline.php
+		 * @param {number[]} lineIds
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null}>}
+		 */
+		fetchLines(lineIds, options = {}) {
+			return Dolibarr.tools.fetch.get(Dolibarr.getContextVar('DOL_URL_ROOT') + '/core/ajax/objectline.php', {
+				element: this.element,
+				id: this.id,
+				lineids: lineIds.join(','),
+				page: new URL(this.url, window.location.href).pathname, // Links of the lines are the ones of the card
+			}, { responseType: 'json', unwrap: true, ...options });
+		}
+
+		/**
+		 * Load the card without its lines, faster than the whole card on documents with many lines
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<Document>}
+		 */
+		async fetchCardWithoutLines(options = {}) {
+			const url = new URL(this.url, window.location.href);
+			url.searchParams.set('nolines', '1');
+
+			const html = await Dolibarr.tools.fetch.get(url.toString(), null, { responseType: 'text', ...options });
+			const doc = new DOMParser().parseFromString(html, 'text/html');
+			syncCsrfToken(doc);
+
+			return doc;
+		}
+
+		/**
+		 * Replace a document line of the page by its new html, or insert it after the previous line of the card
+		 * @param {number} lineId
+		 * @param {string} html Html of the line, only the row tr#row-{id} is used
+		 * @param {number[]} allLineIds Ids of all the lines of the object in the order of the card
+		 * @returns {HTMLElement|null}
+		 */
+		replaceLine(lineId, html, allLineIds) {
+			// Parsed in a table like in the card: html printed by hooks outside of the rows does not prevent to parse them
+			const template = document.createElement('template');
+			template.innerHTML = '<table><tbody>' + html + '</tbody></table>';
+			const newRow = template.content.getElementById('row-' + lineId);
+			if (!newRow) {
+				Dolibarr.log(`tools: object: #row-${lineId} not found in the line loaded`);
+				return null;
+			}
+
+			let target = document.getElementById('row-' + lineId);
+			if (!target) {
+				// New line: an empty row is inserted next to the previous (or next) line of the card, then replaced
+				const index = allLineIds.indexOf(lineId);
+				const previousRow = allLineIds.slice(0, index).reverse().map(id => document.getElementById('row-' + id)).find(row => row);
+				const nextRow = previousRow ? null : allLineIds.slice(index + 1).map(id => document.getElementById('row-' + id)).find(row => row);
+				if (!previousRow && !nextRow) {
+					Dolibarr.log(`tools: object: no line in the page to insert #row-${lineId}`);
+					return null;
+				}
+				target = document.createElement('tr');
+				if (previousRow) {
+					previousRow.after(target);
+				} else {
+					nextRow.before(target);
+				}
+			}
+
+			const node = Dolibarr.tools.replaceContent(target, newRow);
+			if (node) {
+				// Same data as when triggered by external modules, listened by ajaxrow.tpl.php for drag and drop of lines
+				Dolibarr.executeHook('reloadDocumentLine', { lineId, lineElement: node.dataset.element || '' });
+				Dolibarr.executeHook('object:LineReloaded', this.hookData({ lineId, node }));
+			}
+
+			return node;
+		}
+
+		/**
+		 * Remove a document line deleted from the page
+		 * @param {number} lineId
+		 * @returns {null}
+		 */
+		removeLine(lineId) {
+			const row = document.getElementById('row-' + lineId);
+			if (row) {
+				row.remove();
+				Dolibarr.executeHook('object:LineRemoved', this.hookData({ lineId }));
+			}
+
+			return null;
 		}
 
 		/**

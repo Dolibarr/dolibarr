@@ -3,7 +3,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * Dolibarr.tools.replaceContent
 	 * -----------------------------
 	 * Replace an element of the page (or its content) by html received in ajax, like if it was in the page from the start :
-	 * - inline and external scripts of the new html are executed (select2, date pickers...), with the nonce of the current page
+	 * - inline scripts of the new html are executed (select2, date pickers...), with the nonce of the current page, and external scripts not already loaded by the page
 	 * - Dolibarr.initNewContent() is called on the new elements (tooltips...)
 	 *
 	 * Note : scripts of the new html waiting for Dolibarr:Ready or DOMContentLoaded are never executed, these events are already passed.
@@ -19,6 +19,21 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Urls of the external scripts already executed by the page: they are not executed again (classes declared twice...)
+	 * @type {Set<string>}
+	 */
+	const loadedScripts = new Set();
+
+	/**
+	 * Add the external scripts of the page to the scripts already executed, before they are removed by a replacement
+	 */
+	function rememberLoadedScripts() {
+		Array.from(document.scripts).forEach(script => {
+			if (script.src) loadedScripts.add(script.src);
+		});
+	}
+
+	/**
 	 * Execute the scripts of nodes inserted in the page (scripts inserted with innerHTML are never executed by the browser)
 	 * @param {Node[]} nodes
 	 */
@@ -30,12 +45,20 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 			const scripts = node.tagName === 'SCRIPT' ? [node] : Array.from(node.querySelectorAll('script'));
 			scripts.forEach(oldScript => {
+				if (oldScript.src && loadedScripts.has(oldScript.src)) {
+					oldScript.remove();
+					return;
+				}
+
 				const newScript = document.createElement('script');
 				Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
 				// The html comes from a page of this Dolibarr, its scripts get the nonce of the current page
 				if (nonce) newScript.nonce = nonce;
 				// Keep the order of execution of external scripts
-				if (newScript.src) newScript.async = false;
+				if (newScript.src) {
+					newScript.async = false;
+					loadedScripts.add(newScript.src);
+				}
 				newScript.textContent = oldScript.textContent;
 				oldScript.replaceWith(newScript);
 			});
@@ -66,6 +89,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		template.innerHTML = (content instanceof Element) ? content.outerHTML : String(content);
 		const newNodes = Array.from(template.content.childNodes);
 
+		rememberLoadedScripts();
 		if (mode === 'inner') {
 			targetEl.replaceChildren(...newNodes);
 		} else {

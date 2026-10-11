@@ -88,7 +88,7 @@ var Dolibarr = {
 		 * @returns {{
 		 *   element: string, id: number, tms: number, url: string,
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
-		 *   reload: function({sections?: string[], lines?: number[]}, Object=): Promise<{sections: Object, lines: Object, document: Document}>,
+		 *   reload: function({sections?: string[], lines?: number[]}, Object=): Promise<{sections: Object, lines: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
 		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
 		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
 		 *   on: function(string, function): function
