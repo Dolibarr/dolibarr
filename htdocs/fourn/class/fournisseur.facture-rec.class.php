@@ -1419,6 +1419,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$this->db->begin();
 
+				$errorforinvoice = 0;
 				$invoiceidgenerated = 0;
 
 				$new_fac_fourn = null;
@@ -1454,17 +1455,19 @@ class FactureFournisseurRec extends CommonInvoice
 					if ($invoiceidgenerated <= 0) {
 						$this->setErrorsFromObject($new_fac_fourn);
 						$error++;
+						$errorforinvoice++;
 					}
-					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
+					if (!$errorforinvoice && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
 						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
 							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 
-					if (!$error && $facturerec->generate_pdf) {
+					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$laststep = "Refresh ".$new_fac_fourn->id;
 						$new_fac_fourn->fetch($new_fac_fourn->id);
@@ -1473,6 +1476,7 @@ class FactureFournisseurRec extends CommonInvoice
 						if ($result < 0) {
 							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 				} else {
@@ -1482,7 +1486,9 @@ class FactureFournisseurRec extends CommonInvoice
 					dol_syslog('createRecurringInvoices Failed to load invoice template with id=' .$line->rowid. ', entity=' .$conf->entity);
 				}
 
-				if (!$error && $invoiceidgenerated >= 0) {
+				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error), so that a failure on one template does not cancel the templates processed after it.
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above, in which case $new_fac_fourn is still null.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$facturerec->nb_gen_done++;
 					$facturerec->date_last_gen = dol_now();
 					$nextDate = $facturerec->getNextDate();

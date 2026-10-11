@@ -6469,11 +6469,14 @@ span[phptag] {
 .websitebar .fa-plus-circle.btnTitle-icon {
 	margin: 0px 4px 0px 4px !important;
 }
-
 .websitebar {
 	border-bottom: 1px solid #ccc;
+	/* background: var(--colorbacktitle1); */
 	background: #eee;
 	display: inline-block;
+}
+span#morelines {
+	font-weight: normal;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
@@ -7077,14 +7080,19 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 	border: 1px solid #ddd;
 	margin: 0;
 }
+.ace_editor.ace-chrome .ace_gutter {
+	background: var(--colorbacktitle1);
+	color: var(--colortexttitle);
+}
 .aceeditorstatusbar {
 		margin: 0;
-		padding: 0;
+		padding: 5px 5px;
 		padding-<?php echo $left; ?>: 10px;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		color: #666;
+		background-color: var(--colorbacktitle1);
+		color: var(--colortexttitle);
 		height: 28px;
 		line-height: 2.2em;
 }
@@ -7092,7 +7100,7 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 		color: gray;
 		position: relative;
 		right: 0;
-		border-left: 1px solid;
+		border-left: unset;
 }
 pre#editfilecontentaceeditorid {
 	margin-top: 5px;
@@ -9139,6 +9147,16 @@ table.jPicker {
 	padding-top: 6px;
 	border-radius: <?php echo $borderradius; ?>px;
 }
+/* Module AI - configure_tools.php: chevron rotation animation on collapse/expand */
+.toggle-icon {
+	display: inline-block;
+	margin-right: 8px;
+	transition: transform 0.2s ease-in-out;
+}
+
+.trgroup.collapsed .toggle-icon {
+	transform: rotate(-90deg);
+}
 
 
 /* ============================================================================== */
@@ -9519,6 +9537,7 @@ if (is_object($db)) {
 	user-select: none; /* Non-prefixed version, currently
 			  supported by Chrome, Edge, Opera and Firefox */
 }
+
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
