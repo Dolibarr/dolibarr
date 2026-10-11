@@ -942,8 +942,8 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
-$html .= 'Note:Search is done in git repository on regex string "#ghsa|#yogosha|CVE[\s\-]*\d|Sec:|Sec |^Sec\s" (not case sensitive)<br>';
-$html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
+$html .= 'Note: Search is done in git repository on regex string "#ghsa|#yogosha|CVE[\s\-]*\d|Sec:|Sec |^Sec\s" (not case sensitive)<br>';
+$html .= 'You can use this URL for RSS notifications: <a href="/'.htmlspecialchars($outputfilerss, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($outputfilerss, ENT_QUOTES, 'UTF-8').'</a><br><br>';
 
 $html .= '</section>';
 
@@ -962,8 +962,8 @@ if ($fh) {
 	fwrite($fh, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 	fwrite($fh, "<rss version=\"2.0\">\n");
 	fwrite($fh, "<channel>\n");
-	fwrite($fh, '<title>' . htmlspecialchars($title_security) . "</title>\n");
-	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . "</description>\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security, ENT_QUOTES, 'UTF-8') . "</title>\n");
+	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project", ENT_QUOTES, 'UTF-8') . "</description>\n");
 	//fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
 	fwrite($fh, "<language>en-US</language>\n");
 	fwrite($fh, '<lastBuildDate>'.date('r')."</lastBuildDate>\n");
@@ -972,15 +972,15 @@ if ($fh) {
 	<atom:link href="https://cti.dolibarr.org/security-index.rss" rel="self" type="application/rss+xml" />
 	*/
 	if ($url_site) {
-		fwrite($fh, '<link>' . htmlspecialchars($url_site) . "</link>\n");
+		fwrite($fh, '<link>' . htmlspecialchars($url_site, ENT_QUOTES, 'UTF-8') . "</link>\n");
 	}
 	// Image
 	if ($showwidgets) {
 		fwrite($fh, "<image>\n");
 		fwrite($fh, "<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>\n");
-		fwrite($fh, '<title>' . htmlspecialchars($title_security) . "</title>\n");
+		fwrite($fh, '<title>' . htmlspecialchars($title_security, ENT_QUOTES, 'UTF-8') . "</title>\n");
 		if ($url_site) {
-			fwrite($fh, '<link>' . htmlspecialchars($url_site) . "</link>\n");
+			fwrite($fh, '<link>' . htmlspecialchars($url_site, ENT_QUOTES, 'UTF-8') . "</link>\n");
 		}
 		fwrite($fh, "</image>\n");
 	}
@@ -1005,13 +1005,13 @@ if ($fh) {
 		$refurl = !empty($alert['issueid']) ? $url_issue.$alert['issueid'] : $alert['url_commit'];
 
 		fwrite($fh, "<item>\n");
-		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . "</title>\n");
+		fwrite($fh, '<title>' . htmlspecialchars($alert['title'], ENT_QUOTES, 'UTF-8') . "</title>\n");
 		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . str_replace(']]>', '', $alert['description']) . "</description>\n");	// no htmlspecialchars here (content is into a CDATA section)
-		fwrite($fh, '<link>' . htmlspecialchars($refurl) . "</link>\n");
+		fwrite($fh, '<link>' . htmlspecialchars($refurl, ENT_QUOTES, 'UTF-8') . "</link>\n");
 		$tmpdate = strtotime($alert['created_at']);
-		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . "</pubDate>\n");
-		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($refid)."]]></guid>\n");	// A hidden unique ID
+		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate), ENT_QUOTES, 'UTF-8') . "</pubDate>\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($refid, ENT_QUOTES, 'UTF-8')."]]></guid>\n");	// A hidden unique ID
 
 		fwrite($fh, "</item>\n");
 	}
