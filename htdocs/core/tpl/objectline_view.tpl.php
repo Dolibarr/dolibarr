@@ -421,8 +421,13 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponpriceendmultiprice = '</span>';
 }
 
+// Values edited in their cell in ajax (Dolibarr.tools.card.lines): same conditions as the edit link of the line,
+// not for credit lines and lines of situation invoices (edited with the edit form of the line)
+$ajaxlinefields = ($this->isAjaxLineEdit() && $this->getRights()->creer && $action != 'selectlines' && ($line->info_bits & 2) != 2 && empty($disableedit)
+	&& empty($line->fk_remise_except) && $line->special_code != 3 && empty($this->situation_cycle_ref));
+
 // VAT Rate
-print '<td class="linecolvat nowrap right">';
+print '<td class="linecolvat nowrap right"'.($ajaxlinefields ? ' data-dol-line-field="tva_tx"' : '').'>';
 $coldisplay++;
 $positiverates = '';
 if (price2num($line->tva_tx)) {
@@ -443,7 +448,7 @@ print $tooltiponpriceend;
 print '</td>';
 ?>
 
-<td class="linecoluht nowraponall right">
+<td class="linecoluht nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="price_ht"' : ''; ?>>
 	<?php
 	$coldisplay++;
 	if (empty($line->fk_remise_except)) {
@@ -479,7 +484,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="price_ttc"' : ''; ?>><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
 		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
@@ -513,7 +518,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	}
 	?></td>
 <?php } ?>
-	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
+	<td class="linecolqty nowraponall right"<?php print $ajaxlinefields ? ' data-dol-line-field="qty"' : ''; ?>><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// I comment this because it shows info even when not required
@@ -561,19 +566,19 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 	print '</td>';
 }
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-	print '<td class="linecoluseunit nowrap left">';
+	print '<td class="linecoluseunit nowrap left"'.($ajaxlinefields ? ' data-dol-line-field="units"' : '').'>';
 	$label = $line->getLabelOfUnit('short', $langs);
 	print $label;
 	print '</td>';
 }
 if (!empty($line->remise_percent) && $line->special_code != 3) {
-	print '<td class="linecoldiscount right">';
+	print '<td class="linecoldiscount right"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	print dol_print_reduction((float) $line->remise_percent, $langs);
 	print '</td>';
 } else {
-	print '<td class="linecoldiscount">&nbsp;</td>';
+	print '<td class="linecoldiscount"'.($ajaxlinefields ? ' data-dol-line-field="remise_percent"' : '').'>&nbsp;</td>';
 	$coldisplay++;
 }
 
@@ -602,7 +607,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if ($user->hasRight('margins', 'creer')) { ?>
-		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
+		<td class="linecolmargin1 nowrap margininfos right"<?php print $ajaxlinefields ? ' data-dol-line-field="buying_price"' : ''; ?>><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
 	<?php }
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print(($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>

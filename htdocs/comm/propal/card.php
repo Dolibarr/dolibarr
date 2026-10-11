@@ -2200,7 +2200,8 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				$db->commit();
 
-				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// nodocumentbuild: line edited in ajax, the document is generated once after the last change (Dolibarr.tools.card.lines)
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && !GETPOSTINT('nodocumentbuild')) {
 					// Define output language
 					$outputlangs = $langs;
 					if (getDolGlobalInt('MAIN_MULTILANGS')) {

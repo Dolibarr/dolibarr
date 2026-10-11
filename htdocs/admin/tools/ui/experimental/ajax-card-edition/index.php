@@ -157,12 +157,15 @@ $documentation->showSidebar(); ?>
 				Lines of a draft, on the cards using the core templates of lines (proposals, orders, invoices, supplier documents...):
 			</p>
 			<ul>
+				<li><b>Edit a value:</b> a click on a value of a line (VAT, unit prices, quantity, unit, discount, buying price) opens its input in the same popover as the fields, over the value. <kbd>Enter</kbd> saves, <kbd>Tab</kbd> saves and opens the next value (<kbd>Shift</kbd> + <kbd>Tab</kbd> the previous one, on the next or previous line at the end), <kbd>Escape</kbd> cancels. The value saved, and lighter the values changed with it (total of the line, totals of the card), are highlighted once.</li>
 				<li><b>Edit:</b> the edit picto replaces the line by the edit form of the card. <kbd>Escape</kbd> cancels. If the card refuses the values, the error is displayed and the form stays open.</li>
 				<li><b>Add:</b> the button <i>Add</i> inserts the new line at its place, then empties the form to add a line.</li>
 				<li><b>Delete:</b> the delete picto asks a confirmation, then removes the line.</li>
 			</ul>
 			<p class="documentation-text">
 				The first line of an empty document is still added by reloading the page.
+				Credit lines and the lines of situation invoices are edited with the edit picto only.
+				After a value of a line is changed, the document is generated again once, a few seconds after the last change, like after a change of a field.
 			</p>
 
 			<h3>What is refreshed</h3>
@@ -192,7 +195,7 @@ $documentation->showSidebar(); ?>
 				<li>When the answer of the update asks it (<code>builddoc</code>, unless <code>MAIN_DISABLE_PDF_AUTOUPDATE</code>), the controller of the card generates the document again with <code>scheduleDocumentBuild()</code>: the form of generation of the page (<code>form#builddoc_form</code>, same model, language and options as the button Generate) is posted to the card <code>DOCUMENT_BUILD_DELAY</code> ms (3 s) after the last change, once at a time, and once again after if the object changed during the generation. A generation still waiting when the page is left is sent with <code>navigator.sendBeacon()</code>.</li>
 				<li>One field at a time: opening another field cancels the edition in progress (unless it is being saved). A click outside the popover closes it only when the value was not changed. Clicks in the layers of the inputs (dropdown of select2, date picker, dialogs of the rich text editor) are not outside.</li>
 				<li>The value is saved with <code>setField()</code> of the controller of the card (<code>Dolibarr.tools.card</code>), refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed, and the sections of the card (status, action buttons, documents) when they are visible (<code>scheduleSectionsRefresh()</code>).</li>
-				<li><code>Dolibarr.tools.card.fields.open(link)</code> opens the edition of the field of an edit link.</li>
+				<li><code>Dolibarr.tools.card.fields.open(link)</code> opens the edition of the field of an edit link. <code>Dolibarr.tools.card.fields.openPopover(container, options)</code> opens a field popover over any value (used for the values of the lines): <code>content</code> (html or node of the inputs), <code>getValue(inputs)</code>, <code>save(value, popover)</code> (an error thrown keeps the popover open), optional <code>onClose()</code> and <code>onKeydown(event, popover)</code>.</li>
 			</ul>
 			<p class="documentation-text">
 				The controller of the card is shared with the edition of the lines: after a change of the lines, a field can be saved without being refused.
@@ -215,9 +218,14 @@ $documentation->showSidebar(); ?>
 				<li>A click on the link replaces the line by its edit form, the one of the card: <code>core/ajax/objectline.php</code> with <code>action=editline</code> (<code>CommonObject::getObjectLineHtml($lineid, 'editline')</code>). The form to add a line is removed from the page during the edition, it uses the same names and ids of inputs. One line is edited at a time, <kbd>Escape</kbd> cancels.</li>
 				<li>The form is saved by the action <code>updateline</code> of the card, posted with <code>postCard()</code> of the controller of the card (<code>Dolibarr.tools.card</code>): all the rules of the card are applied (prices, taxes, hooks, triggers, document regenerated...).</li>
 				<li>If the card returns an error, it is displayed and the form stays open. Otherwise the line, and the fields displayed (totals...) and the sections of the card (status, action buttons, documents, see <code>refreshSections()</code>) are refreshed.</li>
+				<li>The values of a line are edited in their cell: <code>objectline_view.tpl.php</code> adds <code>data-dol-line-field</code> (<code>tva_tx</code>, <code>price_ht</code>, <code>price_ttc</code>, <code>qty</code>, <code>units</code>, <code>remise_percent</code>, <code>buying_price</code>) to the cells of the lines that have the edit link (not credit lines nor lines of situation invoices).
+					A click on a cell loads the edit form of the line out of the page (also when the mouse stays on a value, so it opens at once), and opens a field popover with a copy of the input of the form: same lists (VAT rates, units) and formats as the card.
+					The value is saved by the action <code>updateline</code> of the card, posted with all the values of the edit form of the line like the button Save, so the values not edited are kept. Like the scripts of the edit form, a unit price entered empties the other one (<code>price_ht</code> or <code>price_ttc</code>).
+					A value that can not be edited alone (input read only or missing) opens the edition of the whole line.
+					The card does not generate the document (<code>nodocumentbuild=1</code>), it is generated once after the last change with <code>scheduleDocumentBuild()</code> when <code>core/ajax/objectline.php</code> answers <code>builddoc</code>.</li>
 				<li>Lines are also added and deleted in ajax, with the actions <code>addline</code> and <code>confirm_deleteline</code> of the card. The button Add of the form to add a line gets the attributes <code>data-dol-add-line</code>, <code>data-dol-element</code> and <code>data-dol-id</code>, the delete link of a line <code>data-dol-delete-line</code>, <code>data-dol-element</code> and <code>data-dol-id</code>. The new lines are inserted at their place and the form to add a line is emptied. A deletion is confirmed first. The lines next to the lines added or deleted are refreshed too (arrows to move the lines, numbers of the lines).</li>
 				<li>The result of an action is read from the object, not from the messages: a line saved, added or deleted is displayed even if an error happened after the action (ex: document not generated), like in the card.</li>
-				<li><code>Dolibarr.tools.card.lines.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.card.lines.close()</code> cancels the edition in progress. <code>addLine(button)</code> and <code>deleteLine(link)</code> add and delete lines like the button Add and the delete links.</li>
+				<li><code>Dolibarr.tools.card.lines.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.card.lines.close()</code> cancels the edition in progress, <code>editCell(cell)</code> opens the edition of a value of a line. <code>addLine(button)</code> and <code>deleteLine(link)</code> add and delete lines like the button Add and the delete links.</li>
 			</ul>
 			<p class="documentation-text">
 				Modules can add the selectors of their own sections of the cards to <code>Dolibarr.tools.card.sections</code>, or for one element with <code>Dolibarr.tools.card.register()</code>, so they are refreshed after a change.

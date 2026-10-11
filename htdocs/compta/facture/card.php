@@ -3700,7 +3700,8 @@ if (empty($reshook)) {
 
 			if ($result >= 0) {
 				$ret = $object->fetch($id); // Reload to get new records
-				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// nodocumentbuild: line edited in ajax, the document is generated once after the last change (Dolibarr.tools.card.lines)
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && !GETPOSTINT('nodocumentbuild')) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';

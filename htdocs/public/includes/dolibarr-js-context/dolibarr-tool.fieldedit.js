@@ -169,10 +169,154 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Edition opened on the page, only one at a time: opening another field cancels it
-	 * @type {{container: HTMLElement, cancel: function, saving: boolean}|null}
+	 * Popover opened on the page, only one at a time: opening another one cancels it
+	 * @type {Object|null}
 	 */
 	let current = null;
+
+	/**
+	 * Open a field popover over a value: the inputs are placed over the value, with buttons to save and cancel, so the layout
+	 * of the page does not move. Used for the fields of the cards and for the values of the lines (Dolibarr.tools.card.lines).
+	 * Keys: Enter in a text input or a list saves, Escape cancels. A click outside closes it only if the value was not changed.
+	 * While saving, the inputs can not be changed and the save button turns into a spinner, an error shows the fail feedback.
+	 * @param {HTMLElement} container Element of the value
+	 * @param {Object} options
+	 * @param {string|Node} options.content Html or node of the inputs
+	 * @param {function(HTMLElement): *} options.getValue Value of the inputs (container of the inputs given), compared to know if it changed
+	 * @param {function(*, Object): Promise<void>} options.save Save the value, then close the popover (popover given).
+	 *        An error thrown keeps the popover open (error already displayed), so the user can correct the value.
+	 * @param {function(): void} [options.onClose] Called when the popover is closed
+	 * @param {function(KeyboardEvent, Object): void} [options.onKeydown] Called first for the keys pressed in the popover, can prevent the default
+	 * @param {string} [options.className] Classes added to the popover
+	 * @returns {Promise<Object>} Popover: {container, editor, inputs, saving, isChanged(), save(), close()}
+	 */
+	async function openPopover(container, options) {
+		const { content, getValue, onClose = null, onKeydown = null, className = '' } = options;
+
+		// Cancel the edition of another value, unless it is being saved
+		if (current && current.container !== container && !current.saving) current.close();
+
+		const [saveLabel, cancelLabel] = await Promise.all([transMain('Save'), transMain('Cancel')]);
+
+		const editor = document.createElement('div');
+		editor.className = 'dol-field-popover --light-mode' + (className ? ' ' + className : '');
+		const inputs = document.createElement('div');
+		inputs.className = 'dol-field-popover-inputs';
+		const actions = document.createElement('div');
+		actions.className = 'dol-field-popover-actions';
+		const saveButton = createIconButton('dol-field-popover-save', 'fa-check', saveLabel);
+		const cancelButton = createIconButton('dol-field-popover-cancel', 'fa-times', cancelLabel);
+		actions.append(saveButton, cancelButton);
+		editor.append(inputs, actions);
+		container.dataset.dolEditing = '1';
+		container.classList.add('dol-field-editing');
+		document.body.append(editor);
+		if (typeof content === 'string') {
+			Dolibarr.tools.replaceContent(inputs, content, { mode: 'inner' });
+		} else {
+			inputs.append(content);
+		}
+		// A multiline editor takes more width
+		if (inputs.querySelector('textarea')) editor.classList.add('--multiline');
+
+		const place = () => placePopover(editor, container);
+		place();
+		window.addEventListener('resize', place);
+
+		focusFirstInput(inputs);
+
+		// Value when opened, a click outside the popover closes it only when nothing was changed
+		const initialValue = JSON.stringify(getValue(inputs));
+		const onOutsideClick = event => {
+			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || popover.saving) return;
+			if (!popover.isChanged()) popover.close();
+		};
+
+		// While saving: the fields can not be changed (inert), they show the processing feedback, the save button turns into a spinner
+		const saveIcon = saveButton.querySelector('.fa');
+		const setSaving = saving => {
+			popover.saving = saving;
+			saveButton.disabled = saving;
+			cancelButton.disabled = saving;
+			inputs.inert = saving;
+			editor.setAttribute('aria-busy', saving ? 'true' : 'false');
+			saveIcon.classList.toggle('fa-check', !saving);
+			saveIcon.classList.toggle('fa-circle-notch', saving);
+			saveIcon.classList.toggle('fa-spin', saving);
+			getVisibleInputs(inputs).forEach(el => el.classList.toggle('processing-feedback', saving));
+		};
+
+		const popover = {
+			container,
+			editor,
+			inputs,
+			saving: false,
+			closed: false,
+			/**
+			 * @returns {boolean} True if the value was changed since the popover was opened
+			 */
+			isChanged: () => JSON.stringify(getValue(inputs)) !== initialValue,
+			/**
+			 * Save the value with options.save()
+			 * @returns {Promise<boolean>} True if saved
+			 */
+			save: async() => {
+				if (popover.saving || popover.closed) return false;
+				const value = getValue(inputs);
+				setSaving(true);
+				try {
+					await options.save(value, popover);
+				} catch (error) {
+					// Error already displayed, the user can correct the value
+					setSaving(false);
+					showInputsFeedback(inputs, 'fail-feedback');
+					focusFirstInput(inputs);
+					return false;
+				}
+				popover.close();
+
+				return true;
+			},
+			/**
+			 * Close the popover, the value is not saved
+			 */
+			close: () => {
+				if (popover.closed) return;
+				popover.closed = true;
+				if (current === popover) current = null;
+				document.removeEventListener('mousedown', onOutsideClick);
+				window.removeEventListener('resize', place);
+				destroyEditors(editor);
+				editor.remove();
+				delete container.dataset.dolEditing;
+				container.classList.remove('dol-field-editing');
+				if (onClose) onClose();
+			},
+		};
+		current = popover;
+
+		// Not the click that opened the popover
+		setTimeout(() => {
+			if (!popover.closed) document.addEventListener('mousedown', onOutsideClick);
+		}, 0);
+
+		saveButton.addEventListener('click', () => popover.save());
+		cancelButton.addEventListener('click', () => popover.close());
+		editor.addEventListener('keydown', event => {
+			if (onKeydown) onKeydown(event, popover);
+			// Not the keys used by the suggestions of ajax_autocompleter() (default prevented by the autocomplete)
+			if (event.defaultPrevented) return;
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				popover.close();
+			} else if (event.key === 'Enter' && ((event.target.tagName === 'INPUT' && event.target.type === 'text') || event.target.tagName === 'SELECT')) {
+				event.preventDefault();
+				popover.save();
+			}
+		});
+
+		return popover;
+	}
 
 	/**
 	 * Open the edition of the field of an edit link, in place of its value
@@ -183,9 +327,6 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const container = findValueContainer(link);
 		if (!container) return false;
 		if (container.dataset.dolEditing) return true;
-
-		// Cancel the edition of another field, unless it is being saved
-		if (current && current.container !== container && !current.saving) current.cancel();
 
 		const field = link.dataset.dolEditField;
 		const element = link.dataset.dolElement;
@@ -207,109 +348,28 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			return false;
 		}
 
-		const [saveLabel, cancelLabel] = await Promise.all([transMain('Save'), transMain('Cancel')]);
-
 		const valueHtml = container.innerHTML;
+		let html = valueHtml; // Html displayed when the popover is closed: the new value once saved
+		let saved = false;
 		// Hidden but keeps its place, so the row does not move
 		link.style.visibility = 'hidden';
 
-		// The editor is a popover placed over the value, so the layout of the card does not change
-		const editor = document.createElement('div');
-		editor.className = 'dol-field-popover --light-mode';
-		const inputs = document.createElement('div');
-		inputs.className = 'dol-field-popover-inputs';
-		const actions = document.createElement('div');
-		actions.className = 'dol-field-popover-actions';
-		const saveButton = createIconButton('dol-field-popover-save', 'fa-check', saveLabel);
-		const cancelButton = createIconButton('dol-field-popover-cancel', 'fa-times', cancelLabel);
-		actions.append(saveButton, cancelButton);
-		editor.append(inputs, actions);
-		container.classList.add('dol-field-editing');
-		document.body.append(editor);
-		Dolibarr.tools.replaceContent(inputs, input, { mode: 'inner' });
-		// A multiline editor takes more width
-		if (inputs.querySelector('textarea')) editor.classList.add('--multiline');
-
-		const place = () => placePopover(editor, container);
-		place();
-		window.addEventListener('resize', place);
-
-		focusFirstInput(inputs);
-
-		const state = { container, cancel: () => close(valueHtml), saving: false };
-		current = state;
-
-		// Value when opened, a click outside the popover closes it only when nothing was changed
-		const initialValue = JSON.stringify(getEditorValue(editor, field));
-		const onOutsideClick = event => {
-			if (editor.contains(event.target) || event.target.closest(POPOVER_LAYERS) || state.saving) return;
-			if (JSON.stringify(getEditorValue(editor, field)) === initialValue) close(valueHtml);
-		};
-		// Not the click that opened the popover
-		setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 0);
-
-		const close = html => {
-			if (current === state) current = null;
-			document.removeEventListener('mousedown', onOutsideClick);
-			window.removeEventListener('resize', place);
-			destroyEditors(editor);
-			editor.remove();
-			delete container.dataset.dolEditing;
-			container.classList.remove('dol-field-editing');
-			Dolibarr.tools.replaceContent(container, html, { mode: 'inner' });
-			link.style.visibility = '';
-		};
-
-		// While saving: the fields can not be changed (inert), they show the processing feedback, the save button turns into a spinner
-		const saveIcon = saveButton.querySelector('.fa');
-		const setSaving = saving => {
-			state.saving = saving;
-			saveButton.disabled = saving;
-			cancelButton.disabled = saving;
-			inputs.inert = saving;
-			editor.setAttribute('aria-busy', saving ? 'true' : 'false');
-			saveIcon.classList.toggle('fa-check', !saving);
-			saveIcon.classList.toggle('fa-circle-notch', saving);
-			saveIcon.classList.toggle('fa-spin', saving);
-			getVisibleInputs(inputs).forEach(el => el.classList.toggle('processing-feedback', saving));
-		};
-
-		const save = async() => {
-			const value = getEditorValue(editor, field);
-			setSaving(true);
-			let result;
-			try {
-				result = await controller.setField(field, value);
-			} catch (error) {
-				// Error already displayed, the user can correct the value
-				setSaving(false);
-				showInputsFeedback(inputs, 'fail-feedback');
-				focusFirstInput(inputs);
-				return;
-			}
-			if (result === null) {
-				close(valueHtml); // Cancelled by a hook
-				return;
-			}
-
-			close(result.html);
-			Dolibarr.tools.card.showUpdatedFeedback(container);
-			// Status, action buttons and documents may depend on the field, refreshed when visible
-			controller.scheduleSectionsRefresh();
-		};
-
-		saveButton.addEventListener('click', save);
-		cancelButton.addEventListener('click', () => close(valueHtml));
-		editor.addEventListener('keydown', event => {
-			// Not the keys used by the suggestions of ajax_autocompleter() (default prevented by the autocomplete)
-			if (event.defaultPrevented) return;
-			if (event.key === 'Escape') {
-				event.preventDefault();
-				close(valueHtml);
-			} else if (event.key === 'Enter' && event.target.tagName === 'INPUT' && event.target.type === 'text') {
-				event.preventDefault();
-				save();
-			}
+		await openPopover(container, {
+			content: input,
+			getValue: inputs => getEditorValue(inputs, field),
+			save: async value => {
+				const result = await controller.setField(field, value);
+				if (result === null) return; // Cancelled by a hook
+				html = result.html;
+				saved = true;
+				// Status, action buttons and documents may depend on the field, refreshed when visible
+				controller.scheduleSectionsRefresh();
+			},
+			onClose: () => {
+				Dolibarr.tools.replaceContent(container, html, { mode: 'inner' });
+				link.style.visibility = '';
+				if (saved) Dolibarr.tools.card.showUpdatedFeedback(container);
+			},
 		});
 
 		return true;
@@ -327,5 +387,5 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		});
 	});
 
-	Dolibarr.tools.card.definePart('fields', { open });
+	Dolibarr.tools.card.definePart('fields', { open, openPopover });
 });

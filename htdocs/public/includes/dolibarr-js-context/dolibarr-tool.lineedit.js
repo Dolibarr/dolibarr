@@ -15,6 +15,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 *   The new lines are inserted at their place, then the form to add a line is emptied.
 	 * - the delete link of a line has the attributes data-dol-delete-line, data-dol-element and data-dol-id. The deletion is confirmed first.
 	 * The lines next to the lines added or deleted are refreshed too (arrows to move the lines, numbers of the lines).
+	 * A value of a line (cells td[data-dol-line-field]) is edited in its cell with a field popover, see editCell().
 	 */
 
 	/**
@@ -440,6 +441,276 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		return true;
 	}
 
+	/**
+	 * Edition of the values of the lines in their cell
+	 * ------------------------------------------------
+	 * A click on a value of a line (cells td[data-dol-line-field], see objectline_view.tpl.php) opens a field popover over it
+	 * (Dolibarr.tools.card.fields.openPopover()) with the input of the edit form of the line, the one of the card: same lists and formats.
+	 * The value is saved with the action updateline of the card, posted with all the values of the edit form of the line, like the
+	 * button Save: all the rules of the card are applied. The document is generated again later, once after the last change
+	 * (Dolibarr.tools.card scheduleDocumentBuild()). Tab saves and opens the next value (Shift + Tab the previous one).
+	 */
+
+	/** Cells of the values edited in their cell */
+	const CELL_SELECTOR = 'td[data-dol-line-field]';
+
+	/**
+	 * Edit forms of the lines loaded for the edition of their values (not in the page), by id of line.
+	 * Emptied when the object changes (lines or fields refreshed).
+	 * @type {Map<number, Promise<{form: HTMLFormElement, tms: number}|null>>}
+	 */
+	const cellForms = new Map();
+
+	/**
+	 * Line, controller and field of a cell
+	 * @param {HTMLElement} cell
+	 * @returns {{row: HTMLElement, link: HTMLElement, lineId: number, field: string, controller: Object}|null}
+	 */
+	function getCellContext(cell) {
+		const row = cell.closest('tr[id^="row-"]');
+		const link = row ? row.querySelector('a[data-dol-edit-line]') : null;
+		if (!link) return null;
+
+		return {
+			row,
+			link,
+			lineId: parseInt(row.id.slice(4), 10),
+			field: cell.dataset.dolLineField,
+			controller: Dolibarr.tools.card(link.dataset.dolElement, parseInt(link.dataset.dolId, 10)),
+		};
+	}
+
+	/**
+	 * Load the edit form of a line, kept out of the page: its scripts are not executed
+	 * @param {Object} controller
+	 * @param {number} lineId
+	 * @param {Object} [options] Options of fetchLines()
+	 * @returns {Promise<{form: HTMLFormElement, tms: number}|null>} Null if the line can not be edited
+	 */
+	function loadCellForm(controller, lineId, options = {}) {
+		if (!cellForms.has(lineId)) {
+			const promise = controller.fetchLines([lineId], { action: 'editline', ...options }).then(data => {
+				const html = data.lines ? data.lines[lineId] : null;
+				if (typeof html !== 'string') return null;
+				const template = document.createElement('template');
+				template.innerHTML = '<table><tbody>' + html + '</tbody></table>';
+				template.content.querySelectorAll('script').forEach(script => script.remove());
+				const form = document.createElement('form');
+				form.append(template.content);
+				if (!form.querySelector('[name="lineid"]')) return null;
+
+				return { form, tms: data.tms ? parseInt(data.tms, 10) : 0 };
+			});
+			promise.catch(() => cellForms.delete(lineId));
+			cellForms.set(lineId, promise);
+		}
+
+		return cellForms.get(lineId);
+	}
+
+	/**
+	 * Data posted to save a value: the hidden inputs of the form of the card (outside the table of the lines) and the values of the
+	 * edit form of the line, with the new value. Like the scripts of the edit form, a price entered empties the other prices.
+	 * @param {HTMLElement} row Line in the page
+	 * @param {HTMLFormElement} editForm Edit form of the line
+	 * @param {string} field
+	 * @param {string} value
+	 * @returns {FormData}
+	 */
+	function getCellFormData(row, editForm, field, value) {
+		const data = new FormData();
+		const pageForm = row.closest('form');
+		const table = row.closest('table');
+		if (pageForm) {
+			pageForm.querySelectorAll('input[type="hidden"][name]').forEach(input => {
+				if (!table.contains(input)) data.append(input.name, input.value);
+			});
+		}
+		new FormData(editForm).forEach((fieldValue, name) => data.append(name, fieldValue));
+
+		data.set(field, value);
+		const otherPrices = { price_ht: ['price_ttc', 'multicurrency_subprice'], price_ttc: ['price_ht', 'multicurrency_subprice'] };
+		(otherPrices[field] || []).forEach(name => {
+			if (data.has(name)) data.set(name, '');
+		});
+		// Margin rates are computed again from the new values
+		['np_marginRate', 'np_markRate'].forEach(name => {
+			if (data.has(name)) data.set(name, '');
+		});
+
+		data.delete('token'); // Current token of the page added by Dolibarr.tools.fetch
+		data.set('action', 'updateline');
+		data.set('save', '1');
+		data.set('nodocumentbuild', '1'); // Generated once after the last change, see scheduleDocumentBuild()
+
+		return data;
+	}
+
+	/**
+	 * Texts seen of the cells of a line and of the fields displayed (not the text of their scripts), to show which values changed after a save
+	 * @param {Object} controller
+	 * @param {HTMLElement} row
+	 * @returns {{cells: string[], fields: Map<HTMLElement, string>}}
+	 */
+	function getDisplayedTexts(controller, row) {
+		return {
+			cells: Array.from(row.cells).map(cell => cell.innerText.trim()),
+			fields: new Map(controller.getFieldContainers().map(el => [el, el.innerText.trim()])),
+		};
+	}
+
+	/**
+	 * Show the feedback of the value saved, and the lighter one on the values changed by the save (total of the line, totals of the card)
+	 * @param {Object} controller
+	 * @param {number} lineId
+	 * @param {string} field
+	 * @param {{cells: string[], fields: Map<HTMLElement, string>}} before Texts before the save, see getDisplayedTexts()
+	 */
+	function showCellFeedback(controller, lineId, field, before) {
+		const row = document.getElementById('row-' + lineId);
+		if (row) {
+			Array.from(row.cells).forEach((cell, index) => {
+				if (cell.dataset.dolLineField === field) {
+					Dolibarr.tools.card.showUpdatedFeedback(cell);
+				} else if (cell.innerText.trim() !== '' && before.cells[index] !== undefined && cell.innerText.trim() !== before.cells[index]) {
+					Dolibarr.tools.card.showUpdatedFeedback(cell, { soft: true });
+				}
+			});
+		}
+		before.fields.forEach((text, el) => {
+			if (el.isConnected && el.innerText.trim() !== text) Dolibarr.tools.card.showUpdatedFeedback(el, { soft: true });
+		});
+	}
+
+	/**
+	 * Cell of a value of a line in the page
+	 * @param {number} lineId
+	 * @param {string} field
+	 * @returns {HTMLElement|null}
+	 */
+	function findCell(lineId, field) {
+		const row = document.getElementById('row-' + lineId);
+
+		return row ? row.querySelector(`${CELL_SELECTOR}[data-dol-line-field="${CSS.escape(field)}"]`) : null;
+	}
+
+	/**
+	 * Value next to a cell, in the order of the page (next line after the last value of a line)
+	 * @param {HTMLElement} cell
+	 * @param {number} step 1 for the next value, -1 for the previous one
+	 * @returns {{lineId: number, field: string}|null}
+	 */
+	function getSiblingCell(cell, step) {
+		const cells = Array.from(document.querySelectorAll(CELL_SELECTOR));
+		const sibling = cells[cells.indexOf(cell) + step];
+		const context = sibling ? getCellContext(sibling) : null;
+
+		return context ? { lineId: context.lineId, field: context.field } : null;
+	}
+
+	/**
+	 * Open the edition of a value of a line in its cell
+	 * @param {HTMLElement} cell td[data-dol-line-field]
+	 * @returns {Promise<boolean>} True if opened, or if the edition is not possible now (a line is being edited, error displayed)
+	 */
+	async function editCell(cell) {
+		// One edition of a line at a time, like in the card
+		if (current || cell.dataset.dolEditing || !Dolibarr.tools.card.fields) return true;
+		const context = getCellContext(cell);
+		if (!context) return false;
+		const { row, link, lineId, field, controller } = context;
+
+		cell.dataset.dolEditing = '1';
+		let loaded;
+		try {
+			loaded = await loadCellForm(controller, lineId);
+		} catch (error) {
+			return true; // Error already displayed
+		} finally {
+			delete cell.dataset.dolEditing;
+		}
+		if (current || !cell.isConnected) return true;
+
+		// Input of the value in the edit form of the line, the whole edit form is opened when the value is not editable alone
+		const source = loaded ? loaded.form.querySelector(`[name="${CSS.escape(field)}"]`) : null;
+		if (!source || source.type === 'hidden' || source.readOnly || source.disabled) {
+			// Classic edition by reloading the page when the line can not be edited here
+			if (!(await open(link))) window.location.href = link.href;
+			return true;
+		}
+
+		const input = source.cloneNode(true);
+		input.removeAttribute('id'); // Same ids as the form to add a line
+		const content = document.createElement('div');
+		content.append(input);
+
+		const before = getDisplayedTexts(controller, row);
+		let saved = false;
+		let next = null;
+
+		await Dolibarr.tools.card.fields.openPopover(cell, {
+			content,
+			className: '--line-value',
+			getValue: () => input.value,
+			save: async value => {
+				const doc = await controller.postCard(getCellFormData(row, loaded.form, field, value));
+				// Messages of the action are returned with the line
+				const data = await controller.fetchLines([lineId]);
+				const errors = (data.eventMessages && data.eventMessages.errors) || [];
+				// The line is saved if the object was modified, even with an error after the update
+				const changed = !loaded.tms || !data.tms || parseInt(data.tms, 10) !== loaded.tms;
+				if (errors.length > 0 && !changed) throw new Error('Line not saved');
+
+				saved = true;
+				await applyLines(controller, data, [lineId], doc);
+				if (data.builddoc) controller.scheduleDocumentBuild();
+			},
+			onKeydown: (event, popover) => {
+				if (event.key !== 'Tab' || popover.saving) return;
+				event.preventDefault();
+				next = getSiblingCell(cell, event.shiftKey ? -1 : 1);
+				if (popover.isChanged()) {
+					popover.save();
+				} else {
+					popover.close();
+				}
+			},
+			onClose: () => {
+				if (saved) showCellFeedback(controller, lineId, field, before);
+				const nextCell = next ? findCell(next.lineId, next.field) : null;
+				next = null;
+				if (nextCell) setTimeout(() => editCell(nextCell), 0);
+			},
+		});
+
+		return true;
+	}
+
+	// The edit forms loaded are not up to date anymore when the object changes
+	['card:FieldsRefreshed', 'card:LineReloaded', 'card:LineRemoved'].forEach(hookName => Dolibarr.on(hookName, () => cellForms.clear()));
+
+	// Values of the lines printed by objectline_view.tpl.php when the lines are edited in ajax
+	document.addEventListener('click', event => {
+		const cell = event.target.closest(CELL_SELECTOR);
+		if (!cell || event.ctrlKey || event.metaKey || event.shiftKey || event.target.closest('a, button, input, select, textarea')) return;
+		// Text selected by the user
+		if (String(window.getSelection()) !== '') return;
+
+		editCell(cell);
+	});
+
+	// The edit form of a line is loaded when the mouse stays on one of its values, so the edition opens at once
+	let preloadTimer = null;
+	document.addEventListener('pointerover', event => {
+		const cell = event.target.closest && event.target.closest(CELL_SELECTOR);
+		clearTimeout(preloadTimer);
+		if (!cell || current) return;
+		preloadTimer = setTimeout(() => {
+			const context = getCellContext(cell);
+			if (context && !cellForms.has(context.lineId)) loadCellForm(context.controller, context.lineId, { showErrors: false }).catch(() => {});
+		}, 150);
+	});
+
 	// Values of the form to add a line saved before the user changes them, to empty it after a line is added
 	document.addEventListener('focusin', event => {
 		const table = event.target.closest && event.target.closest('table');
@@ -492,5 +763,5 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		});
 	});
 
-	Dolibarr.tools.card.definePart('lines', { open, close, addLine, deleteLine });
+	Dolibarr.tools.card.definePart('lines', { open, close, editCell, addLine, deleteLine });
 });

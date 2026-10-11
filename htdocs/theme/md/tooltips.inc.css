@@ -340,3 +340,11 @@ body[dir="rtl"] .dol-tooltip::after {
 .dol-field-editing {
 	opacity: 0.4;
 }
+/* Values of the lines edited in their cell (Dolibarr.tools.card.lines): a light field look on hover */
+td[data-dol-line-field] {
+	cursor: pointer;
+}
+td[data-dol-line-field]:hover {
+	box-shadow: inset 0 0 0 1px var(--inputbordercolor, rgba(0, 0, 0, 0.15));
+	border-radius: 0.25rem;
+}

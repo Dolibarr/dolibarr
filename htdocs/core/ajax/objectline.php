@@ -26,6 +26,7 @@
  *                  With action=editline (one line, write permission, object in draft), the html is the edit form of the line
  *                  (rows of objectline_edit.tpl.php), to edit the line in ajax (Dolibarr.tools.card.lines).
  *                  The event messages kept in session by a card loaded with noflusheventmessages=1 are returned in the answer.
+ *                  builddoc is true when the document of the object must be generated again after a change (not MAIN_DISABLE_PDF_AUTOUPDATE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -146,6 +147,8 @@ $jsonResponse->data = array(
 	'lines' => (object) $lines, // Always an object, keys are the ids of the lines
 	'lineids' => $alllineids,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
+	// The document is generated again after a change of the lines, like the cards do (see Dolibarr.tools.card scheduleDocumentBuild())
+	'builddoc' => !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && method_exists($object, 'generateDocument'),
 );
 
 // Messages of the actions of a card loaded in background (noflusheventmessages=1), ex: error when a line is saved
