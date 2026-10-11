@@ -279,17 +279,17 @@ class Odf
 
 	/**
 	 * Miguel Erill - 2019/03/27 -Add a function to retrieve var values
+	 * 2026/10/11 - Return an empty string when the requested variable is not found
 	 * Return a template variable value
 	 *
 	 * @param string   $key        Name of the variable within the template
-	 * @throws OdfException
-	 * @return value
+	 * @return string Value of the variable, or an empty string if it was not found
 	 */
 	public function getVar($key)
 	{
 		$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
 		if (!array_key_exists($tag, $this->vars)) {
-			throw new OdfException("var $key not found in the document");
+			return '';
 		}
 		return $this->vars[$tag];
 	}

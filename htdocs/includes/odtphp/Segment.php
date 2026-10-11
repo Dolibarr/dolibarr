@@ -190,17 +190,22 @@ class Segment implements IteratorAggregate, Countable
     *                to invoice dates not to invoice generation dates as before. Now you can
     *                (re)generate the invoice when you need and the substitutions will not change
     *
-    * @param	string	$value	String to convert
+    * + 11/10/2026 - Leave the text unchanged when the invoice date variable is not available
+    *
+    * @param	string	$text	String to convert
     */
-    public function macroReplace($value)
+    public function macroReplace($text)
     {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
 
-		// Use our NEW function in odf.php to get the invoice date
+		// Use the invoice date when available.
 		$tmp = $this->odf->getVar('object_date');
+		if ($tmp === '') {
+			return $text;
+		}
 
-		// Find the format the invoice date is in. We may have d-m-y, y-m-d or m-d-y depending on the locale
+		// Find the format the date is in. We may have d-m-y, y-m-d or m-d-y depending on the locale
 		$invarr = false;
 		if     ( strpos($tmp, '-') !== false ) 	{ $invarr = explode('-', $tmp); }
 		elseif ( strpos($tmp, '/') !== false )	{ $invarr = explode('/', $tmp);	}
@@ -210,7 +215,7 @@ class Segment implements IteratorAggregate, Countable
 		if ( ($dayPos = stripos ($fmt, 'd')) === false )
 		{
 			// We MUST have day in the date format
-			throw new OdfException("Invalid date format $fmt");
+            throw new OdfException("Invalid date format $fmt");
 		}
 		// If $invarr is false it means that no separator in date was found
 		// so $tmp should contain the right date
@@ -225,63 +230,41 @@ class Segment implements IteratorAggregate, Countable
 			} else // We had y-d-m
 				$tmp = $invarr[0].$invarr[2].$invarr[1];
 		}
-		// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
-		$tmp = dol_stringtotime($tmp);
-		$tmp = dol_getdate($tmp, true);
 
-		// Get related dates (prev, next)
-		$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-		$tmp3 = dol_get_prev_month($tmp['mon'], $tmp['year']);
-		$tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-		$tmp5 = dol_get_next_month($tmp['mon'], $tmp['year']);
+		// Convert the invoice date to the format required by dol_stringtotime and dol_getdate.
+        $tmp = dol_stringtotime($tmp);
+        $tmp = dol_getdate($tmp, true);
+        $tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+        $tmp3 = dol_get_prev_month($tmp['mon'], $tmp['year']);
+        $tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+        $tmp5 = dol_get_next_month($tmp['mon'], $tmp['year']);
 
-		// We get now the current date for the current date replacements
-		$cur = dol_getdate(dol_now(), true);
-
-		// Get related dates (prev, next)
-		$cur2=dol_get_prev_day($cur['mday'], $cur['mon'], $cur['year']);
-		$cur3=dol_get_prev_month($cur['mon'], $cur['year']);
-		$cur4=dol_get_next_day($cur['mday'], $cur['mon'], $cur['year']);
-		$cur5=dol_get_next_month($cur['mon'], $cur['year']);
-
-		$substitutionarray=array(
+        $substitutionarray = array(
 			// Compatibility
-			'__DAY__' => strval($cur['mday']),
-			'__MONTH__' => strval($cur['mon']),
-			'__YEAR__' => strval($cur['year']),
-			'__MONTHTEXT__' => monthArray($langs)[$cur['mon']],
-			'__NEXTMONTH__' => strval($cur5['month']),
-			'__NEXTYEAR__' => strval($cur['year'] + 1),
+          '__DAY__' => $tmp['mday'],
+          '__MONTH__' => $tmp['mon'],
+          '__YEAR__' => $tmp['year'],
+          '__MONTHTEXT__' => monthArray($langs)[$tmp['mon']],
+          '__NEXTMONTH__' => $tmp5['month'],
+          '__NEXTYEAR__' => ($tmp['year'] + 1),
 
-			// New format for replacements of current date
-			'__CURRENTDAY__' => strval($cur['mday']),
-			'__CURRENTMONTH__' => strval($cur['mon']),
-			'__CURRENTMONTHLONG__' => monthArray($langs)[$cur['mon']],
-			'__CURRENTYEAR__' => strval($cur['year']),
-			'__PREVIOUS_DAY__' => strval($cur2['day']),
-			'__PREVIOUS_MONTH__' => strval($cur3['month']),
-			'__PREVIOUS_YEAR__' => strval($cur['year'] - 1),
-			'__NEXT_DAY__' => strval($cur4['day']),
-			'__NEXT_MONTH__' => strval($cur5['month']),
-			'__NEXTMONTHLONG__' => monthArray($langs)[$cur5['month']],
-			'__NEXT_YEAR__' => strval($cur['year'] + 1),
+			// Existing ODT date macros, relative to the invoice date
+          '__CURRENTDAY__' => $tmp['mday'],
+          '__CURRENTMONTH__' => $tmp['mon'],
+          '__CURRENTMONTHLONG__' => monthArray($langs)[$tmp['mon']],
+          '__CURRENTYEAR__' => $tmp['year'],
+          '__PREVIOUS_DAY__' => $tmp2['day'],
+          '__PREVIOUS_MONTH__' => $tmp3['month'],
+          '__PREVIOUS_YEAR__' => ($tmp['year'] - 1),
+          '__NEXT_DAY__' => $tmp4['day'],
+          '__NEXT_MONTH__' => $tmp5['month'],
+          '__NEXTMONTHLONG__' => monthArray($langs)[$tmp5['month']],
+          '__NEXT_YEAR__' => ($tmp['year'] + 1),
+        );
 
-			// Replacements of invoice date
-			'__INVOICEDAY__' => strval($tmp['mday']),
-			'__INVOICEMONTH__' => strval($tmp['mon']),
-			'__INVOICEMONTHLONG__' => monthArray($langs)[$tmp['mon']],
-			'__INVOICEYEAR__' => strval($tmp['year']),
-			'__PREVIOUS_INVOICEDAY__' => strval($tmp2['day']),
-			'__PREVIOUS_INVOICEMONTH__' => strval($tmp3['month']),
-			'__PREVIOUS_INVOICEYEAR__' => strval($tmp['year'] - 1),
-			'__NEXT_INVOICEDAY__' => strval($tmp4['day']),
-			'__NEXT_INVOICEMONTH__' => strval($tmp5['month']),
-			'__NEXTINVOICEMONTHLONG__' => monthArray($langs)[$tmp5['month']],
-			'__NEXT_INVOICEYEAR__' => strval($tmp['year'] + 1)
-		);
-
-		complete_substitutions_array($substitutionarray, $langs);
-		return make_substitutions($value, $substitutionarray);
+        complete_substitutions_array($substitutionarray, $langs);
+        $text = make_substitutions($text, $substitutionarray);
+		return $text;
     }
 
 	/**
