@@ -2939,7 +2939,9 @@ class ExpenseReport extends CommonObject
 			return 0;
 		}
 
-		if (empty(getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS')) && empty(getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS_TO_PAY'))) {
+		$delaytoapprove = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS');
+		$delaytopay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS_TO_PAY');
+		if (empty($delaytoapprove) && empty($delaytopay)) {
 			$this->output = 'Neither MAIN_DELAY_EXPENSEREPORTS nor MAIN_DELAY_EXPENSEREPORTS_TO_PAY is set, nothing to check.';
 			return 0;
 		}
@@ -2965,7 +2967,8 @@ class ExpenseReport extends CommonObject
 		$formmail = new FormMail($this->db);
 
 		foreach ($steps as $option => $step) {
-			if (empty(getDolGlobalInt($step['delayconst']))) {
+			$delayforstep = getDolGlobalInt($step['delayconst']);
+			if (empty($delayforstep)) {
 				continue; // No delay configured for this step, hasDelay() would always return false, nothing to do.
 			}
 
