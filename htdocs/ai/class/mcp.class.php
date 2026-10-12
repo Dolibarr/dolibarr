@@ -535,6 +535,14 @@ class McpHandler
 			return null;	// read tool
 		}
 
+		// A write bound to fail is refused before the user is asked to approve it.
+		if (method_exists($tool, 'writePrecheck')) {
+			$refused = (string) $tool->writePrecheck($toolName, $args);
+			if ($refused !== '') {
+				return array('error' => $refused);
+			}
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';
 		$gate = new AiWriteConfirmation($this->db);
 
