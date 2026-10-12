@@ -355,6 +355,27 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			$action = 'createsubscription';
 		}
 	}
+	// Validate manual refs before creating subscription (only for linktoobject option)
+	if ($action == 'subscription' && $option == 'linktoobject') {
+		if (!empty($invoicereftolink_post)) {
+			$tmpinvoice = new Facture($db);
+			if ($tmpinvoice->fetch('', $invoicereftolink_post) <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink_post), null, 'errors');
+				$action = 'createsubscription';
+			}
+			unset($tmpinvoice);
+		}
+		if (!empty($orderreftolink_post)) {
+			$tmporder = new Commande($db);
+			if ($tmporder->fetch('', $orderreftolink_post) <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink_post), null, 'errors');
+				$action = 'createsubscription';
+			}
+			unset($tmporder);
+		}
+	}
 	// Record the subscription then complementary actions
 	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
