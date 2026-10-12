@@ -464,7 +464,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 					'Editor name'                                               => $editorname,
 					'https://www.example.com'                                   => $editorurl,
 					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
-					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
+					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\';' : '$this->picto = \'' . $picto . '\';',
 					'modulefamily'                                              => $family,
 					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
 					// array_merge -- causing str_replace to search for '0' instead of '500000'.
