@@ -10234,6 +10234,7 @@ abstract class CommonObject
 	 * Returns the rights used for this class
 	 *
 	 * @return null|int|stdClass		Object of permission for the module
+	 * @deprecated						Use instead hasUserPermission()
 	 */
 	public function getRights()
 	{
@@ -10263,6 +10264,33 @@ abstract class CommonObject
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
+	}
+
+	/**
+	 * Check if user has a permission on this type of object.
+	 * Generic check based on getRightsForUser(), accepting core ("creer", "supprimer") and ModuleBuilder ("write", "delete") names.
+	 * Child classes using other permissions must override it.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'create', 'write' or 'delete'
+	 *
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		$rights = $this->getRightsForUser($user);
+		if (!is_object($rights)) {
+			return false;
+		}
+
+		if ($mode == 'create' || $mode == 'write') {
+			return !empty($rights->creer) || !empty($rights->write);
+		}
+		if ($mode == 'delete') {
+			return !empty($rights->supprimer) || !empty($rights->delete);
+		}
+
+		return false;
 	}
 
 	/**

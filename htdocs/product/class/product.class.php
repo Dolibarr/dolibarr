@@ -7592,19 +7592,23 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class
+	 * Check if user has a permission on this type of product (product or service)
 	 *
-	 * @return Object
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
-
-		if ($this->isProduct()) {
-			return $user->rights->produit;
-		} else {
-			return $user->rights->service;
+		$module = $this->isProduct() ? 'produit' : 'service';
+		if ($mode == 'create' || $mode == 'write') {
+			return (bool) $user->hasRight($module, 'creer');
 		}
+		if ($mode == 'delete') {
+			return (bool) $user->hasRight($module, 'supprimer');
+		}
+
+		return false;
 	}
 
 	/**
