@@ -618,6 +618,24 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if consumption or production has started on the MO (it has consumed or produced lines).
+	 * If yes, $this->error is set with the message to show.
+	 *
+	 * @return 	bool		True if the MO has consumed or produced lines
+	 */
+	public function hasConsumedOrProducedLines()
+	{
+		global $langs;
+
+		if (count($this->fetchLinesLinked('consumed')) || count($this->fetchLinesLinked('produced'))) {
+			$langs->load('mrp');
+			$this->error = $langs->trans('ErrorMoConsumptionOrProductionStarted');
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Count number of movement with origin of MO
@@ -697,6 +715,11 @@ class Mo extends CommonObject
 	{
 		$error = 0;
 		$role = "";
+
+		// The consumed and produced lines can't be deleted here, their stock movements would not be reversed
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		if ($this->status != self::STATUS_DRAFT) {
 			return -1;
@@ -1188,6 +1211,10 @@ class Mo extends CommonObject
 		// Protection
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
+		}
+		// Once consumption or production has started, the lines can't be changed or reset any more
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
 		}
 
 		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
