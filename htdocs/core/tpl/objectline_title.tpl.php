@@ -262,8 +262,8 @@ print '<th class="linecoledit"></th>'; // No width to allow autodim
 print '<th class="linecoldelete" style="width: 10px">';
 if (in_array(get_class($object), ['Propal', 'FactureFournisseur'])) { // objects that support mass lines deletion
 	if ($object->status == get_class($object)::STATUS_DRAFT && (empty($action))) {
-		print '<a class="butActionDelete smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=massdellines&token='.newToken().'" title="'.$langs->trans('DelSelectedLines').'">';
-		print img_delete($langs->trans('DelSelectedLines'));
+		print '<a class="butActionDelete smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=massdellines&token='.newToken().'" title="'.$langs->trans('SelLinesForDeletion').'">';
+		print img_delete($langs->trans('SelLinesForDeletion'));
 		print '</a>';
 	} elseif ($object->status == get_class($object)::STATUS_DRAFT && ($action == 'massdellines' || $action == 'ask_massdellines')) { ?>
 		<input type="hidden" name="action" value="ask_massdellines"/>

@@ -962,6 +962,7 @@ ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk Delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
 DelSelectedLines=Delete selected lines
+SelLinesForDeletion=Select lines for deletion
 btDelSel=Del. Sel.
 ConfirmMassCancellationQuestion = Are you sure you want to cancel the %s selected record(s)?
 ConfirmMassClone=Bulk clone confirmation
