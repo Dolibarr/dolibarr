@@ -497,3 +497,12 @@ ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref
 -- the API authenticates against tokenstring (where the upgrade that moves user api_key values
 -- puts them). Those keys never worked: copy them where they are read.
 UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+-- Multicurrency support for contracts. llx_contratdet already had these columns (unused until now);
+-- the header table had none, so a contract could never record the currency it was created in.
+ALTER TABLE llx_contrat ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
