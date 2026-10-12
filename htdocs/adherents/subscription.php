@@ -138,8 +138,6 @@ $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid
 // Preserve checkbox selections for linktoobject option
 $invoices_to_link_post = GETPOST('invoices_to_link', 'array:int');
 $orders_to_link_post = GETPOST('orders_to_link', 'array:int');
-$invoicemanual_post = GETPOST('invoicemanual', 'int');
-$ordermanual_post = GETPOST('ordermanual', 'int');
 $invoicereftolink_post = GETPOST('invoicereftolink', 'alpha');
 $orderreftolink_post = GETPOST('orderreftolink', 'alpha');
 
@@ -350,7 +348,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 
 	// Check if user filled link fields but chose 'none'
 	if ($action == 'subscription' && $option == 'none') {
-		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicemanual_post) || !empty($ordermanual_post));
+		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicereftolink_post) || !empty($orderreftolink_post));
 		if ($link_inputs_exist) {
 			setEventMessages($langs->trans("ErrorLinkFieldsFilledButPaymentSaveNone"), null, 'errors');
 			$error++;
@@ -426,9 +424,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				}
 
 				// --- Manual invoice ref - allowed to link to any thirdparty ---
-				$invoicemanual = GETPOST('invoicemanual', 'int');
 				$invoicereftolink = GETPOST('invoicereftolink', 'alpha');
-				if (!empty($invoicemanual) && !empty($invoicereftolink)) {
+				if (!empty($invoicereftolink)) {
 					$tmpinvoice = new Facture($db);
 					if ($tmpinvoice->fetch('', $invoicereftolink) > 0) {
 						if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
@@ -1360,7 +1357,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 
 					// Footer row - manual ref input
 					print '<tr class="liste_titre">';
-					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoicemanual" value="1" style="width: 14px; height: 14px;"'.($invoicemanual_post ? ' checked' : '').'></td>';
+					print '<td></td>';
 					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($invoicereftolink_post).'"></td>';
 					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
@@ -1437,7 +1434,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 
 					// Footer row - manual ref input
 					print '<tr class="liste_titre">';
-					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="ordermanual" value="1" style="width: 14px; height: 14px;"'.($ordermanual_post ? ' checked' : '').'></td>';
+					print '<td></td>';
 					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($orderreftolink_post).'"></td>';
 					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
