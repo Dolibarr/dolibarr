@@ -7595,12 +7595,15 @@ class Product extends CommonObject
 	 * Check if user has a permission on this type of product (product or service)
 	 *
 	 * @param User   $user User to check rights
-	 * @param string $mode Permission to check: 'create', 'write' or 'delete'
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
 	 * @return bool True if user has the permission, false otherwise
 	 */
 	public function hasUserPermission(User $user, $mode = 'write')
 	{
 		$module = $this->isProduct() ? 'produit' : 'service';
+		if ($mode == 'read') {
+			return (bool) $user->hasRight($module, 'lire');
+		}
 		if ($mode == 'create' || $mode == 'write') {
 			return (bool) $user->hasRight($module, 'creer');
 		}
@@ -7609,23 +7612,6 @@ class Product extends CommonObject
 		}
 
 		return false;
-	}
-
-	/**
-	 * Check if user has write permission on a field of this object.
-	 * Override of CommonObject::hasUserWritePermissionOnField(): products and services use the "creer" permission of their own module.
-	 *
-	 * @param User   $user  User to check rights
-	 * @param string $field Field name to check
-	 * @return bool         True if user has right to write this field, false otherwise
-	 */
-	public function hasUserWritePermissionOnField(User $user, $field)
-	{
-		if (empty($field)) {
-			return false;
-		}
-
-		return (bool) $user->hasRight($this->isProduct() ? 'produit' : 'service', 'creer');
 	}
 
 	/**
