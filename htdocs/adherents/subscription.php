@@ -1162,7 +1162,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// Invoices of the thirdparty, newest first
 				// ===== START BLOK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
-					print '<b>'.$langs->trans("Invoices").'</b>';
+					print load_fiche_titre($langs->trans("Invoices"), '', '');
 
 					$sql_invoices = "SELECT f.rowid, f.fk_projet";
 					$sql_invoices .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -1239,7 +1239,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// Orders of the thirdparty, newest first
 				// ===== START BLOK: Orders =====
 				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-					print '<b>'.$langs->trans("Orders").'</b>';
+					print load_fiche_titre($langs->trans("Orders"), '', '');
 
 					$sql_orders = "SELECT c.rowid, c.fk_projet";
 					$sql_orders .= " FROM ".MAIN_DB_PREFIX."commande as c";
