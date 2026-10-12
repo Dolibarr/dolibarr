@@ -373,8 +373,9 @@ if (empty($reshook)) {
 		$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
 		if (count($arrLines2del) > 0) {
 			// Remove lines
+			$result = 0;
 			foreach ($arrLines2del as $lineid) {
-				$result = $object->deleteLine($lineid);
+				$result = $object->deleteLine((int) $lineid);
 				if ($result <= 0) {
 					$langs->load("errors");
 					setEventMessages($object->error, $object->errors, 'errors');

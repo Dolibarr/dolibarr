@@ -738,12 +738,11 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 
 if ($action == 'selectlines' || $action == 'massdellines' || $action == 'ask_massdellines') {
 	if ($action == 'ask_massdellines') {
-		// Confirmation delete product/service line
+		// Ask delete product/service line
 		$sellines = GETPOST('line_checkbox', 'array:int');
 	} else {
 		$sellines = [];
-	}
-	?>
+	} ?>
 	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>" <?php print isset($sellines[$i + 1]) ? ' checked="checked" ' : ''?>></td>
 <?php }
 
