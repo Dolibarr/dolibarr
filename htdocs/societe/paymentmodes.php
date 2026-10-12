@@ -1358,7 +1358,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="right minwidth50 nowraponall">';
 							if ($permissiontoaddupdatepaymentinformation) {
 								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref)) {
-									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
+									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&token='.newToken().'&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard&token='.newToken().'">';

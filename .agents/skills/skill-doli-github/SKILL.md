@@ -1,5 +1,5 @@
 ---
-name: skill-github
+name: skill-doli-github
 description:
   Handles GitHub issues and pull requests of the project with the gh CLI - list, triage, analyze an issue, review a PR, diagnose a CI failure, comment, label, close or merge.
   Use when the user mentions an issue, a PR, a failing CI check or GitHub.
@@ -27,7 +27,7 @@ Default branch: `develop`. Stable branches are named `NN.0` (e.g. `21.0`).
 
 ## Project conventions (.github/CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md)
 
-- PR title/description prefixed with `FIX`, `CLOSE`, `NEW`, `UIUX`, `PERF`, `QUAL`
+- PR title/description prefixed with `FIX`, `CLOSE`, `NEW`, `UXUI`, `PERF`, `QUAL`
   (uppercase = goes into the ChangeLog, lowercase = does not). Security PRs use `SEC`.
 - A bugfix targets the oldest affected stable branch; a new feature targets `develop`.
 - The contributor must fix any CI error and any conflict, even outside their own lines (solidarity
