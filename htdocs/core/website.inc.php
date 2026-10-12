@@ -326,7 +326,12 @@ if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom
 	print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
 	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
 	//print '<textarea cols="100" rows="5">';
-	$form = new Form($db);
+	if (!class_exists('Form')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	}
+	if (empty($form)) {
+		$form = new Form($db);
+	}
 	print $form->textwithpicto('', 'Current value for disable_functions = '.ini_get('disable_functions'));
 	print '<br>';
 	//print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.
