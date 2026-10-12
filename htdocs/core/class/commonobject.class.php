@@ -10234,6 +10234,7 @@ abstract class CommonObject
 	 * Returns the rights used for this class
 	 *
 	 * @return null|int|stdClass		Object of permission for the module
+	 * @deprecated						Use instead hasUserPermission()
 	 */
 	public function getRights()
 	{
@@ -10266,43 +10267,70 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Check if user has a permission on this type of object.
+	 * Generic check based on getRightsForUser(), accepting core ("lire", "creer", "supprimer") and ModuleBuilder ("read", "write", "delete") names.
+	 * Child classes using other permissions must override it.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 *
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		$rights = $this->getRightsForUser($user);
+		if (is_int($rights)) {
+			// A single permission without sub levels grants every mode
+			return $rights === 1;
+		}
+		if (!is_object($rights)) {
+			return false;
+		}
+
+		if ($mode == 'read') {
+			return !empty($rights->lire) || !empty($rights->read);
+		}
+		if ($mode == 'create' || $mode == 'write') {
+			return !empty($rights->creer) || !empty($rights->write);
+		}
+		if ($mode == 'delete') {
+			return !empty($rights->supprimer) || !empty($rights->delete);
+		}
+
+		return false;
+	}
+
+	/**
 	 * Check if user has write permission on a field of this object.
-	 * Generic check based on the "write" permission of getRightsForUser() (objects built with ModuleBuilder).
-	 * Child classes using another permission (ex: "creer") or needing per field rules must override it.
 	 *
 	 * @param User   $user User to check rights
 	 * @param string $field Field name to check
 	 *
 	 * @return bool True if current user have right to write for this field, false otherwise
+	 * @deprecated Use instead hasUserPermissionOnField($user, $field, 'write')
 	 */
 	public function hasUserWritePermissionOnField(User $user, $field)
 	{
-		// Basic rights validation (invalid or missing rights object = deny access)
-		// TODO remove chaos from getRights results
-		$right = $this->getRightsForUser($user);
-		// Normalize global rights
-		if (is_null($right)) {
-			return false;
-		}
+		return $this->hasUserPermissionOnField($user, $field, 'write');
+	}
 
-		if (is_int($right)) {
-			if ((int) $right !== 1) {
-				return false;
-			}
-		} elseif (is_object($right)) {
-			if (empty($right->write)) {
-				return false;
-			}
-		} else {
-			return false;
-		}
-
+	/**
+	 * Check if user has a permission on a field of this object.
+	 * Generic check based on hasUserPermission(). Child classes needing per field rules must override it.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @param string $mode  Permission to check: 'read', 'write' or 'delete'
+	 *
+	 * @return bool True if user has the permission on this field, false otherwise
+	 */
+	public function hasUserPermissionOnField(User $user, $field, $mode = 'write')
+	{
 		if (empty($field)) {
-			// Each child class need to be edited
 			return false;
 		}
 
-		return true;
+		return $this->hasUserPermission($user, $mode);
 	}
 
 	/**
@@ -10327,7 +10355,7 @@ abstract class CommonObject
 		// TODO : Implement error message ?
 
 		// Ensure user has write permission for field
-		if (!$byPassUserPermission && !$this->hasUserWritePermissionOnField($user, $field)) {
+		if (!$byPassUserPermission && !$this->hasUserPermissionOnField($user, $field, 'write')) {
 			return false;
 		}
 
