@@ -12,20 +12,46 @@
 
 define('MAIN_DB_PREFIX', 'llx_');
 
+/**
+ * Ignore diagnostic logging in this simulation.
+ *
+ * @param string $message Message
+ * @param int $level Level
+ * @return void
+ */
 function dol_syslog($message, $level = 0)
 {
 }
 
+/**
+ * Supply enabled modules for the test configuration.
+ *
+ * @param string $module Module name
+ * @return bool
+ */
 function isModEnabled($module)
 {
 	return in_array($module, array('product', 'sharingtest'), true);
 }
 
+/**
+ * Supply an integer configuration default.
+ *
+ * @param string $name Constant name
+ * @param int $default Default value
+ * @return int
+ */
 function getDolGlobalInt($name, $default = 0)
 {
 	return $default;
 }
 
+/**
+ * Supply the fixture's visible entities.
+ *
+ * @param string $element Element name
+ * @return string
+ */
 function getEntity($element)
 {
 	return '1,2';
@@ -34,17 +60,25 @@ function getEntity($element)
 require_once __DIR__.'/../../htdocs/core/lib/files.lib.php';
 require_once __DIR__.'/../../htdocs/core/class/hookmanager.class.php';
 
+/** Test user with configurable functional permission. */
 class PhotoAccessTestUser
 {
 	public $allowed = true;
 	public $admin = 0;
 
+	/**
+	 * Return the fixture's functional permission.
+	 *
+	 * @param string ...$parts Permission components
+	 * @return bool
+	 */
 	public function hasRight(...$parts)
 	{
 		return $this->allowed;
 	}
 }
 
+/** Sharing hook fixture exercised by the native manager. */
 class PhotoAccessTestHook
 {
 	public $results = array();
@@ -56,6 +90,15 @@ class PhotoAccessTestHook
 	public $calls = 0;
 	public $lastEntity;
 
+	/**
+	 * Decide access for the simulated sharing scenarios.
+	 *
+	 * @param array<string,mixed> $parameters Native access parameters
+	 * @param object|null $object Context object
+	 * @param string $action Current action
+	 * @param HookManager $hookmanager Native manager
+	 * @return int Hook decision
+	 */
 	public function checkSecureAccess($parameters, &$object, &$action, $hookmanager)
 	{
 		$this->calls++;

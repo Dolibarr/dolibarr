@@ -3915,7 +3915,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
 			}
 		}
-
 	}
 
 	// Keep the session entity; modules must validate any requested shared entity themselves.
