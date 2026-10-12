@@ -135,6 +135,13 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+// Preserve checkbox selections for linktoobject option
+$invoices_to_link_post = GETPOST('invoices_to_link', 'array:int');
+$orders_to_link_post = GETPOST('orders_to_link', 'array:int');
+$invoicemanual_post = GETPOST('invoicemanual', 'int');
+$ordermanual_post = GETPOST('ordermanual', 'int');
+$invoicereftolink_post = GETPOST('invoicereftolink', 'alpha');
+$orderreftolink_post = GETPOST('orderreftolink', 'alpha');
 
 /*
  * 	Actions
@@ -309,7 +316,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			$action = 'createsubscription';
 		} else {
 			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
-			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none') {
+			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none' && GETPOST("paymentsave") != 'linktoobject') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
@@ -317,13 +324,13 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 						$error++;
 						$action = 'createsubscription';
 					}
-					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation") && GETPOST("paymentsave") != 'linktoobject') {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
 						$action = 'createsubscription';
 					}
-					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0)) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0) && GETPOST("paymentsave") != 'linktoobject') {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
@@ -341,6 +348,15 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 	}
 
+	// Check if user filled link fields but chose 'none'
+	if ($action == 'subscription' && $option == 'none') {
+		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicemanual_post) || !empty($ordermanual_post));
+		if ($link_inputs_exist) {
+			setEventMessages($langs->trans("ErrorLinkFieldsFilledButPaymentSaveNone"), null, 'errors');
+			$error++;
+			$action = 'createsubscription';
+		}
+	}
 	// Record the subscription then complementary actions
 	if (!$error && $action == 'subscription') {		// Test on permission already done
 		$db->begin();
@@ -361,6 +377,123 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			} else {
 				// If an invoice was created, it is into $object->invoice
 			}
+		}
+
+		// ===== LINK TO EXISTING OBJECTS =====
+		if (GETPOST('paymentsave') == 'linktoobject' && $idsubscription > 0) {
+			$subscription = new Subscription($db);
+			if ($subscription->fetch($idsubscription) > 0) {
+				// Get thirdparty of the member for security validation
+				$adhlink = new Adherent($db);
+				$adhlink->fetch($subscription->fk_adherent);
+				$thirdpartyidtolink = $adhlink->fk_soc;
+
+				// Load existing links so we can skip duplicates
+				$existinglinks = array();
+				$subscription->fetchObjectLinked();
+				if (!empty($subscription->linkedObjectsIds)) {
+					foreach ($subscription->linkedObjectsIds as $linkedtype => $linkedids) {
+						foreach ($linkedids as $linkedid) {
+							$existinglinks[$linkedtype.'-'.$linkedid] = 1;
+						}
+					}
+				}
+
+				$nbcreatedlinks = 0;
+
+				// --- Selected invoices (checkboxes) - must belong to member's thirdparty ---
+				$invoices_to_link = GETPOST('invoices_to_link', 'array:int');
+				if (!empty($invoices_to_link)) {
+					foreach ($invoices_to_link as $invoiceid) {
+						$tmpinvoice = new Facture($db);
+						if ($tmpinvoice->fetch($invoiceid) > 0) {
+							if ($tmpinvoice->socid != $thirdpartyidtolink) {
+								setEventMessages($langs->trans("ErrorInvoiceNotLinkedToThirdpartyOfMember", $tmpinvoice->ref), null, 'errors');
+								continue;
+							}
+							if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
+								continue;	// Already linked, skip silently
+							}
+							if ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
+								$nbcreatedlinks++;
+								$existinglinks['facture-'.$tmpinvoice->id] = 1;
+							} else {
+								setEventMessages($subscription->error, $subscription->errors, 'errors');
+							}
+						}
+						unset($tmpinvoice);
+					}
+				}
+
+				// --- Manual invoice ref - allowed to link to any thirdparty ---
+				$invoicemanual = GETPOST('invoicemanual', 'int');
+				$invoicereftolink = GETPOST('invoicereftolink', 'alpha');
+				if (!empty($invoicemanual) && !empty($invoicereftolink)) {
+					$tmpinvoice = new Facture($db);
+					if ($tmpinvoice->fetch('', $invoicereftolink) > 0) {
+						if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
+							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmpinvoice->ref), null, 'warnings');
+						} elseif ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
+							$nbcreatedlinks++;
+							$existinglinks['facture-'.$tmpinvoice->id] = 1;
+						} else {
+							setEventMessages($subscription->error, $subscription->errors, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink), null, 'errors');
+					}
+					unset($tmpinvoice);
+				}
+
+				// --- Selected orders (checkboxes) - must belong to member's thirdparty ---
+				$orders_to_link = GETPOST('orders_to_link', 'array:int');
+				if (!empty($orders_to_link)) {
+					foreach ($orders_to_link as $orderid) {
+						$tmporder = new Commande($db);
+						if ($tmporder->fetch($orderid) > 0) {
+							if ($tmporder->socid != $thirdpartyidtolink) {
+								setEventMessages($langs->trans("ErrorOrderNotLinkedToThirdpartyOfMember", $tmporder->ref), null, 'errors');
+								continue;
+							}
+							if (!empty($existinglinks['commande-'.$tmporder->id])) {
+								continue;	// Already linked, skip silently
+							}
+							if ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
+								$nbcreatedlinks++;
+								$existinglinks['commande-'.$tmporder->id] = 1;
+							} else {
+								setEventMessages($subscription->error, $subscription->errors, 'errors');
+							}
+						}
+						unset($tmporder);
+					}
+				}
+
+				// --- Manual order ref - allowed to link to any thirdparty ---
+				$ordermanual = GETPOST('ordermanual', 'int');
+				$orderreftolink = GETPOST('orderreftolink', 'alpha');
+				if (!empty($ordermanual) && !empty($orderreftolink)) {
+					$tmporder = new Commande($db);
+					if ($tmporder->fetch('', $orderreftolink) > 0) {
+						if (!empty($existinglinks['commande-'.$tmporder->id])) {
+							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmporder->ref), null, 'warnings');
+						} elseif ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
+							$nbcreatedlinks++;
+							$existinglinks['commande-'.$tmporder->id] = 1;
+						} else {
+							setEventMessages($subscription->error, $subscription->errors, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink), null, 'errors');
+					}
+					unset($tmporder);
+				}
+
+				if ($nbcreatedlinks > 0) {
+					setEventMessages($langs->trans("XLinksCreated", $nbcreatedlinks), null, 'mesgs');
+				}
+			}
+			unset($subscription);
 		}
 
 		if (!$error) {
@@ -1195,7 +1328,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 							$invoicestatic->fetch($objinv->rowid);
 
 							print '<tr class="oddeven">';
-							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoices_to_link[]" value="'.$invoicestatic->id.'" style="width: 14px; height: 14px;"></td>';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoices_to_link[]" value="'.$invoicestatic->id.'" style="width: 14px; height: 14px;"'.(is_array($invoices_to_link_post) && in_array($invoicestatic->id, $invoices_to_link_post) ? ' checked' : '').'></td>';
 							print '<td class="linkedcol-name tdoverflowmax150">'.$invoicestatic->getNomUrl(1).'</td>';
 							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($invoicestatic->ref_client).'">';
 							if ($invoicestatic->ref_client) {
@@ -1227,8 +1360,8 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 
 					// Footer row - manual ref input
 					print '<tr class="liste_titre">';
-					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoicemanual" value="1" style="width: 14px; height: 14px;"></td>';
-					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
+					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoicemanual" value="1" style="width: 14px; height: 14px;"'.($invoicemanual_post ? ' checked' : '').'></td>';
+					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($invoicereftolink_post).'"></td>';
 					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
 
@@ -1272,7 +1405,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 							$orderstatic->fetch($objord->rowid);
 
 							print '<tr class="oddeven">';
-							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="orders_to_link[]" value="'.$orderstatic->id.'" style="width: 14px; height: 14px;"></td>';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="orders_to_link[]" value="'.$orderstatic->id.'" style="width: 14px; height: 14px;"'.(is_array($orders_to_link_post) && in_array($orderstatic->id, $orders_to_link_post) ? ' checked' : '').'></td>';
 							print '<td class="linkedcol-name tdoverflowmax150">'.$orderstatic->getNomUrl(1).'</td>';
 							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($orderstatic->ref_client).'">';
 							if ($orderstatic->ref_client) {
@@ -1304,8 +1437,8 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 
 					// Footer row - manual ref input
 					print '<tr class="liste_titre">';
-					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="ordermanual" value="1" style="width: 14px; height: 14px;"></td>';
-					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
+					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="ordermanual" value="1" style="width: 14px; height: 14px;"'.($ordermanual_post ? ' checked' : '').'></td>';
+					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;" value="'.dol_escape_htmltag($orderreftolink_post).'"></td>';
 					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
 
