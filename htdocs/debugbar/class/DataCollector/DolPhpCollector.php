@@ -142,7 +142,7 @@ class PhpCollector extends DataCollector implements Renderable
 	 * @param string $fileName File where error is generated.
 	 * @param int    $line     Line number where error is generated.
 	 *
-	 * @return void
+	 * @return true	Error is handled, PHP standard handler is not called
 	 */
 	public function errorHandler($severity, $message, $fileName, $line)
 	{
@@ -158,6 +158,8 @@ class PhpCollector extends DataCollector implements Renderable
 				];
 			}
 		}
+
+		return true;
 	}
 
 	/**

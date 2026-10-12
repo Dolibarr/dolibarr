@@ -123,6 +123,7 @@ The keyword can be omitted only if your commit does not fit in any of the follow
 - Perf/PERF:   for a performance enhancement
 - Doc/DOC:     for documentation
 - Qual/QUAL:   for quality code enhancement or re-engineering
+- Uxui/UXUI:   for a user interface or user experience enhancement
 - Sec/SEC:     for a security vulnerability fix
 
 #### ISSUENUM
@@ -148,7 +149,7 @@ FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID 
 or
 CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. The "Close" must be in upper case to appear into ChangeLog)
 or
-NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
+NEW|New|QUAL|Qual|PERF|Perf|UXUI|Uxui Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
 Short description (only when the commit is not introducing a feature nor closing a bug)
 
