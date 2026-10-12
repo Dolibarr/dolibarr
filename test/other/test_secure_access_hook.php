@@ -78,11 +78,11 @@ class PhotoAccessTestUser extends User
 	 * @param string $module Module name
 	 * @param string $permlevel1 First permission component
 	 * @param string $permlevel2 Second permission component
-	 * @return bool
+	 * @return int<0,1>
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
-		return $this->allowed;
+		return $this->allowed ? 1 : 0;
 	}
 }
 
