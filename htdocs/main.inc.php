@@ -1540,7 +1540,9 @@ if (!function_exists("llxHeader")) {
 			$tmpcsstouse .= ' dol_openinpopup';
 		}
 
-		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+		// The spell checker of the browser is disabled for the whole page (the attribute is inherited by all the
+		// fields of all the forms). It is enabled back only on the fields where it is useful (free text, see DolEditor).
+		print '<body id="mainbody" class="'.$tmpcsstouse.'" spellcheck="false">'."\n";
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -1899,8 +1901,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$jsContextPathUrl = DOL_URL_ROOT . '/public/includes/dolibarr-js-context';
 		$jsContextFiles = [
 			'dolibarr-context.umd.js', // The js Dolibarr context definition
-			'dolibarr-tool.seteventmessage.js' // The first tools to help dev for easy event in js
 		];
+
+		// COMPAT-JSCONTEXT @deprecated since 25.0, remove in 27.0 : backward compatibility layer, must be loaded right after the context definition
+		if (!getDolGlobalInt('MAIN_JS_CONTEXT_DISABLE_COMPAT')) {
+			$jsContextFiles[] = 'dolibarr-context.compat.js';
+		}
+
+		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
+		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -2252,7 +2261,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->headerdone)) {
 		$disablenofollow = 0;
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
-		print '<body id="mainbody">';
+		print '<body id="mainbody" spellcheck="false">';
 	}
 
 	/*
@@ -2369,7 +2378,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (!getDolGlobalString('MAIN_PRINT_DISABLELINK') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			if (isset($_POST) && is_array($_POST)) {
+			if (!empty($_POST)) {
 				foreach ($_POST as $key => $value) {
 					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
 					if (in_array($key, array('action', 'massaction', 'password'))) {

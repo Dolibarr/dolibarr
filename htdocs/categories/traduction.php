@@ -213,7 +213,7 @@ $form      = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-llxHeader("", "", $langs->trans("Translation"));
+llxHeader("", $langs->trans("Translation"));
 
 $title = $langs->trans("Categories");
 $title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
