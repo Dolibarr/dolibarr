@@ -149,7 +149,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 		"webportal_sessionname" => $sessionname,
 		"webportal_anti_spam_session_key" => $anti_spam_session_key,
 	);
-	$reshook = $hookmanager->executeHooks('beforeLoginAuthentication', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalBeforeLoginAuthentication', $parameters, $context);
 	if ($reshook < 0) {
 		$error++;
 	} elseif (empty($reshook)) {
@@ -387,7 +387,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
-		$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $context);
+		$reshook = $hookmanager->executeHooks('webPortalAfterLoginFailed', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
 		}
@@ -397,7 +397,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
-		$reshook = $hookmanager->executeHooks('afterLogin', $parameters, $context);
+		$reshook = $hookmanager->executeHooks('webPortalAfterLogin', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
 		}

@@ -87,6 +87,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default mode
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;

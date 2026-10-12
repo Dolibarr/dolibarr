@@ -3,8 +3,9 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,17 @@ class Inventory extends CommonObject
 	const STATUS_VALIDATED = 1;		// Inventory is in process
 	const STATUS_RECORDED  = 2;		// Inventory is finisged. Stock movement has been recorded.
 	const STATUS_CANCELED  = 9;		// Canceled
+
+	/**
+	 * How the lines of the inventory are initialized when it is started.
+	 * CURRENT: one line per product in stock, expected qty = current stock level (historical behaviour).
+	 * NONE:    no line at all, they are added manually or with a barcode scanner while counting.
+	 * ZERO:    one line per product in stock, but counted qty preset to 0, so a product that is never
+	 *          counted nor scanned ends up regulated to zero.
+	 */
+	const START_MODE_CURRENT = 'current';
+	const START_MODE_NONE    = 'none';
+	const START_MODE_ZERO    = 'zero';
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -242,13 +254,23 @@ class Inventory extends CommonObject
 	 * @param  	User 	$user      				User that creates
 	 * @param	int 	$notrigger 				0=launch triggers after, 1=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
+	 * @param	string	$startmode				How lines are initialized: '' = use the INVENTORY_DEFAULT_START_MODE
+	 *											setup value, self::START_MODE_CURRENT, self::START_MODE_NONE or
+	 *											self::START_MODE_ZERO
 	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0)
+	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0, $startmode = '')
 	{
 		$this->db->begin();
 
 		$result = 0;
+
+		if (empty($startmode)) {
+			$startmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', self::START_MODE_CURRENT);
+		}
+		if (!in_array($startmode, array(self::START_MODE_CURRENT, self::START_MODE_NONE, self::START_MODE_ZERO))) {
+			$startmode = self::START_MODE_CURRENT;
+		}
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
@@ -258,6 +280,17 @@ class Inventory extends CommonObject
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
+			}
+
+			if ($startmode == self::START_MODE_NONE) {
+				// Start with no line at all: they will be added manually or with a barcode scanner while counting
+				$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
+				if ($result > 0) {
+					$this->db->commit();
+				} else {
+					$this->db->rollback();
+				}
+				return $result;
 			}
 
 			// Scan existing stock to prefill the inventory
@@ -324,6 +357,9 @@ class Inventory extends CommonObject
 					$inventoryline->fk_product = $obj->fk_product;
 					$inventoryline->batch = $obj->batch;
 					$inventoryline->datec = dol_now();
+					// With the "zero" start mode, the counted qty is preset to 0 instead of being left empty,
+					// so a product that is never counted is regulated to zero when the inventory is recorded.
+					$inventoryline->qty_view = ($startmode == self::START_MODE_ZERO) ? 0 : null;
 
 					if (isModEnabled('productbatch')) {
 						if ($obj->batch && empty($obj->tobatch)) {
@@ -337,7 +373,6 @@ class Inventory extends CommonObject
 					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
-					//var_dump($obj->batch.' '.$obj->qty.' '.$obj->reel.' '.$this->error);exit;
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {
@@ -614,6 +649,16 @@ class Inventory extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -775,6 +820,93 @@ class Inventory extends CommonObject
 		} else {
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Returns the reference to the following non used object depending on the active numbering module.
+	 *  When no numbering module is configured, returns an empty string: the reference is typed freely.
+	 *
+	 *  @return string		Object free reference, or '' when the reference is manual
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("stocks");
+
+		if (!getDolGlobalString('INVENTORY_ADDON')) {
+			return '';	// Free reference, typed by the user (historical behaviour)
+		}
+
+		$mybool = false;
+
+		$file = getDolGlobalString('INVENTORY_ADDON').".php";
+		$classname = getDolGlobalString('INVENTORY_ADDON');
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/inventory/");
+
+			// Load file with numbering class (if found)
+			$mybool = ((bool) @include_once $dir.$file) || $mybool;
+		}
+
+		if (!$mybool) {
+			dol_print_error(null, "Failed to include file ".$file);
+			return '';
+		}
+
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			'@phan-var-force ModeleNumRefInventory $obj';
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				return '';
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translations
+	 *  @param  int<0,1>	$hidedetails    Hide details of lines
+	 *  @param  int<0,1>	$hidedesc       Hide description
+	 *  @param  int<0,1>	$hideref        Hide ref
+	 *  @param  ?array<string,mixed>	$moreparams		Array to provide more information
+	 *  @return int<-1,1>				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("stocks");
+
+		if (!dol_strlen($modele)) {
+			$modele = ''; // Remove this once a pdf_standard.php exists.
+
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('INVENTORY_ADDON_PDF')) {
+				$modele = getDolGlobalString('INVENTORY_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/inventory/doc/";
+
+		if (empty($modele)) {
+			return 1; // Remove this once a pdf_standard.php exists.
+		}
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
 

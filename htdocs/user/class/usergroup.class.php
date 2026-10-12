@@ -625,7 +625,7 @@ class UserGroup extends CommonObject
 		}
 
 		// Load permission from group
-		$sql = "SELECT r.module, r.perms, r.subperms ";
+		$sql = "SELECT r.module, r.module_origin, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
 		$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -645,7 +645,12 @@ class UserGroup extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
-					$module = $obj->module;
+					// module_origin (set only when the right was declared by another module via
+					// KEY_MODULE, to be filed into a foreign module's section of the permission
+					// grid) is the namespace actually used to check the right with hasRight(),
+					// so the declaring module keeps control of it regardless of which module's
+					// section it is grouped under for display.
+					$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 
@@ -734,7 +739,7 @@ class UserGroup extends CommonObject
 	 */
 	public function update($notrigger = 0)
 	{
-		global $user, $conf;
+		global $user;
 
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
@@ -1013,8 +1018,8 @@ class UserGroup extends CommonObject
 
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
-		$this->datec = time();
-		$this->tms = time();
+		$this->datec = dol_now();
+		$this->tms = dol_now();
 
 		// Members of this group is just me
 		$this->members = array(
@@ -1041,7 +1046,7 @@ class UserGroup extends CommonObject
 
 		$langs->load("user");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
 				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');

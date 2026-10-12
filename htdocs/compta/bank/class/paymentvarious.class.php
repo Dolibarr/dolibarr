@@ -141,6 +141,11 @@ class PaymentVarious extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int|string	Third party ID
+	 */
+	public $socid;
+
+	/**
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
@@ -664,7 +669,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

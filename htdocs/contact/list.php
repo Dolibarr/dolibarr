@@ -47,6 +47,7 @@ require '../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
@@ -705,10 +706,10 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (strlen($search_phone)) {
-	$sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_phone);
+	$sql .= dol_natural_search_phone($db, array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_phone);
 }
 if (strlen($search_cti)) {
-	$sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
+	$sql .= dol_natural_search_phone($db, array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
 }
 if (strlen($search_firstlast_only)) {
 	$sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
@@ -743,28 +744,28 @@ if (strlen($search_poste)) {
 	$sql .= natural_search('p.poste', $search_poste);
 }
 if (strlen($search_phone_perso)) {
-	$sql .= natural_search('p.phone_perso', $search_phone_perso);
+	$sql .= dol_natural_search_phone($db, 'p.phone_perso', $search_phone_perso);
 }
 if (strlen($search_phone_pro)) {
-	$sql .= natural_search('p.phone', $search_phone_pro);
+	$sql .= dol_natural_search_phone($db, 'p.phone', $search_phone_pro);
 }
 if (strlen($search_phone_mobile)) {
-	$sql .= natural_search('p.phone_mobile', $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, 'p.phone_mobile', $search_phone_mobile);
 }
 if (strlen($search_fax)) {
-	$sql .= natural_search('p.fax', $search_fax);
+	$sql .= dol_natural_search_phone($db, 'p.fax', $search_fax);
 }
 if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
 			if (in_array($db->type, array('mysql', 'mysqli'))) {
-				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks REGEXP '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} elseif ($db->type == 'pgsql') {
-				$sql .= " AND p.socialnetworks ~ '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks ~ '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} else {
-				// Works with all database but not reliable because search only for social network code starting with earched value
-				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escape($db->escapeforlike($key))."\":\"".$db->escape($db->escapeforlike($searchkeyinjsonformat))."%'";
+				// Works with all database but not reliable because search only for social network code starting with searched value
+				$sql .= " AND p.socialnetworks LIKE '".$db->escape("%\"".$db->escapeforlike($key."\":\"".$searchkeyinjsonformat)."%")."'";
 			}
 		}
 	}
@@ -1804,12 +1805,12 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
 				$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
-				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
+				print dol_print_email((string) $obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
 			}
 			print '</td>';
 			if (!$i) {

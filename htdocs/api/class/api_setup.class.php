@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2022	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  *
@@ -726,7 +726,7 @@ class Setup extends DolibarrApi
 
 		$result = $region->fetch($id, (int) $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving region : '.$region->error);
+			throw new RestException(503, 'Error when retrieving region : '.$region->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Region not found');
 		}
@@ -751,7 +751,7 @@ class Setup extends DolibarrApi
 
 		$result = $state->fetch($id, $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving state : '.$state->error);
+			throw new RestException(503, 'Error when retrieving state : '.$state->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'State not found');
 		}
@@ -784,7 +784,7 @@ class Setup extends DolibarrApi
 		$result = $country->fetch($id, $code, $iso);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving country : '.$country->error);
+			throw new RestException(503, 'Error when retrieving country : '.$country->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Country not found');
 		} else {
@@ -1555,7 +1555,7 @@ class Setup extends DolibarrApi
 		}
 
 		if (!$extrafields->delete($attrname, $elementtype)) {
-			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->errorsToString());
 		}
 
 		return array(
@@ -2797,7 +2797,7 @@ class Setup extends DolibarrApi
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
+			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Establishment not found');
 		}
@@ -3229,9 +3229,10 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 
-		sort($conf->modules);
+		$modules = $conf->modules;
+		asort($modules); // Sort a copy to keep array keys and avoid mutating the global $conf->modules
 
-		return $conf->modules;
+		return $modules;
 	}
 
 	/**
@@ -3265,8 +3266,8 @@ class Setup extends DolibarrApi
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					//print "$i ".$file."\n<br>";
-					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-						$modName = substr($file, 0, dol_strlen($file) - 10);
+					if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 						include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
@@ -3360,10 +3361,10 @@ class Setup extends DolibarrApi
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-						// print $modulename. "==".substr($file, 0, dol_strlen($file) - 10)."\n";
-						if ($modulename == substr($file, 0, dol_strlen($file) - 10)) {
-							$modName = substr($file, 0, dol_strlen($file) - 10);
+					if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+						// print $modulename. "==".dol_substr($file, 0, dol_strlen($file) - 10)."\n";
+						if ($modulename == dol_substr($file, 0, dol_strlen($file) - 10)) {
+							$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 							include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 							if (class_exists($modName)) {
 								$objMod = new $modName($db);

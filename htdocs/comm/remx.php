@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
@@ -165,6 +165,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 				exit;
 			} else {
 				$db->rollback();
+				setEventMessages($discount->error, $discount->errors, 'errors');
 			}
 		} else {
 			$db->rollback();
@@ -219,6 +220,13 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 			exit;
 		} else {
 			$db->rollback();
+			if ($res <= 0) {
+				setEventMessages($discount->error, $discount->errors, 'errors');
+			} elseif ($newid1 <= 0) {
+				setEventMessages($newdiscount1->error, $newdiscount1->errors, 'errors');
+			} else {
+				setEventMessages($newdiscount2->error, $newdiscount2->errors, 'errors');
+			}
 		}
 	}
 }
@@ -295,7 +303,7 @@ $tmpuser = new User($db);
 llxHeader('', $langs->trans("GlobalDiscount"));
 
 if ($socid > 0) {
-	// On recupere les donnees societes par l'objet
+	// Retrieve third-party data via the object
 	$object = new Societe($db);
 	$object->fetch($socid);
 

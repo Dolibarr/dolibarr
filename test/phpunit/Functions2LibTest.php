@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -74,7 +74,7 @@ if (! defined("NOLOGIN")) {
 class Functions2LibTest extends CommonClassTest
 {
 	/**
-	 * testJsUnEscape
+	 * Data provider for testJsUnEscape.
 	 *
 	 * Note: Tests the behavior of jsUnEscape() which mimics JavaScript's deprecated unescape() function.
 	 * JavaScript unescape() reads exactly 4 hex digits after %u and 2 hex digits after %.

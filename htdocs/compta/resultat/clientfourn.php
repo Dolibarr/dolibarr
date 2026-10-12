@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -297,11 +298,11 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 
 if ($modecompta == 'BOOKKEEPING') {
-	$sanitizedpredefinedgroupwhere = "(";
 	// Some shipped charts of accounts (e.g. US-BASE) split income and expense
 	// accounts across more than one pcg_type value (COGS, OTHER_REVENUE,
 	// OTHER_EXPENSES), unlike FR/GB-style charts which only use INCOME/EXPENSE.
 	// Include those here so this report does not silently omit them.
+	$sanitizedpredefinedgroupwhere = "(";
 	$sanitizedpredefinedgroupwhere .= " (pcg_type IN ('EXPENSE', 'COGS', 'OTHER_EXPENSES'))";
 	$sanitizedpredefinedgroupwhere .= " OR ";
 	$sanitizedpredefinedgroupwhere .= " (pcg_type IN ('INCOME', 'OTHER_REVENUE'))";
@@ -435,6 +436,11 @@ if ($modecompta == 'BOOKKEEPING') {
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3,5)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
@@ -671,6 +677,11 @@ if ($modecompta == 'BOOKKEEPING') {
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 1, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
@@ -1319,6 +1330,11 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
+			// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+			$hookmanager->initHooks(array('turnoverreport'));
+			$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+			$sql .= $hookmanager->resPrint;
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 			}
@@ -1377,6 +1393,11 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3)";
 			}
+			// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+			$hookmanager->initHooks(array('turnoverreport'));
+			$parameters = array('invoicealias' => 'f', 'issupplier' => 1, 'datefield' => 'datef');
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+			$sql .= $hookmanager->resPrint;
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 			}

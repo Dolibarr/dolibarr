@@ -47,7 +47,7 @@ if (isModEnabled('ldap')) {
  */
 
 // Load translation files required by page
-$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
@@ -137,6 +137,7 @@ if (empty($reshook)) {
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 
+			$langs->load('errors');
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -177,6 +178,7 @@ if (empty($reshook)) {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
+						$langs->load('errors');
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success to set temporary password, send email

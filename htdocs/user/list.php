@@ -40,6 +40,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -465,10 +466,10 @@ if ($search_accountancy_code != '') {
 	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$sql .= natural_search("u.office_phone", $search_phonepro);
+	$sql .= dol_natural_search_phone($db, "u.office_phone", $search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$sql .= natural_search("u.user_mobile", $search_phonemobile);
+	$sql .= dol_natural_search_phone($db, "u.user_mobile", $search_phonemobile);
 }
 if ($search_email != '') {
 	$sql .= natural_search("u.email", $search_email);
@@ -1060,7 +1061,6 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = (int) $obj->status;
 	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
@@ -1211,7 +1211,6 @@ while ($i < $imaxinloop) {
 				$user2->user_mobile = $obj->user_mobile;
 				$user2->email = $obj->email2;
 				$user2->socid = $obj->fk_soc2;
-				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
@@ -1251,7 +1250,7 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
 			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

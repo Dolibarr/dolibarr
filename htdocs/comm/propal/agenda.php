@@ -2,6 +2,7 @@
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +177,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
@@ -265,6 +266,15 @@ if ($object->id > 0) {
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 		$cachekey = 'count_events_propal_' . $object->id;
 		$nbEvent = dol_getcache($cachekey);
+
+		// Hook to let external modules add buttons to the object right toolbar. Works on any object page; the hook gets the context (elementtype) so a module can scope itself (e.g. only on event pages).
+		$parameters = array('morehtmlright' => &$morehtmlright, 'elementtype' => $object->element);
+		$reshook = $hookmanager->executeHooks('printObjectRightToolbar', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} else {
+			$morehtmlright .= $hookmanager->resPrint;
+		}
 
 		print_barre_liste($langs->trans("ActionsOnPropal") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 		//print_barre_liste($langs->trans("ActionsOnPropal"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

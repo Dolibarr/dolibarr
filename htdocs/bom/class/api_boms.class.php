@@ -22,6 +22,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -139,9 +140,9 @@ class Boms extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -273,7 +274,7 @@ class Boms extends DolibarrApi
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -306,7 +307,7 @@ class Boms extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->errorsToString());
 		}
 		$result = $this->bom->fetch($id);
 
@@ -340,7 +341,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
+			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->errorsToString());
 		}
 
 		return array(
@@ -437,7 +438,7 @@ class Boms extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -558,7 +559,7 @@ class Boms extends DolibarrApi
 				)
 			);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 

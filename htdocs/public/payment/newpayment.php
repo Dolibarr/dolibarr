@@ -87,7 +87,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -119,14 +119,17 @@ $ws = GETPOST("ws", "aZ09"); // Website reference where the newpayment page is e
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
 	if (is_numeric($amount) && !GETPOST("tag", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
 	if ($source && !GETPOST("ref", 'alpha')) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
 	}
@@ -2400,6 +2403,7 @@ if ($source == 'boothlocation') {
 }
 
 if (!$found && !$mesg) {
+	$langs->load('errors');
 	$mesg = $langs->trans("ErrorBadParameters");
 }
 
@@ -2955,19 +2959,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: 'test'
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>
@@ -3035,7 +3039,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				{
 					console.log("Field Card holder is empty");
 					var displayError = document.getElementById('card-errors');
-					displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
+					displayError.textContent = <?php print "'".dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner")))."'" ; ?>;
 				}
 				else
 				{
@@ -3049,19 +3053,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: cardholderName.value
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>

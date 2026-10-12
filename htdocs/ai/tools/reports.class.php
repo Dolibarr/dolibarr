@@ -2,7 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,10 @@ class ToolReports extends McpTool
 	 */
 	public function getDefinitions(): array
 	{
-		return [
+		$listofreporttools = [];
+
+		/*
+		$listofreporttools[] =
 			[
 				"name" => "get_thirdparty_transactions",
 				"description" => "Generate a list of raw transactions (Invoices, Orders) for a specific thirdparty.",
@@ -72,8 +75,8 @@ class ToolReports extends McpTool
 					"properties" => [
 						"thirdparty_id" => ["type" => "integer", "description" => "The unique ID of the thirdparty."],
 						"thirdparty_name" => ["type" => "string", "description" => "The name of the thirdparty."],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"transaction_type" => [
 							"type" => "string",
 							"enum" => ["all", "invoices", "orders", "proposals"],
@@ -86,8 +89,10 @@ class ToolReports extends McpTool
 						["required" => ["thirdparty_name"]]
 					]
 				]
-			],
-			[
+			];
+		*/
+
+		$listofreporttools[] = [
 				"name" => "get_sales_report",
 				"description" => "Generate a sales/revenue report. If a Thirdparty is provided, it returns a detailed breakdown for that customer. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -97,8 +102,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the customer."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["thirdparty", "product", "month"],
@@ -108,8 +113,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_purchase_report",
 				"description" => "Generate a purchase/expense report. If a Supplier is provided, it returns a detailed breakdown. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -119,8 +125,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the supplier."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["supplier", "product", "month"],
@@ -130,8 +136,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_inventory_report",
 				"description" => "Generate an inventory report showing current stock levels and valuation.",
 				"inputSchema" => [
@@ -142,20 +149,41 @@ class ToolReports extends McpTool
 						"include_zero_stock" => ["type" => "boolean", "default" => false]
 					]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_financial_report",
 				"description" => "Generate a summary financial report (Income vs Expense) for a period.",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."]
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."]
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-		];
+			];
+
+			return $listofreporttools;
+	}
+
+	/**
+	 * Aggregated reports: the widest data reach of any tool class.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'get_sales_report' => array(array('facture', 'lire')),
+			'get_purchase_report' => array(array('fournisseur', 'facture', 'lire')),
+			'get_inventory_report' => array(array('produit', 'lire'), array('stock', 'lire')),
+			'get_financial_report' => array(array('facture', 'lire'), array('fournisseur', 'facture', 'lire')),
+			'get_thirdparty_transactions' => array(array('societe', 'lire'), array('facture', 'lire'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
 	}
 
 	/**
@@ -179,8 +207,8 @@ class ToolReports extends McpTool
 	public function execute(string $name, array $args)
 	{
 		switch ($name) {
-			case 'get_thirdparty_transactions':
-				return $this->getThirdpartyTransactions($args);
+			/*case 'get_thirdparty_transactions':
+				return $this->getThirdpartyTransactions($args); */
 			case 'get_sales_report':
 				return $this->getSalesReport($args);
 			case 'get_purchase_report':
@@ -372,6 +400,7 @@ class ToolReports extends McpTool
 	 * @param array<string, mixed> $args Input arguments.
 	 * @return array<int, array<string, string>> Combined list of transactions.
 	 */
+	/*
 	private function getThirdpartyTransactions(array $args): array
 	{
 		global $langs;
@@ -504,6 +533,7 @@ class ToolReports extends McpTool
 
 		return $list;
 	}
+	*/
 
 	/**
 	 * Generate a purchase/expense report.

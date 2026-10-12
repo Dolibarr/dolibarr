@@ -396,7 +396,6 @@ class FormAI extends Form
 					}
 				});
 			} else {
-
 				// set editor in readonly
 				if (CKEDITOR.instances[htmlname]) {
 					CKEDITOR.instances[htmlname].setReadOnly(1);

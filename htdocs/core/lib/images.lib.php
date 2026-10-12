@@ -203,6 +203,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		return 'Bad parameter file';
 	} elseif (!file_exists($file)) {
 		// Si le fichier passe en parameter n'existe pas
+		$langs->load("errors");
 		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0) {
 		return 'This filename '.$file.' does not seem to be an image filename.';
@@ -571,6 +572,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	if (!file_exists($filetoread)) {
 		// If the file passed in parameter does not exist
+		$langs->load("errors");
 		dol_syslog($langs->trans("ErrorFileNotFound", $filetoread), LOG_ERR);
 		return $langs->trans("ErrorFileNotFound", $filetoread);
 	}

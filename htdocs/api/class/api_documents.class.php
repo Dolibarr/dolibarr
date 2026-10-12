@@ -8,6 +8,7 @@
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
- * API class for receive files
+ * API class to receive files
  *
  * @since	6.0.0	Initial implementation
  *
@@ -531,6 +532,10 @@ class Documents extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 				throw new RestException(403);
 			}
+		} elseif ($modulepart == 'reception') {
+			if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
+				throw new RestException(403);
+			}
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 				throw new RestException(403);
@@ -905,7 +910,7 @@ class Documents extends DolibarrApi
 			if ($result == 0) {
 				throw new RestException(404, "Object with ref '".$ref."' was not found.");
 			} elseif ($result < 0) {
-				throw new RestException(500, 'Error while fetching object: '.$object->error);
+				throw new RestException(500, 'Error while fetching object: '.$object->errorsToString());
 			}
 
 			if (!($object->id > 0)) {

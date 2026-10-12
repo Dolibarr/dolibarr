@@ -552,7 +552,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			} else {
 				print '<tr><td>&nbsp;</td></tr>';
 			}
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(!GETPOST('num_paiement') ? '' : GETPOST('num_paiement')).'"></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero');
+			print ' <em class="opacitymedium small">('.$langs->trans("ChequeOrTransferNumber").')</em>';
+			print '</td><td><input name="num_paiement" type="text" value="'.(!GETPOST('num_paiement') ? '' : GETPOST('num_paiement')).'"></td></tr>';
 			print '<tr><td>'.$langs->trans('Comments').'</td>';
 			print '<td class="tdtop">';
 			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(!GETPOST('comment') ? '' : GETPOST('comment')).'</textarea></td></tr>';
@@ -660,12 +662,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<th class="center">'.$langs->trans('DateDue').'</th>';
 						if (isModEnabled("multicurrency")) {
 							$langs->load("multicurrency");
-							$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
+							$labeltoshow = $langs->trans("MulticurrencyOriginalCurrency");
 							print '<th>'.$langs->trans('Currency').'</th>';
-							print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-							print '<th class="right">'.$langs->trans('AlreadyPaid').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-							print '<th class="right">'.$langs->trans('RemainderToPay').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-							print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+							print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></th>';
+							print '<th class="right">'.$langs->trans('AlreadyPaid').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></th>';
+							print '<th class="right">'.$langs->trans('RemainderToPay').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></th>';
+							print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></th>';
 						}
 						print '<th class="right">'.$langs->trans('AmountTTC').'</th>';
 						print '<th class="right">'.$langs->trans('AlreadyPaid').'</th>';
@@ -718,9 +720,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Ref
 							print '<td data-col="object-name" class="nowraponall">';
 							print '<div class="inline-block lineheightsmall">';
+							print '<span data-field="ref">';
 							print $invoicesupplierstatic->getNomUrl(1);
-							print '<br><span class="opacitymedium spantitle" title="'.$langs->trans("RefSupplier").'">';
-							print dolPrintHTML($objp->ref_supplier);
+							print '</span> ';
+							print '<br class="paiement-line-break-for-ref">';
+							print '<span class="spantitle" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
+							print showValueWithClipboardCPButton($objp->ref_supplier);
 							print '</span>';
 							print '</div>';
 							print '</td>';
@@ -822,19 +827,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								print "</td>";
 							}
 
-							print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
+							print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
 
-							print '<td class="right">'.price($sign * $objp->am);
+							print '<td class="right"><span class="amount">'.price($sign * $objp->am);
 							if ($creditnotes) {
 								print '+'.price($creditnotes);
 							}
 							if ($deposits) {
 								print '+'.price($deposits);
 							}
-							print '</td>';
+							print '</span></td>';
 
 							print '<td class="right">';
-							print price($sign * (float) $remaintopay);
+							print '<span class="amount">'.price($sign * (float) $remaintopay).'</span>';
 							if (isModEnabled('paymentbybanktransfer')) {
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;

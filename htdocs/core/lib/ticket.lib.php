@@ -46,7 +46,7 @@ function ticketAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ticket_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'ticket'));
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
 	$nbExtrafields = $extrafields->attributes['ticket']['count'];
 	if ($nbExtrafields > 0) {

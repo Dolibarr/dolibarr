@@ -359,7 +359,6 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$action = $ifErrorAction;
@@ -425,10 +424,13 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			// Log action in ticket logs table
-			$object->fetch_user($usertoassign);
-
-			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			if ($usertoassign > 0) {
+				// Log action in ticket logs table
+				$object->fetch_user($usertoassign);
+				setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('TicketUnassigned'), null, 'mesgs');
+			}
 			header("Location: card.php?track_id=" . $object->track_id);
 			exit;
 		} else {
@@ -510,6 +512,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $permissiontodelete) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			if ($object->delete($user) > 0) {
 				setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
 				header("Location: " . DOL_URL_ROOT . "/ticket/list.php");
@@ -1529,12 +1532,12 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Clone
 				if ($permissiontoadd) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete ticket
 				if ($permissiontodelete && !$user->socid) {
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '');
+					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 				}
 			}
 			print '</div>'."\n";

@@ -837,7 +837,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= " ref = '".$this->db->escape((string) $this->ref)."'";
 		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
 		$sql .= ", civility = ".($this->civility_code ? "'".$this->db->escape($this->civility_code)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
@@ -2138,7 +2138,6 @@ class Adherent extends CommonObject
 			if (!$error && $option == 'bankviainvoice' && $accountid) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
 				$amounts[$invoice->id] = (float) price2num($amount);
@@ -2189,7 +2188,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Define output language
 				$outputlangs = $langs;
-				$newlang = '';
+				$newlang = $this->default_lang;
 				$lang_id = GETPOST('lang_id');
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
@@ -2801,7 +2800,15 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT a.rowid, a.datefin, a.statut as status";
+		// The count and the number of late members are computed by the database instead of reading every member. A validated
+		// member is late when the end date of the subscription is set and before now minus the warning delay (the rule of
+		// hasDelay()); a draft member ('shift' mode) is never late.
+		$sql = "SELECT COUNT(a.rowid) as nb,";
+		if ($mode == 'expired') {
+			$sql .= " SUM(CASE WHEN a.datefin IS NOT NULL AND a.datefin < '".$this->db->idate($now - getWarningDelay('member', 'subscription'))."' THEN 1 ELSE 0 END) as nblate";
+		} else {
+			$sql .= " 0 as nblate";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
@@ -2842,18 +2849,10 @@ class Adherent extends CommonObject
 			$response->url = $url;
 			$response->img = img_object('', "user");
 
-			$adherentstatic = new Adherent($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->status;
-				$adherentstatic->status = $obj->status;
-
-				if ($adherentstatic->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -3465,7 +3464,8 @@ class Adherent extends CommonObject
 							$nbko++;
 							$listofmembersko[$adherent->id] = $adherent->id;
 
-							break;
+							// Do not break here: a template issue for one member (ex: not found for its language) must not prevent
+							// the reminder from being sent to the other members due the same day.
 						}
 					}
 

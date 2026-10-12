@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "errors"));
+$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
@@ -812,6 +812,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			$db->rollback();
 
 			if ($error >= 10) {
+				$langs->load('errors');
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
 				break; // Break in the foreach
 			}

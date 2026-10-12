@@ -27,7 +27,6 @@ WelcomeOnOnlineSignaturePageSociete_rib=Bienvenue sur la page de signature du ma
 WelcomeOnOnlineSignaturePageExpedition=Bienvenue sur la page de signature de l'expédition %s
 ThisScreenAllowsYouToSignDocFromProposal=Cet écran vous permet d'accepter et signer ou de refuser le devis ou la proposition commerciale
 ThisScreenAllowsYouToSignDocFromFichinter=Cet écran vous permet de signer en ligne une intervention.
-ThisScreenAllowsYouToSignDocFromSociete_rib=Cet écran vous permet de signer en ligne un mandat SEPA.
 ThisScreenAllowsYouToSignDocFromExpedition=Cet écran vous permet de signer en ligne une expédition.
 ThisIsInformationOnDocumentToSignProposal=Ceci est une information sur le document à accepter ou à refuser
 ThisIsInformationOnDocumentToSignContract=Ceci est une information sur le contrat à signer

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2025       Yannis Hoareau
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,13 @@
 
 /**
  * @var CommonObject $object
- * @var int[] $selectedLines
  * @var CommonObjectLine $line
+ * @var int[] $selectedLines
  */
+
+'
+@phan-var-force CommonObjectLine $line
+';
 
 $line_color = $object->getSubtotalColors($line->qty);
 

@@ -186,6 +186,65 @@ if (!GETPOST('code')) {
 	$backtourl = preg_replace('/leftmenu=[a-z0-9]+/i', '', $backtourl);
 	$backtourl = preg_replace('/#.*$/i', '', $backtourl);	// We remove part after the #...
 
+	// TODO Try enable this section
+	/*
+	// Optimization: If this is for login and we already have a valid OAuth token, we can reuse it instead of redirecting to Google again
+	if ($forlogin && $storage->hasAccessToken('Google')) {
+		global $db, $conf;
+		$existingToken = $storage->retrieveAccessToken('Google');
+		if (!$existingToken->isExpired()) {
+			dol_syslog("Reusing existing valid Google OAuth token for login, skipping Google redirect");
+
+			// Extract email from existing token's extraParams (which contains the id_token JWT)
+			$extraparams = $existingToken->getExtraParams();
+			$useremail = '';
+			if (!empty($extraparams['id_token'])) {
+				$jwt = explode('.', $extraparams['id_token']);
+				if (!empty($jwt[1])) {
+					$userinfo = json_decode(base64_decode($jwt[1]), true);
+					$useremail = $userinfo['email'];
+				}
+			}
+
+			if (!empty($useremail)) {
+				// Find the user in Dolibarr
+				$entitytosearchuser = -1; // Search in all entities
+				$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
+				if (!empty($tmparray['entity'])) {
+					$entitytosearchuser = $tmparray['entity'];
+				}
+
+				$tmpuser = new User($db);
+				$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);
+
+				if ($res > 0) {
+					$username = $tmpuser->login;
+					$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
+					dol_syslog('Reused existing token - set $_SESSION["googleoauth_receivedlogin"]='.$_SESSION['googleoauth_receivedlogin']);
+
+					// Redirect back to login page with afteroauthloginreturn flag
+					$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+					$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home&username='.urlencode($username).'&token='.newToken();
+					if (!empty($tmparray['entity'])) {
+						$backtourl .= '&entity='.$tmparray['entity'];
+					}
+
+					dol_syslog("Redirecting to backtourl with reused token: ".$backtourl);
+					header('Location: '.$backtourl);
+					exit();
+				} else {
+					// User not found, fall back to normal OAuth flow
+					dol_syslog("User with email '".$useremail."' was not found, falling back to Google OAuth");
+				}
+			} else {
+				dol_syslog("Existing token has no id_token in extraParams, falling back to Google OAuth");
+			}
+		} else {
+			dol_syslog("Existing token is expired, falling back to Google OAuth");
+		}
+	}
+	*/
+
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
@@ -355,6 +414,7 @@ if (!GETPOST('code')) {
 					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
+					// TODO Try remove this	line
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
 
 					$tmpuser = new User($db);
