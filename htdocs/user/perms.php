@@ -758,7 +758,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 		print '<td>';
 		print '</td>';
-	} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
+	} elseif (!empty($permsgroupbyentitypluszero)) {
 		print '<!-- permsgroupbyentitypluszero -->';
 		if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 			print '<td class="center nowrap">';
@@ -831,7 +831,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 		}
 	}
@@ -839,7 +839,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 		}
 	}
