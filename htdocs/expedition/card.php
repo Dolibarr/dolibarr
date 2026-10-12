@@ -2685,8 +2685,8 @@ if ($action == 'create' && $usercancreate) {
 
 	$num_prod = count($lines);
 
-	$showBatchByDefault = (bool) getDolGlobalInt('SHIPMENT_SHOW_ALL_BATCH_BY_DEFAULT', 1);
 	$withBatchToggle = isModEnabled('productbatch') && !empty($conf->use_javascript_ajax);
+	$showBatchByDefault = !$withBatchToggle || getDolGlobalInt('SHIPMENT_SHOW_ALL_BATCH_BY_DEFAULT', 1);
 	$hasBatchLines = false;
 	foreach ($lines as $tmpline) {
 		if (!empty($tmpline->product_tobatch) && !empty($tmpline->detail_batch)) {

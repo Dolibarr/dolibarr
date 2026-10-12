@@ -2537,8 +2537,8 @@ if ($action == 'create' && $permissiontoadd) {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
 		}
-		$showBatchByDefault = (bool) getDolGlobalInt('RECEPTION_SHOW_ALL_BATCH_BY_DEFAULT', 1);
 		$withBatchToggle = isModEnabled('productbatch') && !empty($conf->use_javascript_ajax);
+		$showBatchByDefault = !$withBatchToggle || getDolGlobalInt('RECEPTION_SHOW_ALL_BATCH_BY_DEFAULT', 1);
 		// Contiguous lines of a same purchase order line of a product with lots, indexed by the position of their first line
 		$batchGroups = array();
 		$batchGroupOfLine = array();
@@ -2864,7 +2864,7 @@ if ($action == 'create' && $permissiontoadd) {
 				$printProductCell($i, true);
 				print '<td></td>';
 				$printQtyOrderedCells($i, true);
-				print '<td class="center linecolqtytoreceive">'.$batchGroup['qty'].'</td>';
+				print '<td class="center linecolqtytoreceive">'.price2num($batchGroup['qty'], 'MS').'</td>';
 				if (isModEnabled('stock')) {
 					print '<td class="left tdoverflowmax150">';
 					$batchGroupWarehouseId = (count($batchGroup['warehouses']) == 1 ? (int) reset($batchGroup['warehouses']) : 0);
@@ -2884,8 +2884,8 @@ if ($action == 'create' && $permissiontoadd) {
 				}
 				print '</td>';
 				$isProductLine = (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT);
-				print '<td class="center linecolweight">'.($isProductLine ? $batchGroup['weight'].' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units) : '').'</td>';
-				print '<td class="center linecolvolume">'.($isProductLine ? $batchGroup['volume'].' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units) : '').'</td>';
+				print '<td class="center linecolweight">'.($isProductLine ? price2num($batchGroup['weight'], 'MS').' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units) : '').'</td>';
+				print '<td class="center linecolvolume">'.($isProductLine ? price2num($batchGroup['volume'], 'MS').' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units) : '').'</td>';
 				if ($object->statut == Reception::STATUS_DRAFT) {
 					print '<td class="linecoledit"></td>';
 					print '<td class="linecoldelete"></td>';

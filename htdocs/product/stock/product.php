@@ -949,7 +949,7 @@ if ($id > 0 || $ref) {
 }
 
 
-$showBatchByDefault = (bool) getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
+$showBatchByDefault = empty($conf->use_javascript_ajax) || getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
 $showstockdetails = 1;
 if ($variants && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 	$showstockdetails = 0;

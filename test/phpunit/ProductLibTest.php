@@ -98,6 +98,24 @@ class ProductLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Translations are already HTML encoded by Translate::trans() and must not be encoded twice.
+	 *
+	 * @return void
+	 */
+	public function testGetBatchLinesToggleHeaderDoesNotEncodeTranslationsTwice(): void
+	{
+		$langs = $this->savlangs;
+		$savedTranslation = $langs->tab_translate['HideLots'] ?? null;
+		$langs->tab_translate['HideLots'] = 'Hide & fold lots';
+
+		$out = getBatchLinesToggleHeader($langs, true);
+		$langs->tab_translate['HideLots'] = $savedTranslation;
+
+		$this->assertStringContainsString('Hide &amp; fold lots', $out);
+		$this->assertStringNotContainsString('&amp;amp;', $out);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testGetBatchLineToggleLinkIconFollowsDefaultState(): void

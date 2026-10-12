@@ -1120,8 +1120,8 @@ function getProductForEmailTemplate($id)
  */
 function getBatchLinesToggleHeader(Translate $langs, bool $showByDefault): string
 {
-	$out = '<a id="batchlines_show_all" href="#" class="nowraponall'.($showByDefault ? ' hideobject' : '').'">'.img_picto('', 'folder-open', 'class="paddingright"').dol_escape_htmltag($langs->trans("ShowAllLots")).'</a>';
-	$out .= '<a id="batchlines_hide_all" href="#" class="nowraponall'.($showByDefault ? '' : ' hideobject').'">'.img_picto('', 'folder', 'class="paddingright"').dol_escape_htmltag($langs->trans("HideLots")).'</a>';
+	$out = '<a id="batchlines_show_all" href="#" class="nowraponall'.($showByDefault ? ' hideobject' : '').'">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
+	$out .= '<a id="batchlines_hide_all" href="#" class="nowraponall'.($showByDefault ? '' : ' hideobject').'">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("HideLots").'</a>';
 
 	return $out;
 }
