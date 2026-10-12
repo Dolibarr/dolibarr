@@ -2970,6 +2970,9 @@ class Facture extends CommonInvoice
 			$facligne->total_localtax1 = -(float) $remise->total_localtax1;
 			$facligne->total_localtax2 = -(float) $remise->total_localtax2;
 
+			// The discount line must carry the currency of the invoice, like any other line
+			$facligne->fk_multicurrency = $this->fk_multicurrency;
+			$facligne->multicurrency_code = $this->multicurrency_code;
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
 			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_total_tva;
