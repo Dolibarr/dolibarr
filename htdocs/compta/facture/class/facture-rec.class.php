@@ -1737,8 +1737,11 @@ class FactureRec extends CommonInvoice
 					dol_syslog("createRecurringInvoices Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity);
 				}
 
-				// Commit or rollback
-				if (!$error && $invoiceidgenerated >= 0) {
+				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error),
+				// so that a failure on one template does not cancel the templates processed after it.
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above,
+				// in which case nothing was created and the transaction must be rolled back.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
