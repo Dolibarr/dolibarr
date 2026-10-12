@@ -208,7 +208,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')
 	) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/consumption.php', ['socid' => $object->id]);
-		$head[$h][1] = $langs->trans("Referers");
+		$head[$h][1] = $langs->trans("ReferringItems");
 		$head[$h][2] = 'consumption';
 		$h++;
 	}

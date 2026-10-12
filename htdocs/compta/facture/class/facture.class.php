@@ -486,6 +486,23 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Check if user has write permission on a field of this object.
+	 * Override of CommonObject::hasUserWritePermissionOnField(): invoices use the "creer" permission.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if user has right to write this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return (bool) $user->hasRight('facture', 'creer');
+	}
+
+	/**
 	 *	Create invoice in database.
 	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV999)"
 	 *  Note: this->fac_rec must be set to create invoice from a recurring invoice
