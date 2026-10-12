@@ -1,0 +1,4 @@
+Note: Using configuration file /home/runner/work/dolibarr/dolibarr/phpstan.neon.dist.
+
+ [OK] No errors                                                                 
+
