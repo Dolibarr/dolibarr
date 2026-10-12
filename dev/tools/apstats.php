@@ -868,7 +868,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($vdp ? ' VDP #'.$vdp.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= (empty($alert['issueid']) ? 'Fix committed as: '.substr($alert['commitid'], 0, 8).'…' : 'Fix for GitHub #'.$alert['issueid']);
 
-	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
+	$arrayofalerts[$key]['description'] = 'Security alert<br>';
 
 	$html .= '<tr style="vertical-align: top;">';
 
@@ -932,8 +932,6 @@ foreach ($arrayofalerts as $key => $alert) {
 		$arrayofalerts[$key]['description'] .= "\n<br><br>Branches of fix: ".$listofbranchnames;
 	}
 	$html .= '</td>';
-
-	$arrayofalerts[$key]['description'] .= ']]>';
 
 	$html .= '</tr>';
 }
@@ -1007,7 +1005,7 @@ if ($fh) {
 		fwrite($fh, "<item>\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title'], ENT_QUOTES, 'UTF-8') . "</title>\n");
 		// Description of alert, list of links to sources and branches of fixes
-		fwrite($fh, '<description>' . str_replace(']]>', '', $alert['description']) . "</description>\n");	// no htmlspecialchars here (content is into a CDATA section)
+		fwrite($fh, '<description><![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $alert['description']) . "]]></description>\n");	// no htmlspecialchars here (content is into a CDATA section)
 		fwrite($fh, '<link>' . htmlspecialchars($refurl, ENT_QUOTES, 'UTF-8') . "</link>\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate), ENT_QUOTES, 'UTF-8') . "</pubDate>\n");
