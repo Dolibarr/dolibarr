@@ -227,7 +227,8 @@ function isValidTinForES($str)
 
 	//Check NIE T
 	if (preg_match('/^[T]{1}/', $str)) {
-		if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $str)) {
+		// A NIE starting with T has no control key to check, so the syntax check is enough.
+		if (preg_match('/^[T]{1}[A-Z0-9]{8}$/', $str)) {
 			return 3;
 		} else {
 			return -3;

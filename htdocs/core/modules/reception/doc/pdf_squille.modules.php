@@ -338,14 +338,14 @@ class pdf_squille extends ModelePdfReception
 
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
-							if ($object->reception_method_id > 0) {
+							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipment_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
 								}
-								$label .= $outputlangs->trans("ReceptionMethod").": ".$outputlangs->trans("ReceptionMethod".strtoupper($code));
+								$label .= $outputlangs->trans("ReceptionMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
 								//var_dump($object->tracking_url != $object->tracking_number);exit;
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= " : ";
@@ -1004,8 +1004,8 @@ class pdf_squille extends ModelePdfReception
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$text = $linkedobject->ref;
-				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
-					$text .= ' ('.$linkedobject->ref_client.')';
+				if (!empty($linkedobject->ref_supplier)) {
+					$text .= ' ('.$linkedobject->ref_supplier.')';
 				}
 				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);

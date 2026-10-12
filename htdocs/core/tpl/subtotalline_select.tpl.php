@@ -2,7 +2,7 @@
 
 /**
  * @var CommonObject $object
- * @var CommonObject $this
+ * @var int[] $selectedLines
  * @var CommonObjectLine $line
  */
 
@@ -13,7 +13,7 @@ print '<tr style="background:#' . $line_color . '" id="row-'.$line->id.'">'."\n"
 
 
 $selected = 1;
-if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
+if (!empty($selectedLines) && !in_array($line->id, $selectedLines)) {
 	$selected = 0;
 }
 print "<td colspan='5'>";

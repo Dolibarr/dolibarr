@@ -346,8 +346,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
 				$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
 				$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
+				$list[$assoc['company_id']]['pstatus'][] = (int) $assoc['pstatus'];
+				$list[$assoc['company_id']]['pstatusbuy'][] = (int) $assoc['pstatusbuy'];
 
 				$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
+				$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];
 				$list[$assoc['company_id']]['payment_amount'][] = (float) $assoc['payment_amount'];
 
 				$company_id = $assoc['company_id'];
@@ -535,6 +538,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['pid'][] = (int) $assoc['pid'];
 				$list[$assoc['company_id']]['pref'][] = (string) $assoc['pref'];
 				$list[$assoc['company_id']]['ptype'][] = (int) $assoc['ptype'];
+				$list[$assoc['company_id']]['pstatus'][] = (int) $assoc['pstatus'];
+				$list[$assoc['company_id']]['pstatusbuy'][] = (int) $assoc['pstatusbuy'];
 
 				$list[$assoc['company_id']]['payment_id'][] = (int) $assoc['payment_id'];
 				$list[$assoc['company_id']]['payment_ref'][] = (string) $assoc['payment_ref'];

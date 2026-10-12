@@ -670,7 +670,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 
@@ -1048,7 +1048,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
-							if ($qtyhourservice && $qtyhourforline) {
+							// Add the workstation cost for the manufacturing order cost when a workstation is set
+							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+								$workstation = new Workstation($db);
+								$workstation->fetch($line->fk_default_workstation);
+								$linecost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MT'); //if global const MRP_SHOW_COST_FOR_CONSUMPTION is used to show price for each line
+								$bomcostupdated += price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MU');
+							} elseif ($qtyhourservice && $qtyhourforline) {
 								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
 								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
 							} else {

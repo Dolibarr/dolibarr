@@ -348,7 +348,8 @@ class modStock extends DolibarrModules
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
 			}
 			$this->export_aggregate_array[$r] = array('ps.reel' => 'SUM'); // TODO Not used yet
-			$this->export_dependencies_array[$r] = array('stockbatch' => array('pb.rowid'), 'batch' => array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+			// We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+			$this->export_dependencies_array[$r] = array('stockbatch' => array('pb.rowid'), 'batch' => array('pb.rowid'), 'movement' => array('e.rowid','p.rowid','pb.batch'));
 			$keyforselect = 'product_lot';
 			$keyforelement = 'batch';
 			$keyforaliasextra = 'extra';

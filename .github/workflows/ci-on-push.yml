@@ -1,6 +1,16 @@
 name: "CI-PUSH"
 
-on: [push]
+
+on:
+  push:
+    # Executer only on push of the main repository, not on fork.
+    branches:
+      - develop
+      - master
+      - '=.0'
+    paths-ignore:
+      - '.agents/**'
+
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml

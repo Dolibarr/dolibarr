@@ -97,7 +97,11 @@ if (!$facid && (string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	}
 }
 $object = new Facture($db);
-$object->fetch($facid);
+$result = $object->fetch($facid);
+// Only an invoice of the POS, in an entity of the user, can be printed from the POS
+if ($result <= 0 || $object->module_source != 'takepos' || !in_array($object->entity, explode(',', getEntity('invoice')))) {
+	accessforbidden();
+}
 
 
 // Record entry in blocked logs
@@ -307,14 +311,19 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 
 // Now show local taxes if company uses them
 
-if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
+// $mysoc->useLocalTax(N) is a country-wide flag (true as soon as the country has a
+// matching c_tva row with a localtaxN_type), so on its own it always prints the line
+// for Spanish companies even when the company is "No sujeto a RE / IRPF". Mirror the
+// pattern used by compta/facture/card.php, card-rec.php and prelevement.php and gate
+// the country check on $mysoc->localtaxN_assuj == "1".
+if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || price2num($object->total_localtax1, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></th>
 </tr>
 <?php } ?>
-<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
+<?php if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || price2num($object->total_localtax2, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";

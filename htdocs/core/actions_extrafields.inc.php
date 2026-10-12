@@ -134,6 +134,17 @@ if ($action == 'add') {
 			$mesgs[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
 		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'create';
+			}
+		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -321,6 +332,17 @@ if ($action == 'update') {
 			$langs->load("errors");
 			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
+		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'edit';
+			}
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
 			// Construct array for parameter (value of select list)

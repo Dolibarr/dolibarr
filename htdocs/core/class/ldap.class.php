@@ -241,7 +241,7 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource The internal LDAP connection handle
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle
 	 */
 	public $connection;
 
@@ -358,7 +358,10 @@ class Ldap
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-						$uri = $host.':'.$this->serverPort;
+						// Since PHP 8.3, ldap_connect() expects a single URI argument. A scheme-less
+						// host (ex: localhost, 192.168.0.2) must be turned into a valid ldap:// URI,
+						// otherwise the host is parsed as the URI scheme and the later bind fails.
+						$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 						$this->connection = ldap_connect($uri);
 					} else {
 						$this->connection = ldap_connect($host, $this->serverPort);
@@ -371,7 +374,7 @@ class Ldap
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-							$uri = $host.':'.$this->serverPort;
+							$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 							$this->connection = ldap_connect($uri);
 						} else {
 							$this->connection = ldap_connect($host, $this->serverPort);
@@ -1141,6 +1144,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// Pourquoi cette ligne ?
 		//$info = ldap_get_entries($this->connection, $this->result);

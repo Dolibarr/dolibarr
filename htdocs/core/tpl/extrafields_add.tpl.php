@@ -2,6 +2,7 @@
 /* Copyright (C) 2014	    Maxime Kohlhaas		    <support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Palisandro David Gamez  <pali@eisbcn.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +86,21 @@ if (empty($reshook)) {
 		$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($thirdpartytopropagateextrafieldsfrom->table_element);
 		if ($thirdpartytopropagateextrafieldsfrom->fetch_optionals() > 0) {
 			$object->array_options = array_merge($object->array_options, $thirdpartytopropagateextrafieldsfrom->array_options);
+		}
+	}
+
+	// Propagate extrafields from an origin object (e.g. commande -> expedition) when the
+	// calling card.php passes its source object via $parameters['objectsrc']. This was
+	// inline logic in each card.php up to v21.x and was lost during the refactor to this
+	// shared template in v22.x. Only extrafields defined on the target elementtype are
+	// effectively displayed (showOptionals filters by target), so there are no side
+	// effects if origin and target have disjoint extrafield sets.
+	if (!empty($parameters['objectsrc']) && is_object($parameters['objectsrc'])
+		&& method_exists($parameters['objectsrc'], 'fetch_optionals')) {
+		$tmpobjectsrc = $parameters['objectsrc'];
+		'@phan-var-force CommonObject $tmpobjectsrc';
+		if ($tmpobjectsrc->fetch_optionals() > 0 && !empty($tmpobjectsrc->array_options)) {
+			$object->array_options = array_merge($object->array_options, $tmpobjectsrc->array_options);
 		}
 	}
 

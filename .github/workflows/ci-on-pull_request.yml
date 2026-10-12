@@ -1,6 +1,11 @@
 name: "CI-PULL-REQUEST"
 
-on: [pull_request]
+
+on:
+  pull_request:
+    paths-ignore:
+      - '.agents/**'
+
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml

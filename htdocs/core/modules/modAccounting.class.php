@@ -257,10 +257,11 @@ class modAccounting extends DolibarrModules
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_account as aa2';
-		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').')';
-		$this->export_sql_end[$r] .= ' AND aa2.rowid = aa.account_parent AND aa2.active = 1 AND ac.pcg_version = aa2.fk_pcg_version AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as ac ON ac.pcg_version = aa.fk_pcg_version';
+		// LEFT JOIN on the parent account: keep accounts that have no parent (root accounts) or whose parent is
+		// inactive or belongs to another chart (common when a custom chart is derived from a base one).
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa2 ON aa2.rowid = aa.account_parent AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' WHERE aa.entity IN ('.getEntity('accounting').')';
 
 
 		// Imports

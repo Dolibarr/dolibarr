@@ -122,6 +122,10 @@ class Odf
 
 		// A working directory is required for some zip proxy like PclZipProxy
 		if (in_array($this->config['ZIP_PROXY'], array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
+			$result = mkdir($this->config['PATH_TO_TMP']);
+		}
+		// Check the dir has been created
+		if (in_array($this->config['ZIP_PROXY'], array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
 			throw new OdfException('Temporary directory '.$this->config['PATH_TO_TMP'].' must exists');
 		}
 

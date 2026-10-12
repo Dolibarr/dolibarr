@@ -81,7 +81,8 @@ div.tabsAction > div.divButAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butActionRefused,
 div.tabsAction > div.divButAction > a.butAction,
 div.tabsAction > div.divButAction > a.butActionDelete,
-div.tabsAction > div.divButAction > a.butActionRefused {
+div.tabsAction > div.divButAction > a.butActionRefused,
+div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }

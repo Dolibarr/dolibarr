@@ -209,9 +209,9 @@ function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((int) ((float) microtime() * 1000000));
+	$max = strlen($chaine) - 1;
 	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[mt_rand() % strlen($chaine)];
+		$string .= $chaine[random_int(0, $max)];
 	}
 	return $string;
 }

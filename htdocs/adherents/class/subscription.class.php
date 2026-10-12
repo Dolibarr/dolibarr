@@ -185,6 +185,16 @@ class Subscription extends CommonObject
 			$this->fk_type = $type;
 		}
 
+		// Update the denormalized end date of subscription of the member, like update() and delete() do
+		if (!$error) {
+			$result = $member->update_end_date($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $member->error;
+				$this->errors[] = $this->error;
+			}
+		}
+
 		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
 			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
 		}
@@ -518,9 +528,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -1669,6 +1669,32 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// A user that still has HRM data (competency assessments, job positions, skills) must not be deleted
+		if (isModEnabled('hrm')) {
+			global $langs;
+
+			$hrmtables = array(
+				'hrm_evaluation' => array('label' => 'EvaluationCard', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
+			);
+			foreach ($hrmtables as $hrmtable => $hrminfo) {
+				$sanitizedfilter = $hrminfo['filter'];	// Built above from the id of the user only
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->nb > 0) {
+						$langs->loadLangs(array('errors', 'hrm'));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($hrminfo['label']));
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
 		// Remove rights
 		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
 
@@ -1686,6 +1712,13 @@ class User extends CommonObject
 
 		// Remove params
 		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
+		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
@@ -2275,8 +2308,12 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
-			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
+		if (isModEnabled('multicompany') && !empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
+			// entity flag can be set/unset only by another superadmin user, and only when multicompany is enabled.
+			// Without multicompany, entity must never be written here: fetch() forces an admin's entity to 0 in memory
+			// (an admin is a global admin without multicompany), and persisting that would wrongly turn the user into
+			// a "whole database" (entity 0) admin.
+			$sql .= ", entity = ".((int) $this->entity);
 		}
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
@@ -3989,7 +4026,7 @@ class User extends CommonObject
 			$childids = $this->cache_childids[$this->id];
 		} else {
 			// Init this->users
-			$this->get_full_tree();
+			$treeresult = $this->get_full_tree();
 
 			$idtoscan = $this->id;
 
@@ -3999,6 +4036,14 @@ class User extends CommonObject
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}
+			}
+
+			// A loop anywhere in the hierarchy aborts get_full_tree(), leaving the branches it had not
+			// walked yet with an empty fullpath, so they silently drop out of the list above. Do not
+			// cache such a truncated result, it would be reused for the whole request.
+			if ($treeresult < 0) {
+				dol_syslog(get_class($this)."::getAllChildIds got a truncated tree: ".$this->error, LOG_WARNING);
+				return $addcurrentuser ? array($this->id => $this->id) : $childids;
 			}
 		}
 		$this->cache_childids[$this->id] = $childids;

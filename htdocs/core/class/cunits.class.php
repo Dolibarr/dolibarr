@@ -208,7 +208,13 @@ class CUnits extends CommonDict
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
-				$this->scale = $obj->scale ? (int) $obj->scale : null;
+				// Preserve scale=0 (e.g. the kg row). A truthy test on $obj->scale would
+				// collapse the legitimate scale of "0" into null and, downstream, the
+				// "weight unit" dropdown comparison in selectMeasuringUnits would no
+				// longer match the stored value under PHP 8 strict numeric-string
+				// rules, silently switching saved products to the first option (see
+				// issue #38497).
+				$this->scale = isset($obj->scale) ? (int) $obj->scale : null;
 				$this->unit_type = $obj->unit_type;
 				$this->active = (int) $obj->active;
 			}
@@ -302,7 +308,8 @@ class CUnits extends CommonDict
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
-					$record->scale = $obj->scale ? (int) $obj->scale : null;
+					// Same scale-preservation as in fetch(): see issue #38497.
+					$record->scale = isset($obj->scale) ? (int) $obj->scale : null;
 					$record->active = (int) $obj->active;
 
 					$this->records[$record->id] = $record;
