@@ -3228,30 +3228,35 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->invoice->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('invoice').")";
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping for preview of proposals
 		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	} elseif ($modulepart == 'apercucommande' && !empty($conf->order->multidir_output[$entity])) {
 		// Wrapping for preview of orders
 		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} elseif (($modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
 		// Wrapping for preview of vendor proposals
 		if ($fuser->hasRight('supplier_proposal', $lire)) {
@@ -3264,12 +3269,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for preview of supplier invoices
 		if ($fuser->hasRight('fournisseur', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
 		if ($fuser->hasRight('holiday', $read) || $fuser->hasRight('holiday', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
