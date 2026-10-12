@@ -356,7 +356,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 	}
 	// Validate manual refs before creating subscription (only for linktoobject option)
-	if ($action == 'subscription' && $option == 'linktoobject') {
+	if ($action == 'subscription' && $option == 'linktoobject' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		if (!empty($invoicereftolink_post)) {
 			$tmpinvoice = new Facture($db);
 			if ($tmpinvoice->fetch(0, $invoicereftolink_post) <= 0) {
