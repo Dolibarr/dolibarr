@@ -467,9 +467,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				}
 
 				// --- Manual order ref - allowed to link to any thirdparty ---
-				$ordermanual = GETPOST('ordermanual', 'int');
 				$orderreftolink = GETPOST('orderreftolink', 'alpha');
-				if (!empty($ordermanual) && !empty($orderreftolink)) {
+				if (!empty($orderreftolink)) {
 					$tmporder = new Commande($db);
 					if ($tmporder->fetch('', $orderreftolink) > 0) {
 						if (!empty($existinglinks['commande-'.$tmporder->id])) {
