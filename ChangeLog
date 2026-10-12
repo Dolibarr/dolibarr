@@ -15,6 +15,7 @@ The following changes may create regressions for some external modules, but were
 * The trigger 'BILL_SUPPLIER_CANCELED', fired when a supplier invoice is canceled, has been renamed into 'BILL_SUPPLIER_CANCEL' to be consistent with others
 * Method getRights() on the object (not on user!) was bugged (and used only in one tpl file). Has been replaced with hasUserPermission().
   Also hasUserWritePermissionOnField (also used at few places only) must be replaced with hasUserPermissionOnField().
+* On the reception card, lines of lots/serial numbers of a same purchase order line are now grouped under a summary line. The hook 'printFieldListValue' is not called on this summary line.
 * The use of starting char '^...' for parameter $picto name in img_object() has been removed.
 * Removed library MathPHP. Was introduced in 2023. Never used by Dolibarr after 3 years.
 

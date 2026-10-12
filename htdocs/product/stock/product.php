@@ -597,52 +597,9 @@ if ($id > 0 || $ref) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock_product');
+	$arrayofjs = (isModEnabled('productbatch') && !empty($conf->use_javascript_ajax)) ? array('/core/js/lib_batchlines_toggle.js') : array();
 
-	if (!empty($conf->use_javascript_ajax)) {
-		?>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$(".collapse_batch").click(function() {
-					console.log("We click on collapse_batch");
-					var id_entrepot = $(this).attr('id').replace('ent', '');
-
-					if($(this).text().indexOf('+') > 0) {
-						$(".batch_warehouse" + id_entrepot).show();
-						$(this).html('(-)');
-						jQuery("#show_all").hide();
-						jQuery("#hide_all").show();
-					}
-					else {
-						$(".batch_warehouse" + id_entrepot).hide();
-						$(this).html('(+)');
-					}
-
-					return false;
-				});
-
-				$("#show_all").click(function() {
-					console.log("We click on show_all");
-					$("[class^=batch_warehouse]").show();
-					$("[class^=collapse_batch]").html('(-)');
-					jQuery("#show_all").hide();
-					jQuery("#hide_all").show();
-					return false;
-				});
-
-				$("#hide_all").click(function() {
-					console.log("We click on hide_all");
-					$("[class^=batch_warehouse]").hide();
-					$("[class^=collapse_batch]").html('(+)');
-					jQuery("#hide_all").hide();
-					jQuery("#show_all").show();
-					return false;
-				});
-
-			});
-		</script>
-		<?php
-	}
+	llxHeader('', $title, $helpurl, '', 0, 0, $arrayofjs, '', '', 'mod-product page-card_stock_product');
 
 	if ($result > 0) {
 		$head = product_prepare_head($object);
@@ -992,6 +949,7 @@ if ($id > 0 || $ref) {
 }
 
 
+$showBatchByDefault = (bool) getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
 $showstockdetails = 1;
 if ($variants && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 	$showstockdetails = 0;
@@ -1061,10 +1019,7 @@ if ($showstockdetails) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td class="minwidth200">';
 		if (!empty($conf->use_javascript_ajax)) {
-			print '<a id="show_all" href="#" class="hideobject">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
-			//print ' &nbsp; ';
-			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("HideLots").'</a>';
-			//print '&nbsp;'.$form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
+			print getBatchLinesToggleHeader($langs, $showBatchByDefault);
 		}
 		print '</td>';
 		print '<td class="right">'.$langs->trans("batch_number").'</td>';
@@ -1128,9 +1083,7 @@ if ($showstockdetails) {
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
 			if (!empty($conf->use_javascript_ajax) && isModEnabled('productbatch') && $object->hasbatch()) {
-				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
-				print(!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? '(+)' : '(-)');
-				print '</a>';
+				print getBatchLineToggleLink('ent'.$entrepotstatic->id, $showBatchByDefault);
 			}
 			print '</td>';
 
@@ -1243,7 +1196,7 @@ if ($showstockdetails) {
 						print '<td></td>';
 						print '</tr>';
 					} else {
-						print "\n".'<tr style="display:'.(!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
+						print "\n".'<tr class="batch_warehouse'.$entrepotstatic->id.'" '.getBatchLineChildRowAttributes('ent'.$entrepotstatic->id, $showBatchByDefault).'><td class="left">';
 						print '</td>';
 						print '<td class="right nowraponall">';
 						if ($product_lot_static->id > 0) {

@@ -1110,3 +1110,90 @@ function getProductForEmailTemplate($id)
 	}
 	return $productarray;
 }
+
+/**
+ * Return the links to show or hide all lot/serial lines of a table.
+ *
+ * @param	Translate	$langs			Language object
+ * @param	bool		$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string						HTML content
+ */
+function getBatchLinesToggleHeader(Translate $langs, bool $showByDefault): string
+{
+	$out = '<a id="batchlines_show_all" href="#" class="nowraponall'.($showByDefault ? ' hideobject' : '').'">'.img_picto('', 'folder-open', 'class="paddingright"').dol_escape_htmltag($langs->trans("ShowAllLots")).'</a>';
+	$out .= '<a id="batchlines_hide_all" href="#" class="nowraponall'.($showByDefault ? '' : ' hideobject').'">'.img_picto('', 'folder', 'class="paddingright"').dol_escape_htmltag($langs->trans("HideLots")).'</a>';
+
+	return $out;
+}
+
+/**
+ * Return the link to show or hide the lot/serial lines of one group of lines.
+ *
+ * @param	string	$groupKey		Key shared with the lot lines of the group (see getBatchLineChildRowAttributes())
+ * @param	bool	$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string					HTML content
+ */
+function getBatchLineToggleLink(string $groupKey, bool $showByDefault): string
+{
+	$out = '<a href="#" class="batchlines_toggle marginleftonly" data-batchtoggle="'.dol_escape_htmltag($groupKey).'">';
+	$out .= img_picto('', 'plus-square', 'class="batchlines_icon_collapsed'.($showByDefault ? ' hideobject' : '').'"');
+	$out .= img_picto('', 'minus-square', 'class="batchlines_icon_expanded'.($showByDefault ? '' : ' hideobject').'"');
+	$out .= '</a>';
+
+	return $out;
+}
+
+/**
+ * Return the attributes of a lot/serial line belonging to a group of lines.
+ *
+ * @param	string	$groupKey		Key shared with the toggle link of the group (see getBatchLineToggleLink())
+ * @param	bool	$showByDefault	True if lot lines are visible when the page is loaded
+ * @return	string					HTML attributes, without leading space
+ */
+function getBatchLineChildRowAttributes(string $groupKey, bool $showByDefault): string
+{
+	return 'data-batchgroup="'.dol_escape_htmltag($groupKey).'"'.($showByDefault ? '' : ' style="display: none"');
+}
+
+/**
+ * Return the link to a lot/serial number, or a tooltip with its known information when it is not recorded as a lot.
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	Form		$form		Form object
+ * @param	Translate	$langs		Language object
+ * @param	int			$productId	Id of product
+ * @param	string		$batch		Lot/serial number
+ * @param	int|string	$sellby		Sell-by date of the line, used when the lot is not recorded
+ * @param	int|string	$eatby		Eat-by date of the line, used when the lot is not recorded
+ * @return	string					HTML content
+ */
+function getBatchLotNomUrl(DoliDB $db, Form $form, Translate $langs, int $productId, string $batch, $sellby, $eatby): string
+{
+	global $conf;
+
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+
+	$cacheKey = $productId.'|'.$batch;
+	if (!isset($conf->cache['productlot'][$cacheKey])) {
+		$productlot = new Productlot($db);
+		$result = $productlot->fetch(0, $productId, $batch);
+		if ($result < 0) {
+			dol_syslog(__FUNCTION__.' '.$productlot->error, LOG_ERR);
+		}
+		$conf->cache['productlot'][$cacheKey] = ($result > 0 ? $productlot : false);
+	}
+
+	if ($conf->cache['productlot'][$cacheKey]) {
+		return $conf->cache['productlot'][$cacheKey]->getNomUrl(1);
+	}
+
+	$batchinfo = $langs->trans("Batch").': '.dol_escape_htmltag($batch);
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($sellby)) {
+		$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($sellby, "day");
+	}
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($eatby)) {
+		$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($eatby, "day");
+	}
+
+	return $form->textwithtooltip(img_picto('', 'object_barcode').' '.dol_escape_htmltag($batch), $batchinfo);
+}
