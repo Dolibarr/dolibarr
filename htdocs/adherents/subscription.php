@@ -1153,9 +1153,12 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// Invoices of the thirdparty, newest first
 				// ===== START BLOK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
+					// Show project column only if module enabled and user can read projects
+					$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
+
 					print '<b>'.$langs->trans("Invoices").'</b>';
 
-					$sql_invoices = "SELECT f.rowid";
+					$sql_invoices = "SELECT f.rowid, f.fk_projet";
 					$sql_invoices .= " FROM ".MAIN_DB_PREFIX."facture as f";
 					$sql_invoices .= " WHERE f.fk_soc = ".((int) $object->socid)." AND f.entity IN (".getEntity('invoice').")";
 					$sql_invoices .= $db->order("f.datef", "DESC");
@@ -1166,6 +1169,9 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '<td class="center">'.$langs->trans("Select").'</td>';
 					print '<td>'.$langs->trans("Ref").'</td>';
 					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					if ($showproject) {
+						print '<td>'.$langs->trans("Project").'</td>';
+					}
 					print '<td class="center">'.$langs->trans("Date").'</td>';
 					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 					print '<td class="right">'.$langs->trans("Status").'</td>';
@@ -1175,6 +1181,12 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					if ($resql_invoices) {
 						$num_invoices = $db->num_rows($resql_invoices);
 						$invoicestatic = new Facture($db);
+
+						if ($showproject) {
+							require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+							$projectstatic = new Project($db);
+						}
+
 						$j = 0;
 						while ($j < $num_invoices) {
 							$objinv = $db->fetch_object($resql_invoices);
@@ -1190,14 +1202,22 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 								print '&nbsp;';
 							}
 							print '</td>';
+							if ($showproject) {
+								$project_label = '&nbsp;';
+								if (!empty($objinv->fk_projet) && $projectstatic->fetch($objinv->fk_projet) > 0) {
+									$project_label = $projectstatic->getNomUrl(1);
+								}
+								print '<td class="linkedcol-project">'.$project_label.'</td>';
+							}
 							print '<td class="linkedcol-date center">'.dol_print_date($invoicestatic->date, 'day').'</td>';
 							print '<td class="linkedcol-amount right">'.price($invoicestatic->total_ht).'</td>';
 							print '<td class="linkedcol-statut right">'.$invoicestatic->getLibStatut(3).'</td>';
 							print '</tr>';
 							$j++;
 						}
+						$colspan = $showproject ? 7 : 6;
 						if (!$num_invoices) {
-							print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+							print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 						}
 					} else {
 						dol_print_error($db);
@@ -1207,7 +1227,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '<tr class="liste_titre">';
 					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoicemanual" value="1" style="width: 14px; height: 14px;"></td>';
 					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
-					print '<td colspan="4"></td>';
+					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
 
 					print '</table>';
