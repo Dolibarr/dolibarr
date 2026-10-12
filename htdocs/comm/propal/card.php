@@ -3149,7 +3149,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$lines2del = GETPOST('line_checkbox', 'array:int');
 		if (is_array($lines2del) && count($lines2del) > 0) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' .implode(',', $lines2del) , $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' .implode(',', $lines2del), $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
 		} else {
 			setEventMessage($langs->trans('NoRecordSelected'), 'warnings');
 		}

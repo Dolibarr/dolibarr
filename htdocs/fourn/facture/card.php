@@ -401,7 +401,7 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
 				exit();
 			}
-		}	
+		}
 	} elseif ($action == 'unlinkdiscount' && $usercancreate) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);

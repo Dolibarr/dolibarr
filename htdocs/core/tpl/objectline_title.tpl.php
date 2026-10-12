@@ -260,18 +260,17 @@ if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 print '<th class="linecoledit"></th>'; // No width to allow autodim
 
 print '<th class="linecoldelete" style="width: 10px">';
-	if (in_array(get_class($object), ['Propal', 'FactureFournisseur'])) { // objects that support mass lines deletion
-		if ($object->status == get_class($object)::STATUS_DRAFT && (empty($action))) {
-			print '<a class="butActionDelete smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=massdellines&token='.newToken().'" title="'.$langs->trans('DelSelectedLines').'">';
-			print img_delete($langs->trans('DelSelectedLines'));
-			print '</a>';
-		} elseif ($object->status == get_class($object)::STATUS_DRAFT && ($action == 'massdellines' || $action == 'ask_massdellines')) { ?>
-			<input type="hidden" name="action" value="ask_massdellines"/>
-			<input class="inline-block button butAction butActionDelete  alignmiddle" type="submit" name="submitmassdellines" value="<?php print $langs->trans('btDelSel')?>" title="<?php print $langs->trans('DelSelectedLines')?>"/>
-			<a class="inline-block button button-cancel smallpaddingimp valignmiddle" style="font-size:0.8em" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=&token='.newToken(); ?>"><?php print $langs->trans('Cancel')?></a>
-		<?php
-		}
-	}
+if (in_array(get_class($object), ['Propal', 'FactureFournisseur'])) { // objects that support mass lines deletion
+	if ($object->status == get_class($object)::STATUS_DRAFT && (empty($action))) {
+		print '<a class="butActionDelete smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=massdellines&token='.newToken().'" title="'.$langs->trans('DelSelectedLines').'">';
+		print img_delete($langs->trans('DelSelectedLines'));
+		print '</a>';
+	} elseif ($object->status == get_class($object)::STATUS_DRAFT && ($action == 'massdellines' || $action == 'ask_massdellines')) { ?>
+		<input type="hidden" name="action" value="ask_massdellines"/>
+		<input class="inline-block button butAction butActionDelete  alignmiddle" type="submit" name="submitmassdellines" value="<?php print $langs->trans('btDelSel')?>" title="<?php print $langs->trans('DelSelectedLines')?>"/>
+		<a class="inline-block button button-cancel smallpaddingimp valignmiddle" style="font-size:0.8em" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=&token='.newToken(); ?>"><?php print $langs->trans('Cancel')?></a>
+	<?php }
+}
 print '</th>';
 
 print '<th class="linecolmove" style="width: 10px"></th>';
