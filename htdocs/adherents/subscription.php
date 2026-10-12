@@ -359,7 +359,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 	if ($action == 'subscription' && $option == 'linktoobject') {
 		if (!empty($invoicereftolink_post)) {
 			$tmpinvoice = new Facture($db);
-			if ($tmpinvoice->fetch('', $invoicereftolink_post) <= 0) {
+			if ($tmpinvoice->fetch(0, $invoicereftolink_post) <= 0) {
 				$error++;
 				setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink_post), null, 'errors');
 				$action = 'createsubscription';
@@ -368,7 +368,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 		if (!empty($orderreftolink_post)) {
 			$tmporder = new Commande($db);
-			if ($tmporder->fetch('', $orderreftolink_post) <= 0) {
+			if ($tmporder->fetch(0, $orderreftolink_post) <= 0) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink_post), null, 'errors');
 				$action = 'createsubscription';
@@ -440,7 +440,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$invoicereftolink = GETPOST('invoicereftolink', 'alpha');
 				if (!empty($invoicereftolink)) {
 					$tmpinvoice = new Facture($db);
-					if ($tmpinvoice->fetch('', $invoicereftolink) > 0) {
+					if ($tmpinvoice->fetch(0, $invoicereftolink) > 0) {
 						if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
 							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmpinvoice->ref), null, 'warnings');
 						} elseif ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
@@ -483,7 +483,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$orderreftolink = GETPOST('orderreftolink', 'alpha');
 				if (!empty($orderreftolink)) {
 					$tmporder = new Commande($db);
-					if ($tmporder->fetch('', $orderreftolink) > 0) {
+					if ($tmporder->fetch(0, $orderreftolink) > 0) {
 						if (!empty($existinglinks['commande-'.$tmporder->id])) {
 							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmporder->ref), null, 'warnings');
 						} elseif ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
@@ -1294,11 +1294,8 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// ===== COMMON SETUP FOR BOTH BLOCKS =====
 				// Show project column only if module enabled and user can read projects
 				$showproject = (isModEnabled('project') && $user->hasRight('projet', 'lire'));
-
-				if ($showproject) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-					$projectstatic = new Project($db);
-				}
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$projectstatic = new Project($db);
 
 				print '<div style="margin-left: 20px; margin-top: 5px;">';
 
