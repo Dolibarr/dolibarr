@@ -48,6 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
@@ -1141,6 +1143,145 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				}
 				print '</label><br>';
 			}
+			// ===== START link BLOK: Link to existing objects =====
+			if ((isModEnabled('invoice') || isModEnabled('order')) && isModEnabled('societe') && $object->socid > 0) {
+				print '<input type="radio" class="moreaction" id="linktoobject" name="paymentsave" value="linktoobject">';
+				print '<label for="linktoobject">  '.$langs->trans("MoreActionLinkToExistingObject").'</label><br>';
+
+				print '<div style="margin-left: 20px; margin-top: 5px;">';
+
+				// Invoices of the thirdparty, newest first
+				// ===== START BLOK: Invoices =====
+				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
+					print '<b>'.$langs->trans("Invoices").'</b>';
+
+					$sql_invoices = "SELECT f.rowid";
+					$sql_invoices .= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sql_invoices .= " WHERE f.fk_soc = ".((int) $object->socid)." AND f.entity IN (".getEntity('invoice').")";
+					$sql_invoices .= $db->order("f.datef", "DESC");
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="noborder allwidth">';
+					print '<tr class="liste_titre">';
+					print '<td class="center">'.$langs->trans("Select").'</td>';
+					print '<td>'.$langs->trans("Ref").'</td>';
+					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					print '<td class="center">'.$langs->trans("Date").'</td>';
+					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+					print '<td class="right">'.$langs->trans("Status").'</td>';
+					print '</tr>';
+
+					$resql_invoices = $db->query($sql_invoices);
+					if ($resql_invoices) {
+						$num_invoices = $db->num_rows($resql_invoices);
+						$invoicestatic = new Facture($db);
+						$j = 0;
+						while ($j < $num_invoices) {
+							$objinv = $db->fetch_object($resql_invoices);
+							$invoicestatic->fetch($objinv->rowid);
+
+							print '<tr class="oddeven">';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoices_to_link[]" value="'.$invoicestatic->id.'" style="width: 14px; height: 14px;"></td>';
+							print '<td class="linkedcol-name tdoverflowmax150">'.$invoicestatic->getNomUrl(1).'</td>';
+							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($invoicestatic->ref_client).'">';
+							if ($invoicestatic->ref_client) {
+								print '<span class="small">'.dol_escape_htmltag($invoicestatic->ref_client).'</span>';
+							} else {
+								print '&nbsp;';
+							}
+							print '</td>';
+							print '<td class="linkedcol-date center">'.dol_print_date($invoicestatic->date, 'day').'</td>';
+							print '<td class="linkedcol-amount right">'.price($invoicestatic->total_ht).'</td>';
+							print '<td class="linkedcol-statut right">'.$invoicestatic->getLibStatut(3).'</td>';
+							print '</tr>';
+							$j++;
+						}
+						if (!$num_invoices) {
+							print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					// Footer row - manual ref input
+					print '<tr class="liste_titre">';
+					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="invoicemanual" value="1" style="width: 14px; height: 14px;"></td>';
+					print '<td><input type="text" name="invoicereftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
+					print '<td colspan="4"></td>';
+					print '</tr>';
+
+					print '</table>';
+					print '</div>';
+				}
+				// ===== END BLOK: Invoices =====
+
+				// Orders of the thirdparty, newest first
+				// ===== START BLOK: Orders =====
+				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+					print '<b>'.$langs->trans("Orders").'</b>';
+
+					$sql_orders = "SELECT c.rowid";
+					$sql_orders .= " FROM ".MAIN_DB_PREFIX."commande as c";
+					$sql_orders .= " WHERE c.fk_soc = ".((int) $object->socid)." AND c.entity IN (".getEntity('commande').")";
+					$sql_orders .= $db->order("c.date_commande", "DESC");
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="noborder allwidth">';
+					print '<tr class="liste_titre">';
+					print '<td class="center">'.$langs->trans("Select").'</td>';
+					print '<td>'.$langs->trans("Ref").'</td>';
+					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					print '<td class="center">'.$langs->trans("Date").'</td>';
+					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
+					print '<td class="right">'.$langs->trans("Status").'</td>';
+					print '</tr>';
+
+					$resql_orders = $db->query($sql_orders);
+					if ($resql_orders) {
+						$num_orders = $db->num_rows($resql_orders);
+						$orderstatic = new Commande($db);
+						$j = 0;
+						while ($j < $num_orders) {
+							$objord = $db->fetch_object($resql_orders);
+							$orderstatic->fetch($objord->rowid);
+
+							print '<tr class="oddeven">';
+							print '<td class="center" style="padding: 4px;"><input type="checkbox" name="orders_to_link[]" value="'.$orderstatic->id.'" style="width: 14px; height: 14px;"></td>';
+							print '<td class="linkedcol-name tdoverflowmax150">'.$orderstatic->getNomUrl(1).'</td>';
+							print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dol_escape_htmltag($orderstatic->ref_client).'">';
+							if ($orderstatic->ref_client) {
+								print '<span class="small">'.dol_escape_htmltag($orderstatic->ref_client).'</span>';
+							} else {
+								print '&nbsp;';
+							}
+							print '</td>';
+							print '<td class="linkedcol-date center">'.dol_print_date($orderstatic->date, 'day').'</td>';
+							print '<td class="linkedcol-amount right">'.price($orderstatic->total_ht).'</td>';
+							print '<td class="linkedcol-statut right">'.$orderstatic->getLibStatut(3).'</td>';
+							print '</tr>';
+							$j++;
+						}
+						if (!$num_orders) {
+							print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					// Footer row - manual ref input
+					print '<tr class="liste_titre">';
+					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="ordermanual" value="1" style="width: 14px; height: 14px;"></td>';
+					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
+					print '<td colspan="4"></td>';
+					print '</tr>';
+
+					print '</table>';
+					print '</div>';
+				}
+				// ===== END BLOK: Orders =====
+				print '</div>';
+			}
+			// ===== END link BLOK =====
 			print '</td></tr>';
 
 			// Bank account
