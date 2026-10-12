@@ -84,6 +84,7 @@ OSSetup=OS setup
 SecurityFilesDesc=Define here options related to security about uploading files.
 ErrorModuleRequirePHPVersion=Error, this module requires PHP version %s or higher
 ErrorModuleRequireDolibarrVersion=Error, this module requires Dolibarr version %s or higher
+RequiredVersions=Required versions
 ErrorDecimalLargerThanAreForbidden=Error, a precision higher than <b>%s</b> is not supported.
 DictionarySetup=Dictionary setup
 Dictionary=Dictionaries
