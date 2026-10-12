@@ -3405,14 +3405,25 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 * Returns the rights used for this class
-	 * @return int
+	 * Check if user has a permission on supplier invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
+		if ($mode == 'read') {
+			return (bool) $user->hasRight("fournisseur", "facture", "lire");
+		}
+		if ($mode == 'create' || $mode == 'write') {
+			return (bool) $user->hasRight("fournisseur", "facture", "creer");
+		}
+		if ($mode == 'delete') {
+			return (bool) $user->hasRight("fournisseur", "facture", "supprimer");
+		}
 
-		return $user->hasRight("fournisseur", "facture");
+		return false;
 	}
 
 	/**

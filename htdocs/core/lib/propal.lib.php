@@ -311,7 +311,7 @@ function getCustomerProposalPieChart($socid = 0)
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
+			$dolgraph->SetDataColor($colorseries);
 			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
