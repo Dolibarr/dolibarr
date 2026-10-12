@@ -142,7 +142,7 @@ print '
     	padding-'.$right.': 8px !important;
 	}
 
-	li.lilevel1 > a, li.lilevel1 > i {
+	li.lilevel1 > a, li.lilevel1 > i, li.lilevel1 > span {
 		padding-'.$left.': 30px !important;
 	}
 	li.lilevel2 a {
@@ -192,10 +192,10 @@ print '
         margin-right: 0px;
         margin-left: 0px;
     }
-    li.lilevel1 a {
+    li.lilevel1 a, li.lilevel1 > span {
         padding-bottom: 5px;
     }
-	li.lilevel1 > a, li.lilevel1 > i {
+	li.lilevel1 > a, li.lilevel1 > i, li.lilevel1 > span {
         background-repeat: no-repeat !important;';
 if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position: right;';
@@ -205,7 +205,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 print '	background-position-y: 1px;
 		padding-'.$left.': 20px;
 	}
-    li.lilevel1 a, li.lilevel1 {
+    li.lilevel1 a, li.lilevel1 > span, li.lilevel1 {
         color: #000;
         cursor: pointer;
         display: block;
@@ -242,7 +242,7 @@ print '	background-position-y: 1px;
     li.lilevel3:last-child {
         padding-bottom: 10px;
     }
-    a.alilevel0, li.lilevel1 a {
+    a.alilevel0, li.lilevel1 a, li.lilevel1 > span {
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
