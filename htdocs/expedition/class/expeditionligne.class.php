@@ -145,7 +145,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * Virtual products : array of total of quantities group product id and warehouse id ([id_product][id_warehouse] -> qty (int|float))
-	 * @var array<int, array<int, int|float>>
+	 * @var array<int, array<int, int|float>>|null	Null when PRODUIT_SOUSPRODUITS is off
 	 */
 	public $detail_children;
 
