@@ -1148,14 +1148,20 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				print '<input type="radio" class="moreaction" id="linktoobject" name="paymentsave" value="linktoobject">';
 				print '<label for="linktoobject">  '.$langs->trans("MoreActionLinkToExistingObject").'</label><br>';
 
+				// ===== COMMON SETUP FOR BOTH BLOCKS =====
+				// Show project column only if module enabled and user can read projects
+				$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
+
+				if ($showproject) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+					$projectstatic = new Project($db);
+				}
+
 				print '<div style="margin-left: 20px; margin-top: 5px;">';
 
 				// Invoices of the thirdparty, newest first
 				// ===== START BLOK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
-					// Show project column only if module enabled and user can read projects
-					$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
-
 					print '<b>'.$langs->trans("Invoices").'</b>';
 
 					$sql_invoices = "SELECT f.rowid, f.fk_projet";
@@ -1181,11 +1187,6 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					if ($resql_invoices) {
 						$num_invoices = $db->num_rows($resql_invoices);
 						$invoicestatic = new Facture($db);
-
-						if ($showproject) {
-							require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-							$projectstatic = new Project($db);
-						}
 
 						$j = 0;
 						while ($j < $num_invoices) {
@@ -1238,9 +1239,6 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// Orders of the thirdparty, newest first
 				// ===== START BLOK: Orders =====
 				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-					// Show project column only if module enabled and user can read projects
-					$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
-
 					print '<b>'.$langs->trans("Orders").'</b>';
 
 					$sql_orders = "SELECT c.rowid, c.fk_projet";
@@ -1266,11 +1264,6 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					if ($resql_orders) {
 						$num_orders = $db->num_rows($resql_orders);
 						$orderstatic = new Commande($db);
-
-						if ($showproject) {
-							require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-							$projectstatic = new Project($db);
-						}
 
 						$j = 0;
 						while ($j < $num_orders) {
