@@ -1362,8 +1362,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
  * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
  * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
- * Only the types of objects linked to a third party or to a project, and expense reports (author in the hierarchy of the user),
- * are checked, an empty array is returned for the others.
+ * Expense reports, leave requests and salaries are checked on the hierarchy of the user. For the other types of objects unknown by
+ * checkUserAccessToObject(), only the entity is checked, if the object is multi-entity managed.
  *
  * @param	User			$user		User
  * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
@@ -1374,6 +1374,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 {
 	$feature = '';
+	$sharedelement = $object->element;	// Key used by getEntity() to check the entity, when it differs from the element
 	switch ($object->element) {
 		case 'societe':
 		case 'contact':
@@ -1388,6 +1389,13 @@ function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 		case 'reception':
 		case 'order_supplier':
 		case 'invoice_supplier':
+		case 'product':
+		case 'don':
+		case 'stock':
+		case 'user':
+		case 'usergroup':
+		case 'website':
+		case 'payment':
 			$feature = $object->element;
 			break;
 		case 'action':
@@ -1399,6 +1407,28 @@ function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 		case 'project_task':
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 			$feature = 'project_task';
+			break;
+		case 'member':
+			$feature = 'adherent';
+			break;
+		case 'mo':
+			$feature = 'mrp';
+			break;
+		case 'chargesociales':
+			$feature = 'chargesociales';
+			$sharedelement = 'tax';
+			break;
+		case 'bank_account':
+			$feature = 'banque';
+			break;
+		case 'category':
+			$feature = 'categorie';
+			break;
+		case 'dolresource':
+			$feature = 'resource';
+			break;
+		case 'knowledgerecord':
+			$feature = 'knowledgemanagement';
 			break;
 		case 'expensereport':
 			// Not linked to a third party but to its author, who must be in the hierarchy of the user unless he can read
@@ -1432,9 +1462,116 @@ function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 			}
 			$db->free($resql);
 			return $refusedids;
+		case 'holiday':
+			// Not linked to a third party but to its employee, who must be in the hierarchy of the user unless he can read all
+			// leave requests or is the approver of the request (same rule as holiday/card.php). All ids are checked with one request.
+			global $db;
+			$sanitizedids = [];
+			foreach ($ids as $id) {
+				if ((int) $id > 0) {
+					$sanitizedids[] = (int) $id;
+				}
+			}
+			if (empty($sanitizedids)) {
+				return [];
+			}
+			$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."holiday as t";
+			$sql .= " WHERE t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+			$sql .= " AND (t.entity NOT IN (".getEntity('holiday', 1).")";
+			if (!$user->hasRight('holiday', 'readall')) {
+				$sql .= " OR (t.fk_user NOT IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+				if ($user->hasRight('holiday', 'approve') && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {
+					$sql .= " AND t.fk_validator <> ".((int) $user->id);
+				}
+				$sql .= ")";
+			}
+			$sql .= ")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+				return $sanitizedids;
+			}
+			$refusedids = [];
+			while ($obj = $db->fetch_object($resql)) {
+				$refusedids[] = (int) $obj->rowid;
+			}
+			$db->free($resql);
+			return $refusedids;
+		case 'salary':
+			// Not linked to a third party but to its employee, who must be the user, or in his hierarchy if he can read the salaries of
+			// his subordinates, unless he can read all salaries (same rule as salaries/list.php). All ids are checked with one request.
+			global $db;
+			$sanitizedids = [];
+			foreach ($ids as $id) {
+				if ((int) $id > 0) {
+					$sanitizedids[] = (int) $id;
+				}
+			}
+			if (empty($sanitizedids)) {
+				return [];
+			}
+			$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."salary as t";
+			$sql .= " WHERE t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+			$sql .= " AND (t.entity NOT IN (".getEntity('salary', 1).")";
+			if (!$user->hasRight('salaries', 'readall')) {
+				if ($user->hasRight('salaries', 'read') && $user->hasRight('salaries', 'readchild')) {
+					$sql .= " OR t.fk_user IS NULL OR t.fk_user NOT IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+				} elseif ($user->hasRight('salaries', 'read')) {
+					$sql .= " OR t.fk_user IS NULL OR t.fk_user <> ".((int) $user->id);
+				} else {
+					$sql .= " OR 1 = 1";
+				}
+			}
+			$sql .= ")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+				return $sanitizedids;
+			}
+			$refusedids = [];
+			while ($obj = $db->fetch_object($resql)) {
+				$refusedids[] = (int) $obj->rowid;
+			}
+			$db->free($resql);
+			return $refusedids;
 	}
 	if (empty($feature)) {
-		return [];
+		// No rule known by checkUserAccessToObject() for this type of object (other modules, external modules...): we check
+		// only the entity, with the same rule as the fetch of the object (field entity of the table or of its parent table).
+		if (empty($object->table_element) || empty($object->ismultientitymanaged)) {
+			return [];
+		}
+		global $db;
+		$sanitizedids = [];
+		foreach ($ids as $id) {
+			if ((int) $id > 0) {
+				$sanitizedids[] = (int) $id;
+			}
+		}
+		if (empty($sanitizedids)) {
+			return [];
+		}
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($object->table_element)." as t";
+		if (is_numeric($object->ismultientitymanaged)) {
+			$sql .= " WHERE t.entity NOT IN (".getEntity($object->element, 1).")";
+		} else {
+			// Entity is on a parent table, for example 'fk_soc@societe'
+			$tmparray = explode('@', $object->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$db->sanitize($tmparray[1])." as tp ON t.".$db->sanitize($tmparray[0])." = tp.rowid";
+			$sql .= " WHERE (tp.rowid IS NULL OR tp.entity NOT IN (".getEntity($object->element, 1)."))";
+		}
+		$sql .= " AND t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+			return $sanitizedids;
+		}
+		$refusedids = [];
+		while ($obj = $db->fetch_object($resql)) {
+			$refusedids[] = (int) $obj->rowid;
+		}
+		$db->free($resql);
+		return $refusedids;
 	}
 
 	$refusedids = [];
@@ -1443,7 +1580,7 @@ function getObjectIdsRefusedToUser(User $user, $object, array $ids)
 		if ($id <= 0) {
 			continue;
 		}
-		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$sharedelement, '', 'fk_soc', 'rowid')) {
 			$refusedids[] = $id;
 		}
 	}
