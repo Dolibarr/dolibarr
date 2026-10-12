@@ -1,5 +1,5 @@
 ---
-name: skill-github
+name: skill-doli-github
 description:
   Handles GitHub issues and pull requests of the project with the gh CLI - list, triage, analyze an issue, review a PR, diagnose a CI failure, comment, label, close or merge.
   Use when the user mentions an issue, a PR, a failing CI check or GitHub.

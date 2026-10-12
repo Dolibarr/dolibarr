@@ -858,6 +858,7 @@ function getAiChatAssistantConfig()
 		'ActionCancelled',
 		'ExecutingTool',
 		'FetchingData',
+		'AISearchDoneNowPreparingAction',
 		'GeneratingLink',
 		'Found',
 		'File',

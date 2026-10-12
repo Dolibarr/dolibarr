@@ -957,7 +957,7 @@ class ModeleImports
 	/**
 	 *  Return array of next record in input file.
 	 *
-	 *  @return	array<string,array{val:mixed,type:int<-1,1>}>|boolean     Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 *  @return	array<int,array{val:mixed,type:int<-1,1>}>|boolean     Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
