@@ -157,7 +157,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($source == 'order') {
-	$securekeyseed = getDolGlobalString('ORDER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('ORDER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
 	$securekeyseed = getDolGlobalString(dol_strtoupper((string) $source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }

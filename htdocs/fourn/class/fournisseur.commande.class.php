@@ -3693,15 +3693,25 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 * Returns the rights used for this class
+	 * Check if user has a permission on supplier orders
 	 *
-	 * @return int
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
+		if ($mode == 'read') {
+			return (bool) $user->hasRight("fournisseur", "commande", "lire");
+		}
+		if ($mode == 'create' || $mode == 'write') {
+			return (bool) $user->hasRight("fournisseur", "commande", "creer");
+		}
+		if ($mode == 'delete') {
+			return (bool) $user->hasRight("fournisseur", "commande", "supprimer");
+		}
 
-		return $user->hasRight("fournisseur", "commande");
+		return false;
 	}
 
 
