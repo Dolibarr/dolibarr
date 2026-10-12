@@ -3634,7 +3634,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-						} elseif (count($lines[$i]->detail_children ?? []) > 1) {
+						} elseif (is_array($lines[$i]->detail_children) && count($lines[$i]->detail_children) > 1) {
 							$detail = '';
 							foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 								foreach ($child_stock_list as $warehouse_id => $total_qty) {
