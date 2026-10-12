@@ -332,6 +332,20 @@ function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
 	return $report;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('modulebuilder'));
+$hookobject = null;
+
+$parameters = array('module' => $module, 'tab' => $tab, 'tabobj' => $tabobj, 'dirins' => $dirins, 'dirread' => $dirread, 'listofmodules' => $listofmodules);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $hookobject, $action); // Note that $action may have been modified by hook
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if ($reshook > 0) {
+	// The action was fully managed by a hook, so native actions are skipped
+	$action = '';
+}
+
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
 	$modulename = dol_string_nounprintableascii(dol_string_unaccent(dol_ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
@@ -464,7 +478,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 					'Editor name'                                               => $editorname,
 					'https://www.example.com'                                   => $editorurl,
 					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
-					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
+					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\';' : '$this->picto = \'' . $picto . '\';',
 					'modulefamily'                                              => $family,
 					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
 					// array_merge -- causing str_replace to search for '0' instead of '500000'.
@@ -1528,6 +1542,23 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$i += 5;
 			}
 			$stringforproperties .= ');'."\n";
+			$stringforproperties .= '// END MODULEBUILDER PROPERTIES'."\n";
+		}
+	}
+
+	// Hook to define the properties of the new object from another source than a table (a hook returning
+	// resArray['fields'] with the same format than $fields replaces the properties of the template)
+	if (!$error) {
+		$parameters = array('module' => $module, 'objectname' => $objectname, 'dirins' => $dirins, 'initfromtablename' => $tablename);
+		$reshook = $hookmanager->executeHooks('getFieldsForNewObject', $parameters, $hookobject, $action);
+		if ($reshook < 0) {
+			$error++;
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$tabobj = 'newobject';
+		} elseif ($reshook > 0 && !empty($hookmanager->resArray['fields']) && is_array($hookmanager->resArray['fields'])) {
+			// Class file is reformatted later by rebuildObjectClass()
+			$stringforproperties = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
+			$stringforproperties .= 'public $fields = '.var_export($hookmanager->resArray['fields'], true).';'."\n";
 			$stringforproperties .= '// END MODULEBUILDER PROPERTIES'."\n";
 		}
 	}
@@ -4514,6 +4545,14 @@ if ($module == 'initmodule') {
 				print $form->textwithpicto('', $langs->trans("DefinePropertiesFromExistingTableDesc").'<br>'.$langs->trans("DefinePropertiesFromExistingTableDesc2"));
 				print '</div></div>';
 
+				// Other lines of options (printed as div class="tagtr")
+				$parameters = array('module' => $module, 'tabobj' => $tabobj);
+				$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $hookobject, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
+
 				print '</div>';
 
 				print '<br>';
@@ -5011,6 +5050,14 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+
+							$parameters = array('module' => $module, 'tabobj' => $tabobj, 'dirread' => $dirread);
+							$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $tmpobject, $action);
+							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+							}
+							print $hookmanager->resPrint;
+
 							print '<br><br class="clearboth">';
 							print '<br class="clearboth">';
 
