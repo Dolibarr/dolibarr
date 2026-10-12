@@ -407,17 +407,9 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$adhlink->fetch($subscription->fk_adherent);
 				$thirdpartyidtolink = $adhlink->fk_soc;
 
-				// Load existing links so we can skip duplicates
+				// Track links created in this request so we skip duplicates
+				// (e.g. object both checked in list and typed as manual ref)
 				$existinglinks = array();
-				$subscription->fetchObjectLinked();
-				if (!empty($subscription->linkedObjectsIds)) {
-					foreach ($subscription->linkedObjectsIds as $linkedtype => $linkedids) {
-						foreach ($linkedids as $linkedid) {
-							$existinglinks[$linkedtype.'-'.$linkedid] = 1;
-						}
-					}
-				}
-
 				$nbcreatedlinks = 0;
 
 				// --- Selected invoices (checkboxes) - must belong to member's thirdparty ---
