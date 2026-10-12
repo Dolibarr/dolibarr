@@ -347,7 +347,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 	}
 
 	// Check if user filled link fields but chose 'none'
-	if ($action == 'subscription' && $option == 'none') {
+	if ($action == 'subscription' && $option == 'none' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicereftolink_post) || !empty($orderreftolink_post));
 		if ($link_inputs_exist) {
 			setEventMessages($langs->trans("ErrorLinkFieldsFilledButPaymentSaveNone"), null, 'errors');
