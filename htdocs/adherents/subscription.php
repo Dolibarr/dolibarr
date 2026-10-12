@@ -1293,7 +1293,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 
 				// ===== COMMON SETUP FOR BOTH BLOCKS =====
 				// Show project column only if module enabled and user can read projects
-				$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
+				$showproject = (isModEnabled('project') && $user->hasRight('projet', 'lire'));
 
 				if ($showproject) {
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
