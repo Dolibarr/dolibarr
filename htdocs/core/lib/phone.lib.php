@@ -122,7 +122,7 @@ function dol_get_trunk_prefix($db, $phone_code)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '' && $obj->trunk_prefix !== null) {
+		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '') {
 			$db->free($resql);
 			return $obj->trunk_prefix;
 		}
