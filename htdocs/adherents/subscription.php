@@ -1286,7 +1286,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				}
 				print '</label><br>';
 			}
-			// ===== START link BLOK: Link to existing objects =====
+			// ===== START link BLOCK: Link to existing objects =====
 			if ((isModEnabled('invoice') || isModEnabled('order')) && isModEnabled('societe') && $object->socid > 0) {
 				print '<input type="radio" class="moreaction" id="linktoobject" name="paymentsave" value="linktoobject">';
 				print '<label for="linktoobject">  '.$langs->trans("MoreActionLinkToExistingObject").'</label><br>';
@@ -1303,7 +1303,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				print '<div style="margin-left: 20px; margin-top: 5px;">';
 
 				// Invoices of the thirdparty, newest first
-				// ===== START BLOK: Invoices =====
+				// ===== START BLOCK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 					print load_fiche_titre($langs->trans("Invoices"), '', '');
 
@@ -1377,10 +1377,10 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '</table>';
 					print '</div>';
 				}
-				// ===== END BLOK: Invoices =====
+				// ===== END BLOCK: Invoices =====
 
 				// Orders of the thirdparty, newest first
-				// ===== START BLOK: Orders =====
+				// ===== START BLOCK: Orders =====
 				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 					print load_fiche_titre($langs->trans("Orders"), '', '');
 
@@ -1454,10 +1454,10 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '</table>';
 					print '</div>';
 				}
-				// ===== END BLOK: Orders =====
+				// ===== END BLOCK: Orders =====
 				print '</div>';
 			}
-			// ===== END link BLOK =====
+			// ===== END link BLOCK =====
 			print '</td></tr>';
 
 			// Bank account
