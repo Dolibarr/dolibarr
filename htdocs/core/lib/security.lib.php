@@ -854,6 +854,10 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		$modulepart = 'delivery';
 	}
+	// Previews (apercu*) are files into the same directories than the documents of the object, so we check the same object
+	if (strpos($modulepart, 'apercu') === 0) {
+		$modulepart = dol_substr($modulepart, 6);
+	}
 
 	// Find the subdirectory name as the reference
 	$refname = basename(dirname($original_file)."/");
