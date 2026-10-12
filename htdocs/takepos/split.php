@@ -153,20 +153,13 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
  */
 
 $invoice = new Facture($db);
-if (isset($invoiceid) && $invoiceid > 0) {
+$invoiceid = 0; // Invoice does not exist yet
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
+$resql = $db->query($sql);
+$obj = $db->fetch_object($resql);
+if ($obj) {
+	$invoiceid = $obj->rowid;
 	$invoice->fetch($invoiceid);
-} else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
-	if ($obj) {
-		$invoiceid = $obj->rowid;
-	}
-	if (!isset($invoiceid)) {
-		$invoiceid = 0; // Invoice does not exist yet
-	} else {
-		$invoice->fetch($invoiceid);
-	}
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
