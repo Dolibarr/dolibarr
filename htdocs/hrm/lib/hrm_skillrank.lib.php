@@ -124,7 +124,8 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 		return $langs->trans('SkillHasNoLines');
 	}
 
-	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.($selected_rank == "-1" ? ' selected' : '').'">';
+	$ret = '<!-- field jquery -->';
+	$ret ='<span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.($selected_rank == "-1" ? ' selected' : '').'">';
 	$ret .= $langs->trans('NA');
 	$ret .= '</span>';
 	if (is_array($Lines) && !empty($Lines)) {
@@ -153,7 +154,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 					$(".' . $inputname . '_' . $fk_skill . '").removeClass("selected");
 					if(same)
 					{
-						$("#' . $inputname . '_' . $fk_skill . '").val("");
+						$("#' . $inputname . '_' . $fk_skill . '").val(0);
 					}else {
 						$(this).addClass("selected");
 						$("#' . $inputname . '_' . $fk_skill . '").val(val);

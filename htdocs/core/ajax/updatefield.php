@@ -77,6 +77,8 @@ if (!$canreadsalary) {
 	$blacklistedfields[] = 'thm';
 	$blacklistedfields[] = 'tjm';
 }
+// Blacklist is a protection in depth in case the whitelist is extended later, so phan sees no overlap today.
+// @phan-suppress-next-line PhanSuspiciousWeakTypeComparisonInGlobalScope
 if (in_array($field, $blacklistedfields)) {
 	httponly_accessforbidden("Can't edit a field blacklisted with name ".$field);
 }

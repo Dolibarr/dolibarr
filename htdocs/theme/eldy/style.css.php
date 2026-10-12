@@ -6887,12 +6887,15 @@ span[phptag] {
 	text-decoration: unset !important;
 	margin: 0px 4px 0px 4px  !important
 }
-
 .websitebar {
 	border-bottom: 1px solid #ccc;
-	background: #e6e6e6;
+	/* background: var(--colorbacktitle1); */
+	background: #eee;
 	display: inline-block;
 	z-index: 1000;
+}
+span#morelines {
+	font-weight: normal;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
@@ -7531,14 +7534,19 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 	border: 1px solid #ddd;
 	margin: 0;
 }
+.ace_editor.ace-chrome .ace_gutter {
+	background: var(--colorbacktitle1);
+	color: var(--colortexttitle);
+}
 .aceeditorstatusbar {
 		margin: 0;
-		padding: 0;
+		padding: 5px 5px;
 		padding-<?php echo $left; ?>: 10px;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #ebebeb;
+		background-color: var(--colorbacktitle1);
+		color: var(--colortexttitle);
 		height: 2.2em;
 		line-height: 2.2em;
 }
@@ -7546,7 +7554,7 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 		color: gray;
 		position: relative;
 		right: 0;
-		border-<?php echo $left; ?>: 1px solid;
+		border-<?php echo $left; ?>: unset;
 		padding-<?php echo $left; ?>: 10px;
 }
 pre#editfilecontentaceeditorid {

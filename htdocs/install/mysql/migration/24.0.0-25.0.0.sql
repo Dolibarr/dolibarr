@@ -403,6 +403,11 @@ CREATE TABLE llx_extrafields_schemas (
 	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
+ALTER TABLE llx_schemas ADD UNIQUE INDEX uk_schemas_name (name, entity);
+ALTER TABLE llx_schemas ADD INDEX idx_schemas_uuid (uuid);
+ALTER TABLE llx_extrafields_schemas ADD UNIQUE INDEX uk_extrafields_schemas_name (fk_schema, name, entity);
+ALTER TABLE llx_extrafields_schemas ADD CONSTRAINT fk_extrafields_schemas_fk_schema FOREIGN KEY (fk_schema) REFERENCES llx_schemas (rowid);
+
 
 -- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
 -- Empty strings must become NULL first: the unique index does not tolerate them like NULL.

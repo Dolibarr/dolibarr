@@ -91,7 +91,25 @@ notifications:
 
 before_install:
 - |
-  echo "===== $(date) Check if the build is required (only for a pull request, we always build on push)"
+  echo "===== $(date) Check if the build is required (for a pull request or a push, we always build on cron or with 'latest php')"
+  if [ "$TRAVIS_EVENT_TYPE" = 'push' ] && [ "$TRAVIS_PHP_VERSION" != 'latest' ]; then
+    # TRAVIS_COMMIT_RANGE is "before...after". It is empty for the first push of a branch, and the
+    # "before" commit may no more exist after a force push: in such cases, we run the build.
+    # The clone is shallow (see git.depth), so we fetch the "before" commit to compare the 2 trees.
+    push_before_commit=${TRAVIS_COMMIT_RANGE%%...*}
+    changed_files=''
+    if [ -n "$push_before_commit" ] && git fetch -q --depth=1 origin "$push_before_commit" 2>/dev/null; then
+      changed_files=$(git diff --name-only "$push_before_commit" "$TRAVIS_COMMIT" 2>/dev/null)
+    fi
+    if [ -z "$changed_files" ]; then
+      echo "Can not get the list of changed files of the push (range '$TRAVIS_COMMIT_RANGE'), we run the build"
+    elif echo "$changed_files" | bash dev/build/ci/build_required.sh; then
+      echo "The build is required"
+    else
+      echo "No changed file of the push (range $TRAVIS_COMMIT_RANGE) can change the result of the build, we stop here"
+      travis_terminate 0
+    fi
+  fi
   if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
     # The clone is shallow (see git.depth), so we ask for the parents of the merge
     # commit of the pull request to know the list of files it changes.

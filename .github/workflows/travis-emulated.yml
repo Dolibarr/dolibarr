@@ -104,9 +104,26 @@ jobs:
             run_build=no
           fi
 
-          echo "===== $(date) Check if the build is required (only for a pull request, we always build on push)"
+          echo "===== $(date) Check if the build is required (for a pull request or a push, we always build on cron or with 'latest php')"
           changed_files=''
           run_build=${run_build:-yes}
+          if [ "$gh_event" = 'push' ] && [ "$TRAVIS_PHP_VERSION" != 'latest' ] && [ "$run_build" = 'yes' ]; then
+            # Port of TRAVIS_COMMIT_RANGE: the "before" commit of the push. It is 000...0 for the first
+            # push of a branch, and it may no more exist after a force push: in such cases, we run the build.
+            # The clone is shallow (see fetch-depth), so we fetch the "before" commit to compare the 2 trees.
+            push_before_commit=$(jq -r '.before // ""' "$GITHUB_EVENT_PATH")
+            if [ -n "$push_before_commit" ] && [[ ! "$push_before_commit" =~ ^0+$ ]] && git fetch -q --depth=1 origin "$push_before_commit" 2>/dev/null; then
+              changed_files=$(git diff --name-only "$push_before_commit" "$GITHUB_SHA" 2>/dev/null || true)
+            fi
+            if [ -z "$changed_files" ]; then
+              echo "Can not get the list of changed files of the push (before commit '$push_before_commit'), we run the build"
+            elif printf '%s\n' "$changed_files" | bash dev/build/ci/build_required.sh; then
+              echo "The build is required"
+            else
+              echo "No changed file of the push ($push_before_commit...$GITHUB_SHA) can change the result of the build, we stop here"
+              run_build=no
+            fi
+          fi
           if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
             if jq -r '.pull_request.labels[].name' "$GITHUB_EVENT_PATH" 2>/dev/null | grep -q '^ci: full$'; then
               echo "The build is forced by the label 'ci: full'"
