@@ -276,7 +276,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_enabled;
 	/**
-	 * @var array<array<array{string,string}>>
+	 * @var array<array<array{0:string,1?:string,2?:string}>>
 	 */
 	public $export_permission;
 	/**

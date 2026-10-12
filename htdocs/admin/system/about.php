@@ -81,7 +81,7 @@ print'</div>';
 //print "<br>\n";
 
 print '<div class="divsection wordwrap">';
-print $langs->trans("Developpers").':';
+print $langs->trans("Developers").':';
 print '<ul>';
 print '<li>'.$langs->trans("SourcesRepository").': <a href="https://www.github.com/Dolibarr/dolibarr" target="_blank" rel="noopener noreferrer external">https://www.github.com/Dolibarr/dolibarr</a></li>';
 print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="https://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank" rel="noopener noreferrer external">https://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
