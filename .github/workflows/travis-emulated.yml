@@ -199,7 +199,7 @@ jobs:
 
           echo "===== $(date) Updating Composer config"
           # Like .travis.yml but without sudo, so the global config is the one of the runner user
-          composer -n config -g vendor-dir htdocs/includes
+          composer -n config -g vendor-dir "$TRAVIS_BUILD_DIR/htdocs/includes"
           composer -n config -g audit.block-insecure false
 
           echo "===== $(date) Update Composer version and Install tools - PHP Unit, PHP CodeSniffer - for $TRAVIS_PHP_VERSION"
