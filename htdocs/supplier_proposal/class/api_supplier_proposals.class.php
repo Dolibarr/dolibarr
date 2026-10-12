@@ -225,6 +225,78 @@ class SupplierProposals extends DolibarrApi
 	}
 
 	/**
+	 * Add a line to a supplier proposal (price request)
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param int   $id             Id of supplier proposal to update
+	 * @param array $request_data   Supplier proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url	POST {id}/line
+	 *
+	 * @return int
+	 *
+	 * @throws	RestException
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
+
+		$updateRes = $this->supplier_proposal->addline(
+			$request_data->desc,
+			$request_data->subprice,
+			$request_data->qty,
+			$request_data->tva_tx,
+			$request_data->localtax1_tx,
+			$request_data->localtax2_tx,
+			$request_data->fk_product,
+			$request_data->remise_percent,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
+			$request_data->info_bits,
+			$request_data->product_type,
+			$request_data->rang,
+			$request_data->special_code,
+			$request_data->fk_parent_line,
+			$request_data->fk_fournprice,
+			$request_data->pa_ht,
+			$request_data->label,
+			$request_data->array_options,
+			$request_data->ref_fourn,
+			$request_data->fk_unit,
+			$request_data->origin,
+			$request_data->origin_id,
+			$request_data->multicurrency_subprice,
+			$request_data->date_start,
+			$request_data->date_end
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->supplier_proposal->errorsToString());
+		}
+	}
+
+	/**
 	 * List supplier proposals
 	 *
 	 * Get a list of supplier proposals
