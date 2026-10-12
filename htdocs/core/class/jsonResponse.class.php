@@ -74,8 +74,11 @@ class JsonResponse
 	public function getResponse()
 	{
 
-		if (!$this->result && !headers_sent()) {
-			http_response_code(400);
+		if (!headers_sent()) {
+			header('Content-Type: application/json; charset=utf-8');
+			if (!$this->result) {
+				http_response_code(400);
+			}
 		}
 
 		$jsonResponse = new stdClass();

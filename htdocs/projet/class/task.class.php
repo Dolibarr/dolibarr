@@ -2972,4 +2972,194 @@ class Task extends CommonObjectLine
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROJECT_TASK);
 	}
+
+	/**
+	 * Send an email to the task's executives (internal contacts of type TASKEXECUTIVE) when a task has
+	 * gone past its end date without being completed.
+	 * CAN BE A CRON TASK
+	 *
+	 * The delay is the same one already used to show the "Late" warning icon on the task everywhere it is
+	 * displayed (MAIN_DELAY_TASKS_TODO, in days, 7 by default): this method does not add new setup, it
+	 * reuses Task::hasDelay() so the email only ever fires for a task that already shows as late there.
+	 * Unlike a plain fk_user column, a task can have several executives (or none): the reminder is sent to
+	 * all of them in one email, and a task with no executive with an email on file is counted as a
+	 * failure. A task is only ever reminded once per calendar day (same dedup convention as the other
+	 * automated reminder emails in the application, via the AC_EMAIL agenda event it logs on success), so
+	 * it keeps being reminded once a day for as long as it stays overdue. A failure on one task (ex: no
+	 * email template found) is counted and does not prevent the other overdue tasks from being processed.
+	 *
+	 * @return	int		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForOverdueTasks()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		if (!isModEnabled('project')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Project"));
+			return 0;
+		}
+
+		$langs->loadLangs(array('main', 'projects'));
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listoftasksok = array();
+		$listoftasksko = array();
+
+		// Label of the event recorded once a reminder is sent for a task. Also used to not send the same reminder twice the same day.
+		$labelreminderok = 'sendReminderForOverdueTasksOK';
+
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."projet_task as t";
+		$sql .= " WHERE t.entity = ".((int) $conf->entity); // Do not use getEntity('project_task') here, we want the batch to be on its entity only
+		$sql .= " AND t.fk_statut NOT IN (".self::STATUS_CLOSED.", ".self::STATUS_CANCELED.")";
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'project_task' AND a.fk_element = t.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$formmail = new FormMail($this->db);
+
+		$num_rows = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num_rows) {
+			$obj = $this->db->fetch_object($resql);
+
+			$taskstatic = new Task($this->db);
+			$taskstatic->fetch($obj->rowid);
+
+			// Same late/not-late decision as the warning icon shown everywhere a task is displayed, so the
+			// email only ever fires for tasks that already show as late there.
+			if (!$taskstatic->hasDelay()) {
+				$i++;
+				continue;
+			}
+
+			// An executive is an internal contact of type TASKEXECUTIVE. There is no single "assigned user"
+			// column on a task, and there can be several (or none).
+			$to = array();
+			$tmparraycontact = $taskstatic->liste_contact(-1, 'internal', 0, 'TASKEXECUTIVE');
+			if (is_array($tmparraycontact)) {
+				foreach ($tmparraycontact as $data_email) {
+					if (!empty($data_email['email'])) {
+						$to[] = $data_email['email'];
+					}
+				}
+			}
+
+			if (empty($to)) {
+				$nbko++;
+				$listoftasksko[$taskstatic->id] = $taskstatic->id;
+			} else {
+				$projectstatic = new Project($this->db);
+				$projectstatic->fetch($taskstatic->fk_project);
+				$projectstatic->fetch_thirdparty();
+
+				$arraydefaultmessage = null;
+				$labeltouse = getDolGlobalString('PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE');
+
+				if (!empty($labeltouse)) {
+					$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'project_task', $user, $langs, 0, 1, $labeltouse);
+				}
+
+				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $taskstatic);
+					complete_substitutions_array($substitutionarray, $langs, $taskstatic);
+					$substitutionarray['__TASK_LABEL__'] = $taskstatic->label;
+					$substitutionarray['__TASK_END_DATE__'] = dol_print_date($taskstatic->date_end, 'day', 'tzuserrel', $langs);
+					$substitutionarray['__TASK_PROGRESS__'] = (string) $taskstatic->progress;
+					$substitutionarray['__TASK_PROJECT_REF__'] = $projectstatic->ref;
+					$substitutionarray['__TASK_URL__'] = DOL_MAIN_URL_ROOT.'/projet/tasks/task.php?id='.$taskstatic->id.'&withproject=1';
+
+					$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $langs);
+					$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $langs);
+					$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+					$toimploded = implode(',', $to);
+
+					$trackid = 'tas'.$taskstatic->id;
+					$moreinheader = 'X-Dolibarr-Info: sendReminderForOverdueTasks'."\r\n";
+
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					$cmail = new CMailFile($subject, $toimploded, $email_from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+					$result = $cmail->sendfile();
+					if (!$result) {
+						$error++;
+						$this->error .= $cmail->error.' ';
+						if (!is_null($cmail->errors)) {
+							$this->errors = array_merge($this->errors, $cmail->errors);
+						}
+						$nbko++;
+						$listoftasksko[$taskstatic->id] = $taskstatic->id;
+					} else {
+						$nbok++;
+						$listoftasksok[$taskstatic->id] = $taskstatic->id;
+
+						// Insert record of email sent, as an agenda event on the task (same convention as other automated reminder emails)
+						require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+						$actioncomm = new ActionComm($this->db);
+						$actioncomm->type_code = 'AC_OTH_AUTO';
+						$actioncomm->code = 'AC_EMAIL';
+						$actioncomm->label = $labelreminderok;
+						$actioncomm->note_private = $msg;
+						$actioncomm->fk_project = $taskstatic->fk_project;
+						$actioncomm->datep = $now;
+						$actioncomm->datef = $now;
+						$actioncomm->percentage = -1; // Not applicable
+						$actioncomm->socid = (is_object($projectstatic->thirdparty) ? $projectstatic->thirdparty->id : 0);
+						$actioncomm->contact_id = 0;
+						$actioncomm->authorid = $user->id;
+						$actioncomm->userownerid = $user->id;
+						$actioncomm->email_msgid = $cmail->msgid;
+						$actioncomm->email_from = $email_from;
+						$actioncomm->email_sender = '';
+						$actioncomm->email_to = $toimploded;
+						$actioncomm->email_subject = $subject;
+
+						$actioncomm->fk_element = $taskstatic->id;
+						$actioncomm->elementid = $taskstatic->id;
+						$actioncomm->elementtype = $taskstatic->element;
+
+						$actioncomm->create($user);
+					}
+				} else {
+					$error++;
+					$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+					$nbko++;
+					$listoftasksko[$taskstatic->id] = $taskstatic->id;
+
+					// Do not break here: a template issue for one task (ex: template not found) must not
+					// prevent the reminder from being sent for the other overdue tasks.
+				}
+			}
+
+			$i++;
+		}
+
+		$this->output = 'Found '.($nbok + $nbko).' overdue tasks to send reminder for.';
+		$this->output .= ' Sent email successfully for '.$nbok.' tasks';
+		if ($nbko) {
+			$this->output .= ' - Canceled for '.$nbko.' task(s) (no executive with an email, missing template, or send error)';
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
+	}
 }

@@ -882,7 +882,10 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					$currentline = $object->lines[$i];
+					'@phan-var-force FactureLigne $currentline';
+					/** @var FactureLigne $currentline */	// fetch_lines() of an invoice loads FactureLigne
+					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $currentline);
 
 					// Sum
 					$columkey = 'btpsomme';
