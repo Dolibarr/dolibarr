@@ -1218,9 +1218,12 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				// Orders of the thirdparty, newest first
 				// ===== START BLOK: Orders =====
 				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+					// Show project column only if module enabled and user can read projects
+					$showproject = (isModEnabled('projet') && $user->hasRight('projet', 'lire'));
+
 					print '<b>'.$langs->trans("Orders").'</b>';
 
-					$sql_orders = "SELECT c.rowid";
+					$sql_orders = "SELECT c.rowid, c.fk_projet";
 					$sql_orders .= " FROM ".MAIN_DB_PREFIX."commande as c";
 					$sql_orders .= " WHERE c.fk_soc = ".((int) $object->socid)." AND c.entity IN (".getEntity('commande').")";
 					$sql_orders .= $db->order("c.date_commande", "DESC");
@@ -1231,6 +1234,9 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '<td class="center">'.$langs->trans("Select").'</td>';
 					print '<td>'.$langs->trans("Ref").'</td>';
 					print '<td>'.$langs->trans("RefCustomer").'</td>';
+					if ($showproject) {
+						print '<td>'.$langs->trans("Project").'</td>';
+					}
 					print '<td class="center">'.$langs->trans("Date").'</td>';
 					print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 					print '<td class="right">'.$langs->trans("Status").'</td>';
@@ -1240,6 +1246,12 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					if ($resql_orders) {
 						$num_orders = $db->num_rows($resql_orders);
 						$orderstatic = new Commande($db);
+
+						if ($showproject) {
+							require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+							$projectstatic = new Project($db);
+						}
+
 						$j = 0;
 						while ($j < $num_orders) {
 							$objord = $db->fetch_object($resql_orders);
@@ -1255,14 +1267,22 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 								print '&nbsp;';
 							}
 							print '</td>';
+							if ($showproject) {
+								$project_label = '&nbsp;';
+								if (!empty($objord->fk_projet) && $projectstatic->fetch($objord->fk_projet) > 0) {
+									$project_label = $projectstatic->getNomUrl(1);
+								}
+								print '<td class="linkedcol-project">'.$project_label.'</td>';
+							}
 							print '<td class="linkedcol-date center">'.dol_print_date($orderstatic->date, 'day').'</td>';
 							print '<td class="linkedcol-amount right">'.price($orderstatic->total_ht).'</td>';
 							print '<td class="linkedcol-statut right">'.$orderstatic->getLibStatut(3).'</td>';
 							print '</tr>';
 							$j++;
 						}
+						$colspan = $showproject ? 7 : 6;
 						if (!$num_orders) {
-							print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+							print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 						}
 					} else {
 						dol_print_error($db);
@@ -1272,7 +1292,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 					print '<tr class="liste_titre">';
 					print '<td class="center" style="padding: 4px;"><input type="checkbox" name="ordermanual" value="1" style="width: 14px; height: 14px;"></td>';
 					print '<td><input type="text" name="orderreftolink" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" style="width: 95%;"></td>';
-					print '<td colspan="4"></td>';
+					print '<td colspan="'.($showproject ? 5 : 4).'"></td>';
 					print '</tr>';
 
 					print '</table>';
