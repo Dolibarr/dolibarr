@@ -231,15 +231,18 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'alpha');
-	$notification_email_template_description = 'Template email for ticket create notification';
-	if (!empty($notification_email_template)) {
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, $notification_email_template_description, $conf->entity);
-	} else {
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, $notification_email_template_description, $conf->entity);
-	}
-	if (!($res > 0)) {
-		$error++;
+	// Email templates used instead of the built-in content of the emails sent by the ticket triggers
+	$email_template_settings = array(
+		'TICKET_NOTIFICATION_EMAIL_TEMPLATE' => 'Template email for ticket notifications sent to the notification address',
+		'TICKET_CUSTOMER_EMAIL_TEMPLATE' => 'Template email for ticket notifications sent to the customer',
+		'TICKET_ASSIGNEE_EMAIL_TEMPLATE' => 'Template email for ticket notifications sent to the assigned user',
+	);
+	foreach ($email_template_settings as $email_template_const => $email_template_description) {
+		$email_template = GETPOST($email_template_const, 'alpha');
+		$res = dolibarr_set_const($db, $email_template_const, (string) $email_template, 'chaine', 0, $email_template_description, $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	$mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
@@ -509,14 +512,22 @@ if (is_array($formmail->lines_model)) {
 	}
 }
 
-// Email template for notification of TICKET_CREATE
-print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans('TicketEmailNotificationTemplate').'</label></td>';
-print '<td class="left">';
-print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $arrayofmessagename, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans('TicketEmailNotificationTemplateHelp'), 1, 'help');
-print '</td>';
-print '</tr>';
+// Email templates used instead of the built-in content of the emails sent to the notification address, to the customer and to the assigned user
+$email_template_settings = array(
+	'TICKET_NOTIFICATION_EMAIL_TEMPLATE' => 'TicketEmailNotificationTemplate',
+	'TICKET_CUSTOMER_EMAIL_TEMPLATE' => 'TicketEmailCustomerTemplate',
+	'TICKET_ASSIGNEE_EMAIL_TEMPLATE' => 'TicketEmailAssigneeTemplate',
+);
+foreach ($email_template_settings as $email_template_const => $email_template_langkey) {
+	print '<tr class="oddeven"><td><label for="'.$email_template_const.'" class="block">'.$langs->trans($email_template_langkey).'</label></td>';
+	print '<td class="left">';
+	print $form->selectarray($email_template_const, $arrayofmessagename, getDolGlobalString($email_template_const), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td>';
+	print '<td class="center">';
+	print $formcategory->textwithpicto('', $langs->trans($email_template_langkey.'Help'), 1, 'help');
+	print '</td>';
+	print '</tr>';
+}
 
 // Check "Notify thirdparty" by default on ticket creation
 print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
