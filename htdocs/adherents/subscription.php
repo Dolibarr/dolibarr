@@ -380,9 +380,9 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 
 		// ===== LINK TO EXISTING OBJECTS =====
-		if (GETPOST('paymentsave') == 'linktoobject' && $idsubscription > 0) {
+		if (GETPOST('paymentsave') == 'linktoobject' && $crowid > 0) {
 			$subscription = new Subscription($db);
-			if ($subscription->fetch($idsubscription) > 0) {
+			if ($subscription->fetch($crowid) > 0) {
 				// Get thirdparty of the member for security validation
 				$adhlink = new Adherent($db);
 				$adhlink->fetch($subscription->fk_adherent);
