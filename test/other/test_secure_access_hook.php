@@ -11,6 +11,7 @@
  */
 
 define('MAIN_DB_PREFIX', 'llx_');
+define('DOL_DOCUMENT_ROOT', dirname(__DIR__, 2).'/htdocs');
 
 /**
  * Ignore diagnostic logging in this simulation.
@@ -59,20 +60,27 @@ function getEntity($element)
 
 require_once __DIR__.'/../../htdocs/core/lib/files.lib.php';
 require_once __DIR__.'/../../htdocs/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /** Test user with configurable functional permission. */
-class PhotoAccessTestUser
+class PhotoAccessTestUser extends User
 {
-	public $allowed = true;
-	public $admin = 0;
+	public bool $allowed = true;
+
+	/** Initialize the fixture without database access. */
+	public function __construct()
+	{
+	}
 
 	/**
 	 * Return the fixture's functional permission.
 	 *
-	 * @param string ...$parts Permission components
+	 * @param string $module Module name
+	 * @param string $permlevel1 First permission component
+	 * @param string $permlevel2 Second permission component
 	 * @return bool
 	 */
-	public function hasRight(...$parts)
+	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
 		return $this->allowed;
 	}
@@ -81,19 +89,22 @@ class PhotoAccessTestUser
 /** Sharing hook fixture exercised by the native manager. */
 class PhotoAccessTestHook
 {
-	public $results = array();
-	public $resprints;
-	public $error = '';
-	public $errors = array();
-	public $warnings = array();
-	public $mode = 'neutral';
-	public $calls = 0;
-	public $lastEntity;
+	/** @var array{accessallowed?:int,original_file?:string} */
+	public array $results = array();
+	public ?string $resprints = null;
+	public string $error = '';
+	/** @var string[] */
+	public array $errors = array();
+	/** @var string[] */
+	public array $warnings = array();
+	public string $mode = 'neutral';
+	public int $calls = 0;
+	public ?int $lastEntity = null;
 
 	/**
 	 * Decide access for the simulated sharing scenarios.
 	 *
-	 * @param array<string,mixed> $parameters Native access parameters
+	 * @param array{entity:int,original_file:string,fuser:PhotoAccessTestUser} $parameters Native access parameters
 	 * @param object|null $object Context object
 	 * @param string $action Current action
 	 * @param HookManager $hookmanager Native manager
