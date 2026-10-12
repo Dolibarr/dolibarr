@@ -170,6 +170,8 @@ WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO 
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
+* When creating your Pull Request, make sure the option **"Allow edits from maintainers"** is checked (this is the default on GitHub, but check it manually if your tool does not set it). This allows the PR Maintainer to push fixes directly into your PR branch, so it can be integrated faster instead of being closed.
+
 * A screenshot is mandatory for any PR of change/addition related to the User Interface.
 
 Also, some code changes need a prior approbation:
