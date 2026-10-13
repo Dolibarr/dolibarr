@@ -10355,8 +10355,8 @@ class Form
 				if ($objecttmp->ismultientitymanaged == 1) {
 					$sql .= " AND t.entity IN (" . getEntity($objecttmp->element) . ")";
 				}
-				if (!is_numeric($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged != 'fk_project@projet') {
-					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
+				if (!is_numeric($objecttmp->ismultientitymanaged)) {
+					$sql .= " AND parenttable.entity IN (" . getEntity($tmparray[1]) . ")";
 				}
 				// If the parent table is llx_societe and user is not an external user (a more robust test done later for external users),
 				// then we must also check that user has permissions
