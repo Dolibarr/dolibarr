@@ -469,23 +469,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 * Check if user has write permission on a field of this object.
-	 * Override of CommonObject::hasUserWritePermissionOnField(): proposals use the "creer" permission.
-	 *
-	 * @param User   $user  User to check rights
-	 * @param string $field Field name to check
-	 * @return bool         True if user has right to write this field, false otherwise
-	 */
-	public function hasUserWritePermissionOnField(User $user, $field)
-	{
-		if (empty($field)) {
-			return false;
-		}
-
-		return (bool) $user->hasRight('propal', 'creer');
-	}
-
-	/**
 	 * Return the name of the property of the object holding the value of a field of $fields.
 	 * Override of CommonObject::getFieldPropertyName(): the date of proposals is in the property date.
 	 *
