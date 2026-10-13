@@ -132,10 +132,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 			$langs->load("errors");
 			if ($resupload < 0) {	// Unknown error
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
-				// Files infected by a virus
-				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else { // Known error
+			} else { // Known error, $resupload is a translation key
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
@@ -481,7 +478,7 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	if ($backtopage) {
 		$paramsdelete['backtopage'] = $backtopage;
 	}
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd);
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

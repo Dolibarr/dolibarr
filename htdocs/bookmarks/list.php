@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,9 @@ if (!$sortorder) {
 $object = new Bookmark($db);
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $hookmanager->initHooks(array('bookmarklist')); // Note that conf->hooks_modules contains array
 
 if ($id > 0) {
@@ -122,6 +125,23 @@ if (empty($reshook)) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
+	// Without the permission to delete all bookmarks, a user can only delete his own bookmarks: the mass action must
+	// not delete other records than these, whatever the list of ids received.
+	if (!$user->hasRight('bookmark', 'supprimer') && is_array($toselect) && count($toselect) > 0) {
+		$ownbookmarks = array();
+		$sqlown = "SELECT rowid FROM ".MAIN_DB_PREFIX."bookmark";
+		$sqlown .= " WHERE rowid IN (".$db->sanitize(implode(',', array_map('intval', $toselect))).")";
+		$sqlown .= " AND fk_user = ".((int) $user->id);
+		$sqlown .= " AND entity IN (".getEntity('bookmark').")";
+		$resqlown = $db->query($sqlown);
+		if ($resqlown) {
+			while ($objown = $db->fetch_object($resqlown)) {
+				$ownbookmarks[] = (int) $objown->rowid;
+			}
+		}
+		$toselect = $ownbookmarks;
+	}
+
 	// Mass actions
 	$objectclass = 'Bookmark';
 	$objectlabel = 'Bookmark';
@@ -130,6 +150,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete' && $permissiontodelete) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);

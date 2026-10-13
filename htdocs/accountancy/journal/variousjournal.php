@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "accountancy", "compta", "other", "errors"));
+$langs->loadLangs(array("banks", "accountancy", "compta", "other"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');

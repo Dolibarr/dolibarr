@@ -349,7 +349,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_icon[$r] = 'invoice';
 			$this->export_permission[$r] = array(array("fournisseur", "facture", "export"));
 			$this->export_fields_array[$r] = array(
-				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
+				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.code_fournisseur' => 'SupplierCode', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
 				's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6',
 				's.code_compta' => 'CustomerAccountancyCode', 's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
 				'f.rowid' => "InvoiceId", 'f.ref' => "InvoiceRef", 'f.ref_supplier' => "RefSupplier", 'f.datec' => "InvoiceDateCreation", 'f.datef' => "DateInvoice", 'f.date_lim_reglement' => 'DateMaxPayment',
@@ -398,7 +398,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			//     'fd.tva'=>"Numeric",'fd.product_type'=>'Numeric','fd.fk_product'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 			//);
 			$this->export_TypeFields_array[$r] = array(
-				's.rowid' => 'Numeric', 's.nom' => 'Text', 'ps.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text',
+				's.rowid' => 'Numeric', 's.nom' => 'Text', 's.code_fournisseur' => 'Text', 'ps.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text',
 				's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
 				'f.rowid' => 'Numeric', 'f.ref' => "Text", 'f.ref_supplier' => "Text", 'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => 'Date',
 				'f.fk_cond_reglement' => 'Numeric', 'f.fk_mode_reglement' => 'Numeric',
@@ -415,7 +415,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 				'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 			);
 			$this->export_entities_array[$r] = array(
-				's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company', 's.siren' => 'company', 's.siret' => 'company',
+				's.rowid' => "company", 's.nom' => 'company', 's.code_fournisseur' => 'company', 'ps.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company', 's.siren' => 'company', 's.siret' => 'company',
 				's.ape' => 'company', 's.idprof4' => 'company', 's.idprof5' => 'company', 's.idprof6' => 'company', 's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company', 's.tva_intra' => 'company', 'f.rowid' => "invoice",
 				'f.ref' => "invoice", 'f.ref_supplier' => "invoice", 'f.datec' => "invoice", 'f.datef' => "invoice", 'f.date_lim_reglement' => 'invoice',
 				'f.fk_cond_reglement' => 'invoice', 'f.fk_mode_reglement' => 'invoice',
@@ -467,7 +467,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_icon[$r] = 'invoice';
 			$this->export_permission[$r] = array(array("fournisseur", "facture", "export"));
 			$this->export_fields_array[$r] = array(
-				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
+				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.code_fournisseur' => 'SupplierCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
 				's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6',
 				's.code_compta' => 'CustomerAccountancyCode', 's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
 				'f.rowid' => "InvoiceId", 'f.ref' => "InvoiceRef", 'f.ref_supplier' => "RefSupplier", 'f.datec' => "InvoiceDateCreation", 'f.datef' => "DateInvoice", 'f.date_lim_reglement' => "DateMaxPayment",
@@ -498,7 +498,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			//	'pf.amount'=>'Numeric','p.datep'=>'Date','p.num_paiement'=>'Numeric'
 			//);
 			$this->export_TypeFields_array[$r] = array(
-				's.rowid' => 'Numeric', 's.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text',
+				's.rowid' => 'Numeric', 's.nom' => 'Text', 's.code_fournisseur' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text',
 				's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text', 's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
 				'f.rowid' => 'Numeric', 'f.ref' => "Text", 'f.ref_supplier' => "Text",
 				'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => 'Date',
@@ -510,7 +510,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 				'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 			);
 			$this->export_entities_array[$r] = array(
-				's.rowid' => "company", 's.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company',
+				's.rowid' => "company", 's.nom' => 'company', 's.code_fournisseur' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company',
 				's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.idprof5' => 'company', 's.idprof6' => 'company',
 				's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company', 's.tva_intra' => 'company',
 				'f.rowid' => "invoice", 'f.ref' => "invoice", 'f.ref_supplier' => "invoice", 'f.datec' => "invoice", 'f.datef' => "invoice", 'f.date_lim_reglement' => 'invoice',
@@ -550,7 +550,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_icon[$r] = 'supplier_order';
 			$this->export_permission[$r] = array(array("fournisseur", "commande", "export"));
 			$this->export_fields_array[$r] = array(
-				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
+				's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.code_fournisseur' => 'SupplierCode', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
 				's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6', 's.tva_intra' => 'VATIntra',
 				'f.rowid' => "OrderId", 'f.ref' => "Ref", 'f.ref_supplier' => "RefSupplier", 'f.date_creation' => "DateCreation", 'f.date_commande' => "OrderDate", 'f.date_livraison' => "DateDeliveryPlanned",
 				'f.total_ht' => "TotalHT", 'f.total_ttc' => "TotalTTC", 'f.total_tva' => "TotalVAT", 'f.fk_statut' => 'Status', 'f.date_valid' => 'DateValidation', 'f.date_approve' => 'DateApprove', 'f.date_approve2' => 'DateApprove2',
@@ -572,7 +572,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 				unset($this->export_fields_array['ua2.login']);
 			}
 			$this->export_TypeFields_array[$r] = array(
-				's.rowid' => "company", 's.nom' => 'Text', 'ps.nom' => 'Text', 's.address' => 'Text', 's.cp' => 'Text', 's.ville' => 'Text', 'c.code' => 'Text', 's.tel' => 'Text', 's.siren' => 'Text',
+				's.rowid' => "company", 's.nom' => 'Text', 's.code_fournisseur' => 'Text', 'ps.nom' => 'Text', 's.address' => 'Text', 's.cp' => 'Text', 's.ville' => 'Text', 'c.code' => 'Text', 's.tel' => 'Text', 's.siren' => 'Text',
 				's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text', 's.tva_intra' => 'Text', 'f.ref' => "Text", 'f.ref_supplier' => "Text",
 				'f.date_creation' => "Date", 'f.date_commande' => "Date", 'f.date_livraison' => "Date", 'f.total_ht' => "Numeric", 'f.total_ttc' => "Numeric", 'f.total_tva' => "Numeric",
 				'f.fk_statut' => 'Status', 'f.date_valid' => 'Date', 'f.date_approve' => 'Date', 'f.date_approve2' => 'Date', 'f.note_public' => "Text", 'f.note_private' => "Text", 'f.source' => 'Numeric', 'fd.description' => "Text",
@@ -581,7 +581,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 				'fd.product_type' => 'Numeric', 'fd.ref' => 'Text', 'fd.fk_product' => 'List:product:label', 'p.ref' => 'Text', 'p.label' => 'Text', 'project.ref' => 'Text', 'project.title' => 'Text'
 			);
 			$this->export_entities_array[$r] = array(
-				's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company', 's.siren' => 'company',
+				's.rowid' => "company", 's.nom' => 'company', 's.code_fournisseur' => 'company', 'ps.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company', 's.siren' => 'company',
 				's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.idprof5' => 'company', 's.idprof6' => 'company', 's.tva_intra' => 'company', 'uv.login' => 'user', 'ua1.login' => 'user',
 				'ua2.login' => 'user', 'f.source' => 'order', 'fd.rowid' => 'order_line', 'fd.description' => "order_line", 'fd.tva_tx' => "order_line", 'fd.qty' => "order_line", 'fd.remise_percent' => "order_line",
 				'fd.total_ht' => "order_line", 'fd.total_ttc' => "order_line", 'fd.total_tva' => "order_line", 'fd.date_start' => "order_line", 'fd.date_end' => "order_line", 'fd.special_code' => "order_line",
@@ -668,17 +668,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn' AND entity IN (0, " . ((int) $conf->entity) . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_fourn';
+			$keyforelement = 'supplier_invoice';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn');
 			if (empty($conf->multicurrency->enabled)) {
 				$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-' . $conf->currency;
@@ -763,17 +756,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn_det' AND entity IN (0, " . ((int) $conf->entity) . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_fourn_det';
+			$keyforelement = 'supplier_invoice';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn_det');
 			$this->import_regex_array[$r] = array('fd.product_type' => '[0|1]$', 'fd.fk_product' => 'rowid@' . MAIN_DB_PREFIX . 'product', 'fd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency');
 			$import_sample = array(
@@ -850,18 +836,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseur' AND entity IN (0, " . ((int) $conf->entity) . ")";
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'commande_fournisseur';
+			$keyforelement = 'supplier_order';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseur');
 			$this->import_regex_array[$r] = array(
@@ -932,16 +910,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 
 			// Add extra fields
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseurdet' AND entity IN (0, " . ((int) $conf->entity) . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'commande_fournisseurdet';
+			$keyforelement = 'supplier_order';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseurdet');
 			$this->import_regex_array[$r] = array(

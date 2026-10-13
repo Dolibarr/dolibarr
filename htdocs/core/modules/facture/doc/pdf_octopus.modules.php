@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
  * Copyright (C) 2026		Vincent Maury			<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +83,12 @@ class pdf_octopus extends ModelePDFFactures
 	public $version = 'disabled';	// Disabled by default. Enabled in constructor if option INVOICE_USE_SITUATION is 2.
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+
+	/**
 	 * @var int height for info total
 	 */
 	public $heightforinfotot;
@@ -113,7 +120,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|int|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}},content?:array{align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -734,6 +741,9 @@ class pdf_octopus extends ModelePDFFactures
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$posy = $this->tab_top_newpage;
+							// The 'position' and 'totalexcltax' columns are output at $curY, not at $posy.
+							// Without this update, they stay at the coordinate of the previous page.
+							$curY = $posy;
 							$showpricebeforepagebreak = 0;
 						}
 
@@ -801,6 +811,8 @@ class pdf_octopus extends ModelePDFFactures
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter);
 						$posy = $this->tab_top_newpage;
+						// Same as above: 'position' and 'totalexcltax' are output at $curY.
+						$curY = $posy;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -870,7 +882,10 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					$currentline = $object->lines[$i];
+					'@phan-var-force FactureLigne $currentline';
+					/** @var FactureLigne $currentline */	// fetch_lines() of an invoice loads FactureLigne
+					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $currentline);
 
 					// Sum
 					$columkey = 'btpsomme';
@@ -1547,7 +1562,7 @@ class pdf_octopus extends ModelePDFFactures
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$bac->fetch(0, '', $object->thirdparty->id);
 					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
+					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", pdf_truncate_text($pdf, $iban, 6, 'right', ''));
 				}
 
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
@@ -2105,7 +2120,7 @@ class pdf_octopus extends ModelePDFFactures
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -2114,7 +2129,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". $object->project->title, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
 			}
 		}
 
@@ -2125,7 +2140,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ". $object->project->ref, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".$object->project->ref, '', 'R');
 			}
 		}
 
@@ -2340,10 +2355,10 @@ class pdf_octopus extends ModelePDFFactures
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'targetshipping', $object);
 				} else {
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'targetshipping', $object);
 				}
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
@@ -2445,7 +2460,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = array(
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => getDolGlobalInt('PDF_SPONGE_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -2456,7 +2471,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'content' => array(
 				'align' => 'C',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -2474,7 +2489,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -2482,14 +2497,14 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -2503,7 +2518,7 @@ class pdf_octopus extends ModelePDFFactures
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
-			'width' => 14, // in mm
+			'width' => 14.0, // in mm
 			'title' => array(
 				'textkey' => 'VAT'
 			),
@@ -2517,7 +2532,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
-			'width' => 11, // in mm
+			'width' => 11.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -2531,7 +2546,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 17, // in mm
+			'width' => 17.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -2553,7 +2568,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 10, // in mm
+			'width' => 10.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -2567,7 +2582,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['btpsomme'] = array(
 			'rank' => $rank,
-			'width' => 18, // in mm
+			'width' => 18.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Chantier'
@@ -2588,7 +2603,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['prev_progress'] = array(
 			'rank' => $rank,
-			'width' => 10, // in mm
+			'width' => 10.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('ProgressShort')
@@ -2610,7 +2625,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['prev_progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 18, // in mm
+			'width' => 18.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -2625,7 +2640,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
-			'width' => 10, // in mm
+			'width' => 10.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('ProgressShort')
@@ -2643,7 +2658,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 18, // in mm
+			'width' => 18.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -2659,7 +2674,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
-			'width' => 10, // in mm
+			'width' => 10.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ReductionShort'
@@ -2672,7 +2687,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 18, // in mm
+			'width' => 18.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('TotalHT')
@@ -3466,7 +3481,7 @@ class pdf_octopus extends ModelePDFFactures
 				$label = $outputlangs->transnoentities("SituationInvoiceTotalProposal");
 				$pdf->MultiCell($this->page_largeur - ($this->marge_droite + $this->marge_gauche), 3, $label, 0, 'L', false, 1, $posx, $posy + 1);
 
-				$amount = price($sign * ($total_ht + (! empty($propal->remise) ? $propal->remise : 0)));
+				$amount = price($sign * $total_ht);
 				$pdf->MultiCell($width2, 3, $amount, 0, 'R', false, 1, $posx + $width, $posy + 1);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -3555,7 +3570,7 @@ class pdf_octopus extends ModelePDFFactures
 			$total_ht = (isModEnabled('multicurrency') && $invoice->multicurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
 
 			$pdf->SetXY($posx + $width, $posy);
-			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)), 0, $outputlangs), 0, 'R', true);
+			$pdf->MultiCell($width2, $height, price($sign * $total_ht, 0, $outputlangs), 0, 'R', true);
 
 			$tvas = array();
 			$nblines = count($invoice->lines);
@@ -3781,14 +3796,14 @@ class pdf_octopus extends ModelePDFFactures
 			} else {
 				$idinv++;
 
-				$remain_to_pay_in_invoice = ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
+				$remain_to_pay_in_invoice = $sign * $total_ht;
 
 				$rem = 0;
 				if (count($invoice->lines)) {
 					foreach ($invoice->lines as $l) {
 						if ($l->fk_remise_except > 0) {
 							$discount = new DiscountAbsolute($this->db);
-							$result = $discount->fetch($l->fk_remise_except);
+							$result = $discount->fetch((int) $l->fk_remise_except);
 							if ($result > 0) {
 								$rem += $discount->total_ht;
 							}

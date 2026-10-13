@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Eric Seigne 		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2025		Charlene Benke 		<charlene@patas-monkey.com>
@@ -316,8 +316,6 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;
@@ -334,10 +332,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) {
-				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+				$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 			}
 			if ($type == 1) {
-				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+				$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 			}
 			if (!$mask) {
 				$this->error = 'NotConfigured';

@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,6 @@ if ($mode == 'supplier') {
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
@@ -229,7 +228,6 @@ if (!$mesg) {
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 $fileurlamount = '';

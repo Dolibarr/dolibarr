@@ -157,6 +157,8 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
+			// The price by quantity must be a price of the product asked, not the one of another product
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $id).")";
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -246,6 +248,27 @@ if ($action == 'fetch' && !empty($id)) {
 			$outtva_tx_formated = price($object->tva_tx);
 			$outtva_tx = price2num($object->tva_tx);
 			$outdefault_vat_code = $object->default_vat_code;
+
+			// Variant rows are kept in llx_product without their own price/vat
+			// information - the parent product holds them. If this product is a
+			// variant child and its vat fields are empty, inherit them from the
+			// parent so the sales/order line gets the default tax preselected
+			// like the non-variant flow does (#30400).
+			if (empty($outtva_tx) && empty($outdefault_vat_code)) {
+				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+				$combination = new ProductCombination($db);
+				if ($combination->fetchByFkProductChild($object->id, 1) > 0) {
+					$parent = new Product($db);
+					if ($parent->fetch($combination->fk_product_parent) > 0) {
+						$outtva_tx_formated = price($parent->tva_tx);
+						$outtva_tx = price2num($parent->tva_tx);
+						$outdefault_vat_code = $parent->default_vat_code;
+						$product_outtva_tx_formated = $outtva_tx_formated;
+						$product_outtva_tx = $outtva_tx;
+						$product_outdefault_vat_code = $outdefault_vat_code;
+					}
+				}
+			}
 		}
 
 		// VAT to use and default VAT for product are set to same value by default
@@ -271,6 +294,17 @@ if ($action == 'fetch' && !empty($id)) {
 					$outtva_tx_formated = price($outtva_tx);
 					$outdefault_vat_code = '';
 				}
+			}
+
+			// The VAT rate above was just changed to the one applicable to this buyer, but price_ht/
+			// price_ttc are still whatever was set for the product/price line, so they can now be an
+			// inconsistent triple (e.g. a price defined as tax included, VAT rate now 0 for an EU
+			// reverse-charge buyer, but price_ttc is still the original tax-included amount). Off by
+			// default to keep historical behavior (price_ttc unchanged, whatever VAT rate applies);
+			// when enabled, price_ht is kept as the fixed reference and price_ttc is recomputed from
+			// it and the buyer's actual VAT rate instead.
+			if (getDolGlobalString('PRODUIT_RECALCULATE_TTC_ACCORDING_TO_BUYER_VAT') && isset($outprice_ht)) {
+				$outprice_ttc = price((float) price2num($outprice_ht) * (1 + ($outtva_tx / 100)));
 			}
 		}
 

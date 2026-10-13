@@ -140,7 +140,7 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $volume_units;	// scale -3, 0, 3, 6
 	/**
-	 * @var ?array<string,array<string,string>>
+	 * @var ?array<string,array{rowid?:int,label:string,description:string,note?:string,other?:string,array_options?:array<string,mixed>}>	Array for multilangs, same shape as Product::$multilangs it is usually copied from
 	 */
 	public $multilangs;
 
@@ -247,7 +247,7 @@ abstract class CommonObjectLine extends CommonObject
 
 	/**
 	 * Unit price including taxes
-	 * @var float
+	 * @var float|null
 	 */
 	public $subprice_ttc;
 
@@ -272,7 +272,7 @@ abstract class CommonObjectLine extends CommonObject
 	public $multicurrency_subprice;
 
 	/**
-	 * @var float Multicurrency unit price including taxes
+	 * @var float|null Multicurrency unit price including taxes
 	 */
 	public $multicurrency_subprice_ttc;
 

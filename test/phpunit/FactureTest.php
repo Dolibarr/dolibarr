@@ -26,11 +26,13 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
@@ -76,11 +78,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureCreate()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
@@ -101,11 +104,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureFetch($id)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new Facture($db);
 		$result = $localobject->fetch($id);
@@ -132,11 +136,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureUpdate($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$this->changeProperties($localobject);
 		$result = $localobject->update($user);
@@ -157,11 +162,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureAddLine($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject->fetch_thirdparty();
 		$beforelinecount = count($localobject->lines);
@@ -191,11 +197,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureUpdateLine($params)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		list($localobject, $lineid) = $params;
 		$beforelinecount = count($localobject->lines);
@@ -225,11 +232,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureDeleteLine($params)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		list($localobject, $lineid) = $params;
 		$beforelinecount = count($localobject->lines);
@@ -260,11 +268,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureValid($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force to default setup
 		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
@@ -309,11 +318,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureOther($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
@@ -337,11 +347,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureDelete($id)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default setup
 		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
@@ -382,6 +393,85 @@ class FactureTest extends CommonClassTest
 
 		return $result;
 	}
+
+	/**
+	 * testFactureLoadBoard
+	 *
+	 * load_board() of customer and supplier invoices computes its count, total and number of late invoices with one aggregate
+	 * query. Check it against the reference rule applied row by row (hasDelay() on each unpaid validated invoice), on synthetic
+	 * invoices with due dates spread around the warning delay, some without due date. Inserted in a transaction that is rolled
+	 * back. Independent of the other tests of this class.
+	 *
+	 * @return void
+	 */
+	/*
+	public function testFactureLoadBoard()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		$now = dol_now();
+		$db->begin();
+
+		foreach (['facture', 'facture_fourn'] as $table) {
+			for ($i = 1; $i <= 60; $i++) {
+				// Due dates from 40 days ago to 19 days ahead, one invoice in ten without due date
+				$due = ($i % 10 == 0) ? 'NULL' : "'".$db->idate($now + (($i % 60) - 40) * 86400)."'";
+				if ($table == 'facture') {
+					$sql = "INSERT INTO ".$db->prefix()."facture (ref, entity, fk_soc, fk_statut, paye, type, datec, datef, date_lim_reglement, total_ht)";
+					$sql .= " VALUES ('(PROVBOARD".$i.")', ".((int) $conf->entity).", 1, ".Facture::STATUS_VALIDATED.", 0, 0, '".$db->idate($now)."', '".$db->idate($now)."', ".$due.", ".($i * 10).".5)";
+				} else {
+					$sql = "INSERT INTO ".$db->prefix()."facture_fourn (ref, ref_supplier, entity, fk_soc, fk_user_author, fk_statut, paye, type, datec, datef, date_lim_reglement, total_ht)";
+					$sql .= " VALUES ('(PROVBOARD".$i.")', 'BOARD".$i."', ".((int) $conf->entity).", 1, ".((int) $user->id).", ".FactureFournisseur::STATUS_VALIDATED.", 0, 0, '".$db->idate($now)."', '".$db->idate($now)."', ".$due.", ".($i * 10).".5)";
+				}
+				$this->assertTrue((bool) $db->query($sql), $table.' insert '.$db->lasterror());
+			}
+		}
+
+		foreach ([['facture', 'Facture', 'f', 'date_lim_reglement'], ['facture_fourn', 'FactureFournisseur', 'ff', 'date_echeance']] as [$table, $class, $alias, $property]) {
+			// Reference: the rule of hasDelay() applied to each unpaid validated invoice the user can see
+			$expected = ['nbtodo' => 0, 'nbtodolate' => 0, 'total' => 0.0];
+			$sql = "SELECT ".$alias.".date_lim_reglement as datefin, ".$alias.".fk_statut as status, ".$alias.".total_ht FROM ".$db->prefix().$table." as ".$alias;
+			// Same scope as load_board(): entities of the invoice element for customer invoices, current entity for supplier invoices
+			$sql .= " WHERE ".$alias.".paye = 0 AND ".$alias.".fk_statut = ".constant($class.'::STATUS_VALIDATED');
+			$sql .= ($table == 'facture' ? " AND f.entity IN (".getEntity('invoice').")" : " AND ff.entity = ".((int) $conf->entity));
+			$resql = $db->query($sql);
+			$this->assertNotFalse($resql, $db->lasterror());
+			$reference = new $class($db);
+			while ($obj = $db->fetch_object($resql)) {
+				$reference->$property = $db->jdate($obj->datefin);
+				$reference->status = $obj->status;
+				$reference->statut = $obj->status;
+				$expected['nbtodo']++;
+				$expected['total'] += (float) $obj->total_ht;
+				if ($reference->hasDelay()) {
+					$expected['nbtodolate']++;
+				}
+			}
+			$this->assertGreaterThanOrEqual(60, $expected['nbtodo'], $class.' the synthetic invoices must be counted');
+			$this->assertGreaterThan(0, $expected['nbtodolate'], $class.' some synthetic invoices must be late');
+			$this->assertLessThan($expected['nbtodo'], $expected['nbtodolate'], $class.' some synthetic invoices must not be late');
+
+			$invoice = new $class($db);
+			$board = $invoice->load_board($user);
+
+			print __METHOD__." ".$class." nbtodo=".$board->nbtodo." nbtodolate=".$board->nbtodolate." total=".$board->total."\n";
+
+			$this->assertInstanceOf('WorkboardResponse', $board);
+			$this->assertSame($expected['nbtodo'], $board->nbtodo, $class.' nbtodo');
+			$this->assertSame($expected['nbtodolate'], $board->nbtodolate, $class.' nbtodolate');
+			$this->assertEqualsWithDelta($expected['total'], $board->total, 0.001, $class.' total');
+			$this->assertNotEmpty($board->url_late, $class.' url_late must be set when there are late invoices');
+			$this->assertNotEmpty($board->url);
+		}
+
+		$db->rollback();
+	}
+	*/
 
 	/**
 	 * Edit an object to test updates

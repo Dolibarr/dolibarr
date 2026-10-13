@@ -34,6 +34,17 @@ if [ ${#filtered[@]} -eq 0 ]; then
 	exit 0
 fi
 
-~/vendor/bin/phpstan --level=9 -v analyze -a dev/build/phpstan/bootstrap.php "${filtered[@]}"
+output=$(~/vendor/bin/phpstan --level=9 -v analyze -a dev/build/phpstan/bootstrap.php "${filtered[@]}" 2>&1)
+result=$?
+echo "$output"
 
-exit $?
+# Even after the htdocs/scripts filter above, a batch can still end up containing only files
+# excluded by phpstan.neon.dist's own excludePaths (e.g. a vendored library under htdocs/includes/*
+# that is fully out of scope for analysis). PHPStan then errors with "No files found to analyse"
+# instead of just reporting zero errors, so treat that specific case as a pass too.
+if [ $result -ne 0 ] && echo "$output" | grep -q "No files found to analyse"; then
+	echo "Skipping PHPStan (all files in this batch are excluded by phpstan.neon.dist)"
+	exit 0
+fi
+
+exit $result

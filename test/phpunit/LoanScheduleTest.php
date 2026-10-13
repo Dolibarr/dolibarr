@@ -23,7 +23,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loan.class.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loanschedule.class.php';
@@ -195,6 +195,56 @@ class LoanScheduleTest extends CommonClassTest
 		// No capital or no term: nothing to calculate
 		$this->assertSame('', $localobject->calcMonthlyPayments(0, 0.12, 12));
 		$this->assertSame('', $localobject->calcMonthlyPayments(1200, 0.12, 0));
+	}
+
+	/**
+	 * testLoanCalcMonthlyPaymentWithGracePeriod
+	 *
+	 * Pure calculation testing grace period and amortization handling.
+	 *
+	 * @return void
+	 */
+	public function testLoanCalcMonthlyPaymentWithGracePeriod()
+	{
+		// 12,000 capital, 10% annual rate (0.1), 12 terms, 3 terms of grace period
+		$res = loanCalcMonthlyPayment(0, 12000, 0.1, 1, 12, 0, 'amort', 3);
+
+		$this->assertCount(12, $res);
+
+		// Term 1: 0 amort, 100 interest, 12000 remaining capital
+		$this->assertEqualsWithDelta(0.0, $res[1]['amort_num'], 0.01);
+		$this->assertEqualsWithDelta(100.0, $res[1]['interet'], 0.01);
+		$this->assertEqualsWithDelta(100.0, $res[1]['mens_num'], 0.01);
+		$this->assertEqualsWithDelta(12000.0, $res[1]['cap_rest'], 0.01);
+
+		// Term 2: 0 amort, 100 interest, 12000 remaining capital
+		$this->assertEqualsWithDelta(0.0, $res[2]['amort_num'], 0.01);
+		$this->assertEqualsWithDelta(100.0, $res[2]['interet'], 0.01);
+		$this->assertEqualsWithDelta(12000.0, $res[2]['cap_rest'], 0.01);
+
+		// Term 3: 0 amort, 100 interest, 12000 remaining capital
+		$this->assertEqualsWithDelta(0.0, $res[3]['amort_num'], 0.01);
+		$this->assertEqualsWithDelta(100.0, $res[3]['interet'], 0.01);
+		$this->assertEqualsWithDelta(12000.0, $res[3]['cap_rest'], 0.01);
+
+		// Term 4: capital 12000 begins amortizing over 9 terms (12 - 4 + 1 = 9)
+		$this->assertGreaterThan(0.0, $res[4]['amort_num']);
+		$this->assertLessThan(12000.0, $res[4]['cap_rest']);
+
+		// Term 12: final remaining capital is 0
+		$this->assertEqualsWithDelta(0.0, $res[12]['cap_rest'], 0.01);
+
+		// Total amortized over all 12 terms must equal initial capital 12000
+		$totalAmort = 0;
+		foreach ($res as $termData) {
+			$totalAmort += $termData['amort_num'];
+		}
+		$this->assertEqualsWithDelta(12000.0, $totalAmort, 0.05);
+
+		// Also test single term amort update directly without grace_period parameter
+		$resSingle = loanCalcMonthlyPayment(0, 12000, 0.1, 1, 12, 0, 'amort');
+		$this->assertEqualsWithDelta(0.0, $resSingle[1]['amort_num'], 0.01);
+		$this->assertEqualsWithDelta(12000.0, $resSingle[1]['cap_rest'], 0.01);
 	}
 
 	/**

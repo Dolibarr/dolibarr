@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -47,7 +47,7 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
+$langs->loadLangs(array("admin", "other", "bills", "orders"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -146,6 +146,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -236,7 +237,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+				if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
@@ -252,7 +253,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
@@ -309,10 +310,12 @@ foreach ($dirmodels as $reldir) {
 								$htmltooltip .= $langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+										$langs->load('errors');
 										$nextval = $langs->trans($nextval);
 									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
+									$langs->load('errors');
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
@@ -371,8 +374,8 @@ foreach ($dirmodels as $reldir) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-					$name = substr($file, 4, dol_strlen($file) - 16);
-					$classname = substr($file, 0, dol_strlen($file) - 12);
+					$name = dol_substr($file, 4, dol_strlen($file) - 16);
+					$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 					require_once $dir.'/'.$file;
 					$module = new $classname($db);
@@ -397,7 +400,7 @@ foreach ($dirmodels as $reldir) {
 						//if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF != "$name")
 						//{
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">';
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</a>';
 						/*}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -240,6 +240,11 @@ if (empty($action)) {
 
 		$uploadform .= '<br>';
 
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_type_fees(GETPOSTINT('feetypeid') > 0 ? GETPOSTINT('feetypeid') : -1, 'feetypeid', $langs->transnoentitiesnoconv("TypeFees"), 'maxwidth200 disableautoopen', 1, 1);
+
+		$uploadform .= '<br>';
+
 		$uploadform .= '<br>
 		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
 		</div>
@@ -254,13 +259,34 @@ if (empty($action)) {
 		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("UserPaySlip").'<br><br>';
 
-
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		//$uploadform .= '<span class="disableautoopen">';
 		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
-		//$uploadform .= '</span>';
 
 		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
+	// Form to upload a salary document
+	if (isModEnabled('tax')) {
+		$langs->load("taxes");
+		$uploadform .= '
+		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("SocialContribution").'<br><br>';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+		$formsocialcontrib = new FormSocialContrib($db);
+
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $formsocialcontrib->select_type_socialcontrib(GETPOST('socialcontrib', 'alpha') ? GETPOSTINT('socialcontrib') : -1, 'socialcontrib', $langs->transnoentities("TypeContrib"), 0, 0, 'minwidth150 maxwidth200 disableautoopen', 0, 1);
+
+		$uploadform .= '<br>';
+
+		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : -1, 'usertaxid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		$uploadform .= '<br>
 		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
@@ -310,7 +336,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	if (!empty($ajaxFileUrl)) {
 		print '<script>
 		$(document).ready(function() {
-			console.log("Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'");
+			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
 			$.ajax({
 				url: \''.dol_escape_js($ajaxFileUrl).'\',
 				type: "GET",
@@ -325,17 +351,24 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 						console.log(data);
 						$("#ajax-result").val(JSON.stringify(data, null, 2));
 						$(".progress-bar").css("width", "100%");
+
 						// Submit the form
 						//$("#form-result").submit();
+
+						// or show the button Next
+						$("#ajax-result-message").html("<div class=\"ok\">Your file has been analyzed by the AI service.</div>");
 						$("#form-result-submit").show();
 					} else {
+						console.log("We received an error");
+
 						// Display error if status is not 200
-						$("#ajax-result").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					// Display error
-					$("#ajax-result").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					console.log("We received an error");
+					$("#ajax-result-message").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
 					$(".progress-bar").css("width", "100%");
 				}
 			});
@@ -429,62 +462,95 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 
 	print '<form class="" id="form-result" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 	print '<input type="hidden" name="action" value="showsummary">';
+	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
-	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';
-	if ($action == 'upload') {
-		print '<input type="submit" name="form-result-submit" class="" value="'.$langs->trans("Next").'">';		// TODO Hide.
+	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';	// Fill by the ajax answer
+	print '<div id="ajax-result-message"></div>';
+	if ($action == 'uploadfile') {
+		print '<br>';
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
 	}
 	print '</form>'."\n";
 	print "\n";
 }
 
 if ($action == 'showsummary') {
-	print '<form class="" id="summary-result">';
-	print '<br>';
+	print '<form class="" id="summary-result" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="addobject">';
+	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
+	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
+	print '<input type="hidden" name="jsonstring" id="ajax-result" value="'.GETPOST('jsonstring', 'restricthtml').'">';
+	print '<div id="ajax-result-message"></div>';
+	//print '<br>';
+
+	print load_fiche_titre('Summary', '', 'upload');
+
 	print '<div class="neutral">';
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
+	$json = null;
+	try {
+		$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
+	} catch (Exception $e) {
+		print 'Failed to decode the result of the AI service. Error: '.$e->getMessage();
+		print '<br>';
+		print 'Result: '.GETPOST('jsonstring', 'restricthtml');
+		print '<br>';
+		print '<br>';
+	}
 
 	if ($modulepart == 'invoice_supplier') {
-		print '
-			<div id="supplierinvoice" class="">';
+		// Parse JSON to get information for an invoice
+		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
 
-			//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
-			//print '<br><br>';
+		//var_dump($json, $invoiceindoc);
 
-			$nameindoc = $json['vendor']['name'];
-			$addressindoc = $json['vendor']['address'];
-			$idprof1indoc = $json['professional_id']['siren'];
-			$idprof2indoc = $json['supplier']['siret'];
-			$emailindoc = $json['email'];
-			$vatnumberindoc = $json['vat_number'];
+		print '<div id="supplierinvoice" class="">';
 
-			// Thirdparty
-			$tmpthirdparty = new Societe($db);
-			print img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("ThirdParty").'<br>';
+		//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
+		//print '<br><br>';
+
+		$nameindoc = (string) $invoiceindoc['vendor_name'];
+		$addressindoc = (string) $invoiceindoc['vendor_address'];
+		$idprof1indoc = (string) $invoiceindoc['vendor_profid1'];
+		$idprof2indoc = (string) $invoiceindoc['vendor_profid2'];
+		$emailindoc = (string) $invoiceindoc['vendor_email'];
+		$vatnumberindoc = (string) $invoiceindoc['vendor_vat_number'];
+
+		// Thirdparty
+		$tmpthirdparty = new Societe($db);
+		print img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("ThirdParty").'<br>';
 		if (GETPOSTINT('socid')) {
 			$tmpthirdparty->fetch(GETPOSTINT('socid'));
 			// TODO We can show a warning if we find a diff with autodetected value $nameindoc
 		} else {
 			// Try to find thirdparty
-			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, '', 0, 1);
+			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, 0, 0, '1');
 
 			if ($result > 0) {
-				$tmpthirdparty->id = $result;
+				$tmpthirdparty->fetch($result);
 			}
 		}
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $nameindoc.', &nbsp;'.implode(', ', $addressindoc);
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$s = $nameindoc;
+		if (!empty($addressindoc)) {
+			$s .= ', &nbsp;'.$addressindoc;
+		}
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br>';
 		if (empty($tmpthirdparty->id)) {
-			print '<span class="opacitymedium">'.$langs->trans("NotFoundInDatabase").'</span><br>';
+			if ($s) {
+				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
+			}
 			print $langs->trans("ChooseTheThirdPartyTouse").' ';
 			print $form->select_company($socid, 'socid', '(statut:=:0)', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
@@ -495,18 +561,19 @@ if ($action == 'showsummary') {
 		}
 
 
-			print '<br><br>';
+		print '<br><br><hr><br>';
 
 
-			$nameprodindoc = $json['items'][0]['description'];
+		// @phan-suppress-next-line PhanTypeMismatchDimFetch
+		$nameprodindoc = $invoiceindoc['items'][0]['description'];
 
 
-			// Product
-			$prodid = GETPOSTINT('prodid');
-			$prodtext = $langs->trans("RefOrLabel");
+		// Product
+		$prodid = GETPOSTINT('prodid');
+		$prodtext = $langs->trans("RefOrLabel");
 
-			$tmpproduct = new Product($db);
-			print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
+		$tmpproduct = new Product($db);
+		print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
 
 		if ($prodid) {
 			$tmpproduct->fetch($prodid);
@@ -515,12 +582,22 @@ if ($action == 'showsummary') {
 			//$tmpproduct->ref = $json['ref'];
 		}
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $nameprodindoc;
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$s = $nameprodindoc;
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br>';
 		if (empty($tmpproduct->id)) {
 			print $langs->trans("ChooseTheProductTouse").' ';
 			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+
+			print '<br>';
+			print $langs->trans("TotalTTC").' ';
+			print '<input type="text" class="width100 right" name="amount_ttc" id="amount_ttc" value="'.(GETPOSTFLOAT('amount_ttc', '', 2) ? price(GETPOSTFLOAT('amount_ttc', '', 2)) : '').'">';
+
+			// TODO On selection of product, refresh next section with the product price ref
 		} else {
 			print $langs->trans("WillUse").' ';
 			print $tmpproduct->getNomUrl(1);
@@ -528,39 +605,66 @@ if ($action == 'showsummary') {
 		}
 
 
-			print '<br><br>';
+		print '<br><br><hr><br>';
 
-			$tmpinvoice = new FactureFournisseur($db);
 
-			$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+		// Supplier invoice
+		$tmpinvoice = new FactureFournisseur($db);
 
-			print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
+		print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $invoiceindoc['supplierref'].' - '.$invoiceindoc['due_date'].' - '.$invoiceindoc['issue_date'];
-			print ' - '.$invoiceindoc['currency_code'];
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$tmpvalue = array();
+		$invoiceindoc['supplierref'] ? $tmpvalue[] = $invoiceindoc['supplierref'] : '';
+		$invoiceindoc['due_date'] ? $tmpvalue[] = dol_print_date($invoiceindoc['due_date'], 'day', 'tzuserrel') : '';
+		$invoiceindoc['issue_date'] ? $tmpvalue[] = dol_print_date($invoiceindoc['issue_date'], 'day', 'tzuserrel') : '';
+		$invoiceindoc['currency_code'] ? $tmpvalue[] = $invoiceindoc['currency_code'] : '';
+		$invoiceindoc['invoice_label'] ? $tmpvalue[] = $invoiceindoc['invoice_label'] : '';
 
-			// Supplier invoice
+		$s = implode(', ', $tmpvalue);
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br>';
 		if (!empty($invoiceindoc['supplierref'])) {
 			// Try to find supplier invoice
-			// TODO Search using ref (see code of einvoicing module)
-			//$tmpinvoice->find...
+
+			// Exact match. Always tried first, and always enough on its own.
+			$sql = "SELECT rowid, total_ttc FROM " . $db->prefix() . "facture_fourn";
+			$sql .= " WHERE ref_supplier = '" . $db->escape($invoiceindoc['supplierref']) . "'";
+			$sql .= " AND fk_soc = " . ((int) $tmpthirdparty->id);
+			$sql .= " AND entity IN (" . getEntity('facture_fourn') . ")";
+			$sql .= " LIMIT 1";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog("SQL Error " . $db->lasterror(), LOG_ERR);
+				return -1;
+			}
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$tmpinvoice->fetch($obj->rowid);
+			}
 		}
 
 		if (empty($tmpinvoice->id)) {
 			print $langs->trans("InvoiceWillBeCreated");
+			print '<input type="hidden" name="supplierref" value="'.$invoiceindoc['supplierref'].'">';
+			print '<input type="hidden" name="due_date" value="'.$invoiceindoc['due_date'].'">';
+			print '<input type="hidden" name="issue_date" value="'.$invoiceindoc['issue_date'].'">';
+			print '<input type="hidden" name="currency_code" value="'.$invoiceindoc['currency_code'].'">';
+			print '<input type="hidden" name="currency_code" value="'.$invoiceindoc['currency_code'].'">';
+			print '<input type="hidden" name="invoice_label" value="'.$invoiceindoc['invoice_label'].'">';
 		} else {
 			print $tmpinvoice->getNomUrl(1);
-			print '<input type="hidden name="invoiceid" value="'.$tmpinvoice->id.'">';
+			print '<input type="hidden" name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
-			print '<br>
+		print '<br>
+		</div>
+		</div>';
 
-			</div>
-			</div>';
-
-			print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 	}
 
 	print '<input type="hidden" name="jsonstring" value="'.$json.'">';

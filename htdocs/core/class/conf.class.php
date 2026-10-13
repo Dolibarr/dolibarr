@@ -119,7 +119,7 @@ class Conf extends stdClass
 	 */
 	public $modules;
 	/**
-	 * @var array<string,array<string,string|array>>  List of activated modules
+	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
 	public $modules_parts;
 
@@ -1021,7 +1021,7 @@ class Conf extends stdClass
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
 			}
 
-			// By default we enable feature to feature of layout for email
+			// By default we enable the of layout for email
 			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
 				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
 			}
@@ -1399,7 +1399,6 @@ class Conf extends stdClass
 				// In on of this customer price modes, option PRODUCT_USE_CUSTOMER_PACKAGING is not implemented/supported, so we disable it
 				$this->global->PRODUCT_USE_CUSTOMER_PACKAGING = 0;
 			}
-
 
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
