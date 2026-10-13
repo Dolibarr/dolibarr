@@ -360,7 +360,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
 	} elseif ($objecttype == "user") {  // Always true - @phpstan-ignore equal.alwaysTrue
 		require_once DOL_DOCUMENT_ROOT . "/core/lib/usergroups.lib.php";
-		$object->getRights();
 		$head = user_prepare_head($object);
 		$listLink = dol_buildpath('/user/list.php', 1);
 	} else {
