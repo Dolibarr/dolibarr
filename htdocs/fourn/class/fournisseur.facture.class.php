@@ -3408,22 +3408,19 @@ class FactureFournisseur extends CommonInvoice
 	 * Check if user has a permission on supplier invoices
 	 *
 	 * @param User   $user User to check rights
-	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
 	 * @return bool True if user has the permission, false otherwise
 	 */
 	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		if ($mode == 'read') {
-			return (bool) $user->hasRight("fournisseur", "facture", "lire");
+		if ($mode == 'create') {
+			$mode = 'write';
 		}
-		if ($mode == 'create' || $mode == 'write') {
-			return (bool) $user->hasRight("fournisseur", "facture", "creer");
-		}
-		if ($mode == 'delete') {
-			return (bool) $user->hasRight("fournisseur", "facture", "supprimer");
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
 		}
 
-		return false;
+		return (bool) $user->hasRight("fournisseur", "facture", $mode);
 	}
 
 	/**
