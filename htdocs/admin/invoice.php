@@ -181,10 +181,15 @@ if ($action == 'updateMask') {
 	// validated with an empty one and nobody would notice until the bank did.
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
 	$payrefblocker = dolPayRefGetSetupWarning($mysoc->country_code, $payrefmode);
-	if ($payrefmode != '' && $payrefblocker != '') {
+	if ($payrefmode != '' && $payrefblocker != '' && $payrefblocker != 'WarningPaymentRefDIASCodeMissingThirdparty') {
 		setEventMessages($langs->trans($payrefblocker), null, 'errors');
 	} else {
 		dolibarr_set_const($db, "INVOICE_PAYMENT_REF_MODE", $payrefmode, 'chaine', 0, '', $conf->entity);
+		// In the per third party mode a reference can be written on each third party,
+		// so a missing DIAS code does not stop the mode, it is only reported.
+		if ($payrefblocker == 'WarningPaymentRefDIASCodeMissingThirdparty') {
+			setEventMessages($langs->trans($payrefblocker), null, 'warnings');
+		}
 	}
 
 	// Parts combined to build a per invoice reference
