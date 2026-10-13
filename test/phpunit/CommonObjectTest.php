@@ -1619,6 +1619,14 @@ class CommonObjectTest extends CommonClassTest
 
 		$savopportunities = getDolGlobalString('PROJECT_USE_OPPORTUNITIES');
 		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+		// The module and the write permission may be missing in the database of the CI
+		$savmodules = $conf->modules;
+		$savrights = isset($user->rights->projet) ? clone $user->rights->projet : null;
+		$conf->modules['projet'] = 'projet';
+		if (!isset($user->rights->projet)) {
+			$user->rights->projet = new stdClass();
+		}
+		$user->rights->projet->creer = 1;
 
 		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE active = 1 ORDER BY rowid DESC LIMIT 1");
 		$obj = $resql ? $db->fetch_object($resql) : null;
@@ -1634,7 +1642,7 @@ class CommonObjectTest extends CommonClassTest
 		$localobject->fetch($id);
 		$localobject->setValid($user);
 
-		$this->assertSame((bool) ($user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer')), $localobject->isFieldEditableFromUi($user, 'fk_opp_status'));
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_opp_status'), 'Opportunity status editable from UI on an open project');
 		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'ref'), 'Ref of a project must not be editable from UI');
 		$this->assertFalse($localobject->isFieldEditableFromUi(new User($db), 'fk_opp_status'), 'User without permission');
 
@@ -1647,6 +1655,12 @@ class CommonObjectTest extends CommonClassTest
 
 		$localobject->delete($user);
 		$conf->global->PROJECT_USE_OPPORTUNITIES = $savopportunities;
+		$conf->modules = $savmodules;
+		if ($savrights === null) {
+			unset($user->rights->projet);
+		} else {
+			$user->rights->projet = $savrights;
+		}
 
 		print __METHOD__." OK\n";
 	}
