@@ -140,7 +140,9 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 // The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
 // request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
 // lists and the cards (entity, third parties of the sales representative, projects the user can see...).
-if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
 	$objecttmpforaccesscheck = new $objectclass($db);
 	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
 	if (!empty($refusedids)) {
