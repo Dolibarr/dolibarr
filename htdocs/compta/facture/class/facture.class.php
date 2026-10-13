@@ -943,8 +943,12 @@ class Facture extends CommonInvoice
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
-				foreach ($this->lines as $i => $val) {
-					$line = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$line = $linestoadd[$i];
 					'@phan-var-force FactureLigne $line';
 
 					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
