@@ -203,6 +203,12 @@ class Holiday extends CommonObject
 	 * Refused
 	 */
 	const STATUS_REFUSED = 5;
+	/** Monthly update on application access (legacy setting value 0). */
+	const BALANCE_UPDATE_ON_ACCESS = 0;
+	/** Monthly update by the scheduled job only (legacy setting value 1). */
+	const BALANCE_UPDATE_BY_CRON = 1;
+	/** Monthly update on application access or by the scheduled job, whichever runs first. */
+	const BALANCE_UPDATE_ON_ACCESS_OR_CRON = 2;
 
 
 	/**
@@ -280,12 +286,28 @@ class Holiday extends CommonObject
 	 */
 	public function updateBalance($fromPage = false)
 	{
-		// Keep page-load updates by default. Never fall back to pages in cron mode.
-		if ((bool) getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON') === (bool) $fromPage) {
+		global $conf;
+
+		// Keep the existing constant name and values for installations of the initial patch.
+		$mode = getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON', self::BALANCE_UPDATE_ON_ACCESS);
+		if (!in_array($mode, array(self::BALANCE_UPDATE_ON_ACCESS, self::BALANCE_UPDATE_BY_CRON, self::BALANCE_UPDATE_ON_ACCESS_OR_CRON), true)
+			|| ($fromPage && $mode === self::BALANCE_UPDATE_BY_CRON)
+			|| (!$fromPage && $mode === self::BALANCE_UPDATE_ON_ACCESS)) {
 			return 0;
 		}
 
-		$this->db->begin();
+		// Avoid a database check on every page in an authenticated session. Retry failures.
+		$month = dol_print_date(dol_now(), '%Y%m');
+		$entity = (int) $conf->entity;
+		if ($fromPage && isset($_SESSION['holiday_balance_update_month'][$entity])
+			&& $_SESSION['holiday_balance_update_month'][$entity] === $month) {
+			return 0;
+		}
+
+		if (!$this->db->begin()) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
 
 		// Update sold of vocations
 		$result = $this->updateSoldeCP();
@@ -294,7 +316,14 @@ class Holiday extends CommonObject
 		//if ($result > 0) $result = $this->verifNbUsers($this->countActiveUsersWithoutCP(), $this->getConfCP('nbUser'));
 
 		if ($result >= 0) {
-			$this->db->commit();
+			if (!$this->db->commit()) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+			if ($fromPage && isset($_SESSION)) {
+				$_SESSION['holiday_balance_update_month'][$entity] = $month;
+			}
 			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();

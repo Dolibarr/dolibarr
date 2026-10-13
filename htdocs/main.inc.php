@@ -1423,6 +1423,19 @@ if (empty($conf->browser->firefox)) {
 
 $heightforframes = 52;	// Used by frames.php page
 
+// Run monthly leave accrual on the first authenticated application access of the month.
+// Public pages, asset/Ajax requests and settings submissions must not trigger this update.
+if (!defined('NOLOGIN') && !defined('NOREQUIREDB') && !defined('NOREQUIREUSER') && !defined('NOREQUIREHTML')
+	&& !defined('NOREQUIRETRAN') && $_SERVER['REQUEST_METHOD'] === 'GET'
+	&& $user->id > 0 && empty($user->socid) && isModEnabled('holiday')
+	&& getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON') !== 1) {
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$holidayBalanceUpdater = new Holiday($db);
+	if ($holidayBalanceUpdater->updateBalance(true) < 0) {
+		dol_syslog('Monthly leave balance update on application access failed: '.$holidayBalanceUpdater->error, LOG_ERR);
+	}
+}
+
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
 	if (empty($user->socid)) {    // If internal user or not defined

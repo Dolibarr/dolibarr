@@ -17,6 +17,7 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', dirname(__DIR__, 2).'/htdocs');
 }
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/db/mysqli.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -27,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 {
 	/**
-	 * Check absent, disabled and enabled settings for both callers and two entities.
+	 * Check all three modes, absent and invalid settings for both callers and two entities.
 	 *
 	 * @return void
 	 */
@@ -35,20 +36,22 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf;
 		$savedConf = $conf;
+		$savedSession = isset($_SESSION) ? $_SESSION : null;
 		try {
 			foreach (array(1, 2) as $entity) {
-				foreach (array(null, 0, 1) as $mode) {
+				foreach (array(null, 0, 1, 2, 99) as $mode) {
 					foreach (array(false, true) as $fromPage) {
+						$_SESSION = array();
 						$conf = new stdClass();
 						$conf->entity = $entity;
 						$conf->global = new stdClass();
 						if ($mode !== null) {
 							$conf->global->HOLIDAY_BALANCE_UPDATE_BY_CRON = $mode;
 						}
-						$shouldUpdate = $fromPage ? $mode !== 1 : $mode === 1;
+						$shouldUpdate = $fromPage ? in_array($mode, array(null, 0, 2), true) : in_array($mode, array(1, 2), true);
 						$database = $this->createMock(DoliDBMysqli::class);
-						$database->expects($shouldUpdate ? $this->once() : $this->never())->method('begin');
-						$database->expects($shouldUpdate ? $this->once() : $this->never())->method('commit');
+						$database->expects($shouldUpdate ? $this->once() : $this->never())->method('begin')->willReturn(1);
+						$database->expects($shouldUpdate ? $this->once() : $this->never())->method('commit')->willReturn(1);
 						$database->expects($this->never())->method('rollback');
 						$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
 							->onlyMethods(array('updateSoldeCP'))->getMock();
@@ -59,6 +62,11 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 			}
 		} finally {
 			$conf = $savedConf;
+			if ($savedSession === null) {
+				unset($_SESSION);
+			} else {
+				$_SESSION = $savedSession;
+			}
 		}
 	}
 
@@ -73,9 +81,10 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 		$savedConf = $conf;
 		try {
 			$conf = new stdClass();
+			$conf->entity = 1;
 			$conf->global = new stdClass();
 			$database = $this->createMock(DoliDBMysqli::class);
-			$database->expects($this->exactly(2))->method('begin');
+			$database->expects($this->exactly(2))->method('begin')->willReturn(1);
 			$database->expects($this->never())->method('commit');
 			$database->expects($this->exactly(2))->method('rollback');
 			$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
@@ -87,6 +96,110 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 			$conf->global->HOLIDAY_BALANCE_UPDATE_BY_CRON = 0;
 			$this->assertSame(0, $holiday->updateBalance());
 			$this->assertSame(-1, $holiday->updateBalance(true));
+		} finally {
+			$conf = $savedConf;
+		}
+	}
+
+	/**
+	 * Only successful page updates are cached for the current month and entity.
+	 *
+	 * @return void
+	 */
+	public function testPageUpdateCacheIsScopedByMonthAndEntity()
+	{
+		global $conf;
+		$savedConf = $conf;
+		$savedSession = isset($_SESSION) ? $_SESSION : null;
+		try {
+			$_SESSION = array();
+			$conf = new stdClass();
+			$conf->global = new stdClass();
+			$conf->entity = 1;
+			$database = $this->createMock(DoliDBMysqli::class);
+			$database->expects($this->exactly(3))->method('begin')->willReturn(1);
+			$database->expects($this->exactly(3))->method('commit')->willReturn(1);
+			$database->expects($this->never())->method('rollback');
+			$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
+				->onlyMethods(array('updateSoldeCP'))->getMock();
+			$holiday->expects($this->exactly(3))->method('updateSoldeCP')->willReturn(1);
+			$this->assertSame(0, $holiday->updateBalance(true));
+			$this->assertSame(0, $holiday->updateBalance(true));
+			$conf->entity = 2;
+			$this->assertSame(0, $holiday->updateBalance(true));
+			$conf->entity = 1;
+			$_SESSION['holiday_balance_update_month'][1] = '199901';
+			$this->assertSame(0, $holiday->updateBalance(true));
+		} finally {
+			$conf = $savedConf;
+			if ($savedSession === null) {
+				unset($_SESSION);
+			} else {
+				$_SESSION = $savedSession;
+			}
+		}
+	}
+
+	/**
+	 * A failed commit must not mark the monthly update as successful in the session.
+	 *
+	 * @return void
+	 */
+	public function testFailedCommitAllowsAnotherPageAttempt()
+	{
+		global $conf;
+		$savedConf = $conf;
+		$savedSession = isset($_SESSION) ? $_SESSION : null;
+		try {
+			$_SESSION = array();
+			$conf = new stdClass();
+			$conf->global = new stdClass();
+			$conf->entity = 1;
+			$database = $this->createMock(DoliDBMysqli::class);
+			$database->expects($this->exactly(2))->method('begin')->willReturn(1);
+			$database->expects($this->exactly(2))->method('commit')->willReturnOnConsecutiveCalls(0, 1);
+			$database->expects($this->once())->method('rollback');
+			$database->method('lasterror')->willReturn('Simulated commit failure');
+			$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
+				->onlyMethods(array('updateSoldeCP'))->getMock();
+			$holiday->expects($this->exactly(2))->method('updateSoldeCP')->willReturn(1);
+			$this->assertSame(-1, $holiday->updateBalance(true));
+			$this->assertFalse(isset($_SESSION['holiday_balance_update_month'][1]));
+			$this->assertSame(0, $holiday->updateBalance(true));
+			$this->assertSame(0, $holiday->updateBalance(true));
+		} finally {
+			$conf = $savedConf;
+			if ($savedSession === null) {
+				unset($_SESSION);
+			} else {
+				$_SESSION = $savedSession;
+			}
+		}
+	}
+
+	/**
+	 * A failed transaction start must prevent all accrual writes.
+	 *
+	 * @return void
+	 */
+	public function testFailedBeginDoesNotRunAccrual()
+	{
+		global $conf;
+		$savedConf = $conf;
+		try {
+			$conf = new stdClass();
+			$conf->global = new stdClass();
+			$conf->global->HOLIDAY_BALANCE_UPDATE_BY_CRON = Holiday::BALANCE_UPDATE_BY_CRON;
+			$conf->entity = 1;
+			$database = $this->createMock(DoliDBMysqli::class);
+			$database->expects($this->once())->method('begin')->willReturn(0);
+			$database->expects($this->never())->method('commit');
+			$database->expects($this->never())->method('rollback');
+			$database->method('lasterror')->willReturn('Simulated transaction start failure');
+			$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
+				->onlyMethods(array('updateSoldeCP'))->getMock();
+			$holiday->expects($this->never())->method('updateSoldeCP');
+			$this->assertSame(-1, $holiday->updateBalance());
 		} finally {
 			$conf = $savedConf;
 		}
