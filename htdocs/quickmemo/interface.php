@@ -1031,7 +1031,7 @@ function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
 
 /**
  * Return the GETPOST filter to use for the text of a memo, same rule as other labels.
- * By default fo long text, we use 'nohtml', but we can set it to 'alphanohtml' (better security, with MAIN_SECURITY_DISALLOW_UNSECURED_TEXT).
+ * By default for long text, we use 'nohtml', but we can set it to 'alphanohtml' (better security, with MAIN_SECURITY_DISALLOW_UNSECURED_TEXT).
  * @return string Filter for GETPOST()
  */
 function quickMemoInterfaceGetNoteSecurityCheck()
