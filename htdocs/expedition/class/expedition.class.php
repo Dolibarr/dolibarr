@@ -3350,6 +3350,14 @@ class Expedition extends CommonObject
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
+		// Only a validated shipment can go back to draft. A closed one must be reopened first, so that the stock
+		// decreased on closing (STOCK_CALCULATE_ON_SHIPMENT_CLOSE) is restored.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$langs->load("sendings");
+			$this->error = $langs->trans("StatusOfRefMustBe", $this->ref, $langs->transnoentitiesnoconv("StatusSendingValidatedShort"));
+			$this->errors[] = $this->error;
+			return -1;
+		}
 
 		$this->db->begin();
 
