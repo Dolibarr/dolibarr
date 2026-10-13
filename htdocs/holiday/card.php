@@ -663,53 +663,10 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				// To
-				$destinataire = new User($db);
-				$destinataire->fetch($object->fk_user);
-				$emailTo = $destinataire->email;
-
-				if (!$emailTo) {
-					dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-				} else {
-					// From
-					$expediteur = new User($db);
-					$expediteur->fetch($object->fk_validator);
-					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-					// Subject
-					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-					}
-
-					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-					// Content
-					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";
-
-					$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."</p>\n";
-
-					$link = dol_buildpath('/holiday/card.php', 3).'?id='.$object->id;
-
-					$message .= "<ul>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
-					$message .= "</ul>\n";
-
-					$trackid = 'leav'.$object->id;
-
-					$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
-
-					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
-
-					// Sending email
-					$result = $mail->sendfile();
-
-					if (!$result) {
-						setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-						$action = '';
-					}
+				$result = $object->sendApprovalEmail();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+					$action = '';
 				}
 			}
 
