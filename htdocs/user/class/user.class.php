@@ -354,6 +354,11 @@ class User extends CommonObject
 	public $user_group_list;
 
 	/**
+	 * @var int[]	Entities of the group membership, loaded by UserGroup::listUsersForGroup()
+	 */
+	public $usergroup_entity;
+
+	/**
 	 * @var array<string,int> Cache array of already loaded permissions
 	 */
 	private $_tab_loaded = array();
