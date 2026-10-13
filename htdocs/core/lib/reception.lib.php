@@ -169,12 +169,12 @@ function reception_admin_prepare_head()
  * @param	Form						$form			Form helper
  * @param	Translate					$langs			Language of the user
  * @param	Translate					$outputlangs	Language used for the product label
- * @param	CommandeFournisseurDispatch	$line			Reception line
+ * @param	CommandeFournisseurDispatch|ReceptionLineBatch	$line	Reception line
  * @param	int							$lineIndex		Index of the line, used as tooltip id
  * @param	bool						$showHead		False to return an empty cell
  * @return	string								HTML td
  */
-function getReceptionLineProductCell(DoliDB $db, Form $form, Translate $langs, Translate $outputlangs, CommandeFournisseurDispatch $line, int $lineIndex, bool $showHead): string
+function getReceptionLineProductCell(DoliDB $db, Form $form, Translate $langs, Translate $outputlangs, ReceptionLineBatch $line, int $lineIndex, bool $showHead): string
 {
 	$out = '<td class="linecoldescription">';
 	if (!$showHead) {
@@ -225,13 +225,13 @@ function getReceptionLineProductCell(DoliDB $db, Form $form, Translate $langs, T
  * @param	DoliDB						$db				Database handler
  * @param	Form						$form			Form helper
  * @param	Translate					$langs			Language of the user
- * @param	CommandeFournisseurDispatch	$line			Reception line
+ * @param	CommandeFournisseurDispatch|ReceptionLineBatch	$line	Reception line
  * @param	array<int|string,array<int|string,array{reception_ref:string,reception_id:int|string,warehouse:int|string|null,qty:float|int|string,date_valid:int|string|null,date_delivery:int|string|null}>>	$alreadySent	Quantities already received, by purchase order line then by reception line
  * @param	int							$originId		Id of the purchase order, 0 if none (no "Qty in other receptions" cell)
  * @param	bool						$showHead		False to return empty cells
  * @return	string								HTML td
  */
-function getReceptionLineQtyOrderedCells(DoliDB $db, Form $form, Translate $langs, CommandeFournisseurDispatch $line, array $alreadySent, int $originId, bool $showHead): string
+function getReceptionLineQtyOrderedCells(DoliDB $db, Form $form, Translate $langs, ReceptionLineBatch $line, array $alreadySent, int $originId, bool $showHead): string
 {
 	global $conf;
 
