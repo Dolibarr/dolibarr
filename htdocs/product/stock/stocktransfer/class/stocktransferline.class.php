@@ -204,7 +204,7 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
+		global $extrafields;
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -230,7 +230,6 @@ class StockTransferLine extends CommonObjectLine
 
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
-		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...
 		// Clear extrafields that are unique
@@ -256,15 +255,6 @@ class StockTransferLine extends CommonObjectLine
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
