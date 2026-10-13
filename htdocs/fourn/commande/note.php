@@ -45,10 +45,13 @@ if ($user->socid) {
 }
 
 $hookmanager->initHooks(array('ordersuppliercardnote'));
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
