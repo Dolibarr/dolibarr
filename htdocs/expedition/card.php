@@ -2704,7 +2704,11 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && (getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT'))) {
+
+		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED);
+
+		if ($needquestiononstock) {
 			$formquestion = array(
 				array(
 					'type' => 'onecolumn',
