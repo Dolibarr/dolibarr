@@ -679,7 +679,9 @@ try {
 		$systemPrompt .= "- Combining: terms joined only by AND or OR (uppercase, surrounded by spaces).\n";
 		$systemPrompt .= "  Free nesting with balanced parentheses. No NOT.\n";
 		$systemPrompt .= "  Do not mix AND and OR at the same level without parentheses.\n";
-		$systemPrompt .= "- No sub-query (SELECT ...): to filter on a third party, use thirdparty_ids or (t.fk_soc:=:id) with its id.\n";
+		// Disabled for the moment, as this could not be a generic rule of sqlfilters
+		// Wait test to see why we need this. We shouldnot need it if field fk_soc is defined on each tool.
+		//$systemPrompt .= "- No sub-query (SELECT ...): to filter on a third party, use thirdparty_ids or (t.fk_soc:=:id) with its id.\n";
 		$systemPrompt .= "\n";
 		$systemPrompt .= "Valid:   ((t.client:=:1) OR (t.client:in:2,3)) AND (t.nom:like:'a%')\n";
 		$systemPrompt .= "Invalid: t.ref:=:'A' | (t.ref = 'A') | (t.status:in:(1,2)) | NOT (t.status:=:1) | ((t.a:=:1)\n";
