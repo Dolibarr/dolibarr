@@ -83,6 +83,11 @@ class SMTPs
 	private $_msgId = null;
 
 	/**
+	 * @var string Authentication method ('LOGIN', 'PLAIN', 'XOAUTH2', 'NONE'). If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 */
+	private $_smtpsAuthType = '';
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -547,8 +552,6 @@ class SMTPs
 	private function _server_authenticate($withauth = true)
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvement as provided by 'SirSir' to
@@ -674,13 +677,12 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (!getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE')) {
-				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
-			}
+			// Authentication method of the send context, else of the main setup
+			$authtype = $this->_smtpsAuthType ? $this->_smtpsAuthType : getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
+			switch ($authtype) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -1061,6 +1063,17 @@ class SMTPs
 	public function setToken($_strToken)
 	{
 		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Authentication method to use (the one of the send context)
+	 *
+	 * @param	string	$_strAuthType	'LOGIN', 'PLAIN', 'XOAUTH2' or 'NONE'. If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 * @return	void
+	 */
+	public function setAuthType($_strAuthType)
+	{
+		$this->_smtpsAuthType = (string) $_strAuthType;
 	}
 
 	/**
@@ -1852,13 +1865,17 @@ class SMTPs
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
-			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
-			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
-			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
-			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
+			// The key is the file name and the hash of its content: the same file given twice is attached once, but 2 different
+			// files with the same name (from different directories) are both attached.
+			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 'sha256');
+
+			$this->_msgContent['attachment'][$attachmentkey]['mimeType'] = $strMimeType;
+			$this->_msgContent['attachment'][$attachmentkey]['fileName'] = $strFileName;
+			$this->_msgContent['attachment'][$attachmentkey]['data']     = $strContent;
+			$this->_msgContent['attachment'][$attachmentkey]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, '3');
+				$this->_msgContent['attachment'][$attachmentkey]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}

@@ -10578,10 +10578,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class for a specific user
+	 * Returns the rights used for this class for a specific user.
+	 * This is called by getRights() and hasUserPermission()
 	 *
 	 * @param User $user User to check rights
-	 *
 	 * @return null|int|stdClass        Object of permission for the module
 	 */
 	public function getRightsForUser(User $user)
@@ -10589,11 +10589,7 @@ abstract class CommonObject
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
-		if ($element == 'facturerec') {
-			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec') {
-			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
-		} elseif ($module && $user->hasRight($module, $element)) {
+		if ($module && $user->hasRight($module, $element)) {
 			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
 			$rights = $user->hasRight($module, $element);
 			// Some core modules have a permission named like the element, but it is not the permissions of the object

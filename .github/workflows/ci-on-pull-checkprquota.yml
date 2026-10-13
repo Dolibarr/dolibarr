@@ -2,7 +2,8 @@
 # Check the number of PR created by the same user during the last 24 hours (rolling window,
 # and not a reset of the counter at 00:00 UTC) does not exceed
 # the quota defined in the variable MAX_PR_PER_USER_PER_DAY (20).
-# All the PR are counted, whatever their state (open, closed or merged), including the drafts.
+# All the PR are counted, whatever their state (open, closed or merged), including the drafts,
+# except the PR targeting the branch 18.0 (end of life version), which are excluded from the count.
 # The quota is checked for the author of the PR but also for each author of the commits of the PR,
 # so a PR opened by somebody else than the original author (for example a maintainer that pulls
 # the branch of a contributor on github and creates the PR with its own login) is also checked
@@ -13,6 +14,7 @@
 # so they can pull the branch of a contributor and create the PR with their own login,
 # or add merge or fix commits on the PR of a contributor, without being blocked by this control.
 # If the quota is exceeded, the CI fails, so the PR is refused.
+# The check does not run at all on the PR targeting the branch 18.0 (end of life version).
 # The check runs when the PR is opened or reopened, and also each time commits are pushed
 # on the branch of the PR (synchronize), so the PR becomes or stays red if the quota of
 # the author or of one of the commit authors is exceeded at any time.
@@ -27,9 +29,6 @@ name: Check PR quota per user
 on:
   pull_request:
     types: [opened, reopened, synchronize]
-  # Also called by the workflow ci-on-pull.yml, that runs the cheap PR checks
-  # first, then starts pre-commit, phan and phpstan only when they are green.
-  workflow_call:
 
 permissions:
   pull-requests: read
@@ -38,6 +37,9 @@ jobs:
   check-pr-quota:
     name: Check PR quota per user
     runs-on: ubuntu-latest
+    # Do not run the check on the PR targeting the branch 18.0 (end of life version):
+    # the PR on this branch are not counted, so the PR on this branch are not checked either.
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref != '18.0'
     env:
       MAX_PR_PER_USER_PER_DAY: 10
       EXCLUDED_MAINTAINERS: '^(eldy|rycks|lvessiller-opendsi)$'
@@ -81,16 +83,17 @@ jobs:
 
             # Get the PR created by the user during the last 24 hours,
             # using the GitHub search API so no git history is needed (no checkout).
+            # The PR targeting the branch 18.0 are excluded from the count with -base:18.0.
             # The PR being checked may or may not be already indexed by the search engine,
             # so it is excluded from the result to count only the other PR of the user.
             SEARCH_RESULT=$(gh api --method GET search/issues \
-              -f q="repo:${REPO} is:pr author:${USER_TO_CHECK} created:>=${SINCE_24H}" \
+              -f q="repo:${REPO} is:pr author:${USER_TO_CHECK} created:>=${SINCE_24H} -base:18.0" \
               -f per_page=100)
 
             NB_PR_24H=$(echo "${SEARCH_RESULT}" | jq --argjson pr "${PR_NUMBER}" \
               '[.items[].number | select(. != $pr)] | length')
 
-            echo "Number of PR created during the last 24 hours by ${USER_TO_CHECK}, except this one: ${NB_PR_24H}"
+            echo "Number of PR created during the last 24 hours by ${USER_TO_CHECK}, except this one and except those targeting branch 18.0: ${NB_PR_24H}"
 
             if [ "${NB_PR_24H}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
               echo "::error::The user ${USER_TO_CHECK} has already created ${NB_PR_24H} pull requests during the last 24 hours and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is automatically refused and will be deleted after a delay if not repushed. Please wait 24 hours before creating new pull requests and close this pull request and reopen it later to run the check again."
