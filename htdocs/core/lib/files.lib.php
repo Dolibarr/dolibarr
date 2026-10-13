@@ -1453,7 +1453,11 @@ function dolCheckVirus($src_file, $dest_file = '')
 		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0) {	// If virus or error, we stop here
-			$reterrors = $antivir->errors;
+			if ($result == -99) {
+				$reterrors['ErrorFileIsInfectedKnownVirus'] = implode(', ', $antivir->errors);
+			} else {  // -98, -97, etc.
+				$reterrors['ErrorAntivirusNotAvailable'] = implode(', ', $antivir->errors);
+			}
 			return $reterrors;
 		}
 	}
@@ -2210,7 +2214,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus', 'ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
