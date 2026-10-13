@@ -69,16 +69,11 @@ $label_product_ref_option = GETPOSTISSET('label_product_ref_option');
 $label_product_label_option = GETPOSTISSET('label_product_label_option');
 
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'nohtml') : null);
-} else {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'alpha') : null);
-}
-
-if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 	$security_check = 'nohtml';
 } else {
 	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', $security_check) : null);
 $label_product_label = (GETPOSTISSET('label_product_label') ? GETPOST('label_product_label', $security_check) : null);
 
 $mesg = '';
