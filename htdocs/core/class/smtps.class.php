@@ -1817,7 +1817,7 @@ class SMTPs
 
 			// The key is the file name and the hash of its content: the same file given twice is attached once, but 2 different
 			// files with the same name (from different directories) are both attached.
-			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 3);
+			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 'sha256');
 
 			$this->_msgContent['attachment'][$attachmentkey]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$attachmentkey]['fileName'] = $strFileName;
