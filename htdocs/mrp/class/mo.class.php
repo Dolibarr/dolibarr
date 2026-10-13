@@ -1067,8 +1067,8 @@ class Mo extends CommonObject
 			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-			$codemovementCancel = $langs->trans("StockIncrease");
+			$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
@@ -1091,8 +1091,8 @@ class Mo extends CommonObject
 				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
+				$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 
 				if ($qtytoprocess >= 0) {
@@ -1460,8 +1460,8 @@ class Mo extends CommonObject
 					$qtytoprocess = $lineDetails['qty'];
 
 					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
+					$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
