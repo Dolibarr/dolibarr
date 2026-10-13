@@ -341,7 +341,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		fetchLines(lineIds, options = {}) {
 			return this.object.fetchLines(lineIds, {
 				page: new URL(this.url, window.location.href).pathname,
-				hookContexts: Dolibarr.getContextVar('HOOK_CONTEXTS', []),
+				hookContexts: Dolibarr.getContextVar('HOOK_CONTEXTS', ''),
 				...options,
 			});
 		}

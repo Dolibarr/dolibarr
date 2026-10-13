@@ -122,15 +122,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {Object} [options] Options of Dolibarr.tools.fetch (showErrors, signal...)
 		 * @param {string} [options.action] 'editline' for the edit form of one line (rows of objectline_edit.tpl.php)
 		 * @param {string} [options.page] Path of the card, like /comm/propal/card.php, so the links of the lines are the ones of the card
-		 * @param {string[]} [options.hookContexts] Hook contexts of the page that printed the lines (ex: ['propalcard', 'globalcard']),
+		 * @param {string} [options.hookContexts] Hook contexts of the page that printed the lines, separated by a comma (ex: 'propalcard,globalcard'),
 		 *   so modules hooking the lines render them as in this page
 		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null, eventMessages: Object}>}
 		 */
 		async fetchLines(lineIds, options = {}) {
-			const { action = '', page = '', hookContexts = [], ...fetchOptions } = options;
+			const { action = '', page = '', hookContexts = '', ...fetchOptions } = options;
 			const params = { element: this.element, id: this.id, lineids: lineIds.join(',') };
 			if (page) params.page = page;
-			if (hookContexts.length > 0) params.hookcontexts = hookContexts.join(',');
+			if (hookContexts) params.hookcontexts = hookContexts;
 			if (action) params.action = action;
 
 			// A GET with an action needs the anti CSRF token (MAIN_SECURITY_CSRF_WITH_TOKEN = 3 by default)
