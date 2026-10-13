@@ -188,7 +188,7 @@ function getReceptionLineProductCell(DoliDB $db, Form $form, Translate $langs, T
 			$prod->fetch($line->fk_product);
 			$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $line->product->label;
 		} else {
-			$label = (!empty($line->product->label) ? $line->product->label : $line->product->product_label);
+			$label = (!empty($line->product->label) ? $line->product->label : '');
 		}
 
 		$text = $line->product->getNomUrl(1);

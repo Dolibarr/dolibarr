@@ -1559,7 +1559,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 		print '<td colspan="3">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 		print "</td>\n";
 		print '</tr>';

@@ -2131,7 +2131,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->address);
+	print dolPrintText($companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2140,7 +2140,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->owner_address);
+	print dolPrintText($companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';

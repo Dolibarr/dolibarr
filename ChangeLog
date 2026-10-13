@@ -17,6 +17,8 @@ The following changes may create regressions for some external modules, but were
   Also hasUserWritePermissionOnField (also used at few places only) must be replaced with hasUserPermissionOnField().
 * On the reception card, lines of lots/serial numbers of a same purchase order line are now grouped under a summary line. The hook 'printFieldListValue' is not called on this summary line.
 * The use of starting char '^...' for parameter $picto name in img_object() has been removed.
+* img_object() does not add the prefix 'object_' to the $picto name anymore. An external module with a picto 'xxx@mymodule' must now provide
+  the image file mymodule/img/xxx.png (keep also mymodule/img/object_xxx.png to stay compatible with older versions).
 * Removed library MathPHP. Was introduced in 2023. Never used by Dolibarr after 3 years.
 
 

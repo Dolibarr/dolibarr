@@ -137,6 +137,8 @@ if (!$action) {
 
 
 $thirdparty = null; // Init for static analysis
+$attendee = null; // Init for static analysis
+$invoice = null; // Init for static analysis
 $stripecu = null; // Init for static analysis
 $paymentintent = null; // Init for static analysis
 
@@ -2224,7 +2226,7 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
+if ($source == 'organizedeventregistration' && is_object($thirdparty) && is_object($attendee) && is_object($invoice)) {
 	dol_syslog("newpayment.php source=organizedeventregistration", LOG_DEBUG);
 
 	$found = true;
@@ -2316,7 +2318,7 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'boothlocation') {
+if ($source == 'boothlocation' && is_object($invoice)) {
 	dol_syslog("newpayment.php source=boothlocation", LOG_DEBUG);
 
 	$found = true;
