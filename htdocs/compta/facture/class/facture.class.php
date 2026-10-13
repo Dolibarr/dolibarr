@@ -3293,9 +3293,9 @@ class Facture extends CommonInvoice
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref));
 						} else {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
 						}
 					}
 				}
@@ -3853,7 +3853,7 @@ class Facture extends CommonInvoice
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
 							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
 								$this->setErrorsFromObject($mouvP);
@@ -3905,7 +3905,7 @@ class Facture extends CommonInvoice
 												// not enough (take all in batch)
 												$product_batch_qty = $batch->qty;
 											}
-											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
 												$this->setErrorsFromObject($mouvP);
@@ -3929,7 +3929,7 @@ class Facture extends CommonInvoice
 											} else {
 												// take in the first batch
 												$batch = $batchList[0];
-												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
 													$this->setErrorsFromObject($mouvP);
@@ -3941,7 +3941,7 @@ class Facture extends CommonInvoice
 							}
 
 							if (!$is_batch_line) {	// If stock move not yet processed
-								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
 									$this->setErrorsFromObject($mouvP);
