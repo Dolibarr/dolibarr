@@ -55,7 +55,7 @@ class EvaluationLine extends CommonObjectLine
 	/**
 	 * @see CommonObjectLine
 	 */
-	public $parent_element = 'evaluation';
+	public $parent_element = 'hrm_evaluation';
 
 	/**
 	 * @see CommonObjectLine

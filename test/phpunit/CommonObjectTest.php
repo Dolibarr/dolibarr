@@ -1669,7 +1669,7 @@ class CommonObjectTest extends CommonClassTest
 		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
 
 		$line = new EvaluationLine($db);
-		$this->assertSame('evaluation', getElementProperties($line->parent_element)['element'], 'Parent element of a line is the evaluation');
+		$this->assertSame('Evaluation', getElementProperties($line->parent_element)['classname'], 'Parent of a line is the evaluation');
 
 		$line->fk_evaluation = 0;
 		$this->assertFalse($line->isFieldEditableFromUi($user, 'rankorder'), 'Line without its evaluation is not editable');
