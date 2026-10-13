@@ -1929,11 +1929,7 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					if (!isset($total_time)) {
-						$total_time = $total_time_by_line;
-					} else {
-						$total_time += $total_time_by_line;
-					}
+					$total_time += $total_time_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename)) {

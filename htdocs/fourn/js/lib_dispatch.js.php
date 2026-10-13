@@ -214,7 +214,7 @@ function addDispatchLinesFromSerialList(index, type) {
 	console.log("fourn/js/lib_dispatch.js.php addDispatchLinesFromSerialList type="+type+" index="+index);
 
 	var $dialog = jQuery("#dialogforpopup");
-	var html = '<textarea id="seriallist" class="centpercent" rows="10" placeholder=<?php echo "'".dol_escape_js(dol_escape_htmltag($langs->transnoentitiesnoconv("EnterOneSerialNumberPerLine")))."'" ; ?>></textarea>';
+	var html = '<textarea id="seriallist" class="centpercent" rows="10" placeholder="<?php echo dol_escape_js(dol_escape_htmltag($langs->transnoentitiesnoconv("EnterOneSerialNumberPerLine"))); ?>"></textarea>';
 	html += '<div id="seriallistmessage" class="opacitymedium paddingtop"></div>';
 	$dialog.html(html);
 
