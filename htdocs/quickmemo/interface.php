@@ -1036,8 +1036,8 @@ function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
  */
 function quickMemoInterfaceGetNoteSecurityCheck()
 {
-	if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-		return 'nohtml';
+	if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+		return 'alphanohtml';
 	}
-	return !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+	return 'nohtml';
 }
