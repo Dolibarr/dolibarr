@@ -171,7 +171,7 @@ $arrayfields = array(
 	't.description' => array('label' => "Description", 'checked' => '0', 'position' => 80),
 	't.dateo' => array('label' => "DateStart", 'checked' => '1', 'position' => 100),
 	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 101),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 151),
+	'p.ref' => array('label' => "RefProject", 'checked' => '1', 'position' => 151),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'position' => 152),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '-1', 'csslist' => 'tdoverflowmax125', 'position' => 200),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'csslist' => 'tdoverflowmax125', 'position' => 201),
@@ -1316,8 +1316,9 @@ while ($i < $imaxinloop) {
 			}
 			// Project title
 			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->projecttitle).'">';
-				print dol_escape_htmltag($obj->projecttitle);
+				print '<td class="tdoverflowmax150">';
+				$projectstatic->title = dol_escape_htmltag($obj->projecttitle);
+				print $projectstatic->getNomUrl(1, '', -1);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

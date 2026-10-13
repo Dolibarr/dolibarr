@@ -363,6 +363,31 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
+$langs->load('projects');
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('p.ref' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('p.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '0', 'position' => 190, 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
+$projectcolumns = array(
+	'p.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'p.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
+);
+$arrayfields['p.ref'] = $projectcolumns['p.ref'];
+$arrayfields['p.title'] = $projectcolumns['p.title'];
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -836,6 +861,16 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', p.rowid as projectlist_id, p.ref as projectlist_ref, p.title as projectlist_title, p.public as projectlist_public, p.fk_statut as projectlist_status';
+
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -864,7 +899,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 if (!empty($arrayfields['f.fk_fac_rec_source']['checked']) || !empty($search_fac_rec_source_title) || strpos((string) $sortfield, 'facrec.') !== false) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source = facrec.rowid';
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet AND p.rowid IN (".$db->sanitize($projectsforlist).")";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = f.fk_account';
 // Add table from hooks
@@ -1184,6 +1219,13 @@ if (!empty($searchCategoryCustomerList)) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('p.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('p.title', $search_projectlist_title);
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -1280,6 +1322,8 @@ if ($search_fk_fac_rec_source) {
 }
 
 $param = '';
+
+$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -1749,12 +1793,13 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 }
 // Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
-	print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
 }
 // Project label
-if (!empty($arrayfields['p.title']['checked'])) {
-	print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
-}
+
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
@@ -2075,14 +2120,14 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
-	$langs->load("projects");
-	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.title']['checked'])) {
-	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -2588,9 +2633,29 @@ if ($num > 0) {
 
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nocellnopadd nowraponall">';
-				if ($obj->project_id > 0) {
-					print $projectstatic->getNomUrl(1);
+				print '<td class="tdoverflowmax150">';
+				if ($obj->projectlist_id > 0) {
+					$projectforlist->id = (int) $obj->projectlist_id;
+					$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+					$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+					$projectforlist->public = (int) $obj->projectlist_public;
+					$projectforlist->status = (int) $obj->projectlist_status;
+					print $projectforlist->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['p.title']['checked'])) {
+				print '<td class="tdoverflowmax150">';
+				if ($obj->projectlist_id > 0) {
+					$projectforlist->id = (int) $obj->projectlist_id;
+					$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+					$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+					$projectforlist->public = (int) $obj->projectlist_public;
+					$projectforlist->status = (int) $obj->projectlist_status;
+					print $projectforlist->getNomUrl(1, '', -1);
 				}
 				print '</td>';
 				if (!$i) {
@@ -2599,16 +2664,7 @@ if ($num > 0) {
 			}
 
 			// Project label
-			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td class="nowraponall">';
-				if ($obj->project_id > 0) {
-					print dol_escape_htmltag($projectstatic->title);
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
+
 
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked'])) {
