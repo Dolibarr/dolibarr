@@ -6,22 +6,47 @@ on:
       - '.agents/**'
 
 jobs:
+  # Run first the cheap PR checks, by calling their workflows. They also keep
+  # their own triggers, so the pull_request_target event of "Check PR files"
+  # still allows to comment and label PRs from forks, and "Check PR title and
+  # description" still runs again when the title is edited or the draft is
+  # marked ready for review.
+  check-files:
+    uses: ./.github/workflows/ci-on-pull-checkfiles.yml
+    secrets: inherit
+    permissions:
+      pull-requests: write # to comment the PR
+      issues: write # to add a label on the PR
+  check-pr-quota:
+    uses: ./.github/workflows/ci-on-pull-checkprquota.yml
+    secrets: inherit
+    permissions:
+      pull-requests: read
+  check-pr:
+    uses: ./.github/workflows/ci-on-pull-checkdesc.yml
+    secrets: inherit
+    permissions:
+      pull-requests: read # to get the list of files of the PR
+      issues: read # to get the comments of the PR
+  # Run pre-commit only when the 3 cheap PR checks are green
   pre-commit:
+    needs: [check-files, check-pr-quota, check-pr]
     uses: ./.github/workflows/pre-commit.yml
     secrets: inherit
     with:
       gh_event: ${{ github.event_name }}
+  # Run the costly phan and phpstan only when pre-commit is green
   phan:
     # if: false   # Uncommenting this line disables phan
+    needs: [pre-commit]
     uses: ./.github/workflows/phan.yml
     secrets: inherit
-    needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
   phpstan:
+    needs: [pre-commit]
     uses: ./.github/workflows/phpstan.yml
     secrets: inherit
-    needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
   #windows-ci:
