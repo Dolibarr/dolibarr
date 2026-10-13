@@ -83,6 +83,7 @@ if (GETPOST('lang', 'aZ09')) {
 $langs->load("main");
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
+$urlarrow = DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png';
 
 
 /*
@@ -114,7 +115,6 @@ print '<body class="getmenudiv">'."\n";
 // JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
@@ -125,6 +125,7 @@ print '
     body ul li {
         list-style: none;
     }
+    /* Hide the non active LIs by default */
     body ul ul {
         display: none;
     }
@@ -158,52 +159,28 @@ print '
 		padding-'.$left.': 0px !important;
 	}
 
-    span.spanlilevel0 {
-        background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
-        background-repeat: no-repeat !important;
-		background-position-y: 18px;';
-if ($langs->trans("DIRECTION") == 'rtl') {
-	print 'background-position: right;';
-} else {
-	print 'background-position-x: 10px;';
-}
-print '
-    }
-    a.alilevel0, span.spanlilevel0 {';
-if ($langs->trans("DIRECTION") == 'rtl') {
-	print 'padding: 1em 40px 1em 15px;';
-} else {
-	print 'padding: 1em 15px 1em 40px;';
-}
-print '
-		display: block;
+    a.alilevel0, span.spanlilevel0 {
+        position: relative;
+        display: block;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-'.$left.': 40px;
+        padding-'.$right.': 15px;
     }
     /* Arrow of level 1 entries: points to the right when closed, to the bottom when open */
-    a.alilevel0 {
-        position: relative;
-    }
-    a.alilevel0::before {
+    a.alilevel0::before, span.spanlilevel0::before {
         content: "";
         position: absolute;
         top: 18px;
         '.$left.': 10px;
         width: 18px;
         height: 18px;
-        background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\');
+        background-image: url(\''.$urlarrow.'\');
         background-repeat: no-repeat;
         transition: transform 0.2s;
     }
     li.lilevel0.menuopen > a.alilevel0::before {
         transform: rotate(90deg);
-    }
-    li.lilevel0 font.vsmenudisabled {
-        background-repeat: no-repeat !important;
-        background-position-x: 10px;
-        background-position-y: 16px;
-        padding: 1em 15px 1em 40px;
-        background: #f8f8f8;
-        display: block;
-        font-size: 16px !important;
     }
     li.lilevel1 {
         padding: 1em 15px 0.5em 40px;
@@ -212,23 +189,9 @@ print '
     	margin-left: 0px;
         border-right: 0px ! important;
     }
-    li.lilevel1:first-child {
-        margin-right: 0px;
-        margin-left: 0px;
-    }
     li.lilevel1 a, li.lilevel1 > span {
         padding-bottom: 5px;
     }
-	li.lilevel1 > a, li.lilevel1 > i, li.lilevel1 > span {
-        background-repeat: no-repeat !important;';
-if ($langs->trans("DIRECTION") == 'rtl') {
-	print 'background-position: right;';
-} else {
-	print 'background-position-x: 10px;';
-}
-print '	background-position-y: 1px;
-		padding-'.$left.': 20px;
-	}
     li.lilevel1 a, li.lilevel1 > span, li.lilevel1 {
         color: #000;
         cursor: pointer;
