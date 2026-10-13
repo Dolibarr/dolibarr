@@ -312,7 +312,8 @@ if ($search_projectlist_title !== '') {
 	$sql .= natural_search('p.title', $search_projectlist_title);
 }
 
-$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= ", p.rowid, p.ref, p.title, p.public, p.fk_statut";
 if (isModEnabled('project')) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
