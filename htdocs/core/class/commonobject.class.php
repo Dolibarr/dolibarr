@@ -9039,6 +9039,8 @@ abstract class CommonObject
 			$size = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			// @phan-suppress-next-line PhanTypeMismatchProperty
@@ -9632,6 +9634,8 @@ abstract class CommonObject
 			$maxSize = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {

@@ -67,24 +67,19 @@ $jsonResponse = new JsonResponse();
 
 // Security check: basic read permission
 if (!$user || !$user->hasRight('quickmemo', 'memo', 'read')) {
-	$jsonResponse->msg = $langs->trans('NotEnoughRights');
-	$jsonResponse->result = 0;
-	print $jsonResponse->getResponse();
-	$db->close();    // Close $db database opened handler
-	exit;
+	$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
 }
 
 // Execute hooks before standard actions
 $reshook = $hookmanager->executeHooks('quickMemoInterface', [], $jsonResponse, $action);
 if ($reshook < 0) {
-	$jsonResponse->msg = $hookmanager->error;
+	$errMsg = $hookmanager->error;
 	if (!empty($hookmanager->errors)) {
-		$jsonResponse->msg = (!empty($hookmanager->error) ? '<br>' : '') . implode('<br>', $hookmanager->errors);
+		$errMsg.= (!empty($hookmanager->error) ? '<br>' : '') . implode('<br>', $hookmanager->errors);
 	}
-	$jsonResponse->result = 0;
-	print $jsonResponse->getResponse();
-	$db->close();    // Close $db database opened handler
-	exit;
+	$jsonResponse->setError($errMsg);
+	$jsonResponse->output();
 }
 
 // Action Dispatcher: Routes the request to the appropriate function based on the 'action' parameter
@@ -119,12 +114,10 @@ if ($reshook > 0) {
 } elseif ($action === 'update_note') {
 	quickMemoIntefaceActionUpdateNote($jsonResponse);
 } else {
-	$jsonResponse->msg = 'Action not found';
+	$jsonResponse->setError($langs->trans('ErrorActionNotFound'));
 }
 
-print $jsonResponse->getResponse();
-
-$db->close();    // Close $db database opened handler
+$jsonResponse->output();
 
 /**
  * Update the coordinates (X, Y), dimensions (W, H), and Z-index of a single memo.
@@ -137,27 +130,26 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 
 	// Read permission is sufficient as this only affects the current user's view
 	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	// Prevent moving a private note belonging to another user
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantMoveThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantMoveThisPrivateNote'));
 		return false;
 	}
 
@@ -168,11 +160,10 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 	$h = GETPOST("h", "int");
 
 	if (!$memo->updatePosition($user, (int) $x, (int) $y, (int) $w, (int) $h, (int) $z)) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		return true;
 	}
@@ -190,8 +181,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 	// In case of position, read permission is enough because changing position will affect only this user not others.
 	// So he can't modify the content but can move it for himself.
 	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
@@ -199,8 +189,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 	$data = json_decode($json, true);
 
 	if (!is_array($data) || empty($data['memos'])) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = 'No data received';
+		$jsonResponse->setError($langs->trans('ErrorNoDataReceived'));
 		return;
 	}
 
@@ -224,7 +213,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 	}
 
 	$db->commit();
-	$jsonResponse->result = 1;
+	$jsonResponse->setSuccess();
 
 	return true;
 }
@@ -239,8 +228,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
@@ -249,15 +237,14 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 
 
 	if (empty($element_id) && !is_numeric($element_id) && !empty($element_type)) {
-		$jsonResponse->msg = 'Need memo element_id';
+		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	$context_tab = GETPOST('context');
 	if (!in_array($context_tab, $memo->getAvailableMemoContext())) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : Context unknown';
+		$jsonResponse->setError($langs->trans('ErrorContextUnknown'));
 		return false;
 	}
 
@@ -272,7 +259,6 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 	$memo->quick_note = GETPOST("note", "alphanohtml");
 	$memo->fk_element = $element_id;
 	$memo->element_type = $element_type;
-	$jsonResponse->debug = GETPOST("color", $firstColor);
 	$memo->context_tab = $context_tab;
 	$memo->shared_on_element = GETPOST("shared_on_element", "int") ? 1 : 0;
 	$memo->private = GETPOST("private", "int") ? 1 : 0;
@@ -286,11 +272,10 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 
 	$resCre = $memo->create($user);
 	if ($resCre <= 0 ) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = new stdClass();
 		$jsonResponse->data->id = (int) $resCre;
 
@@ -309,35 +294,33 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantArchiveThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantArchiveThisPrivateNote'));
 		return false;
 	}
 
 	if ($memo->setArchived($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		return true;
 	}
@@ -353,26 +336,25 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
 		return false;
 	}
 
@@ -392,11 +374,10 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 	$memo->date_archived = null;
 
 	if ($memo->update($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		return true;
 	}
@@ -413,40 +394,38 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'delete')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need model Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedModelId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($memo->status != Memo::STATUS_TPL) {
-		$jsonResponse->msg = 'Not a model';
+		$jsonResponse->setError($langs->trans('ErrorThisMemoIsNotATemplate'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private_tpl) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantDeleteThisPrivateModel');
+		$jsonResponse->setError($langs->trans('QuickMemoCantDeleteThisPrivateModel'));
 		return false;
 	}
 
 	if ($memo->delete($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		return true;
 	}
@@ -489,8 +468,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
@@ -498,8 +476,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	$data = json_decode($json, true);
 
 	if (!is_array($data) || empty($data['moved']['id']) || !isset($data['moved']['newPos'])) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = 'INVALID MOVED DATA';
+		$jsonResponse->setError($langs->trans('ErrorInvalidMovedData'));
 		return false;
 	}
 
@@ -518,8 +495,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 
 	$res = $db->query($sql);
 	if (!$res || !$db->num_rows($res)) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = 'MODEL NOT FOUND';
+		$jsonResponse->setError($langs->trans('ErrorModelNotFound'));
 		return false;
 	}
 
@@ -536,8 +512,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 
 	$resAll = $db->query($sqlAll);
 	if (!$resAll) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $db->error();
+		$jsonResponse->setError($db->error(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	}
 
@@ -570,8 +545,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 
 		if (!$db->query($sqlUp)) {
 			$db->rollback();
-			$jsonResponse->result = 0;
-			$jsonResponse->msg = $db->error();
+			$jsonResponse->setError($db->error(), JsonResponse::HTTP_INTERNAL_ERROR);
 			return false;
 		}
 
@@ -580,7 +554,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 
 	$db->commit();
 
-	$jsonResponse->result = 1;
+	$jsonResponse->setSuccess();
 	$jsonResponse->data = null;
 	return true;
 }
@@ -594,40 +568,38 @@ function quickMemoIntefaceActionDeleteNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($memo->status == Memo::STATUS_TPL) { // In case of models need check other stuff
-		$jsonResponse->msg = 'Can\'t delete model';
+		$jsonResponse->setError($langs->trans('ErrorCantDeleteModel'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantDeleteThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantDeleteThisPrivateNote'));
 		return false;
 	}
 
 	if ($memo->delete($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		return true;
 	}
@@ -644,21 +616,20 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
@@ -672,11 +643,10 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 	$memo->fk_user_modif = $user->id;
 
 	if ($memo->update($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = new stdClass();
 
 		// return new memo
@@ -695,43 +665,41 @@ function quickMemoIntefaceActionUpdateColor($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
 	$color = GETPOST("color");
 	if (!Memo::checkColor($color)) {
-		$jsonResponse->msg = 'Need valide Color';
+		$jsonResponse->setError($langs->trans('ErrorNeedValidColor'));
 		return false;
 	}
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
 		return false;
 	}
 
 	$memo->color = $color;
 
-	if (!$memo->update($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = new stdClass();
 
 		// return new memo
@@ -750,15 +718,14 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
@@ -766,23 +733,22 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
 		return false;
 	}
 
 	$memo->shared_on_element = $shared_on_element ? 1 : 0;
 
-	if (!$memo->update($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = null;
 		$jsonResponse->data = new stdClass();
 
@@ -803,15 +769,14 @@ function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
 	$id = GETPOSTINT("id");
 
-	if (empty($id) && !is_numeric($id)) {
-		$jsonResponse->msg = 'Need memo Id';
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
 		return false;
 	}
 
@@ -819,23 +784,22 @@ function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
 
 	$memo = new Memo($db);
 	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->msg = 'Memo not found';
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
 
 	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
 		return false;
 	}
 
 	$memo->private = $private ? 1 : 0;
 
-	if (!$memo->update($user) < 0) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $langs->trans('UpdateError') . ' : ' . $memo->errorsToString();
+	if ($memo->update($user) < 0) {
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
-		$jsonResponse->result = 1;
+		$jsonResponse->setSuccess();
 		$jsonResponse->data = new stdClass();
 
 		// return new memo
@@ -854,8 +818,7 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughRights');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
@@ -894,8 +857,7 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 	$sql = $memoStatic->getTemplateMemosQuery($element_type, $context);
 	$resql = $db->query($sql);
 	if (!$resql) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $db->lasterror();
+		$jsonResponse->setError($db->lasterror(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return;
 	}
 
@@ -904,7 +866,7 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 		$jsonResponse->data->modelTemplate[]  = quickMemoInterfacePopulateMemoTplFromQueryObj($obj);
 	}
 
-	$jsonResponse->result = 1;
+	$jsonResponse->setSuccess();
 }
 
 /**
@@ -917,8 +879,7 @@ function quickMemoIntefaceActionList($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'read')) {
-		$jsonResponse->msg = $langs->trans('NotEnoughPermissions');
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
 		return;
 	}
 
@@ -930,8 +891,7 @@ function quickMemoIntefaceActionList($jsonResponse)
 	$jsonResponse->data->nbArchives = 0;
 
 	if (empty($element_id) && !empty($element_type)) {
-		$jsonResponse->msg = 'Need element_id ';
-		$jsonResponse->result = 0;
+		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
 		return;
 	}
 
@@ -941,8 +901,7 @@ function quickMemoIntefaceActionList($jsonResponse)
 	$sql = $staticMemo->getMemosQuery($element_type, $element_id, $context);
 	$resql = $db->query($sql);
 	if (!$resql) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = $db->lasterror();
+		$jsonResponse->setError($db->lasterror(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return;
 	}
 
@@ -958,14 +917,13 @@ function quickMemoIntefaceActionList($jsonResponse)
 	// Count archived notes for display
 	$nbArchives = $staticMemo->countArchivedMemoQuery($element_type, $element_id, $context);
 	if ($nbArchives === false) {
-		$jsonResponse->result = 0;
-		$jsonResponse->msg = 'Error count archive';
+		$jsonResponse->setError($langs->trans('ErrorCountArchive'), JsonResponse::HTTP_INTERNAL_ERROR);
 		return;
 	}
 
 	$jsonResponse->data->nbArchives = $nbArchives;
 
-	$jsonResponse->result = 1;
+	$jsonResponse->setSuccess();
 }
 
 
