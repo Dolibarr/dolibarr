@@ -1598,6 +1598,7 @@ class QuickMemo {
 
 			if (json.data && json.data.memo) {
 				await this.updateMemoTxt(json.data.memo, noteEl);
+				await this.syncNoteFromServer(noteEl, note, json.data.memo.note);
 			}
 
 			Dolibarr.executeHook('QuickMemo:saveNote:saved', {id, note, json});
@@ -1607,6 +1608,34 @@ class QuickMemo {
 			console.error('QuickMemo save note error', err);
 			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoSaveError') + ' : ' + err, 'errors');
 			return false;
+		}
+	}
+
+	/**
+	 * The server filters the note (for example text looking like html tags is removed).
+	 * Show the note as it was really saved, so the user does not discover the difference after a reload.
+	 * @async
+	 * @param {HTMLElement} noteEl
+	 * @param {string} sentNote - The note sent to the server
+	 * @param {string} savedNote - The note returned by the server
+	 */
+	async syncNoteFromServer(noteEl, sentNote, savedNote) {
+		if (typeof savedNote !== 'string' || savedNote === sentNote) return;
+
+		const textarea = noteEl.querySelector('textarea');
+		// Do not overwrite what the user typed after this save, next save will handle it
+		if (!textarea || textarea.value !== sentNote) return;
+
+		const caret = Math.min(textarea.selectionStart, savedNote.length);
+		textarea.value = savedNote;
+		textarea.setSelectionRange(caret, caret);
+
+		const m = this.getMemoFromElement(noteEl);
+		if (m) m.memo.note = savedNote;
+
+		const preview = noteEl.querySelector('.quickmemo-markdown-preview');
+		if (preview && savedNote) {
+			await this.renderPreview(preview, savedNote);
 		}
 	}
 
