@@ -9049,6 +9049,7 @@ abstract class CommonObject
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $conf, $langs, $form;
 
 		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
@@ -9844,6 +9845,7 @@ abstract class CommonObject
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 		global $objectoffield;
 
