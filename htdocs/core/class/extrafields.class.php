@@ -2463,7 +2463,7 @@ class ExtraFields
 				} else {
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->rowid) {
+					if ($obj && $obj->rowid) {	// fetch_object() returns null when the query returned no row, for example when the field has no value
 						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
