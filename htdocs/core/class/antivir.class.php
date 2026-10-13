@@ -115,6 +115,11 @@ class AntiVir
 			return -98;
 		}
 
+		if ($return_var < 0) {					// If the command could not be run at all, we have no verdict, so the file must not be reported as clean
+			$this->errors = array($errorstring ? $errorstring : 'Failed to run the antivirus command', $output);
+			return -98;
+		}
+
 		// If return code = 0
 		return 1;
 	}
