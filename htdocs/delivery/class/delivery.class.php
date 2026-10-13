@@ -1291,6 +1291,11 @@ class DeliveryLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_origin_line;
+
+	/**
+	 * @var int	Never set: a delivery line has no parent line, but the generic PDF functions read it
+	 */
+	public $fk_parent_line;
 	/**
 	 * @var int
 	 */
