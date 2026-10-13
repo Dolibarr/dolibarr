@@ -9844,7 +9844,6 @@ abstract class CommonObject
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
-		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 		global $objectoffield;
 
