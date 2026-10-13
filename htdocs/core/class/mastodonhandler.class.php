@@ -121,6 +121,7 @@ class MastodonHandler
 				if ($cacheDir) {
 					dol_mkdir($cacheDir);
 					file_put_contents($cacheFile, $data);
+					dolChmod($cacheFile);
 				}
 			} else {
 				$this->error = 'Error retrieving URL ' . $urlAPI;

@@ -1,46 +1,46 @@
 # Dolibarr language file - Source file is en_US - marges
 
-Margin=Kar Oranı
-Margins=Kar Oranları
-TotalMargin=Toplam Kar Oranı
-MarginOnProducts=Kar Oranı / Ürünler
-MarginOnServices=Kar Oranı / Hizmetler
-MarginRate=Kar Oranı değeri
-ModifyMarginRates=Marj oranlarını değiştirin
+Margin=Kâr Oranı
+Margins=Kâr Oranları
+TotalMargin=Toplam Kâr Oranı
+MarginOnProducts=Kâr Oranı / Ürünler
+MarginOnServices=Kâr Oranı / Hizmetler
+MarginRate=Kâr Oranı değeri
+ModifyMarginRates=Kâr oranı değerlerini değiştir
 MarkRate=Yayınlanmış fiyat
-DisplayMarginRates=Kar oran değerlerini göster
+DisplayMarginRates=Kâr oranı değerlerini göster
 DisplayMarkRates=Yayınlanmış fiyatları göster
 InputPrice=Giriş fiyatı
-margin=Kar oranı yönetimi
-margesSetup=Kar oranı yönetimi ayarı
-MarginDetails=Kar oranı ayrıntıları
-ProductMargins=Ürün kar oranları
-CustomerMargins=Müşteri kar oranları
-SalesRepresentativeMargins=Satış temsilcisi kar oranları
+margin=Kâr oranı yönetimi
+margesSetup=Kâr oranı yönetim ayarları
+MarginDetails=Kâr oranı ayrıntıları
+ProductMargins=Ürün kâr oranları
+CustomerMargins=Müşteri kâr oranları
+SalesRepresentativeMargins=Satış temsilcisi kâr oranları
 ContactOfInvoice=Fatura kesen kişi
-UserMargins=Kullanıcı kar oranları
+UserMargins=Kullanıcı kâr oranları
 ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürünler ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç
 ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
-ForceBuyingPriceIfNullDetails=Yeni bir satır eklediğimizde satın alma/maliyet fiyatı sağlanmadıysa ve bu seçenek "AÇIK" ise, yeni satırdaki marj 0%% olacaktır (satın alma/maliyet fiyatı = satış fiyatı). Bu seçenek "KAPALI" ise (önerilir), kenar boşluğu varsayılan olarak önerilen değere eşit olacaktır (ve varsayılan değer bulunamazsa 100%% olabilir).
-MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
+ForceBuyingPriceIfNullDetails=Yeni bir satır eklediğimizde satın alma/maliyet fiyatı girilmemişse ve bu seçenek "AÇIK" ise, yeni satırdaki kâr oranı 0%% olacaktır (satın alma/maliyet fiyatı = satış fiyatı). Bu seçenek "KAPALI" ise (önerilir), kâr oranı varsayılan olarak önerilen değere eşit olacaktır (ve varsayılan değer bulunamazsa 100%% olabilir).
+MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kâr oranı yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
 UseDiscountOnTotal=Ara toplamla
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kar oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
-MARGIN_TYPE=Kar oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
-MargeType1=En iyi satıcı fiyatı marjı
-MargeType2=Ağırlıklı Ortalama Fiyatta Kar Oranı (AOF)
-MargeType3=Maliyet Fiyatı karı
-MarginTypeDesc=* En iyi satın alma fiyatı marjı = Satış fiyatı - Ürün kartında tanımlanan en iyi satıcı fiyatı<br>* Ağırlıklı Ortalama Fiyat Marjı (WAP) = Satış fiyatı - Ürün Ağırlıklı Ortalama Fiyat (WAP) veya WAP henüz tanımlanmamışsa en iyi satıcı fiyatı<br>* Maliyet fiyatı marjı = Satış fiyatı - Maliyet fiyatı tanımlanmamışsa ürün kartında veya WAP'ta tanımlanan maliyet fiyatı veya eğer varsa en iyi satıcı fiyatı WAP henüz tanımlanmadı
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kâr oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
+MARGIN_TYPE=Kâr oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
+MargeType1=En iyi satıcı fiyatındaki kâr oranı
+MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType3=Maliyet fiyatındaki kâr oranı
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 AgentContactType=Ticari temsilci ilgili tipi
-AgentContactTypeDetails=Kişi/adres başına marj raporu için hangi iletişim türünün (faturalarda bağlantılı) kullanılacağını tanımlayın. Çoğu durumda ilgili kişi faturalarda açıkça tanımlanmayabileceğinden, bir kişiyle ilgili istatistiklerin okunmasının güvenilir olmadığını unutmayın.
+AgentContactTypeDetails=Kişi/adres başına kâr oranı raporu için hangi iletişim türünün (faturalarda bağlantılı) kullanılacağını tanımlayın. Çoğu durumda ilgili kişi faturalarda açıkça tanımlanmayabileceğinden, bir kişiyle ilgili istatistiklerin okunmasının güvenilir olmadığını unutmayın.
 rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
-ShowMarginInfos=Kar oranı bilgisi göster
-CheckMargins=Kar oranı ayrıntıları
-MarginPerSaleRepresentativeWarning=Kullanıcı başına kâr raporu, her bir satış temsilcisinin kârını hesaplamak için üçüncü partiler ve satış temsilcileri arasındaki bağlantıyı kullanır. Bazı üçüncü partilerin özel satış temsilcisi bulunmayabileceğinden ve bazı üçüncü partiler birkaç özel satış temsilcisine bağlı olabileceğinden, bazı tutarlar bu rapora dahil edilmeyebilir (satış temsilcisi yoksa) ve bazıları farklı satırlarda görünebilir (her satış temsilcisi için).
+ShowMarginInfos=Kâr oranı bilgilerini göster
+CheckMargins=Kâr oranı ayrıntıları
+MarginPerSaleRepresentativeWarning=Kullanıcı başına kâr oranı raporu, her bir satış temsilcisinin kârını hesaplamak için üçüncü partiler ve satış temsilcileri arasındaki bağlantıyı kullanır. Bazı üçüncü partilerin özel satış temsilcisi bulunmayabileceğinden ve bazı üçüncü partiler birkaç özel satış temsilcisine bağlı olabileceğinden, bazı tutarlar bu rapora dahil edilmeyebilir (satış temsilcisi yoksa) ve bazıları farklı satırlarda görünebilir (her satış temsilcisi için).

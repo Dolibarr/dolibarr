@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,18 @@
  * @var Translate $langs
  *
  * @var string $action
+ * @var int $permissiontoedit
+ * @var int<0,1> $hidedetails
+ * @var int<0,1> $hidedesc
+ * @var int<0,1> $hideref
  */
 if ($action == 'up' && $permissiontoedit) {
-	$object->line_up(GETPOST('rowid'));
+	$object->line_up(GETPOSTINT('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -66,12 +70,12 @@ if ($action == 'up' && $permissiontoedit) {
 }
 
 if ($action == 'down' && $permissiontoedit) {
-	$object->line_down(GETPOST('rowid'));
+	$object->line_down(GETPOSTINT('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {

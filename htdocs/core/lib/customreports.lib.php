@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
-*
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -42,7 +43,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level > 10) {	// Protection against infinite loop
+	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofmesures;
 	}
 
@@ -67,7 +68,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
-		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval($val['enabled'], 1, 1, '1'))) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
+		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
@@ -110,8 +115,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-				// @phan-suppress-next-line PhanTypeMismatchDimAssignment
-				$position = (!empty($val['position']) ? $val['position'] : 0);
+				if (isset($extrafields->attributes[$object->table_element]['pos'][$key])) {
+					$position = $extrafields->attributes[$object->table_element]['pos'][$key];
+				} else {
+					$position = 0;
+				}
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
@@ -152,6 +160,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	}
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && !empty($tmptype[1]) && !empty($tmptype[2])) {
@@ -217,16 +230,20 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['measure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -321,6 +338,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -382,16 +404,20 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['isameasure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -406,21 +432,21 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element,
@@ -429,7 +455,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			} else {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)),
 					'table' => $object->table_element,
@@ -452,14 +478,14 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
@@ -486,6 +512,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -513,11 +544,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	$arrayoffields	Array of fields already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	$arrayoffields	Array of fields already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	Array of fields
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	Array of fields
  */
 function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayoffields, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -549,10 +580,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				'parent', 'pass', 'pass_crypted', 'pass_temp', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -567,7 +598,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayoffields[$tablealias.'.'.$key] = array(
-				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)),
 				'table' => $object->table_element,
@@ -579,6 +610,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			}
 			if ((!isset($val['isamesaure']) || $val['isamesaure'] != 1) && (!isset($val['notnull']) || $val['notnull'] != '1')) {
 				$arrayoffields[$tablealias.'.'.$key]['maybenull'] = 1;
+			}
+			// Keep the attribute 'bi' of the field so the search component can discard the fields hidden on BI tool
+			if (isset($val['bi'])) {
+				$arrayoffields[$tablealias.'.'.$key]['bi'] = (int) $val['bi'];
 			}
 		}
 	}
@@ -606,6 +641,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {

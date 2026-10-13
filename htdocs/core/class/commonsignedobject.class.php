@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +31,7 @@
  * @property	string				$error
  * @property	string				$table_element
  * @property	array<string,mixed>	$context
- * @method		int					call_trigger(string $triggerName, User $user)
+ * @method		int					call_trigger(string $triggerName, ?User $user)
  */
 trait CommonSignedObject
 {
@@ -49,7 +51,7 @@ trait CommonSignedObject
 		'STATUS_SIGNED_SENDER' => 1,
 		'STATUS_SIGNED_RECEIVER' => 2,
 		'STATUS_SIGNED_RECEIVER_ONLINE' => 3,
-		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
+		'STATUS_SIGNED_ALL' => 9, // To handle future kind of signature (ex: tripartite contract)
 	];
 
 	/**
@@ -89,9 +91,12 @@ trait CommonSignedObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, string $triggercode = ''): int
 	{
 		global $langs;
+
 		$langs->loadLangs(array('commercial'));
+
 		$this->signed_status = $status;
 		$this->context['signature'] = $status;
+
 		switch ($status) {
 			case 0:
 				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('UnsignedInDolibarr');
@@ -133,15 +138,13 @@ trait CommonSignedObject
 			$statusfield = 'signed_status';
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$statusfield." = ".((int) $status);
+			$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				if (!$error) {
-					$this->oldcopy = clone $this;
-				}
+				$this->oldcopy = clone $this;
 
-				if (!$error && !$notrigger) {
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger($triggercode, $user);
 					if ($result < 0) {
@@ -152,7 +155,8 @@ trait CommonSignedObject
 				if (!$error) {
 					$this->signed_status = $status;
 					$this->db->commit();
-					setEventMessages($langs->transnoentitiesnoconv('DocumentSigned'), null, 'warnings');
+
+					setEventMessages($langs->transnoentitiesnoconv($status == 0 ? 'DocumentUnsigned' : 'DocumentSigned'), null, 'warnings');
 					return 1;
 				} else {
 					$this->db->rollback();

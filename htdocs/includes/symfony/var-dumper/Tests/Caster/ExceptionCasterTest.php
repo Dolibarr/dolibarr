@@ -53,7 +53,7 @@ Exception {
     %sExceptionCasterTest.php:%d: {
       : $ref = array('foo');
       : $e = $this->getTestException('foo', $ref);
-      : 
+      :
       arguments: {
         $msg: "foo"
         &$ref: array:1 [ …1]
@@ -80,7 +80,7 @@ EODUMP;
   %sExceptionCasterTest.php:%d: {
     : {
     :     $e = $this->getTestException(2);
-    : 
+    :
     arguments: {
       $msg: 2
     }
@@ -197,7 +197,7 @@ array:2 [
     class: "__TwigTemplate_VarDumperFixture_u75a09"
     src: {
       %sTwig.php:1: {
-        : 
+        :
         : foo bar
         :   twig source
       }
@@ -212,7 +212,7 @@ array:2 [
       %sExceptionCasterTest.php:2: {
         : foo bar
         :   twig source
-        : 
+        :
       }
     }
   }

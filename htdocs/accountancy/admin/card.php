@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +72,12 @@ $object = new AccountingAccount($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
+	$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
 	header("Location: ".$urltogo);
 	exit;
 }
 
-if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
+if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
 		if ((string) $account_number === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -125,13 +126,13 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			}
 			if (!$error) {
 				setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-				$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
+				$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
 				header("Location: " . $urltogo);
 				exit;
 			}
 		}
 	}
-} elseif ($action == 'edit' && $user->hasRight('accounting', 'chartofaccount')) {
+} elseif ($action == 'edit' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
 		if ((string) $account_number === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -168,7 +169,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id);
+				$urltogo = (!empty($backtopage) ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id));
 				header("Location: " . $urltogo);
 				exit();
 			} elseif ($result == -2) {
@@ -178,7 +179,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			}
 		}
 	} else {
-		$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+		$urltogo = (!empty($backtopage) ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id));
 		header("Location: ".$urltogo);
 		exit();
 	}
@@ -186,10 +187,12 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 	$result = $object->fetch($id);
 
 	if (!empty($object->id)) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {
-			header("Location: account.php");
+			$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
+			header("Location: ".$urltogo);
 			exit;
 		}
 	}
@@ -237,20 +240,20 @@ if ($action == 'create') {
 
 	// Account number
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-	print '<td><input name="account_number" size="30" value="'.$account_number.'"></td></tr>';
+	print '<td><input name="account_number" size="30" value="'.dolPrintHTMLForAttribute($account_number).'"></td></tr>';
 
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
-	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
+	print '<td><input name="label" size="70" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 	// Label short
-	print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
-	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
+	print '<td><input name="labelshort" size="70" value="'.dolPrintHTMLForAttribute($object->labelshort).'"></td></tr>';
 
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 	print '<td>';
-	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, [], 0, 0, 'minwidth200');
+	print $formaccounting->select_account((string) $object->account_parent, 'account_parent', 1, [], 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Chart of accounts type
@@ -313,21 +316,21 @@ if ($action == 'create') {
 
 			// Account number
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-			print '<td><input name="account_number" size="30" value="'.$object->account_number.'"></td></tr>';
+			print '<td><input class="minwidth300" name="account_number" value="'.dolPrintHTMLForAttribute($object->account_number).'"></td></tr>';
 
 			// Label
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
-			print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 			// Label short
-			print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
-			print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
+			print '<td><input class="minwidth300" name="labelshort" value="'.dolPrintHTMLForAttribute($object->labelshort).'"></td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
 			// Note: We accept disabled account as parent account so we can build a hierarchy and use only children
-			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
+			print $formaccounting->select_account((string) $object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', '1', '');
 			print '</td></tr>';
 
 			// Chart of accounts type
@@ -385,7 +388,7 @@ if ($action == 'create') {
 			print '<td colspan="2">'.$object->label.'</td></tr>';
 
 			// Label to show
-			print '<tr><td class="titlefield">'.$langs->trans("LabelToShow").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("ShortLabel").'</td>';
 			print '<td colspan="2">'.$object->labelshort.'</td></tr>';
 
 			// Account parent
@@ -418,15 +421,15 @@ if ($action == 'create') {
 			 */
 			print '<div class="tabsAction">';
 
-			if ($user->hasRight('accounting', 'chartofaccount')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-			}
+			// if ($user->hasRight('accounting', 'chartofaccount')) { // already checked
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
+			// } else {
+			// 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+			// }
 
 			// Delete
 			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 
 			print '</div>';
 		}

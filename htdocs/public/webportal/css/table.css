@@ -1,0 +1,32 @@
+table.striped tr:hover td {
+	background-color: rgba(255, 224, 0, 0.23);
+	--color: #000;
+}
+table.striped tr:hover td a {
+	--color: #00578d;
+}
+
+.col-prix-adhere, .col-cmd-reste{
+	background-color: #0088ff0d;
+}
+table.striped tr:hover td:is(.col-prix-adhere, .col-cmd-reste){
+	/*background-color: rgba(8, 255, 0, 0.04);*/
+}
+thead th {
+	font-size: 0.9em;
+	font-weight: 700;
+}
+
+[role="search-row"] input:not([type=checkbox], [type=radio], [type=range]){
+	--line-height : 0.8rem;
+	--form-element-spacing-vertical : 0.2rem;
+}
+
+[role="search-row"] select {
+	--line-height : 1rem;
+	--form-element-spacing-vertical : 0.3rem;
+}
+
+[data-col="row-checkbox"] {
+	text-align: center;
+}

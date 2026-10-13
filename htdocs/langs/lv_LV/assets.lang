@@ -17,6 +17,7 @@ AccountancyCodeAsset=Grāmatvedības kods (aktīvs)
 AccountancyCodeDepreciationAsset=Grāmatvedības kods (nolietojuma aktīvu konts)
 AccountancyCodeDepreciationExpense=Grāmatvedības kods (nolietojuma izmaksu konts)
 AssetsLines=Aktīvi
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Dzēst
 DeleteAnAssetType=Dzēst īpašuma modeli
 ConfirmDeleteAssetType=Vai tiešām vēlaties dzēst šo līdzekļu modeli?
@@ -70,6 +71,7 @@ AssetDisposal=Atbrīvošanās
 AssetConfirmDisposalAsk=Vai tiešām vēlaties atbrīvoties no īpašuma <b> %s </b>?
 AssetConfirmReOpenAsk=Vai tiešām vēlaties atkārtoti atvērt īpašumu <b> %s </b>?
 # Asset status
+AssetInDraft=Melnraksts
 AssetInProgress=Procesā
 AssetDisposed=Likvidēts
 AssetRecorded=Grāmatvedība

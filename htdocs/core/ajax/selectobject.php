@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/selectobject.php
- *       \brief      File to return Ajax response on a selection list request
+ *       \file      htdocs/core/ajax/selectobject.php
+ *       \brief     File to return Ajax response on a selection list request
+ *       			Used by selectForForms(). See code comment in this function to find how it is used by modulebuilder fields or by extrafields.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -40,8 +41,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,10 +48,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $extrafields = new ExtraFields($db);
 
-$objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);
+$objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);	// Deprecated. Do not use this anymore. Use param 'objectfield' instead.
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $id = GETPOSTINT('id');
@@ -93,6 +94,7 @@ if (!empty($objectfield)) {
 }
 
 $objecttmp = null;
+$filter = '';
 if ($objectdesc) {
 	// Example of value for $objectdesc:
 	// Bom:bom/class/bom.class.php:0:t.status=1
@@ -107,7 +109,11 @@ if ($objectdesc) {
 	$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
 
 	$classname = $InfoFieldList[0];
-	$classpath = $InfoFieldList[1];
+	$classpath = '';
+	if (!empty($InfoFieldList[1])) {
+		$classpath = dol_sanitizePathName($InfoFieldList[1]);
+	}
+
 	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 	$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
@@ -116,7 +122,7 @@ if ($objectdesc) {
 	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
 
 	// Fallback to another solution to get $objecttmp
-	if (empty($objecttmp) && !empty($classpath)) {
+	if (getDolGlobalString("MAIN_ALLOW_UNSECURED_FALLBACK_FOR_SELECTOBJECT") && empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
 		dol_include_once($classpath);
 
 		if ($classname && class_exists($classname)) {
@@ -130,7 +136,7 @@ $sharedentities = getEntity(strtolower($objecttmp->element));
 
 $filter = str_replace(
 	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
-	array($conf->entity, $sharedentities, $user->id, $id),
+	array((string) $conf->entity, $sharedentities, (string) $user->id, (string) $id),
 	$filter
 );
 
@@ -147,10 +153,11 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 $searchkey = (($id && GETPOST((string) $id, 'alpha')) ? GETPOST((string) $id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
 // Add a security test to avoid to get content of all tables
-if ($objecttmp !== null && !empty($objecttmp->module)) {
+$allowModules = ['bom'];
+if ($objecttmp !== null && !empty($objecttmp->module) && !in_array($objecttmp->module, $allowModules)) {
 	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
 } else {
-	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : '', $id);
+	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : 'unknownobject', $id);	// If object is unknown, we force to 'unknownobject' instead of '' to be sure access is forbidden
 }
 
 
@@ -164,7 +171,7 @@ top_httphead($outjson ? 'application/json' : 'text/html');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
+$arrayresult = ($objecttmp === null) ? [] : $form->selectForFormsList($objecttmp, (string) $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

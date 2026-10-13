@@ -17,6 +17,7 @@ AccountancyCodeAsset=科目代码（资产）
 AccountancyCodeDepreciationAsset=科目代码（折旧资产帐户）
 AccountancyCodeDepreciationExpense=科目代码（折旧费用帐户）
 AssetsLines=资产
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=删除
 DeleteAnAssetType=删除资产模型
 ConfirmDeleteAssetType=您确定要删除该资产模型吗？
@@ -34,7 +35,7 @@ AssetsTypeId=资产模型 ID
 AssetsTypeLabel=资产模型标签
 AssetsTypes=资产模型
 ASSET_ACCOUNTANCY_CATEGORY=固定资产科目组
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=计算一年摊销的比例期，以天为单位
 # Menu
 MenuAssets=资产
 MenuNewAsset=新建资产
@@ -70,6 +71,7 @@ AssetDisposal=处置
 AssetConfirmDisposalAsk=您确定要处置资产 <b> %s </b> 吗？
 AssetConfirmReOpenAsk=您确定要重新打开资产<b>%s</b>吗？
 # Asset status
+AssetInDraft=汇票
 AssetInProgress=进行中
 AssetDisposed=已处置
 AssetRecorded=已记帐

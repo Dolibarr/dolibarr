@@ -34,7 +34,6 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
@@ -73,7 +72,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
@@ -103,7 +102,7 @@ $hookmanager->initHooks(array('quickaddform'));
 
 // Show all forms
 print "\n";
-print "<!-- Begin SearchForm -->\n";
+print "<!-- Begin QuickAddForm -->\n";
 print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
@@ -112,7 +111,7 @@ print printDropdownQuickadd(1);
 
 print '</div>'."\n";
 print '</div></div>';
-print "\n<!-- End SearchForm -->\n";
+print "\n<!-- End QuickAddForm -->\n";
 
 
 print '</div>';

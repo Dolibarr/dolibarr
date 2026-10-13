@@ -1,2 +1,6 @@
 # Dolibarr language file - Source file is en_US - hrm
+Employees=الموظفين
 Employee=موظف
+HrmSetup=إعدادات وحدة إدارة الموارد البشرية
+rank=الترتيب
+legend=الشرح

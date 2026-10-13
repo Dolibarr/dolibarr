@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ if (GETPOST('id')) {
 
 // Initialize Objects
 $object = new Opensurveysondage($db);
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
@@ -72,7 +73,7 @@ $now = dol_now();
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $toutsujet = explode(",", $object->sujet);
 $somme = array();
-// affichage des sujets du sondage
+// display subjects of survey
 $input = $langs->trans("Name").";";
 for ($i = 0; $toutsujet[$i]; $i++) {
 	if ($object->format == "D") {
@@ -106,11 +107,11 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		// Le name de l'utilisateur
+		// The name of the user
 		$nombase = str_replace("°", "'", $obj->name);
 		$input .= $nombase.';';
 
-		//affichage des resultats
+		// Display results
 		$ensemblereponses = $obj->reponses;
 		for ($k = 0; $k < $nbcolonnes; $k++) {
 			if (empty($somme[$k])) {

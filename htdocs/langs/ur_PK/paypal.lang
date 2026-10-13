@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY="انٹیگرل" ادائیگی (کریڈٹ ک
 PaypalModeIntegral=لازمی
 PaypalModeOnlyPaypal=صرف پے پال
 ONLINE_PAYMENT_CSS_URL=آن لائن ادائیگی کے صفحے پر CSS اسٹائل شیٹ کا اختیاری URL
-ThisIsTransactionId=یہ ٹرانزیکشن کی شناخت ہے: <b> %s </b>
+ThisIsTransactionId=This is id of transaction
 PAYPAL_ADD_PAYMENT_URL=جب آپ ای میل کے ذریعے کوئی دستاویز بھیجیں تو پے پال کی ادائیگی کا یو آر ایل شامل کریں۔
 NewOnlinePaymentReceived=نئی آن لائن ادائیگی موصول ہوئی۔
 NewOnlinePaymentFailed=نئی آن لائن ادائیگی کی کوشش کی لیکن ناکام ہوگئی
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=تمام پوسٹ ایکشنز پر ایک ر
 ValidationOfPaymentFailed=ادائیگی کی توثیق ناکام ہوگئی ہے۔
 CardOwner=کارڈ ہولڈر
 PayPalBalance=پے پال کریڈٹ
+OnlineSubscriptionPaymentLine=آن لائن سبسکرپشن کو ریکارڈ کیا گیا %s<br>بذریعہ ادائیگی %s<br>ابتدائی آئی پی ایڈریس: %s<br>ٹرانزیکشن ID: <span class='noeclatecfda19bz0</span> </span>

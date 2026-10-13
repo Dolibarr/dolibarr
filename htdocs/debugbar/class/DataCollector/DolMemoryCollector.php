@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return value of indicator
 	 *
-	 *  @return array{peak_usage:string,peak_usage_str:string}		Array
+	 *  @return array{peak_usage:int,peak_usage_str:string}		Array
 	 */
 	public function collect()
 	{

@@ -24,4 +24,3 @@ ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_st
 --ALTER TABLE llx_workstation_workstation ADD UNIQUE INDEX uk_workstation_workstation_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_field FOREIGN KEY (fk_field) REFERENCES llx_workstation_myotherobject(rowid);
-

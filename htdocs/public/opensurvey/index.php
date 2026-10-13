@@ -113,6 +113,8 @@ if (getDolGlobalString('MAIN_OPENSURVEY_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
+$conf->global->OPENSURVEY_ENABLE_PUBLIC_INTERFACE = 1;
+
 if (!getDolGlobalString('OPENSURVEY_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
@@ -127,6 +129,10 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("Surveys"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
 
 
+include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('OPENSURVEY_PUBLIC_INTERFACE_TOPIC'), 'OPENSURVEY_IMAGE_PUBLIC_INTERFACE', 'ONLINE_OPENSURVEY_LOGO_'.$suffix, 'ONLINE_OPENSURVEY_LOGO');
+
+
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
@@ -137,47 +143,7 @@ print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'"
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to view jobs -->'."\n";
-
-// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logosmall = $mysoc->logo_small;
-$logo = $mysoc->logo;
-$paramlogo = 'ONLINE_OPENSURVEY_LOGO_'.$suffix;
-if (getDolGlobalString($paramlogo)) {
-	$logosmall = getDolGlobalString($paramlogo);
-} elseif (getDolGlobalString('ONLINE_OPENSURVEY_LOGO')) {
-	$logosmall = getDolGlobalString('ONLINE_OPENSURVEY_LOGO_');
-}
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-}
-// Output html code for logo
-if ($urllogo) {
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
-	print '</div>';
-	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-}
-
-if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
-	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE').'">';
-	print '</div>';
-}
-
+print '<!-- Form to view survey -->'."\n";
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
@@ -207,7 +173,7 @@ if (is_array($results)) {
 
 			// Label
 			print $langs->trans("Label").' : ';
-			print '<b>'.dol_escape_htmltag($object->title).'</b><br>';
+			print '<b>'.dol_escape_htmltag(empty($object->titre) ? $object->title : $object->titre).'</b><br>';
 
 			// Date
 			print  $langs->trans("DateExpected").' : ';

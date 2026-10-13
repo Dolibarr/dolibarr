@@ -2,6 +2,7 @@
 IdAgenda=ID događaja
 Actions=Događaji
 Agenda=Agenda
+AgendaEvents=Događaji dnevnog reda
 TMenuAgenda=Agenda
 Agendas=Agende
 LocalAgenda=Zadani kalendar
@@ -28,11 +29,13 @@ ViewWeek=Sedmični pregled
 ViewPerUser=Pregled po korisniku
 ViewPerType=Pregled po vrsti
 AutoActions= Automatsko popunjavanje
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Ovdje možete definirati događaje koje želite da Dolibarr automatski kreira u Agendi. Ako ništa nije označeno, samo ručne radnje će biti uključene u dnevnike i prikazane u dnevnom redu. Automatsko praćenje poslovnih radnji izvršenih na objektima (validacija, promjena statusa) neće se pohranjivati.
 AgendaSetupOtherDesc= Ova stranica pruža opcije za omogućavanje izvoza vaših Dolibarr događaja u vanjski kalendar (Thunderbird, Google kalendar itd...)
 AgendaExtSitesDesc=Ova stranica omogućava definisanje eksternih izvora kalendara da vidite svoje događaje u Dolibarr agendi.
 ActionsEvents=Događaji za koje će Dolibarr stvoriti akciju u dnevni red automatski
 EventRemindersByEmailNotEnabled=Podsjetnici na događaje putem e-pošte nisu bili omogućeni u postavci %s modula.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Kreirana treća strana %s
 COMPANY_MODIFYInDolibarr=Treća strana %s modificirana
@@ -44,6 +47,7 @@ PropalClosedRefusedInDolibarr=Prijedlog %s odbijen
 PropalValidatedInDolibarr=Prijedlog %s potvrđen
 PropalBackToDraftInDolibarr=Prijedlog %s vrati se na status nacrta
 PropalClassifiedBilledInDolibarr=Prijedlog %s klasificiran kao fakturisan
+InvoiceCreatedInDolibarr=Faktura %s kreirana
 InvoiceValidatedInDolibarr=Faktura %s potvrđena
 InvoiceValidatedInDolibarrFromPos=Račun %s odobren na POSu
 InvoiceBackToDraftInDolibarr=Faktura %s vraćena u status izrade
@@ -134,14 +138,14 @@ AgendaModelModule=Predlošci dokumenata za događaj
 DateActionStart=Datum početka
 DateActionEnd=Datum završetka
 AgendaUrlOptions1=Također možete dodati sljedeće parametre za filtriranje prikazanog:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> za ograničavanje izlaza na radnje u vlasništvu korisnika <b>%s</b> (koristite <b>logina=!%s</b> za događaje koji nisu u vlasništvu korisnika).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> za dobijanje automatskih ili ručnih događaja
+AgendaUrlOptionsCode=<b>actioncode=%s</b> da biste dobili samo događaje sa datim kodom
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> da uključi događaje praznika.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> za ograničavanje na događaje u posljednjih %s dana (zadano je %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> za ograničavanje na posljednjih 50 događaja (zadani maksimum i je %s).
 AgendaShowBirthdayEvents=Rođendani kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata
 Busy=Zauzet
@@ -168,8 +172,10 @@ OnceOnly=Samo jednom
 EveryDay=Svaki dan
 EveryWeek=Svake sedmice
 EveryMonth=Svakog mjeseca
+EveryYear=Every year
 DayOfMonth=Dan u mjesecu
 DayOfWeek=Dan u sedmici
+DayOfYear=Day of year
 DateStartPlusOne=Datum početka + 1 sat
 SetAllEventsToTodo=Postavite sve događaje na obaveze
 SetAllEventsToInProgress=Postavite sve događaje na u toku
@@ -202,6 +208,16 @@ AppointmentDuration = Trajanje termina : %s
 BookingSuccessfullyBooked=Vaša rezervacija je sačuvana
 BookingReservationHourAfter=Potvrđujemo rezervaciju našeg sastanka na datum %s
 BookcalBookingTitle=Online termin
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = Transparentnost
+ReadMore = Pročitajte više
+ReadLess = Čitaj manje
+RecurringEvent=Ponavljajući događaj
+EventPartOfARecurringSerie=Događaj je dio ponavljajuće serije s ID-om %s
+BookCalSystem=Online rezervacija
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

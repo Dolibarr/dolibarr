@@ -28,4 +28,3 @@ create table llx_c_forme_juridique
   module        varchar(32) NULL,
   position      integer NOT NULL DEFAULT 0
 )ENGINE=innodb;
-

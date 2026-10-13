@@ -20,19 +20,19 @@ class MemcacheCache implements iCache
      * @var string
      */
     static public $namespace;
-    
+
     /**
-     * @var string the memcache server hostname / IP address. For the memcache 
+     * @var string the memcache server hostname / IP address. For the memcache
      * cache method.
      */
     static public $memcacheServer = '127.0.0.1';
-    
+
     /**
-     * @var int the memcache server port. For the memcache cache method. 
+     * @var int the memcache server port. For the memcache cache method.
      */
     static public $memcachePort = 11211;
 
-    
+
     private $memcache;
 
     /**

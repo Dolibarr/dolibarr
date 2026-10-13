@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -101,12 +101,6 @@ class DateLibTest extends CommonClassTest
 		$result = num_between_day($date1, $date2, 0);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
-
-		/*
-		$result = num_between_day(1514332800, 1538265600, 0);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(277, $result);
-		*/
 
 		return $result;
 	}
@@ -191,6 +185,15 @@ class DateLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+
+		// Check for sunday/sunday with time changing - Sunday 25 october 2025 - Sunday 1 november 2025
+		$date1 = dol_mktime(0, 0, 0, 10, 26, 2025, 'gmt');
+		$date2 = dol_mktime(0, 0, 0, 11, 1, 2025, 'gmt');
+		$result = num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result ".$result."\n";
+		$this->assertEquals(5, $result, 'NumPublicHoliday for FR with date start before date change end inding after');
+
 
 		// With same hours - Tuesday/Wednesday jan 2013
 		$date1 = dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
@@ -401,6 +404,15 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Thu Jan January', $result);
 
+		// Check date output in a use timezone
+		$_SESSION['dol_tz'] = 1;
+		$_SESSION['dol_dst'] = 0;
+		$_SESSION['dol_tz_string'] = 'Europe/Paris';
+
+		$result = dol_print_date(0, '%H', 'tzuserrel', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01', $result);
+
 		return $result;
 	}
 
@@ -422,9 +434,71 @@ class DateLibTest extends CommonClassTest
 		$outputlangs->setDefaultLang('fr_FR');
 		$outputlangs->load("main");
 
-		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
+		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
+
+		// Add 4 days on a date just before daylight change
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('28/10/2025 00:00', $result);
+
+
+		// Imagine we are in a server with TZ Europe/Paris (UTC+1 +daylight)
+		// A) If user want to store a "date_when" (of a recurring invoices) for "2025-10-01" (every 1st of month), we store it in db with idate() so with string value '2025-10-01 00:00:00'
+		//     (because we want "date_when" as a day only field, so with no mention of TZ)
+		// B) So after a read with jdate(), we retrieve in UTC the date in memory that is '30 September 22:00 UTC.'
+		// C) If we add 1 month, we got '30 October 22:00 UTC.'
+		// D) When we want to store it into db, we use idate() to convert it into server timezone and we got '2025-10-30 23:00:00' because the daylight is not the same, offset is 1h instead of 2h.
+		// E) So next day processed will be the 30th instead of the 1st (because we take car of day only).
+		/*
+		$date_when = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt'), 1, 'm'), 'standard', 'gmt', $outputlangs);
+		$result2 = $db->idate(dol_time_plus_duree(dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt'), 1, 'm'));
+		print "result A: ".$result."\n";
+		$dateInfo = dol_getdate($date_when);
+		var_dump($dateInfo);
+		print "db->idate last day ".$db->idate(dol_mktime(23, 59, 59, 10, 31, 2025))."\n";
+		print "doldprintdate ".dol_print_date(dol_mktime(23, 59, 59, 10, 31, 2025), 'standard', 'gmt')."\n";
+		print "result B: ".$result2."\n";
+		$this->assertEquals('2025-10-30 22:00:00', $result);
+		$this->assertEquals('2025-10-30 23:00:00', $result2);
+		*/
+		$date_when_utc = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		//$tz = new DateTimeZone('Europe/Paris');
+		//$date_when_utc = (new DateTime('2025-10-01 00:00:00', $tz))->getTimestamp();
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 0, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-09-30 22:00:00', $result1);
+		$this->assertEquals('2025-10-31 23:00:00', $result2);
+
+		// With param for end of month
+		$date_when_utc = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 1, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-09-30 22:00:00', $result1);
+		$this->assertEquals('2025-10-31 23:00:00', $result2);
+
+		// Rule for end of month applied in the timezone
+		$date_when_utc = dol_mktime(22, 0, 0, 1, 30, 2025, 'gmt');
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 1, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-01-30 22:00:00', $result1);
+		$this->assertEquals('2025-02-28 22:00:00', $result2);
+
+		// Rule for end of month in GMT
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 1, 31, 2028, 'gmt'), 1, 'm', 1, 'gmt'), 'standard', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2028-02-29 00:00:00', $result);
 
 		return $result;
 	}
@@ -552,8 +626,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolGetFirstHour()
 	{
-		global $conf;
-
 		$now = 1800 + (24 * 3600 * 10);	// The 11th of january 1970 at 0:30 in UTC
 		$result = dol_get_first_hour($now, 'gmt');
 		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
@@ -574,8 +646,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolSqlDateFilter()
 	{
-		global $conf;
-
 		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
 		print __METHOD__." result = ".$result."\n";
 		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');

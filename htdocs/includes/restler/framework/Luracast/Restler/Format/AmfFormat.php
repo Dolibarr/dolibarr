@@ -45,4 +45,3 @@ class AmfFormat extends DependentFormat
         return $deserializer->readTypeMarker();
     }
 }
-

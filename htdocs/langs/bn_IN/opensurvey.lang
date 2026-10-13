@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s একটি লাইন পূরণ করেছে৷\n
 ShowSurvey=সমীক্ষা দেখান
 UserMustBeSameThanUserUsedToVote=আপনি অবশ্যই ভোট দিয়েছেন এবং একটি মন্তব্য পোস্ট করার জন্য যে ব্যবহারকারী ভোট দিয়েছেন সেই একই ব্যবহারকারীর নাম ব্যবহার করবেন৷
 ListOfOpenSurveys=উন্মুক্ত সমীক্ষার তালিকা
+AddTheVote=ভোট যোগ করতে ক্লিক করুন

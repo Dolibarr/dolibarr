@@ -327,7 +327,7 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16)
 
 ALTER TABLE llx_adherent_type MODIFY subscription varchar(3) NOT NULL DEFAULT '1';
 ALTER TABLE llx_adherent_type MODIFY vote varchar(3) NOT NULL DEFAULT '1';
-  
+
 UPDATE llx_prelevement_facture_demande SET entity = 1 WHERE entity IS NULL;
 
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
@@ -357,4 +357,3 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active)
 
 UPDATE llx_menu SET perms = '$user->rights->societe->creer' WHERE titre = 'MenuNewThirdParty' AND url = '/societe/card.php?mainmenu=companies&amp;action=create';
 UPDATE llx_menu SET url = '/societe/list.php?mainmenu=companies&amp;leftmenu=thirdparties' WHERE titre = 'List' AND url = '/societe/list.php?mainmenu=companies&amp;action=create';
-

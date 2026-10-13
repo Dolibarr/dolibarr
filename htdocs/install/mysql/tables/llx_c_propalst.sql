@@ -26,4 +26,3 @@ create table llx_c_propalst
   sortorder       smallint DEFAULT 0,
   active          tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
-

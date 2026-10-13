@@ -46,6 +46,10 @@ IPP_Color=Έγχρωμη
 IPP_Device=Συσκευή
 IPP_Media=Μέσα εκτύπωσης
 IPP_Supported=Τύπος των μέσων
+STATE_IPP_idle=Αδρανής εκτυπωτής
+STATE_IPP_none=Κανένα
+IPP_COLOR_print-black=Ασπρόμαυρο
+IPP_COLOR_print-color=Έγχρωμο
 DirectPrintingJobsDesc=Αυτή η σελίδα παραθέτει τις εργασίες εκτύπωσης που βρέθηκαν για τους διαθέσιμους εκτυπωτές.
 GoogleAuthNotConfigured=Το Google OAuth δεν έχει ρυθμιστεί. Ενεργοποιήστε την ενότητα OAuth και ορίστε ένα Google ID/Secret.
 GoogleAuthConfigured=Τα διαπιστευτήρια του Google OAuth βρέθηκαν στη ρύθμιση της ενότητας OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Διαμόρφωση μεταβλητών οδηγώ�
 PrintingDriverDescprintipp=Διαμόρφωση μεταβλητών οδηγών εκτύπωσης Cups.
 PrintTestDescprintgcp=Λίστα εκτυπωτών με δυνατότητα Google Cloud Print.
 PrintTestDescprintipp=Λίστα εκτυπωτών με ρύθμιση μέσω Cups.
-Testbbbb
+PrinterLocation=Τοποθεσία εκτυπωτή

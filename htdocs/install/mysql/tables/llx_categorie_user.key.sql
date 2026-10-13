@@ -22,4 +22,3 @@ ALTER TABLE llx_categorie_user ADD INDEX idx_categorie_user_fk_user (fk_user);
 
 ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_user ADD CONSTRAINT fk_categorie_user_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
-

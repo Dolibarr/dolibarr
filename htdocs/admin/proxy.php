@@ -25,9 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "users", "admin"));
@@ -92,12 +91,10 @@ llxHeader('', $langs->trans("Proxy"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ProxyDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("ProxyDesc")."</div>\n";
 
 
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_proxy">';
 
@@ -165,7 +162,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print $form->selectyesno('MAIN_PROXY_USE', (getDolGlobalString('MAIN_PROXY_USE') ? $conf->global->MAIN_PROXY_USE : 0), 1);
+print $form->selectyesno('MAIN_PROXY_USE', getDolGlobalInt('MAIN_PROXY_USE'), 1);
 print '</td>';
 print '</tr>';
 
@@ -174,7 +171,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_HOST') ? $conf->global->MAIN_PROXY_HOST : '').'">';
+print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'.getDolGlobalString('MAIN_PROXY_HOST').'">';
 print '</td>';
 print '</tr>';
 
@@ -183,7 +180,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.(getDolGlobalString('MAIN_PROXY_PORT') ? $conf->global->MAIN_PROXY_PORT : '').'">';
+print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.getDolGlobalInt('MAIN_PROXY_PORT').'">';
 print '</td>';
 print '</tr>';
 
@@ -192,7 +189,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_USER') ? $conf->global->MAIN_PROXY_USER : '').'">';
+print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'.getDolGlobalString('MAIN_PROXY_USER').'">';
 print '</td>';
 print '</tr>';
 
@@ -201,7 +198,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_PASS" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_PASS') ? $conf->global->MAIN_PROXY_PASS : '').'">';
+print '<input class="flat" name="MAIN_PROXY_PASS" type="password" size="16" value="'.getDolGlobalString('MAIN_PROXY_PASS').'">';
 print '</td>';
 print '</tr>';
 

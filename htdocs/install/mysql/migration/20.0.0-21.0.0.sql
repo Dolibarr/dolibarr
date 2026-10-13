@@ -133,6 +133,28 @@ ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER to
 
 ALTER TABLE llx_notify_def ADD COLUMN entity integer DEFAULT 1;
 
+-- Product attribut extrafields
+CREATE TABLE llx_product_attribute_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_extrafields ADD INDEX idx_product_attribute_extrafields (fk_object);
+
+-- Product attribut value extrafields
+CREATE TABLE llx_product_attribute_value_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);
+
 -- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;
@@ -212,8 +234,6 @@ ALTER TABLE llx_product_attribute_combination2val ADD INDEX idx_product_att_com2
 ALTER TABLE llx_societe ADD COLUMN ip varchar(250);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN ip varchar(250);
 ALTER TABLE llx_socpeople ADD COLUMN ip varchar(250);
-
-ALTER TABLE llx_webhook_target ADD COLUMN trigger_stack text;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY fk_user_creat integer NULL;
 
@@ -550,4 +570,3 @@ ALTER TABLE llx_receptiondet_batch_extrafields CHANGE COLUMN tms tms timestamp D
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
-

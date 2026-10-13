@@ -38,7 +38,12 @@ function datapolicyAdminPrepareHead()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setup.php";
-	$head[$h][1] = $langs->trans("DataAnonymization");
+
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		$head[$h][1] = $langs->trans("DataAnonymizationOrDeletion");
+	} else {
+		$head[$h][1] = $langs->trans("DataAnonymization");
+	}
 	$head[$h][2] = 'settings';
 	$h++;
 

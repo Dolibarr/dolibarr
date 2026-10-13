@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s ka mbushur një rresht.\nSondazhin tuaj mund ta gjeni në l
 ShowSurvey=Shfaq anketën
 UserMustBeSameThanUserUsedToVote=Duhet të keni votuar dhe të përdorni të njëjtin emër përdoruesi që përdori për të votuar, për të postuar një koment
 ListOfOpenSurveys=Lista e anketave të hapura
+AddTheVote=Klikoni për të shtuar votën

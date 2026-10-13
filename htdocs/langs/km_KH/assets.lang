@@ -17,6 +17,7 @@ AccountancyCodeAsset=លេខកូដគណនី (ទ្រព្យសកម
 AccountancyCodeDepreciationAsset=លេខកូដគណនី (គណនីទ្រព្យសកម្មរំលោះ)
 AccountancyCodeDepreciationExpense=លេខ​កូដ​គណនេយ្យ (គណនី​ចំណាយ​រំលោះ)
 AssetsLines=ទ្រព្យសកម្ម
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Delete
 DeleteAnAssetType=លុបគំរូទ្រព្យសកម្ម
 ConfirmDeleteAssetType=តើអ្នកប្រាកដថាចង់លុបគំរូទ្រព្យសកម្មនេះទេ?
@@ -70,6 +71,7 @@ AssetDisposal=ការចោល
 AssetConfirmDisposalAsk=តើអ្នកប្រាកដថាចង់បោះចោលទ្រព្យសកម្ម <b> %s</b>?
 AssetConfirmReOpenAsk=តើអ្នកប្រាកដថាចង់បើកទ្រព្យសកម្មឡើងវិញ <b> %s</b>?
 # Asset status
+AssetInDraft=Draft
 AssetInProgress=In progress
 AssetDisposed=បោះចោល
 AssetRecorded=គណនេយ្យ

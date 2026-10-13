@@ -29,8 +29,8 @@ CronExecute=Ҳоло оғоз кунед
 CronConfirmExecute=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои таъиншударо ҳозир иҷро кунед?
 CronInfo=Модули кории ба нақша гирифташуда имкон медиҳад, ки ҷойҳои корӣ ба таври худкор иҷро карда шаванд. Корҳоро инчунин дастӣ оғоз кардан мумкин аст.
 CronTask=Айюб
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Давраи навбатии вазифаи ба нақша гирифташуда
+CronNotYetRan=Ҳеҷ гоҳ иҷро нашудааст
 CronDtStart=На пеш
 CronDtEnd=На пас аз
 CronDtNextLaunch=Иҷрои навбатӣ
@@ -50,7 +50,7 @@ JobFinished=Айюб оғоз ва анҷом ёфт
 Scheduled=Ба нақша гирифта шудааст
 #Page card
 CronAdd=Иловаи ҷойҳои корӣ
-CronEvery=Run job every
+CronEvery=Ҳар як корро иҷро кунед
 CronObject=Мисол/Объект барои сохтан
 CronArgs=Параметрҳо
 CronSaveSucess=Бо муваффақият захира кунед
@@ -77,6 +77,7 @@ CronType=Навъи кор
 CronType_method=Усули занги синфи PHP
 CronType_command=Фармони Shell
 CronCannotLoadClass=Файли синфи %s бор карда намешавад (барои истифодаи синфи %s)
+CronModuleNotEnabledInThisEntity=Модули Cron дар ин объект фаъол нест (барои истифода бурдани усули %s объекти %s)
 CronCannotLoadObject=Файли синфи %s бор карда шуд, аммо объекти %s дар он ёфт нашуд
 UseMenuModuleToolsToAddCronJobs=Ба менюи "<a href="%s"> Home - Воситаҳои маъмурӣ - Ҷойҳои ба нақша гирифташуда </a>" ворид шавед, то ҷойҳои кориро бубинед ва таҳрир кунед.
 JobDisabled=Кор хомӯш карда шудааст

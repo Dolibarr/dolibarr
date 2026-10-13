@@ -42,4 +42,6 @@ $context->controllerInstance->action();
  * View
  */
 
+// $context->controllerInstance can be LoginController, DefaultController, DocumentController...
+
 $context->controllerInstance->display();

@@ -17,7 +17,7 @@
 -- ============================================================================
 
 
--- Table to store some translations of values of objects 
+-- Table to store some translations of values of objects
 
 create table llx_object_lang
 (

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,13 +74,13 @@ class modFTP extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array(
-			1=>array('FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1),
-			2=>array('FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1)
-		); // List of parameters
+		$this->const = [
+			['FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1],
+			['FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1],
+		]; // List of parameters
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = []; // List of boxes
 		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -118,8 +119,8 @@ class modFTP extends DolibarrModules
 							  'url'=>'/ftp/index.php',
 							  'langs'=>'ftp',
 							  'position'=>100,
-							  'enabled'=>'$conf->ftp->enabled',
-							  'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
+							  'enabled'=>'isModEnabled("ftp")',
+							  'perms'=>'$user->hasRight("ftp", "read") || $user->hasRight("ftp", "write") || $user->hasRight("ftp", "setup")',
 							  'target'=>'',
 							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

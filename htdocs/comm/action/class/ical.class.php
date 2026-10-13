@@ -4,7 +4,9 @@
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +98,16 @@ class ICal
 		$file_text = '';
 
 		//$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], 2, 0);	// To test with any URL
-		$tmpresult = getURLContent($file, 'GET');
+		$localip = 0;
+		$sslverify = -1;
+		if (getDolGlobalString('AGENDA_EXT_CALENDAR_IP_MODE')) {
+			$localip = intval(getDolGlobalString('AGENDA_EXT_CALENDAR_IP_MODE'));
+		}
+		if (getDolGlobalString('AGENDA_EXT_CALENDAR_SSLVERIFY_MODE')) {
+			$sslverify = intval(getDolGlobalString('AGENDA_EXT_CALENDAR_SSLVERIFY_MODE'));
+		}
+		// See documentation of getURLContent function for $localip and $sslverify possible values
+		$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], $localip, $sslverify);
 		if ($tmpresult['http_code'] != 200) {
 			$file_text = null;
 			$this->error = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
@@ -422,8 +433,8 @@ class ICal
 
 		$key = $temp[0];
 		$temp = explode("=", $temp[1]);
-		$return_value[$temp[0]] = $temp[1];
-		$return_value['unixtime'] = $value;
+		$return_value[$temp[0]] = trim($temp[1], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
+		$return_value['unixtime'] = $this->ical_date_to_unix($value);	// Local time as GMT timestamp; TZ correction is done by caller (AGENDA_EXT_BUGGEDFILEx)
 
 		return array($key, $return_value);
 	}

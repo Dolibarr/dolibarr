@@ -26,7 +26,6 @@
  * @var Conf $conf
  */
 
-
 $now = dol_now();
 $current_date = dol_getdate($now);
 if (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {

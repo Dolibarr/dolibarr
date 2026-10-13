@@ -26,5 +26,5 @@ create table llx_c_barcode_type
   libelle  varchar(128)        NOT NULL,
   coder    varchar(16)        NOT NULL,
   example  varchar(16)        NOT NULL
-  
+
 )ENGINE=innodb;

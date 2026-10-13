@@ -50,6 +50,7 @@ ConfirmProductionDesc=Al hacer clic en '%s', validará el consumo y / o producci
 AutoCloseMO=Cerrar automáticamente la Orden de Fabricación si se alcanzan las cantidades para consumir y producir
 NoStockChangeOnServices=Sin cambio de stock en los servicios
 ProductsToProduce=Productos a producir
+ManufacturingUnitCost=Coste unitario de fabricación
 BOMTotalCost=El costo de producir esta lista de materiales en función del costo de cada cantidad y producto a consumir (use el precio de costo si está definido, de lo contrario, el precio promedio ponderado si está definido, de lo contrario, el mejor precio de compra)
 BOMTotalCostService=Si está activado el módulo “Puesto de trabajo” y en la línea se define por defecto un puesto de trabajo, entonces el cálculo es “cantidad (convertida a horas) x puesto de trabajo ahr”, en caso contrario “cantidad x precio de coste del servicio”
 ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit no se puede utilizar en una lista de materiales o un MO

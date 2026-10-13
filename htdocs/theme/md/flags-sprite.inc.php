@@ -1,7 +1,16 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var string $path
+ */
+'
+@phan-var-force string $path
+';
+?>
 
 /* IDE Hack <style type="text/css"> */
 

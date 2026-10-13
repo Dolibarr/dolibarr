@@ -1,7 +1,24 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var string $badgeDanger
+ * @var string $badgeSuccess
+ * @var string $badgeWarning
+ * @var string $colorblind_deuteranopes_badgeDanger
+ * @var string $colorblind_deuteranopes_badgeSuccess
+ */
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeWarning
+@phan-var-force string $colorblind_deuteranopes_badgeDanger
+@phan-var-force string $colorblind_deuteranopes_badgeSuccess
+'
+?>
 
 /* IDE Hack <style type="text/css"> */
 
@@ -27,7 +44,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	background-color: #f5f5f5;
 	background-color: rgba(128, 128, 128, 0.1);
 	border-radius: 4px;
-	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -44,7 +60,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	color: #fff;
 	text-align: center;
 	background-color: #337ab7;
-	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;
@@ -59,7 +74,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .progress,
 .progress > .progress-bar {
-	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 .progress,

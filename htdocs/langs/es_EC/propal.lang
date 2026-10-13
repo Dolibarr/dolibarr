@@ -21,6 +21,7 @@ AllPropals=Todas las propuestas
 SearchAProposal=Buscar una propuesta
 NoProposal=Ninguna propuesta
 ProposalsStatistics=Estadísticas de la propuesta comercial
+NumberOfProposals=Número de propuestas
 NumberOfProposalsByMonth=Número por meses
 AmountOfProposalsByMonthHT=Cantidad por mes (sin impuestos)
 NbOfProposals=Número de propuestas comerciales

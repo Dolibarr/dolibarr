@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,22 +66,21 @@ class modMailing extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("mails");
 
 		// Config pages
 		$this->config_page_url = array("mailing.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "MAILING_CONTACT_DEFAULT_BULK_STATUS";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Default value for field "Refuse bulk email" when creating a contact';
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"MAILING_CONTACT_DEFAULT_BULK_STATUS",
+				"chaine",
+				"0",
+				'Default value for field "Refuse bulk email" when creating a contact',
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();
@@ -91,10 +91,10 @@ class modMailing extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 221; // id de la permission
-		$this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 221; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Consulter les mailings'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		$r++;

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,26 +20,39 @@
 /**
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
- *		\brief      Page to export database
+ *		\brief      Page to export database.
+ *				    See the file export_files.php for code to build a zip of documents
+ *					See the file export.php for code to build a dump file.
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_restrict_os_commands
+ * @var int $dolibarr_allow_download_app
+ *
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');
+
+$allow_download_app = GETPOSTINT('allow_download_app');
+// The optional step to export the application files is shown only if the parameter allow_download_app is provided
+// and the option $dolibarr_allow_download_app is set into the conf/conf.php file.
+$allowdownloadapp = ($allow_download_app && !empty($dolibarr_allow_download_app));
+// Parameter to add to the URLs and forms of the page to keep the step to export the application files visible
+$paramallowdownloadapp = ($allowdownloadapp ? '&allow_download_app=1' : '');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -68,6 +81,14 @@ if (!$user->admin) {
 if ($action == 'deletefile') {
 	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha'))) {
 		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret = dol_delete_file($file, 1);
+		if ($ret) {
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+		}
+	} elseif (preg_match('/^backupapp\//', GETPOST('urlfile', 'alpha'))) {
+		$file = $conf->admin->dir_output.'/backupapp/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -144,24 +165,26 @@ print "</script>\n";
 $title = $langs->trans("Backup");
 
 print load_fiche_titre($title, '', 'title_setup');
-//print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("BackupDesc", DOL_DATA_ROOT);
+print $langs->trans("BackupDesc", $allowdownloadapp ? 4 : 3);
 print '</div>';
 print '<br>';
 
 print "<!-- Dump of a server -->\n";
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
+if ($allowdownloadapp) {
+	print '<input type="hidden" name="allow_download_app" value="1" />';
+}
 
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
 print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
-//print $langs->trans("BackupDescY").'<br>';
+print $langs->trans("BackupDescY").'<br>';
 print '</span>';
 
 print '<br>';
@@ -228,10 +251,10 @@ function hideoptions(domelem) {
 
   	if (div.style.display === "none") {
     	div.style.display = "block";
-		domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'\';
   	} else {
     	div.style.display = "none";
-		domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions").'...').'\';
 	}
 }
 </script>';
@@ -249,7 +272,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	} else {
 		$fullpathofmysqldump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 	}
-	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'">';
+	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" spellcheck="false">';
 	print '</fieldset>';
 
 	print '<br>';
@@ -303,7 +326,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	}
 	if ($execmethod == 1) {
 		// If we use the "exec" method for shell, we ask if we need to use the alternative low memory exec mode.
-		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
+		print '<input type="checkbox" name="lowmemorydump" value="1" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOSTINT('lowmemorydump') : getDolGlobalInt('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
 		print '<label for="lowmemorydump">';
 		print $form->textwithpicto($langs->trans('ExportUseLowMemoryMode'), $langs->trans('ExportUseLowMemoryModeHelp'));
 		print '</label>';
@@ -613,7 +636,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -626,10 +649,13 @@ $title = $langs->trans("BackupZipWizard");
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
+if ($allowdownloadapp) {
+	print '<input type="hidden" name="allow_download_app" value="1" />';
+}
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
@@ -660,11 +686,27 @@ $filecompression = $compression;
 unset($filecompression['none']);
 $filecompression['zip'] = array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip', 'label' => $langs->trans("FormatZip"));
 
+// The gz, bz and zstd formats are built by export_files.php with OS commands (tar then a compressor). When
+// $dolibarr_main_restrict_os_commands is set (default since 24.0.1), Utils::executeCLI() refuses any command not in
+// the list, so a format whose commands are not allowed must not be offered.
+$oscommandsforformat = array('gz' => array('tar', 'gzip'), 'bz' => array('tar', 'bzip2'), 'zstd' => array('tar', 'zstd'));
+$arrayofallowedcommand = array();
+if (!empty($dolibarr_main_restrict_os_commands)) {
+	$arrayofallowedcommand = array_map('trim', explode(',', $dolibarr_main_restrict_os_commands));
+}
+$disabledbyrestriction = array();
+foreach ($oscommandsforformat as $key => $commands) {
+	if (!empty($arrayofallowedcommand) && array_diff($commands, $arrayofallowedcommand)) {
+		$disabledbyrestriction[$key] = implode(', ', array_diff($commands, $arrayofallowedcommand));
+	}
+}
+$defaultcompression = empty($disabledbyrestriction['gz']) ? 'gz' : 'zip';
+
 $i = 0;
 foreach ($filecompression as $key => $val) {
-	if (!$val['function'] || function_exists($val['function'])) {	// Enabled export format
+	if ((!$val['function'] || function_exists($val['function'])) && empty($disabledbyrestriction[$key])) {	// Enabled export format
 		$checked = '';
-		if ($key == 'gz') {
+		if ($key == $defaultcompression) {
 			$checked = ' checked';
 		}
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2"'.$checked.'>';
@@ -672,10 +714,17 @@ foreach ($filecompression as $key => $val) {
 	} else { // Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
-		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+		if (!empty($disabledbyrestriction[$key])) {
+			print ' <span class="opacitymedium">('.$langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]).')</span>';
+		} else {
+			print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+		}
 	}
 	print ' &nbsp; &nbsp; ';
 	$i++;
+}
+if (!empty($disabledbyrestriction)) {
+	print '<br><span class="opacitymedium small">'.$langs->trans("RestrictOsCommandsHelp", 'dolibarr_main_restrict_os_commands').'</span>';
 }
 
 print '</div>';
@@ -692,7 +741,7 @@ print '</div>';
 print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -701,6 +750,119 @@ print '</fieldset>';
 print '</form>';
 
 print '<br>';
+
+
+// Step 3 (optional): Export the application files (directory DOL_DOCUMENT_ROOT)
+if ($allowdownloadapp) {
+	print "<!-- Dump of the application directory -->\n";
+	print '<br>';
+
+	print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dumpapp" spellcheck="false">';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
+	print '<input type="hidden" name="export_type" value="app" />';
+	print '<input type="hidden" name="page_y" value="" />';
+
+	print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
+
+	print '<span class="opacitymedium">';
+	print $langs->trans("BackupDescApp", DOL_DOCUMENT_ROOT).'<br>';
+	print $langs->trans("BackupDescX").'<br><br>';
+	print '</span>';
+
+	print '<div id="backupappfilesleft" class="fichehalfleft">';
+
+	$title = $langs->trans("BackupAppZipWizard");
+
+	print load_fiche_titre($title);
+
+	print '<label for="appfilename_template" class="line-height-large paddingbottom opacitymedium">'.$langs->trans("FileNameToGenerate").'</label><br>';
+	$prefix = 'application';
+	$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser');
+	print '<input type="text" name="zipfilename_template" style="width: 90%" id="appfilename_template" value="'.$file.'" /> <br>';
+	print '<br>';
+
+	// Show compression choices (same choices than for the documents directory)
+	print '<div class="formelementrow">';
+	print "\n";
+	print $langs->trans("Compression").': &nbsp; ';
+	foreach ($filecompression as $key => $val) {
+		if ((empty($val['function']) || function_exists($val['function'])) && empty($disabledbyrestriction[$key])) {	// Enabled export format
+			$checked = '';
+			if ($key == $defaultcompression) {
+				$checked = ' checked';
+			}
+			print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'3"'.$checked.'>';
+			print ' <label for="'.$val['id'].'3">'.$val['label'].'</label>';
+		} else {	// Disabled export format
+			print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'3" disabled>';
+			print ' <label for="'.$val['id'].'3">'.$val['label'].'</label>';
+			if (!empty($disabledbyrestriction[$key])) {
+				print ' <span class="opacitymedium">('.$langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]).')</span>';
+			} else {
+				print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+			}
+		}
+		print ' &nbsp; &nbsp; ';
+	}
+	if (!empty($disabledbyrestriction)) {
+		print '<br><span class="opacitymedium small">'.$langs->trans("RestrictOsCommandsHelp", 'dolibarr_main_restrict_os_commands').'</span>';
+	}
+	print '</div>';
+	print "\n";
+
+	print '<br>';
+	print '<div class="center">';
+	print '<input type="submit" class="button reposition" value="'.$langs->trans("GenerateBackup").'" id="buttonGo3" /><br>';
+	print '<br>';
+	print '</div>';
+
+	print '</div>';
+
+	print '<div id="backupappfilesright" class="fichehalfright">';
+
+	$filearray = dol_dir_list($conf->admin->dir_output.'/backupapp', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+	$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backupapp/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+	print '<br>';
+
+	print '</div>';
+
+	print '</fieldset>';
+	print '</form>';
+} elseif ($allow_download_app) {
+	// The parameter allow_download_app was provided but the option $dolibarr_allow_download_app
+	// is not set into the conf/conf.php file, so the step to export the application files is not shown.
+	print '<br>';
+	print '<div class="center"><span class="warning">'.$langs->trans("DownloadOfAppFileDisallowed").'</span></div>';
+	print '<br>';
+}
+
+
+print "<br>\n";
+print "<!-- Save setup conf -->\n";
+
+print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">'.($allowdownloadapp ? 4 : 3).'</legend>';
+
+print '<br>';
+
+print '<span class="opacitymedium">';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key '.$langs->transnoentitiesnoconv("or").' dolibarr_main_instance_unique_id').'<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div id="backupfileright">';
+
+print $langs->trans("SeeValueIntoConfPhp").'<br>';
+print $langs->trans("SeeValueIntoConfPhp2");
+print '<br>';
+
+print '<br>';
+
+print '</div>';
+
+print '</fieldset>';
+
+print '<br><br>';
 
 // End of page
 llxFooter();

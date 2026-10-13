@@ -13,13 +13,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- !! Do not place comments at the end of the line, 
+-- !! Do not place comments at the end of the line,
 -- as this file is parsed during installation and all '--' acronyms are removed.
 --
 -- Note: To replace a string that is '__, 0' into an increasing number, you can use vi with comment
 -- :let @a=1 | %s/__, 0/\='__, '.(@a+setreg('a',@a+1))/g
 --
--- Description of charts of accounts GREECE Ε.Λ.Π. 
+-- Description of charts of accounts GREECE Ε.Λ.Π.
 -- ID 1 - 460
 -- ADD 1020000 to rowid # Do no remove this comment --
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ if (!defined('NOIPCHECK')) {
 
 // C'est un wrapper, donc header vierge
 /**
+ * Header function
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
@@ -41,18 +45,21 @@ if (!defined('NOIPCHECK')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>List of donators</title><body>';
 }
 /**
- * Header function
+ * Footer function
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</body></html>';
 }
@@ -60,7 +67,11 @@ function llxFooterVierge()
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 // Security check
 if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
@@ -91,7 +102,7 @@ if ($resql) {
 		print "<td>Date</td>";
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print "</tr>\n";
-
+		$i = 0;
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
@@ -102,7 +113,7 @@ if ($resql) {
 				print "<td>".$langs->trans("Anonymous")."</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
-			print '<td class="right">'.price($objp->amount).' '.$langs->trans("Currency".$conf->currency).'</td>';
+			print '<td class="right">'.price($objp->amount).' '.$langs->trans("Currency".getDolCurrency()).'</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -114,6 +125,6 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooterVierge();
+$db->close();

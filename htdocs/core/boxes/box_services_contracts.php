@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/core/boxes/box_services_contracts.php
- *		\ingroup    produits,services
+ *		\ingroup    product,services
  *      \brief      Widget of sells products
  */
 
@@ -36,7 +36,7 @@ class box_services_contracts extends ModeleBoxes
 	public $boxcode = "lastproductsincontract";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxLastProductsInContract";
-	public $depends = array("service", "contrat");
+	public $depends = array("service", "contract");
 
 	/**
 	 *  Constructor
@@ -44,7 +44,7 @@ class box_services_contracts extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -94,7 +94,7 @@ class box_services_contracts extends ModeleBoxes
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= ")";
-			$sql .= " WHERE c.entity = ".$conf->entity;
+			$sql .= " WHERE c.entity = ".((int) $conf->entity);
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
@@ -143,7 +143,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + getWarningDelay('contract', 'services', 'expires')) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 

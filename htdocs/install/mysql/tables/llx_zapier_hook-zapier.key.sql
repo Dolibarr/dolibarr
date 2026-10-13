@@ -19,4 +19,3 @@
 --ALTER TABLE llx_zapier_hook ADD UNIQUE INDEX uk_zapier_hook_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_zapier_hook ADD CONSTRAINT llx_zapier_hook_fk_field FOREIGN KEY (fk_field) REFERENCES llx_zapier_myotherobject(rowid);
-

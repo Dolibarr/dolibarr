@@ -28,7 +28,7 @@ create table llx_paiement
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
-  multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
+  multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency
   fk_paiement      integer NOT NULL,					-- type of payment in llx_c_paiement
   num_paiement     varchar(50),
   note             text,
@@ -39,5 +39,6 @@ create table llx_paiement
   fk_user_modif    integer,								-- utilisateur qui a modifie l'info
   statut           smallint DEFAULT 0 NOT NULL,			-- Satut, 0 ou 1, 1 n'est plus supprimable
   fk_export_compta integer DEFAULT 0 NOT NULL,			-- fk_export_compta 0 pas exporte
-  pos_change       double(24,8) DEFAULT 0  				-- Excess received in TakePOS cash payment
+  pos_change       double(24,8) DEFAULT 0,  				-- Excess received in TakePOS cash payment
+  import_key       varchar(14)							-- import key
 )ENGINE=innodb;

@@ -25,4 +25,3 @@ create table llx_usergroup_rights
   fk_id			integer NOT NULL
 
 )ENGINE=innodb;
-

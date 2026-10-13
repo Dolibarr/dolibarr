@@ -43,12 +43,7 @@
        	#require valid-user
 	</Directory>
 
-	# Leaving /public and /api, /dav, .well_known but also wrappers for document, viewimage and public json/img accessible to everyone
-    <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
-        AuthType None
-        Satisfy any
-        Require all granted
-    </Directory>
+	# Leaving /public, /api, /dav and /.well_known directory accessible to everyone (out of the HTTP basic auth if defined)
     <Directory /home/admin/wwwroot/dolibarr/htdocs/api/>
         AuthType None
         Satisfy any
@@ -59,11 +54,24 @@
         Satisfy any
         Require all granted
     </Directory>
+    <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
+        AuthType None
+        Satisfy any
+        Require all granted
+    </Directory>
     <Directory /home/admin/wwwroot/dolibarr/htdocs/.well-known/>
         AuthType None
         Satisfy any
         Require all granted
     </Directory>
+
+    # You may also want to allow access to everyone to wrappers for api, document, viewimage, manifest and public json/img files
+    # but if you can avoid it, it is better.
+    <Files /home/admin/wwwroot/dolibarr/htdocs/api/index.php>
+        AuthType None
+        Satisfy any
+        Require all granted
+    </Files>
     <Files ~ "(document\.php|viewimage\.php|\.js\.php|\.json\.php|\.js|\.css\.php|\.css|\.gif|\.png|\.svg|\.woff2|favicon\.ico)$">
         AuthType None
         Satisfy any

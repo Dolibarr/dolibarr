@@ -25,7 +25,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -48,6 +48,13 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
+ * @phan-file-suppress PhanParamTooMany
+ * @phan-file-suppress PhanPluginUnknownObjectMethodCall
+ * @phan-file-suppress PhanTypeMismatchArgumentProbablyReal
  */
 class CommandeFournisseurTest extends CommonClassTest
 {
@@ -94,7 +101,8 @@ class CommandeFournisseurTest extends CommonClassTest
 		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 1;
 
 		$localobject = new CommandeFournisseur($db);
-		$localobject->initAsSpecimen();
+		$param = array('tobuy' => 1);
+		$localobject->initAsSpecimen($param);
 		$localobject->lines = array();    // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line with qty too low";
@@ -102,6 +110,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
 		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject->lines[] = $line;
 
 		$result = $localobject->create($user);
@@ -113,14 +122,15 @@ class CommandeFournisseurTest extends CommonClassTest
 
 		// Create purchase order
 		$localobject2 = new CommandeFournisseur($db);
-		$localobject2->initAsSpecimen();    // This create 5 lines of first product found for socid 1
+		$param = array('tobuy' => 1);
+		$localobject2->initAsSpecimen($param);    // This create 5 lines of first product found for socid 1
 		$localobject2->lines = array();       // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line ok";
 		$line->qty = 10;                      // So enough quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject2->lines[] = $line;
 
 		$result = $localobject2->create($user);
@@ -132,14 +142,15 @@ class CommandeFournisseurTest extends CommonClassTest
 		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 0;
 
 		$localobject3 = new CommandeFournisseur($db);
-		$localobject3->initAsSpecimen();
+		$param = array('tobuy' => 1);
+		$localobject3->initAsSpecimen($param);
 		$localobject3->lines = array();    // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line with qty too low";
 		$line->qty = 1;                   // So lower than $quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject3->lines[] = $line;
 
 		$result = $localobject3->create($user);
@@ -158,7 +169,6 @@ class CommandeFournisseurTest extends CommonClassTest
 		$line->qty = 10;                      // So enough quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
 		$localobject4->lines[] = $line;
 
 		$result = $localobject4->create($user);
@@ -321,5 +331,61 @@ class CommandeFournisseurTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testSupplierOrderLineInsertMulticurrencySubpriceTtc
+	 *
+	 * @return	void
+	 */
+	public function testSupplierOrderLineInsertMulticurrencySubpriceTtc()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+
+		$line = new CommandeFournisseurLigne($db);
+		$line->fk_commande = $orderid;
+		$line->desc = 'phpunit multicurrency line';
+		$line->qty = 1;
+		$line->product_type = 0;
+		$line->special_code = 0;
+		$line->rang = 0;
+		$line->vat_src_code = '';
+		$line->tva_tx = 20;
+		$line->localtax1_tx = 0;
+		$line->localtax2_tx = 0;
+		$line->localtax1_type = '';
+		$line->localtax2_type = '';
+		$line->remise_percent = 0;
+		$line->subprice = 100;
+		$line->subprice_ttc = 120;
+		$line->ref_supplier = '';
+		$line->total_ht = 100;
+		$line->total_tva = 20;
+		$line->total_localtax1 = 0;
+		$line->total_localtax2 = 0;
+		$line->total_ttc = 120;
+		$line->fk_multicurrency = 0;
+		$line->multicurrency_code = $conf->currency;
+		$line->multicurrency_subprice = 110;
+		$line->multicurrency_subprice_ttc = 132;
+		$line->multicurrency_total_ht = 110;
+		$line->multicurrency_total_tva = 22;
+		$line->multicurrency_total_ttc = 132;
+		$result = $line->insert(1);
+		$this->assertGreaterThan(0, $result, 'Failed to insert supplier order line: '.$line->errorsToString());
+
+		$reloaded = new CommandeFournisseurLigne($db);
+		$reloaded->fetch($line->id);
+		print __METHOD__." multicurrency_subprice_ttc=".$reloaded->multicurrency_subprice_ttc."\n";
+		$this->assertEquals(132, $reloaded->multicurrency_subprice_ttc, 'multicurrency_subprice_ttc must be persisted on insert');
 	}
 }

@@ -54,8 +54,50 @@ $documentation->showSidebar(); ?>
 	<?php $documentation->showBreadCrumb(); ?>
 
 	<div class="doc-content-wrapper">
-		<?php echo $langs->trans('WelcomeToDocumentation'); ?>
-		<?php $documentation->showSummary(1, 1); ?>
+		<h1 class="documentation-title"><?php echo $langs->trans('WelcomeToDocumentation'); ?></h1>
+		<p class="documentation-text"><?php echo $langs->trans('WelcomeToDocumentationDescription'); ?></p>
+
+		<div class="doclinks-section">
+			<h2 class="doclinks-title"><?php echo $langs->trans('DocLinkSectionResources'); ?></h2>
+			<div class="doclinks-wrapper" style="justify-content: space-between;">
+				<a class="doc-link size-default" href="<?php print dol_buildpath($documentation->baseUrl.'/resources/contributing.php', 1); ?>">
+					<div class="link-title"><span class="fas fa-info-circle paddingright"></span> <?php print $langs->trans('DocHowContribute'); ?></div>
+					<div class="link-content"><?php print $langs->trans('DocHowContributeDescription'); ?></div>
+				</a>
+				<a class="doc-link size-default" href="https://www.dolibarr.fr/forum/" target="_blank">
+					<div class="link-title"><span class="fas fa-external-link-alt paddingright"></span> Dolibarr community</div>
+					<div class="link-content">Meet and chat with the Dolibarr community on the dedicated forum</div>
+				</a>
+			</div>
+		</div>
+
+		<?php
+		$indexMenu = $documentation->menu;
+
+		// Remove BackToDolibarr and Documentation Home from menu
+		// Remove Resources from menu (Set manually above)
+		unset($indexMenu['BackToDolibarr']);
+		unset($indexMenu['DocumentationHome']);
+		unset($indexMenu['Resources']);
+
+		if (!empty($indexMenu)) {
+			foreach ($indexMenu as $keyMenu => $infosMenu) {
+				print '<div class="doclinks-section">';
+				print '<h2 class="doclinks-title">'.$langs->trans($keyMenu).'</h2>';
+				print '<div class="doclinks-wrapper flex-fix" style="justify-content: flex-start;">';
+				if (!empty($infosMenu['submenu'])) {
+					foreach ($infosMenu['submenu'] as $keySubmenu => $infosSubmenu) {
+						print '<a href="'.$infosSubmenu['url'].'" class="doc-link size-small">';
+							print '<div class="link-icon"><span class="'.$infosSubmenu['icon'].'"></span></div>';
+							print '<div class="link-title">'.$langs->trans($keySubmenu).'</div>';
+						print '</a>';
+					}
+				}
+				print '</div>';
+				print '</div>';
+			}
+		}
+		?>
 	</div>
 
 </div>

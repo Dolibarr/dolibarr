@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class box_project_opportunities extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user, $langs;
 
@@ -125,6 +125,7 @@ class box_project_opportunities extends ModeleBoxes
 					$projectstatic->title = $objp->title;
 					$projectstatic->public = $objp->public;
 					$projectstatic->statut = $objp->status;
+					$projectstatic->status = $objp->status;
 					$projectstatic->opp_status = $objp->opp_status;
 					$projectstatic->opp_status_code = $objp->opp_status_code;
 					$projectstatic->opp_percent = $objp->opp_percent;
@@ -167,7 +168,7 @@ class box_project_opportunities extends ModeleBoxes
 		}
 
 		if ($num > 0) {
-			// Add the sum à the bottom of the boxes
+			// Add the sum to the bottom of the boxes
 			$this->info_box_contents[$i][] = array(
 				'tr' => 'class="liste_total_wrap"',
 				'td' => 'class="liste_total"',

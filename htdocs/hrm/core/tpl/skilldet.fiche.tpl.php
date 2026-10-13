@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
  */
 
 /**
+ * @var ?Conf $conf
+ * @var CommonObject $object
  * @var Form $form
  * @var Translate $langs
  *
+ * @var int $colwidth
+ * @var int $permission
+ * @var string $typeofdata
+ * @var string $moreparam
  * @var string $note_public
  * @var string $note_private
+ * @var string $value_public
+ * @var string $value_private
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
@@ -41,7 +49,7 @@ if (!empty($object->table_element_line)) {
 @phan-var-force string $note_private
 @phan-var-force int $colwidth
 @phan-var-force string $moreparam
-@phan-var-force bool $permission
+@phan-var-force int $permission
 @phan-var-force string $typeofdata
 @phan-var-force string $value_public
 @phan-var-force string $value_private

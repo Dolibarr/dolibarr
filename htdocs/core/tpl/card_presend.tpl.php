@@ -3,8 +3,9 @@
  * Copyright (C) 2022	    Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,28 +22,28 @@
  * or see https://www.gnu.org/
  */
 
-/*
- * Code to output content when action is presend
- *
- * $trackid must be defined
- * $modelmail
- * $defaulttopic and $defaulttopiclang
- * $diroutput
- * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
- * $file
- */
 /**
- * @var int<0,1> $diroutput
- * @var string $defaulttopic
- * @var string $defaulttopiclang
- * @var string[] $arrayoffamiliestoexclude
- * @var string $file
- * @var string $action
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $trackid
+ * @var string $modelmail
+ * @var string $defaulttopic
+ * @var string $defaulttopiclang
+ * @var int<0,1> $diroutput
+ * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
+ * @var string $file
+ * @var ?string $inreplyto
+ * @var int $hidedetails
+ * @var int $hidedesc
+ * @var int $hideref
+ * @var string $recruitername
+ * @var string $recruitermail
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -50,6 +51,7 @@
 @phan-var-force string $defaulttopiclang
 @phan-var-force string[] $arrayoffamiliestoexclude
 @phan-var-force string $file
+@phan-var-force string $modelmail
 @phan-var-force CommonObject $object
 ';
 
@@ -60,6 +62,10 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 $fileparams = array();
+$file = null;
+if (!isset($modelmail)) {
+	$modelmail = '';
+}
 
 if ($action == 'presend') {
 	$langs->load("mails");
@@ -90,12 +96,20 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		if (!is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		// When the email form is resubmitted (e.g. Apply button to select a template),
+		// lang_id is not in POST but langsmodels is. Use it to preserve the language selection.
+		if (empty($newlang) && GETPOST('langsmodels', 'aZ09')) {
+			$newlang = GETPOST('langsmodels', 'aZ09');
 		}
 	}
 
@@ -137,18 +151,24 @@ if ($action == 'presend') {
 
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument')) {
+			$hidedetails = empty($hidedetails) ? '' : $hidedetails;
+			$hidedesc = empty($hidedesc) ? '' : $hidedesc;
+			$hideref = empty($hideref) ? '' : $hideref;
+
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
+				dol_syslog(__FILE__.' generateDocument failed for '.$object->element.' id='.(empty($object->id) ? 0 : $object->id).' error='.$object->error, LOG_ERR);
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			if ($object->element == 'invoice_supplier') {
-				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			} else {
-				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
-			}
+			if ($result >= 0) {
+				if ($object->element == 'invoice_supplier') {
+					$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+				} else {
+					$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+				}
 
-			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+				$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+			}
 		}
 	}
 
@@ -222,6 +242,7 @@ if ($action == 'presend') {
 	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
 
+
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
@@ -252,7 +273,8 @@ if ($action == 'presend') {
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		// For example if element is project
-		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (property_exists($object, 'socid') && !empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
 		if (is_object($object->thirdparty)) {
@@ -287,7 +309,7 @@ if ($action == 'presend') {
 	// Make substitution in email content
 	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
-		$formmail->setSubstitFromObject($object, $langs);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 
@@ -336,6 +358,13 @@ if ($action == 'presend') {
 
 		if (!empty($origin) && !empty($origin_id)) {
 			$element = $subelement = $origin;
+
+			if ($element == 'order_supplier') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.commande';
+				$origin = 'CommandeFournisseur';
+			}
+
 			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 				$element = $regs[1];
@@ -357,10 +386,6 @@ if ($action == 'presend') {
 			}
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';
-			}
-			if ($element == 'order_supplier') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.commande';
 			}
 			if ($element == 'project') {
 				$element = 'projet';
@@ -424,13 +449,45 @@ if ($action == 'presend') {
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
+	$fileinit = array();
+	$nbmostrecentfiles = 0;
+	if ($object->element == 'facture' && getDolGlobalInt('MAIN_FACTURE_EMAIL_ATTACH_MOST_RECENT_FILES') > 0) {
+		$nbmostrecentfiles = getDolGlobalInt('MAIN_FACTURE_EMAIL_ATTACH_MOST_RECENT_FILES');
+	} elseif (getDolGlobalInt('MAIN_EMAIL_ATTACH_MOST_RECENT_FILES') > 0) {
+		$nbmostrecentfiles = getDolGlobalInt('MAIN_EMAIL_ATTACH_MOST_RECENT_FILES');
+	}
+
+	if ($nbmostrecentfiles > 0) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if ($object->element == 'invoice_supplier') {
+			$dir = $diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref;
+		} else {
+			$dir = $diroutput.'/'.$ref;
+		}
+		$recentfiles = dol_most_recent_file($dir, '', array('(\.meta|_preview.*\.png)$', '^\.'), 0, 0, $nbmostrecentfiles);
+		if (is_array($recentfiles) && count($recentfiles) > 0) {
+			if (isset($recentfiles['fullname'])) {
+				$recentfiles = array($recentfiles);
+			}
+			foreach ($recentfiles as $fileentry) {
+				if (!empty($fileentry['fullname']) && is_readable($fileentry['fullname'])) {
+					$fileinit[] = $fileentry['fullname'];
+				}
+			}
+		}
+	}
+
+	if (empty($fileinit) && !empty($file)) {
+		$fileinit = array($file);
+	}
+
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
 	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-	$formmail->param['fileinit'] = array($file);
+	$formmail->param['fileinit'] = $fileinit;
 	$formmail->param['object_entity'] = $object->entity;
 
 	// Show form

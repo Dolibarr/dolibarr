@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class modEmailCollector extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -87,14 +88,13 @@ class modEmailCollector extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('always'=>'modCron'); // List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array('always' => 'modCron'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -157,7 +157,7 @@ class modEmailCollector extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0=>array('label'=>'Email collector', 'priority'=>50, 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'isModEnabled("emailcollector")')
+			0 => array('label' => 'Email collector', 'priority' => 50, 'jobtype' => 'method', 'class' => '/emailcollector/class/emailcollector.class.php', 'objectname' => 'EmailCollector', 'method' => 'doCollect', 'parameters' => '', 'comment' => 'Comment', 'frequency' => 5, 'unitfrequency' => 60, 'status' => 1, 'test' => 'isModEnabled("emailcollector")')
 		);
 
 
@@ -168,16 +168,16 @@ class modEmailCollector extends DolibarrModules
 		$this->menu = array(); // List of menus to add
 
 		$r = 0;
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'EmailCollectors',
-			'url'=>'/admin/emailcollector_list.php?leftmenu=admintools',
-			'langs'=>'admin', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>400,
-			'enabled'=>'isModEnabled("emailcollector") && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->admin', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'EmailCollectors',
+			'url' => '/admin/emailcollector_list.php?leftmenu=admintools',
+			'langs' => 'admin', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 400,
+			'enabled' => 'isModEnabled("emailcollector") && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->admin', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 	}
 
@@ -196,24 +196,24 @@ class modEmailCollector extends DolibarrModules
 
 		$sql = array();
 
-		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity;
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".((int) $conf->entity);
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
 				$descriptionA1 = $langs->trans('EmailCollectorExampleToCollectTicketRequestsDesc');
 				$label = $langs->trans('EmailCollectorExampleToCollectTicketRequests');
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requests', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleA1 .= " VALUES (".((int) $conf->entity).", 'Collect_Ticket_Requests', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 				//$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				//$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				//$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".((int) $conf->entity)."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 				$sqlforexampleFilterA3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".((int) $conf->entity)."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sqlforexampleActionA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".((int) $conf->entity)."), 'ticket', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleA1;
 
@@ -227,14 +227,14 @@ class modEmailCollector extends DolibarrModules
 			dol_print_error($this->db);
 		}
 
-		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity;
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity);
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
 				$descriptionA1 = $langs->trans('EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware');
 				$label = $langs->trans('EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware');
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleA1 .= " VALUES (".((int) $conf->entity).", 'Collect_Responses_Out', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
@@ -260,7 +260,7 @@ class modEmailCollector extends DolibarrModules
 				$descriptionB1 = $langs->trans('EmailCollectorExampleToCollectDolibarrAnswersDesc');
 				$label = $langs->trans('EmailCollectorExampleToCollectDolibarrAnswers');
 				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', '".$this->db->escape($label)."', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleB1 .= " VALUES (".((int) $conf->entity).", 'Collect_Responses_In', '".$this->db->escape($label)."', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterB2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
@@ -285,7 +285,7 @@ class modEmailCollector extends DolibarrModules
 				$descriptionC1 = $langs->trans("EmailCollectorExampleToCollectLeadsDesc");
 				$label = $langs->trans('EmailCollectorExampleToCollectLeads');
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleC1 .= " VALUES (".((int) $conf->entity).", 'Collect_Leads', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
@@ -317,7 +317,7 @@ class modEmailCollector extends DolibarrModules
 				$descriptionC1 = $langs->trans("EmailCollectorExampleToCollectJobCandidaturesDesc");
 				$label = $langs->trans('EmailCollectorExampleToCollectJobCandidatures');
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleC1 .= " VALUES (".((int) $conf->entity).", 'Collect_Candidatures', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";

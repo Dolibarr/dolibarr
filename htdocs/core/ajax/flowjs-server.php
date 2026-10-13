@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2023-2026  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
@@ -25,6 +25,7 @@
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
+// If there is no need to load and show top and left menu
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -37,10 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// If there is no need to load and show top and left menu
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
-}
+
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');    // Required to know date format for dol_print_date
 
 // Load Dolibarr environment
@@ -58,14 +56,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $module = GETPOST('module', 'aZ09arobase');
+$uploaddirname = dol_sanitizeFileName(GETPOST('uploaddirname', 'alpha'));
 
-$flowFilename = GETPOST('flowFilename', 'alpha');
-$flowIdentifier = GETPOST('flowIdentifier', 'alpha');
+$flowFilename = dol_sanitizeFileName(GETPOST('flowFilename', 'alpha'));
+$flowIdentifier = dol_sanitizeFileName(GETPOST('flowIdentifier', 'alpha'));
 $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
 $flowChunkSize = GETPOST('flowChunkSize', 'alpha');
 $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 
-$result = restrictedArea($user, $module, 0, '', '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, ($module ? $module : 'unknown'), 0, '', '', 'fk_soc', 'rowid', 0, 1);		// Call with mode return. Use 'unknown' if module not defined to be sure to have an error when module is not set
+
+if (!$result) {
+	httponly_accessforbidden("No permission on module ".$module);
+}
 
 if ($action != 'upload') {
 	httponly_accessforbidden("Param action must be 'upload'");
@@ -73,9 +76,13 @@ if ($action != 'upload') {
 
 if (!empty($conf->$module->dir_temp)) {
 	$upload_dir = $conf->$module->dir_temp;
+	if (!empty($uploaddirname)) {
+		$upload_dir .= "/".$uploaddirname;
+	}
 } else {
 	httponly_accessforbidden("Param module does not has a dir_temp directory. Module does not exists or is not activated.");
 }
+
 
 /*
  * Action
@@ -173,8 +180,14 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 	// check that all the parts are present
 	// the size of the last part is between chunkSize and 2*$chunkSize
 	if ($total_files * (float) $chunkSize >=  ((float) $totalSize - (float) $chunkSize + 1)) {
+		// Security: disallow file with executable extensions, rename them like dol_move_uploaded_file() does
+		$destFileName = $fileName;
+		if (isAFileWithExecutableContent($destFileName) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
+			$destFileName .= '.noexe';
+		}
+
 		// create the final destination file
-		if (($fp = fopen($upload_dir.'/'.$fileName, 'w')) !== false) {
+		if (($fp = fopen($upload_dir.'/'.$destFileName, 'w')) !== false) {
 			for ($i = 1; $i <= $total_files; $i++) {
 				fwrite($fp, file_get_contents($temp_dir.'/'.$fileName.'.part'.$i));
 				dol_syslog('writing chunk '.$i);
@@ -182,6 +195,14 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 			fclose($fp);
 		} else {
 			dol_syslog('cannot create the destination file');
+			return false;
+		}
+
+		// Security: scan the assembled file (a virus may be split across chunks)
+		$checkvirusarray = dolCheckVirus($upload_dir.'/'.$destFileName, $upload_dir.'/'.$fileName);
+		if (count($checkvirusarray)) {
+			dol_syslog('File "'.$destFileName.'" KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+			dol_delete_file($upload_dir.'/'.$destFileName, 0, 1);
 			return false;
 		}
 

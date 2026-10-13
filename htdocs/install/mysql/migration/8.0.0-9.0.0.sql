@@ -274,18 +274,21 @@ UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_END_TO_END')__ where name = _
 UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_USTRD')__ where name = __ENCRYPT('USTRD')__;
 
 
--- Delete duplicate accounting account, but only if not used
-DROP TABLE tmp_llx_accounting_account;
-CREATE TABLE tmp_llx_accounting_account AS SELECT MIN(rowid) as MINID, MAX(rowid) as MAXID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
---SELECT * from tmp_llx_accounting_account;
-DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accounting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+-- Sequence to removed duplicated values of llx_accounting_account
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT aa.rowid, aad.min FROM llx_accounting_account AS aa INNER JOIN (SELECT account_number, entity, fk_pcg_version, MIN(rowid) AS min FROM llx_accounting_account GROUP BY account_number, entity, fk_pcg_version HAVING COUNT(*) >= 2) AS aad ON aa.account_number = aad.account_number AND aa.entity = aad.entity AND aa.fk_pcg_version = aad.fk_pcg_version AND aa.rowid != aad.min;
+-- Fix fk_code_ventilation in lines
+UPDATE llx_facturedet SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facturedet.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facture_fourn_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_expensereport_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+DELETE FROM llx_accounting_account WHERE rowid IN (SELECT rowid FROM tmp_llx_accouting_account);
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
 
--- If there is record in tmp_llx_accounting_account, make a look on each line to do
---update llx_facturedet        set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
---update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
---update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
-
+-- Fix accounting account unique index and orphans
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 UPDATE llx_projet SET fk_opp_status = NULL WHERE fk_opp_status = -1;

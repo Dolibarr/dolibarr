@@ -1,8 +1,9 @@
 <?php
 /*
- * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016 Xebax Christy 			<xebax@wanadoo.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/bankcateg.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 /**
  * API class for accounts
@@ -32,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 class BankAccounts extends DolibarrApi
 {
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields, checked when creating an object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -58,10 +61,12 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int		$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
+	 * @phan-return Account[]
+	 * @phpstan-return Account[]
 	 *
 	 * @throws RestException
 	 */
@@ -111,6 +116,7 @@ class BankAccounts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$account = new Account($this->db);
 				if ($account->fetch($obj->rowid) > 0) {
+					$account->balance = $account->solde(1);  // 1=Exclude future operation date
 					$list[] = $this->_filterObjectProperties($this->_cleanObjectDatas($account), $properties);
 				}
 			}
@@ -148,6 +154,8 @@ class BankAccounts extends DolibarrApi
 	 * Create account object
 	 *
 	 * @param	array $request_data		Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
@@ -156,11 +164,11 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(403);
 		}
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
 
 		$account = new Account($this->db);
 		// Date of the initial balance (required to create an account).
-		$account->date_solde = time();
+		$account->date_solde = dol_now();
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -170,9 +178,6 @@ class BankAccounts extends DolibarrApi
 
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
-		// courant and type are the same thing but the one used when
-		// creating an account is courant
-		$account->courant = $account->type; // deprecated
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
@@ -194,6 +199,8 @@ class BankAccounts extends DolibarrApi
 	 * @url POST    /transfer
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
 	 *
 	 * @status 201
 	 *
@@ -267,14 +274,14 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline((int) $date, $typefrom, $description, -1 * (float) price2num($amount), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
 		}
 
 		if (!$error) {
-			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user, $cheque_number);
+			$bank_line_id_to = $accountto->addline((int) $date, $typeto, $description, (float) price2num($amount_to), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_to > 0)) {
 			$error++;
@@ -315,7 +322,7 @@ class BankAccounts extends DolibarrApi
 			);
 		} else {
 			$this->db->rollback();
-			throw new RestException(500, $accountfrom->error . ' ' . $accountto->error);
+			throw new RestException(500, $accountfrom->errorsToString() . ' ' . $accountto->errorsToString());
 		}
 	}
 
@@ -324,6 +331,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param	int    $id              ID of account
 	 * @param	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -350,7 +359,7 @@ class BankAccounts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+					$account->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $account);
 				}
 				continue;
 			}
@@ -360,7 +369,7 @@ class BankAccounts extends DolibarrApi
 		if ($account->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $account->error);
+			throw new RestException(500, $account->errorsToString());
 		}
 	}
 
@@ -369,6 +378,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int    $id    ID of account
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -396,13 +407,16 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$account = array();
 		foreach (BankAccounts::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -416,9 +430,12 @@ class BankAccounts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -435,6 +452,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int $id ID of account
 	 * @return array Array of AccountLine objects
+	 * @phan-return AccountLine[]
+	 * @phpstan-return AccountLine[]
 	 *
 	 * @throws RestException
 	 *
@@ -473,6 +492,7 @@ class BankAccounts extends DolibarrApi
 
 		if ($result) {
 			$num = $this->db->num_rows($result);
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $num; $i++) {
 				$obj = $this->db->fetch_object($result);
 				$accountLine = new AccountLine($this->db);
@@ -527,7 +547,7 @@ class BankAccounts extends DolibarrApi
 		$num_releve = sanitizeVal($num_releve);
 
 		$result = $account->addline(
-			$date,
+			(int) $date,
 			$type,
 			$label,
 			$amount,
@@ -537,11 +557,11 @@ class BankAccounts extends DolibarrApi
 			$cheque_writer,
 			$cheque_bank,
 			$accountancycode,
-			$datev,
+			(int) $datev,
 			$num_releve
 		);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding line to account: ' . $account->error);
+			throw new RestException(503, 'Error when adding line to account: ' . $account->errorsToString());
 		}
 		return $result;
 	}
@@ -549,13 +569,13 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Add a link to an account line
 	 *
-	 * @param int    $id			ID of account
-	 * @param int    $line_id       ID of account line
-	 * @param int    $url_id        ID to set in the URL {@from body}
-	 * @param string $url           URL of the link {@from body}
-	 * @param string $label         Label {@from body}
-	 * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
-	 * @return int  ID of link
+	 * @param 	int    	$id				ID of account
+	 * @param 	int    	$line_id       	ID of account line
+	 * @param 	int    	$url_id        	ID to set in the URL {@from body}
+	 * @param 	string 	$url           	URL of the link {@from body}
+	 * @param 	string 	$label         	Label {@from body}
+	 * @param 	string 	$type          	Type of link ('payment', 'company', 'member', ...) {@from body}
+	 * @return 	int  					ID of link
 	 *
 	 * @url POST {id}/lines/{line_id}/links
 	 */
@@ -577,13 +597,17 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$url = sanitizeVal($url);
 		$label = sanitizeVal($label);
 		$type = sanitizeVal($type);
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding link to account line: ' . $account->error);
+			throw new RestException(503, 'Error when adding link to account line: ' . $account->errorsToString());
 		}
 		return $result;
 	}
@@ -594,16 +618,15 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array Array of links
+	 * @phan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
+	 * @phpstan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
 	 *
 	 * @throws RestException
 	 *
 	 * @url GET {id}/lines/{line_id}/links
-	 *
 	 */
 	public function getLinks($id, $line_id)
 	{
-		$list = array();
-
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
@@ -623,6 +646,30 @@ class BankAccounts extends DolibarrApi
 	}
 
 	/**
+	 * Get the detail of a given line of the bank account.
+	 *
+	 * @param 	int 			$line_id 	ID of the account line
+	 * @return	array|mixed					Data without useless information. Note: If we use here AccountLine as return type, we got error if xdebug is on, due to infinite loop parsing of doc by Restler, we can disable this we commenting line 228 to 323 in CommonObject)
+	 * @url GET /lines/{line_id}
+	 *
+	 * @throws RestException
+	 */
+	public function getDetailAccountLine($line_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account Line not found');
+		}
+
+		return $this->_cleanObjectDatas($accountLine);
+	}
+
+	/**
 	 * Update an account line
 	 *
 	 * @param int    $id    		ID of account
@@ -634,7 +681,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function updateLine($id, $line_id, $label)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -650,11 +697,15 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$accountLine->label = sanitizeVal($label);
 
 		$result = $accountLine->updateLabel();
 		if ($result < 0) {
-			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->error);
+			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->errorsToString());
 		}
 		return $accountLine->id;
 	}
@@ -665,12 +716,14 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE {id}/lines/{line_id}
 	 */
 	public function deleteLine($id, $line_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -684,6 +737,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {
@@ -699,7 +756,123 @@ class BankAccounts extends DolibarrApi
 	}
 
 	/**
-	 * Get current account balance by ID
+	 * Reconcile account lines with a bank statement
+	 *
+	 * All lines are checked before any change and updated in one transaction, so a statement is
+	 * never left half reconciled. A line already reconciled with the same statement is accepted,
+	 * so the call can be replayed. A line reconciled with another statement is refused.
+	 *
+	 * @param int    $id            ID of account
+	 * @param string $num_releve    Bank statement number {@from body} {@required true}
+	 * @param int[]  $lines         IDs of the account lines to reconcile {@from body} {@required true} {@type int} {@min 1}
+	 * @param int    $conciliated   1=Set lines as reconciled, 0=Only save the statement number {@from body}
+	 * @param int    $catid         ID of a bank category to add to the lines {@from body}
+	 * @return array
+	 * @phan-return array{num_releve:string,conciliated:int,lines:int[]}
+	 * @phpstan-return array{num_releve:string,conciliated:int,lines:int[]}
+	 *
+	 * @throws RestException 400 Bad statement number or category, empty list of lines or line of another account
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Account or line not found
+	 * @throws RestException 409 Line already reconciled with another statement
+	 * @throws RestException 503 Error when updating a line
+	 *
+	 * @url POST {id}/reconcile
+	 *
+	 * @since 25.0.0 Initial implementation
+	 */
+	public function reconcile($id, $num_releve, $lines, $conciliated = 1, $catid = 0)
+	{
+		global $langs;
+
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire') || !DolibarrApiAccess::$user->hasRight('banque', 'consolidate')) {
+			throw new RestException(403);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'account not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('banque', $account->id, 'bank_account&bank_account')) {
+			throw new RestException(403, 'Access to this bank account not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if ($account->canBeConciliated() <= 0) {
+			throw new RestException(400, 'Account can not be reconciled (reconciliation disabled, cash account or closed account)');
+		}
+
+		$num_releve = trim(sanitizeVal($num_releve));
+		if ($num_releve === '' || dol_strlen($num_releve) > 50) {
+			throw new RestException(400, 'num_releve field missing or longer than 50 characters');
+		}
+		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE') && !preg_match('/'.getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $num_releve)) {
+			$langs->load("errors");
+			throw new RestException(400, $langs->transnoentitiesnoconv("ErrorBankStatementNameMustFollowRegex", getDolGlobalString('BANK_STATEMENT_REGEX_RULE')));
+		}
+		if (!is_array($lines) || empty($lines)) {
+			throw new RestException(400, 'lines field missing or empty');
+		}
+		$conciliated = empty($conciliated) ? 0 : 1;
+		$catid = (int) $catid;
+		if ($catid > 0) {
+			$bankcateg = new BankCateg($this->db);
+			if ($bankcateg->fetch($catid) <= 0 || empty($bankcateg->id)) {
+				throw new RestException(400, 'Bank category '.$catid.' not found');
+			}
+		}
+		$categorie = new Categorie($this->db);
+
+		// Check every line before the first write
+		$lineids = array();
+		$toupdate = array();
+		foreach (array_unique(array_map('intval', $lines)) as $line_id) {
+			$accountLine = new AccountLine($this->db);
+			if ($line_id <= 0 || $accountLine->fetch($line_id) <= 0) {
+				throw new RestException(404, 'account line '.$line_id.' not found');
+			}
+			if ($accountLine->fk_account != $id) {
+				throw new RestException(400, 'Line '.$line_id.' does not belong to this account');
+			}
+			if ($accountLine->rappro && (string) $accountLine->num_releve !== $num_releve) {
+				throw new RestException(409, 'Line '.$line_id.' is already reconciled with statement '.$accountLine->num_releve.', cannot reconcile it with '.$num_releve);
+			}
+			$lineids[] = $line_id;
+			if (!$accountLine->rappro) {
+				// update_conciliation() inserts the category link without checking it already exists
+				$linecat = 0;
+				if ($catid > 0) {
+					$linecats = $categorie->containing($line_id, Categorie::TYPE_BANK_LINE, 'id');
+					if (!is_array($linecats)) {
+						throw new RestException(503, 'Error when reading categories of account line '.$line_id);
+					}
+					$linecat = in_array($catid, $linecats) ? 0 : $catid;
+				}
+				$toupdate[] = array($accountLine, $linecat);
+			}
+		}
+
+		$this->db->begin();
+		foreach ($toupdate as list($accountLine, $linecat)) {
+			$accountLine->num_releve = $num_releve;
+			if ($accountLine->update_conciliation(DolibarrApiAccess::$user, $linecat, $conciliated) < 0) {
+				$errors = array_merge(array($accountLine->error, $this->db->lasterror()), $accountLine->errors);
+				$this->db->rollback();
+				throw new RestException(503, 'Error when reconciling account line '.$accountLine->id, $errors);
+			}
+		}
+		if (!$this->db->commit()) {
+			throw new RestException(503, 'Error when reconciling account lines: '.$this->db->lasterror());
+		}
+
+		return array(
+			'num_releve' => $num_releve,
+			'conciliated' => $conciliated,
+			'lines' => $lineids
+		);
+	}
+
+	/**
+	 * Get the current account balance
 	 *
 	 * @param	int		$id				ID of account
 	 * @return	float	$balance	 	balance
@@ -719,7 +892,9 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account not found');
 		}
+
 		$balance = $account->solde(1);  //1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
+
 		return $balance;
 	}
 }

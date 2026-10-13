@@ -29,8 +29,8 @@ CronExecute=เปิดตัวเลย
 CronConfirmExecute=คุณแน่ใจหรือไม่ว่าต้องการดำเนินการงานที่กำหนดเวลาไว้เหล่านี้ทันที
 CronInfo=โมดูลงานที่กำหนดเวลาไว้ช่วยให้สามารถกำหนดเวลางานเพื่อดำเนินการได้โดยอัตโนมัติ งานสามารถเริ่มต้นได้ด้วยตนเอง
 CronTask=งาน
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=การรันงานตามกำหนดเวลาครั้งต่อไป
+CronNotYetRan=ไม่เคยดำเนินการ
 CronDtStart=ไม่ก่อน
 CronDtEnd=ไม่หลังจากนั้น
 CronDtNextLaunch=การดำเนินการต่อไป
@@ -50,7 +50,7 @@ JobFinished=งานเปิดตัวและจบ
 Scheduled=กำหนดเวลาแล้ว
 #Page card
 CronAdd=เพิ่มงาน
-CronEvery=Run job every
+CronEvery=รันงานทุกๆ
 CronObject=อินสแตนซ์ / วัตถุที่จะสร้าง
 CronArgs=พารามิเตอร์
 CronSaveSucess=บันทึกสำเร็จ
@@ -77,6 +77,7 @@ CronType=หมวดงาน
 CronType_method=วิธีการเรียกคลาส PHP
 CronType_command=คำสั่งเชลล์
 CronCannotLoadClass=ไม่สามารถโหลดไฟล์คลาส %s (เพื่อใช้คลาส %s)
+CronModuleNotEnabledInThisEntity=โมดูล Cron ไม่ได้เปิดใช้งานในเอนทิตีนี้ (เพื่อใช้เมธอด %s ของอ็อบเจ็กต์ %s)
 CronCannotLoadObject=โหลดไฟล์คลาส %s แล้ว แต่ไม่พบวัตถุ %s เข้าไป
 UseMenuModuleToolsToAddCronJobs=ไปที่เมนู "<a href="%s">หน้าแรก - เครื่องมือผู้ดูแลระบบ - งานที่กำหนดเวลาไว้</a>" เพื่อดูและแก้ไขงานที่กำหนดเวลาไว้
 JobDisabled=ปิดการใช้งาน

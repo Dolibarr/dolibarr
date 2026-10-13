@@ -15,6 +15,7 @@ AddProp=Create quotation
 LastPropals=Latest %s quotations
 AllPropals=All quotations
 SearchAProposal=Search a quotation
+NumberOfProposals=Number of quotations
 ShowPropal=Show quotation
 ActionsOnPropal=Events on quotation
 DatePropal=Date of quotation

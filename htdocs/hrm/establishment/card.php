@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ $id = GETPOSTINT('id');
 
 // List of status
 static $tmpstatus2label = array(
-		'0'=>'CloseEtablishment',
-		'1'=>'OpenEtablishment'
+		'0' => 'CloseEtablishment',
+		'1' => 'OpenEtablishment'
 );
 $status2label = array('');
 foreach ($tmpstatus2label as $key => $val) {
@@ -86,6 +87,7 @@ if (empty($permissiontoread)) {
  */
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
@@ -242,7 +244,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
+	print $form->select_country((string) (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id)), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -288,12 +290,12 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 			// Ref
 			print "<tr>";
 			print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-			print $object->id;
+			print dolPrintHTML($object->id);
 			print '</td></tr>';
 
 			// Name
 			print '<tr><td>'.$form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-			print '<input name="label" id="label" class="flat" value="'.$object->label.'">';
+			print '<input name="label" id="label" class="flat" value="'.dolPrintHTMLForAttribute($object->label).'">';
 			print '</td></tr>';
 
 			// Entity
@@ -326,7 +328,7 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->country_id, 'country_id');
+			print $form->select_country((string) $object->country_id, 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -440,7 +442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 	// Delete
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

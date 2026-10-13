@@ -7,8 +7,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -43,15 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var Form $form
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
@@ -143,7 +142,7 @@ if ($optioncss != '') {
 }
 $num = 0;
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -181,10 +180,8 @@ if ($year > 0) {
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if ($sortfield !== null
-	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
-) {
-	$sql .= $db->order($sortfield, $sortorder);
+if ($sortfield && preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)) {
+	$sql .= $db->order($sortfield, (string) $sortorder);
 }
 
 // Count total nb of records
@@ -193,7 +190,7 @@ $resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -226,7 +223,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre">';
-$formsocialcontrib->select_type_socialcontrib(GETPOSTISSET("search_sc_type") ? $search_sc_type : '', 'search_sc_type', 1, 0, 0, 'minwidth200 maxwidth300');
+$formsocialcontrib->select_type_socialcontrib(GETPOSTISSET("search_sc_type") ? (int) $search_sc_type : 0, 'search_sc_type', 1, 0, 0, 'minwidth200 maxwidth300');
 print '</td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';

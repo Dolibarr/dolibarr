@@ -1,0 +1,816 @@
+<?php
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+
+/**
+ * API class for Leaves
+ *
+ * @since	23.0.0	Initial implementation
+ *
+ * @access protected
+ * @class  DolibarrApiAccess {@requires user,external}
+ */
+class Holidays extends DolibarrApi
+{
+	/**
+	 * @var string[]	Mandatory fields, checked when create and update object
+	 */
+	public static $FIELDS = array(
+		'fk_user',
+		'date_debut',
+		'date_fin',
+	);
+
+	/**
+	 * @var string[]	Workflow fields that must not be set through the generic
+	 *					create/update endpoints. They can only be changed via the
+	 *					dedicated routes (validate, approve, refuse, cancel, reopen)
+	 *					that enforce the proper permission checks.
+	 */
+	public static $FIELDS_FORBIDDEN_FOR_API = array(
+		'status',
+		'statut',
+		'fk_validator',
+		'date_valid',
+		'fk_user_valid',
+		'date_approval',
+		'fk_user_approve',
+		'date_refuse',
+		'fk_user_refuse',
+		'detail_refuse',
+	);
+
+	/**
+	 * @var Holiday {@type Holiday}
+	 */
+	public $holiday;
+
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $db;
+
+		$this->db = $db;
+		$this->holiday = new Holiday($this->db);
+	}
+
+	/**
+	 * Get a leave
+	 *
+	 * Return an array with leave information
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of Leave
+	 * @return	Object			Object with cleaned properties
+	 *
+	 * @throws	RestException
+	 */
+	public function get($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->holiday->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * List leaves
+	 *
+	 * Get a list of Leaves
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	string		$sortfield			Sort field
+	 * @param	string		$sortorder			Sort order
+	 * @param	int			$limit				List limit
+	 * @param	int			$page				Page number
+	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
+	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array<string,mixed>				Array of order objects
+	 *
+	 * @throws RestException
+	 */
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read') && !DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		// case of external user, $societe param is ignored and replaced by user's socid
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
+
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Link to extrafields is to allow to search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
+		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
+		if ($user_ids) {
+			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
+		}
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$holiday_static = new Holiday($this->db);
+				if ($holiday_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($holiday_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve Leave list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Create a leave
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	int						ID of Leave
+	 *
+	 * @throws RestException
+	 */
+	public function post($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		// Check that the leave is for the user himself or for a user of his hierarchy (same rule as holiday/card.php)
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'writeall') && !in_array((int) $request_data['fk_user'], DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'UserNotInHierachy');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API) && $field !== 'fk_validator') {
+				throw new RestException(400, "Field '".$field."' is not allowed in create endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
+			}
+
+			$this->holiday->$field = $this->_checkValForAPI($field, $value, $this->holiday);
+		}
+		/*if (isset($request_data["lines"])) {
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->holiday->lines = $lines;
+		}*/
+		if ($this->holiday->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, "Error creating holiday", array_merge(array($this->holiday->error), $this->holiday->errors));
+		}
+
+		return $this->holiday->id;
+	}
+
+
+	/**
+	 * Update holiday general fields
+	 *
+	 * Does not touch lines of the holiday
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id					Leave ID to update
+	 * @param	array	$request_data		holiday report data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	Object						Updated object
+	 *
+	 * @throws	RestException	401		Not allowed
+	 * @throws  RestException	404		Holiday not found
+	 * @throws	RestException	500		System error
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		// Only a draft of the user himself or of his hierarchy can be modified (same rule as holiday/card.php)
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'writeall') && !in_array((int) $this->holiday->fk_user, DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'UserNotInHierachy');
+		}
+		if ($this->holiday->status != Holiday::STATUS_DRAFT) {
+			throw new RestException(400, 'Only a draft leave can be modified');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API)) {
+				throw new RestException(400, "Field '".$field."' is not allowed in update endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->holiday->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->holiday);
+				}
+				continue;
+			}
+
+			$this->holiday->$field = $this->_checkValForAPI($field, $value, $this->holiday);
+		}
+
+		if ($this->holiday->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->holiday->errorsToString());
+		}
+	}
+
+	/**
+	 * Delete holiday
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id		Leave Report ID
+	 * @return	array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'delete')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same rule as holiday/card.php
+		if (!in_array($this->holiday->status, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+			throw new RestException(400, 'Only a draft, canceled or refused leave can be deleted');
+		}
+
+		if (!$this->holiday->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when deleting Leave : '.$this->holiday->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Leave deleted'
+			)
+		);
+	}
+
+	/**
+	 * Validate a holiday
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Leave report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/validate
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Only a draft can be validated, by its owner or his hierarchy (same rule as holiday/card.php)
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'writeall') && !in_array((int) $this->holiday->fk_user, DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'UserNotInHierachy');
+		}
+		if ($this->holiday->status != Holiday::STATUS_DRAFT) {
+			throw new RestException(400, 'Only a draft leave can be validated');
+		}
+
+		$this->holiday->status = Holiday::STATUS_VALIDATED;
+		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating leave: '.$this->holiday->errorsToString());
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+
+	/**
+	 * Approve a leave
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Leave ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/approve
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function approve($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'approve')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Only a leave waiting for approval can be approved, by its approver (same rule as holiday/card.php)
+		if ($this->holiday->status != Holiday::STATUS_VALIDATED) {
+			throw new RestException(400, 'Only a validated leave can be approved');
+		}
+		if (DolibarrApiAccess::$user->id != $this->holiday->fk_validator && !DolibarrApiAccess::$user->hasRight('holiday', 'writeall')) {
+			throw new RestException(403, 'Only the approver of the leave can approve it');
+		}
+
+		$this->holiday->date_approval = dol_now();
+		$this->holiday->fk_user_approve = DolibarrApiAccess::$user->id;
+		$this->holiday->status = Holiday::STATUS_APPROVED;
+		$this->db->begin();
+		$result = $this->holiday->approve(DolibarrApiAccess::$user, $notrigger);
+		// Decrease the balance of the user (same code as holiday/card.php)
+		if ($result > 0 && !getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+			global $langs;
+			$langs->load('holiday');
+
+			$tmpUser = new User($this->db);
+			$tmpUser->fetch($this->holiday->fk_user);
+
+			// Calculate number of days consumed
+			$nbopenedday = num_open_day($this->holiday->date_debut_gmt, $this->holiday->date_fin_gmt, 0, 1, $this->holiday->halfday, $tmpUser->country_id);
+			$soldeActuel = $this->holiday->getCpforUser($this->holiday->fk_user, $this->holiday->fk_type);
+			$newSolde = ($soldeActuel - $nbopenedday);
+			$label = $this->holiday->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
+
+			// The modification is added to the LOG, then the balance is updated
+			if ($this->holiday->addLogCP(DolibarrApiAccess::$user->id, $this->holiday->fk_user, $label, $newSolde, $this->holiday->fk_type) < 0
+				|| $this->holiday->updateSoldeCP($this->holiday->fk_user, $newSolde, $this->holiday->fk_type) < 0) {
+				$result = -1;
+			}
+		}
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->errorsToString());
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * Cancel a holiday
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Holiday ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/cancel
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function cancel($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Only a leave waiting for approval or approved can be canceled (same rule as holiday/card.php)
+		if ($this->holiday->status != Holiday::STATUS_VALIDATED && $this->holiday->status != Holiday::STATUS_APPROVED) {
+			throw new RestException(400, 'Only a validated or approved leave can be canceled');
+		}
+		if (DolibarrApiAccess::$user->id != $this->holiday->fk_validator && !DolibarrApiAccess::$user->hasRight('holiday', 'writeall') && !DolibarrApiAccess::$user->hasRight('holiday', 'approve')
+			&& !in_array((int) $this->holiday->fk_user, DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'UserNotInHierachy');
+		}
+
+		$oldstatus = $this->holiday->status;
+		$this->holiday->date_cancel = dol_now();
+		$this->holiday->fk_user_cancel = DolibarrApiAccess::$user->id;
+		$this->holiday->status = Holiday::STATUS_CANCELED;
+		$this->db->begin();
+		$result = $this->holiday->update(DolibarrApiAccess::$user, $notrigger);
+		// The leave was approved, so the balance was decreased: increase it back (same code as holiday/card.php)
+		if ($result > 0 && $oldstatus == Holiday::STATUS_APPROVED) {
+			global $langs;
+			$langs->load('holiday');
+
+			if (!$notrigger && $this->holiday->call_trigger('HOLIDAY_CANCEL', DolibarrApiAccess::$user) < 0) {
+				$result = -1;
+			}
+
+			$startDate = $this->holiday->date_debut_gmt;
+			$endDate = $this->holiday->date_fin_gmt;
+			$alreadydebited = true;
+
+			if (getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+				$lastUpdate = strtotime($this->holiday->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
+				$date = strtotime('-1 month', $lastUpdate);
+				$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, (int) date('m', $date), (int) date('t', $date), (int) date('Y', $date), 1);
+				if ($this->holiday->date_debut_gmt < $endOfMonthBeforeLastUpdate && $this->holiday->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
+					$endDate = $endOfMonthBeforeLastUpdate;
+				} elseif ($this->holiday->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
+					$alreadydebited = false;	// The leave starts after the last monthly update, nothing was debited yet
+				}
+			}
+
+			$tmpUser = new User($this->db);
+			$tmpUser->fetch($this->holiday->fk_user);
+
+			// Calculate number of days consumed
+			$nbopenedday = $alreadydebited ? num_open_day($startDate, $endDate, 0, 1, $this->holiday->halfday, $tmpUser->country_id) : 0;
+			$soldeActuel = $this->holiday->getCpforUser($this->holiday->fk_user, $this->holiday->fk_type);
+			$newSolde = ($soldeActuel + $nbopenedday);
+			$label = $this->holiday->ref.' - '.$langs->transnoentitiesnoconv("HolidayCreditAfterCancellation");
+
+			// The modification is added to the LOG, then the balance is updated
+			if ($this->holiday->addLogCP(DolibarrApiAccess::$user->id, $this->holiday->fk_user, $label, $newSolde, $this->holiday->fk_type) < 0
+				|| $this->holiday->updateSoldeCP($this->holiday->fk_user, $newSolde, $this->holiday->fk_type) < 0) {
+				$result = -1;
+			}
+		}
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already canceled');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * Refuse a holiday
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Holiday ID
+	 * @param	string	$detail_refuse	Comments for refusal
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/refuse
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function refuse($id, $detail_refuse, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'approve')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Only a leave waiting for approval can be refused, by its approver (same rule as holiday/card.php)
+		if ($this->holiday->status != Holiday::STATUS_VALIDATED) {
+			throw new RestException(400, 'Only a validated leave can be refused');
+		}
+		if (DolibarrApiAccess::$user->id != $this->holiday->fk_validator && !DolibarrApiAccess::$user->hasRight('holiday', 'writeall')) {
+			throw new RestException(403, 'Only the approver of the leave can refuse it');
+		}
+
+		$this->holiday->date_refuse = dol_now();
+		$this->holiday->fk_user_refuse = DolibarrApiAccess::$user->id;
+		$this->holiday->status = Holiday::STATUS_REFUSED;
+		$this->holiday->detail_refuse = $detail_refuse;
+		$result = $this->holiday->update(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already refused');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->errorsToString());
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * Reopen a canceled holiday
+	 *
+	 * This method allows to reopen a holiday that was previously canceled
+	 * and set its status back to VALIDATED
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since   23.0.0   New endpoint
+	 *
+	 * @param   int     $id             Holiday ID
+	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url     POST    {id}/reopen
+	 *
+	 * @return  Object
+	 *
+	 * @throws RestException
+	 */
+	public function reopen($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Leave not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Check if the holiday is actually canceled
+		if ($this->holiday->status != Holiday::STATUS_CANCELED) {
+			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
+		}
+		$this->holiday->status = Holiday::STATUS_VALIDATED;
+		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 * @phpstan-template T
+	 *
+	 * @param   Holiday  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+		/**
+		 * @var Holiday $object
+		 */
+		unset($object->statut);
+		unset($object->user);
+		unset($object->thirdparty);
+
+		unset($object->cond_reglement);
+		unset($object->shipping_method_id);
+
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
+
+		unset($object->mode_reglement_id);
+		unset($object->cond_reglement_id);
+
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->cond_reglement_id);
+		unset($object->contact);
+		unset($object->contact_id);
+
+		unset($object->state);
+		unset($object->state_id);
+		unset($object->state_code);
+		unset($object->country);
+		unset($object->country_id);
+		unset($object->country_code);
+
+		unset($object->logs);
+		unset($object->events);
+		unset($object->holiday);
+		unset($object->canvas);
+		unset($object->lines);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+
+		unset($object->note); // We already use note_public and note_pricate
+
+		return $object;
+	}
+
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		if ($data === null) {
+			$data = array();
+		}
+		$holiday = array();
+		foreach (self::$FIELDS as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$holiday[$field] = $data[$field];
+		}
+		return $holiday;
+	}
+}
