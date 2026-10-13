@@ -327,6 +327,7 @@ StockEntryDate=Date of <br>entry in stock
 StockMovementWillBeRecorded=Stock movement will be recorded
 StockMovementNotYetRecorded=Stock movement will not be affected by this step
 ReverseConfirmed=Stock movement has been reversed successfully
+WarningReverseStockMovementOfObjects=The selection contains movements of these types: %s. If the source object of a movement is canceled or deleted later, it may also reverse its stock movement, so the stock would be reversed a second time. Do you confirm the reverse of all the selected movements?
 WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
 ValidateInventory=Inventory validation
 ConfirmStartInventory=Are you sure you want to start this inventory ?
