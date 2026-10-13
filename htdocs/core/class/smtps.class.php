@@ -541,9 +541,10 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
+	 * @param	bool	$withauth	False to only send EHLO and switch to TLS (STARTTLS) without login
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-	private function _server_authenticate()
+	private function _server_authenticate($withauth = true)
 	{
 		// phpcs:enable
 		global $conf;
@@ -657,7 +658,7 @@ class SMTPs
 
 				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method)) {
 					$this->_setErr(132, 'STARTTLS connection failed.');
-					return $_retVal;
+					return false;
 				}
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
@@ -665,6 +666,11 @@ class SMTPs
 					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
+			}
+
+			if (!$withauth) {
+				// No login, only EHLO and STARTTLS were needed
+				return $_retVal;
 			}
 
 			// Default authentication method is LOGIN
@@ -736,6 +742,9 @@ class SMTPs
 			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
+			} elseif (preg_match('@tls://@i', $this->getHost())) {
+				// No login but STARTTLS is on: the switch to TLS is needed before sending the message, or it is sent in clear text
+				$_retVal = $this->_server_authenticate(false);
 			} else {
 				// This is a "normal" SMTP Server "handshack"
 				// Send the RFC821 specified HELO.
@@ -803,17 +812,28 @@ class SMTPs
 					 * mark the last address as "bad" and start the address loop over again.
 					 * If any address fails, the entire message fails.
 					 */
-					$this->socket_send_str('RCPT TO: <'.$_address.'>', '250');
+					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
+						// Stop here, sending DATA would desynchronize the SMTP responses
+						fclose($this->socket);
+						return false;
+					}
 				}
 
 				// Tell the server we are ready to start sending data
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
-				$this->socket_send_str('DATA', '354');
+				if (!$this->socket_send_str('DATA', '354')) {
+					fclose($this->socket);
+					return false;
+				}
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$data = $this->getHeader().$this->getBodyContent();
+				// Dot-stuffing (RFC 5321 4.5.2): a line starting with a "." gets a second one, that the server removes.
+				// Without it, a line with only "." ends the data and the next lines are read by the server as SMTP commands.
+				$data = preg_replace('/^\./m', '..', $data);
+				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				fwrite($this->socket, 'QUIT');

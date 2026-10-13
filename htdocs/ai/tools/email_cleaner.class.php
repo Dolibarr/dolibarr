@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026  Braito                  <braito4@hotmail.com>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +129,21 @@ class ToolEmailCleaner extends McpTool
 	public function getCategories(): array
 	{
 		return ['global'];
+	}
+
+	/**
+	 * Rights required to run one of these tools.
+	 *
+	 * The four tools read the cleaner runs of the EmailCollector module, so they
+	 * need its read right: the same check canReadEmailData() applies at execution.
+	 * Without this declaration the handler denies the tools as undeclared.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>> Rights required.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return array(array('emailcollector', 'read'));
 	}
 
 	/**

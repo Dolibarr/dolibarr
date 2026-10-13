@@ -16,6 +16,8 @@ The following changes may create regressions for some external modules, but were
 * Method getRights() on the object (not on user!) was bugged (and used only in one tpl file). Has been replaced with hasUserPermission().
   Also hasUserWritePermissionOnField (also used at few places only) must be replaced with hasUserPermissionOnField().
 * The use of starting char '^...' for parameter $picto name in img_object() has been removed.
+* img_object() does not add the prefix 'object_' to the $picto name anymore. An external module with a picto 'xxx@mymodule' must now provide
+  the image file mymodule/img/xxx.png (keep also mymodule/img/object_xxx.png to stay compatible with older versions).
 * Removed library MathPHP. Was introduced in 2023. Never used by Dolibarr after 3 years.
 
 
