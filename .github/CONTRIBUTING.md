@@ -1,8 +1,7 @@
 How to contribute to Dolibarr
 =============================
 
-Submit a Bug report or a Feature request
----------------------------------------
+# Submit a Bug report or a Feature request
 
 <a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.**  
 If you have questions about Dolibarr or need help on using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
@@ -22,8 +21,7 @@ Default **language here is English**. So please prepare your contributions in En
 
 <a name="code"></a>
 
-Submit code
----------------------
+# Submit code
 
 This process describes how a Developer can submit code to the project so it can be analyzed and validated by the PR Maintainer (we call this a Pull Request).
 
@@ -33,7 +31,7 @@ Definition:
 - The Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
 
 
-### Basic workflow
+## Basic workflow
 
 As the Developer:
 
@@ -42,9 +40,9 @@ As the Developer:
 3. Clone your fork.
 4. Choose a branch(See the [Branches](#branches) section below).
 5. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
-6. Apply recommandation if you are using IA: Link the .agents/AGENTS.md into AGENTS.md file in root repository directoy. Link also the .agents dir to the dir of your IA (.claud, .vibe, ...)
-7. Commit and push your changes.
-8. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+6. Prepare your environment if you are using IA: Create a symlink AGENTS.md to the .agents/AGENTS.md file in root repository directory. Create a symlink with name of your IA setup dir (.claude, .vibe, ...) to the directory .agents.
+7. Commit your changes - follow rules of [Commits](#commits).
+8. Make your pull requests - follow rules of [Pull Requests](#pull-requests). See also [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
 
@@ -66,7 +64,7 @@ Note: Mainteners of a branch can directly commit to the project (in their branch
 
 <span id="branches" name="branches"></span>
 
-### Branches
+## Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
@@ -80,7 +78,7 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 
 
-### General rules
+## General rules
 
 - As the Developer, please don't edit the ChangeLog file. This file is generated from all commit messages during the release process by the Project releaser.
 
@@ -93,7 +91,7 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 <a name="commits"></a>
 
-### Commits
+## Commits messages
 
 Use clear commit messages with the following structure:
 
@@ -112,7 +110,7 @@ git config --local commit.template .gitmessage
 
 with
 
-#### KEYWORD
+### KEYWORD
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be omitted only if your commit does not fit in any of the following categories:
@@ -124,17 +122,18 @@ The keyword can be omitted only if your commit does not fit in any of the follow
 - Doc/DOC:     for documentation
 - Qual/QUAL:   for quality code enhancement or re-engineering
 - Sec/SEC:     for a security vulnerability fix
+- Uxui/UxUi:   for user experience or user interface enhancements
 
-#### ISSUENUM
+### ISSUENUM
 If your commit fixes a referenced bug or feature request.
 
 In the form of a # followed by the GitHub issue number.
 
-#### DESC
+### DESC
 A short description of the commit content (ideally less than 50 characters).
 If fix a bug in an old version already fixed in a more recent version, please mention `backport of` followed by the commit ID you backport.
 
-#### LONGDESC
+### LONGDESC
 A long description of the commit content.
 
 You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
@@ -143,7 +142,7 @@ Feel free to express technical details, use cases or anything relevant to the cu
 
 If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
 
-#### Examples
+### Examples
 <pre>
 FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID exists, or #xxx456 with xxx as the name of the VDP platform in lower case for security issues. The "Fix" must be in upper case to appear into ChangeLog)
 or
@@ -157,26 +156,54 @@ Long description (Can span across multiple lines).
 </pre>
 
 
-### Pull Requests
+## Pull Requests (PR)
 
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
-* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). 
+### Atomic PR
+
+A PR must be atomic. 
+
+It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is NOT atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). 
 This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
 WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO BE CAREFULL IF USING AI.
+If your PR contains more than 10 files, it is not an atomic PR. 
 
-* Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
+### Submit a sample first
 
-* When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
+When submitting code changes with similare patterns in different files in a PR, first try to submit a first one for one file. 
+If first PR is accepted, you could reproduce it for more files but do not try to send all PR before the first one is accepted.
 
-* A screenshot will be always required for any PR of change/addition of a GUI behavior.
+### Description of PR
+ 
+When submitting a pull request, use same rule as [Commits](#commits) for the message. 
+If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
-Also, some code changes need a prior approbation:
+A screenshot will be always required for any PR of change/addition of a GUI behavior.
 
-* if you want to include a new external library (into htdocs/includes directory), please contact the core project manager first (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
+### CI checks
 
-* if you add new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
+Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
+
+### Change on translation files
+
+Never include changes on non en_US files:Translation are managed by transifex and files for local languages are erased during synchronization with Transifex.
+Only mainteners car push change on non en_US files (for the transifex synchronization process).
+
+### PR that need pre-approbation
+
+Some code changes need a prior approbation:
+
+If you want to include a new external library (into htdocs/includes directory), please contact the core project manager first (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
+
+### Database structure changes
+
+Never mix changes database structure with code on PHP/JS code:
+If you add new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). 
+Start development only once this data structure has been accepted.
+
+### PR status
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
@@ -191,7 +218,7 @@ Statistics on Dolibarr project shows that 95% of submitted PRs are reviewed and 
 A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
 
 
-### Resources
+# Developer Resources
 [Developer documentation](https://wiki.dolibarr.org/index.php/Developer_documentation)
 
 Translations
@@ -207,7 +234,7 @@ has changed, the translation is surely no more correct so must be done again. Bu
 to retrieve all old translations of a source text and restore the translation in one click with no need to retranslate it if there is no need to.
 
 
-### Resources
+# Translation Resources
 [Translator documentation](https://wiki.dolibarr.org/index.php/Translator_documentation)
 
 Documentation
