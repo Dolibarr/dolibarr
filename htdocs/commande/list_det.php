@@ -246,10 +246,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
 $projectcolumnenabled = $canreadprojects ? '1' : '0';
 $langs->load('projects');
-$arrayfields = array_merge($arrayfields, array(
-	'p.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.ref']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'], 'help' => ''),
-	'p.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.title']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'] + 1, 'help' => ''),
-));
+$arrayfields['p.ref'] = array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.ref']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'], 'help' => '');
+$arrayfields['p.title'] = array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.title']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'] + 1, 'help' => '');
 
 $search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
 $search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
