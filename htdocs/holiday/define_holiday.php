@@ -237,7 +237,7 @@ $help_url = 'EN:Module_Holiday';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-define_holiday');
 
 $typeleaves = $holiday->getTypes(1, 1);
-$result = $holiday->updateBalance(); // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+$result = $holiday->updateBalance(true); // Monthly update only when page-load mode is selected.
 if ($result < 0) {
 	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }

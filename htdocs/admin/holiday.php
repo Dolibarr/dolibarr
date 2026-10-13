@@ -256,6 +256,34 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60"></td>';
 print "</tr>\n";
 
+// Choose one automatic execution path for monthly leave balance updates.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('HolidayBalanceUpdateByCron');
+print '<br><span class="opacitymedium">'.$langs->trans('HolidayBalanceUpdateByCronHelp').'</span>';
+if (getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON')) {
+	if (!isModEnabled('cron')) {
+		$langs->load('cron');
+		print '<br><span class="warning">'.$langs->trans('WarningModuleNotActive', $langs->trans('Module2300Name')).'</span>';
+	} else {
+		// Check the task in this entity, not a shared task belonging to another entity.
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."cronjob";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND jobtype = 'method' AND objectname = 'Holiday' AND methodename = 'updateBalance' AND status = 1";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			setEventMessages($db->lasterror(), null, 'errors');
+		} elseif ($db->num_rows($resql) == 0) {
+			print '<br><span class="warning">'.$langs->trans('HolidayBalanceUpdateCronUnavailable').'</span>';
+		}
+		if ($resql) {
+			$db->free($resql);
+		}
+	}
+}
+print '</td><td class="center">';
+print ajax_constantonoff('HOLIDAY_BALANCE_UPDATE_BY_CRON', array(), $conf->entity, 0, 0, 1, 2, 0, 1);
+print '</td></tr>';
+
 // Set working days
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("XIsAUsualNonWorkingDay", $langs->transnoentitiesnoconv("Monday"))."</td>";

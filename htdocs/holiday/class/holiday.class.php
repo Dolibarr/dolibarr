@@ -273,12 +273,18 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 * Update balance of vacations and check table of users for holidays is complete. If not complete.
+	 * Update leave balances from the selected automatic execution path.
 	 *
-	 * @return	int			Return integer <0 if KO, >0 if OK
+	 * @param	bool	$fromPage	True for page-load updates, false for the scheduled job
+	 * @return	int				0 if OK or skipped, -1 if KO (cron return convention)
 	 */
-	public function updateBalance()
+	public function updateBalance($fromPage = false)
 	{
+		// Keep page-load updates by default. Never fall back to pages in cron mode.
+		if ((bool) getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON') === (bool) $fromPage) {
+			return 0;
+		}
+
 		$this->db->begin();
 
 		// Update sold of vocations

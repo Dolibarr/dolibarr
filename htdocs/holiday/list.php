@@ -250,7 +250,7 @@ $fuser = new User($db);
 $holidaystatic = new Holiday($db);
 
 // Update sold
-$result = $object->updateBalance();
+$result = $object->updateBalance(true);
 
 $title = $langs->trans('Holidays');
 $help_url = 'EN:Module_Holiday';
