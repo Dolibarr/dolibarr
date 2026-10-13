@@ -42,8 +42,8 @@ jobs:
             fi
 
             # Tag the PR as "PR not qualified"
-            gh pr edit "${{ github.event.number }}" --repo "${{ github.repository }}" --add-label "PR not qualified" \
-              || echo "::warning::Failed to add the label \"PR not qualified\" on the PR."
+            #gh pr edit "${{ github.event.number }}" --repo "${{ github.repository }}" --add-label "PR not qualified" \
+            #  || echo "::warning::Failed to add the label \"PR not qualified\" on the PR."
 
             echo "::error::Translation files outside htdocs/langs/en_US must not be modified in a pull request. Translations are generated from en_US. The following files were modified:"
             echo "$CHANGED_FILES" | sed 's/^/ - /'
@@ -53,3 +53,10 @@ jobs:
           fi
 
           echo "No translation files outside htdocs/langs/en_US were modified. OK."
+
+          # If a previous run of this check has tagged the PR as "PR not qualified",
+          # remove the label now that the forbidden files have been reverted.
+          #if gh api "repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" 2>/dev/null | grep -qF '"name": "PR not qualified"'; then
+          #  gh pr edit "${{ github.event.number }}" --repo "${{ github.repository }}" --remove-label "PR not qualified" \
+          #    || echo "::warning::Failed to remove the label \"PR not qualified\" on the PR."
+          #fi
