@@ -6079,14 +6079,13 @@ abstract class CommonObject
 	 *	Return the display context of the lines, as defined by the card of the object before printObjectLines() and formAddObjectLine().
 	 *	Override it in child classes when the card uses other values.
 	 *
-	 *	@return	array{hookcontext:string,seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Hook context of the card, seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
 	 */
 	public function getObjectLinesDisplayContext()
 	{
 		global $mysoc;
 
 		return array(
-			'hookcontext' => $this->element.'card', // Hook context initialized by the card, to init when the lines are printed outside of the card
 			'seller' => $mysoc,
 			'buyer' => (is_object($this->thirdparty) ? $this->thirdparty : null),
 			'dateSelector' => 1,
@@ -6100,7 +6099,7 @@ abstract class CommonObject
 	 *	Init the display of the lines: set the global variables used by the line templates (objectline_xxx.tpl.php) from getObjectLinesDisplayContext()
 	 *	To call in the card before printObjectLines() and formAddObjectLine().
 	 *
-	 *	@return	array{hookcontext:string,seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
 	 */
 	public function initObjectLinesDisplay()
 	{
@@ -6138,7 +6137,7 @@ abstract class CommonObject
 	 *	Return the HTML of a line as printed in the card by printObjectLines(), hooks printObjectLine and printObjectSubLine included.
 	 *	Used to reload a line with ajax. The line is in view mode, or in edit mode with the action 'editline' (if the object is a draft).
 	 *	The lines must be loaded into $this->lines (for example with getLinesArray()).
-	 *	Note: the caller must init the hook context of the card (key 'hookcontext' of getObjectLinesDisplayContext()) so modules hooking it render the line as in the card.
+	 *	Note: the caller must init the hook contexts of the page that printed the lines (ex: propalcard), so modules hooking them render the line as in this page.
 	 *	The global variables of the caller used for the rendering ($object, $form, ...) are restored at the end.
 	 *
 	 *	@param	int		$lineid		Id of the line
