@@ -200,6 +200,9 @@ ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new cont
 JSContextCompatAndDeprecations = Backward compatibility and deprecations
 SetEventMessageTool = Dolibarr Tool : Set event message
 FetchTool = Dolibarr Tool : Fetch (ajax requests)
+ReplaceContentTool = Dolibarr Tool : Replace content
+ObjectTool = Dolibarr Tool : Object (read and update an object in ajax)
+CardTool = Dolibarr Tool : Card (controller of the card of an object displayed in the page)
 
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.

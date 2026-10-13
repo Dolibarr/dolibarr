@@ -1910,6 +1910,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Read and update an object in ajax (data, no change of the page)
+		$jsContextFiles[] = 'dolibarr-tool.card.js'; // Controller of the card of an object: refresh fields, lines and sections of the page
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -3939,7 +3942,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
+		// for the next page, its html is not displayed.
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists
