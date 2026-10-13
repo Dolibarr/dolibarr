@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/core/ajax/ajaxuploadpage.php
- *       \brief      Page that decrypt a file saved into a temporary directory
+ *       \brief      Page that analyze a file saved into a temporary directory and suggest final import
  */
 
 if (!defined('NOTOKENRENEWAL')) {

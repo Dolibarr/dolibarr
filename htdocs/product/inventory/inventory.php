@@ -160,12 +160,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	if ($action == 'cancel_record' && $permissiontoupdatestock) {
+	if ($action == 'cancel_record' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$object->setCanceled($user);
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -210,7 +210,17 @@ if (empty($reshook)) {
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
 				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
-					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+					// Search the lot without case sensitivity, like the database (and the stock movement) does,
+					// otherwise a lot typed with another case is seen as empty and the full counted qty is added.
+					$realqtynow = 0;
+					if (!empty($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch)) {
+						foreach ($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch as $tmpbatchnumber => $tmpdetailbatch) {
+							if (dol_strtolower((string) $tmpbatchnumber) == dol_strtolower((string) $line->batch)) {
+								$realqtynow = $tmpdetailbatch->qty;
+								break;
+							}
+						}
+					}
 				}
 
 				if (!is_null($qty_view)) {
@@ -381,6 +391,12 @@ if (empty($reshook)) {
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&page='.$page.$paramwithsearch;
+
+	// Action 'update' of this page is the recording of the inventory (done above or refused), never the
+	// generic update of the object: it would overwrite the fields of the inventory with empty values.
+	if ($action == 'update') {	// Test on permission not required here
+		$action = '';
+	}
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
