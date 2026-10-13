@@ -317,23 +317,24 @@ class QuickMemo {
 			<span class="quickmemo-info__date_update">
 				${hasDateChange ? `
 					<span class="quickmemo-info__date_update">
-						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${memo.date_change}
+						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${this.escapeHTML(String(memo.date_change))}
 					</span>
 				` : ''}
 				${hasUserChange ? `
 					<span class="quickmemo-info__user-change-name">
-						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${memo.user_change_name}
+						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${this.escapeHTML(String(memo.user_change_name))}
 					</span>
 				` : ''}
 			</span>
 		`;
 
 
+		// User names and dates come from server data: always escaped
 		meta.innerHTML = `
 			<div class="quickmemo-info">
 				<span class="quickmemo-info__create">
-					<span class="quickmemo-info__user-create-name">${memo.user_name || ''}</span>
-					<span class="quickmemo-info__date_create">${memo.date_creation || ''}</span>
+					<span class="quickmemo-info__user-create-name">${this.escapeHTML(String(memo.user_name || ''))}</span>
+					<span class="quickmemo-info__date_create">${this.escapeHTML(String(memo.date_creation || ''))}</span>
 				</span>
 				${updateBlock}
 			</div>
