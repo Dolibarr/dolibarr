@@ -1411,7 +1411,7 @@ class CommandeFournisseur extends CommonOrder
 							if (!empty($this->lines[$i]->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
 								$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
 							}
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr", $this->ref));
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->transnoentitiesnoconv("OrderApprovedInDolibarr", $this->ref));
 							if ($result < 0) {
 								$error++;
 							}
@@ -3719,22 +3719,19 @@ class CommandeFournisseur extends CommonOrder
 	 * Check if user has a permission on supplier orders
 	 *
 	 * @param User   $user User to check rights
-	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
 	 * @return bool True if user has the permission, false otherwise
 	 */
 	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		if ($mode == 'read') {
-			return (bool) $user->hasRight("fournisseur", "commande", "lire");
+		if ($mode == 'create') {
+			$mode = 'write';
 		}
-		if ($mode == 'create' || $mode == 'write') {
-			return (bool) $user->hasRight("fournisseur", "commande", "creer");
-		}
-		if ($mode == 'delete') {
-			return (bool) $user->hasRight("fournisseur", "commande", "supprimer");
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
 		}
 
-		return false;
+		return (bool) $user->hasRight("fournisseur", "commande", $mode);
 	}
 
 
@@ -4001,9 +3998,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 		$sql .= ' cfd.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
-		if (isset($this->fk_product) && !empty($this->fk_product) > 0) {
-			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
-		}
 		if ($filtre_statut >= 0) {
 			$sql .= ' AND e.fk_statut >= '.((int) $filtre_statut);
 		}

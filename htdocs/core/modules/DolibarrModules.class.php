@@ -50,6 +50,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $numero;
 
 	/**
+	 * @var int	Copy of $numero, set by modulehelp_prepare_head() for the substitution of tabs added by modules
+	 */
+	public $id;
+
+	/**
 	 * @var string 	Publisher name
 	 */
 	public $editor_name;
