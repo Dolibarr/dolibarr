@@ -1500,7 +1500,7 @@ class Memo extends CommonObject
 
 		$sql = 'SELECT COUNT(m.rowid) nb
 			FROM '.MAIN_DB_PREFIX.$this->table_element.' m
-			WHERE m.entity IN ('.getEntity($this->element).')
+			WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
 			  AND m.element_type = \''.$this->db->escape($element_type).'\'
 			  AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
 			  AND m.context_tab = \''.$this->db->escape($context).'\'
@@ -1540,7 +1540,7 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.entity IN ('.getEntity($this->element).')
+        WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
           AND m.element_type = \''.$this->db->escape($element_type).'\'
           AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
           AND m.context_tab = \''.$this->db->escape($context).'\'
@@ -1768,7 +1768,22 @@ class Memo extends CommonObject
 			return true;
 		}
 
-		return in_array((int) $this->entity, array_map('intval', explode(',', getEntity($this->element))), true);
+		$entityKey = ($this->status == self::STATUS_TPL ? $this->element : self::getEntityElementKey((string) $this->element_type));
+
+		return in_array((int) $this->entity, array_map('intval', explode(',', getEntity($entityKey))), true);
+	}
+
+	/**
+	 * Element key to use with getEntity() for memos of an element type.
+	 * Memos linked to an object follow the multicompany sharing of this type of object,
+	 * global memos (home page...) and templates use the sharing of memos.
+	 *
+	 * @param string $element_type Element type of the linked object ('' for global memos)
+	 * @return string
+	 */
+	public static function getEntityElementKey($element_type)
+	{
+		return empty($element_type) ? 'memo' : $element_type;
 	}
 
 	/**
