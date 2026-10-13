@@ -1453,7 +1453,11 @@ function dolCheckVirus($src_file, $dest_file = '')
 		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0) {	// If virus or error, we stop here
-			$reterrors = $antivir->errors;
+			if ($result == -99) {
+				$reterrors['ErrorFileIsInfectedKnownVirus'] = implode(', ', $antivir->errors);
+			} else {  // -98, -97, etc.
+				$reterrors['ErrorAntivirusNotAvailable'] = implode(', ', $antivir->errors);
+			}
 			return $reterrors;
 		}
 	}
@@ -2210,7 +2214,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus', 'ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
@@ -3272,7 +3276,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $entity);
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
@@ -3293,7 +3297,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for preview of supplier invoices
 		if ($fuser->hasRight('fournisseur', $lire)) {

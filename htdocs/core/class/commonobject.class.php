@@ -9039,6 +9039,8 @@ abstract class CommonObject
 			$size = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			// @phan-suppress-next-line PhanTypeMismatchProperty
@@ -9632,6 +9634,8 @@ abstract class CommonObject
 			$maxSize = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
@@ -10243,10 +10247,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class for a specific user
+	 * Returns the rights used for this class for a specific user.
+	 * This is called by getRights() and hasUserPermission()
 	 *
 	 * @param User $user User to check rights
-	 *
 	 * @return null|int|stdClass        Object of permission for the module
 	 */
 	public function getRightsForUser(User $user)
@@ -10254,13 +10258,14 @@ abstract class CommonObject
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
-		if ($element == 'facturerec') {
-			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec') {
-			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
-		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+		if ($module && $user->hasRight($module, $element)) {
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;

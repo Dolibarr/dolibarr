@@ -587,7 +587,7 @@ if (empty($reshook)) {
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
 				// Label of stock movement will be "TakePOS - Invoice XXXX"
-				$labeltakeposmovement = 'TakePOS - '.$langs->trans("Invoice").' '.$invoice->ref;
+				$labeltakeposmovement = 'TakePOS - '.$langs->transnoentitiesnoconv("Invoice").' '.$invoice->ref;
 
 				foreach ($invoice->lines as $line) {
 					// Use the warehouse id defined on invoice line else in the setup
@@ -806,7 +806,7 @@ if (empty($reshook)) {
 					require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 					$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
-					$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
+					$labeltakeposmovement = 'TakePOS - '.$langs->transnoentitiesnoconv("CreditNote").' '.$creditnote->ref;
 
 					foreach ($creditnote->lines as $line) {
 						// Use the warehouse id defined on invoice line else in the setup

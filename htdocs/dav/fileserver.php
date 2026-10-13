@@ -226,9 +226,7 @@ $server = new \Sabre\DAV\Server($nodes);
 // If you want to run the SabreDAV server in a custom location (using mod_rewrite for instance)
 // You can override the baseUri here.
 $baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
-if (isset($baseUri)) {
-	$server->setBaseUri($baseUri);
-}
+$server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')

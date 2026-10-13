@@ -111,6 +111,7 @@ if ($object->id > 0) {
 
 $maxpricesupplier = 0;
 
+$permissiontoadd = 0;
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		$permissiontoadd = $user->hasRight('produit', 'creer');

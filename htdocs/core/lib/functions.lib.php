@@ -2356,7 +2356,8 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr((string) $stringtoescape, $substitjs);
+	// Escape also "</script" so the string can't close the <script> block that contains it ("<\/" is "</" in a JS string)
+	return preg_replace('/<\/(script)/i', '<\\/$1', strtr((string) $stringtoescape, $substitjs));
 }
 
 /**
@@ -3647,7 +3648,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		return '';
 	}
 	if (empty($countrycode)) {
-		$countrycode = $mysoc->country_code;
+		$countrycode = (is_object($mysoc) ? $mysoc->country_code : '');
 	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
