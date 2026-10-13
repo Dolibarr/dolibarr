@@ -38,9 +38,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+define("DOLENTITY", $entity);
 
 // Load Dolibarr environment
 require '../../main.inc.php';
