@@ -308,31 +308,40 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
-		// Remove line
-		$result = $object->deleteLine($lineid);
-		// reorder lines
+	} elseif (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && $usercancreate) {
+		if ($action == 'confirm_massdellines') {
+			$result = 0;
+			$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+			foreach ($arrLines2del as $lineid) {
+				$result = $object->deleteLine((int) $lineid);
+				if ($result <= 0) {
+					break;
+				}
+			}
+		} else {
+			// Remove line
+			$result = $object->deleteLine($lineid);
+		}
 		if ($result > 0) {
+			// reorder lines
 			$object->line_order(true);
+			$ret = $object->fetch($id); // Reload to get new records
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		} else {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-
-		$ret = $object->fetch($id); // Reload to get new records
-		if ($ret > 0) {
-			$object->fetch_thirdparty();
-		}
-
-		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-			// Define output language
-			$outputlangs = $langs;
-			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$outputlangs = new Translate("", $conf);
-				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
 		// Delete line
@@ -368,42 +377,6 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
-		}
-	} elseif ($action == 'confirm_massdellines' && $confirm == 'yes' && $usercancreate) {
-		$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
-		if (count($arrLines2del) > 0) {
-			// Remove lines
-			$result = 0;
-			foreach ($arrLines2del as $lineid) {
-				$result = $object->deleteLine((int) $lineid);
-				if ($result <= 0) {
-					$langs->load("errors");
-					setEventMessages($object->error, $object->errors, 'errors');
-					break;
-				}
-			}
-			// reorder lines
-			$object->line_order(true);
-
-			$ret = $object->fetch($id); // Reload to get new records
-			if ($ret > 0) {
-				$object->fetch_thirdparty();
-			}
-
-			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				// Define output language
-				$outputlangs = $langs;
-				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					$outputlangs = new Translate("", $conf);
-					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			}
-			if ($result >= 0) {
-				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
-				exit();
-			}
 		}
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		// Validation

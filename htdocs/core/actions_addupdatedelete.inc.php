@@ -509,7 +509,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodele
 	$action = '';
 }
 
-// Remove a line
+// Remove a line or lines in mass
 if (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && !empty($permissiontoadd)) {
 	if ($action == 'confirm_massdellines') {
 		$result = 0;
