@@ -2741,117 +2741,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 		$arrayofpurchaselinealreadyoutput = array();
 
-		$printProductCell = function (int $i, bool $showHead) use ($lines, $db, $form, $langs, $outputlangs): void {
-			// Predefined product or service
-			if ($lines[$i]->fk_product > 0) {
-				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$prod = new Product($db);
-					$prod->fetch($lines[$i]->fk_product);
-					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
-				} else {
-					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
-				}
-
-				print '<td class="linecoldescription">';
-				if ($showHead) {
-					$text = $lines[$i]->product->getNomUrl(1);
-					$text .= ' - '.$label;
-					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->description));
-					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
-					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
-					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($lines[$i]->description) && $lines[$i]->description != $label) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
-					}
-				}
-				print "</td>\n";
-			} else {
-				print '<td class="linecoldescription">';
-				if ($showHead) {
-					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
-						$text = img_object($langs->trans('Service'), 'service');
-					} else {
-						$text = img_object($langs->trans('Product'), 'product');
-					}
-
-					if (!empty($lines[$i]->label)) {
-						$text .= ' <strong>'.$lines[$i]->label.'</strong>';
-						print $form->textwithtooltip($text, $lines[$i]->description, 3, 0, '', (string) $i);
-					} else {
-						print $text.' '.nl2br($lines[$i]->description);
-					}
-
-					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
-				}
-				print "</td>\n";
-			}
-		};
-
-		$printQtyOrderedCells = function (int $i, bool $showHead) use ($lines, $db, $form, $langs, $conf, $alreadysent, $origin_id): void {
-			// Qty ordered
-			print '<td class="center linecolqty">';
-			if ($showHead) {
-				print $lines[$i]->qty_asked;
-			}
-			print '</td>';
-
-			// Qty in other receptions (with reception and warehouse used)
-			// Note: here $origin is always a non-empty string (normalized above), so only $origin_id needs to be tested
-			if ($origin_id > 0) {
-				print '<td class="center nowrap linecolqtyinotherreceptions">';
-				$htmltooltip = '';
-				$qtyalreadyreceived = 0;
-				if ($showHead) {
-					foreach ($alreadysent as $key => $val) {
-						if ($lines[$i]->fk_commandefourndet == $key) {
-							$j = 0;
-							foreach ($val as $receptionline_id => $receptionline_var) {
-								if ($receptionline_var['reception_id'] == $lines[$i]->fk_reception) {
-									continue; // We want to show only "other receptions"
-								}
-
-								$j++;
-								if ($j > 1) {
-									$htmltooltip .= '<br>';
-								}
-								if (empty($conf->cache['reception'][$receptionline_var['reception_id']])) {
-									$reception_static = new Reception($db);
-									$reception_static->fetch($receptionline_var['reception_id']);
-									$conf->cache['reception'][$receptionline_var['reception_id']] = $reception_static;
-								} else {
-									$reception_static = $conf->cache['reception'][$receptionline_var['reception_id']];
-								}
-								$htmltooltip .= $reception_static->getNomUrl(1, 'nolink', 0, 0, 1);
-								$htmltooltip .= ' - '.$receptionline_var['qty'];
-
-								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
-								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
-									if (empty($conf->cache['warehouse'][$receptionline_var['warehouse']])) {
-										$warehousestatic = new Entrepot($db);
-										$warehousestatic->fetch($receptionline_var['warehouse']);
-										$conf->cache['warehouse'][$receptionline_var['warehouse']] = $warehousestatic;
-									} else {
-										$warehousestatic = $conf->cache['warehouse'][$receptionline_var['warehouse']];
-									}
-									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
-								}
-								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
-
-								$qtyalreadyreceived += $receptionline_var['qty'];
-							}
-							if ($j) {
-								$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
-							}
-						}
-					}
-				}
-				if ($showHead) {
-					print $form->textwithpicto((string) $qtyalreadyreceived, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
-				}
-				print '</td>';
-			}
-		};
-
 		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
 		print '<tbody>';
 		for ($i = 0; $i < $num_prod; $i++) {
@@ -2861,9 +2750,9 @@ if ($action == 'create' && $permissiontoadd) {
 				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 					print '<td></td>';
 				}
-				$printProductCell($i, true);
+				print getReceptionLineProductCell($db, $form, $langs, $outputlangs, $lines[$i], $i, true);
 				print '<td></td>';
-				$printQtyOrderedCells($i, true);
+				print getReceptionLineQtyOrderedCells($db, $form, $langs, $lines[$i], $alreadysent, (int) $origin_id, true);
 				print '<td class="center linecolqtytoreceive">'.price2num($batchGroup['qty'], 'MS').'</td>';
 				if (isModEnabled('stock')) {
 					print '<td class="left tdoverflowmax150">';
@@ -2903,7 +2792,7 @@ if ($action == 'create' && $permissiontoadd) {
 				print '<td class="center">'.($i + 1).'</td>';
 			}
 
-			$printProductCell($i, $showHead);
+			print getReceptionLineProductCell($db, $form, $langs, $outputlangs, $lines[$i], $i, $showHead);
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				print '<td><input name="comment'.$line_id.'" id="comment'.$line_id.'" value="'.dol_escape_htmltag($lines[$i]->comment).'"></td>';
@@ -2912,7 +2801,7 @@ if ($action == 'create' && $permissiontoadd) {
 			}
 
 
-			$printQtyOrderedCells($i, $showHead);
+			print getReceptionLineQtyOrderedCells($db, $form, $langs, $lines[$i], $alreadysent, (int) $origin_id, $showHead);
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
