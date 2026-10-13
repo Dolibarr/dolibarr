@@ -71,6 +71,12 @@ if (!$user || !$user->hasRight('quickmemo', 'memo', 'read')) {
 	$jsonResponse->output();
 }
 
+// Security check: memos are for internal users only (the js interface is not loaded for external users)
+if ($user->socid > 0) {
+	$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+	$jsonResponse->output();
+}
+
 // Execute hooks before standard actions
 $reshook = $hookmanager->executeHooks('quickMemoInterface', [], $jsonResponse, $action);
 if ($reshook < 0) {
@@ -134,22 +140,9 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
 	// Prevent moving a private note belonging to another user
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantMoveThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantMoveThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -200,6 +193,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 		if ($memo->fetch((int) $item['id']) > 0) {
 			// Security check for private notes
 			if ($user->id != $memo->fk_user_creat && $memo->private) continue;
+			if (!quickMemoInterfaceCanAccessMemo($memo)) continue;
 
 			$memo->updatePosition(
 				$user,
@@ -238,6 +232,11 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 
 	if (empty($element_id) && !is_numeric($element_id) && !empty($element_type)) {
 		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
+		return false;
+	}
+
+	if (!quickMemoInterfaceCanAccessElement((string) $element_type, (int) $element_id)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return false;
 	}
 
@@ -298,21 +297,8 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantArchiveThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantArchiveThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -340,21 +326,8 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -572,26 +545,13 @@ function quickMemoIntefaceActionDeleteNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantDeleteThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
 	if ($memo->status == Memo::STATUS_TPL) { // In case of models need check other stuff
 		$jsonResponse->setError($langs->trans('ErrorCantDeleteModel'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantDeleteThisPrivateNote'));
 		return false;
 	}
 
@@ -620,21 +580,8 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -669,27 +616,14 @@ function quickMemoIntefaceActionUpdateColor($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
 	$color = GETPOST("color");
 	if (!Memo::checkColor($color)) {
 		$jsonResponse->setError($langs->trans('ErrorNeedValidColor'));
 		return false;
 	}
 
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -722,23 +656,10 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
 	$shared_on_element = GETPOST("shared_on_element", "int");
 
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -773,23 +694,10 @@ function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOSTINT("id");
-
-	if ($id <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
-		return false;
-	}
-
 	$private = GETPOST("private", "int");
 
-	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
-		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
-		return false;
-	}
-
-	if ($user->id != $memo->fk_user_creat && $memo->private) {
-		$jsonResponse->setError($langs->trans('QuickMemoCantChangeThisPrivateNote'));
+	$memo = quickMemoInterfaceFetchMemo($jsonResponse, 'QuickMemoCantChangeThisPrivateNote');
+	if (!$memo) {
 		return false;
 	}
 
@@ -892,6 +800,11 @@ function quickMemoIntefaceActionList($jsonResponse)
 
 	if (empty($element_id) && !empty($element_type)) {
 		$jsonResponse->setError($langs->trans('ErrorNeedElementId'));
+		return;
+	}
+
+	if (!quickMemoInterfaceCanAccessElement((string) $element_type, $element_id)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
 		return;
 	}
 
@@ -1009,6 +922,109 @@ function quickMemoInterfacePopulateMemoTplFromQueryObj($obj)
 	$memo->user_name =  $user->getFullName($langs);
 	$memo->date_change =  '';
 	$memo->user_change_name = '';
+
+	return $memo;
+}
+
+/**
+ * Check that current user can read the object a memo is attached to.
+ * Writing a memo does not change the object, so read access on the object is enough.
+ *
+ * @param string $element_type    Element type of the object ('' for global contexts like home page)
+ * @param int    $element_id      Id of the object
+ * @param bool   $moduleLevelOnly True to check only the permission on the module (memo shared on all objects of this type)
+ * @return bool
+ */
+function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleLevelOnly = false)
+{
+	global $user, $hookmanager;
+
+	if (empty($element_type)) {
+		return true;
+	}
+
+	$parameters = array('element_type' => $element_type, 'element_id' => $element_id, 'moduleLevelOnly' => $moduleLevelOnly);
+	$hookobject = null;
+	$action = '';
+	$reshook = $hookmanager->executeHooks('quickMemoCheckElementAccess', $parameters, $hookobject, $action);
+	if ($reshook > 0) {
+		return true;
+	} elseif ($reshook < 0) {
+		return false;
+	}
+
+	$object = fetchObjectByElement($moduleLevelOnly ? 0 : (int) $element_id, $element_type);
+	if (!is_object($object) || empty($object->element)) {
+		return false;
+	}
+	if (!$moduleLevelOnly && empty($object->id)) {
+		return false;
+	}
+
+	// Property module is set by fetchObjectByElement() only when object is fetched
+	$module = !empty($object->module) ? $object->module : getElementProperties($element_type)['module'];
+	if (empty($module)) {
+		return false;
+	}
+
+	$feature2 = ($module != $object->element ? $object->element : '');
+	if ($feature2 && !$user->hasRight($module, $object->element, 'read')) {
+		$feature2 = '';
+	}
+
+	// Force mode 'read', else restrictedArea() guesses the mode from our 'action' (create, delete...) and checks write permission on the object
+	return (bool) restrictedArea($user, $module, $moduleLevelOnly ? 0 : $object, $object->table_element, $feature2, 'fk_soc', 'rowid', 0, 1, 'read');
+}
+
+/**
+ * Check that current user can access a memo through the object it is attached to.
+ *
+ * @param Memo $memo Memo
+ * @return bool
+ */
+function quickMemoInterfaceCanAccessMemo($memo)
+{
+	// Templates are not attached to an object
+	if ($memo->status == Memo::STATUS_TPL) {
+		return true;
+	}
+
+	// A memo shared on element is displayed on all objects of the same type
+	return quickMemoInterfaceCanAccessElement((string) $memo->element_type, (int) $memo->fk_element, !empty($memo->shared_on_element));
+}
+
+/**
+ * Load the memo from the posted id and check that current user can access it.
+ *
+ * @param JsonResponse $jsonResponse    The response object, populated with error if memo is not accessible
+ * @param string       $privateErrorKey Translation key of error if memo is private to another user, '' to not check privacy
+ * @return Memo|null                    Memo, or null if not accessible
+ */
+function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
+{
+	global $user, $langs, $db;
+
+	$id = GETPOSTINT("id");
+	if ($id <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorNeedMemoId'));
+		return null;
+	}
+
+	$memo = new Memo($db);
+	if ($memo->fetch($id) <= 0) {
+		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
+		return null;
+	}
+
+	if (!empty($privateErrorKey) && $user->id != $memo->fk_user_creat && $memo->private) {
+		$jsonResponse->setError($langs->trans($privateErrorKey));
+		return null;
+	}
+
+	if (!quickMemoInterfaceCanAccessMemo($memo)) {
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
+		return null;
+	}
 
 	return $memo;
 }
