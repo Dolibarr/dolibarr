@@ -160,7 +160,7 @@ function fetchConnectionToken() {
 	}
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
@@ -638,7 +638,7 @@ array(
 ),
 );
 $numpad = getDolGlobalInt('TAKEPOS_NUMPAD');
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
@@ -749,7 +749,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i += 1;
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
+if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (getDolGlobalString((string) $keyforstripeterminalbank)) {
