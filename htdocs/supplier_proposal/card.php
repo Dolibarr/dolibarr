@@ -2120,7 +2120,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
 		if ($action == 'editdate_livraison') {
-			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
+			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

@@ -83,6 +83,11 @@ The hooks environments are preloaded into the image when it is built (they are t
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
 
+## Apache logs of the host
+
+When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).
+The directory is owned by the group `adm` on Debian/Ubuntu and is not readable by others: the user of the container is added to the group with the same GID by `docker-entrypoint.sh`.
+
 ## No email can be delivered
 
 No MTA is installed into the image (no postfix, no exim, no sendmail daemon, ...). The binary `/usr/sbin/sendmail` is a stub that stores the emails it receives into the directory `/var/mail/outbox/` instead of delivering them:

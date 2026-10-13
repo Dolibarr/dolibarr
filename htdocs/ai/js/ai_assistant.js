@@ -78,6 +78,11 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Third parties the user picked when a name fitted several: phrase -> id,
+    // 0 = none of them. They answer the request they were asked for only, the next
+    // question asks again.
+    let thirdpartyChoices = {};
+    let lastSent = null;          // { sentQuery, query } of the last request, resent once a choice is made
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
@@ -224,6 +229,7 @@ export function initAiAssistant(container) {
             }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
+            thirdpartyChoices = {};
             input.focus();
         }
     });
@@ -1330,6 +1336,21 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
+    // Several third parties fit a name the user wrote, and the privacy guard
+    // keeps names away from the provider: the server asked before sending
+    // anything. The same request goes again with the choice.
+    function handleThirdpartyChoice(question, choice) {
+        const pick = (id) => {
+            const msg = chat.lastElementChild;
+            if (msg && msg.classList.contains('clarification')) msg.remove();
+            thirdpartyChoices[choice.phrase] = id;
+            if (lastSent) handleQuery(lastSent);
+        };
+        const actions = (choice.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-building', onclick: () => pick(o.id) }));
+        actions.push({ text: t('AINoneOfThese'), icon: 'fa-times', onclick: () => pick(0) });
+        appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(question)}</div>`, actions);
+    }
+
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
@@ -1631,10 +1652,13 @@ export function initAiAssistant(container) {
         }
     }
 
-    async function handleQuery() {
-        const query = input.value.trim();
-        const readyDocs = attachedDocs.filter((d) => !d.error);
-        if (!query && !readyDocs.length) return;
+    async function handleQuery(resend) {
+        // A resend (after the user picked a third party) posts the same request
+        // again, without a second bubble.
+        const isResend = !!(resend && typeof resend.sentQuery === 'string');
+        const query = isResend ? resend.query : input.value.trim();
+        const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
         // "/status" is answered locally (no AI call): statistics of the whole
@@ -1655,7 +1679,7 @@ export function initAiAssistant(container) {
         }
 
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
-        let sentQuery = query;
+        let sentQuery = isResend ? resend.sentQuery : query;
         let displayHtml = escapeHtml(query);
         if (readyDocs.length) {
             // One wrapped context block per document, so each keeps its own
@@ -1668,8 +1692,11 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
-        clearChip();
+        if (!isResend) {
+            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            clearChip();
+        }
+        lastSent = { sentQuery: sentQuery, query: query };
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
@@ -1682,6 +1709,8 @@ export function initAiAssistant(container) {
             // Result of the read flagged needs_followup, sent back on the second round.
             let followupSnippet = null;
             let followupResult = null;
+            // The third parties the user picked, for every round of this request.
+            const sentChoices = Object.assign({}, thirdpartyChoices);
             // Two rounds at most: the server never flags a followup round itself.
             for (let round = 0; round < 2; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
@@ -1692,6 +1721,7 @@ export function initAiAssistant(container) {
                     // ids against the user's rights before trusting them.
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
                             if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
@@ -1719,8 +1749,10 @@ export function initAiAssistant(container) {
                 });
                 const intent = await aiJson(intentRes);
                 loadingMsg.remove();
+                // Choices answer this request only: once it went through, the next question asks again.
+                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
-
+                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
                 if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
                     // Debug output of /tools, built and escaped server side: shown as is,
