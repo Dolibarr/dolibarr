@@ -46,12 +46,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -77,6 +71,15 @@ if ($object->fetch($id, $ref) < 0) {
 	dol_print_error($db);
 	exit;
 }
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $upload_dir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();

@@ -67,6 +67,14 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+$object = new CommandeFournisseur($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	}
+}
+
 // Security check
 $socid = 0;
 if ($user->socid) {
