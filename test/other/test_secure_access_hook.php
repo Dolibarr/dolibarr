@@ -138,48 +138,68 @@ class PhotoAccessTestHook
 $user = new PhotoAccessTestUser();
 $conf = (object) array(
 	'entity' => 1,
-	'modules_parts' => array('hooks' => array('sharingtest' => array('fileslib'))),
+	'modules_parts' => array('hooks' => array('sharingtest' => array('document', 'viewimage'))),
 	'societe' => (object) array('multidir_output' => array(1 => '/documents/societe')),
 	'product' => (object) array('multidir_output' => array(1 => '/documents/produit')),
 	'service' => (object) array('multidir_output' => array(1 => '/documents/produit')),
 	'testmodule' => (object) array('dir_output' => '/documents/testmodule', 'multidir_output' => array(1 => '/documents/testmodule')),
 );
 $hook = new PhotoAccessTestHook();
-$hookmanager = new HookManager(null);
-$hookmanager->hooks = array('fileslib' => array('sharingtest' => $hook));
-$hookmanager->hooksSorted = array('fileslib' => array('50:sharingtest' => $hook));
 $object = null;
 $checks = 0;
 
-foreach (array('contact', 'socpeople', 'product', 'produit', 'service', 'produit|service', 'testmodule') as $modulepart) {
-	foreach (array('neutral', 'share', 'deny', 'error', 'neutral') as $mode) {
-		$hook->mode = $mode;
-		$_GET['entity'] = 2;
-		$before = $hook->calls;
+foreach (array('document', 'viewimage') as $context) {
+	$hookmanager = new HookManager(null);
+	$hookmanager->hooks = array($context => array('sharingtest' => $hook));
+	$hookmanager->hooksSorted = array($context => array('50:sharingtest' => $hook));
+	$hookmanager->initHooks(array($context));
+
+	foreach (array('contact', 'socpeople', 'product', 'produit', 'service', 'produit|service', 'testmodule') as $modulepart) {
+		foreach (array('neutral', 'share', 'deny', 'error', 'neutral') as $mode) {
+			$hook->mode = $mode;
+			$_GET['entity'] = 2;
+			$before = $hook->calls;
+			$result = dol_check_secure_access_document($modulepart, '42/photos/photo.jpg', 1, $user);
+			$expectedAccess = in_array($mode, array('deny', 'error'), true) ? 0 : 1;
+			$expectedDirectory = $mode === 'share' ? '/documents/2/' : '/documents/';
+			if ($hook->calls !== $before + 1 || $result['accessallowed'] !== $expectedAccess
+				|| strpos($result['original_file'], $expectedDirectory) !== 0
+				|| ($mode !== 'share' && strpos($result['original_file'], '/documents/2/') === 0)) {
+				throw new RuntimeException('Unexpected access result for '.$modulepart.' / '.$mode);
+			}
+			$checks++;
+		}
+		$user->allowed = false;
+		$hook->mode = 'share';
 		$result = dol_check_secure_access_document($modulepart, '42/photos/photo.jpg', 1, $user);
-		$expectedAccess = in_array($mode, array('deny', 'error'), true) ? 0 : 1;
-		$expectedDirectory = $mode === 'share' ? '/documents/2/' : '/documents/';
-		if ($hook->calls !== $before + 1 || $result['accessallowed'] !== $expectedAccess
-			|| strpos($result['original_file'], $expectedDirectory) !== 0
-			|| ($mode !== 'share' && strpos($result['original_file'], '/documents/2/') === 0)) {
-			throw new RuntimeException('Unexpected access result for '.$modulepart.' / '.$mode);
+		if ($result['accessallowed'] !== 0) {
+			throw new RuntimeException('Missing functional permission was bypassed');
+		}
+		$user->allowed = true;
+		$checks++;
+		$_GET['entity'] = 9;
+		$result = dol_check_secure_access_document($modulepart, '42/photos/photo.jpg', 1, $user);
+		if (strpos($result['original_file'], '/documents/9/') === 0 || $hook->lastEntity !== 1) {
+			throw new RuntimeException('An unapproved URL entity changed the file directory');
 		}
 		$checks++;
 	}
-	$user->allowed = false;
-	$hook->mode = 'share';
-	$result = dol_check_secure_access_document($modulepart, '42/photos/photo.jpg', 1, $user);
-	if ($result['accessallowed'] !== 0) {
-		throw new RuntimeException('Missing functional permission was bypassed');
+	if ($hookmanager->contextarray !== array($context)) {
+		throw new RuntimeException('The file library changed the page hook context');
 	}
-	$user->allowed = true;
-	$checks++;
-	$_GET['entity'] = 9;
-	$result = dol_check_secure_access_document($modulepart, '42/photos/photo.jpg', 1, $user);
-	if (strpos($result['original_file'], '/documents/9/') === 0 || $hook->lastEntity !== 1) {
-		throw new RuntimeException('An unapproved URL entity changed the file directory');
+}
+
+// Check that both production entry points initialize their context before access.
+foreach (array('document', 'viewimage') as $context) {
+	$source = file_get_contents(DOL_DOCUMENT_ROOT.'/'.$context.'.php');
+	if ($source === false) {
+		throw new RuntimeException('Cannot read the production entry point');
 	}
-	$checks++;
+	$init = strpos($source, '$hookmanager->initHooks(array(\''.$context.'\'));');
+	$access = strpos($source, '$check_access = dol_check_secure_access_document(');
+	if ($init === false || $access === false || $init > $access) {
+		throw new RuntimeException('Page context initialized after file access: '.$context);
+	}
 }
 
 // Without an installed hook, native permissions and paths must remain unchanged.

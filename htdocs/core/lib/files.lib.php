@@ -3919,7 +3919,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 	// Keep the session entity; modules must validate any requested shared entity themselves.
 	if ($checksecureaccesshook) {
-		$hookmanager->initHooks(array('fileslib'));
 		$parameters = array(
 			'modulepart' => $modulepart,
 			'original_file' => $original_file,
