@@ -680,7 +680,7 @@ try {
 		$systemPrompt .= "  Free nesting with balanced parentheses. No NOT.\n";
 		$systemPrompt .= "  Do not mix AND and OR at the same level without parentheses.\n";
 		// Disabled for the moment, as this could not be a generic rule of sqlfilters
-		// Wait test to see why we need this. We shouldnot need it if field fk_soc is defined on each tool.
+		// Wait test to see why we need this. We should not need it if field fk_soc is defined on each tool.
 		//$systemPrompt .= "- No sub-query (SELECT ...): to filter on a third party, use thirdparty_ids or (t.fk_soc:=:id) with its id.\n";
 		$systemPrompt .= "\n";
 		$systemPrompt .= "Valid:   ((t.client:=:1) OR (t.client:in:2,3)) AND (t.nom:like:'a%')\n";
