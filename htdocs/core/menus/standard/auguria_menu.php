@@ -363,16 +363,20 @@ class MenuManager
 								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
 
+							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
+							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
+
 							print $val2['titre'];
+							// If entry of level 2 has a submenu, we add '...' to show that a click will open the submenu
+							if ($val2['level'] == 0 && $nextlevel > $currentlevel) {
+								print ' ...';
+							}
 							if ($relurl2) {
 								print '</a>';
 							} else {
 								print '</span>';
 							}
 
-
-							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
-							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
 							// If there is no lower level
 							if ($nextlevel > $currentlevel) {
 								// There is a submenu with a lower level, we do not close the li
