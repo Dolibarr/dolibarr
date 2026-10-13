@@ -163,19 +163,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
 $projectcolumnenabled = $canreadprojects ? '1' : '0';
 $langs->load('projects');
-$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('m.fk_projet' => 1)));
-$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.title' => 1)));
-$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
-$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
-$projectrefdefinition += array('checked' => '0', 'position' => 190, 'help' => '');
-$projectlabeldefinition += array('checked' => '0', 'help' => '');
-$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
-$projectcolumns = array(
-	'm.fk_projet' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
-	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
-);
-$arrayfields['m.fk_projet'] = $projectcolumns['m.fk_projet'];
-$arrayfields['projectlist.title'] = $projectcolumns['projectlist.title'];
+$arrayfields = array_merge($arrayfields, array(
+	'm.fk_projet' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $arrayfields['m.fk_projet']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['m.fk_projet']['position'], 'help' => ''),
+	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['m.fk_projet']['position'] + 1, 'help' => ''),
+));
 
 $search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
 $search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');

@@ -206,6 +206,14 @@ $arrayfields = $input['selected'] ?? array();
 $metastart = strpos($source, '// Project columns use the same access scope');
 if ($metastart === false) { $metastart = strpos($source, '$canreadprojects ='); }
 $metaend = strpos($source, '$search_projectlist_ref = GETPOST', $metastart);
+// Seed existing native columns before evaluating the added column definitions.
+foreach (explode("\n", substr($source, 0, $metastart)) as $line) {
+	foreach (array($input['refkey'], $input['titlekey']) as $columnkey) {
+		if (preg_match('/^\h*[\'\"]'.preg_quote($columnkey, '/').'[\'\"]\h*=>\h*array\(/', $line)) {
+			eval('$arrayfields += array('.trim($line).');');
+		}
+	}
+}
 eval(substr($source, $metastart, $metaend-$metastart));
 $metadata = $arrayfields;
 $start = strpos($source, '$projectforlist = new Project($db);');

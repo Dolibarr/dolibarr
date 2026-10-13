@@ -102,4 +102,4 @@ No deployed instance was used during this change.
 Fictitious data with the native project cell HTML and Eldy CSS. This illustrates the
 optional label after enabling its column; it is not a deployed-instance screenshot.
 
-![Isolated before/after preview](../images/project-list-columns-preview.png)
+![Isolated before/after preview](https://raw.githubusercontent.com/mapiolca/dolibarr/105daef3464eebde3b3c5092090ca8571e5e0c7e/doc/images/project-list-columns-preview.png)
