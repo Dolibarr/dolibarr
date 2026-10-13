@@ -2705,8 +2705,8 @@ if ($action == 'create' && $usercancreate) {
 	if ($action == 'delete') {
 		$formquestion = array();
 
-		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
-			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED));
+		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $object->status == $object::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $object->status == $object::STATUS_CLOSED));
 
 		if ($needquestiononstock) {
 			$formquestion = array(
