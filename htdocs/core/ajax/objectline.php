@@ -21,6 +21,8 @@
  *                  to reload some lines after an ajax edition without loading the whole card.
  *                  GET with parameters element, id, lineids (list of line ids separated by a comma) and page (path of the card,
  *                  like /comm/propal/card.php, so the links of the lines are the ones of the card).
+ *                  Parameter hookcontexts: hook contexts of the page that printed the lines, separated by a comma (JS context var HOOK_CONTEXTS),
+ *                  so modules hooking the lines render them as in this page.
  *                  Answer is a JsonResponse, data contains the html of each line (null if the line does not exist anymore)
  *                  and the ids of all the lines of the object in the order of the card, to insert or remove lines.
  *                  With action=editline (one line, write permission, object in draft), the html is the edit form of the line
@@ -58,6 +60,7 @@ $element = GETPOST('element', 'aZ09');
 $id = GETPOSTINT('id');
 $lineids = GETPOST('lineids', 'intcomma');
 $page = GETPOST('page', 'alphanohtml');
+$hookcontexts = GETPOST('hookcontexts', 'aZ09comma');
 $action = GETPOST('action', 'aZ09');
 $editline = ($action == 'editline'); // Test on permission done later, write permission checked by restrictedArea()
 
@@ -112,9 +115,15 @@ if (preg_match('/^[a-zA-Z0-9_\-\/\.]+\.php$/', $page) && strpos($page, '..') ===
 	$_SERVER['PHP_SELF'] = $page;
 }
 
-// Modules hooking the lines of the card render them as in the card
-$context = $object->getObjectLinesDisplayContext();
-$hookmanager->initHooks(array($context['hookcontext'], 'globalcard'));
+// The hook context is the one of the page, not of the object: the hook contexts of the page that printed the lines are sent back,
+// so modules hooking the lines render them as in this page (ex: propalcard, globalcard)
+$contexts = array();
+foreach (explode(',', $hookcontexts) as $hookcontext) {
+	if (preg_match('/^[a-zA-Z0-9_]+$/', $hookcontext) && !in_array($hookcontext, array('main', 'login'))) {
+		$contexts[] = $hookcontext;
+	}
+}
+$hookmanager->initHooks(empty($contexts) ? array('globalcard') : array_unique($contexts));
 
 $lines = array();
 if ($editline) {
