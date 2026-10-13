@@ -426,7 +426,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 // The cell gives the field of the edit form of the line (data-dol-line-field). A value entered in one input is saved when changed,
 // a value entered in several parts (date, text on several lines...) keeps the buttons save and cancel: the mode is deduced from
 // the input, a cell can force it with data-dol-edit-mode="instant" or data-dol-edit-mode="confirm".
-$ajaxlinefields = ($this->isAjaxLineEdit() && $this->getRights()->creer && $action != 'selectlines' && ($line->info_bits & 2) != 2 && empty($disableedit)
+$ajaxlinefields = ($this->isAjaxLineEdit() && $this->hasUserPermission($user, 'write') && $action != 'selectlines' && ($line->info_bits & 2) != 2 && empty($disableedit)
 	&& empty($line->fk_remise_except) && $line->special_code != 3 && empty($this->situation_cycle_ref));
 // The value is in a span: it gets the look of a field on hover, its input is placed over it
 $ajaxlinevalue = ($ajaxlinefields ? '<span class="dol-line-value">' : '');
