@@ -242,17 +242,24 @@ print '
 
 <script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
-    $("body li").click(function(event){
-        console.log("We click on a li");
+    /* A click on a disabled (greyed) entry must do nothing (and not follow the link "#" that scrolls to top) */
+    $("a.vsmenudisabled").click(function(event){
+        event.preventDefault();
+    });
 
-        /* Do not propagate the click to the parent li (this would toggle the parent menu too) */
-        event.stopPropagation();
+    /* Only entries of level 1 (lilevel0) and level 2 (lilevel1) can be toggled */
+    $("li.lilevel0, li.lilevel1").click(function(event){
+        /* Ignore clicks coming from an entry of a submenu */
+        if ($(event.target).closest("li")[0] !== this) {
+            return;
+        }
+
+        console.log("We click on a li");
 
         var target = $(this);
         var childul = target.children("ul");
 
-        /* Only entries of level 1 (lilevel0) and level 2 (lilevel1) with a submenu can be toggled */
-        if (childul.length == 0 || !(target.hasClass("lilevel0") || target.hasClass("lilevel1"))) {
+        if (childul.length == 0) {
             return;
         }
 
