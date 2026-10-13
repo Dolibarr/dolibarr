@@ -102,34 +102,31 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * Only successful page updates are cached for the current month and entity.
+	 * Business calls neither read nor change the caller's HTTP session state.
 	 *
 	 * @return void
 	 */
-	public function testPageUpdateCacheIsScopedByMonthAndEntity()
+	public function testBusinessUpdatesAreIndependentOfSessionState()
 	{
 		global $conf;
 		$savedConf = $conf;
 		$savedSession = isset($_SESSION) ? $_SESSION : null;
 		try {
-			$_SESSION = array();
+			$_SESSION = array('holiday_balance_update_month' => array(1 => dol_print_date(dol_now(), '%Y%m')));
+			$sessionBefore = $_SESSION;
 			$conf = new stdClass();
 			$conf->global = new stdClass();
 			$conf->entity = 1;
 			$database = $this->createMock(DoliDBMysqli::class);
-			$database->expects($this->exactly(3))->method('begin')->willReturn(1);
-			$database->expects($this->exactly(3))->method('commit')->willReturn(1);
+			$database->expects($this->exactly(2))->method('begin')->willReturn(1);
+			$database->expects($this->exactly(2))->method('commit')->willReturn(1);
 			$database->expects($this->never())->method('rollback');
 			$holiday = $this->getMockBuilder(Holiday::class)->setConstructorArgs(array($database))
 				->onlyMethods(array('updateSoldeCP'))->getMock();
-			$holiday->expects($this->exactly(3))->method('updateSoldeCP')->willReturn(1);
+			$holiday->expects($this->exactly(2))->method('updateSoldeCP')->willReturn(1);
 			$this->assertSame(0, $holiday->updateBalance(true));
 			$this->assertSame(0, $holiday->updateBalance(true));
-			$conf->entity = 2;
-			$this->assertSame(0, $holiday->updateBalance(true));
-			$conf->entity = 1;
-			$_SESSION['holiday_balance_update_month'][1] = '199901';
-			$this->assertSame(0, $holiday->updateBalance(true));
+			$this->assertSame($sessionBefore, $_SESSION);
 		} finally {
 			$conf = $savedConf;
 			if ($savedSession === null) {
@@ -141,7 +138,7 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * A failed commit must not mark the monthly update as successful in the session.
+	 * A failed commit is reported and another business call can retry the update.
 	 *
 	 * @return void
 	 */
@@ -166,7 +163,7 @@ class HolidayBalanceUpdateTest extends PHPUnit\Framework\TestCase
 			$this->assertSame(-1, $holiday->updateBalance(true));
 			$this->assertFalse(isset($_SESSION['holiday_balance_update_month'][1]));
 			$this->assertSame(0, $holiday->updateBalance(true));
-			$this->assertSame(0, $holiday->updateBalance(true));
+			$this->assertFalse(isset($_SESSION['holiday_balance_update_month'][1]));
 		} finally {
 			$conf = $savedConf;
 			if ($savedSession === null) {

@@ -1428,11 +1428,18 @@ $heightforframes = 52;	// Used by frames.php page
 if (!defined('NOLOGIN') && !defined('NOREQUIREDB') && !defined('NOREQUIREUSER') && !defined('NOREQUIREHTML')
 	&& !defined('NOREQUIRETRAN') && $_SERVER['REQUEST_METHOD'] === 'GET'
 	&& $user->id > 0 && empty($user->socid) && isModEnabled('holiday')
-	&& getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON') !== 1) {
-	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-	$holidayBalanceUpdater = new Holiday($db);
-	if ($holidayBalanceUpdater->updateBalance(true) < 0) {
-		dol_syslog('Monthly leave balance update on application access failed: '.$holidayBalanceUpdater->error, LOG_ERR);
+	&& in_array(getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON'), array(0, 2), true)) {
+	// Session caching belongs to the application entry point, not the business object.
+	$holidayBalanceUpdateMonth = dol_print_date(dol_now(), '%Y%m');
+	if (!isset($_SESSION['holiday_balance_update_month'][$conf->entity])
+		|| $_SESSION['holiday_balance_update_month'][$conf->entity] !== $holidayBalanceUpdateMonth) {
+		require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+		$holidayBalanceUpdater = new Holiday($db);
+		if ($holidayBalanceUpdater->updateBalance(true) < 0) {
+			dol_syslog('Monthly leave balance update on application access failed: '.$holidayBalanceUpdater->error, LOG_ERR);
+		} else {
+			$_SESSION['holiday_balance_update_month'][$conf->entity] = $holidayBalanceUpdateMonth;
+		}
 	}
 }
 

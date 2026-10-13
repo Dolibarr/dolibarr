@@ -237,6 +237,10 @@ $help_url = 'EN:Module_Holiday';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-define_holiday');
 
 $typeleaves = $holiday->getTypes(1, 1);
+$result = $holiday->updateBalance(true);
+if ($result < 0) {
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
+}
 
 // List of mass actions available
 $arrayofmassactions = array(

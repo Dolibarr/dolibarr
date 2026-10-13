@@ -84,6 +84,12 @@ $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHO
  * Actions
  */
 
+// Update balances when GUI updates are selected.
+if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
+	$holidaystatic = new Holiday($db);
+	$result = $holidaystatic->updateBalance(true);
+}
+
 // Add box (when submit is done from a form when ajax disabled)
 include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 

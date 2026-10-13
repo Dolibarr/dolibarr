@@ -249,6 +249,9 @@ $formfile = new FormFile($db);
 $fuser = new User($db);
 $holidaystatic = new Holiday($db);
 
+// Update balances when GUI updates are selected, including without an external cron.
+$result = $object->updateBalance(true);
+
 $title = $langs->trans('Holidays');
 $help_url = 'EN:Module_Holiday';
 
