@@ -1922,7 +1922,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Hook contexts of the page, sent back by the ajax requests printing parts of the page (ex: core/ajax/objectline.php),
 		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
 		if (is_object($hookmanager)) {
-			$jsContextVars['HOOK_CONTEXTS'] = array_values(array_diff($hookmanager->contextarray, array('main', 'login')));
+			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
 		}
 
 		// Load context and all js tools
