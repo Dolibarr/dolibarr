@@ -346,6 +346,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				lineids: lineIds.join(','),
 				page: new URL(this.url, window.location.href).pathname, // Links of the lines are the ones of the card
 			};
+			// Hook contexts of the page (ex: propalcard), so modules hooking the lines render them as in the page
+			const hookContexts = Dolibarr.getContextVar('HOOK_CONTEXTS', []);
+			if (Array.isArray(hookContexts) && hookContexts.length > 0) params.hookcontexts = hookContexts.join(',');
 			if (action) params.action = action;
 
 			// A GET with an action needs the anti CSRF token (MAIN_SECURITY_CSRF_WITH_TOKEN = 3 by default)
