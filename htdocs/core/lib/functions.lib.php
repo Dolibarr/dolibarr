@@ -3646,7 +3646,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		return '';
 	}
 	if (empty($countrycode)) {
-		$countrycode = $mysoc->country_code;
+		$countrycode = (is_object($mysoc) ? $mysoc->country_code : '');
 	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);

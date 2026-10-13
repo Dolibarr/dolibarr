@@ -2305,7 +2305,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$logouttext = '';
 		$logouthtmltext = '';
 		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
+			$authmode = (empty($_SESSION["dol_authmode"]) ? '' : $_SESSION["dol_authmode"]);
+			if ($authmode != 'forceuser' && $authmode != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout').' ('.$conf->browser->stringforfirstkey.' l)', 'sign-out', '', 0, 0, 0, '', 'atoplogin valignmiddle');
@@ -2554,7 +2555,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysoc->name).'</span>';
+	// $mysoc may not be loaded (pages defining NOREQUIRESOC)
+	$mysocname = (is_object($mysoc) ? $mysoc->name : '');
+	$mysoccountrycode = (is_object($mysoc) ? $mysoc->country_code : '');
+
+	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysocname).'</span>';
 	$idprofcursor = 0;
 	while ($idprofcursor < 10) {
 		$idprofcursor++;
@@ -2571,17 +2576,17 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		if ($idprofcursor == 4) {
 			$constkeyforprofid = 'MAIN_INFO_RCS';
 		}
-		$showprofid = (($idprofcursor <= 6) && $langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code) != '-');
+		$showprofid = (($idprofcursor <= 6) && $langs->transcountry("ProfId".$idprofcursor, $mysoccountrycode) != '-');
 		if ($idprofcursor > 6 && getDolGlobalString($constkeyforprofid)) {
 			$showprofid = true;
 		}
 		if ($showprofid) {
-			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), '1').'</span>';
+			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoccountrycode).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), '1').'</span>';
 		}
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
-	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code).' '.$langFlag : '').'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoccountrycode ? $langs->trans("Country".$mysoccountrycode).' '.$langFlag : '').'</span>';
 	if (isModEnabled('multicurrency')) {
 		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.getDolCurrency().'</span>';
 	}
@@ -2612,7 +2617,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	if (getDolGlobalString('MAIN_MODULE_MULTICOMPANY')) {
 		$dropdownBody .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
 	}
-	$dropdownBody .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)');
+	$dropdownBody .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.(empty($_SESSION["dol_authmode"]) ? '' : $_SESSION["dol_authmode"]).(empty($dolibarr_main_demo) ? '' : ' (demo)');
 	$dropdownBody .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
@@ -2621,16 +2626,16 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.$langs->getDefaultLang().($langFlag ? ' '.$langFlag : '');;
 
-	$tz = (int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
+	$tz = (int) (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) + (int) (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']);
 	$dropdownBody .= '<br><b>'.$langs->trans("ClientTZ").':</b> '.($tz ? ($tz >= 0 ? '+' : '').$tz : '');
-	$dropdownBody .= ' <span class="opacitymedium">('.$_SESSION['dol_tz_string'].')</span>';
+	$dropdownBody .= ' <span class="opacitymedium">('.(empty($_SESSION['dol_tz_string']) ? '' : $_SESSION['dol_tz_string']).')</span>';
 	//$dropdownBody .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
 	//if ($_SESSION['dol_dst'] > 0) $dropdownBody .= yn(1);
 	//else $dropdownBody .= yn(0);
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
 	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT'] ?? ''), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
-	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.(empty($_SESSION['dol_screenwidth']) ? '' : $_SESSION['dol_screenwidth']).' x '.(empty($_SESSION['dol_screenheight']) ? '' : $_SESSION['dol_screenheight']);
 	$dropdownBody .= ' <span class="opacitymedium">('.$conf->browser->layout.')</span>';
 	if (!empty($_SESSION["disablemodules"])) {
 		$dropdownBody .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.implode(', ', explode(',', $_SESSION["disablemodules"]));
