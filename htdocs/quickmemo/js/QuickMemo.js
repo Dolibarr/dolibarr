@@ -2050,6 +2050,25 @@ class QuickMemo {
 	 * @param {boolean} force - Force refresh even if already loaded.
 	 */
 	async fetchMenuDropDown(force = false) {
+		// A load is already running (double click on menu...): wait for it instead of loading twice
+		if (this.menuDropDownLoading) {
+			return this.menuDropDownLoading;
+		}
+
+		this.menuDropDownLoading = this.loadMenuDropDown(force);
+		try {
+			return await this.menuDropDownLoading;
+		} finally {
+			this.menuDropDownLoading = null;
+		}
+	}
+
+	/**
+	 * Loads templates and color presets into the dropdown menu. Use fetchMenuDropDown() to call it.
+	 * @async
+	 * @param {boolean} force - Reload even if already loaded
+	 */
+	async loadMenuDropDown(force = false) {
 
 		const dropDown = document.getElementById(this.param.menuDropDownId);
 		const dropDownMenuToggleBtn = dropDown.querySelector('.dropdown-toggle');
@@ -2086,6 +2105,9 @@ class QuickMemo {
 			let models = json.data.modelTemplate.length ? json.data.modelTemplate : [];
 			let presets = json.data.presetTemplate.length ? json.data.presetTemplate : [];
 
+			modelListDiv.innerHTML = '';
+			presetListDiv.innerHTML = '';
+
 			// CREATE BTN TEMPLATE LIST
 			if (!models.length) {
 				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoTemplatesFound') + '</div>';
@@ -2100,7 +2122,7 @@ class QuickMemo {
 
 			// CREATE BTN FOR COLOR PRESETS LIST
 			if (!presets.length) {
-				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
+				presetListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
 			} else {
 
 				presets.forEach(preset => {
@@ -2108,12 +2130,16 @@ class QuickMemo {
 					presetListDiv.appendChild(btn);
 				});
 
-				// Quick add default note on double click
-				dropDownMenuToggleBtn.addEventListener('dblclick', e => {
-					e.preventDefault();
-					this.createMemoFromModel(presets[0]);
-					dropdown.classList.remove('open');
-				});
+				// Quick add default note on double click (bind only once, else each reload creates one more memo)
+				this.menuDefaultPreset = presets[0];
+				if (!dropDownMenuToggleBtn.dataset.quickmemoDblclick) {
+					dropDownMenuToggleBtn.dataset.quickmemoDblclick = '1';
+					dropDownMenuToggleBtn.addEventListener('dblclick', e => {
+						e.preventDefault();
+						this.createMemoFromModel(this.menuDefaultPreset);
+						dropDown.classList.remove('open');
+					});
+				}
 			}
 
 			// Set loaded data flag
@@ -2335,13 +2361,15 @@ class QuickMemo {
 	 * Toggles inline markdown with support for overlapping styles (***bold italic***)
 	 */
 	toggleInlineMarkdown(text, type) {
-		const patterns = {
-			bold: { tag: '**', regex: /^\*\*(.*)\*\*$/ },
-			italic: { tag: '*', regex: /^(\*\*\*|(?<!\*)\*(?!\*))(.*)(\*\*\*|(?<!\*)\*(?!\*))$/ },
-			underline: { tag: '__', regex: /^__(.*)__$/ }
+		// Toggle is done with startsWith/endsWith below. Do not add a regex with lookbehind (?<!...) in this file:
+		// it is a syntax error on Safari < 16.4 that prevents the whole QuickMemo.js from loading.
+		const tags = {
+			bold: '**',
+			italic: '*',
+			underline: '__'
 		};
 
-		const { tag, regex } = patterns[type];
+		const tag = tags[type];
 
 		// Special case for Italic to not conflict with Bold
 		if (type === 'italic') {
