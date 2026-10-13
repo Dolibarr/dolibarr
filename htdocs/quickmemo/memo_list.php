@@ -220,6 +220,22 @@ if (empty($reshook)) {
 	$objectlabel = 'Memo';
 	$uploaddir = $conf->quickmemo->dir_output;
 
+	// The generic mass delete does not know private memos: remove from selection those the user is not allowed to delete
+	if (($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete && !empty($toselect)) {
+		foreach ($toselect as $key => $idMemo) {
+			$tmpMemo = new Memo($db);
+			if ($tmpMemo->fetch($idMemo) <= 0) {
+				unset($toselect[$key]);
+				continue;
+			}
+			$isPrivate = ($tmpMemo->status == Memo::STATUS_TPL ? $tmpMemo->private_tpl : $tmpMemo->private);
+			if ($isPrivate && $user->id != $tmpMemo->fk_user_creat) {
+				setEventMessage($langs->trans($tmpMemo->status == Memo::STATUS_TPL ? 'QuickMemoCantDeleteThisPrivateModel' : 'QuickMemoCantDeleteThisPrivateNote').' : '.((int) $idMemo), 'errors');
+				unset($toselect[$key]);
+			}
+		}
+	}
+
 	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
