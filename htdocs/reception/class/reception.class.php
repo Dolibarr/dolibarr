@@ -1142,6 +1142,11 @@ class Reception extends CommonObject
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
+					// Same lines as the ones that moved the stock in valid() and setClosed()
+					if ($obj->qty == 0 || ($obj->qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
+						continue;
+					}
+
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
