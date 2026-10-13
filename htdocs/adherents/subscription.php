@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-$langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
+$langs->loadLangs(array("companies", "bills", "orders", "members", "users", "mails", 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -1302,21 +1302,21 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				$projectstatic = new Project($db);
 
 				print '<div class="linkobjectswitchclass" style="margin-left: 20px; margin-top: 5px; display:none;">';
-				// Invoices of the thirdparty, newest first
+				// Invoices of the thirdparty, the 5 newest only
 				// ===== START BLOCK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
-					print load_fiche_titre($langs->trans("Invoices"), '', '');
-
 					$sql_invoices = "SELECT f.rowid, f.fk_projet";
 					$sql_invoices .= " FROM ".MAIN_DB_PREFIX."facture as f";
 					$sql_invoices .= " WHERE f.fk_soc = ".((int) $object->socid)." AND f.entity IN (".getEntity('invoice').")";
 					$sql_invoices .= $db->order("f.datef", "DESC");
+					// Keep only the 5 latest invoices, the list can be long
+					$sql_invoices .= $db->plimit(5);
 
 					print '<div class="div-table-responsive-no-min">';
 					print '<table class="noborder allwidth">';
 					print '<tr class="liste_titre">';
-					print '<td class="center">'.$langs->trans("Select").'</td>';
-					print '<td>'.$langs->trans("Ref").'</td>';
+					// Block title is placed on the 2 first header cells to save space, so the Ref column has no more title
+					print '<td colspan="2" class="left">'.$langs->trans("LastBills", 5).'</td>';
 					print '<td>'.$langs->trans("RefCustomer").'</td>';
 					if ($showproject) {
 						print '<td>'.$langs->trans("Project").'</td>';
@@ -1379,21 +1379,21 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				}
 				// ===== END BLOCK: Invoices =====
 
-				// Orders of the thirdparty, newest first
+				// Orders of the thirdparty, the 5 newest only
 				// ===== START BLOCK: Orders =====
 				if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-					print load_fiche_titre($langs->trans("Orders"), '', '');
-
 					$sql_orders = "SELECT c.rowid, c.fk_projet";
 					$sql_orders .= " FROM ".MAIN_DB_PREFIX."commande as c";
 					$sql_orders .= " WHERE c.fk_soc = ".((int) $object->socid)." AND c.entity IN (".getEntity('commande').")";
 					$sql_orders .= $db->order("c.date_commande", "DESC");
+					// Keep only the 5 latest orders, the list can be long
+					$sql_orders .= $db->plimit(5);
 
 					print '<div class="div-table-responsive-no-min">';
 					print '<table class="noborder allwidth">';
 					print '<tr class="liste_titre">';
-					print '<td class="center">'.$langs->trans("Select").'</td>';
-					print '<td>'.$langs->trans("Ref").'</td>';
+					// Block title is placed on the 2 first header cells to save space, so the Ref column has no more title
+					print '<td colspan="2" class="left">'.$langs->trans("LastOrders", 5).'</td>';
 					print '<td>'.$langs->trans("RefCustomer").'</td>';
 					if ($showproject) {
 						print '<td>'.$langs->trans("Project").'</td>';
