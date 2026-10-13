@@ -198,6 +198,7 @@ BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
 BookCalAbout = About BookCal
 BookCalAboutPage = BookCal about page
 Calendars=Calendars
+Bookings=Bookings
 Availabilities=Availabilities
 NewAvailabilities=New availabilities
 NewCalendar=New calendar

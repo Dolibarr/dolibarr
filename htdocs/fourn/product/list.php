@@ -44,6 +44,8 @@ require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
 
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers'));
 
@@ -116,6 +118,30 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$langs->load('projects');
+$projectcolumns = array_replace_recursive(
+	array(
+		'projectlist.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects, 'position' => 190),
+		'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects),
+	),
+	array_intersect_key($arrayfields, array('projectlist.ref' => 1, 'projectlist.title' => 1))
+);
+$projectcolumns['projectlist.ref']['label'] = 'RefProject';
+$projectcolumns['projectlist.ref']['langfile'] = 'projects';
+$projectcolumns['projectlist.ref']['enabled'] = $canreadprojects;
+$projectcolumns['projectlist.title']['enabled'] = $canreadprojects;
+$projectcolumns['projectlist.title']['position'] = $projectcolumns['projectlist.ref']['position'] + 1;
+$arrayfields = array_replace($arrayfields, $projectcolumns);
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -186,9 +212,20 @@ if ($reshook < 0) {
 }
 $sql .= $hookmanager->resPrint;
 
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', projectlist.rowid as projectlist_id, projectlist.ref as projectlist_ref, projectlist.title as projectlist_title, projectlist.public as projectlist_public, projectlist.fk_statut as projectlist_status';
+
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as projectlist ON projectlist.rowid = p.fk_project AND projectlist.rowid IN ('.$db->sanitize($projectsforlist).')';
 if ($catid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 }
@@ -215,6 +252,13 @@ if ($fourn_id > 0) {
 }
 
 // Add WHERE filters from hooks
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('projectlist.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('projectlist.title', $search_projectlist_title);
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
 if ($reshook < 0) {
@@ -281,6 +325,8 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-pr
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+
+$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -374,6 +420,13 @@ print '<td></td>';
 print '<td></td>';
 print '<td></td>';
 // add filters from hooks
+if (!empty($arrayfields['projectlist.ref']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+}
+if (!empty($arrayfields['projectlist.title']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
@@ -409,6 +462,13 @@ print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", "", $p
 print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", "", $param, "", $sortfield, $sortorder, 'right ');
 print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", "", $param, "", $sortfield, $sortorder, 'right ');
 // add header cells from hooks
+if (!empty($arrayfields['projectlist.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['projectlist.ref']['label'], $_SERVER['PHP_SELF'], 'projectlist.ref', '', $param, '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['projectlist.title']['checked'])) {
+	print_liste_field_titre($arrayfields['projectlist.title']['label'], $_SERVER['PHP_SELF'], 'projectlist.title', '', $param, '', $sortfield, $sortorder);
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
@@ -485,6 +545,31 @@ while ($i < $imaxinloop) {
 	print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
 
 	// add additional columns from hooks
+	if (!empty($arrayfields['projectlist.ref']['checked'])) {
+		print '<td class="tdoverflowmax150">';
+		if ($objp->projectlist_id > 0) {
+			$projectforlist->id = (int) $objp->projectlist_id;
+			$projectforlist->ref = dol_escape_htmltag($objp->projectlist_ref);
+			$projectforlist->title = dol_escape_htmltag($objp->projectlist_title);
+			$projectforlist->public = (int) $objp->projectlist_public;
+			$projectforlist->status = (int) $objp->projectlist_status;
+			print $projectforlist->getNomUrl(1);
+		}
+		print '</td>';
+	}
+	if (!empty($arrayfields['projectlist.title']['checked'])) {
+		print '<td class="tdoverflowmax150">';
+		if ($objp->projectlist_id > 0) {
+			$projectforlist->id = (int) $objp->projectlist_id;
+			$projectforlist->ref = dol_escape_htmltag($objp->projectlist_ref);
+			$projectforlist->title = dol_escape_htmltag($objp->projectlist_title);
+			$projectforlist->public = (int) $objp->projectlist_public;
+			$projectforlist->status = (int) $objp->projectlist_status;
+			print $projectforlist->getNomUrl(1, '', -1);
+		}
+		print '</td>';
+	}
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action);
 	if ($reshook < 0) {
@@ -517,7 +602,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 8;
+	$colspan = 8 + (!empty($arrayfields['projectlist.ref']['checked']) ? 1 : 0) + (!empty($arrayfields['projectlist.title']['checked']) ? 1 : 0);
 	/*foreach ($arrayfields as $key => $val) {
 		if (!empty($val['checked'])) {
 			$colspan++;
