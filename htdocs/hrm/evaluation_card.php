@@ -315,8 +315,13 @@ $urltopost = DOL_URL_ROOT.'/core/ajax/objectfield.php';
 				id: lineid,
 				field: "rankorder",
 				ajaxfield_rankorder: rank
-			}).fail(function(xhr) {
-				$.jnotify((xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : '<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
+			}).fail(async function(xhr) {
+				let msg = (xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : '';
+				if (!msg) {
+					await Dolibarr.tools.langs.load('main');
+					msg = Dolibarr.tools.langs.trans('ErrorFailedToUpdateRecord');
+				}
+				$.jnotify(msg, 'error', true);
 			});
 		});
 	});
