@@ -9,7 +9,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - errors displayed with Dolibarr.tools.setEventMessage() (unless option showErrors: false)
 	 *   and thrown as Dolibarr.tools.fetch.Error with status and response data
 	 * - responses built with PHP class JsonResponse {result, msg, newToken, data, debug} recognized :
-	 *   result = 0 is an error even with HTTP 200, msg is used as error message, option unwrap returns only data
+	 *   result = 0 is an error even with HTTP 200, msg is used as error message, option unwrap returns only data,
+	 *   eventMessages (PHP setEventMessages() moved into the response) are displayed (unless option showEventMessages: false)
 	 *
 	 * The token is read from the meta tag anti-csrf-currenttoken printed by main.inc.php
 	 *
@@ -108,6 +109,28 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Display the event messages of a JsonResponse, like on a page: errors and warnings are sticky
+	 * @param {Object} eventMessages {mesgs: [], warnings: [], errors: []}
+	 * @returns {boolean} True if error messages were displayed
+	 */
+	function displayEventMessages(eventMessages) {
+		if (!eventMessages || typeof eventMessages !== 'object' || !Dolibarr.checkToolExist('setEventMessage')) return false;
+
+		let errorsDisplayed = false;
+		['mesgs', 'warnings', 'errors'].forEach(style => {
+			const messages = eventMessages[style];
+			if (!Array.isArray(messages)) return;
+			messages.forEach(message => {
+				if (typeof message !== 'string' || message === '') return;
+				Dolibarr.tools.setEventMessage(message, style, style !== 'mesgs');
+				if (style === 'errors') errorsDisplayed = true;
+			});
+		});
+
+		return errorsDisplayed;
+	}
+
+	/**
 	 * Find a readable error message in a response body
 	 * @param {*} data Parsed response body
 	 * @param {Response} response
@@ -119,6 +142,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			if (typeof data.error === 'string' && data.error !== '') return data.error;
 			if (data.error && typeof data.error.message === 'string') return data.error.message;
 			if (typeof data.msg === 'string' && data.msg !== '') return data.msg;
+			if (data.eventMessages && Array.isArray(data.eventMessages.errors) && data.eventMessages.errors.length > 0) return data.eventMessages.errors.join(', ');
 			if (typeof data.message === 'string' && data.message !== '') return data.message;
 		}
 
@@ -145,6 +169,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * @param {boolean} [options.token] Add the anti CSRF token, default true except for GET and HEAD
 	 * @param {string} [options.responseType='auto'] 'auto' (according to content type), 'json', 'text' or 'response' (native Response)
 	 * @param {boolean} [options.showErrors=true] Display errors with Dolibarr.tools.setEventMessage()
+	 * @param {boolean} [options.showEventMessages=true] For a JsonResponse, display its eventMessages
 	 * @param {number} [options.timeout=0] Abort after this delay in ms, 0 to wait without limit
 	 * @param {boolean} [options.unwrap=false] For a JsonResponse, return only its data property
 	 * @returns {Promise<*>} Parsed response body
@@ -159,6 +184,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			token = undefined,
 			responseType = 'auto',
 			showErrors = true,
+			showEventMessages = true,
 			timeout = 0,
 			unwrap = false,
 			...fetchOptions
@@ -226,7 +252,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		Dolibarr.log(`tools: fetch: ${upperMethod} ${finalUrl.pathname} -> ${response.status}`);
 
 		if (responseType === 'response') {
-			if (!response.ok) return fail(new DolibarrFetchError(`HTTP ${response.status} ${response.statusText}`.trim(), response.status, null, response));
+			// With the option redirect: 'manual', a redirect is not followed and returned to the caller (response.type 'opaqueredirect')
+			if (!response.ok && response.type !== 'opaqueredirect') return fail(new DolibarrFetchError(`HTTP ${response.status} ${response.statusText}`.trim(), response.status, null, response));
 			return response;
 		}
 
@@ -245,10 +272,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			return fail(new DolibarrFetchError('Invalid response from server, your session may have expired', response.status, null, response));
 		}
 
-		// JsonResponse with result = 0 is an error, even if HTTP status could not be set (output already sent)
 		const jsonResponse = isJsonResponse(body);
+		const errorsDisplayed = jsonResponse && showEventMessages && displayEventMessages(body.eventMessages);
+
+		// JsonResponse with result = 0 is an error, even if HTTP status could not be set (output already sent)
 		if (!response.ok || (jsonResponse && !body.result)) {
-			return fail(new DolibarrFetchError(getErrorMessage(body, response), response.status, body, response));
+			const error = new DolibarrFetchError(getErrorMessage(body, response), response.status, body, response);
+			// Error already displayed with the event messages of the response
+			if (errorsDisplayed && !body.msg) throw error;
+			return fail(error);
 		}
 
 		return (unwrap && jsonResponse) ? body.data : body;
