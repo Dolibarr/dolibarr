@@ -147,6 +147,31 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
+$langs->load('projects');
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('t.fk_project' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '0', 'position' => (int) $object->fields['fk_project']['position'], 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : (int) $object->fields['fk_project']['position'];
+$projectcolumns = array(
+	't.fk_project' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
+);
+$arrayfields['t.fk_project'] = $projectcolumns['t.fk_project'];
+$arrayfields['projectlist.title'] = $projectcolumns['projectlist.title'];
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -674,9 +699,20 @@ $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', projectlist.rowid as projectlist_id, projectlist.ref as projectlist_ref, projectlist.title as projectlist_title, projectlist.public as projectlist_public, projectlist.fk_statut as projectlist_status';
+
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as projectlist ON projectlist.rowid = t.fk_project AND projectlist.rowid IN ('.$db->sanitize($projectsforlist).')';
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.id = ef.fk_object)";
 }
@@ -709,7 +745,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search(($key == 'fk_project' ? 'projectlist.rowid' : 't.'.$db->sanitize($key)), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -732,6 +768,13 @@ if ($search_all) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('projectlist.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('projectlist.title', $search_projectlist_title);
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -782,6 +825,8 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+
+$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -936,6 +981,15 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 foreach ($object->fields as $key => $val) {
+	if ($key == 'fk_project') {
+		if (!empty($arrayfields['t.fk_project']['checked'])) {
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+		}
+		if (!empty($arrayfields['projectlist.title']['checked'])) {
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
+		}
+		continue;
+	}
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -998,6 +1052,17 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 foreach ($object->fields as $key => $val) {
+	if ($key == 'fk_project') {
+		if (!empty($arrayfields['t.fk_project']['checked'])) {
+			print_liste_field_titre($arrayfields['t.fk_project']['label'], $_SERVER['PHP_SELF'], 'projectlist.ref', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['projectlist.title']['checked'])) {
+			print_liste_field_titre($arrayfields['projectlist.title']['label'], $_SERVER['PHP_SELF'], 'projectlist.title', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+		}
+		continue;
+	}
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -1094,6 +1159,39 @@ while ($i < $imaxinloop) {
 			}
 		}
 		foreach ($object->fields as $key => $val) {
+			if ($key == 'fk_project') {
+				if (!empty($arrayfields['t.fk_project']['checked'])) {
+					print '<td class="tdoverflowmax150">';
+					if ($obj->projectlist_id > 0) {
+						$projectforlist->id = (int) $obj->projectlist_id;
+						$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+						$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+						$projectforlist->public = (int) $obj->projectlist_public;
+						$projectforlist->status = (int) $obj->projectlist_status;
+						print $projectforlist->getNomUrl(1);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['projectlist.title']['checked'])) {
+					print '<td class="tdoverflowmax150">';
+					if ($obj->projectlist_id > 0) {
+						$projectforlist->id = (int) $obj->projectlist_id;
+						$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+						$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+						$projectforlist->public = (int) $obj->projectlist_public;
+						$projectforlist->status = (int) $obj->projectlist_status;
+						print $projectforlist->getNomUrl(1, '', -1);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				continue;
+			}
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
