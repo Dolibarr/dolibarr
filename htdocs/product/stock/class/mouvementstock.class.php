@@ -357,6 +357,14 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
+			// An outgoing movement (qty < 0) takes the eat-by/sell-by dates of the lot as they are now: the dates given by
+			// the caller (often a copy kept on the line of a reception or shipment, so maybe outdated since the dates were
+			// corrected on the lot) must not block the movement nor be saved into the lot.
+			if ($qty < 0) {
+				$eatby = '';
+				$sellby = '';
+			}
+
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -515,6 +523,9 @@ class MouvementStock extends CommonObject
 				$origin_type = '';
 				$origin_id = 0;
 			}
+
+			// llx_stock_mouvement.label is VARCHAR(255)
+			$label = dol_trunc((string) $label, 255, 'right', 'UTF-8', 1);
 
 			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";

@@ -111,6 +111,19 @@ if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
+// A dispatched line linked to a reception can be updated or deleted only while the reception is a draft
+if (($action == 'confirm_deleteline' || ($action == 'updateline' && empty($cancel))) && $lineid > 0) {
+	$tmpdispatchline = new CommandeFournisseurDispatch($db);
+	if ($tmpdispatchline->fetch($lineid) > 0 && $tmpdispatchline->fk_reception > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+		$tmpreception = new Reception($db);
+		if ($tmpreception->fetch($tmpdispatchline->fk_reception) > 0 && $tmpreception->status != Reception::STATUS_DRAFT) {
+			setEventMessages($langs->trans('StatusOfRefMustBe', $langs->transnoentitiesnoconv('Reception'), $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+			$action = '';
+		}
+	}
+}
+
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
@@ -609,7 +622,7 @@ if ($id > 0 || !empty($ref)) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

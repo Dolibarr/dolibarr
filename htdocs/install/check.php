@@ -65,7 +65,7 @@ $checksok = 1;
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install"));
+$langs->loadLangs(array("install", "admin"));
 
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;

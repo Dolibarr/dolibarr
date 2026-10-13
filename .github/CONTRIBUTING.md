@@ -123,6 +123,7 @@ The keyword can be omitted only if your commit does not fit in any of the follow
 - Perf/PERF:   for a performance enhancement
 - Doc/DOC:     for documentation
 - Qual/QUAL:   for quality code enhancement or re-engineering
+- Uxui/UXUI:   for a user interface or user experience enhancement
 - Sec/SEC:     for a security vulnerability fix
 
 #### ISSUENUM
@@ -148,7 +149,7 @@ FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID 
 or
 CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. The "Close" must be in upper case to appear into ChangeLog)
 or
-NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
+NEW|New|QUAL|Qual|PERF|Perf|UXUI|Uxui Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
 Short description (only when the commit is not introducing a feature nor closing a bug)
 
@@ -169,7 +170,9 @@ WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO 
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
-* A screenshot is mandatory for any PR of change/addition related to the User Interface.
+* When creating your Pull Request, make sure the option **"Allow edits from maintainers"** is checked (this is the default on GitHub, but check it manually if your tool does not set it). This allows the PR Maintainer to push fixes directly into your PR branch, so it can be integrated faster instead of being closed.
+
+* A screenshot is mandatory for any PR of change/addition related to the User Interface. The CI detects the PRs that change the User Interface (title starting with UXUI or modification of UI files like .tpl, .css, .js, ...) and refuses the PR if no screenshot is found into the description or the comments.
 
 Also, some code changes need a prior approbation:
 

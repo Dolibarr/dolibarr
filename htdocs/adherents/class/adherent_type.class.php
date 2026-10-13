@@ -235,6 +235,7 @@ class AdherentType extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		global $langs;
+
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;

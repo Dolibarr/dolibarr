@@ -260,7 +260,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	text-transform: uppercase;
 	font-weight: bold !important;
 
-	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;

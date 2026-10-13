@@ -83,6 +83,7 @@ $search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
+$search_supplier_code = GETPOST('search_supplier_code', 'alphanohtml');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -211,6 +212,7 @@ $arrayfields = array(
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 30, 'enabled' => (isModEnabled('project') ? '1' : '0')),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
+	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'checked' => '-1', 'position' => 43),
 	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 43),
 	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 44),
 	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 45),
@@ -312,6 +314,7 @@ if (empty($reshook)) {
 		$search_project = '';
 		$search_company = "";
 		$search_company_alias = "";
+		$search_supplier_code = "";
 		$search_amount_no_tax = "";
 		$search_amount_all_tax = "";
 		$search_montant_ht = '';
@@ -661,6 +664,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	if ($search_company_alias) {
 		$sql .= natural_search('s.name_alias', $search_company_alias);
 	}
+}
+if ($search_supplier_code) {
+	$sql .= natural_search('s.code_fournisseur', $search_supplier_code);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1043,6 +1049,9 @@ if ($search_company) {
 if ($search_company_alias) {
 	$param .= '&search_company_alias='.urlencode($search_company_alias);
 }
+if ($search_supplier_code) {
+	$param .= '&search_supplier_code='.urlencode($search_supplier_code);
+}
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
@@ -1241,6 +1250,8 @@ if (isModEnabled('category')) {
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
+$moreforfilter .= '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle opacitymedium" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle opacitymedium">'.$langs->trans("Alert").'</label></div>';
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -1332,7 +1343,6 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	 print $langs->trans('to').' ';*/
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 	//print '<br>';
-	print '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle">'.$langs->trans("Alert").'</label></div>';
 	print '</div>';
 	print '</td>';
 }
@@ -1347,6 +1357,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Alias
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
+}
+// Supplier code
+if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'"></td>';
 }
 // Town
 if (!empty($arrayfields['s.town']['checked'])) {
@@ -1584,6 +1598,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+	print_liste_field_titre($arrayfields['s.code_fournisseur']['label'], $_SERVER['PHP_SELF'], 's.code_fournisseur', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
@@ -2003,6 +2021,15 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			print dol_escape_htmltag($thirdparty->name_alias);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Supplier code
+		if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($thirdparty->code_fournisseur).'">';
+			print dol_escape_htmltag($thirdparty->code_fournisseur);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

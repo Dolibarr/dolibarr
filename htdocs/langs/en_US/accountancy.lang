@@ -265,7 +265,6 @@ ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
 FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
-CustomerInvoicePayment=Payment of invoice customer
 ThirdPartyAccount=Third-party account
 AccountNotDefined=Account not defined
 TransactionExportDesc=This accounting entry has been exported. It cannot be modified.

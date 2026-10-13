@@ -119,6 +119,31 @@ body.dolibarr-doc {
 .doc-wrapper .doc-content-wrapper ul.documentation-summary li.summary-title {margin: 0;padding: 0;list-style: none;}
 .doc-wrapper .doc-content-wrapper ul.documentation-summary li.summary-title h3 {color: rgb(38,60,92);margin: 12px 0 6px 0;padding: 0;font-size: 1.2em;text-decoration: underline;}
 
+/* Sticky summary (table of contents) on large screens, filled by documentation.js */
+/* Layout depends on the summary-toc class set in PHP, so the page is displayed directly with its final layout */
+.doc-wrapper .doc-toc {display: none;}
+@media (min-width: 1500px) {
+  .doc-wrapper:has(.summary-toc) {display: grid;grid-template-columns: minmax(0, 960px) minmax(260px, 520px) minmax(0, 1fr);column-gap: 8px;align-items: start;}
+  .doc-wrapper:has(.summary-toc) > * {grid-column: 1 / -1;}
+  .doc-wrapper:has(.summary-toc) > .doc-content-wrapper {grid-column: 1;}
+  .doc-wrapper:has(.summary-toc) > .doc-toc {grid-column: 2;grid-row: 2;}
+  .doc-wrapper .doc-content-wrapper .summary-wrapper.summary-toc {display: none;}
+  .doc-wrapper:has(.summary-toc) .doc-content-wrapper [id] {scroll-margin-top: 16px;}
+
+  .doc-wrapper .doc-toc {display: block;position: sticky;top: 24px;margin: 24px 32px 24px 0;max-height: calc(100vh - 48px);overflow-y: auto;box-sizing: border-box;background: #fff;padding: 16px;border-radius: 4px;animation: doc-toc-fadein .15s ease-out;}
+  @keyframes doc-toc-fadein {from {opacity: 0;} to {opacity: 1;}}
+  .doc-wrapper .doc-toc .doc-toc-header {display: flex;align-items: baseline;justify-content: space-between;gap: 12px;margin: 0 0 12px 0;}
+  .doc-wrapper .doc-toc .doc-toc-title {color: rgb(38,60,92);font-weight: 600;font-size: 1.1em;}
+  .doc-wrapper .doc-toc .doc-toc-backtop {color: rgba(64, 64, 64, .7);text-decoration: none;font-size: .9em;white-space: nowrap;}
+  .doc-wrapper .doc-toc .doc-toc-backtop:hover {color: rgb(0, 123, 140);}
+  .doc-wrapper .doc-toc ul {margin: 0;padding: 0;list-style: none;}
+  .doc-wrapper .doc-toc ul ul {padding-left: 12px;}
+  .doc-wrapper .doc-toc li.summary-title h3 {margin: 12px 0 6px 0;padding: 0;font-size: 1em;color: rgb(38,60,92);}
+  .doc-wrapper .doc-toc li a {display: block;padding: 4px 0 4px 10px;border-left: 2px solid rgba(0, 0, 0, .08);color: rgb(38, 60, 92);text-decoration: none;line-height: 1.35;transition: color .1s ease-in-out, border-color .1s ease-in-out;}
+  .doc-wrapper .doc-toc li a:hover {color: rgb(0, 123, 140);}
+  .doc-wrapper .doc-toc li a.active {color: rgb(0, 123, 140);border-left-color: rgb(0, 123, 140);font-weight: 600;}
+}
+
 /* Documentation section */
 .doc-wrapper .doc-content-wrapper .documentation-section {background: #fff;padding: 16px;border-radius: 4px;margin-bottom: 24px;}
 .doc-wrapper .doc-content-wrapper .documentation-section h2.documentation-title {margin: 0;margin-bottom:16px;padding: 0;color: rgb(38,60,92);}

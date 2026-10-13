@@ -1268,7 +1268,7 @@ if ($id > 0) {
 			if (empty($object->ref)) $object->ref = (string) $object->id;
 
 			$objref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->salaries->dir_output.'/'.$object->element.'/'.$objref;
+			$filedir = $conf->salaries->dir_output.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = 1;
@@ -1277,7 +1277,7 @@ if ($id > 0) {
 
 			print $formfile->showdocuments(
 				'salaries:Salary',
-				$object->element.'/'.$objref,
+				$objref,
 				$filedir,
 				$urlsource,
 				(int) $genallowed,

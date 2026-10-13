@@ -91,7 +91,25 @@ notifications:
 
 before_install:
 - |
-  echo "===== $(date) Check if the build is required (only for a pull request, we always build on push)"
+  echo "===== $(date) Check if the build is required (for a pull request or a push, we always build on cron or with 'latest php')"
+  if [ "$TRAVIS_EVENT_TYPE" = 'push' ] && [ "$TRAVIS_PHP_VERSION" != 'latest' ]; then
+    # TRAVIS_COMMIT_RANGE is "before...after". It is empty for the first push of a branch, and the
+    # "before" commit may no more exist after a force push: in such cases, we run the build.
+    # The clone is shallow (see git.depth), so we fetch the "before" commit to compare the 2 trees.
+    push_before_commit=${TRAVIS_COMMIT_RANGE%%...*}
+    changed_files=''
+    if [ -n "$push_before_commit" ] && git fetch -q --depth=1 origin "$push_before_commit" 2>/dev/null; then
+      changed_files=$(git diff --name-only "$push_before_commit" "$TRAVIS_COMMIT" 2>/dev/null)
+    fi
+    if [ -z "$changed_files" ]; then
+      echo "Can not get the list of changed files of the push (range '$TRAVIS_COMMIT_RANGE'), we run the build"
+    elif echo "$changed_files" | bash dev/build/ci/build_required.sh; then
+      echo "The build is required"
+    else
+      echo "No changed file of the push (range $TRAVIS_COMMIT_RANGE) can change the result of the build, we stop here"
+      travis_terminate 0
+    fi
+  fi
   if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
     # The clone is shallow (see git.depth), so we ask for the parents of the merge
     # commit of the pull request to know the list of files it changes.
@@ -242,7 +260,7 @@ install:
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.5' ] || [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
     sudo composer self-update 2.4.4
     # phpunit 8+ is required for php 8
-    composer -n require --ignore-platform-reqs phpunit/phpunit ^8
+    composer -n require --ignore-platform-reqs phpunit/phpunit ^9
     if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
       composer -n require --ignore-platform-reqs squizlabs/php_codesniffer ^3
     fi
@@ -329,7 +347,7 @@ before_script:
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
 
       echo "MySQL load sql"
-      sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+      sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_4.0.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo "PGSQL"
@@ -338,6 +356,8 @@ before_script:
       sudo pgloader 'mysql://root:password@127.0.0.1/travis' 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+      # pgloader renames indexes into idx_<oid>_<name>, so the "DROP INDEX uk_ecm_files" of migration scripts fails and the old unique key (label, entity) is kept. We drop it here.
+      psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis' -At -c "SELECT 'DROP INDEX ' || quote_ident(schemaname) || '.' || quote_ident(indexname) || ';' FROM pg_indexes WHERE tablename = 'llx_ecm_files' AND indexname LIKE 'idx_%_uk_ecm_files'" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
       #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
       #echo '\d llx_c_country' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
@@ -487,21 +507,6 @@ script:
     # I disable stop on error to be able to continue.
     set +e
     cd htdocs/install
-    php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
-    php upgrade2.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-2.log
-    php step5.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-3.log
-    php upgrade.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370.log
-    php upgrade2.php 3.6.0 3.7.0 > $TRAVIS_BUILD_DIR/upgrade360370-2.log
-    php step5.php 3.6.0 3.7.0 > $TRAVIS_BUILD_DIR/upgrade360370-3.log
-    php upgrade.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380.log
-    php upgrade2.php 3.7.0 3.8.0 > $TRAVIS_BUILD_DIR/upgrade370380-2.log
-    php step5.php 3.7.0 3.8.0 > $TRAVIS_BUILD_DIR/upgrade370380-3.log
-    php upgrade.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390.log
-    php upgrade2.php 3.8.0 3.9.0 > $TRAVIS_BUILD_DIR/upgrade380390-2.log
-    php step5.php 3.8.0 3.9.0 > $TRAVIS_BUILD_DIR/upgrade380390-3.log
-    php upgrade.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400.log
-    php upgrade2.php 3.9.0 4.0.0 > $TRAVIS_BUILD_DIR/upgrade390400-2.log
-    php step5.php 3.9.0 4.0.0 > $TRAVIS_BUILD_DIR/upgrade390400-3.log
     php upgrade.php 4.0.0 5.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade400500.log
     php upgrade2.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-2.log
     php step5.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-3.log

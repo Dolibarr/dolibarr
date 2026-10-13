@@ -91,12 +91,27 @@ if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+	if (isModEnabled('variants')) {
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+	}
 
 	top_httphead('application/json');
 
 	$outjson = array();
 
 	$object = new Product($db);
+	if (isModEnabled('variants')) {
+		$combinations = GETPOST('combinations', 'array:alphanohtml');
+		if (!empty($combinations)) {
+			$prodcomb = new ProductCombination($db);
+			$combination = $prodcomb->fetchByProductCombination2ValuePairs($id, $combinations);
+			if ($combination) {
+				// Fetch the concrete variant product so returned prices include the configured price impact.
+				$id = (int) $combination->fk_product_child;
+			}
+		}
+	}
+
 	$ret = $object->fetch($id);
 	if ($ret > 0) {
 		$outref = $object->ref;
@@ -157,6 +172,8 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
+			// The price by quantity must be a price of the product asked, not the one of another product
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $id).")";
 
 			$result = $db->query($sql);
 			if ($result) {

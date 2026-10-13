@@ -231,6 +231,7 @@ class UserBankAccount extends Account
 
 				$this->id = $obj->rowid;
 				$this->userid = $obj->fk_user;
+				$this->entity = $obj->entity;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;

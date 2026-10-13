@@ -1122,6 +1122,44 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *    Return the ids of all the events of the recurring series the current event belongs to.
+	 *    A recurring event is not a master event with occurrences: it is N independent records of
+	 *    llx_actioncomm sharing the same recurid. So an action that must apply to the whole series
+	 *    has to load the ids of the other events first.
+	 *
+	 *    @return   int[]|int<-1,-1>			Ids of the events sorted by date, empty array if the
+	 *    									event is not part of a series, -1 if KO
+	 */
+	public function getIdsOfRecurringSerie()
+	{
+		if (empty($this->recurid)) {
+			return array();
+		}
+
+		$sql = "SELECT a.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.recurid = '".$this->db->escape($this->recurid)."'";
+		$sql .= " AND a.entity IN (".getEntity('agenda').")";
+		$sql .= " ORDER BY a.datep ASC, a.id ASC";
+
+		dol_syslog(get_class($this)."::getIdsOfRecurringSerie", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$ids = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$ids[] = (int) $obj->id;
+		}
+		$this->db->free($resql);
+
+		return $ids;
+	}
+
+	/**
 	 *    Delete event from database
 	 *
 	 *    @param	User		$user			User making the delete
@@ -2948,13 +2986,20 @@ class ActionComm extends CommonObject
 			$to = null;  // Ensure 'to' is defined for static analysis
 
 			while ($obj = $this->db->fetch_object($resql)) {
+				// Error status for the reminder being processed in this iteration. $error (the cumulative counter for
+				// the whole run) must not be used to gate this per-reminder processing: once any single reminder fails
+				// (ex: a user with no email on file), it would otherwise stay non-zero for the rest of the loop and
+				// silently defer every other due reminder to the next cron run.
+				$errorforreminder = 0;
+
 				$res = $actionCommReminder->fetch($obj->id);
 				if ($res < 0) {
 					$error++;
+					$errorforreminder++;
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error) {
+				if (!$errorforreminder) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
@@ -2986,10 +3031,12 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
+								$errorforreminder++;
 							}
 						} else {
 							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+							$errorforreminder++;
 						}
 
 						// Sender
@@ -2997,9 +3044,10 @@ class ActionComm extends CommonObject
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
+							$errorforreminder++;
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							// Errors Recipient
 							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
@@ -3012,10 +3060,11 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
 								$error++;
+								$errorforreminder++;
 							}
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
 
 							$res = $actionCommReminder->update($user);
@@ -3040,6 +3089,7 @@ class ActionComm extends CommonObject
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
+						$errorforreminder++;
 					}
 				}
 			}

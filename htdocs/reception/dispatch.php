@@ -137,6 +137,12 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// Lines can be updated only while the stock of the reception is not moved (same rule as the display of the form)
+if ($action == 'updatelines' && !($object->status == Reception::STATUS_DRAFT || ($object->status == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')))) {
+	setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+	$action = '';
+}
+
 // Update a dispatched line
 if ($action == 'updatelines' && $permissiontoreceive) {
 	$db->begin();
@@ -389,7 +395,7 @@ if ($id > 0 || !empty($ref)) {
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($objectsrc->fk_project);
+				$proj->fetch((int) $objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
