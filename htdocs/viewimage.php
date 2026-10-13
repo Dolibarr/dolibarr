@@ -298,11 +298,13 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
+$imagepublicfortakepos = 0;
 if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
+		$imagepublicfortakepos = 1;
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
 		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
 		// only shared images are visible

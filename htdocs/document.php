@@ -129,6 +129,7 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 {
 }
 
+$needlogin = !defined('NOLOGIN') || !NOLOGIN;
 require 'main.inc.php'; // Load $user and permissions
 /**
  * @var Conf $conf
