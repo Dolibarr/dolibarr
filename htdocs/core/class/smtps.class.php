@@ -119,7 +119,7 @@ class SMTPs
 	/**
 	 * Message Content
 	 *
-	 * @var array{html?:array{mimeType:string,data:string,dataText:string,md5?:string},plain?:array{mimeType:string,data:string,dataText:string,md5?:string},image:array<string,array{imageName:string,cid:string,md5?:string,data:string}>,attachment:array<string,array{filename:string,cid?:string,md5?:string,data:string}>}	$msgContent	Array of messages
+	 * @var array{html?:array{mimeType:string,data:string,dataText:string,md5?:string},plain?:array{mimeType:string,data:string,dataText:string,md5?:string},image:array<string,array{imageName:string,cid:string,md5?:string,data:string}>,attachment:array<string,array{mimeType:string,fileName:string,cid:string,md5?:string,data:string}>}	$msgContent	Array of messages
 	 */
 	private $_msgContent = array();
 
@@ -1786,13 +1786,17 @@ class SMTPs
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
-			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
-			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
-			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
-			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
+			// The key is the file name and the hash of its content: the same file given twice is attached once, but 2 different
+			// files with the same name (from different directories) are both attached.
+			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 3);
+
+			$this->_msgContent['attachment'][$attachmentkey]['mimeType'] = $strMimeType;
+			$this->_msgContent['attachment'][$attachmentkey]['fileName'] = $strFileName;
+			$this->_msgContent['attachment'][$attachmentkey]['data']     = $strContent;
+			$this->_msgContent['attachment'][$attachmentkey]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['attachment'][$attachmentkey]['md5'] = dol_hash($strContent, 3);
 			}
 		}
 	}
