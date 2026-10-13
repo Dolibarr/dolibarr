@@ -326,7 +326,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search(($key == 'fk_project' ? 'projectlist.rowid' : (($key == 'ref') ? 't.ref' : 't.'.$class_key)), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search(($key == 'fk_project' ? 'projectlist.rowid' : (($key == 'ref') ? 't.ref' : 't.'.$db->sanitize($class_key))), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
