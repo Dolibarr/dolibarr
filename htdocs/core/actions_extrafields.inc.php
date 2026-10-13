@@ -431,7 +431,7 @@ if ($action == 'update') {
 				}
 
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
-				$computedvalue = GETPOST('computed_value', 'nohtml');
+				$computedvalue = GETPOST('computed_value', 'alphanohtml');
 
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
@@ -451,7 +451,7 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'nohtml'),
+					GETPOST('enabled', 'alphanohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
