@@ -42,8 +42,9 @@ As the Developer:
 3. Clone your fork.
 4. Choose a branch(See the [Branches](#branches) section below).
 5. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
-6. Commit and push your changes.
-7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+6. Apply recommandation if you are using IA: Link the .agents/AGENTS.md into AGENTS.md file in root repository directoy. Link also the .agents dir to the dir of your IA (.claud, .vibe, ...)
+7. Commit and push your changes.
+8. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
 
