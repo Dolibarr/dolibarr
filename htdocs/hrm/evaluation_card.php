@@ -163,7 +163,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "validate" && $permissiontoadd) {
-		// Levels are saved in database as soon as they are clicked (see core/ajax/updatefield.php)
+		// Levels are saved in database as soon as they are clicked (see core/ajax/objectfield.php)
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
 			if ($line->rankorder != "") {
@@ -297,7 +297,7 @@ $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 
-$urltopost = DOL_URL_ROOT.'/core/ajax/updatefield.php';
+$urltopost = DOL_URL_ROOT.'/core/ajax/objectfield.php';
 ?>
 <script>
 	$(document).ready(function() {
@@ -312,15 +312,11 @@ $urltopost = DOL_URL_ROOT.'/core/ajax/updatefield.php';
 			$.post('<?php echo dol_escape_js($urltopost); ?>', {
 				token: '<?php echo currentToken(); ?>',
 				element: "evaluationdet",
-				fk_element: lineid,
+				id: lineid,
 				field: "rankorder",
-				value: rank
-			}).done(function(data) {
-				if (data && data.error) {
-					$.jnotify(data.error, 'error', true);
-				}
+				ajaxfield_rankorder: rank
 			}).fail(function(xhr) {
-				$.jnotify('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
+				$.jnotify((xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : '<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', 'error', true);
 			});
 		});
 	});
