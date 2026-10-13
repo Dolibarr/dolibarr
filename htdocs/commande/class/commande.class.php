@@ -453,6 +453,23 @@ class Commande extends CommonOrder
 	}
 
 	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of orders is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client($user, (string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
+	}
+
+	/**
 	 *  Returns the reference to the following non used Order depending on the active numbering module
 	 *  defined into COMMANDE_ADDON
 	 *
