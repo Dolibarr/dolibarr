@@ -1919,6 +1919,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
 		}
 
+		// Hook contexts of the page, sent back by the ajax requests printing parts of the page (ex: core/ajax/objectline.php),
+		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
+		if (is_object($hookmanager)) {
+			$jsContextVars['HOOK_CONTEXTS'] = array_values(array_diff($hookmanager->contextarray, array('main', 'login')));
+		}
+
 		// Load context and all js tools
 		foreach ($jsContextFiles as $jsContextFile) {
 			print '<script nonce="'.getNonce().'" src="'.$jsContextPathUrl.'/'.$jsContextFile.'?' . $ext . '" ></script>'."\n";
