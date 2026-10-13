@@ -136,6 +136,8 @@ function dolPrintHTMLForAttributeUrl($s)
 /**
  * Return a string ready to be output on input textarea.
  * Differs from dolPrintHTML because all tags are escape. With dolPrintHTML, all tags except common one are escaped.
+ * If the content is for a textare that need to edit a text string (not HTML), you can also use
+ * dolPrintText() for the textarea.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags

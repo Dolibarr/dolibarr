@@ -149,6 +149,36 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 *  testShowOutputFieldAndValidateFieldWithDoublePrecision
+	 *
+	 *  Type double(xx,yy), used by amounts of documents, must be managed like double.
+	 *
+	 *  @return void
+	 */
+	public function testShowOutputFieldAndValidateFieldWithDoublePrecision()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+
+		$fields = array(
+			'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'isameasure' => 1),
+		);
+
+		$this->assertSame(price('58.40000000'), $localobject->showOutputField($fields['total_ht'], 'total_ht', '58.40000000'), 'double(24,8) is output like double');
+		$this->assertSame($localobject->showOutputField(array('type' => 'double') + $fields['total_ht'], 'total_ht', '58.40000000'), $localobject->showOutputField($fields['total_ht'], 'total_ht', '58.40000000'));
+
+		$this->assertTrue($localobject->validateField($fields, 'total_ht', '58.4'), 'Numeric value is valid');
+		$this->assertFalse($localobject->validateField($fields, 'total_ht', 'abc'), 'double(24,8) is validated as numeric');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testIsInt
 	 *
 	 *  @return void

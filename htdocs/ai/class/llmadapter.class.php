@@ -310,7 +310,7 @@ class UniversalLLMAdapter
 	 * retired or not available (not a quota/auth/network error).
 	 *
 	 * @param string $msg      Error message returned by the provider
-	 * @return bool
+	 * @return bool            True if the message says the model is not available
 	 */
 	public static function isModelUnavailableError(string $msg): bool
 	{
