@@ -61,8 +61,8 @@ $lineid = GETPOSTINT('lineid');
 $contextpage = 'bookcalbookinglist';
 $canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
 $arrayfields = array(
-	'projectlist.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects, 'position' => 60),
-	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects, 'position' => 61),
+	'projectlist.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => '0', 'enabled' => ($canreadprojects ? '1' : '0'), 'position' => 60),
+	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => '0', 'enabled' => ($canreadprojects ? '1' : '0'), 'position' => 61),
 );
 $search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
 $search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');

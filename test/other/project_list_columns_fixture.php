@@ -21,7 +21,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $conf = new Conf();
 $conf->entity = $input['entity'] ?? 1;
-$conf->modules['project'] = !empty($input['enabled']);
+$conf->modules['project'] = !empty($input['enabled']) ? 'modProjet' : '';
 $conf->global->MAIN_ENABLE_AJAX_TOOLTIP = $input['ajax'] ?? 1;
 $conf->global->MAIN_LOGTOFILE = 0;
 $conf->global->MAIN_LOGTOHTML = 0;
@@ -214,6 +214,7 @@ $ifstart = $start + $opening[0][1];
 preg_match('/^'.preg_quote($opening[1][0], '/').'\}/m', substr($source, $ifstart), $closing, PREG_OFFSET_CAPTURE);
 $end = $ifstart + $closing[0][1] + strlen($closing[0][0]);
 $scope = substr($source, $start, $end-$start);
+$projectsforlist = '0';
 eval($scope);
 $output = array('queries'=>$db->queries, 'allowed'=>$projectsforlist, 'metadata'=>$metadata);
 if (($input['stage'] ?? '') === 'scope') { echo json_encode($output); exit; }

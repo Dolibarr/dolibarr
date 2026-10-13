@@ -95,7 +95,7 @@ for f,relation,alias,refkey,titlekey,style in configs:
         cfg=base|scope|dict(stage='scope')
         probe=call(cfg)
         assert probe['metadata'][titlekey]['checked']=='0',(f,name,'label enabled by default')
-        assert bool(probe['metadata'][titlekey]['enabled'])==bool(scope['enabled'] and scope['read'])
+        assert probe['metadata'][titlekey]['enabled']==('1' if scope['enabled'] and scope['read'] else '0')
         if probe['queries']:
             authorized=[dict(r) for r in db.execute(probe['queries'][-1])]
         else:authorized=[]

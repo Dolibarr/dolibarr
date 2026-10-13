@@ -318,20 +318,21 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfields
 // Project columns use the same access scope for display, search and sorting.
 $canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
 $langs->load('projects');
-$projectcolumns = array_replace_recursive(
-	array(
-		'pr.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects, 'position' => 190),
-		'pr.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => '0', 'enabled' => $canreadprojects),
-	),
-	array_intersect_key($arrayfields, array('pr.ref' => 1, 'pr.title' => 1))
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('pr.ref' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('pr.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '0', 'position' => 190, 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
+$projectcolumns = array(
+	'pr.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'pr.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
 );
-$projectcolumns['pr.ref']['label'] = 'RefProject';
-$projectcolumns['pr.ref']['langfile'] = 'projects';
-$projectcolumns['pr.ref']['enabled'] = $canreadprojects;
-$projectcolumns['pr.title']['enabled'] = $canreadprojects;
-$projectcolumns['pr.title']['position'] = $projectcolumns['pr.ref']['position'] + 1;
-$arrayfields = array_replace($arrayfields, $projectcolumns);
+$arrayfields['pr.ref'] = $projectcolumns['pr.ref'];
+$arrayfields['pr.title'] = $projectcolumns['pr.title'];
 
 $search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
 $search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
