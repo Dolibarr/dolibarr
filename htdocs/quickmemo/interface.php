@@ -256,7 +256,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 		$memo->color = $firstColor;
 	}
 
-	$memo->quick_note = GETPOST("note", "alphanohtml");
+	$memo->quick_note = GETPOST("note", "nohtml");
 	$memo->fk_element = $element_id;
 	$memo->element_type = $element_type;
 	$memo->context_tab = $context_tab;
@@ -638,7 +638,7 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 		return false;
 	}
 
-	$memo->quick_note = GETPOST("note", "alphanohtml");
+	$memo->quick_note = GETPOST("note", "nohtml");
 	$memo->tms = dol_now();
 	$memo->fk_user_modif = $user->id;
 
