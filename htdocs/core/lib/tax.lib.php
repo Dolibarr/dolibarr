@@ -1211,4 +1211,3 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	/** @var array<int|string, array<int|string, mixed>> $list Array with details of VATs (per rate) */
 	return $list;
 }
-
