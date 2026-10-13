@@ -59,6 +59,7 @@ HostCharset=Host charset
 ClientCharset=Client charset
 ClientSortingCharset=Client collation
 WarningModuleNotActive=Module <b>%s</b> must be enabled
+WarningPermissionIdsAlreadyUsed=Some permission ids of module <b>%s</b> are already used by another module, so these permissions were not added: %s. The module may not work properly. Check the id of the module is not already used by another module.
 WarningOnlyPermissionOfActivatedModules=Only permissions for enabled modules are shown.
 WarningOnlyProfilesOfActivatedModules=Only predefined import/export profiles for enabled modules are shown.
 WarningOnlyCategoryTypesOfActivatedModules=Only categories for enabled modules are shown.
