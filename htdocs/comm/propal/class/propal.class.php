@@ -373,14 +373,14 @@ class Propal extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 20),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 22),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 22, 'uieditable' => 1, 'alwayseditable' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 40),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'position' => 23),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 24),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 24, 'uieditable' => 1, 'alwayseditable' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => -1, 'position' => 60),
-		'fin_validite' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'datep' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'uieditable' => 1),
+		'fin_validite' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'uieditable' => 1),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -393,20 +393,20 @@ class Propal extends CommonObject
 		'localtax1' => array('type' => 'double(24,8)', 'label' => 'LocalTax1', 'enabled' => 1, 'visible' => -1, 'position' => 135, 'isameasure' => 1),
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
-		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 150),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 150, 'uieditable' => 1),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 155),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'uieditable' => 1),
 		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 161),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 165),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 165, 'uieditable' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 175, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 180),
-		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 185),
-		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 185, 'uieditable' => 1),
+		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'uieditable' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'DefaultWarehouse', 'enabled' => 'isModEnabled("stock")', 'visible' => -1, 'position' => 191),
-		'fk_availability' => array('type' => 'integer', 'label' => 'Availability', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'fk_availability' => array('type' => 'integer', 'label' => 'Availability', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'uieditable' => 1),
 		'fk_delivery_address' => array('type' => 'integer', 'label' => 'DeliveryAddress', 'enabled' => 1, 'visible' => 0, 'position' => 200), // deprecated
-		'fk_input_reason' => array('type' => 'integer', 'label' => 'InputReason', 'enabled' => 1, 'visible' => -1, 'position' => 205),
+		'fk_input_reason' => array('type' => 'integer', 'label' => 'InputReason', 'enabled' => 1, 'visible' => -1, 'position' => 205, 'uieditable' => 1),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 220),
 		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 225),
@@ -467,6 +467,131 @@ class Propal extends CommonObject
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Override of CommonObject::getFieldPropertyName(): the date of proposals is in the property date.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		if ($field == 'datep') {
+			return 'date';
+		}
+
+		return parent::getFieldPropertyName($field);
+	}
+
+	/**
+	 * Recompute the fields depending on a field changed by setFieldValue().
+	 * Override of CommonObject::onFieldValueChanged(): the end of validity follows the date of the proposal,
+	 * with the same validity duration.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		if ($fieldKey == 'datep' && !empty($value) && !empty($this->duree_validite) && !empty($this->fin_validite)) {
+			$this->fin_validite = $value + ((int) $this->duree_validite * 24 * 3600);
+		}
+	}
+
+	/**
+	 * Return the value of a field posted by an ajax edition of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::getFieldValueFromAjaxPost(): the end of validity is a day on the card.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if the input is not posted
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		if ($field == 'fin_validite') {
+			return GETPOSTISSET('ajaxfield_'.$field.'year') ? GETPOSTDATE('ajaxfield_'.$field, '12:00:00') : null;
+		}
+
+		return parent::getFieldValueFromAjaxPost($field);
+	}
+
+	/**
+	 * Return the input html of a field for an ajax edition of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxInputField(): the end of validity is a day on the card.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	string			Input html
+	 */
+	public function ajaxInputField($field)
+	{
+		if ($field == 'fin_validite') {
+			$form = new Form($this->db);
+
+			return $form->selectDate($this->fin_validite, 'ajaxfield_'.$field, 0, 0, 0, '', 1, 1);
+		}
+
+		return parent::ajaxInputField($field);
+	}
+
+	/**
+	 * Return the output html of a field for an ajax refresh of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxOutputField(): the end of validity is a day on the card.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		if ($field == 'fin_validite') {
+			return empty($this->fin_validite) ? '' : dol_print_date($this->fin_validite, 'day');
+		}
+
+		return parent::ajaxOutputField($field);
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): fields of proposals are saved with their setters, like on the card
+	 * (set_ref_client(), set_date()...).
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		global $langs;
+
+		switch ($field) {
+			case 'ref_client':
+				return $this->set_ref_client($user, (string) $this->ref_client);
+			case 'datep':
+				if (empty($this->date)) {
+					$langs->load('errors');
+					$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Date'));
+					return -1;
+				}
+				// End of validity recomputed by onFieldValueChanged(), compared before set_date() that replaces oldcopy
+				$finvaliditychanged = is_object($this->oldcopy) && $this->fin_validite != $this->oldcopy->fin_validite;
+				$result = $this->set_date($user, (int) $this->date);
+				if ($result > 0 && $finvaliditychanged) {
+					$result = $this->set_echeance($user, (int) $this->fin_validite, 1);
+				}
+				return $result;
+			case 'fin_validite':
+				return $this->set_echeance($user, (int) $this->fin_validite);
+			case 'date_livraison':
+				return $this->setDeliveryDate($user, (int) $this->delivery_date);
+			case 'fk_availability':
+				return $this->set_availability($user, (int) $this->availability_id);
+			case 'fk_input_reason':
+				return $this->set_demand_reason($user, (int) $this->demand_reason_id);
+		}
+
+		return parent::persistFieldValue($user, $field);
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -4060,6 +4185,19 @@ class Propal extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**

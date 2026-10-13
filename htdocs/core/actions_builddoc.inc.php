@@ -53,6 +53,9 @@
 @phan-var-force int $id
 @phan-var-force int $permissiontoadd
 @phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force ?int $hidedetails
+@phan-var-force ?int $hidedesc
+@phan-var-force ?int $hideref
 @phan-var-force CommonObject|Societe $object
 @phan-var-force int $id
 ';
@@ -113,7 +116,9 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) 
 			setEventMessages($object->warning, $object->warnings, 'warnings');
 			$action = '';
 		} else {
-			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
+			// $donotredirect is set when include is done by bulk action "Bill Orders".
+			// nosuccessmessage is posted when the document is generated again automatically after a change (ajax edition of the card)
+			if (empty($donotredirect) && !GETPOSTINT('nosuccessmessage')) {
 				setEventMessages($langs->trans("FileGenerated"), null);
 
 				/*$urltoredirect = $_SERVER['REQUEST_URI'];

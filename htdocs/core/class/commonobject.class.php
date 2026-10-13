@@ -164,7 +164,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * notnull?: int<-1, 1>,
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
+	 * uieditable?: int<0, 1>,
 	 * default?: string|int,
 	 * description?: string,
 	 * index?: int<0, 1>,
@@ -223,6 +224,7 @@ abstract class CommonObject
 	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 * 'noteditable' says if field is not editable (1 or 0)
 	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'uieditable' says if field can be modified from the user interface with generic tools like ajax edition (1 or 0, default 0). See isFieldEditableFromUi()
 	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 * 'index' if we want an index in database.
 	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
@@ -2448,14 +2450,17 @@ abstract class CommonObject
 		}
 
 
-		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
-			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		// Property holding the value, ex: cond_reglement_id for the field fk_cond_reglement
+		$property = $this->getFieldPropertyName($fieldKey);
+
+		if (is_object($this->oldcopy) && property_exists($this, $property) && property_exists($this->oldcopy, $property)) {
+			$this->oldcopy->$property = $this->$property;
 		}
 
 		$this->fieldValueBeingSet[$fieldKey] = true;
 
 		// Set new value
-		$this->$fieldKey = $value;
+		$this->$property = $value;
 
 		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
 		// both declared as real properties on the object for backward compatibility, so PHP never triggers
@@ -2503,6 +2508,353 @@ abstract class CommonObject
 	protected function onFieldValueChanged($fieldKey, $value)
 	{
 		// Nothing to do by default.
+	}
+
+	/**
+	 * Update a field from the user interface (ajax edition of cards...) and save it into database.
+	 * The field must be allowed by isFieldEditableFromUi(), the value is checked and set by setFieldValue(),
+	 * then only this field is saved by persistFieldValue().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @param mixed  $value New value
+	 * @return int          Return integer <0 if KO (error into $this->error and $this->errors), >0 if OK
+	 */
+	public function updateFieldFromUi(User $user, $field, $value)
+	{
+		global $langs;
+
+		if (!$this->isFieldEditableFromUi($user, $field)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorFieldIsNotEditable');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$property = $this->getFieldPropertyName($field);
+		$oldvalue = $this->getFieldUiValue($field);
+
+		if (!$this->setFieldValue($user, $field, $value)) {
+			if (empty($this->error)) {
+				$this->error = $this->getFieldError($field);
+			}
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		$result = $this->persistFieldValue($user, $field);
+		if ($result <= 0) {
+			// Keep the object consistent with the database
+			$this->$property = $oldvalue;
+			if (empty($this->error) && !empty($this->errors)) {
+				$this->error = implode(', ', $this->errors);
+			}
+			return -3;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Business documents keep some fields in a property with another name than the field
+	 * (ex: the field fk_cond_reglement is in the property cond_reglement_id).
+	 * Override in child classes for their own fields, and return the result of the parent for the others.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		// Only for objects having the property (properties named like these fields are deprecated, ex: Propal::$fk_availability)
+		$properties = array(
+			'fk_cond_reglement' => 'cond_reglement_id',
+			'fk_mode_reglement' => 'mode_reglement_id',
+			'fk_availability' => 'availability_id',
+			'fk_input_reason' => 'demand_reason_id',
+			'fk_shipping_method' => 'shipping_method_id',
+			'fk_projet' => 'fk_project',
+			'date_livraison' => 'delivery_date',
+		);
+		if (isset($properties[$field]) && property_exists($this, $properties[$field])) {
+			return $properties[$field];
+		}
+
+		return $field;
+	}
+
+	/**
+	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
+	 * Used by the ajax edition of cards (core/ajax/objectfield.php).
+	 *
+	 * @param	string	$field	Field name
+	 * @return	mixed			Value, null if the object has no property for this field
+	 */
+	public function getFieldUiValue($field)
+	{
+		$property = $this->getFieldPropertyName($field);
+
+		return property_exists($this, $property) ? $this->$property : null;
+	}
+
+	/**
+	 * Return if the object saves a deposit percent with its payment term (see setPaymentTerms())
+	 *
+	 * @return	bool
+	 */
+	protected function hasPaymentTermDepositPercent()
+	{
+		return in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'));
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * By default, notes are saved with update_note() and other fields with setValueFrom(), with the trigger XXX_MODIFY.
+	 * Override in child classes to use a dedicated method holding business rules (ex: set_ref_client()).
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'note_public' || $field == 'note_private') {
+			return $this->update_note((string) $this->$field, $field == 'note_public' ? '_public' : '_private');
+		}
+
+		// Fields of business documents saved by the same setters as their cards
+		$value = $this->getFieldUiValue($field);
+		switch ($field) {
+			case 'fk_cond_reglement':
+				return $this->setPaymentTerms((int) $value, $this->hasPaymentTermDepositPercent() ? $this->deposit_percent : null);
+			case 'fk_mode_reglement':
+				return $this->setPaymentMethods((int) $value);
+			case 'fk_shipping_method':
+				return $this->setShippingMethod((int) $value, 0, $user);
+			case 'fk_account':
+				return $this->setBankAccount((int) $value, 0, $user);
+			case 'fk_projet':
+			case 'fk_project':
+				return $this->setProject((int) $value);
+		}
+
+		$type = $this->fields[$field]['type'];
+		if (preg_match('/^(int|integer)\b/', $type)) {
+			$format = 'int';
+		} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			$format = 'date';
+		} else {
+			$format = 'text';
+		}
+		$trigkey = (property_exists($this, 'TRIGGER_PREFIX') && !empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)).'_MODIFY';
+
+		return $this->setValueFrom($field, $value, '', null, $format, '', $user, $trigkey);
+	}
+
+	/**
+	 * Return the value of a field posted by an ajax edition of the card (core/ajax/objectfield.php).
+	 * Inputs are named with the prefix 'ajaxfield_' followed by the field name, like the names generated by
+	 * showInputField() with this key prefix (ex: ajaxfield_note_public, or ajaxfield_date_livraisonday... for a date).
+	 * Override in child classes when the input of a field is not the default one (several inputs, other names...).
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if the input is not posted (a missing input must never empty a field)
+	 *                          or if the type of field is not supported
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		$key = 'ajaxfield_'.$field;
+		$type = $this->fields[$field]['type'];
+
+		if (!GETPOSTISSET($key) && !GETPOSTISSET($key.'year')) {
+			return null;
+		}
+
+		if ($type == 'html') {
+			return dol_html_entity_decode(GETPOST($key, 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1);
+		} elseif (preg_match('/^(varchar|text)\b/', $type)) {
+			return GETPOST($key, 'alphanohtml');
+		} elseif (preg_match('/^(int|integer)\b/', $type)) {
+			// The deposit percent of a payment term is posted with it, by the input of Form::getSelectConditionsPaiements()
+			if ($field == 'fk_cond_reglement' && $this->hasPaymentTermDepositPercent() && GETPOSTISSET($key.'_deposit_percent')) {
+				$this->deposit_percent = GETPOSTFLOAT($key.'_deposit_percent');
+			}
+			return GETPOSTINT($key);
+		} elseif ($type == 'date') {
+			// At noon like the cards, so the day does not change with the time zone
+			return GETPOSTDATE($key, '12:00:00');
+		} elseif (in_array($type, array('datetime', 'timestamp'))) {
+			return GETPOSTDATE($key, 'getpost');
+		}
+
+		// Other types (lists, amounts...) are not supported yet
+		return null;
+	}
+
+	/**
+	 * Return the output html of a field for an ajax refresh of the card (core/ajax/objectfield.php).
+	 * By default, it is the output of showOutputField(). The totals of the object are shown like on the cards,
+	 * with their currency (main currency, or currency of the object for the multicurrency totals).
+	 * Override in child classes only for fields the card does not show with showOutputField(),
+	 * so a refreshed value always looks like the displayed one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		global $conf, $langs;
+
+		$value = $this->getFieldUiValue($field);
+
+		// Totals are declared as double in $fields, showOutputField() would show them without currency
+		if (preg_match('/^(multicurrency_)?total_(ht|tva|localtax1|localtax2|ttc)$/', $field)) {
+			if (is_null($value) || $value === '') {
+				return '';
+			}
+			$currency = (strpos($field, 'multicurrency_') === 0 && !empty($this->multicurrency_code)) ? $this->multicurrency_code : $conf->currency;
+
+			return price((float) $value, 0, $langs, 1, -1, -1, $currency);
+		}
+
+		// Fields of business documents shown like on their cards, with the label of the dictionary
+		$html = $this->ajaxOutputDictionaryField($field, $value);
+		if (!is_null($html)) {
+			return $html;
+		}
+
+		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
+		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showOutputField($fielddef, $field, $value);
+	}
+
+	/**
+	 * Load the translations of the labels of the dictionaries of business documents (payment terms and modes, availability,
+	 * input reasons, shipping methods), loaded by the cards but not by core/ajax/objectfield.php
+	 *
+	 * @return void
+	 */
+	protected function loadAjaxDictionaryLangs()
+	{
+		global $langs;
+
+		$langs->loadLangs(array('bills', 'dict', 'propal', 'sendings'));
+	}
+
+	/**
+	 * Return the output html of the fields of business documents chosen in a dictionary (payment term, payment mode...)
+	 * or linked to another object (project), like the cards show them (Form::form_conditions_reglement()... with htmlname 'none').
+	 *
+	 * @param	string	$field	Field name
+	 * @param	mixed	$value	Value of the field
+	 * @return	?string			Output html, null if the field is not one of them
+	 */
+	protected function ajaxOutputDictionaryField($field, $value)
+	{
+		$this->loadAjaxDictionaryLangs();
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($this->db);
+
+		switch ($field) {
+			case 'fk_cond_reglement':
+				return $form->form_conditions_reglement('', (string) $value, 'none', 0, '', -1, $this->hasPaymentTermDepositPercent() ? (float) $this->deposit_percent : -1, 1);
+			case 'fk_mode_reglement':
+				return $form->form_modes_reglement('', (string) $value, 'none', '', 1, 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $form->form_project('', property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+		}
+
+		// Methods printing their output
+		ob_start();
+		switch ($field) {
+			case 'fk_availability':
+				$form->form_availability('', (string) $value, 'none', 1);
+				break;
+			case 'fk_input_reason':
+				$form->formInputReason('', (string) $value, 'none');
+				break;
+			case 'fk_shipping_method':
+				$form->formSelectShippingMethod('', (string) $value, 'none');
+				break;
+			case 'fk_account':
+				$form->formSelectAccount('', (string) $value, 'none');
+				break;
+			default:
+				ob_end_clean();
+				return null;
+		}
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Return the input html of a field for an ajax edition of the card (core/ajax/objectfield.php).
+	 * Inputs are named with the prefix 'ajaxfield_', so they are read back by getFieldValueFromAjaxPost().
+	 * By default, it is the input of showInputField(), and the notes use the same editor as the notes of the card.
+	 * Override in child classes together with getFieldValueFromAjaxPost() when the input of a field is not the default one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	string			Input html
+	 */
+	public function ajaxInputField($field)
+	{
+		$value = $this->getFieldUiValue($field);
+		$htmlname = 'ajaxfield_'.$field;
+
+		// Same editor as the notes of the card (core/tpl/notes.tpl.php)
+		if ($field == 'note_public' || $field == 'note_private') {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$withckeditor = isModEnabled('fckeditor') && getDolGlobalString($field == 'note_public' ? 'FCKEDITOR_ENABLE_NOTE_PUBLIC' : 'FCKEDITOR_ENABLE_NOTE_PRIVATE');
+			$doleditor = new DolEditor($htmlname, (string) $value, '100%', 200, 'dolibarr_notes', 'In', true, false, $withckeditor, 12, '95%');
+
+			return (string) $doleditor->Create(1);
+		}
+
+		// Fields of business documents chosen in a dictionary, with the same selectors as their cards (with ajax_combobox())
+		$this->loadAjaxDictionaryLangs();
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+		$form = new Form($this->db);
+		switch ($field) {
+			case 'fk_cond_reglement':
+				$withdeposit = $this->hasPaymentTermDepositPercent();
+				return $form->getSelectConditionsPaiements((int) $value, $htmlname, $withdeposit ? 1 : -1, 0, 0, '', $withdeposit ? (float) $this->deposit_percent : -1);
+			case 'fk_mode_reglement':
+				return $form->select_types_paiements((string) $value, $htmlname, 'CRDT', 0, 1, 0, 0, 1, '', 1);
+			case 'fk_availability':
+				return $form->selectAvailabilityDelay((string) $value, $htmlname, '', 1, '', 1);
+			case 'fk_account':
+				return (string) $form->select_comptes((string) $value, $htmlname, 0, '', 1, '', 0, '', 1);
+			case 'fk_projet':
+			case 'fk_project':
+				// Projects of the thirdparty, like Form::form_project() on the cards
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+				$formproject = new FormProjets($this->db);
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				return $formproject->select_projects(property_exists($this, 'socid') ? (int) $this->socid : -1, empty($value) ? '' : (string) $value, $htmlname, 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth300');
+			case 'fk_input_reason':
+			case 'fk_shipping_method':
+				// Methods printing their output
+				ob_start();
+				if ($field == 'fk_input_reason') {
+					$form->selectInputReason((string) $value, $htmlname, '-1', 1);
+				} else {
+					$form->selectShippingMethod((string) $value, $htmlname, '', 1);
+				}
+				return (string) ob_get_clean();
+		}
+
+		// Fields like notes are hidden from generic forms (visible = 0), the field is already allowed by isFieldEditableFromUi()
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showInputField($fielddef, $field, $value, '', '', 'ajaxfield_');
 	}
 
 	/**
@@ -5787,25 +6139,9 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define $usemargins (used by objectline_xxx.tpl.php files)
-		$usemargins = 0;
-		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
-			$usemargins = 1;
-		}
+		$this->prepareObjectLinesDisplay();
 
 		$num = count($this->lines);
-
-		// Line extrafield
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line);
-
-		if (method_exists($this, 'loadExpeditions')) {
-			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
-			$this->loadExpeditions();
-		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printObjectLinesBlock', $parameters, $this, $action);
@@ -5844,23 +6180,196 @@ abstract class CommonObject
 				// Line extrafield. TODO Remove this. extrafields should be already loaded.
 				//$line->fetch_optionals();
 
-				if (is_object($hookmanager)) {
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
-				}
-				if (empty($reshook)) {
-					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
-				}
+				$this->printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 
 				$i++;
 			}
 			print "<!-- end printObjectLines() -->\n";
 		}
+	}
+
+	/**
+	 *	Prepare the display of the lines: global $usemargins and line extrafields used by the line templates (objectline_xxx.tpl.php)
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@return	void
+	 */
+	protected function prepareObjectLinesDisplay()
+	{
+		global $extrafields, $usemargins;
+
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
+		$usemargins = 0;
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+			$usemargins = 1;
+		}
+
+		// Line extrafield
+		if (!is_object($extrafields)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line);
+
+		if (method_exists($this, 'loadExpeditions')) {
+			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
+			$this->loadExpeditions();
+		}
+	}
+
+	/**
+	 *	Print a line of the lines table: hooks printObjectLine or printObjectSubLine, then printObjectLine() if no hook replaced it
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@param	string		$action				Action code
+	 *	@param	CommonObjectLine|CommonObject|stdClass	$line	Line to print
+	 *	@param	int			$num				Number of lines
+	 *	@param	int			$i					Index of the line in $this->lines
+	 *	@param	int			$dateSelector		1=Show also date range input fields
+	 *	@param	Societe		$seller				Object of seller third party
+	 *	@param	?Societe	$buyer				Object of buyer third party
+	 *	@param	int<0,max>	$selected			ID line selected
+	 *	@param	?ExtraFields	$extrafields	Object of extrafields
+	 *	@param	string		$defaulttpldir		Directory where to find the template
+	 *	@return	void
+	 */
+	protected function printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir)
+	{
+		global $hookmanager;
+
+		// Only lines of documents having sub lines declare fk_parent_line
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		$fk_parent_line = (empty($line->fk_parent_line) ? 0 : $line->fk_parent_line);
+
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			if (empty($fk_parent_line)) {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			} else {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $fk_parent_line, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			}
+		}
+		if (empty($reshook)) {
+			$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card of the object before printObjectLines() and formAddObjectLine().
+	 *	Override it in child classes when the card uses other values.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		return array(
+			'seller' => $mysoc,
+			'buyer' => (is_object($this->thirdparty) ? $this->thirdparty : null),
+			'dateSelector' => 1,
+			'forceall' => 0,
+			'senderissupplier' => 0,
+			'inputalsopricewithtax' => 0,
+		);
+	}
+
+	/**
+	 *	Init the display of the lines: set the global variables used by the line templates (objectline_xxx.tpl.php) from getObjectLinesDisplayContext()
+	 *	To call in the card before printObjectLines() and formAddObjectLine().
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
+	 */
+	public function initObjectLinesDisplay()
+	{
+		// TODO We should not use global var for this
+		global $forceall, $senderissupplier, $inputalsopricewithtax;
+
+		$context = $this->getObjectLinesDisplayContext();
+
+		$forceall = $context['forceall'];
+		$senderissupplier = $context['senderissupplier'];
+		$inputalsopricewithtax = $context['inputalsopricewithtax'];
+
+		return $context;
+	}
+
+	/**
+	 *	Return if the lines of the card are edited in ajax, without reloading the page (Dolibarr.tools.card.lines).
+	 *	Lines can be edited only on a draft. Enabled with MAIN_FEATURES_LEVEL >= 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT.
+	 *	The edit link of the lines must still be shown only if the user can edit them, the url of the link is used without javascript.
+	 *
+	 *	@return	bool
+	 */
+	public function isAjaxLineEdit()
+	{
+		global $conf;
+
+		if (empty($conf->use_javascript_ajax) || empty($this->id) || empty($this->table_element_line) || $this->status != 0) {
+			return false;
+		}
+
+		return getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('MAIN_USE_AJAX_LINE_EDIT');
+	}
+
+	/**
+	 *	Return the HTML of a line as printed in the card by printObjectLines(), hooks printObjectLine and printObjectSubLine included.
+	 *	Used to reload a line with ajax. The line is in view mode, or in edit mode with the action 'editline' (if the object is a draft).
+	 *	The lines must be loaded into $this->lines (for example with getLinesArray()).
+	 *	Note: the caller must init the hook contexts of the page that printed the lines (ex: propalcard), so modules hooking them render the line as in this page.
+	 *	The global variables of the caller used for the rendering ($object, $form, ...) are restored at the end.
+	 *
+	 *	@param	int		$lineid		Id of the line
+	 *	@param	string	$action		Action code, 'editline' for the edit form of the line (objectline_edit.tpl.php)
+	 *	@return	string				HTML of the line (<tr id="row-...">, or the rows of the edit form), empty string if line not found (error in $this->error)
+	 */
+	public function getObjectLineHtml($lineid, $action = '')
+	{
+		global $object, $form, $extrafields;
+		global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+
+		$lines = (is_array($this->lines) ? $this->lines : array());
+		$num = count($lines);
+		$i = 0;
+		$line = null;
+		foreach ($lines as $tmpline) {
+			if ($tmpline->id == $lineid) {
+				$line = $tmpline;
+				break;
+			}
+			$i++;
+		}
+		if ($line === null) {
+			$this->error = 'ErrorRecordNotFound';
+			return '';
+		}
+
+		// Third party is needed for seller or buyer and by printObjectLine()
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (!is_object($this->thirdparty) && property_exists($this, 'socid') && !empty($this->socid)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Keep the global variables of the caller, they are restored at the end
+		$savedGlobals = array($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins);
+
+		$object = $this; // Used by the line templates
+		if (!is_object($form)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+		}
+		$context = $this->initObjectLinesDisplay();
+		$this->prepareObjectLinesDisplay();
+
+		ob_start();
+		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], ($action == 'editline' ? (int) $line->id : 0), $extrafields, '/core/tpl');
+		$out = ob_get_clean();
+
+		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+
+		return (string) $out;
 	}
 
 	/**
@@ -10263,8 +10772,13 @@ abstract class CommonObject
 		} elseif ($element == 'invoice_supplier_rec') {
 			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
 		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
@@ -10389,6 +10903,73 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check whether a field can be edited from the user interface with generic tools (ajax edition of cards...),
+	 * where the user chooses the field to modify.
+	 *
+	 * isFieldEditAllowed() is a generic rule for PHP code and allows any field not marked as "noteditable",
+	 * including computed or technical fields (ref, status, totals...). Exposing it to the user interface
+	 * would let a user change them, so the user interface requires an explicit opt-in on each field
+	 * with the "uieditable" attribute, in addition to all rules of isFieldEditAllowed().
+	 * The private note is always hidden to external users, so it is never editable by them.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the field can be edited from the user interface, false otherwise
+	 */
+	public function isFieldEditableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || empty($this->fields[$field]['uieditable'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		return $this->isFieldEditAllowed($user, $field);
+	}
+
+	/**
+	 * Check whether the value of a field can be read from the user interface with generic tools
+	 * (ajax refresh of the values displayed on a card...), by a user allowed to read the object.
+	 *
+	 * The field must be enabled and visible on the card (visible 1, 3, 4 or 5, or an expression giving one of these values),
+	 * or editable from the user interface (fields like notes are hidden from generic forms but shown by their own block of the card).
+	 * Password fields are never readable, and the private note is always hidden to external users.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the value of the field can be read from the user interface, false otherwise
+	 */
+	public function isFieldReadableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || !$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		if (preg_match('/^password/', (string) $this->fields[$field]['type'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		if (!empty($this->fields[$field]['uieditable'])) {
+			return true;
+		}
+
+		$visible = isset($this->fields[$field]['visible']) ? $this->fields[$field]['visible'] : 0;
+		if (!is_numeric($visible)) {
+			$visible = dol_eval((string) $visible);
+		}
+
+		return in_array(abs((int) $visible), array(1, 3, 4, 5));
 	}
 
 
