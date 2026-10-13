@@ -36,6 +36,8 @@ require '../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta", "loan"));
 
@@ -102,6 +104,31 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
+$langs->load('projects');
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.ref' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '0', 'position' => 190, 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
+$projectcolumns = array(
+	'projectlist.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
+);
+$arrayfields['projectlist.ref'] = $projectcolumns['projectlist.ref'];
+$arrayfields['projectlist.title'] = $projectcolumns['projectlist.title'];
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -165,9 +192,20 @@ $help_url = "EN:Module_Loan|FR:Module_Emprunt";
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
 $sql .= " SUM(pl.amount_capital) as alreadypaid";
 
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', projectlist.rowid as projectlist_id, projectlist.ref as projectlist_ref, projectlist.title as projectlist_title, projectlist.public as projectlist_public, projectlist.fk_statut as projectlist_status';
+
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as projectlist ON projectlist.rowid = l.fk_projet AND projectlist.rowid IN ('.$db->sanitize($projectsforlist).')';
 $sql_linktopl = " LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl ON l.rowid = pl.fk_loan";
 $sql .= $sql_linktopl;
 
@@ -181,7 +219,14 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search("l.label", $search_label);
 }
-$sql .= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('projectlist.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('projectlist.title', $search_projectlist_title);
+}
+
+$sql .= " GROUP BY projectlist.rowid, projectlist.ref, projectlist.title, projectlist.public, projectlist.fk_statut, l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -238,6 +283,8 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan pag
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+
+$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -361,6 +408,13 @@ print '<td class="liste_titre">&nbsp;</td>';
 // No filter: Date end
 print '<td class="liste_titre">&nbsp;</td>';
 
+if (!empty($arrayfields['projectlist.ref']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+}
+if (!empty($arrayfields['projectlist.title']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
+}
+
 // No filter: Status
 print '<td class="liste_titre"></td>';
 
@@ -394,6 +448,15 @@ print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $p
 $totalarray['nbfield']++;
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
+if (!empty($arrayfields['projectlist.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['projectlist.ref']['label'], $_SERVER['PHP_SELF'], 'projectlist.ref', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['projectlist.title']['checked'])) {
+	print_liste_field_titre($arrayfields['projectlist.title']['label'], $_SERVER['PHP_SELF'], 'projectlist.title', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!$conf->main_checkbox_left_column) {
@@ -470,6 +533,37 @@ while ($i < $imaxinloop) {
 		// Date end
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
+		if (!empty($arrayfields['projectlist.ref']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($obj->projectlist_id > 0) {
+				$projectforlist->id = (int) $obj->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+				$projectforlist->public = (int) $obj->projectlist_public;
+				$projectforlist->status = (int) $obj->projectlist_status;
+				print $projectforlist->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['projectlist.title']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($obj->projectlist_id > 0) {
+				$projectforlist->id = (int) $obj->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+				$projectforlist->public = (int) $obj->projectlist_public;
+				$projectforlist->status = (int) $obj->projectlist_status;
+				print $projectforlist->getNomUrl(1, '', -1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		print '<td class="center nowrap">';
 		print $object->LibStatut($obj->paid, 5, $obj->alreadypaid);
 		print '</td>';
@@ -486,7 +580,7 @@ while ($i < $imaxinloop) {
 
 // If no record found
 if ($num == 0) {
-	$colspan = 7;
+	$colspan = 7 + (!empty($arrayfields['projectlist.ref']['checked']) ? 1 : 0) + (!empty($arrayfields['projectlist.title']['checked']) ? 1 : 0);
 	//foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }

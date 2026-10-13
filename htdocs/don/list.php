@@ -136,6 +136,31 @@ $arrayfields = array();
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
+$langs->load('projects');
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('d.fk_projet' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('p.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '1', 'position' => 190, 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
+$projectcolumns = array(
+	'd.fk_projet' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'p.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
+);
+$arrayfields['d.fk_projet'] = $projectcolumns['d.fk_projet'];
+$arrayfields['p.title'] = $projectcolumns['p.title'];
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -255,10 +280,20 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', p.rowid as projectlist_id, p.ref as projectlist_ref, p.title as projectlist_title, p.public as projectlist_public, p.fk_statut as projectlist_status';
+
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql .= " ON p.rowid = d.fk_projet";
+$sql .= " ON p.rowid = d.fk_projet AND p.rowid IN (".$db->sanitize($projectsforlist).")";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
 $sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
 
@@ -288,6 +323,13 @@ if ($search_date_start) {
 }
 if ($search_date_end) {
 	$sql .= " AND d.datedon <= '".$db->idate($search_date_end)."'";
+}
+
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('p.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('p.title', $search_projectlist_title);
 }
 
 // Count total nb of records
@@ -342,6 +384,8 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-donation 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+
+$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -520,10 +564,11 @@ print '<div class="nowrapfordate">';
 print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
-if (isModEnabled('project')) {
-	print '<td class="liste_titre right">';
-	print '&nbsp;';
-	print '</td>';
+if (!empty($arrayfields['d.fk_projet']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
 }
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
 print '<td class="liste_titre center parentonrightofpage">';
@@ -569,9 +614,12 @@ print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, 
 $totalarray['nbfield']++;
 print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
-if (isModEnabled('project')) {
-	$langs->load("projects");
-	print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['d.fk_projet']['checked'])) {
+	print_liste_field_titre($arrayfields['d.fk_projet']['label'], $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -679,18 +727,35 @@ while ($i < $imaxinloop) {
 		// Date donation
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datedon), 'day').'</td>';
 
-		if (isModEnabled('project')) {
-			print "<td>";
-			if ($obj->pid) {
-				$projectstatic->id = $obj->pid;
-				$projectstatic->ref = $obj->pref;
-				$projectstatic->public = $obj->public;
-				$projectstatic->title = $obj->title;
-				print $projectstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
+		if (!empty($arrayfields['d.fk_projet']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($obj->projectlist_id > 0) {
+				$projectforlist->id = (int) $obj->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+				$projectforlist->public = (int) $obj->projectlist_public;
+				$projectforlist->status = (int) $obj->projectlist_status;
+				print $projectforlist->getNomUrl(1);
 			}
-			print "</td>\n";
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($obj->projectlist_id > 0) {
+				$projectforlist->id = (int) $obj->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($obj->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($obj->projectlist_title);
+				$projectforlist->public = (int) $obj->projectlist_public;
+				$projectforlist->status = (int) $obj->projectlist_status;
+				print $projectforlist->getNomUrl(1, '', -1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
@@ -716,6 +781,10 @@ while ($i < $imaxinloop) {
 		print '</tr>'."\n";
 	}
 	$i++;
+}
+
+if ($num == 0) {
+	print '<tr class="oddeven"><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans('NoRecordFound').'</span></td></tr>';
 }
 
 $db->free($resql);

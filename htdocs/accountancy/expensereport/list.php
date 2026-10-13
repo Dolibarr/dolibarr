@@ -45,6 +45,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "trips", "productbatch", "hrm"));
 
@@ -133,6 +135,31 @@ $arrayfields = array(
 	'aa.account_number'     => array('label' => "AccountAccountingSuggest",     'position' => 1, 'checked' => '1', 'enabled' => '1'),
 );
 // Add hook to complete $arrayfield
+// Project columns use the same access scope for display, search and sorting.
+$canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
+$projectcolumnenabled = $canreadprojects ? '1' : '0';
+$langs->load('projects');
+$projectrefdefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.ref' => 1)));
+$projectlabeldefinitions = array_values(array_intersect_key($arrayfields, array('projectlist.title' => 1)));
+$projectrefdefinition = array_shift($projectrefdefinitions) ?: array();
+$projectlabeldefinition = array_shift($projectlabeldefinitions) ?: array();
+$projectrefdefinition += array('checked' => '0', 'position' => 190, 'help' => '');
+$projectlabeldefinition += array('checked' => '0', 'help' => '');
+$projectrefposition = is_numeric($projectrefdefinition['position']) ? (int) $projectrefdefinition['position'] : 190;
+$projectcolumns = array(
+	'projectlist.ref' => array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $projectrefdefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition, 'help' => (string) $projectrefdefinition['help']),
+	'projectlist.title' => array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $projectlabeldefinition['checked'], 'enabled' => $projectcolumnenabled, 'position' => $projectrefposition + 1, 'help' => (string) $projectlabeldefinition['help']),
+);
+$arrayfields['projectlist.ref'] = $projectcolumns['projectlist.ref'];
+$arrayfields['projectlist.title'] = $projectcolumns['projectlist.title'];
+
+$search_projectlist_ref = GETPOST('search_projectlist_ref', 'alphanohtml');
+$search_projectlist_title = GETPOST('search_projectlist_title', 'alphanohtml');
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_projectlist_ref = '';
+	$search_projectlist_title = '';
+}
+
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
@@ -273,8 +300,19 @@ $sql .= " aa.rowid as aarowid";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+$projectforlist = new Project($db);
+$projectsforlist = '0';
+if ($canreadprojects) {
+	$projectsforlist = $projectforlist->getProjectsAuthorizedForUser($user, $user->hasRight('projet', 'all', 'lire') ? 2 : 0, 1, (int) $user->socid);
+	if (!is_string($projectsforlist)) {
+		$projectsforlist = '0';
+	}
+}
+$sql .= ', projectlist.rowid as projectlist_id, projectlist.ref as projectlist_ref, projectlist.title as projectlist_title, projectlist.public as projectlist_public, projectlist.fk_statut as projectlist_status';
+
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as projectlist ON projectlist.rowid = erd.fk_projet AND projectlist.rowid IN ('.$db->sanitize($projectsforlist).')';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".((int) $conf->entity);
@@ -318,6 +356,13 @@ if ($search_date_end) {
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
 // Add where from hooks
+if ($search_projectlist_ref !== '') {
+	$sql .= natural_search('projectlist.ref', $search_projectlist_ref);
+}
+if ($search_projectlist_title !== '') {
+	$sql .= natural_search('projectlist.title', $search_projectlist_title);
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -353,6 +398,8 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
+
+	$param .= '&search_projectlist_ref='.urlencode($search_projectlist_ref).'&search_projectlist_title='.urlencode($search_projectlist_title);
 	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -499,6 +546,13 @@ if ($result) {
 		print '<td class="liste_titre"></td>';
 	}
 	// Fields from hook
+	if (!empty($arrayfields['projectlist.ref']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_ref" value="'.dol_escape_htmltag($search_projectlist_ref).'"></td>';
+	}
+	if (!empty($arrayfields['projectlist.title']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_projectlist_title" value="'.dol_escape_htmltag($search_projectlist_title).'"></td>';
+	}
+
 	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -576,6 +630,15 @@ if ($result) {
 		$totalarray['nbfield']++;
 	}
 	// Hook fields
+	if (!empty($arrayfields['projectlist.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['projectlist.ref']['label'], $_SERVER['PHP_SELF'], 'projectlist.ref', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['projectlist.title']['checked'])) {
+		print_liste_field_titre($arrayfields['projectlist.title']['label'], $_SERVER['PHP_SELF'], 'projectlist.title', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -697,6 +760,37 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 		// Fields from hook
+		if (!empty($arrayfields['projectlist.ref']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($objp->projectlist_id > 0) {
+				$projectforlist->id = (int) $objp->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($objp->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($objp->projectlist_title);
+				$projectforlist->public = (int) $objp->projectlist_public;
+				$projectforlist->status = (int) $objp->projectlist_status;
+				print $projectforlist->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['projectlist.title']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if ($objp->projectlist_id > 0) {
+				$projectforlist->id = (int) $objp->projectlist_id;
+				$projectforlist->ref = dol_escape_htmltag($objp->projectlist_ref);
+				$projectforlist->title = dol_escape_htmltag($objp->projectlist_title);
+				$projectforlist->public = (int) $objp->projectlist_public;
+				$projectforlist->status = (int) $objp->projectlist_status;
+				print $projectforlist->getNomUrl(1, '', -1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
