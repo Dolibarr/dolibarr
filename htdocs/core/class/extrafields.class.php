@@ -1206,6 +1206,7 @@ class ExtraFields
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $conf, $langs, $form, $hookmanager;
 
 		if (!is_object($form)) {
@@ -2280,6 +2281,7 @@ class ExtraFields
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null, $mode = '')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $conf, $langs, $hookmanager;
 
 		if (is_null($outputlangs) || !is_object($outputlangs)) {
