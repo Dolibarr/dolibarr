@@ -346,8 +346,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 	}
 
-	// Check if user filled link fields but chose 'none'
-	if ($action == 'subscription' && $option == 'none' && $user->hasRight('adherent', 'cotisation', 'creer')) {
+	// Check if user filled link fields but chose another option than "linktoobject"
+	if ($action == 'subscription' && $option != 'linktoobject' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		$link_inputs_exist = (!empty($invoices_to_link_post) || !empty($orders_to_link_post) || !empty($invoicereftolink_post) || !empty($orderreftolink_post));
 		if ($link_inputs_exist) {
 			setEventMessages($langs->trans("ErrorLinkFieldsFilledButPaymentSaveNone"), null, 'errors');
@@ -399,7 +399,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 
 		// ===== LINK TO EXISTING OBJECTS =====
-		if (GETPOST('paymentsave') == 'linktoobject' && $crowid > 0) {
+		if ($option == 'linktoobject' && $crowid > 0) {
 			$subscription = new Subscription($db);
 			if ($subscription->fetch($crowid) > 0) {
 				// Get thirdparty of the member for security validation
@@ -413,9 +413,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				$nbcreatedlinks = 0;
 
 				// --- Selected invoices (checkboxes) - must belong to member's thirdparty ---
-				$invoices_to_link = GETPOST('invoices_to_link', 'array:int');
-				if (!empty($invoices_to_link)) {
-					foreach ($invoices_to_link as $invoiceid) {
+				if (!empty($invoices_to_link_post)) {
+					foreach ($invoices_to_link_post as $invoiceid) {
 						$tmpinvoice = new Facture($db);
 						if ($tmpinvoice->fetch($invoiceid) > 0) {
 							if ($tmpinvoice->socid != $thirdpartyidtolink) {
@@ -437,10 +436,9 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				}
 
 				// --- Manual invoice ref - allowed to link to any thirdparty ---
-				$invoicereftolink = GETPOST('invoicereftolink', 'alpha');
-				if (!empty($invoicereftolink)) {
+				if (!empty($invoicereftolink_post)) {
 					$tmpinvoice = new Facture($db);
-					if ($tmpinvoice->fetch(0, $invoicereftolink) > 0) {
+					if ($tmpinvoice->fetch(0, $invoicereftolink_post) > 0) {
 						if (!empty($existinglinks['facture-'.$tmpinvoice->id])) {
 							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmpinvoice->ref), null, 'warnings');
 						} elseif ($subscription->add_object_linked('facture', $tmpinvoice->id) > 0) {
@@ -450,15 +448,14 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 							setEventMessages($subscription->error, $subscription->errors, 'errors');
 						}
 					} else {
-						setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink), null, 'errors');
+						setEventMessages($langs->trans("ErrorInvoiceNotFound", $invoicereftolink_post), null, 'errors');
 					}
 					unset($tmpinvoice);
 				}
 
 				// --- Selected orders (checkboxes) - must belong to member's thirdparty ---
-				$orders_to_link = GETPOST('orders_to_link', 'array:int');
-				if (!empty($orders_to_link)) {
-					foreach ($orders_to_link as $orderid) {
+				if (!empty($orders_to_link_post)) {
+					foreach ($orders_to_link_post as $orderid) {
 						$tmporder = new Commande($db);
 						if ($tmporder->fetch($orderid) > 0) {
 							if ($tmporder->socid != $thirdpartyidtolink) {
@@ -480,10 +477,9 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 				}
 
 				// --- Manual order ref - allowed to link to any thirdparty ---
-				$orderreftolink = GETPOST('orderreftolink', 'alpha');
-				if (!empty($orderreftolink)) {
+				if (!empty($orderreftolink_post)) {
 					$tmporder = new Commande($db);
-					if ($tmporder->fetch(0, $orderreftolink) > 0) {
+					if ($tmporder->fetch(0, $orderreftolink_post) > 0) {
 						if (!empty($existinglinks['commande-'.$tmporder->id])) {
 							setEventMessages($langs->trans("ErrorObjectAlreadyLinked", $tmporder->ref), null, 'warnings');
 						} elseif ($subscription->add_object_linked('commande', $tmporder->id) > 0) {
@@ -493,7 +489,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 							setEventMessages($subscription->error, $subscription->errors, 'errors');
 						}
 					} else {
-						setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink), null, 'errors');
+						setEventMessages($langs->trans("ErrorOrderNotFound", $orderreftolink_post), null, 'errors');
 					}
 					unset($tmporder);
 				}
@@ -1052,13 +1048,21 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
+					$(".linkobjectswitchclass").'.(GETPOST('paymentsave', 'aZ09') == 'linktoobject' ? 'show()' : 'hide()').';
 					$("#none, #invoiceonly").click(function() {
 						$(".bankswitchclass").hide();
 						$(".bankswitchclass2").hide();
+						$(".linkobjectswitchclass").hide();
 					});
 					$("#bankdirect, #bankviainvoice").click(function() {
 						$(".bankswitchclass").show();
 						$(".bankswitchclass2").show();
+						$(".linkobjectswitchclass").hide();
+					});
+					$("#linktoobject").click(function() {
+						$(".bankswitchclass").hide();
+						$(".bankswitchclass2").hide();
+						$(".linkobjectswitchclass").show();
 					});
 					$("#selectoperation").change(function() {
 						var code = $(this).val();
@@ -1297,8 +1301,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic = new Project($db);
 
-				print '<div style="margin-left: 20px; margin-top: 5px;">';
-
+				print '<div class="linkobjectswitchclass" style="margin-left: 20px; margin-top: 5px; display:none;">';
 				// Invoices of the thirdparty, newest first
 				// ===== START BLOCK: Invoices =====
 				if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
