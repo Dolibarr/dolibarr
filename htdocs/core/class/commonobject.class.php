@@ -10263,8 +10263,13 @@ abstract class CommonObject
 		} elseif ($element == 'invoice_supplier_rec') {
 			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
 		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
