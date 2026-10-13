@@ -1887,9 +1887,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock));
+		$can_update_stock = isModEnabled('stock') && $also_update_stock &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -2081,9 +2081,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock));
+		$can_update_stock = isModEnabled('stock') && $also_update_stock &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -2355,14 +2355,16 @@ class Expedition extends CommonObject
 				$line->ref = $obj->product_ref; // TODO deprecated
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
-				$line->libelle        	= $obj->product_label; // TODO deprecated
 				$line->product_barcode = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
 				$line->fk_fournprice = $obj->fk_fournprice;
 				$line->label = $obj->custom_label;
+
 				$line->description    	= $obj->description;
+				$line->desc		    	= $obj->description;
+
 				$line->qty_asked      	= $obj->qty_asked;
 				$line->rang = $obj->rang;
 				$line->weight         	= $obj->weight;
@@ -3347,6 +3349,14 @@ class Expedition extends CommonObject
 		// Protection
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
+		}
+		// Only a validated shipment can go back to draft. A closed one must be reopened first, so that the stock
+		// decreased on closing (STOCK_CALCULATE_ON_SHIPMENT_CLOSE) is restored.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$langs->load("sendings");
+			$this->error = $langs->trans("StatusOfRefMustBe", $this->ref, $langs->transnoentitiesnoconv("StatusSendingValidatedShort"));
+			$this->errors[] = $this->error;
+			return -1;
 		}
 
 		$this->db->begin();

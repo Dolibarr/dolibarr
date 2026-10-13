@@ -7008,9 +7008,12 @@ class Product extends CommonObject
 	{
 		$result = array();
 
-		$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb, ".$this->db->prefix()."product_stock as ps";
-		$sql .= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
-		$sql .= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+		// The dates of the lot are read from llx_product_lot (eatby and sellby of llx_product_batch are deprecated and not updated when the lot is modified)
+		$sql = "SELECT pb.batch, pl.eatby, pl.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON pb.fk_product_stock = ps.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl ON pl.fk_product = ps.fk_product AND pl.batch = pb.batch";
+		$sql .= " WHERE ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
+		$sql .= " GROUP BY pb.batch, pl.eatby, pl.sellby";
 		dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -7592,36 +7595,26 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class
+	 * Check if user has a permission on this type of product (product or service)
 	 *
-	 * @return Object
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
-
-		if ($this->isProduct()) {
-			return $user->rights->produit;
-		} else {
-			return $user->rights->service;
+		$module = $this->isProduct() ? 'produit' : 'service';
+		if ($mode == 'read') {
+			return (bool) $user->hasRight($module, 'lire');
 		}
-	}
-
-	/**
-	 * Check if user has write permission on a field of this object.
-	 * Override of CommonObject::hasUserWritePermissionOnField(): products and services use the "creer" permission of their own module.
-	 *
-	 * @param User   $user  User to check rights
-	 * @param string $field Field name to check
-	 * @return bool         True if user has right to write this field, false otherwise
-	 */
-	public function hasUserWritePermissionOnField(User $user, $field)
-	{
-		if (empty($field)) {
-			return false;
+		if ($mode == 'create' || $mode == 'write') {
+			return (bool) $user->hasRight($module, 'creer');
+		}
+		if ($mode == 'delete') {
+			return (bool) $user->hasRight($module, 'supprimer');
 		}
 
-		return (bool) $user->hasRight($this->isProduct() ? 'produit' : 'service', 'creer');
+		return false;
 	}
 
 	/**
