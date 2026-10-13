@@ -63,7 +63,10 @@ class ToolReports extends McpTool
 	 */
 	public function getDefinitions(): array
 	{
-		return [
+		$listofreporttools = [];
+
+		/*
+		$listofreporttools[] =
 			[
 				"name" => "get_thirdparty_transactions",
 				"description" => "Generate a list of raw transactions (Invoices, Orders) for a specific thirdparty.",
@@ -86,8 +89,10 @@ class ToolReports extends McpTool
 						["required" => ["thirdparty_name"]]
 					]
 				]
-			],
-			[
+			];
+		*/
+
+		$listofreporttools[] = [
 				"name" => "get_sales_report",
 				"description" => "Generate a sales/revenue report. If a Thirdparty is provided, it returns a detailed breakdown for that customer. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -108,8 +113,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_purchase_report",
 				"description" => "Generate a purchase/expense report. If a Supplier is provided, it returns a detailed breakdown. Otherwise, it returns a global summary.",
 				"inputSchema" => [
@@ -130,8 +136,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_inventory_report",
 				"description" => "Generate an inventory report showing current stock levels and valuation.",
 				"inputSchema" => [
@@ -142,8 +149,9 @@ class ToolReports extends McpTool
 						"include_zero_stock" => ["type" => "boolean", "default" => false]
 					]
 				]
-			],
-			[
+			];
+
+		$listofreporttools[] = [
 				"name" => "get_financial_report",
 				"description" => "Generate a summary financial report (Income vs Expense) for a period.",
 				"inputSchema" => [
@@ -154,8 +162,9 @@ class ToolReports extends McpTool
 					],
 					"required" => ["date_start", "date_end"]
 				]
-			],
-		];
+			];
+
+			return $listofreporttools;
 	}
 
 	/**
@@ -198,8 +207,8 @@ class ToolReports extends McpTool
 	public function execute(string $name, array $args)
 	{
 		switch ($name) {
-			case 'get_thirdparty_transactions':
-				return $this->getThirdpartyTransactions($args);
+			/*case 'get_thirdparty_transactions':
+				return $this->getThirdpartyTransactions($args); */
 			case 'get_sales_report':
 				return $this->getSalesReport($args);
 			case 'get_purchase_report':
@@ -391,6 +400,7 @@ class ToolReports extends McpTool
 	 * @param array<string, mixed> $args Input arguments.
 	 * @return array<int, array<string, string>> Combined list of transactions.
 	 */
+	/*
 	private function getThirdpartyTransactions(array $args): array
 	{
 		global $langs;
@@ -523,6 +533,7 @@ class ToolReports extends McpTool
 
 		return $list;
 	}
+	*/
 
 	/**
 	 * Generate a purchase/expense report.

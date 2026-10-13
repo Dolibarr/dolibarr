@@ -112,7 +112,12 @@ if ($object->id > 0) {
 $maxpricesupplier = 0;
 
 if ($object->id > 0) {
-	$permissiontoadd = $object->getRights()->creer;
+	if ($object->type == $object::TYPE_PRODUCT) {
+		$permissiontoadd = $user->hasRight('produit', 'creer');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		$permissiontoadd = $user->hasRight('service', 'creer');
+	}
 } else {
 	$permissiontoadd = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 }
@@ -1686,7 +1691,7 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 	print '<br></form><br>';
 }
 
-if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRights()->creer) {
+if (($action == 'edit_price' || $action == 'edit_level_price') && $permissiontoadd) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("NewPrice"), '');
 
@@ -1814,7 +1819,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print $form->buttonsSaveCancel();
 
 		print '</form>';
-	} elseif ($action == 'edit_level_price' && $object->getRights()->creer) {
+	} elseif ($action == 'edit_level_price' && $permissiontoadd) {
 		print '<!-- Edit price per level -->'."\n"; ?>
 		<script>
 

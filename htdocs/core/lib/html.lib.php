@@ -136,6 +136,8 @@ function dolPrintHTMLForAttributeUrl($s)
 /**
  * Return a string ready to be output on input textarea.
  * Differs from dolPrintHTML because all tags are escape. With dolPrintHTML, all tags except common one are escaped.
+ * If the content is for a textare that need to edit a text string (not HTML), you can also use
+ * dolPrintText() for the textarea.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
@@ -4521,8 +4523,8 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
 				$tmpUrl = '';
-				if (isset($subbutton['urlraw']) && !empty($subbutton['urlraw'])) {
-					$tmpUrl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
+				if (isset($button['urlraw']) && !empty($button['urlraw'])) {
+					$tmpUrl = $button['urlraw']; // Use raw url, no url completion, use only what developer send
 				} elseif (!empty($button['urlroot'])) {
 					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
 				} elseif (!empty($button['url'])) {

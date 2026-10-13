@@ -3646,7 +3646,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		return '';
 	}
 	if (empty($countrycode)) {
-		$countrycode = $mysoc->country_code;
+		$countrycode = (is_object($mysoc) ? $mysoc->country_code : '');
 	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
@@ -7339,8 +7339,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/** @var Societe $object */
 				'@phan-var-force Societe $object';
 				$substitutionarray['__THIRDPARTY_ID__'] = ($object->id > 0 ? $object->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_NAME__'] = (string) $object->name;
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (string) $object->name_alias;
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
@@ -7354,7 +7354,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
 				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code;
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF3__'] = $object->idprof3 ?? '';
