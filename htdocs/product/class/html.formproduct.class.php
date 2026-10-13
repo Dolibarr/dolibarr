@@ -277,7 +277,7 @@ class FormProduct
 			return $final_label;
 		} else {
 			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
-				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 2 && empty($this->cache_warehouses[$tab['parent_id']]['parent_id']))) {
+				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || empty($this->cache_warehouses[$tab['parent_id']]['parent_id'])) {
 					$final_label = $this->cache_warehouses[$tab['parent_id']]['label'] . ' >> ' . $final_label;
 				}
 

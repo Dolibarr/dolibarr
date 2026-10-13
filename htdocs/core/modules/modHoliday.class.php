@@ -119,15 +119,10 @@ class modHoliday extends DolibarrModules
 		$this->tabs[] = array(); // To add a new tab identified by code tabname1
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = [
+			['file' => 'box_holidays_to_approve.php', 'enabledbydefaulton' => 'Home'],
+		];
 		$r = 0;
-
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
 
 
 		// Cronjobs

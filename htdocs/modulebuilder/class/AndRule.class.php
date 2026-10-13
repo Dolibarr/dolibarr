@@ -59,7 +59,9 @@ final class AndRule implements AccessRuleExpression
 	}
 
 	/**
-	 * @return string
+	 * Render the rules as a PHP boolean expression joined by &&, wrapped in parentheses.
+	 *
+	 * @return string	PHP boolean expression
 	 */
 	public function toPhp(): string
 	{
