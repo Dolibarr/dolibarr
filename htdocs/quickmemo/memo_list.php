@@ -232,7 +232,7 @@ if (empty($reshook)) {
 			foreach ($toselect as $idMemo) {
 				// TODO Recover the memo - be careful to not recover a model - models can not be recovered.
 				$selectdModel = new Memo($db);
-				if ($selectdModel->fetch($idMemo) <= 0) {
+				if ($selectdModel->fetch($idMemo) <= 0 || !$selectdModel->isInCurrentEntity()) {
 					$idMemo = (int) $idMemo; // sanitize
 					setEventMessage($langs->trans('QuickMemoLoadMemosError').' : '. (int) $idMemo, 'errors');
 					continue;

@@ -219,7 +219,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
  */
 function quickMemoIntefaceActionCreate($jsonResponse)
 {
-	global $user, $langs, $db;
+	global $user, $langs, $db, $conf;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
 		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
@@ -268,6 +268,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 	$memo->pos_h = GETPOST("h", "int");
 	$memo->pos_z = GETPOST("z", "int");
 	$memo->status = Memo::STATUS_VALIDATED;
+	$memo->entity = $conf->entity;
 
 	$resCre = $memo->create($user);
 	if ($resCre <= 0 ) {
@@ -379,7 +380,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
 	}
 
 	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
 		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
@@ -464,6 +465,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	$sql = 'SELECT rowid, element_type, context_tab
 	        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
 	        WHERE rowid = '. (int) $movedId.'
+	        AND entity IN ('.getEntity($tmpMemo->element).')
 	        AND status = '. (int) Memo::STATUS_TPL;
 
 	$res = $db->query($sql);
@@ -478,6 +480,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	$sqlAll = 'SELECT rowid
 	           FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
 	           WHERE status = '. (int) Memo::STATUS_TPL.'
+	           AND entity IN ('.getEntity($tmpMemo->element).')
 	           AND element_type IN (\''.$db->escape($movedModel->element_type).'\', \'\')
 	           ORDER BY rank_tpl DESC';
 
@@ -514,6 +517,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 		          SET rank_tpl = '.(int) $currentRank.'
 		          WHERE rowid = '.(int) $id.'
 		          AND status = '. (int) Memo::STATUS_TPL.'
+		          AND entity IN ('.getEntity($tmpMemo->element).')
 		          AND (private_tpl = 0 OR fk_user_creat = '.(int) $user->id.')';
 
 		if (!$db->query($sqlUp)) {
@@ -984,6 +988,10 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
  */
 function quickMemoInterfaceCanAccessMemo($memo)
 {
+	if (!$memo->isInCurrentEntity()) {
+		return false;
+	}
+
 	// Templates are not attached to an object
 	if ($memo->status == Memo::STATUS_TPL) {
 		return true;
@@ -1011,7 +1019,7 @@ function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
 	}
 
 	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
 		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return null;
 	}
