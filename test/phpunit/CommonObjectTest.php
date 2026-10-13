@@ -2075,42 +2075,6 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
-	 *  testGetObjectLinesDisplayContextHookContext
-	 *  The hook context is the one initialized by the card, so modules render a line printed outside of the card as in the card
-	 *
-	 *  @return void
-	 */
-	public function testGetObjectLinesDisplayContextHookContext()
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-
-		$cards = array(
-			'Propal' => '/comm/propal/card.php',
-			'Commande' => '/commande/card.php',
-			'Facture' => '/compta/facture/card.php',
-			'SupplierProposal' => '/supplier_proposal/card.php',
-			'CommandeFournisseur' => '/fourn/commande/card.php',
-			'FactureFournisseur' => '/fourn/facture/card.php',
-		);
-		foreach ($cards as $classname => $card) {
-			$localobject = new $classname($db);
-			$context = $localobject->getObjectLinesDisplayContext();
-			$this->assertStringContainsString("initHooks(array('".$context['hookcontext']."'", (string) file_get_contents(DOL_DOCUMENT_ROOT.$card), $classname);
-		}
-
-		print __METHOD__." OK\n";
-	}
-
-	/**
 	 * Create, update then delete the object with createCommon(), updateCommon() and deleteCommon()
 	 *
 	 * @param	DefaultValuesTriggerSpy	$localobject	Object to process

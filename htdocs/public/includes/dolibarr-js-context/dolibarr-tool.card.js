@@ -590,14 +590,19 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
-		 * Load the html of document lines with core/ajax/objectline.php, with the links of the card (Dolibarr.tools.object fetchLines()).
+		 * Load the html of document lines with core/ajax/objectline.php, with the links and the hook contexts of the card
+		 * (Dolibarr.tools.object fetchLines()).
 		 * The event messages kept in session by postCard() are returned and displayed (unless option showEventMessages is false).
 		 * @param {number[]} lineIds
 		 * @param {Object} [options] See Dolibarr.tools.object fetchLines()
 		 * @returns {Promise<{lines: Object<number, string|null>, lineids: number[], tms: number|null, eventMessages: Object}>}
 		 */
 		fetchLines(lineIds, options = {}) {
-			return this.object.fetchLines(lineIds, { page: new URL(this.url, window.location.href).pathname, ...options });
+			return this.object.fetchLines(lineIds, {
+				page: new URL(this.url, window.location.href).pathname,
+				hookContexts: Dolibarr.getContextVar('HOOK_CONTEXTS', []),
+				...options,
+			});
 		}
 
 		/**
