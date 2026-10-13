@@ -30,6 +30,7 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var CommonObject $object
  * @var string $contextpage
  */
 

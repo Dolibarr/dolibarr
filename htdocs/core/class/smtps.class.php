@@ -803,17 +803,24 @@ class SMTPs
 					 * mark the last address as "bad" and start the address loop over again.
 					 * If any address fails, the entire message fails.
 					 */
-					$this->socket_send_str('RCPT TO: <'.$_address.'>', '250');
+					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
+						// Stop here, sending DATA would desynchronize the SMTP responses
+						fclose($this->socket);
+						return false;
+					}
 				}
 
 				// Tell the server we are ready to start sending data
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
-				$this->socket_send_str('DATA', '354');
+				if (!$this->socket_send_str('DATA', '354')) {
+					fclose($this->socket);
+					return false;
+				}
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$_retVal = $this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				fwrite($this->socket, 'QUIT');
