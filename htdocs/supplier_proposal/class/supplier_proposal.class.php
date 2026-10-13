@@ -167,6 +167,7 @@ class SupplierProposal extends CommonObject
 	public $total;
 
 	public $cond_reglement_code;
+	public $cond_reglement_label;
 	public $mode_reglement_code;
 	public $remise = 0;
 	public $remise_percent = 0;
@@ -1275,6 +1276,7 @@ class SupplierProposal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
