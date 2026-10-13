@@ -6731,23 +6731,23 @@ class Facture extends CommonInvoice
 	 */
 	public function fetchAndSetSubstitution($id, $key, $fetched = false)
 	{
-		$substitution = '';
+		// Only this key needs the database, so any other one returns before the fetch
+		if ($key != '__PAYMENT_VIRTUAL_BARCODE__') {
+			return '';
+		}
 
-		if ($fetched === false) {
-			$res = $this->fetch($id);
-			if ($res > 0) {
-				$fetched = true;
+		// make_substitutions() keeps the object between calls and then passes $fetched
+		// as true. The object may still be empty if the previous call was for a key
+		// that returned before the fetch, so the id is checked too.
+		if ($fetched === false || empty($this->id)) {
+			if ($this->fetch($id) <= 0) {
+				return '';
 			}
 		}
 
-		if ($fetched === true) {
-			if ($key == '__PAYMENT_VIRTUAL_BARCODE__') {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
-				$substitution = dolFIFormatVirtualBarcode(dolFIGetInvoiceBarcodeData($this));
-			}
-		}
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
 
-		return (string) $substitution;
+		return (string) dolFIFormatVirtualBarcode(dolFIGetInvoiceBarcodeData($this));
 	}
 
 
