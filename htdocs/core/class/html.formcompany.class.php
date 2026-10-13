@@ -1007,17 +1007,6 @@ class FormCompany extends Form
 		}
 
 		$selected = $preselected;
-		if (!$selected) {
-			if ($idprof == 1 && !empty($this->idprof1)) {
-				$selected = $this->idprof1;
-			} elseif ($idprof == 2 && !empty($this->idprof2)) {
-				$selected = $this->idprof2;
-			} elseif ($idprof == 3 && !empty($this->idprof3)) {
-				$selected = $this->idprof3;
-			} elseif ($idprof == 4 && !empty($this->idprof4)) {
-				$selected = $this->idprof4;
-			}
-		}
 
 		$maxlength = $formlength;
 		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");
