@@ -1238,9 +1238,10 @@ class CommonObjectTest extends CommonClassTest
 			/**
 			 * @param User   $user  User
 			 * @param string $field Field name
+			 * @param string $mode  Permission to check
 			 * @return bool
 			 */
-			public function hasUserWritePermissionOnField(User $user, $field)
+			public function hasUserPermissionOnField(User $user, $field, $mode = 'write')
 			{
 				return $this->hasRight;
 			}
