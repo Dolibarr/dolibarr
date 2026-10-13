@@ -292,7 +292,7 @@ if (empty($reshook)) {
 
 	// Clear the structured payment reference so a new one is generated on the next
 	// invoice. Invoices already validated keep the reference they were issued with.
-	if ($action == 'unsetpaymentref' && $user->admin) {
+	if ($action == 'unsetpaymentref' && $permissiontoadd) {
 		$object->fetch($socid);
 		$res = $object->setValueFrom('tp_payment_reference', '', '', null, 'text', '', $user, 'COMPANY_MODIFY');
 		if ($res > 0) {
@@ -3145,8 +3145,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print showValueWithClipboardCPButton(dol_escape_htmltag($object->tp_payment_reference));
 					if ($permissiontoadd) {
 						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editpaymentref&token='.newToken().'">'.img_edit().'</a>';
-					}
-					if ($user->admin) {
 						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=unsetpaymentref&token='.newToken().'"';
 						print ' title="'.dolPrintHTMLForAttribute($langs->trans('ResetPaymentReferenceHelp')).'">';
 						print img_picto($langs->trans('ResetPaymentReference'), 'refresh');
