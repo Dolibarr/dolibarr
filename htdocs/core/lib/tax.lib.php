@@ -668,7 +668,6 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 	}
 
-	/** @var array<int|string, array<int|string, mixed>> $list Array with details of VATs (per third party) */
 	return $list;
 }
 
@@ -1208,6 +1207,5 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 	}
 
-	/** @var array<int|string, array<int|string, mixed>> $list Array with details of VATs (per rate) */
 	return $list;
 }
