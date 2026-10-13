@@ -120,6 +120,16 @@ class Reception extends CommonObject
 	 */
 	public $date_valid;
 
+	/**
+	 * @var int ID of user author
+	 */
+	public $fk_user_author;
+
+	/**
+	 * @var int ID of user who validated
+	 */
+	public $fk_user_valid;
+
 	public $meths;
 	public $listmeths; // List of carriers
 
@@ -368,6 +378,7 @@ class Reception extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut";
+		$sql .= ", e.date_valid, e.fk_user_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -403,6 +414,9 @@ class Reception extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
+				$this->fk_user_author       = $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
+				$this->date_valid           = $this->db->jdate($obj->date_valid);
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
@@ -909,6 +923,12 @@ class Reception extends CommonObject
 		if (isset($this->socid)) {
 			$this->socid = trim($this->socid);
 		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->fk_user_valid)) {
+			$this->fk_user_valid = trim($this->fk_user_valid);
+		}
 		if (isset($this->shipping_method_id)) {
 			$this->shipping_method_id = trim($this->shipping_method_id);
 		}
@@ -957,7 +977,9 @@ class Reception extends CommonObject
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
 		$sql .= " date_creation=".(dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
+		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
 		$sql .= " date_valid=".(dol_strlen($this->date_valid) != 0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
+		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
 		$sql .= " date_reception=".(dol_strlen($this->date_reception) != 0 ? "'".$this->db->idate($this->date_reception)."'" : 'null').",";
 		$sql .= " date_delivery=".(dol_strlen($this->date_delivery) != 0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
