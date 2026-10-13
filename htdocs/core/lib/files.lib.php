@@ -1866,7 +1866,9 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
-						dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file
+						if (!is_link(dol_osencode("$dir/$item"))) {
+							dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file (chmod would follow a symlink and change its target)
+						}
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -3291,7 +3293,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for preview of supplier invoices
 		if ($fuser->hasRight('fournisseur', $lire)) {
@@ -3642,7 +3644,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid";
-		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = f.rowid";
 		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'payment') {
 		// Wrapping for report of payments
@@ -4365,7 +4367,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT can be for example: "/usr/bin/pdftotext"
 		// It is for the moment a hidden constant.
-		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext'))) . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext'))) . " " . $params ." ".escapeshellarg($filetoprocess)." - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (empty($resultexec['error'])) {
@@ -4400,7 +4402,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		// We also exclude '/temp/' dir and 'documents/admin/documents'
 		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
-		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text ".escapeshellarg($filetoprocess);
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (!$resultexec['error']) {
