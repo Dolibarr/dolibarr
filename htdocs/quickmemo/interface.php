@@ -219,7 +219,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
  */
 function quickMemoIntefaceActionCreate($jsonResponse)
 {
-	global $user, $langs, $db;
+	global $user, $langs, $db, $conf;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
 		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
@@ -268,6 +268,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 	$memo->pos_h = GETPOST("h", "int");
 	$memo->pos_z = GETPOST("z", "int");
 	$memo->status = Memo::STATUS_VALIDATED;
+	$memo->entity = quickMemoInterfaceGetMemoEntity((string) $element_type, (int) $element_id, (bool) $memo->shared_on_element);
 
 	$resCre = $memo->create($user);
 	if ($resCre <= 0 ) {
@@ -319,7 +320,7 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
  */
 function quickMemoIntefaceActionCreateModel($jsonResponse)
 {
-	global $user, $langs, $db;
+	global $user, $langs, $db, $conf;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
 		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_FORBIDDEN);
@@ -337,6 +338,7 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 	}
 
 	$memo->status = Memo::STATUS_TPL;
+	$memo->entity = $conf->entity;	// A template is not linked to the object anymore
 	$memo->private_tpl = GETPOST("tpl_private", "int");
 	$memo->name_tpl = GETPOST("tpl_name");
 	$memo->fk_user_creat = $user->id;
@@ -379,7 +381,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
 	}
 
 	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
 		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return false;
 	}
@@ -464,6 +466,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	$sql = 'SELECT rowid, element_type, context_tab
 	        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
 	        WHERE rowid = '. (int) $movedId.'
+	        AND entity IN ('.getEntity($tmpMemo->element).')
 	        AND status = '. (int) Memo::STATUS_TPL;
 
 	$res = $db->query($sql);
@@ -478,6 +481,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	$sqlAll = 'SELECT rowid
 	           FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
 	           WHERE status = '. (int) Memo::STATUS_TPL.'
+	           AND entity IN ('.getEntity($tmpMemo->element).')
 	           AND element_type IN (\''.$db->escape($movedModel->element_type).'\', \'\')
 	           ORDER BY rank_tpl DESC';
 
@@ -514,6 +518,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 		          SET rank_tpl = '.(int) $currentRank.'
 		          WHERE rowid = '.(int) $id.'
 		          AND status = '. (int) Memo::STATUS_TPL.'
+		          AND entity IN ('.getEntity($tmpMemo->element).')
 		          AND (private_tpl = 0 OR fk_user_creat = '.(int) $user->id.')';
 
 		if (!$db->query($sqlUp)) {
@@ -664,6 +669,7 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 	}
 
 	$memo->shared_on_element = $shared_on_element ? 1 : 0;
+	$memo->entity = quickMemoInterfaceGetMemoEntity((string) $memo->element_type, (int) $memo->fk_element, (bool) $memo->shared_on_element);
 
 	if ($memo->update($user) < 0) {
 		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
@@ -953,7 +959,7 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
 		return false;
 	}
 
-	$object = fetchObjectByElement($moduleLevelOnly ? 0 : (int) $element_id, $element_type);
+	$object = fetchObjectByElement($moduleLevelOnly ? 0 : (int) $element_id, $element_type, '', $moduleLevelOnly ? 0 : 1);
 	if (!is_object($object) || empty($object->element)) {
 		return false;
 	}
@@ -977,6 +983,29 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
 }
 
 /**
+ * Get the entity of a memo: entity of the linked object, or current entity for global memos
+ * and memos shared on all objects of a type.
+ *
+ * @param string $element_type      Element type of the linked object ('' for global contexts like home page)
+ * @param int    $element_id        Id of the linked object
+ * @param bool   $shared_on_element Memo is shared on all objects of this type
+ * @return int
+ */
+function quickMemoInterfaceGetMemoEntity($element_type, $element_id, $shared_on_element)
+{
+	global $conf;
+
+	if (empty($element_type) || $shared_on_element || $element_id <= 0) {
+		return (int) $conf->entity;
+	}
+
+	// Object already loaded in cache by quickMemoInterfaceCanAccessElement()
+	$object = fetchObjectByElement($element_id, $element_type, '', 1);
+
+	return is_object($object) ? (int) setEntity($object) : (int) $conf->entity;
+}
+
+/**
  * Check that current user can access a memo through the object it is attached to.
  *
  * @param Memo $memo Memo
@@ -984,6 +1013,10 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
  */
 function quickMemoInterfaceCanAccessMemo($memo)
 {
+	if (!$memo->isInCurrentEntity()) {
+		return false;
+	}
+
 	// Templates are not attached to an object
 	if ($memo->status == Memo::STATUS_TPL) {
 		return true;
@@ -1011,7 +1044,7 @@ function quickMemoInterfaceFetchMemo($jsonResponse, $privateErrorKey = '')
 	}
 
 	$memo = new Memo($db);
-	if ($memo->fetch($id) <= 0) {
+	if ($memo->fetch($id) <= 0 || !$memo->isInCurrentEntity()) {
 		$jsonResponse->setError($langs->trans('ErrorMemoNotFound'));
 		return null;
 	}
