@@ -40,8 +40,9 @@ var Dolibarr = {
 		 * @param {boolean} [options.token] Add the anti CSRF token, default true except for GET and HEAD
 		 * @param {string} [options.responseType='auto'] 'auto', 'json', 'text' or 'response'
 		 * @param {boolean} [options.showErrors=true] Display errors with setEventMessage
+		 * @param {boolean} [options.showEventMessages=true] For a JsonResponse, display its eventMessages (PHP setEventMessages())
 		 * @param {number} [options.timeout=0] Abort after this delay in ms
-		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug}, return only data
+		 * @param {boolean} [options.unwrap=false] For a JsonResponse {result, msg, newToken, data, debug, eventMessages}, return only data
 		 * @returns {Promise<*>} Parsed response body, throws Dolibarr.tools.fetch.Error {message, status, data, response}
 		 */
 		fetch: Object.assign(function(url, options) {}, {
@@ -66,6 +67,68 @@ var Dolibarr = {
 			/** Error thrown by Dolibarr.tools.fetch, with status, data and response properties */
 			Error: class extends Error {},
 		}),
+
+		/**
+		 * Replace an element of the page, or its content, by html received in ajax.
+		 * Scripts of the html are executed and Dolibarr.initNewContent() is called on the new elements.
+		 * @param {HTMLElement|jQuery|string} target Element or CSS selector
+		 * @param {string|HTMLElement} content Html, or element of another document
+		 * @param {Object} [options]
+		 * @param {string} [options.mode='replace'] 'replace' the element, or 'inner' to replace its content
+		 * @param {boolean} [options.initNewContent=true]
+		 * @returns {HTMLElement|null}
+		 */
+		replaceContent(target, content, options) {},
+
+		/**
+		 * Get the controller of an object displayed on a card
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms, url}
+		 * @returns {{
+		 *   element: string, id: number, tms: number, url: string,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
+		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
+		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
+		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   on: function(string, function): function
+		 * }}
+		 */
+		object: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers */
+			Controller: class {},
+		}),
+
+		/**
+		 * Edition of the fields of a card in ajax, see Form::isAjaxFieldEdit()
+		 */
+		fieldEdit: {
+			/**
+			 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+			 * @param {HTMLElement} link
+			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+			 */
+			open: function(link) {},
+		},
+
+		/**
+		 * Edition of the document lines of a card in ajax, see CommonObject::isAjaxLineEdit()
+		 */
+		lineEdit: {
+			/**
+			 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
+			 * @param {HTMLElement} link
+			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+			 */
+			open: function(link) {},
+
+			/**
+			 * Cancel the edition of the line in progress
+			 */
+			close: function() {},
+		},
 
 		/**
 		 * TThe langs tool
