@@ -510,14 +510,26 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodele
 }
 
 // Remove a line
-if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd)) {
-	if (!empty($object->element) && $object->element == 'mo') {
-		$fk_movement = GETPOSTINT('fk_movement');
-		$result = $object->deleteLine($user, $lineid, 0, $fk_movement);
+if (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && !empty($permissiontoadd)) {
+	if ($action == 'confirm_massdellines') {
+		$result = 0;
+		$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+		foreach ($arrLines2del as $lineid) {
+			$result = $object->deleteLine((int) $lineid);
+			if ($result <= 0) {
+				$langs->load("errors");
+				setEventMessages($object->error, $object->errors, 'errors');
+				break;
+			}
+		}
 	} else {
-		$result = $object->deleteLine($user, $lineid);
+		if (!empty($object->element) && $object->element == 'mo') {
+			$fk_movement = GETPOSTINT('fk_movement');
+			$result = $object->deleteLine($user, $lineid, 0, $fk_movement);
+		} else {
+			$result = $object->deleteLine($user, $lineid);
+		}
 	}
-
 	if ($result > 0) {
 		// Define output language
 		$outputlangs = $langs;

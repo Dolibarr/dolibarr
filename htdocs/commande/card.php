@@ -346,6 +346,37 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'confirm_massdellines' && $confirm == 'yes' && $usercancreate) {
+		$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+		if (count($arrLines2del) > 0) {
+			// Remove lines
+			$result = 0;
+			foreach ($arrLines2del as $lineid) {
+				$result = $object->deleteLine((int) $lineid);
+				if ($result <= 0) {
+					$langs->load("errors");
+					setEventMessages($object->error, $object->errors, 'errors');
+					break;
+				}
+			}
+			// reorder lines
+			$object->line_order(true);
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+			if ($result >= 0) {
+				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+				exit();
+			}
+		}
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Link to a project
 		$object->setProject(GETPOSTINT('projectid'));
@@ -3009,7 +3040,15 @@ if ($action == 'create' && $usercancreate) {
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
-
+		if ($action == 'ask_massdellines') {
+			// Confirmation delete product/service lines
+			$lines2del = GETPOST('line_checkbox', 'array:int');
+			if (is_array($lines2del) && count($lines2del) > 0) {
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' . implode(',', $lines2del), $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
+			} else {
+				setEventMessage($langs->trans('NoRecordSelected'), 'warnings');
+			}
+		}
 		// Generate form to delete a subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
@@ -3547,7 +3586,7 @@ if ($action == 'create' && $usercancreate) {
 			/*
 			 * Form to add new line
 			 */
-			if ($object->status == Commande::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
+			if ($object->status == Commande::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'massdellines') {
 				if ($action != 'editline') {
 					// Add free products/services
 
@@ -3576,7 +3615,7 @@ if ($action == 'create' && $usercancreate) {
 		/*
 		 * Buttons for actions
 		 */
-		if ($action != 'presend' && $action != 'editline') {
+		if ($action != 'presend' && $action != 'editline' && $action != 'massdellines') {
 			print '<div class="tabsAction">';
 
 			$parameters = array();

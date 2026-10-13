@@ -260,7 +260,9 @@ if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 print '<th class="linecoledit"></th>'; // No width to allow autodim
 
 print '<th class="linecoldelete" style="width: 10px">';
-if (in_array(get_class($object), ['Propal', 'FactureFournisseur'])) { // objects that support mass lines deletion
+// if actions_addupdatedelete.inc.php.php is included, mass deletion of object lines is supported
+$actions_addupdatedelete_included = in_array('actions_addupdatedelete.inc.php.php', array_map('basename', get_included_files()));
+if ($actions_addupdatedelete_included || in_array(get_class($object), ['Propal', 'Commande', 'FactureFournisseur'])) { // objects that support mass lines deletion
 	if ($object->status == get_class($object)::STATUS_DRAFT && (empty($action))) {
 		print '<a class="butActionDelete smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=massdellines&token='.newToken().'" title="'.$langs->trans('SelLinesForDeletion').'">';
 		print img_delete($langs->trans('SelLinesForDeletion'));
