@@ -644,9 +644,7 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-// TODO Replace this with $permissiontoedit ?
-$objectRights = $this->getRights();
-$tmppermtoedit = $objectRights->creer;
+$tmppermtoedit = $this->hasUserPermission($user, 'write');
 
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	// Asset info

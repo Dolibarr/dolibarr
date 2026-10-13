@@ -453,23 +453,6 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Check if user has write permission on a field of this object.
-	 * Override of CommonObject::hasUserWritePermissionOnField(): orders use the "creer" permission.
-	 *
-	 * @param User   $user  User to check rights
-	 * @param string $field Field name to check
-	 * @return bool         True if user has right to write this field, false otherwise
-	 */
-	public function hasUserWritePermissionOnField(User $user, $field)
-	{
-		if (empty($field)) {
-			return false;
-		}
-
-		return (bool) $user->hasRight('commande', 'creer');
-	}
-
-	/**
 	 * Save into database the current value of one field, called by updateFieldFromUi().
 	 * Override of CommonObject::persistFieldValue(): the customer ref of orders is saved with set_ref_client().
 	 *

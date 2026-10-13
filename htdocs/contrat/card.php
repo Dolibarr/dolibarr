@@ -311,6 +311,9 @@ if (empty($reshook)) {
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
 			$object->fk_contract_type = GETPOSTINT('contract_type');
+			if (isModEnabled('multicurrency')) {
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			}
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
@@ -539,6 +542,7 @@ if (empty($reshook)) {
 
 			$price_base_type = '';
 			$price_min = '';
+			$pu_ht_devise = 0;
 			// Ecrase $tva_tx par celui du produit. TODO Remove this once vat selection is open
 			// Get and check minimum price
 			if ($idprod > 0) {
@@ -682,7 +686,8 @@ if (empty($reshook)) {
 					(float) $pa_ht,
 					$array_options,
 					(int) $fk_unit,
-					$rang
+					$rang,
+					(float) $pu_ht_devise
 				);
 			}
 
@@ -1296,6 +1301,17 @@ if ($action == 'create') {
 	print $form->selectDate($datecontrat, '', 0, 0, 0, "contrat");
 	print "</td></tr>";
 
+	// Multicurrency
+	if (isModEnabled('multicurrency')) {
+		$currency_code = (is_object($objectsrc) && !empty($objectsrc->multicurrency_code)) ? $objectsrc->multicurrency_code : ($soc->multicurrency_code ? $soc->multicurrency_code : $conf->currency);
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
+		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+		print '</td></tr>';
+	}
+
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load('projects');
@@ -1726,9 +1742,9 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 					print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 					print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-					//if (isModEnabled("multicurrency")) {
-					//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
-					//}
+					if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<td width="80" class="right">'.$langs->trans("PriceUHT").'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($object->multicurrency_code).')</span></td>';
+					}
 					print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
@@ -1820,9 +1836,9 @@ if ($action == 'create') {
 						// Price
 						print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						}*/
+						}
 						// Quantity
 						print '<td class="center">'.$objp->qty.'</td>';
 						// Unit
@@ -1974,9 +1990,9 @@ if ($action == 'create') {
 						print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice') ? GETPOST('elprice') : price($objp->subprice)).'"></td>';
 
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
-						 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						 }*/
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
+						}
 
 						// Quantity
 						print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty') ? GETPOST('elqty') : $objp->qty).'"></td>';
@@ -2294,7 +2310,8 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				$forcetoshowtitlelines = 1;
 				if (empty($object->multicurrency_code)) {
-					$object->multicurrency_code = $conf->currency; // TODO Remove this when multicurrency supported on contracts
+					// Contracts created before multicurrency support existed on this object have no currency stored.
+					$object->multicurrency_code = $conf->currency;
 				}
 
 				// Add free products/services
