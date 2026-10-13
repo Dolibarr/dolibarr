@@ -129,7 +129,8 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 {
 }
 
-$needlogin = !defined('NOLOGIN') || !NOLOGIN;
+// Keep $_GET here: GETPOST is not available until main.inc.php is loaded.
+$needlogin = !isset($_GET['hashp']) && (!isset($_GET['modulepart']) || $_GET['modulepart'] !== 'medias');
 require 'main.inc.php'; // Load $user and permissions
 /**
  * @var Conf $conf
