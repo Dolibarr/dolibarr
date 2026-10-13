@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  * Class to manage contracts
@@ -291,6 +292,12 @@ class Contrat extends CommonObject
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 125),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'Last main doc', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCurrency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 245),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 250, 'isameasure' => 1),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 255, 'isameasure' => 1),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 260, 'isameasure' => 1),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 265, 'isameasure' => 1),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'position' => 500, 'notnull' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed'))
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -735,7 +742,8 @@ class Contrat extends CommonObject
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams, fk_contract_type";
+		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams, fk_contract_type,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
@@ -795,6 +803,13 @@ class Contrat extends CommonObject
 					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 					$this->fk_contract_type = (int) $obj->fk_contract_type;
+
+					$this->fk_multicurrency = $obj->fk_multicurrency;
+					$this->multicurrency_code = $obj->multicurrency_code;
+					$this->multicurrency_tx = $obj->multicurrency_tx;
+					$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+					$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+					$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 					$this->db->free($resql);
 
@@ -859,6 +874,9 @@ class Contrat extends CommonObject
 		$total_ttc = 0;
 		$total_vat = 0;
 		$total_ht = 0;
+		$multicurrency_total_ttc = 0;
+		$multicurrency_total_vat = 0;
+		$multicurrency_total_ht = 0;
 
 		$now = dol_now();
 
@@ -884,7 +902,8 @@ class Contrat extends CommonObject
 		$sql .= " d.fk_unit,";
 		$sql .= " d.extraparams,";
 		$sql .= " d.product_type as type,";
-		$sql .= " d.rang";
+		$sql .= " d.rang,";
+		$sql .= " d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_subprice_ttc, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 		$sql .= " WHERE d.fk_contrat = ".((int) $this->id);
 		if ($only_services == 1) {
@@ -963,6 +982,14 @@ class Contrat extends CommonObject
 
 				$line->rang = $objp->rang;
 
+				$line->fk_multicurrency = $objp->fk_multicurrency;
+				$line->multicurrency_code = $objp->multicurrency_code;
+				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
+				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
+				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
+				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+
 				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
 				if (empty($noextrafields)) {
@@ -1002,6 +1029,9 @@ class Contrat extends CommonObject
 				$total_ttc += $objp->total_ttc;
 				$total_vat += $objp->total_tva;
 				$total_ht += $objp->total_ht;
+				$multicurrency_total_ttc += $objp->multicurrency_total_ttc;
+				$multicurrency_total_vat += $objp->multicurrency_total_tva;
+				$multicurrency_total_ht += $objp->multicurrency_total_ht;
 
 				$i++;
 				$pos++;
@@ -1017,6 +1047,9 @@ class Contrat extends CommonObject
 		$this->total_ttc = (float) price2num($total_ttc);
 		$this->total_tva = (float) price2num($total_vat);
 		$this->total_ht = (float) price2num($total_ht);
+		$this->multicurrency_total_ttc = (float) price2num($multicurrency_total_ttc);
+		$this->multicurrency_total_tva = (float) price2num($multicurrency_total_vat);
+		$this->multicurrency_total_ht = (float) price2num($multicurrency_total_ht);
 
 		return $this->lines;
 	}
@@ -1055,10 +1088,23 @@ class Contrat extends CommonObject
 
 		$now = dol_now();
 
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_contrat);
+		} else {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		}
+		if (empty($this->fk_multicurrency)) {
+			$this->multicurrency_code = $conf->currency;
+			$this->fk_multicurrency = 0;
+			$this->multicurrency_tx = 1;
+		}
+
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext, fk_contract_type)";
+		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext, fk_contract_type,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx)";
 		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->socid).", ".((int) $user->id);
 		$sql .= ", ".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : "NULL");
 		$sql .= ",".($this->commercial_signature_id > 0 ? ((int) $this->commercial_signature_id) : "NULL");
@@ -1073,6 +1119,9 @@ class Contrat extends CommonObject
 		$sql .= ", ".(!empty($this->ref_supplier) ? ("'".$this->db->escape($this->ref_supplier)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_ext) ? ("'".$this->db->escape($this->ref_ext)."'") : "NULL");
 		$sql .= ", ".((int) $this->fk_contract_type);
+		$sql .= ", ".(int) $this->fk_multicurrency;
+		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ")";
 		$resql = $this->db->query($sql);
 
@@ -1492,9 +1541,10 @@ class Contrat extends CommonObject
 	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	?int			$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int				$rang 				Position
+	 *  @param  float			$pu_ht_devise		Unit price net in currency of the contract (isModEnabled('multicurrency'))
 	 *  @return int             					Return integer <0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0, $pu_ht_devise = 0.0)
 	{
 		global $user, $langs, $mysoc;
 		$error = 0;
@@ -1512,6 +1562,7 @@ class Contrat extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht);
+			$pu_ht_devise = price2num($pu_ht_devise);
 
 			// Clean vat code
 			$reg = array();
@@ -1576,7 +1627,7 @@ class Contrat extends CommonObject
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1584,6 +1635,12 @@ class Contrat extends CommonObject
 			$total_localtax2 = $tabprice[10];
 			$pu_ht  = $tabprice[3];
 			$pu_ttc = $tabprice[5];
+
+			// Multicurrency
+			$multicurrency_total_ht  = $tabprice[16];
+			$multicurrency_total_tva = $tabprice[17];
+			$multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
 
 			if (count($localtaxes_type) > 0) {
 				$localtax1_type = $localtaxes_type[0];
@@ -1614,7 +1671,8 @@ class Contrat extends CommonObject
 			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
 			$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql .= " info_bits,";
-			$sql .= " fk_product_fournisseur_price, buy_price_ht";
+			$sql .= " fk_product_fournisseur_price, buy_price_ht,";
+			$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_ttc, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
 			if ($date_start > 0) {
 				$sql .= ",date_ouverture_prevue";
 			}
@@ -1644,10 +1702,15 @@ class Contrat extends CommonObject
 				$sql .= ' null,';
 			}
 			if (isset($pa_ht)) {
-				$sql .= ' '.price2num($pa_ht);
+				$sql .= ' '.price2num($pa_ht).',';
 			} else {
-				$sql .= ' null';
+				$sql .= ' null,';
 			}
+			$sql .= " ".(int) $this->fk_multicurrency.",";
+			$sql .= " '".$this->db->escape((string) $this->multicurrency_code)."',";
+			$sql .= " ".(float) $pu_ht_devise.",";
+			$sql .= " ".($price_base_type === 'TTC' ? (float) price2num((float) $pu_ht_devise * (1 + ((float) $txtva / 100))) : 0).",";
+			$sql .= " ".(float) $multicurrency_total_ht.",".(float) $multicurrency_total_tva.",".(float) $multicurrency_total_ttc;
 			if ($date_start > 0) {
 				$sql .= ",'".$this->db->idate($date_start)."'";
 			}
@@ -1721,9 +1784,10 @@ class Contrat extends CommonObject
 	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	string			$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int				$rang 				Position
+	 *  @param  float			$pu_ht_devise		Unit price net in currency of the contract (isModEnabled('multicurrency'))
 	 *  @return int             	 				Return integer <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0, $pu_ht_devise = 0.0)
 	{
 		global $user, $langs, $mysoc;
 
@@ -1742,6 +1806,7 @@ class Contrat extends CommonObject
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
 		$pa_ht = price2num($pa_ht);
+		$pu_ht_devise = price2num($pu_ht_devise);
 		if (empty($fk_fournprice)) {
 			$fk_fournprice = 0;
 		}
@@ -1766,7 +1831,7 @@ class Contrat extends CommonObject
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
 
-		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
+		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1774,6 +1839,12 @@ class Contrat extends CommonObject
 		$total_localtax2 = $tabprice[10];
 		$pu_ht  = $tabprice[3];
 		$pu_ttc = $tabprice[5];
+
+		// Multicurrency
+		$multicurrency_total_ht  = $tabprice[16];
+		$multicurrency_total_tva = $tabprice[17];
+		$multicurrency_total_ttc = $tabprice[18];
+		$pu_ht_devise = $tabprice[19];
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
 		$localtax2_type = (empty($localtaxes_type[2]) ? '' : $localtaxes_type[2]);
@@ -1810,6 +1881,13 @@ class Contrat extends CommonObject
 		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
 		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? ((int) $fk_fournprice) : "null");
 		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
+		$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
+		$sql .= ", multicurrency_code = '".$this->db->escape((string) $this->multicurrency_code)."'";
+		$sql .= ", multicurrency_subprice = ".(float) $pu_ht_devise;
+		$sql .= ", multicurrency_subprice_ttc = ".($price_base_type === 'TTC' ? (float) price2num((float) $pu_ht_devise * (1 + ((float) $tvatx / 100))) : 0);
+		$sql .= ", multicurrency_total_ht = ".(float) $multicurrency_total_ht;
+		$sql .= ", multicurrency_total_tva = ".(float) $multicurrency_total_tva;
+		$sql .= ", multicurrency_total_ttc = ".(float) $multicurrency_total_ttc;
 		if ($date_start > 0) {
 			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
 		} else {
@@ -2734,7 +2812,7 @@ class Contrat extends CommonObject
 				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
 				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
 				$line_price_base_type = $line->getPriceBaseType();
-				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang, (float) $line->multicurrency_subprice);
 				if ($result < 0) {
 					$error++;
 					$this->setErrorsFromObject($clonedObj);
