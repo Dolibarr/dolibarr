@@ -27,9 +27,6 @@ name: Check PR quota per user
 on:
   pull_request:
     types: [opened, reopened, synchronize]
-  # Also called by the workflow ci-on-pull.yml, that runs the cheap PR checks
-  # first, then starts pre-commit, phan and phpstan only when they are green.
-  workflow_call:
 
 permissions:
   pull-requests: read
