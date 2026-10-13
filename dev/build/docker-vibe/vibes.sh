@@ -118,6 +118,14 @@ for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
     fi
 done
 
+# Make the Apache logs of the host readable into the container (read-only mount).
+# The GID owning the directory (adm on Debian/Ubuntu) is passed so the entrypoint
+# can add the user to this group, as the directory is not readable by others.
+LOG_ARGS=()
+if [ -d /var/log/apache2 ]; then
+    LOG_ARGS+=(-e "HOST_APACHE_LOG_GID=$(stat -c %g /var/log/apache2)" --mount "type=bind,src=/var/log/apache2,dst=/var/log/apache2,readonly")
+fi
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -126,6 +134,7 @@ sudo docker run --rm -it \
   -e GH_TOKEN="$GH_TOKEN" \
   "${GRAPHIC_ARGS[@]}" \
   "${TEST_ARGS[@]}" \
+  "${LOG_ARGS[@]}" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \

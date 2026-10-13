@@ -124,6 +124,46 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 *  testGetRightsForUserWhenModuleIsSet
+	 *  The module of the object is set by fetchObjectByElement(). A core permission named like the element
+	 *  (commande->commande->export) must not be returned as the permissions of the object, else hasUserPermission() is false.
+	 *
+	 *  @return void
+	 */
+	public function testGetRightsForUserWhenModuleIsSet()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertTrue(isModEnabled('order'), 'Module order must be enabled for this test');
+
+		$savrights = isset($user->rights->commande) ? $user->rights->commande : null;
+
+		$localobject = new Commande($db);
+		$localobject->module = 'commande'; // As set by fetchObjectByElement()
+
+		$user->rights->commande = new stdClass();
+		$user->rights->commande->lire = 1;
+		$user->rights->commande->creer = 1;
+		$user->rights->commande->commande = new stdClass();
+		$user->rights->commande->commande->export = 1;
+		$this->assertSame($user->rights->commande, $localobject->getRightsForUser($user), 'Permissions of the core module');
+		$this->assertTrue($localobject->hasUserPermission($user, 'write'), 'Write permission of the core module');
+
+		// Object of a module built with ModuleBuilder, named like its module
+		$user->rights->commande->commande->read = 1;
+		$user->rights->commande->commande->write = 1;
+		$this->assertSame($user->rights->commande->commande, $localobject->getRightsForUser($user), 'Permissions of the object of a ModuleBuilder module');
+
+		$user->rights->commande = $savrights;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testFetchThirdParty
 	 *
 	 *  @return void
@@ -144,6 +184,36 @@ class CommonObjectTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThanOrEqual($result, 0);
 		return $result;
+	}
+
+	/**
+	 *  testShowOutputFieldAndValidateFieldWithDoublePrecision
+	 *
+	 *  Type double(xx,yy), used by amounts of documents, must be managed like double.
+	 *
+	 *  @return void
+	 */
+	public function testShowOutputFieldAndValidateFieldWithDoublePrecision()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+
+		$fields = array(
+			'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'isameasure' => 1),
+		);
+
+		$this->assertSame(price('58.40000000'), $localobject->showOutputField($fields['total_ht'], 'total_ht', '58.40000000'), 'double(24,8) is output like double');
+		$this->assertSame($localobject->showOutputField(array('type' => 'double') + $fields['total_ht'], 'total_ht', '58.40000000'), $localobject->showOutputField($fields['total_ht'], 'total_ht', '58.40000000'));
+
+		$this->assertTrue($localobject->validateField($fields, 'total_ht', '58.4'), 'Numeric value is valid');
+		$this->assertFalse($localobject->validateField($fields, 'total_ht', 'abc'), 'double(24,8) is validated as numeric');
+
+		print __METHOD__." OK\n";
 	}
 
 	/**
