@@ -1210,13 +1210,65 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	$object->fetch_userassigned();
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$result = $object->delete($user);
+	if (GETPOST('deletescope', 'aZ09') == 'serie' && !empty($object->recurid)) {
+		// A recurring event is not a master event with occurrences but N independent events, so the
+		// whole series is deleted event by event, all of them or none of them.
+		$idsofserie = $object->getIdsOfRecurringSerie();
 
-	if ($result >= 0) {
-		header("Location: index.php");
-		exit;
+		if (!is_array($idsofserie)) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			$error = 0;
+			$nbdeleted = 0;
+
+			$db->begin();
+
+			foreach ($idsofserie as $idtodelete) {
+				$eventofserie = new ActionComm($db);
+				if ($eventofserie->fetch($idtodelete) <= 0) {
+					$error++;
+					setEventMessages($eventofserie->error, $eventofserie->errors, 'errors');
+					break;
+				}
+
+				// The permission is checked again on each event of the series: a user allowed on its
+				// own events only must not delete the series when one event belongs to someone else.
+				if (!$user->hasRight('agenda', 'allactions', 'delete')
+					&& !(($eventofserie->authorid == $user->id || $eventofserie->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+					break;
+				}
+
+				$eventofserie->fetch_optionals();
+				$eventofserie->oldcopy = dol_clone($eventofserie, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+				if ($eventofserie->delete($user) < 0) {
+					$error++;
+					setEventMessages($eventofserie->error, $eventofserie->errors, 'errors');
+					break;
+				}
+				$nbdeleted++;
+			}
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+				setEventMessages($langs->trans("RecordsDeleted", $nbdeleted), null, 'mesgs');
+				header("Location: index.php");
+				exit;
+			}
+		}
 	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+		$result = $object->delete($user);
+
+		if ($result >= 0) {
+			header("Location: index.php");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 
@@ -2032,7 +2084,34 @@ if ($id > 0 && $action != 'create') {
 
 	// Deletion confirmation action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		$formquestion = array();
+
+		// A recurring series is N independent events, so without this choice, undoing a series
+		// created by mistake or due to a data entry error, means deleting its events one by one.
+		if (!empty($object->recurid)) {
+			$idsofserie = $object->getIdsOfRecurringSerie();
+
+			if (is_array($idsofserie) && count($idsofserie) > 1) {
+				// The ids are sorted by date, so the first and the last event give the period covered
+				$firstofserie = new ActionComm($db);
+				$firstofserie->fetch($idsofserie[0]);
+				$lastofserie = new ActionComm($db);
+				$lastofserie->fetch($idsofserie[count($idsofserie) - 1]);
+
+				$formquestion[] = array(
+					'type' => 'radio',
+					'name' => 'deletescope',
+					'label' => $langs->trans("ThisEventIsPartOfARecurringSerie"),
+					'default' => 'event',
+					'values' => array(
+						'event' => $langs->trans("DeleteThisEventOnly"),
+						'serie' => $langs->trans("DeleteAllEventsOfTheSerie", count($idsofserie), dol_print_date($firstofserie->datep, 'day'), dol_print_date($lastofserie->datep, 'day'))
+					)
+				);
+			}
+		}
+
+		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", $formquestion, '', 1);
 	}
 
 	if ($action == 'edit') {
