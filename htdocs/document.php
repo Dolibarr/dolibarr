@@ -50,8 +50,10 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
+	$needlogin = 0;
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -65,6 +67,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
