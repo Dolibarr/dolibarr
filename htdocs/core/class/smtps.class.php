@@ -78,6 +78,11 @@ class SMTPs
 	private $_smtpsToken = null;
 
 	/**
+	 * @var string Authentication method ('LOGIN', 'PLAIN', 'XOAUTH2', 'NONE'). If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 */
+	private $_smtpsAuthType = '';
+
+	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -486,8 +491,6 @@ class SMTPs
 	private function _server_authenticate()
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvement as provided by 'SirSir' to
@@ -608,13 +611,12 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (!getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE')) {
-				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
-			}
+			// Authentication method of the send context, else of the main setup
+			$authtype = $this->_smtpsAuthType ? $this->_smtpsAuthType : getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
+			switch ($authtype) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -982,6 +984,17 @@ class SMTPs
 	public function setToken($_strToken)
 	{
 		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Authentication method to use (the one of the send context)
+	 *
+	 * @param	string	$_strAuthType	'LOGIN', 'PLAIN', 'XOAUTH2' or 'NONE'. If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 * @return	void
+	 */
+	public function setAuthType($_strAuthType)
+	{
+		$this->_smtpsAuthType = (string) $_strAuthType;
 	}
 
 	/**
