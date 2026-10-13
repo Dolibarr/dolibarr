@@ -158,19 +158,43 @@ print '
 		padding-'.$left.': 0px !important;
 	}
 
-    a.alilevel0, span.spanlilevel0 {
+    span.spanlilevel0 {
         background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
         background-repeat: no-repeat !important;
 		background-position-y: 18px;';
 if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position: right;';
-	print 'padding: 1em 40px 1em 15px;';
 } else {
 	print 'background-position-x: 10px;';
+}
+print '
+    }
+    a.alilevel0, span.spanlilevel0 {';
+if ($langs->trans("DIRECTION") == 'rtl') {
+	print 'padding: 1em 40px 1em 15px;';
+} else {
 	print 'padding: 1em 15px 1em 40px;';
 }
 print '
 		display: block;
+    }
+    /* Arrow of level 1 entries: points to the right when closed, to the bottom when open */
+    a.alilevel0 {
+        position: relative;
+    }
+    a.alilevel0::before {
+        content: "";
+        position: absolute;
+        top: 18px;
+        '.$left.': 10px;
+        width: 18px;
+        height: 18px;
+        background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\');
+        background-repeat: no-repeat;
+        transition: transform 0.2s;
+    }
+    li.lilevel0.menuopen > a.alilevel0::before {
+        transform: rotate(90deg);
     }
     li.lilevel0 font.vsmenudisabled {
         background-repeat: no-repeat !important;
@@ -255,14 +279,43 @@ print '	background-position-y: 1px;
 
 <script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
-    $("body li").click(function(){
+    $("body li").click(function(event){
         console.log("We click on a li");
 
-        $(this).siblings().find("ul").slideUp(0);
-
-        $(this).find("ul").slideToggle(200);
+        /* Do not propagate the click to the parent li (this would toggle the parent menu too) */
+        event.stopPropagation();
 
         var target = $(this);
+        var childul = target.children("ul");
+
+        /* Only entries of level 1 (lilevel0) and level 2 (lilevel1) with a submenu can be toggled */
+        if (childul.length == 0 || !(target.hasClass("lilevel0") || target.hasClass("lilevel1"))) {
+            return;
+        }
+
+        /* The entry has a submenu: a click on it only toggles the submenu, the link of the entry is not followed */
+        event.preventDefault();
+
+        target.siblings().find("ul").slideUp(0);
+        target.siblings().removeClass("menuopen");
+
+        if (childul.is(":visible")) {
+            target.find("ul").slideUp(200);
+            target.removeClass("menuopen");
+        } else if (target.hasClass("lilevel0")) {
+            /* Click on level 1: show only the level 2, or all levels if there is only one entry of level 2 */
+            if (childul.children("li").length == 1) {
+                target.find("ul").slideDown(200);
+            } else {
+                target.find("ul ul").hide();
+                childul.slideDown(200);
+            }
+            target.addClass("menuopen");
+        } else {
+            /* Click on level 2: show all levels under it */
+            target.find("ul").slideDown(200);
+        }
+
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);
