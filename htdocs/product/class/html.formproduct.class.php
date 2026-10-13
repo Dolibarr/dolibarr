@@ -461,14 +461,8 @@ class FormProduct
 		}
 
 		if (strpos($htmlname, 'search_') !== 0) {
-			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
-				}
-			} else {
-				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = $user->fk_workstation;
-				}
+			if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
+				$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 			}
 		}
 
