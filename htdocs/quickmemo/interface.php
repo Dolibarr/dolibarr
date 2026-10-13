@@ -256,7 +256,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 		$memo->color = $firstColor;
 	}
 
-	$memo->quick_note = GETPOST("note", "nohtml");
+	$memo->quick_note = GETPOST("note", quickMemoInterfaceGetNoteSecurityCheck());
 	$memo->fk_element = $element_id;
 	$memo->element_type = $element_type;
 	$memo->context_tab = $context_tab;
@@ -638,7 +638,7 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 		return false;
 	}
 
-	$memo->quick_note = GETPOST("note", "nohtml");
+	$memo->quick_note = GETPOST("note", quickMemoInterfaceGetNoteSecurityCheck());
 	$memo->tms = dol_now();
 	$memo->fk_user_modif = $user->id;
 
@@ -1011,4 +1011,17 @@ function quickMemoInterfacePopulateMemoTplFromQueryObj($obj)
 	$memo->user_change_name = '';
 
 	return $memo;
+}
+
+/**
+ * Return the GETPOST filter to use for the text of a memo, same rule as other labels.
+ * By default 'alphanohtml' (better security), hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html.
+ * @return string Filter for GETPOST()
+ */
+function quickMemoInterfaceGetNoteSecurityCheck()
+{
+	if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
+		return 'nohtml';
+	}
+	return !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
