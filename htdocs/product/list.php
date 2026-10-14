@@ -524,6 +524,9 @@ if ($search_type != '' && $search_type != '-1') {
 	}
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.description, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
@@ -1142,8 +1145,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1878,7 +1879,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdlineheightsmall" data-key="ref">';
-			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
 			print $product_static->getNomUrl(1, '', 0, -1, 0, '', 0, ' - ', 1);
 			if (empty($arrayfields['p.label']['checked'])) {
 				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
@@ -1928,7 +1929,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
 			print '<span class="spantitle">';
 			print dolPrintHTML($product_static->label);
 			print '</span>';

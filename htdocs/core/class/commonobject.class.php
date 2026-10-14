@@ -2571,7 +2571,7 @@ abstract class CommonObject
 
 	/**
 	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
-	 * Used by the user interface (core/ajax/objectfield.php).
+	 * Use it instead of $object->$field when the field name comes from $fields (generic tools of the user interface...).
 	 *
 	 * @param	string	$field	Field name
 	 * @return	mixed			Value, null if the object has no property for this field

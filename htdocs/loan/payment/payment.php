@@ -99,6 +99,20 @@ if (!empty($line_id)) {
 	}
 }
 
+// Without a schedule: the next payment worked out from the loan and the payments already made
+$nextpayment = null;
+if (empty($line) && $loan->paid != Loan::STATUS_PAID) {
+	$nextpayment = loanNextPayment($db, $loan);
+	if ($nextpayment) {
+		$amount_capital = price($nextpayment['capital']);
+		$amount_insurance = price($nextpayment['charge']);
+		$amount_interest = price($nextpayment['interest']);
+		if (empty($datepaid)) {
+			$ts_temppaid = $nextpayment['date'];
+		}
+	}
+}
+
 $permissiontoadd = $user->hasRight('loan', 'write');
 
 
@@ -133,8 +147,8 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 		$pay_amount_capital = (float) price2num(GETPOST('amount_capital'));
 		$pay_amount_insurance = (float) price2num(GETPOST('amount_insurance'));
-		// User can't set interest him self if schedule is set (else value in schedule can be incoherent)
-		if (!empty($line)) {
+		// Interest as entered (pre-filled with the schedule's); if it differs from the schedule, the following payments are recalculated
+		if (!empty($line) && !GETPOSTISSET('amount_interest')) {
 			$pay_amount_interest = $line->amount_interest;
 		} else {
 			$pay_amount_interest = (float) price2num(GETPOST('amount_interest'));
@@ -392,7 +406,7 @@ if ($action == 'create') {
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital) {
-		print $langs->trans("Interest").': <input type="text" size="8" name="amount_interest" value="'.(GETPOSTISSET('amount_interest') ? GETPOST('amount_interest') : $amount_interest).'" '.(!empty($line) ? 'disabled title="'.$langs->trans('CantModifyInterestIfScheduleIsUsed').'"' : '').'>';
+		print $langs->trans("Interest").': <input type="text" size="8" name="amount_interest" value="'.(GETPOSTISSET('amount_interest') ? GETPOST('amount_interest') : $amount_interest).'">';
 	} else {
 		print '-';
 	}
@@ -401,6 +415,10 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	print '</table>';
+
+	if (!empty($nextpayment)) {
+		print '<div class="opacitymedium margintoponly">'.$langs->trans("LoanNextPaymentPrefilled", $nextpayment['term'], (int) $loan->nbterm).'</div>';
+	}
 
 	// With a schedule, how to recalculate the following payments if this payment differs from it
 	if (!empty($line)) {
