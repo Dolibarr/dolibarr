@@ -506,3 +506,25 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- History of the content of the knowledge records. One row per past version; the row keeps the
+-- author and the date of the version it holds, so no pairing is needed to tell who wrote what.
+-- The current version stays in llx_knowledgemanagement_knowledgerecord.
+CREATE TABLE llx_knowledgemanagement_knowledgerecord_log(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,
+	fk_knowledgerecord integer NOT NULL,
+	version integer NOT NULL,
+	date_version datetime,
+	fk_user integer,
+	change_reason varchar(255),
+	question text,
+	answer longtext,
+	lang varchar(6),
+	status integer
+) ENGINE=innodb;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord_log ADD UNIQUE INDEX uk_knowledgemanagement_knowledgerecord_log_record_version (fk_knowledgerecord, version);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord_log ADD INDEX idx_knowledgemanagement_knowledgerecord_log_fk_user (fk_user);
+
+-- Reason of the last change of a knowledge record, archived with the content into the history above
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN change_reason varchar(255);

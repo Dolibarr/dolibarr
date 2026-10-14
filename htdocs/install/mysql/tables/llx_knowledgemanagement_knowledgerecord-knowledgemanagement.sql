@@ -30,6 +30,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	model_pdf varchar(255),
 	question text NOT NULL,
 	answer longtext,
+	change_reason varchar(255),
 	url varchar(255),
 	fk_ticket integer,
 	fk_c_ticket_category integer,
