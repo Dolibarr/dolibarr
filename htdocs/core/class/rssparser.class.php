@@ -303,6 +303,12 @@ class RssParser
 				} catch (Exception $e) {
 					$rss = null;
 				}
+
+				// The root element was not rss, rdf or feed (an HTML error page, an empty answer...): it is not a feed.
+				// Errors after the root element are tolerated, the items read before the error are kept.
+				if ($rss && empty($this->_format)) {
+					$rss = null;	// Error ErrorFailedToLoadRSSFile, and the answer is not saved into the cache
+				}
 			}
 		}
 
