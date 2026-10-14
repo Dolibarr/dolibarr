@@ -770,7 +770,9 @@ class Documents extends DolibarrApi
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
-		global $conf;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
+		global $conf, $langs;
+
 
 		$modulepartorig = $modulepart;
 
@@ -1039,7 +1041,15 @@ class Documents extends DolibarrApi
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
+				// Differentiate based on the error key in the array
+				$errorkey = array_keys($checkvirusarray)[0];
+				$langs->load('errors');
+				if (in_array($errorkey, array('ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable', 'ErrorFileIsInfectedWithAVirus'))) {
+					$restmsg = $langs->trans($errorkey);
+				} else {
+					$restmsg = $langs->trans('ErrorFileIsInfectedWithAVirus'); // fallback
+				}
+				throw new RestException(500, $restmsg . ': ' . implode(',', $checkvirusarray));
 			}
 		}
 

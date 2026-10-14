@@ -2571,7 +2571,7 @@ abstract class CommonObject
 
 	/**
 	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
-	 * Used by the user interface (core/ajax/objectfield.php).
+	 * Use it instead of $object->$field when the field name comes from $fields (generic tools of the user interface...).
 	 *
 	 * @param	string	$field	Field name
 	 * @return	mixed			Value, null if the object has no property for this field
@@ -10439,10 +10439,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class for a specific user
+	 * Returns the rights used for this class for a specific user.
+	 * This is called by getRights() and hasUserPermission()
 	 *
 	 * @param User $user User to check rights
-	 *
 	 * @return null|int|stdClass        Object of permission for the module
 	 */
 	public function getRightsForUser(User $user)
@@ -10450,13 +10450,14 @@ abstract class CommonObject
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
-		if ($element == 'facturerec') {
-			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec') {
-			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
-		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+		if ($module && $user->hasRight($module, $element)) {
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;

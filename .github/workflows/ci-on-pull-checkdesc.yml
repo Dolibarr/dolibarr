@@ -16,9 +16,6 @@ name: Check PR title and description
 on:
   pull_request:
     types: [opened, edited, reopened, ready_for_review, synchronize]
-  # Also called by the workflow ci-on-pull.yml, that runs the cheap PR checks
-  # first, then starts pre-commit, phan and phpstan only when they are green.
-  workflow_call:
 
 permissions: {}
 

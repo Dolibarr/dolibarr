@@ -160,6 +160,11 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
+
+	/**
 	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
@@ -607,7 +612,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrement stock of product (and sub-products)
-						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
+						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -947,7 +952,7 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -2126,6 +2131,7 @@ class Commande extends CommonOrder
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent = $obj->deposit_percent;
 				$this->fk_account = $obj->fk_account;
@@ -3663,7 +3669,7 @@ class Commande extends CommonOrder
 					$mouvP->origin = &$this;
 					$mouvP->setOrigin($this->element, $this->id);
 					// 0 as price so the weighted average value is not changed
-					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderDeletedInDolibarr", $this->ref));
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderDeletedInDolibarr", $this->ref));
 					if ($result < 0) {
 						$error++;
 						$this->error = $mouvP->error;

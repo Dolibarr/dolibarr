@@ -2626,7 +2626,7 @@ if ($num > 0) {
 			// Alias name
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-				print dol_escape_htmltag($companystatic->name_alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($companystatic->name_alias).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -3184,6 +3184,12 @@ if ($num > 0) {
 						$selected = 1;
 					}
 					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				}
+				if ($contextpage == 'poslist') {
+					// Button to preview the full ticket detail in a colorbox without leaving the history list
+					print '<a href="#" onclick="parent.$.colorbox({href: \''.DOL_URL_ROOT.'/takepos/receipt.php?facid='.$obj->id.'&token='.newToken().'\', width: \'40%\', height: \'90%\', transition: \'none\', iframe: \'true\', title: \''.dol_escape_js($langs->trans('TakeposTicketDetail')).'\'}); return false;" class="butActionSmall" title="'.dol_escape_htmltag($langs->trans('TakeposTicketDetail')).'">'
+						. img_picto($langs->trans('TakeposTicketDetail'), 'search')
+						. '</a>';
 				}
 				print '</td>';
 				if (!$i) {
