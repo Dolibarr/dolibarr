@@ -1676,6 +1676,67 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * The opportunity status of a project is changed from the kanban view (core/ajax/objectfield.php), also when the project is open
+	 *
+	 * @return void
+	 */
+	public function testUpdateOpportunityStatusOfProjectFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savopportunities = getDolGlobalString('PROJECT_USE_OPPORTUNITIES');
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+		// The module and the write permission may be missing in the database of the CI
+		$savmodules = $conf->modules;
+		$savrights = isset($user->rights->projet) ? clone $user->rights->projet : null;
+		$conf->modules['projet'] = 'projet';
+		if (!isset($user->rights->projet)) {
+			$user->rights->projet = new stdClass();
+		}
+		$user->rights->projet->creer = 1;
+
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE active = 1 ORDER BY rowid DESC LIMIT 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$this->assertNotEmpty($obj, 'A status of opportunity is required');
+		$oppstatus = (int) $obj->rowid;
+
+		$localobject = new Project($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = 'PJUI-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Project($db);
+		$localobject->fetch($id);
+		$localobject->setValid($user);
+
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_opp_status'), 'Opportunity status editable from UI on an open project');
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'ref'), 'Ref of a project must not be editable from UI');
+		$this->assertFalse($localobject->isFieldEditableFromUi(new User($db), 'fk_opp_status'), 'User without permission');
+
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_opp_status', $oppstatus), $localobject->errorsToString());
+		$checkobject = new Project($db);
+		$checkobject->fetch($id);
+		$this->assertSame($oppstatus, (int) $checkobject->opp_status);
+		$code = dol_getIdFromCode($db, $oppstatus, 'c_lead_status', 'rowid', 'code');
+		$this->assertSame(dol_escape_htmltag($langs->trans('OppStatus'.$code)), $checkobject->ajaxOutputField('fk_opp_status'), 'Status shown with its label');
+
+		$localobject->delete($user);
+		$conf->global->PROJECT_USE_OPPORTUNITIES = $savopportunities;
+		$conf->modules = $savmodules;
+		if ($savrights === null) {
+			unset($user->rights->projet);
+		} else {
+			$user->rights->projet = $savrights;
+		}
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void
