@@ -1381,6 +1381,78 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
+	 *
+	 * @return void
+	 */
+	public function testUpdateFieldFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$localobject->ref_client = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+
+		// Field without the opt-in "uieditable"
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref', 'HACKED'));
+		$this->assertNotEmpty($localobject->error);
+
+		// User without the write permission
+		$userwithoutright = new User($db);
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($userwithoutright, 'note_public', 'Not allowed'));
+
+		// Note saved with update_note()
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'note_public', '<b>Public note</b>'), $localobject->error);
+		$checkobject = new Commande($db);
+		$checkobject->fetch($id);
+		$this->assertSame('<b>Public note</b>', $checkobject->note_public);
+
+		// Field saved with the default setValueFrom(), blocked when object is not a draft
+		$localobject->fields['ref_ext']['uieditable'] = 1;
+		$localobject->status = $localobject->statut = Commande::STATUS_VALIDATED;
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-LOCKED'));
+		$localobject->status = $localobject->statut = Commande::STATUS_DRAFT;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-'.$id), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame('REFEXT-'.$id, $checkobject->ref_ext);
+
+		// Customer ref saved with set_ref_client(), that refuses a ref already used by another order of the same thirdparty
+		$refclient = 'REFCLIENT-UI-'.$id;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_client', $refclient), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame($refclient, $checkobject->ref_client);
+
+		$otherobject = new Commande($db);
+		$otherobject->initAsSpecimen();
+		$otherobject->socid = $localobject->socid;
+		$otherobject->ref = '';
+		$otherobject->ref_client = '';
+		$otherid = $otherobject->create($user);
+		$this->assertGreaterThan(0, $otherid, 'create: '.$otherobject->error);
+		$otherobject = new Commande($db);
+		$otherobject->fetch($otherid);
+		if (!getDolGlobalString('ORDER_ALLOW_DUPLICATE_REF_CLIENT')) {
+			$this->assertLessThan(0, $otherobject->updateFieldFromUi($user, 'ref_client', $refclient));
+			$this->assertNotEmpty($otherobject->error);
+			$this->assertSame('', (string) $otherobject->ref_client, 'Value in memory must be restored when save fails');
+		}
+
+		$otherobject->delete($user);
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void
