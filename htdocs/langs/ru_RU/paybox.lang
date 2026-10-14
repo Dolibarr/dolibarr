@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Настройка модуля PayBox
-PayBoxDesc=Этот модуль предложить страниц, чтобы платеж по <a href="http://www.paybox.com" target="_blank">Paybox</a> клиентами. Это может быть использовано для свободного платежа или за плату по тому или иному объекту Dolibarr (счетов-фактур, порядка, ...)
-FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
-PaymentForm=Форма оплаты
-WelcomeOnPaymentPage=Добро пожаловать в нашу службу онлайн-платежей
-ThisScreenAllowsYouToPay=На этом экране можно сделать онлайн-платежей для %s.
-ThisIsInformationOnPayment=Это данные по оплате делать
-ToComplete=Для завершения
-YourEMail=Электронная почта для подтверждения оплаты
-Creditor=Кредитор
-PaymentCode=Код платежа
+PayBoxDesc=Этот модуль предлагает страницы, позволяющие клиентам совершать платежи в платежном ящике <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> </a>. Это можно использовать для бесплатной оплаты или для оплаты определенного объекта Dolibarr (счет, заказ, ...)
 PayBoxDoPayment=Оплатить через Paybox
 YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
-Continue=Далее
 SetupPayBoxToHavePaymentCreatedAutomatically=Настройте свою Paybox с URL-адресом <b>%s</b>, чтобы платеж создавался автоматически при подтверждении Paybox.
 YourPaymentHasBeenRecorded=Эта страница подтверждает, что ваш платеж был записан. Спасибо.
 YourPaymentHasNotBeenRecorded=Ваш платеж НЕ был зарегистрирован, и транзакция была отменена. Спасибо.
-AccountParameter=Счет параметры
-UsageParameter=Использование параметров
-InformationToFindParameters=Помогите найти %s информацию об учетной записи
 PAYBOX_CGI_URL_V2=Url модуля Paybox CGI для оплаты
-CSSUrlForPaymentForm=CSS-стилей URL для оплаты форме
 NewPayboxPaymentReceived=Новый платёж Paybox поулчен.
 NewPayboxPaymentFailed=Попытка нового платежа Paybox не удалась
 PAYBOX_PAYONLINE_SENDEMAIL=Уведомление по электронной почте после попытки платежа (успешной или неудачной)

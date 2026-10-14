@@ -20,8 +20,8 @@
 create table llx_bank_url
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_bank         integer,
-  url_id          integer,
+  fk_bank         integer,								-- ID in llx_bank
+  url_id          integer,								-- ID of object (invoice, payment, customer, ...). Type is in type field.
   url             varchar(255),
   label           varchar(255),
   type            varchar(24) NOT NULL

@@ -5,9 +5,9 @@
 // Begin       : 2009-04-07
 // Last Update : 2014-05-20
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2009-2014 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2009-2026 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -22,10 +22,14 @@
 // See the GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with TCPDF.  If not, see <http://www.gnu.org/licenses/>.
+// along with TCPDF.  If not, see <https://www.gnu.org/licenses/>.
 //
 // See LICENSE.TXT file for more information.
 // -------------------------------------------------------------------
+//
+// DEPRECATED :
+//   TCPDF is deprecated: migrate to tecnickcom/tc-lib-pdf
+//   (https://github.com/tecnickcom/tc-lib-pdf).
 //
 // Description : PHP class to creates array representations for
 //               2D barcodes to be used with TCPDF.
@@ -46,6 +50,7 @@
  * @package com.tecnick.tcpdf
  * @version 1.0.015
  * @author Nicola Asuni
+ * @deprecated TCPDF is deprecated: migrate to tecnickcom/tc-lib-pdf.
  */
 class TCPDF2DBarcode {
 
@@ -53,7 +58,7 @@ class TCPDF2DBarcode {
 	 * Array representation of barcode.
 	 * @protected
 	 */
-	protected $barcode_array = false;
+	protected $barcode_array = array();
 
 	/**
 	 * This is the class constructor.
@@ -62,8 +67,8 @@ class TCPDF2DBarcode {
 	 * <li>$arrcode['num_rows'] required number of rows</li>
 	 * <li>$arrcode['num_cols'] required number of columns</li>
 	 * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
-	 * @param $code (string) code to print
- 	 * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+	 * @param string $code code to print
+ 	 * @param string $type type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parameters are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
 	 */
 	public function __construct($code, $type) {
 		$this->setBarcode($code, $type);
@@ -79,9 +84,9 @@ class TCPDF2DBarcode {
 
 	/**
 	 * Send barcode as SVG image object to the standard output.
-	 * @param $w (int) Width of a single rectangle element in user units.
-	 * @param $h (int) Height of a single rectangle element in user units.
-	 * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+	 * @param int $w Width of a single rectangle element in user units.
+	 * @param int $h Height of a single rectangle element in user units.
+	 * @param string $color Foreground color (in SVG format) for bar elements (background is transparent).
  	 * @public
 	 */
 	public function getBarcodeSVG($w=3, $h=3, $color='black') {
@@ -99,9 +104,9 @@ class TCPDF2DBarcode {
 
 	/**
 	 * Return a SVG string representation of barcode.
-	 * @param $w (int) Width of a single rectangle element in user units.
-	 * @param $h (int) Height of a single rectangle element in user units.
-	 * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+	 * @param int $w Width of a single rectangle element in user units.
+	 * @param int $h Height of a single rectangle element in user units.
+	 * @param string $color Foreground color (in SVG format) for bar elements (background is transparent).
  	 * @return string SVG code.
  	 * @public
 	 */
@@ -135,9 +140,9 @@ class TCPDF2DBarcode {
 
 	/**
 	 * Return an HTML representation of barcode.
-	 * @param $w (int) Width of a single rectangle element in pixels.
-	 * @param $h (int) Height of a single rectangle element in pixels.
-	 * @param $color (string) Foreground color for bar elements (background is transparent).
+	 * @param int $w Width of a single rectangle element in pixels.
+	 * @param int $h Height of a single rectangle element in pixels.
+	 * @param string $color Foreground color for bar elements (background is transparent).
  	 * @return string HTML code.
  	 * @public
 	 */
@@ -164,9 +169,9 @@ class TCPDF2DBarcode {
 
 	/**
 	 * Send a PNG image representation of barcode (requires GD or Imagick library).
-	 * @param $w (int) Width of a single rectangle element in pixels.
-	 * @param $h (int) Height of a single rectangle element in pixels.
-	 * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+	 * @param int $w Width of a single rectangle element in pixels.
+	 * @param int $h Height of a single rectangle element in pixels.
+	 * @param array $color RGB (0-255) foreground color for bar elements (background is transparent).
  	 * @public
 	 */
 	public function getBarcodePNG($w=3, $h=3, $color=array(0,0,0)) {
@@ -184,10 +189,10 @@ class TCPDF2DBarcode {
 
 	/**
 	 * Return a PNG image representation of barcode (requires GD or Imagick library).
-	 * @param $w (int) Width of a single rectangle element in pixels.
-	 * @param $h (int) Height of a single rectangle element in pixels.
-	 * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
- 	 * @return image or false in case of error.
+	 * @param int $w Width of a single rectangle element in pixels.
+	 * @param int $h Height of a single rectangle element in pixels.
+	 * @param array $color RGB (0-255) foreground color for bar elements (background is transparent).
+ 	 * @return string|Imagick|false image or false in case of error.
  	 * @public
 	 */
 	public function getBarcodePngData($w=3, $h=3, $color=array(0,0,0)) {
@@ -238,16 +243,18 @@ class TCPDF2DBarcode {
 			ob_start();
 			imagepng($png);
 			$imagedata = ob_get_clean();
-			imagedestroy($png);
+			if (PHP_VERSION_ID < 80000) {
+				imagedestroy($png);
+			}
 			return $imagedata;
 		}
 	}
 
 	/**
 	 * Set the barcode.
-	 * @param $code (string) code to print
- 	 * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
- 	 * @return array
+	 * @param string $code code to print
+ 	 * @param string $type type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parameters are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+ 	 * @return void
 	 */
 	public function setBarcode($code, $type) {
 		$mode = explode(',', $type);
@@ -338,7 +345,7 @@ class TCPDF2DBarcode {
 				break;
 			}
 			default: {
-				$this->barcode_array = false;
+				$this->barcode_array = array();
 			}
 		}
 	}

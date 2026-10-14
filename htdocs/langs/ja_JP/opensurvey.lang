@@ -62,3 +62,4 @@ EmailSomeoneVoted=%sが行を埋めました。\nあなたはリンクであな�
 ShowSurvey=アンケートを表示
 UserMustBeSameThanUserUsedToVote=コメントを投稿するには、投票して、投票に使用したのと同じユーザ名を使用する必要がある
 ListOfOpenSurveys=公開調査のリスト
+AddTheVote=クリックして投票を追加

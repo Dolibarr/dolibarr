@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -33,12 +35,18 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language and need security layer
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -73,7 +81,7 @@ $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 	if (preg_match('/\d\.\d/', $appli)) {
-		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+		if (!preg_match('/'.preg_quote(DOL_VERSION, '/').'/', $appli)) {
 			$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
 		}
 	} else {
@@ -111,9 +119,9 @@ print '<div class="login_block_getinfo">'."\n";
 $toprightmenu .= '<div class="login_block_user">';
 
 // Login name with photo and tooltip
-$mode = -1;
+$picto = -1;
 $toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-$toprightmenu .= $user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+$toprightmenu .= $user->getNomUrl($picto, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
 $toprightmenu .= '</div></div>';
 
 $toprightmenu .= '</div>'."\n";

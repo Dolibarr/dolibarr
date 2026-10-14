@@ -74,7 +74,7 @@ class ImagePrintBuffer implements PrintBuffer
         $draw = new \ImagickDraw();
         $color = new \ImagickPixel('#000000');
         $background = new \ImagickPixel('white');
-            
+
         /* Create annotation */
         if ($this->font !== null) {
             // Allow fallback on defaults as necessary

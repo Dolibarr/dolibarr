@@ -31,7 +31,7 @@ create table llx_projet_task
   datev					datetime,						-- date validation
   label					varchar(255) NOT NULL,
   description			text,
-  duration_effective	real DEFAULT 0,					-- total of time spent on the task. DENORMALIZED FIELD of total of lines into llx_element_time
+  duration_effective	real DEFAULT 0,					-- DENORMALIZED FIELD. total of time spent on the task. total of lines into llx_element_time
   planned_workload		real DEFAULT 0,
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority
@@ -44,5 +44,6 @@ create table llx_projet_task
   note_public			text,
   rang                  integer DEFAULT 0,
   model_pdf        		varchar(255),
-  import_key			varchar(14)						-- Import key
+  import_key			varchar(14),						-- Import key,
+  billable    smallint DEFAULT 1
 )ENGINE=innodb;

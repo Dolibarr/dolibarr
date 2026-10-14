@@ -32,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassStandard extends ModeleGenPassword
 {
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string ID
 	 */
 	public $id;
@@ -124,6 +129,8 @@ class modGeneratePassStandard extends ModeleGenPassword
 	public function validatePassword($password)
 	{
 		global $langs;
+
+		dol_syslog("modGeneratePassStandard::validatePassword");
 
 		if (dol_strlen($password) < $this->length2) {
 			$langs->load("other");

@@ -31,9 +31,9 @@ UseDiscountOnTotal=Trên tổng phụ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Xác định nếu giảm giá toàn cục được coi là một sản phẩm, dịch vụ hoặc chỉ trên tổng phụ để tính toán biên lợi nhuận.
 MARGIN_TYPE=Mua/Giá thành được đề xuất theo mặc định để tính toán biên lợi nhuận
 MargeType1=Biên lợi nhuận trên giá nhà cung cấp tốt nhất
-MargeType2=Biên lợi nhuân trên giá bình quân gia quyền (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Biên lợi nhuận trên Giá thành
-MarginTypeDesc=* Biên lợi nhuận trên giá mua tốt nhất = Giá bán - Giá nhà cung cấp tốt nhất được xác định trên thẻ sản phẩm <br> * Lợi nhuận trên giá bình quân gia quyền (WAP) = Giá bán - Giá bình quân gia quyền sản phẩm (Wap) hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap <br> * Lợi nhuận trên giá vốn = Giá bán - Giá thành được xác định trên thẻ sản phẩm hoặc Wap nếu giá chưa xác định hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Giá thành
 UnitCharges=Phí đơn vị
 Charges=Phí

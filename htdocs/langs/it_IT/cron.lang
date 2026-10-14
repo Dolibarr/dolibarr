@@ -77,6 +77,7 @@ CronType=Tipo di processo
 CronType_method=Metodo di chiamata di una classe PHP
 CronType_command=Comando da shell
 CronCannotLoadClass=Non posso caricare la classe %s (per usare la classe %s)
+CronModuleNotEnabledInThisEntity=Cron modulo non abilitato in questa entità (per utilizzare il metodo %s di %s oggetto)
 CronCannotLoadObject=Il file di classe %s è stato caricato, ma all'interno l'oggetto %s non è presente
 UseMenuModuleToolsToAddCronJobs=Vai nel menu "Home - Strumenti di amministrazione - Processi pianificati" per visualizzare e modificare i processi pianificati.
 JobDisabled=Processo disabilitato

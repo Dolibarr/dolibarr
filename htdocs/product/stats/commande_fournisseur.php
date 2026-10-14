@@ -3,6 +3,10 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Charlene Benke             <charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent MAURY TimGroup	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +25,16 @@
 /**
  * \file htdocs/product/stats/commande_fournisseur.php
  * \ingroup product service commande
- * \brief Page des stats des commandes fournisseurs pour un produit
+ * \brief Statistics for supplier orders by product
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -44,7 +55,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatssupplierorder'));
 
 $mesg = '';
@@ -73,11 +84,13 @@ if (GETPOSTISARRAY('search_status')) {
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
+$search_company = GETPOSTINT('search_company');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 	$search_status = '';
+	$search_company = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -106,7 +119,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-stats_commande_fournisseur');
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', 'mod-product page-stats_commande_fournisseur');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -131,8 +144,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -147,8 +160,8 @@ if ($id > 0 || !empty($ref)) {
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty,";
-			$sql .= " c.date_livraison as delivery_date";
+			$sql .= " c.date_livraison as delivery_date,";
+			$sql .= " c.date_commande, c.fk_statut as status, c.billed, c.rowid as commandeid, d.rowid, d.qty, d.subprice as unitprice";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
@@ -163,16 +176,18 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= " AND MONTH(c.date_commande) IN (".$db->sanitize($search_month).")";
+				$sql .= " AND MONTH(c.date_commande) = ".((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= " AND YEAR(c.date_commande) IN (".$db->sanitize($search_year).")";
+				$sql .= " AND YEAR(c.date_commande) = ".((int) $search_year);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND c.fk_soc = ".((int) $socid);
+			} elseif ($search_company > 0) {
+				$sql .= " AND c.fk_soc = ".((int) $search_company);
 			}
 
 			if ($search_status != '') {
@@ -211,11 +226,13 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				if ($search_status != '') {
-					$param .= '&search_status='.urlencode($search_status);
+					$option .= '&search_status='.urlencode($search_status);
 				}
 
+				print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="">';
 				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				}
@@ -234,12 +251,13 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
+				if (empty($socid)) print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.fournisseur:=:1)', 1);
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
@@ -254,7 +272,8 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("OrderDate", $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre('DateDeliveryPlanned', $_SERVER['PHP_SELF'], 'c.date_livraison', '', $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "d.unitprice", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
@@ -267,7 +286,11 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
-						$supplierorderstatic->statut = $objp->statut;
+
+						$supplierorderstatic->statut = $objp->status;	// deprecated
+						$supplierorderstatic->status = $objp->status;
+						$supplierorderstatic->billed = $objp->billed;
+
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
@@ -283,6 +306,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->delivery_date), 'dayhour');
 						print '</td>';
 						print '<td class="center">'.$objp->qty."</td>\n";
+						print '<td align="right">'.price($objp->unitprice)."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$supplierorderstatic->getLibStatut(4).'</td>';
 						print "</tr>\n";
@@ -299,6 +323,7 @@ if ($id > 0 || !empty($ref)) {
 				// delivery planned date
 				print '<td></td>';
 				print '<td class="center">'.$total_qty.'</td>';
+				print '<td></td>';
 				print '<td align="right">'.price($total_ht).'</td>';
 				print '<td></td>';
 				print "</table>";

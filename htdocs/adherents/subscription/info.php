@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users"));
 
-if (!$user->hasRight('adherent', 'lire')) {
+if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	accessforbidden();
 }
 
 $rowid = GETPOSTINT("rowid");
+
+// Security check (the subscription must be the one of a member of an entity of the user)
+$result = restrictedArea($user, 'subscription', $rowid);
 
 
 
@@ -46,7 +59,10 @@ $rowid = GETPOSTINT("rowid");
 
 $form = new Form($db);
 
-llxHeader();
+$title = $langs->trans('Subscription')." - ".$langs->trans('Info');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-subscription-card_info');
 
 $object = new Subscription($db);
 $result = $object->fetch($rowid);
@@ -67,7 +83,7 @@ print '<br>';
 
 $object->info($rowid);
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

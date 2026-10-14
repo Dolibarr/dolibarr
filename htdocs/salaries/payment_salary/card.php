@@ -4,9 +4,9 @@
  * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
  * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre SPANGARO			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
@@ -68,6 +76,7 @@ restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('salaries', 'delete')) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -104,7 +113,7 @@ $head = array();
 
 $head[$h][0] = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$id;
 $head[$h][1] = $langs->trans("SalaryPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*
@@ -154,9 +163,9 @@ print '</td></tr>';*/
 
 // Date
 print '<tr><td>';
-print $form->editfieldkey("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker');
+print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink' => 1));
 print "</td>";
 print '</tr>';
 
@@ -176,9 +185,9 @@ print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlconte
 
 // Bank account
 if (isModEnabled("bank")) {
-	if ($object->bank_account) {
+	if ($object->bank_account && isset($object->bank_line)) {
 		$bankline = new AccountLine($db);
-		$bankline->fetch($object->bank_line);
+		$bankline->fetch((int) $object->bank_line);
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
@@ -204,7 +213,7 @@ $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, ps.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps,'.MAIN_DB_PREFIX.'salary as f';
 $sql .= ' WHERE ps.fk_salary = f.rowid';
-$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND f.entity = '.((int) $conf->entity);
 $sql .= ' AND ps.rowid = '.((int) $object->id);
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);
@@ -249,7 +258,7 @@ if ($resql) {
 				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
@@ -273,7 +282,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->hasRight('salaries', 'delete')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($langs->trans("CantRemovePaymentSalaryPaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}

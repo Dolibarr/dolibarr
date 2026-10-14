@@ -17,7 +17,7 @@
 -- ===================================================================
 
 
--- Supprimme orphelins pour permettre montee de la cle
+-- To delete orphelins to allow creation of foreign key
 -- V4 DELETE llx_facture_fourn_det FROM llx_facture_fourn_det LEFT JOIN llx_facture_fourn ON llx_facture_fourn_det.fk_facture_fourn = llx_facture_fourn.rowid WHERE llx_facture_fourn.rowid IS NULL;
 
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);

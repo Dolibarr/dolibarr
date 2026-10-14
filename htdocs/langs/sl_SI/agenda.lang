@@ -2,6 +2,7 @@
 IdAgenda=ID dogodka
 Actions=Dogodki
 Agenda=Koledar
+AgendaEvents=Agenda events
 TMenuAgenda=Koledar
 Agendas=Koledarji
 LocalAgenda=Privzeti koledar
@@ -21,7 +22,6 @@ MenuDoneMyActions=Moji prekinjeni dogodki
 ListOfEvents=Seznam dogodkov (privzeti koledar)
 ActionsAskedBy=Dogodek vnesel
 ActionsToDoBy=Dogodki so dodeljeni
-ActionsDoneBy=Dogodke izvedel
 ActionAssignedTo=Dogodek je dodeljen
 ViewCal=Mesečni pogled
 ViewDay=Dnevni pogled
@@ -29,11 +29,13 @@ ViewWeek=Tedenski pogled
 ViewPerUser=Pogled po uporabniku
 ViewPerType=Pogled na vrsto
 AutoActions= Avtomatska izpolnitev
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Tukaj lahko določite dogodke, za katere želite, da jih Dolibarr samodejno ustvari v programu Agenda. Če ni označeno nič, bodo v dnevnike vključena samo ročna dejanja in prikazana v dnevnem redu. Samodejno sledenje opravljenih poslovnih dejanj na objektih (validacija, sprememba statusa) ne bo shranjeno.
 AgendaSetupOtherDesc= Na tej strani so možnosti za izvoz vaših dogodkov Dolibarr v zunanji koledar (Thunderbird, Google Calendar itd.)
 AgendaExtSitesDesc=Stran omogoča zunanje koledarje za ogled dogodkov v programu
 ActionsEvents=Dogodki, ki bodo samodejno kreirani v koledarju
 EventRemindersByEmailNotEnabled=Opomniki za dogodke po e-pošti niso bili omogočeni v nastavitvah modula %s.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Partner %s ustvarjen
 COMPANY_MODIFYInDolibarr=Partner %s spremenjen
@@ -45,6 +47,7 @@ PropalClosedRefusedInDolibarr=Ponudba %s zavrnjena
 PropalValidatedInDolibarr=Potrjena ponudba %s
 PropalBackToDraftInDolibarr=Predlog %s se vrne v status osnutka
 PropalClassifiedBilledInDolibarr=Ponudba %s je označena kot "zaračunana"
+InvoiceCreatedInDolibarr=Invoice %s created
 InvoiceValidatedInDolibarr=Potrjen račun %s
 InvoiceValidatedInDolibarrFromPos=Račun %s je potrjen preko POS
 InvoiceBackToDraftInDolibarr=Račun %s se vrača v status osnutka
@@ -135,12 +138,14 @@ AgendaModelModule=Predloge dokumentov za dogodek
 DateActionStart=Začetni datum
 DateActionEnd=Končni datum
 AgendaUrlOptions1=V filtriran izhod lahko dodate tudi naslednje parametre:
-AgendaUrlOptions3=<b>logina=%s</b> za omejitev izhoda na aktivnosti v lasti uporabnika <b>%s</b>.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> za omejitev izhoda na dejanja, ki niso v lasti uporabnika <b> %s </b> .
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> za omejitev izhoda na dejanja, dodeljena uporabniku <b> %s </b> (lastnik in drugi).
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> za omejitev izhoda na dejanja, povezana s projektom <b> __PROJECT_ID__ </b> .
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> za izključitev samodejnih dogodkov.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> za vključitev dogodkov ob praznikih.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Rojstni dnevi stikov
 AgendaHideBirthdayEvents=Skrij rojstne dneve stikov
 Busy=Zaseden
@@ -167,8 +172,10 @@ OnceOnly=Samo enkrat
 EveryDay=Vsak dan
 EveryWeek=Vsak teden
 EveryMonth=Vsak mesec
+EveryYear=Every year
 DayOfMonth=Dan v mesecu
 DayOfWeek=Dan v tednu
+DayOfYear=Day of year
 DateStartPlusOne=Začetni datum + 1 ura
 SetAllEventsToTodo=Nastavite vse dogodke na opravila
 SetAllEventsToInProgress=Vse dogodke nastavite na v teku
@@ -202,3 +209,15 @@ BookingSuccessfullyBooked=Vaša rezervacija je shranjena
 BookingReservationHourAfter=Potrjujemo rezervacijo našega srečanja na datum %s
 BookcalBookingTitle=Spletni termin
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less
+RecurringEvent=Recurring event
+EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
+BookCalSystem=Online booking
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

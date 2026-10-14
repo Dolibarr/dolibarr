@@ -2,6 +2,7 @@
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,13 @@ if (!defined('NOCSRFCHECK')) {
 }
 
 require "../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
@@ -54,11 +62,10 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 //require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
-
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
-	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
-	$user->getrights();
+	$user->fetch(0, $_SERVER['PHP_AUTH_USER']);
+	$user->loadRights();
 }
 
 // Load translation files required by the page
@@ -125,7 +132,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 
@@ -148,7 +155,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		}
 
 		// Check if user status is enabled
-		if ($user->statut != $user::STATUS_ENABLED) {
+		if ($user->status != $user::STATUS_ENABLED) {
 			// Status is disabled
 			dol_syslog("The user has been disabled.");
 			return false;
@@ -219,13 +226,11 @@ $server = new \Sabre\DAV\Server($nodes);
 // If you want to run the SabreDAV server in a custom location (using mod_rewrite for instance)
 // You can override the baseUri here.
 $baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
-if (isset($baseUri)) {
-	$server->setBaseUri($baseUri);
-}
+$server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
-	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
+	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', Sabre\Uri\normalize($_SERVER["PHP_SELF"])))
 	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 ) {
 	//var_dump($_SERVER["QUERY_STRING"]);exit;

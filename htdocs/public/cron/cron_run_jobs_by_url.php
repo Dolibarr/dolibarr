@@ -3,6 +3,8 @@
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +61,7 @@ if (is_numeric($entity)) {
 // Error if CLI mode
 if (php_sapi_name() == "cli") {
 	echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
-	exit(-1);
+	exit(1);
 }
 
 // core library
@@ -68,14 +70,18 @@ require '../../main.inc.php';
 
 // cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
-
-global $langs, $conf;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
+global $langs, $conf, $db;
 
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	httponly_accessforbidden('Module Cron not enabled');
 }
 
@@ -106,7 +112,7 @@ if (empty($userlogin)) {
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user = new User($db);
-$result = $user->fetch('', $userlogin);
+$result = $user->fetch(0, $userlogin);
 if ($result < 0) {
 	echo "User Error:".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -118,7 +124,7 @@ if ($result < 0) {
 		exit;
 	}
 }
-$user->getrights();
+$user->loadRights();
 
 $id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
@@ -134,6 +140,49 @@ if (!empty($id)) {
 		exit;
 	}
 	$filter['t.rowid'] = $id;
+}
+
+// Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
+$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
+$sql .= " WHERE processing = 1";
+$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
+$sql .= " AND datelastresult IS NULL";
+$db->query($sql);
+
+// Also unlock jobs that have a PID but the process does not exist anymore (SIGKILL, crash, segfault, ...).
+if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
+	$sql = "SELECT rowid, pid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."cronjob";
+	$sql .= " WHERE processing = 1";
+	$sql .= " AND datelastresult IS NULL";
+	$sql .= " AND pid IS NOT NULL";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$pid = (int) $obj->pid;
+			if ($pid <= 0) {
+				continue;
+			}
+
+			$isalive = @posix_kill($pid, 0);
+			if (!$isalive) {
+				$errno = posix_get_last_error();
+				if ($errno === 3) { // ESRCH = No such process
+					$nowcleanup = dol_now();
+					$msg = 'Cron job unlocked: stale PID '.$pid;
+
+					$sqlu = "UPDATE ".MAIN_DB_PREFIX."cronjob";
+					$sqlu .= " SET processing = 0, pid = NULL, datelastresult = '".$db->idate($nowcleanup)."', lastresult = '-1', lastoutput = '".$db->escape($msg)."'";
+					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".((int) $pid)." AND datelastresult IS NULL";
+					$db->query($sqlu);
+
+					dol_syslog("cron_run_jobs_by_url.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")", LOG_WARNING);
+					echo "Unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")\n";
+				}
+			}
+		}
+		$db->free($resql);
+	}
 }
 
 $result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
@@ -155,6 +204,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force Cronjob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -168,19 +218,19 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity && $user->entity != 0) {
-				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
+				$result = $user->fetch(0, $userlogin, '', 0, $conf->entity);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-					exit(-1);
+					exit(1);
 				} else {
 					if ($result == 0) {
 						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
 						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-						exit(-1);
+						exit(1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights();
 			}
 		}
 
@@ -224,13 +274,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
+				exit(1);
 			}
 
-			echo "Job re-scheduled\n";
+			echo " - Job re-scheduled\n";
 		} else {
 			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 

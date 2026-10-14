@@ -5,7 +5,8 @@
  * Copyright (C) 2014-2021 Charlene Benke		<charlene.r@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2019	   Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +30,22 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 
 // Load translation files required by the page
 $langs->load("companies");
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
 
@@ -61,20 +67,10 @@ if (!isset($form) || !is_object($form)) {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -99,7 +95,8 @@ $third = array(
 );
 $total = 0;
 
-$sql = "SELECT s.rowid, s.client, s.fournisseur";
+// Counted by the database: the page must not fetch one row per third party
+$sql = "SELECT s.client, s.fournisseur, COUNT(s.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -120,6 +117,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
+$sql .= " GROUP BY s.client, s.fournisseur";
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
@@ -127,22 +125,22 @@ if ($result) {
 		$found = 0;
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS') && ($objp->client == 2 || $objp->client == 3)) {
 			$found = 1;
-			$third['prospect']++;
+			$third['prospect'] += $objp->nb;
 		}
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS') && ($objp->client == 1 || $objp->client == 3)) {
 			$found = 1;
-			$third['customer']++;
+			$third['customer'] += $objp->nb;
 		}
 		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS') && $objp->fournisseur) {
 			$found = 1;
-			$third['supplier']++;
+			$third['supplier'] += $objp->nb;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
 			$found = 1;
-			$third['other']++;
+			$third['other'] += $objp->nb;
 		}
 		if ($found) {
-			$total++;
+			$total += $objp->nb;
 		}
 	}
 } else {
@@ -151,7 +149,7 @@ if ($result) {
 
 $thirdpartygraph = '<div class="div-table-responsive-no-min">';
 $thirdpartygraph .= '<table class="noborder nohover centpercent">'."\n";
-$thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+$thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("NatureOfThirdParty").'</th></tr>';
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
@@ -207,7 +205,6 @@ $thirdpartygraph .= '</div>';
 $thirdpartycateggraph = '';
 if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	$elementtype = 'societe';
 
 	$thirdpartycateggraph = '<div class="div-table-responsive-no-min">';
 	$thirdpartycateggraph .= '<table class="noborder nohover centpercent">';
@@ -218,7 +215,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
 	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
-		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+		$sql .= " AND c.label like '".$db->escape(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
 	$sql .= " GROUP BY c.label";
@@ -258,7 +255,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				$thirdpartycateggraph .= '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				$thirdpartycateggraph .= '<tr class="oddeven"><td>'.dolPrintHTML($obj->label).'</td><td>'.$obj->nb.'</td></tr>';
 				$total += $obj->nb;
 				$i++;
 			}
@@ -278,6 +275,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 /*
  * Latest modified third parties
  */
+
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
@@ -290,8 +288,9 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, s.tms as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -315,7 +314,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
@@ -411,10 +410,13 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
-$sql .= ", s.tms as date_modification, s.status as status";
+$sql .= ", s.status as status";
+$sql .= ", GREATEST(sp.tms, COALESCE(spef.tms, sp.tms)) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as sp";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object = sp.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -422,8 +424,7 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " WHERE s.entity IN (".getEntity('societe').") AND sp.fk_soc = s.rowid";
-$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
+$sql .= " WHERE s.entity IN (".getEntity('societe').") ";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
@@ -439,7 +440,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
@@ -489,6 +490,7 @@ if ($result) {
 			$thirdparty_static->code_compta_client = $objp->code_compta;
 
 			$contact_static->id = $objp->cid;
+			$contact_static->status = $objp->cstatus;
 			$contact_static->firstname = $objp->firstname;
 			$contact_static->lastname = $objp->lastname;
 			$contact_static->email = $objp->cemail;
@@ -499,11 +501,11 @@ if ($result) {
 
 			$lastmodifiedcontact .= '<tr class="oddeven">';
 			// Contact
-			$lastmodifiedcontact .= '<td>';
+			$lastmodifiedcontact .= '<td class="tdoverflowmax150">';
 			$lastmodifiedcontact .= $contact_static->getNomUrl(1);
 			$lastmodifiedcontact .= '</td>';
 			// Third party
-			$lastmodifiedcontact .= '<td class="nowrap tdoverflowmax200">';
+			$lastmodifiedcontact .= '<td class="nowrap tdoverflowmax125">';
 			$lastmodifiedcontact .= $thirdparty_static->getNomUrl(1);
 			$lastmodifiedcontact .= "</td>\n";
 			// Last modified date

@@ -29,3 +29,5 @@ LDAPPasswordHashType=கடவுச்சொல் ஹாஷ் வகை
 LDAPPasswordHashTypeExample=சேவையகத்தில் பயன்படுத்தப்படும் கடவுச்சொல் ஹாஷ் வகை
 SupportedForLDAPExportScriptOnly=ldap ஏற்றுமதி ஸ்கிரிப்ட் மட்டுமே ஆதரிக்கிறது
 SupportedForLDAPImportScriptOnly=ldap இறக்குமதி ஸ்கிரிப்ட் மட்டுமே ஆதரிக்கிறது
+LDAPUserAccountControl = userAccountControl on creation (active directory)
+LDAPUserAccountControlExample = 512 Normal Account / 546 Normal Account + No Passwd + Disabled (see : https://fr.wikipedia.org/wiki/Active_Directory)

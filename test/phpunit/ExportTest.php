@@ -24,12 +24,13 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
@@ -99,31 +100,31 @@ class ExportTest extends CommonClassTest
 
 		$valtotest = 'A simple string';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'A simple string');
 
 		$valtotest = 'A string with , and ; inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
 
 		$valtotest = 'A string with " inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside"');
 
 		$valtotest = 'A string with " inside and '."\r\n".' carriage returns';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
 
 		$valtotest = 'A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 
@@ -132,31 +133,31 @@ class ExportTest extends CommonClassTest
 
 		$valtotest = 'A simple string';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'A simple string');
 
 		$valtotest = 'A string with , and ; inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with , and ; inside"');
 
 		$valtotest = 'A string with " inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside"');
 
 		$valtotest = 'A string with " inside and '."\r\n".' carriage returns';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
 
 		$valtotest = 'A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 	}
@@ -188,31 +189,31 @@ class ExportTest extends CommonClassTest
 
 		$valtotest = 'A simple string';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'A simple string');
 
 		$valtotest = 'A string with , and ; inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
 
 		$valtotest = 'A string with " inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside"');
 
 		$valtotest = 'A string with " inside and '."\r\n".' carriage returns';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
 
 		$valtotest = 'A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 
@@ -221,31 +222,31 @@ class ExportTest extends CommonClassTest
 
 		$valtotest = 'A simple string';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'A simple string');
 
 		$valtotest = 'A string with , and ; inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with , and ; inside"');
 
 		$valtotest = 'A string with " inside';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with "" inside"');
 
 		$valtotest = 'A string with " inside and '."\r\n".' carriage returns';
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
 
 		$valtotest = 'A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
 		print __METHOD__." valtotest=".$valtotest."\n";
-		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		$result = csvClean($valtotest, $langs->charset_output);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 	}
@@ -371,9 +372,18 @@ class ExportTest extends CommonClassTest
 	 */
 	public function testExportModulesDatasets()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$model = 'csviso';
+
+		print "ccccccccccccccccc\n";
+		print var_export($db, true);
+		print var_export($mysoc->db, true);
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';
@@ -405,6 +415,110 @@ class ExportTest extends CommonClassTest
 			$result = dol_is_file($exportfile);
 			$this->assertTrue($result, 'File '.$exportfile.' not found');
 		}
+
+		return true;
+	}
+
+	/**
+	 * Test export datasets SQL is restricted in the same way than the UI for a restricted user
+	 *
+	 * @return void
+	 */
+	public function testExportDatasetSqlScopingForRestrictedUser()
+	{
+		global $conf, $user, $langs, $db;
+
+		$savuser = $user;
+
+		// Build a restricted internal user (no thirdparty advanced visibility, no hierarchy-wide read rights)
+		$restricteduser = new User($db);
+		$restricteduser->id = 999999901;
+		$restricteduser->rights = new stdClass();
+
+		// Build a user with all the rights that remove the export scope restrictions
+		$fulluser = new User($db);
+		$fulluser->id = 999999902;
+		$fulluser->rights = new stdClass();
+		$fulluser->rights->societe = new stdClass();
+		$fulluser->rights->societe->client = new stdClass();
+		$fulluser->rights->societe->client->voir = 1;
+		$fulluser->rights->projet = new stdClass();
+		$fulluser->rights->projet->all = new stdClass();
+		$fulluser->rights->projet->all->lire = 1;
+		$fulluser->rights->expensereport = new stdClass();
+		$fulluser->rights->expensereport->readall = 1;
+		$fulluser->rights->salaries = new stdClass();
+		$fulluser->rights->salaries->readall = 1;
+		$fulluser->rights->salaries->readchild = 1;
+
+		$datasets = array(
+			'modContrat' => array('contrat_1', 'contrat', 'AND (co.fk_soc IS NULL OR sc.fk_user = ID)', 'societe_commerciaux'),
+			'modFicheinter' => array('ficheinter_1', 'ficheinter', 'AND (f.fk_soc IS NULL OR sc.fk_user = ID)', 'societe_commerciaux'),
+			'modTicket' => array('ticket_1', 'ticket', 'AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ID))', 'societe_commerciaux'),
+			'modProjet' => array('projet_1', 'projet', 'AND p.rowid IN (', 'projet'),
+			'modExpenseReport' => array('expensereport_1', 'expensereport', 'AND d.fk_user_author IN (', 'expensereport'),
+			'modSalaries' => array('salaries_1', 'salaries', 'AND s.fk_user = ID', 'salary')
+		);
+
+		// Phase 1: with a restricted user, every dataset must include a scope restriction
+		$user = $restricteduser;
+
+		foreach ($datasets as $modulefile => $datasetdef) {
+			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$expectedclause = str_replace('ID', (string) $restricteduser->id, $expectedclause);
+
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/'.$modulefile.'.class.php';
+			$mod = new $modulefile($db);
+
+			$found = 0;
+			$sql = '';
+			foreach ($mod->export_code as $key => $code) {
+				if ($code != $exportcode) {
+					continue;
+				}
+				$found++;
+				$sql = $mod->export_sql_start[$key].$mod->export_sql_end[$key];
+			}
+
+			$this->assertEquals(1, $found, 'Dataset '.$exportcode.' not found into '.$modulefile);
+
+			print __METHOD__." dataset=".$exportcode." sql=".$sql."\n";
+
+			$regex = '/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/';
+			$result = (bool) preg_match($regex, $sql);
+			$this->assertTrue($result, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
+			$this->assertStringContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is not restricted for a user without permission to see all records');
+		}
+
+		// Phase 2: with a user that has all visibility rights, no dataset must be restricted
+		$user = $fulluser;
+
+		foreach ($datasets as $modulefile => $datasetdef) {
+			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$expectedclause = str_replace('ID', (string) $fulluser->id, $expectedclause);
+
+			if (!isModEnabled($modulename) || !isModEnabled('societe')) {
+				print __METHOD__." dataset=".$exportcode." skipped (module not enabled)\n";
+				continue;
+			}
+
+			$mod = new $modulefile($db);
+
+			$found = 0;
+			$sql = '';
+			foreach ($mod->export_code as $key => $code) {
+				if ($code != $exportcode) {
+					continue;
+				}
+				$found++;
+				$sql = $mod->export_sql_start[$key].$mod->export_sql_end[$key];
+			}
+
+			$this->assertEquals(1, $found, 'Dataset '.$exportcode.' not found into '.$modulefile);
+			$this->assertStringNotContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is wrongly restricted for a user with all visibility rights');
+		}
+
+		$user = $savuser;
 
 		return true;
 	}

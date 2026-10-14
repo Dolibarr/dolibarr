@@ -33,11 +33,10 @@ CREATE TABLE llx_establishment (
   profid1			varchar(20),
   profid2			varchar(20),
   profid3			varchar(20),
-  phone				varchar(20),
+  phone				varchar(30),
   fk_user_author 	integer NOT NULL,
   fk_user_mod		integer,
   datec				datetime NOT NULL,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   status            tinyint DEFAULT 1
 ) ENGINE=innodb;
-

@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,15 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -85,11 +95,10 @@ $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-admin-website');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = partnershipAdminPrepareHead();
-
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -99,7 +108,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Partnerships"), -1, 'partnership');
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
@@ -133,7 +142,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<span class="opacitymedium">'.$langs->trans("PublicFormRegistrationPartnerDesc").'</span><br><br>';
+print '<div class="info">'.$langs->trans("PublicFormRegistrationPartnerDesc").'</div>';
 
 $param = '';
 
@@ -149,15 +158,14 @@ if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
+
+print '<div class="neutral">';
 print $enabledisablehtml;
 print '<input type="hidden" id="PARTNERSHIP_ENABLE_PUBLIC" name="PARTNERSHIP_ENABLE_PUBLIC" value="'.(!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC') ? 0 : 1).'">';
-
-
-print '<br>';
-
+print '</div>';
 
 /*
-if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -182,9 +190,6 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
-	}
 	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}

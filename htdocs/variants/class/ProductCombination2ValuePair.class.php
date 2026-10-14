@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,21 @@ class ProductCombination2ValuePair
 	 * @var int
 	 */
 	public $id;
+
+	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
+	 * @var string	Key of the import run that created or updated the row
+	 */
+	public $import_key;
+
+	/**
+	 * @var array<string,mixed>	Context of the current operation, set by the import engine
+	 */
+	public $context = array();
 
 	/**
 	 * ID of the ProductCombination linked to this object
@@ -138,6 +154,44 @@ class ProductCombination2ValuePair
 	}
 
 	/**
+	 * Retrieves a ProductCombination2ValuePair by its rowid
+	 *
+	 * Required by fetchObjectByElement(), which calls fetch() on the class resolved for the
+	 * element 'product_attribute_combination2val' without testing that the method exists.
+	 *
+	 * @param	int		$id		Rowid of the pair
+	 * @return	int<-1,1>		-1 if KO, 0 if not found, 1 if OK
+	 */
+	public function fetch($id)
+	{
+		$sql = "SELECT rowid, fk_prod_combination, fk_prod_attr, fk_prod_attr_val";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val";
+		$sql .= " WHERE rowid = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		if (!$this->db->num_rows($resql)) {
+			$this->db->free($resql);
+			return 0;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		$this->id = (int) $obj->rowid;
+		$this->fk_prod_combination = (int) $obj->fk_prod_combination;
+		$this->fk_prod_attr = (int) $obj->fk_prod_attr;
+		$this->fk_prod_attr_val = (int) $obj->fk_prod_attr_val;
+
+		return 1;
+	}
+
+	/**
 	 * Retrieve all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
 	 * @param   int          $fk_combination           ID of the ProductCombination
@@ -146,7 +200,7 @@ class ProductCombination2ValuePair
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
-        c.rowid,
+        c2v.rowid,
         c2v.fk_prod_attr_val,
         c2v.fk_prod_attr,
         c2v.fk_prod_combination
@@ -179,8 +233,8 @@ class ProductCombination2ValuePair
 	/**
 	 * Delete all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
-	 * @param       int     	$fk_combination         ID of the ProductCombination
-	 * @return      int		                            Return <0 if KO, 1 if OK
+	 * @param       int					$fk_combination	ID of the ProductCombination
+	 * @return      int<-1,-1>|int<1,1>					-1 if KO, 1 if OK
 	 */
 	public function deleteByFkCombination($fk_combination)
 	{

@@ -15,7 +15,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is a list of all available possible automatic actions
--- It is read only by admin page to select action code and save them 
+-- It is read only by admin page to select action code and save them
 -- into llx_const with name MAIN_AGENDA_ACTIONAUTO_XXX_YYY.
 -- ===================================================================
 
@@ -24,8 +24,9 @@ create table llx_c_action_trigger
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   elementtype	varchar(64) 			NOT NULL,
   code			varchar(128)			NOT NULL,
-  contexts		varchar(255)			NULL,			-- list of possible contexts when ther is different context of trigger
+  contexts		varchar(255)			NULL,			-- list of possible contexts when there is different context of trigger
   label			varchar(128)			NOT NULL,
   description	varchar(255),
+  enabled       varchar(255),
   rang			integer		DEFAULT 0
 )ENGINE=innodb;

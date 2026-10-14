@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012 Florian Henry  <florian.henry@open-concept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -59,7 +59,7 @@ $authentication=array(
 
 
 // Test URL
-if ($action=='get')
+if ($action=='get')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_GET;
     $parameters = array('authentication'=>$authentication,'id'=>1);
@@ -78,7 +78,7 @@ if ($action=='get')
 
 
 // Test URL
-if ($action=='getlist')
+if ($action=='getlist')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_GET_C_LIST;
 	$parameters = array('authentication'=>$authentication);
@@ -96,7 +96,7 @@ if ($action=='getlist')
 }
 
 // Test URL
-if ($action=='create')
+if ($action=='create')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_CREATE;
 	$new=array(
@@ -112,8 +112,8 @@ if ($action=='create')
 	'percentage'=>'100',
 	'location'=>'Location1'
 	);
-	
-	
+
+
 	$parameters = array('authentication'=>$authentication,'actioncomm'=>$new);
 	dol_syslog("Call method ".$WS_METHOD_CREATE);
 	$result = $soapclient->call($WS_METHOD_CREATE,$parameters,$ns,'');

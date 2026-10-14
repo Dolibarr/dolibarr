@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+-- Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ create table llx_payment_vat
   note            text,
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,            -- creation user
-  fk_user_modif   integer             -- last modification user
+  fk_user_modif   integer,            -- last modification user
+  import_key      varchar(14)         -- import key
 
 )ENGINE=innodb;

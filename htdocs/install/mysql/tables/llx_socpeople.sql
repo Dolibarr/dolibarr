@@ -25,6 +25,7 @@ create table llx_socpeople
   datec				datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_soc			integer,									-- lien vers la societe
+  use_thirdparty_address	smallint DEFAULT NULL,					-- 1=use linked thirdparty address, 0=use contact address, null=legacy resolution
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
   name_alias        varchar(255),
@@ -67,5 +68,6 @@ create table llx_socpeople
   default_lang		varchar(6),
   canvas			varchar(32),			-- type of canvas if used (null by default)
   import_key		varchar(14),
-  statut			tinyint DEFAULT 1 NOT NULL
+  statut			tinyint DEFAULT 1 NOT NULL,
+  ip    varchar(250)    -- ip used to create record (for public submission page)
 )ENGINE=innodb;

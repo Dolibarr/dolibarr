@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,14 +42,39 @@ const PREFIXES = [
 	'php' => ['/* ', ' * ', ' */', '<?php'],
 ];
 
+
+/**
+ * Expand tabs in string to spaces.
+ *
+ * @param string	$str		String in which to expand the tabs to spaces
+ * @param int		$tabWidth	Width to use for a tabstop
+ * @return string	Expanded string value.
+ */
+function expandTabs($str, $tabWidth)
+{
+	$expanded = '';
+	$col = 0;
+	$len = mb_strlen($str);
+	for ($i = 0; $i < $len; $i++) {
+		if ($str[$i] == "\t") {
+			$expanded .= str_repeat(' ', $tabWidth - ($col % $tabWidth));
+			$col += $tabWidth - ($col % $tabWidth);
+		} else {
+			$expanded .= $str[$i];
+			$col++;
+		}
+	}
+	return $expanded;
+}
+
 /**
  * Update or add copyright notice in a file
  *
- * @param $filename string Path to the file to modify
- * @param $fileType string Filetype identification for the file
- * @param $name     string Name of developer to add in header
- * @param $email    string Email for the developer
- * @return          bool   True if license was updated
+ * @param string	$filename	Path to the file to modify
+ * @param string	$fileType	Filetype identification for the file
+ * @param string	$name		Name of developer to add in header
+ * @param string	$email		Email for the developer
+ * @return bool		True if license was updated
  */
 function updateCopyrightNotice($filename, $fileType, $name, $email)
 {
@@ -70,19 +95,47 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	$n = 50;
 	$lines = implode('', array_slice(file($filename), 0, $n));
 
-	// Define the regex pattern for matching copyright notices
-	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?<year>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
+	// Based on the tendency to limit the length of the spacing between the name
+	// and email to the smallest one, determine the biggest offset from the start
+	// of a name to the start of the email, and use that for the current name/email
+	// offset if it is sufficient.
 
+	// Pattern to match any copyright already present
+	$allpattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?:\d{4}))\s+(\S.*)<\S+>~";
+	// Set minimum offset based of width of new name
+	$nameStartToMailStartOffset = 4 * (int) ((mb_strlen($r_name) + 4) / 4);
+
+	if (preg_match_all($allpattern, $lines, $allmatches)) {
+		foreach ($allmatches[1] as $nameAndSpaces) {
+			//print $nameAndSpaces."\n";
+			$nameAndSpaces = expandTabs($nameAndSpaces, 4);
+			$currentOffset = mb_strlen($nameAndSpaces);
+			$currentOffset = 4 * (int) ((3 + $currentOffset) / 4);
+			//print "Other offset $nameAndSpaces: $currentOffset\n";
+			if ($currentOffset > $nameStartToMailStartOffset) {
+				$nameStartToMailStartOffset = $currentOffset;
+			}
+		}
+	}
+
+	// Pattern to match the line matching the current developer
+	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:(?<start>\d{4})-)?(?<last>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
 	// Check if the lines match the pattern
 	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
-		$existingYear = $matches['year'];
+		$existingYear = $matches['last'];
+		$startYear = null;
+		if (array_key_exists('start', $matches)) {
+			$startYear = $matches['start'];
+		}
+		if (empty($startYear)) {
+			$startYear = $existingYear;
+		}
 
 		// Check if the existing year is different from the current year
 		if ($existingYear !== date('Y')) {
-			// Update the year range to include or be up to the current year
-			$updatedNotice = preg_replace('/(\d{4})(-\d{4})?\s+/', $existingYear . '-' . date('Y') . "\t", $matches[0]);
-
+			// Extend the year range to the current year
+			$updatedNotice = preg_replace('/(?:\d{4}-)?\d{4}\s+/', $startYear . '-' . date('Y') . "\t", $matches[0]);
 			// Replace the old notice with the updated one in the file
 			file_put_contents($filename, preg_replace($pattern, $updatedNotice, file_get_contents($filename)));
 			return true; // Change detected
@@ -90,7 +143,8 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		// If the existing year is the same, no need to update
 	} else {
 		// Adjust tabs for proper alignment
-		$emailTabs = str_repeat("\t", (int) (max(0, (31 - mb_strlen($name)) / 4)));
+		// print "Offset:".$nameStartToMailStartOffset."\n";
+		$emailTabs = str_repeat("\t", (int) (max(0, ($nameStartToMailStartOffset + 4 - mb_strlen($name)) / 4)));
 
 		// No match found, add a new line to the header
 		$newNotice = "Copyright (C) " . date('Y') . "\t\t" . $name . $emailTabs . "<" . $email . ">";
@@ -114,6 +168,7 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 
 		// Write the updated content back to the file
 		file_put_contents($filename, $fileContent);
+		// print $fileContent;
 		return true; // Change detected
 	}
 
@@ -128,6 +183,11 @@ if ($argc < 2) {
 	exit(1);
 }
 
+// Retrieve Git user information (once for all files)
+$gitUserInfo = getGitUserInfo();
+$name = $gitUserInfo['name'];
+$email = $gitUserInfo['email'];
+
 // Process each filename provided
 $changesDetected = false;
 for ($i = 1; $i < $argc; $i++) {
@@ -136,14 +196,9 @@ for ($i = 1; $i < $argc; $i++) {
 	// Determine file type based on extension
 	$fileType = pathinfo($filename, PATHINFO_EXTENSION);
 
-	// Retrieve Git user information
-	$gitUserInfo = getGitUserInfo();
-	$name = $gitUserInfo['name'];
-	$email = $gitUserInfo['email'];
-
 	// Update or add copyright notice based on file type
 	$changeDetected = updateCopyrightNotice($filename, $fileType, $name, $email);
-	$changesDetected |= $changeDetected;
+	$changesDetected = $changesDetected || $changeDetected;
 	if ($changeDetected) {
 		echo "Copyright notice updated in '$filename'" . PHP_EOL;
 	}

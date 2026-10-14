@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = نالج مینجمنٹ سسٹم
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=نالج مینجمنٹ (KM) یا ہیلپ ڈیسک بیس کا نظم کریں۔
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = نالج مینجمنٹ سسٹم سیٹ اپ
 KnowledgeManagementSetupPage = نالج مینجمنٹ سسٹم سیٹ اپ صفحہ
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = نالج مینجمنٹ کے بارے میں
 KnowledgeManagementAboutPage = صفحہ کے بارے میں علم کا انتظام
-
 KnowledgeManagementArea = نالج مینجمنٹ
 MenuKnowledgeRecord = علم کی بنیاد
 MenuKnowledgeRecordShort = علم کی بنیاد
@@ -46,8 +33,7 @@ KnowledgeRecord = مضمون
 KnowledgeRecordExtraFields = آرٹیکل کے لیے ایکسٹرا فیلڈز
 GroupOfTicket=ٹکٹوں کا گروپ
 YouCanLinkArticleToATicketCategory=آپ مضمون کو ٹکٹ گروپ سے جوڑ سکتے ہیں (لہذا مضمون کو اس گروپ کے کسی بھی ٹکٹ پر نمایاں کیا جائے گا)
-SuggestedForTicketsInGroup=ٹکٹ بنانے کی تجویز
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=متروک کے طور پر سیٹ کریں۔
 ConfirmCloseKM=کیا آپ اس مضمون کے متروک ہونے کی تصدیق کرتے ہیں؟
 ConfirmReopenKM=کیا آپ اس مضمون کو "تصدیق شدہ" کی حیثیت پر بحال کرنا چاہتے ہیں؟

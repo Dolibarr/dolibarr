@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +22,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -39,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
@@ -56,6 +65,7 @@ $pagenext = $page + 1;
 $result = restrictedArea($user, 'banque');
 $optioncss = GETPOST('optioncss', 'alpha');
 
+
 /*
  * View
  */
@@ -68,10 +78,10 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -94,7 +104,7 @@ if (!$rowid) {
 	if (GETPOSTISSET('starting_after_'.$page)) {
 		$option['starting_after'] = GETPOST('starting_after_'.$page, 'alphanohtml');
 	}
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -107,9 +117,11 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeChargeList");
-	$title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= $form->textwithpicto('', $stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', 'hidepaginationprevious', $limit);
+
+	$hookmanager->initHooks(array('stripechargelist'));
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -119,10 +131,11 @@ if (!$rowid) {
 	print_liste_field_titre("StripeCustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'center ');
 	print "</tr>\n";
 
 	try {
@@ -132,6 +145,7 @@ if (!$rowid) {
 			$list = \Stripe\Charge::all($option);
 		}
 
+		'@phan-var-force \Stripe\Charge $list';  // TStripeObject suggested, but is a template
 		$num = count($list->data);
 
 
@@ -142,26 +156,32 @@ if (!$rowid) {
 		$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 		//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 	} catch (Exception $e) {
-		print '<tr><td colspan="8">'.$e->getMessage().'</td></td>';
+		print '<tr><td colspan="9">'.$e->getMessage().'</td></td>';
 	}
 
 	//print $list;
 	$i = 0;
 	if (!empty($list)) {
 		foreach ($list->data as $charge) {
+			'@phan-var-force \Stripe\Charge $charge';  // TStripeObject suggested, but is a template
 			if ($i >= $limit) {
 				break;
 			}
 
+			$label = '';
 			if ($charge->refunded == '1') {
 				$status = img_picto($langs->trans("refunded"), 'statut6');
 			} elseif ($charge->paid == '1') {
 				$status = img_picto($langs->trans((string) $charge->status), 'statut4');
-			} else {
-				$label = $langs->trans("Message").": ".$charge->failure_message."<br>";
+			} elseif (empty($charge->failure_message)) {
 				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
 				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
-				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut4'), $label, 1);
+			} else {
+				$label .= $langs->trans("Error").": ".$charge->failure_message."<br>";
+				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
+				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, 1);
 			}
 
 			if (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'card') {
@@ -174,6 +194,8 @@ if (!$rowid) {
 				$type = $langs->trans("sepadebit");
 			} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'ideal') {
 				$type = $langs->trans("iDEAL");
+			} else {
+				$type = '';
 			}
 
 			// Why this ?
@@ -191,15 +213,15 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 			// Load origin object according to metadata
-			if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0) {
-				$societestatic->fetch($tmparray['CUS']);
+			if (!empty($tmparray['CUS']) && (int) $tmparray['CUS'] > 0) {
+				$societestatic->fetch((int) $tmparray['CUS']);
 			} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0) {
 				$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 			} else {
 				$societestatic->id = 0;
 			}
-			if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0) {
-				$memberstatic->fetch($tmparray['MEM']);
+			if (!empty($tmparray['MEM']) && (int) $tmparray['MEM'] > 0) {
+				$memberstatic->fetch((int) $tmparray['MEM']);
 			} else {
 				$memberstatic->id = 0;
 			}
@@ -217,7 +239,7 @@ if (!$rowid) {
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 			}
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 			if ($charge->payment_intent) {
 				print '<br><span class="opacitymedium">'.$charge->payment_intent.'</span>';
@@ -225,7 +247,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Stripe customer
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			if (isModEnabled('stripe') && !empty($stripeacc)) {
 				$connect = $stripeacc.'/';
 			}
@@ -238,40 +260,54 @@ if (!$rowid) {
 			}
 			print "</td>\n";
 
-			// Link
-			print "<td>";
-			if ($societestatic->id > 0) {
-				print $societestatic->getNomUrl(1);
-			} elseif ($memberstatic->id > 0) {
-				print $memberstatic->getNomUrl(1);
+			// Customer
+			print '<td class="tdoverflowmax200">';
+			// Allow a module to fill this cell (e.g. charges without Dolibarr metadata)
+			$parameters = array('charge' => $charge, 'field' => 'customer');
+			$reshook = $hookmanager->executeHooks('printStripeChargeField', $parameters);
+			print $hookmanager->resPrint;
+			if ($reshook <= 0) {
+				if ($societestatic->id > 0) {
+					print $societestatic->getNomUrl(1);
+				} elseif ($memberstatic->id > 0) {
+					print $memberstatic->getNomUrl(1);
+				}
 			}
 			print "</td>\n";
 
 			// Origin
-			print "<td>";
-			if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
-				$object = new Commande($db);
-				$object->fetch($charge->metadata->dol_id);
-				if ($object->id > 0) {
-					print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
+			print '<td class="nowraponall">';
+			$parameters = array('charge' => $charge, 'field' => 'origin');
+			$reshook = $hookmanager->executeHooks('printStripeChargeField', $parameters);
+			print $hookmanager->resPrint;
+			if ($reshook <= 0) {
+				if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
+					$object = new Commande($db);
+					$object->fetch($charge->metadata->dol_id);
+					if ($object->id > 0) {
+						print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
+					} else {
+						print $FULLTAG;
+					}
+				} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
+					$object = new Facture($db);
+					$object->fetch($charge->metadata->dol_id);
+					if ($object->id > 0) {
+						print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
+					} else {
+						print $FULLTAG;
+					}
 				} else {
 					print $FULLTAG;
 				}
-			} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
-				$object = new Facture($db);
-				$object->fetch($charge->metadata->dol_id);
-				if ($object->id > 0) {
-					print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
-				} else {
-					print $FULLTAG;
-				}
-			} else {
-				print $FULLTAG;
 			}
 			print "</td>\n";
 
+			// Description
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($charge->description).'">'.dol_escape_htmltag($charge->description).'</td>'."\n";
+
 			// Date payment
-			print '<td class="center">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
 			// Type
 			print '<td>';
 			print $type;
@@ -279,7 +315,7 @@ if (!$rowid) {
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</span></td>";
 			// Status
-			print '<td class="right">';
+			print '<td class="nowraponall center">';
 			print $status;
 			print "</td>\n";
 

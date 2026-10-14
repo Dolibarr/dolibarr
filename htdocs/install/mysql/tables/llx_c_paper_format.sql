@@ -29,7 +29,7 @@ create table llx_c_paper_format
   module  varchar(32) NULL
 )ENGINE=innodb;
 
--- 
+--
 -- Conversion
 --
 -- un inch = 2.54 cm

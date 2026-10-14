@@ -2,6 +2,7 @@
 IdAgenda=事件 ID
 Actions=事件
 Agenda=日程
+AgendaEvents=Agenda events
 TMenuAgenda=日程
 Agendas=日程
 LocalAgenda=默认日历
@@ -21,7 +22,6 @@ MenuDoneMyActions=我的已终止事件
 ListOfEvents=事件清单(默认日历)
 ActionsAskedBy=事件报告人
 ActionsToDoBy=事件分配给
-ActionsDoneBy=事件由谁完成
 ActionAssignedTo=事件分配给
 ViewCal=月视图
 ViewDay=日视图
@@ -29,11 +29,13 @@ ViewWeek=周视图
 ViewPerUser=用户视图
 ViewPerType=类型视图
 AutoActions= 自动填写
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= 在这里您可以定义您希望 Dolibarr 在日程中自动创建的事件。如果未选中任何内容，则仅有手动操作被包含在日志中、并显示在日程中。对对象执行的业务操作（验证、状态更改）的自动跟踪将不会被保存在日志或日程中。
 AgendaSetupOtherDesc= 此页面提供允许将 Dolibarr 事件导出到外部日历（Thunderbird、Google 日历等...）的选项
 AgendaExtSitesDesc=此页面允许声明日历的外部来源，以将其事件纳入 Dolibarr 日程中。
 ActionsEvents=Dolibarr 将自动在日程中创建一个操作的事件
 EventRemindersByEmailNotEnabled=在 %s 模块设置中未启用通过电子邮件发送事件提醒。
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合作方 %s 已创建
 COMPANY_MODIFYInDolibarr=合作方 %s 已修改
@@ -45,6 +47,7 @@ PropalClosedRefusedInDolibarr=报价单 %s 已被拒绝
 PropalValidatedInDolibarr=报价单 %s 已验证
 PropalBackToDraftInDolibarr=报价单 %s 恢复到草稿状态
 PropalClassifiedBilledInDolibarr=报价单 %s 已归类为已开票
+InvoiceCreatedInDolibarr=Invoice %s created
 InvoiceValidatedInDolibarr=发票 %s 已验证
 InvoiceValidatedInDolibarrFromPos=POS 的发票 %s 已验证
 InvoiceBackToDraftInDolibarr=发票 %s 恢复到草稿状态
@@ -135,12 +138,14 @@ AgendaModelModule=事件的文档模板
 DateActionStart=开始日期
 DateActionEnd=结束日期
 AgendaUrlOptions1=您还可以添加以下参数来过滤输出：
-AgendaUrlOptions3= <b> logina=%s </b> 将输出限制为用户 <b> %s </b> 拥有的操作。
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> 将输出限制为用户 <b> %s </b> 不拥有的操作。
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> 将输出限制为分配给用户 <b> %s </b> 的操作（所有者和其他人）。
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> 将输出限制为链接到项目 <b> __PROJECT_ID__ </b> 的操作。
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> 将排除自动事件。
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> 将包含休假的事件。
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=联系人的生日
 AgendaHideBirthdayEvents=隐藏联系人的生日
 Busy=忙碌
@@ -167,8 +172,10 @@ OnceOnly=只有一次
 EveryDay=每日
 EveryWeek=每周
 EveryMonth=每月
+EveryYear=Every year
 DayOfMonth=几号
 DayOfWeek=周几
+DayOfYear=Day of year
 DateStartPlusOne=开始日期 + 1 小时
 SetAllEventsToTodo=将所有事件设置为待办事项
 SetAllEventsToInProgress=将所有事件设置为进行中
@@ -202,3 +209,15 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less
+RecurringEvent=Recurring event
+EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
+BookCalSystem=Online booking
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

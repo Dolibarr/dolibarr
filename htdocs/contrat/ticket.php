@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2023		Charlene BENKE		<charlene@patas-monkey.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2023	Charlene BENKE				<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array('companies', 'contracts', 'tickets'));
 
 $socid = GETPOSTINT('socid');
@@ -66,8 +76,10 @@ $result = restrictedArea($user, 'contrat', $id);
 /*
  *	View
  */
+$title = $langs->trans("Contract") . ' - ' . $langs->trans("Tickets");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader("", $langs->trans("Tickets"), "Contrat");
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_ticket');
 
 $form = new Form($db);
 $userstatic = new User($db);
@@ -139,7 +151,7 @@ $morehtmlref .= $form->editfieldval(
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (! empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 	$langs->load("projects");
@@ -180,7 +192,7 @@ print '<td  align="center" nowrap >'.$langs->trans("DateEnd").'</td>';
 print '<td  align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
-// on récupère la totalité des tickets liés au contrat
+// retrieve all tickets linked to the contract
 $allticketarray = $object->getTicketsArray();
 if (is_array($allticketarray) && count($allticketarray) > 0) {
 	foreach ($allticketarray as $key => $value) {

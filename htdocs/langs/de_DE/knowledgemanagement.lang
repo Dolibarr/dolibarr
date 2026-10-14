@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Wissensmanagement-System
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Verwalten einer Datenbasis für Wissensmanagement (Knowledge Management, KM) oder Helpdesk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Einstellungen des Wissensmanagement-Systems
 KnowledgeManagementSetupPage = Einstellungen für das Modul Wissensmanagement
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Über Wissensmanagement
 KnowledgeManagementAboutPage = Über Wissensmanagement Seite
-
 KnowledgeManagementArea = Wissensmanagement
 MenuKnowledgeRecord = Wissensbasis
 MenuKnowledgeRecordShort = Wissensbasis
@@ -47,7 +34,6 @@ KnowledgeRecordExtraFields = Extrafelder für Artikel
 GroupOfTicket=Ticket-Themengruppe
 YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Themengruppe verknüpfen (so wird auf den Artikel bei der Erfassung neuer Tickets hingewiesen)
 SuggestedForTicketsInGroup=Bei der Ticketerstellung vorschlagen
-
 SetObsolete=Als veraltet festlegen
 ConfirmCloseKM=Bestätigen Sie das Schließen dieses Artikels als veraltet?
 ConfirmReopenKM=Möchten Sie diesen Artikel auf den Status "freigegeben" zurücksetzen?

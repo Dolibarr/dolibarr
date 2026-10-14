@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-Permission23101 =Leia trabalho Programado
-Permission23102 =Criar / atualização de tarefa agendada
-Permission23103 =Excluir trabalho agendado
-Permission23104 =Executar trabalho agendado
 CronSetup=Configuração do gerenciamento de trabalho agendado
 KeyForCronAccess=Chave seguranca para URL que lanca tarefas cron
 FileToLaunchCronJobs=Linha de comando para checar e iniciar tarefas cron qualificadas
@@ -17,7 +13,6 @@ CronDelete=Excluir tarefas agendadas
 CronConfirmDelete=Você tem certeza que deseja excluir esses cron jobs agendados?
 CronConfirmExecute=Você tem certeza que deseja executar agora estas tarefas agendadas?
 CronInfo=O módulo de Tarefa Agendada permite agendar tarefas para executá-las automaticamente. As tarefas também podem ser iniciadas manualmente.
-CronNone=Nenhum
 CronDtEnd=Não depois
 CronDtNextLaunch=Próxima execução
 CronFrequency=Frequencia
@@ -35,7 +30,6 @@ CronModuleHelp=Nome do diretório do módulo Dolibarr (também trabalhe com o m�
 CronClassFileHelp=O caminho relativo e o nome do arquivo a ser carregado (o caminho é relativo ao diretório-raiz do servidor da web). <BR> Por exemplo, para chamar o método fetch do objeto Product do Dolibarr htdocs / product / class / <u> product.class.php </ u>, o valor para o nome do arquivo de classe é <i> product / class / product.class.php </ i>
 CronObjectHelp=O nome do objeto a ser carregado. <BR> Por exemplo, para chamar o método fetch do objeto do produto Dolibarr /htdocs/product/class/product.class.php, o valor para o nome do arquivo de classe é <i> Produto </ i>
 CronMethodHelp=O método do objeto a ser lançado. <BR> Por exemplo, para chamar o método fetch do objeto Product do Dolibarr /htdocs/product/class/product.class.php, o valor para o método é <i> fetch </ i>
-CronArgsHelp=Os argumentos do método. <BR> Por exemplo, para chamar o método fetch do objeto Dolibarr Product /htdocs/product/class/product.class.php, o valor dos parâmetros pode ser <i> 0, ProductRef </ i>
 CronCommandHelp=A linha de comando de sistema que deve ser executada.
 CronCreateJob=Criar uma nova Tarefa agendada
 CronType_method=Chamar método de uma Classe PHP

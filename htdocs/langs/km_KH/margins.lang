@@ -31,9 +31,9 @@ UseDiscountOnTotal=នៅលើសរុបរង
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=កំណត់ថាតើការបញ្ចុះតម្លៃជាសកលត្រូវបានចាត់ទុកជាផលិតផល សេវាកម្ម ឬតែលើសរុបរងសម្រាប់ការគណនារឹម។
 MARGIN_TYPE=ការទិញ/តម្លៃតម្លៃត្រូវបានស្នើតាមលំនាំដើមសម្រាប់ការគណនារឹម
 MargeType1=រឹមលើតម្លៃអ្នកលក់ល្អបំផុត
-MargeType2=រឹមលើតម្លៃមធ្យមដែលមានទម្ងន់ (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=រឹមលើតម្លៃថ្លៃដើម
-MarginTypeDesc=* រឹមលើតម្លៃទិញល្អបំផុត = តម្លៃលក់ - តម្លៃអ្នកលក់ល្អបំផុតដែលបានកំណត់នៅលើកាតផលិតផល<br>* Margin on Weighted Average Price (WAP) = តម្លៃលក់ - ផលិតផលទម្ងន់មធ្យមតម្លៃ (WAP) ឬតម្លៃអ្នកលក់ល្អបំផុត ប្រសិនបើ WAP មិនទាន់បានកំណត់ <br>* Margin on Cost price = តម្លៃលក់ - តម្លៃដែលបានកំណត់នៅលើកាតផលិតផល ឬ WAP ប្រសិនបើតម្លៃថ្លៃមិនបានកំណត់ ឬតម្លៃអ្នកលក់ល្អបំផុតប្រសិនបើ WAP មិនទាន់កំណត់
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=តម្លៃថ្លៃ
 UnitCharges=ការគិតថ្លៃឯកតា
 Charges=ការចោទប្រកាន់

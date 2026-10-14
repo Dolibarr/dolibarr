@@ -2,6 +2,8 @@
 /* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020-2023 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +51,9 @@ if (!defined('NOREQUIREHTML')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -57,45 +61,46 @@ require_once '../../main.inc.php';
 
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 print "jQuery(document).ready(function () {\n";
 
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
-print '	var nowtime = Date.now();';
-print '	var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
-print '	var time_js_next_test;'."\n";
-print '	var dolnotif_nb_test_for_page = 0;'."\n";
-print ' var dolnotif_idinterval = null;'."\n";
+print 'var nowtime = Date.now();'."\n";
+print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
+print 'var time_js_next_test;'."\n";
+print 'var dolnotif_nb_test_for_page = 0;'."\n";
+print 'var dolnotif_idinterval = null;'."\n";
 ?>
 
-/* Check if Notification is supported */
-if ("Notification" in window) {
-	/* Check if permission ok */
-	if (Notification.permission !== "granted") {
-		console.log("Ask Notification.permission");
-		Notification.requestPermission(function(result) {
-			console.log("result for Notification.requestPermission is "+result);
-		});
+var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
+
+/* For old method notification system, check if Notification is supported */
+if (methodfornotification == "jsnotification") {
+	if ("Notification" in window) {
+		/* Check if permission ok */
+		if (Notification.permission !== "granted") {
+			console.log("Ask Notification.permission");
+			Notification.requestPermission(function(result) {
+				console.log("result for Notification.requestPermission is "+result);
+			});
+		}
+	} else {
+		console.log("This browser in this context does not support Notification.");
 	}
+}
 
-	/* Launch timer */
-
+/* Launch timer for notifications */
+if (methodfornotification == "jnotify" || (methodfornotification == "jsnotification" && "Notification" in window)) {
 	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
 	var time_first_execution = <?php echo max(3, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION', 0)); ?>;
 
-	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
+	setTimeout(first_execution, time_first_execution * 1000);	// Launch the function first_execution() after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
 	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
-} else {
-	console.log("This browser in this context does not support Notification.");
 }
 
 /* The method called after time_first_execution on each page */
@@ -108,11 +113,11 @@ function first_execution() {
 	}
 }
 
-/* the method call frequently every time_auto_update */
+/* The method call frequently every time_auto_update */
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;
-	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jsnotification')); ?>';
+	var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
 
 	permissionok = 0;
 	if (methodfornotification == "jsnotification" && Notification.permission == "granted") {
@@ -151,7 +156,7 @@ function check_events() {
 						print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 					}
 					?>
-					var icon = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
+					var icon = '<?php print DOL_URL_ROOT.'/public/theme/common/bell.svg'; ?>';
 					var listofreminderids = '';
 					var noti = []
 
@@ -164,7 +169,7 @@ function check_events() {
 						if (value.type == 'agenda')
 						{
 							url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
+							title = <?php print "'".dol_escape_js($langs->transnoentities('EventReminder'))."'"; ?>;
 						}
 
 						if (methodfornotification == "jsnotification") {
@@ -184,7 +189,7 @@ function check_events() {
 							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
 								body += ' '+value.event_date_start_formated;
 							}
-							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';
+							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';  // Suppress - dol_escape_js is in '' @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 							body += '<br>'+value.label;
 							if (value.type == 'agenda' && value.location != null && value.location != '') {
 								body += '<br>' + value.location;
@@ -199,7 +204,7 @@ function check_events() {
 							var extra = {
 								icon: icon,
 								body: body,
-								lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
+								lang: <?php print "'".dol_escape_js($langs->getDefaultLang(1))."'"; ?>,
 								tag: value.id_agenda,
 								requireInteraction: true	/* wait that the user click or close the notification */
 								/* "actions:" parameter is only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */

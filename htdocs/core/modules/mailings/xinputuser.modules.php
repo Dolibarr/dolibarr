@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +34,16 @@ class mailing_xinputuser extends MailingTargets
 {
 	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $desc = 'EMails input by user'; // Label used if no translation found for MailingModuleDescXXX or XXX=name
+
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array(); // Module mailing actif si modules require_module actifs
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
 	/**
@@ -60,7 +70,7 @@ class mailing_xinputuser extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
@@ -87,10 +97,10 @@ class mailing_xinputuser extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
 	 *  @param	int		$id		ID
-	 *  @return string      	Url lien
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -99,16 +109,16 @@ class mailing_xinputuser extends MailingTargets
 
 
 	/**
-	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *   Display filter form shown on the mailing recipient selection page
 	 *
-	 *   @return     string      Retourne zone select
+	 *   @return     string      HTML select zone
 	 */
 	public function formFilter()
 	{
 		global $langs;
 
-		$s = '';
-		$s .= '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+		$s = '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+
 		return $s;
 	}
 
@@ -142,7 +152,7 @@ class mailing_xinputuser extends MailingTargets
 					'firstname' => $firstname,
 					'other' => $other,
 					'source_url' => '',
-					'source_id' => '',
+					'source_id' => 0,
 					'source_type' => 'file'
 				);
 

@@ -27,4 +27,4 @@ interface iDecodeStream
      */
     public function decodeStream($stream);
 
-} 
+}

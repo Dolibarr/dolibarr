@@ -2,6 +2,8 @@
 /* Copyright (C) 2010 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +27,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -36,7 +38,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -58,7 +60,7 @@ if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 class PricesTest extends CommonClassTest
 {
 	/**
-	 * Test function calcul_price_total
+	 * Test function for calculating price total
 	 *
 	 * @return 	boolean
 	 * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
@@ -66,10 +68,6 @@ class PricesTest extends CommonClassTest
 	public function testCalculPriceTotal()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		global $mysoc;
 		$mysoc = new Societe($db);
@@ -202,7 +200,7 @@ class PricesTest extends CommonClassTest
 
 
 		/*
-		 * Country Côte d'Ivoire
+		 * Country Ivory Coast
 		 */
 
 		// 10 * 10 HT - 0% discount with 18% vat, seller using localtax1 type 2, not localtax2 (method we provide value)
@@ -241,10 +239,6 @@ class PricesTest extends CommonClassTest
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0;
 

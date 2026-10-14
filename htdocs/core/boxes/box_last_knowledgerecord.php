@@ -1,8 +1,9 @@
 <?php
 /*
- * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2016  Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2018-2025  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +42,12 @@ class box_last_knowledgerecord extends ModeleBoxes
 	public $boximg = "knowledgemanagement";
 
 	/**
-	 * @var string boc label
+	 * @var string box label
 	 */
 	public $boxlabel;
 
 	/**
-	 * @var array box dependencies
+	 * @var string[] box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
 
@@ -55,7 +56,7 @@ class box_last_knowledgerecord extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $langs;
 		$langs->loadLangs(array("boxes", "languages"));
@@ -92,13 +93,13 @@ class box_last_knowledgerecord extends ModeleBoxes
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			$sql = 'SELECT k.rowid as id, k.date_creation, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
-			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
+			$sql .= " WHERE k.entity IN (".getEntity('knowledgerecord').")";
 
 			if ($user->socid) {
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);
 			}
 
-			$sql.= " AND k.status > 0";
+			$sql .= " AND k.status > 0";
 
 			$sql .= " ORDER BY k.date_creation DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);
@@ -182,13 +183,15 @@ class box_last_knowledgerecord extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *     Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
-	 *     @return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

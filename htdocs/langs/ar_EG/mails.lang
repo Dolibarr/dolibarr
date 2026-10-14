@@ -1,2 +1,10 @@
 # Dolibarr language file - Source file is en_US - mails
-MailingStatusValidated=معتمد
+MailFrom=من موقع
+PhoneFrom=من موقع
+MailText=رسالة
+MailMessage=محتوى البريد الإلكتروني
+MailingStatusNotSent=لم يتم الإرسال
+MailingStatusRead=قراءة
+MailingModuleDescThirdPartiesByCategories=جهات خارجية
+MailingArea=البريد الإلكتروني الجماعي
+Information=معلومة

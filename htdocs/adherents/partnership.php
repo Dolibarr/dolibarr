@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2021 NextGestion 			<contact@nextgestion.com>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		NextGestion					<contact@nextgestion.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +26,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -31,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies","members","partnership", "other"));
@@ -40,7 +51,7 @@ $id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'partnershipcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -51,10 +62,9 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize technical objects
-$object 		= new Partnership($db);
-$extrafields 	= new ExtraFields($db);
-$adht 			= new AdherentType($db);
+// Initialize a technical objects
+$object = new Partnership($db);
+$adht = new AdherentType($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('partnershipthirdparty', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -74,7 +84,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('partnership', 'read');
 $permissiontoadd = $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -103,7 +113,7 @@ if (($action == 'update' || $action == 'edit') && $object->status != $object::ST
 
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
+restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
 
 /*
@@ -143,7 +153,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans("Partnership");
-llxHeader('', $title);
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_partnership');
 
 $form = new Form($db);
 
@@ -163,7 +175,7 @@ if ($id > 0) {
 
 	print dol_get_fiche_head($head, 'partnership', $langs->trans("ThirdParty"), -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'rowid', $linkback);
 
@@ -260,12 +272,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			if (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			} else {
 				print $langs->trans("SubscriptionNotReceived");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			}

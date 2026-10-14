@@ -22,8 +22,11 @@ create table llx_fichinterdet
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_fichinter      integer,
   fk_parent_line    integer NULL,
+  special_code      integer DEFAULT 0, -- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
+  product_type      integer DEFAULT 0,
   date              datetime,          -- date de la ligne d'intervention
   description       text,              -- description de la ligne d'intervention
   duree             integer,           -- duree de la ligne d'intervention
-  rang              integer DEFAULT 0  -- ordre affichage sur la fiche
+  rang              integer DEFAULT 0, -- ordre affichage sur la fiche
+  extraparams		varchar(255)	   -- to stock other parameters in json format
 )ENGINE=innodb;

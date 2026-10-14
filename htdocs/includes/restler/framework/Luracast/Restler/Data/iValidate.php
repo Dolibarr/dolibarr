@@ -29,4 +29,3 @@ interface iValidate {
      */
     public static function validate($input, ValidationInfo $info);
 }
-

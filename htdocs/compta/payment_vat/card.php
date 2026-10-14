@@ -4,6 +4,8 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2021      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -46,8 +56,6 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
 if ($id > 0) {
@@ -56,6 +64,8 @@ if ($id > 0) {
 		dol_print_error($db, 'Failed to get payment id '.$id);
 	}
 }
+
+restrictedArea($user, 'payment_vat', $object, '');
 
 
 /*
@@ -66,6 +76,7 @@ if ($id > 0) {
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -77,16 +88,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', '
 	}
 }
 
+$outputlangs = $langs;
+
 // Validate social contribution
 /*
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
-{
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->hasRight('tax', 'charges', '>creer') {
 	$db->begin();
 
 	$result=$object->valide();
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 
 		$factures=array();	// TODO Get all id of invoices linked to this payment
@@ -108,9 +119,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 		header('Location: card.php?id='.$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -132,7 +141,7 @@ $h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$id;
 $head[$h][1] = $langs->trans("VATPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
@@ -207,7 +216,7 @@ $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
-$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND f.entity = '.((int) $conf->entity);
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_vat/card.php", LOG_DEBUG);
@@ -253,7 +262,7 @@ if ($resql) {
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
@@ -275,7 +284,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->hasRight('tax', 'charges', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($langs->trans("CantRemovePaymentVATPaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}

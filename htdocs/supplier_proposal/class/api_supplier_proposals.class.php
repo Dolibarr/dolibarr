@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -30,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 class SupplierProposals extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
 	);
 
 	/**
-	 * @var SupplierProposal $supplier_proposal {@type SupplierProposal}
+	 * @var SupplierProposal {@type SupplierProposal}
 	 */
 	public $supplier_proposal;
 
@@ -56,6 +59,8 @@ class SupplierProposals extends DolibarrApi
 	 *
 	 * @param   int     $id         Supplier proposal ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -72,7 +77,7 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->errorsToString());
 		}
 
 		return array(
@@ -116,12 +121,14 @@ class SupplierProposals extends DolibarrApi
 	 * Create supplier proposal (price request) object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of supplier proposal
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -133,8 +140,17 @@ class SupplierProposals extends DolibarrApi
 				continue;
 			}
 
-			$this->supplier_proposal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				$this->supplier_proposal->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -142,6 +158,7 @@ class SupplierProposals extends DolibarrApi
 		  }
 		  $this->propal->lines = $lines;
 		}*/
+
 		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
 		}
@@ -153,7 +170,9 @@ class SupplierProposals extends DolibarrApi
 	 * Update supplier proposal general fields (won't touch lines of supplier proposal)
 	 *
 	 * @param	int		$id             Id of supplier proposal to update
-	 * @param	array	$request_data   Datas
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -181,11 +200,11 @@ class SupplierProposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->supplier_proposal->array_options[$index] = $val;
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
 				}
 				continue;
 			}
-			$this->supplier_proposal->$field = $value;
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
 		// update end of validity date
@@ -194,14 +213,86 @@ class SupplierProposals extends DolibarrApi
 		}
 		if (!empty($this->supplier_proposal->fin_validite)) {
 			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
-				throw new RestException(500, $this->supplier_proposal->error);
+				throw new RestException(500, $this->supplier_proposal->errorsToString());
 			}
 		}
 
 		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->supplier_proposal->error);
+			throw new RestException(500, $this->supplier_proposal->errorsToString());
+		}
+	}
+
+	/**
+	 * Add a line to a supplier proposal (price request)
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param int   $id             Id of supplier proposal to update
+	 * @param array $request_data   Supplier proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url	POST {id}/line
+	 *
+	 * @return int
+	 *
+	 * @throws	RestException
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
+
+		$updateRes = $this->supplier_proposal->addline(
+			$request_data->desc,
+			$request_data->subprice,
+			$request_data->qty,
+			$request_data->tva_tx,
+			$request_data->localtax1_tx,
+			$request_data->localtax2_tx,
+			$request_data->fk_product,
+			$request_data->remise_percent,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
+			$request_data->info_bits,
+			$request_data->product_type,
+			$request_data->rang,
+			$request_data->special_code,
+			$request_data->fk_parent_line,
+			$request_data->fk_fournprice,
+			$request_data->pa_ht,
+			$request_data->label,
+			$request_data->array_options,
+			$request_data->ref_fourn,
+			$request_data->fk_unit,
+			$request_data->origin,
+			$request_data->origin_id,
+			$request_data->multicurrency_subprice,
+			$request_data->date_start,
+			$request_data->date_end
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->supplier_proposal->errorsToString());
 		}
 	}
 
@@ -217,9 +308,12 @@ class SupplierProposals extends DolibarrApi
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
+	 * @phan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
 			throw new RestException(403);
@@ -228,7 +322,7 @@ class SupplierProposals extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -246,9 +340,9 @@ class SupplierProposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -259,6 +353,9 @@ class SupplierProposals extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total supplier proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -288,6 +385,23 @@ class SupplierProposals extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving supplier proposal list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -295,12 +409,15 @@ class SupplierProposals extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$propal = array();
 		foreach (SupplierProposals::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -315,9 +432,12 @@ class SupplierProposals extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

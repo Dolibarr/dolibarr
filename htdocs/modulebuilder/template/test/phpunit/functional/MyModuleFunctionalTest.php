@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,9 @@ use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
  * @todo OSX support (Safari, Google Chrome, Mozilla Firefox)
  *
  * @package Testmymodule
+ * @phan-file-suppress PhanPluginUnknownObjectMethodCall,PhanUndeclaredMethod,PhanNonClassMethodCall
  */
-class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
+class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
 	// TODO: move to a global configuration file?
 	/** @var string Base URL of the webserver under test */
@@ -82,15 +83,17 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	/**
 	 * Helper function to select links by href
 	 *
-	 * @param  string  $value      Href
-	 * @return mixed               Helper string
+	 * @param  string  $value		Href
+	 * @return ?string				Helper string
+	 * @phan
 	 */
 	protected function byHref($value)
 	{
-		$anchor = null;
 		$anchors = $this->elements($this->using('tag name')->value('a'));
-		foreach ($anchors as $anchor) {
-			if (strstr($anchor->attribute('href'), $value)) {
+		$anchor = null;
+		foreach ($anchors as $test_anchor) {
+			if (\strstr($test_anchor->attribute('href'), $value)) {
+				$anchor = $test_anchor;
 				break;
 			}
 		}
@@ -126,6 +129,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	/**
 	 * Handle Dolibarr authentication
 	 * @return void
+	 * @phan-suppress PhanUndeclaredClassCatch
 	 */
 	private function authenticate()
 	{
@@ -174,7 +178,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		$this->authenticate();
 		$module_status_image_path = '//a[contains(@href, "'.self::$module_id.'")]/img';
 		$module_status_image = $this->byXPath($module_status_image_path);
-		if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
+		if (\strstr($module_status_image->attribute('src'), 'switch_off.png')) {
 			// Enable the module
 			$this->byHref('modMyModule')->click();
 		} else {

@@ -2,6 +2,7 @@
 IdAgenda=אירוע מזהה
 Actions=אירועים
 Agenda=סדר היום
+AgendaEvents=Agenda events
 TMenuAgenda=סדר היום
 Agendas=סדר יום
 LocalAgenda=לוח שנה ברירת מחדל
@@ -21,7 +22,6 @@ MenuDoneMyActions=אירועי הסתיימו שלי
 ListOfEvents=רשימת אירועים (לוח שנה ברירת מחדל)
 ActionsAskedBy=אירועים שדווחו על ידי
 ActionsToDoBy=אירועים הוקצו ל
-ActionsDoneBy=אירועים שנעשו על ידי
 ActionAssignedTo=האירוע הוקצה ל
 ViewCal=תצוגת חודש
 ViewDay=תצוגת יום
@@ -29,11 +29,13 @@ ViewWeek=תצוגת שבוע
 ViewPerUser=לכל תצוגת משתמש
 ViewPerType=תצוגה לפי סוג
 AutoActions= מילוי אוטומטי
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= כאן אתה יכול להגדיר אירועים שאתה רוצה ש-Dolibarr תיצור אוטומטית ב-Agenda. אם שום דבר לא מסומן, רק פעולות ידניות ייכללו ביומנים ויוצגו באג'נדה. מעקב אוטומטי אחר פעולות עסקיות שנעשו על אובייקטים (אימות, שינוי סטטוס) לא יישמר.
 AgendaSetupOtherDesc= דף זה מספק אפשרויות לאפשר ייצוא של אירועי Dolibarr שלך ללוח שנה חיצוני (Thunderbird, Google Calendar וכו'...)
 AgendaExtSitesDesc=דף זה מאפשר להכריז על מקורות חיצוניים של לוחות שנה כדי לראות את האירועים שלהם בסדר היום של Dolibarr.
 ActionsEvents=אירועים שעבורם Dolibarr תיצור פעולה באג'נדה באופן אוטומטי
 EventRemindersByEmailNotEnabled=תזכורות לאירועים באימייל לא הופעלו בהגדרת המודול %s.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=צד שלישי %s נוצר
 COMPANY_MODIFYInDolibarr=צד שלישי %s השתנה
@@ -45,6 +47,7 @@ PropalClosedRefusedInDolibarr=ההצעה %s נדחתה
 PropalValidatedInDolibarr=ההצעה %s אומתה
 PropalBackToDraftInDolibarr=הצעה %s חזרה לסטטוס הטיוטה
 PropalClassifiedBilledInDolibarr=הצעה %s מסווגת מחויבת
+InvoiceCreatedInDolibarr=Invoice %s created
 InvoiceValidatedInDolibarr=החשבונית %s אומתה
 InvoiceValidatedInDolibarrFromPos=חשבונית %s מאומתת מ-POS
 InvoiceBackToDraftInDolibarr=חשבונית %s חזרה לסטטוס הטיוטה
@@ -135,12 +138,14 @@ AgendaModelModule=תבניות מסמכים לאירוע
 DateActionStart=תאריך התחלה
 DateActionEnd=תאריך סיום
 AgendaUrlOptions1=אתה יכול גם להוסיף את הפרמטרים הבאים לסינון הפלט:
-AgendaUrlOptions3=<b>logina=%s</b> כדי להגביל את הפלט לפעולות שבבעלות משתמש <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> כדי להגביל פלט לפעולות שאינן בבעלות משתמש <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> כדי לא לכלול אירועים אוטומטיים.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> כדי לכלול אירועים של חגים.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=ימי הולדת של אנשי קשר
 AgendaHideBirthdayEvents=הסתר ימי הולדת של אנשי קשר
 Busy=עסוק
@@ -167,8 +172,10 @@ OnceOnly=פעם אחת בלבד
 EveryDay=כל יום
 EveryWeek=כל שבוע
 EveryMonth=כל חודש
+EveryYear=Every year
 DayOfMonth=יום בחודש
 DayOfWeek=יום בשבוע
+DayOfYear=Day of year
 DateStartPlusOne=תאריך התחלה + שעה
 SetAllEventsToTodo=הגדר את כל האירועים לביצוע
 SetAllEventsToInProgress=הגדר את כל האירועים ל'בעייתיים'
@@ -202,3 +209,15 @@ BookingSuccessfullyBooked=ההזמנה שלך נשמרה
 BookingReservationHourAfter=אנו מאשרים את ההזמנה של הפגישה שלנו בתאריך %s
 BookcalBookingTitle=פגישה מקוונת
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less
+RecurringEvent=Recurring event
+EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
+BookCalSystem=Online booking
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

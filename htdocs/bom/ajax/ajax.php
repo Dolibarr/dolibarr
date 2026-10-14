@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,13 @@ include_once '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $idproduct = GETPOSTINT('idproduct');
@@ -78,7 +86,7 @@ if ($action == 'getWorkstationByProduct' && $user->hasRight('product', 'lire')) 
 		$error = 'NOT FOUND';
 	} else {
 		$error = null;
-		$result['defaultWk']=$product->fk_default_workstation;
+		$result['defaultWk'] = $product->fk_default_workstation;
 	}
 
 	$result['error']=$error;

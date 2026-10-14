@@ -5,8 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,11 +47,11 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return datas as an array
+	 * Return data as an array
 	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
 	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
-	 * @return  array                   			Array
+	 * @return  array<string|int,mixed>|null|int<0,0>      			Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -60,10 +60,11 @@ interface Database
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 * @param   int		$param 		Date TMS to convert
+	 * @param   int|''		$param 		Date TMS to convert
+	 * @param	'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 * @return  string            	Date in a string YYYYMMDDHHMMSS
 	 */
-	public function idate($param);
+	public function idate($param, $gm = 'tzserver');
 
 	/**
 	 * Return last error code
@@ -98,7 +99,7 @@ interface Database
 	/**
 	 * Return version of database server into an array
 	 *
-	 * @return	array        Version array
+	 * @return	string[]        Version array
 	 */
 	public function getVersionArray();
 
@@ -135,7 +136,7 @@ interface Database
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	string[] of tables in an array
 	 */
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
@@ -146,7 +147,7 @@ interface Database
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '');
 	// phpcs:enable
@@ -177,10 +178,10 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return datas as an array
+	 *    Return data as an array
 	 *
 	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
-	 * @return  array|null|false           							Result with row
+	 * @return  array<int|string,mixed>|null|false  				Result with row
 	 */
 	public function fetch_array($resultset);
 	// phpcs:enable
@@ -263,10 +264,11 @@ interface Database
 	 * @param   string 			$passwd 					Password
 	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
 	 * @param   int    			$port 						Port of database server
+	 * @param   bool			$forcenew					Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (relevant for pgsql only, see DoliDBPgsql::connect())
 	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0);
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false);
 
 	/**
 	 *    Define limits and offset of request
@@ -280,16 +282,16 @@ interface Database
 	/**
 	 * Return value of server parameters
 	 *
-	 * @param   string	$filter		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param   string	$filter			Filter list on a particular value
+	 * @return  array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerParametersValues($filter = '');
 
 	/**
 	 * Return value of server status
 	 *
-	 * @param   string $filter 		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param   string $filter			Filter list on a particular value
+	 * @return  array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerStatusValues($filter = '');
 
@@ -337,12 +339,12 @@ interface Database
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}> 	$fields 		Associative table [field name][table of descriptions]
+	 * @param        array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Name of the field that will be the primary key
 	 * @param        string $type 			Type of the table
-	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
-	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
-	 * @param        array $keys 			Table of key fields names => value
+	 * @param        ?array<string,mixed>	$unique_keys 	Associative array Name of fields that will be unique key => value
+	 * @param        string[] 	$fulltext_keys 	Field name table that will be indexed in fulltext
+	 * @param        string[]	$keys 			Table of key fields names => value
 	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
@@ -361,7 +363,7 @@ interface Database
 	/**
 	 * Return list of available charset that can be used to store data in database
 	 *
-	 * @return        array        List of Charset
+	 * @return	?array<int,array{charset:string,description:string}>	List of Charset
 	 */
 	public function getListOfCharacterSet();
 
@@ -371,7 +373,7 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to add
-	 * @param    array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optional ex .: "after field stuff"
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
@@ -395,7 +397,7 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} 	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
@@ -404,7 +406,7 @@ interface Database
 	/**
 	 * Return list of available collation that can be used for database
 	 *
-	 * @return        array        			List of Collation
+	 * @return	?array<int,array{collation:string}>		List of Collation
 	 */
 	public function getListOfCollation();
 
@@ -456,7 +458,7 @@ interface Database
 	 * List information of columns into a table.
 	 *
 	 * @param   string 			$table 			Name of table
-	 * @return  array                			Array with information on table
+	 * @return  array<array<string,mixed>>		Array with information on table
 	 */
 	public function DDLInfoTable($table);
 	// phpcs:enable
@@ -464,10 +466,10 @@ interface Database
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
-	 * 19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 * 19700101020000 -> 7200 whatever is TZ if gmt=1
 	 *
-	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
+	 * @param	?string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 * @param	bool|int|string	$gm			1=Input information are GMT values, otherwise local to server TZ
 	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
@@ -476,9 +478,9 @@ interface Database
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1);
 
@@ -541,4 +543,22 @@ interface Database
 	 */
 	public function select_db($database);
 	// phpcs:enable
+
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param	string	$sql	SQL query with '?' placeholders
+	 * @return	mixed			Driver-specific prepared statement handle, or false on failure
+	 */
+	public function prepare($sql);
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param	mixed				$stmt	Statement handle returned by prepare()
+	 * @param	array<int,mixed>	$params	Ordered list of values for the '?' placeholders
+	 * @return	mixed						Resultset (SELECT) usable with fetch_object()/num_rows()/free(),
+	 *										true for another successful statement, false on failure
+	 */
+	public function execute($stmt, $params = array());
 }

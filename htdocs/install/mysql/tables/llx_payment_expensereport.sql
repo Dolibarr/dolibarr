@@ -19,7 +19,7 @@
 create table llx_payment_expensereport
 (
   rowid                   integer AUTO_INCREMENT PRIMARY KEY,
-  fk_expensereport        integer,
+  fk_expensereport        integer,			  -- This column will be abandonned in favor of the use of the n-n link table llx_paymentexpensereport_expensereport
   datec                   datetime,           -- date de creation
   tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep                   datetime,           -- payment date
@@ -29,5 +29,6 @@ create table llx_payment_expensereport
   note                    text,
   fk_bank                 integer NOT NULL,
   fk_user_creat           integer,            -- creation user
-  fk_user_modif           integer             -- last modification user
+  fk_user_modif           integer,            -- last modification user
+  import_key              varchar(14)         -- import key
 )ENGINE=innodb;

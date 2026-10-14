@@ -3,7 +3,6 @@ ReceptionDescription=Gestión de recepción de proveedores (Crear documentos de 
 RefReception=Árbitro. recepción
 Reception=Recepción
 ReceptionsArea=Área de recepciones
-ListOfReceptions=Lista de recepciones
 LastReceptions=Últimas recepciones %s
 ReceptionCard=Tarjeta de recepción
 NewReception=nueva recepción

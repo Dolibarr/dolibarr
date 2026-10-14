@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=小計
+SubTotalModuleDesc=特定の文書の小計とタイトル行
+#
+# Admin
+#
+SubtotalSetup=小計モジュールの設定
+MaxSubtotalLevel=最大レベル
+SubtotalLineBackColor=レベル %s 行の背景色
+NotSupportedByAllPDF=新しい PDF では機能しますが、古い PDF では機能しない %s
+
+#
+# Card
+#
+AddTitleLine=タイトル行を追加
+AddSubtotalLine=小計行を追加
+TitleNeedDesc=タイトルを作成するには、有効な説明を入力する必要がある。
+TitleAddedLevelTooHigh=追加されたタイトル レベルが高すぎる (代わりにレベル %s が追加された)。
+TitleEditedLevelTooHigh=編集されたタイトルのレベルが高すぎる (代わりにレベル %s で編集した)。
+DeleteSubtotalLine=削除 小計行
+ConfirmDeleteSubtotalLine=この小計行を 削除 してもよいか?
+DeleteTitleLine=削除 タイトル行
+ConfirmDeleteTitleLine=このタイトル行を 削除 してもよいか?
+DeleteCorrespondingSubtotalLine=削除 対応する小計行?
+SubtotalLevel=レベル %s
+SubtotalLineDesc=行の説明
+SubtotalLineLevel=ラインレベル
+ShowUPOnPDF=PDF に 単価 を表示
+ShowTotalExludingVATOnPDF=PDFにVATを除いた合計金額を表示する
+ForcePageBreak=タイトルの前に強制改ページ
+NoTitleError=タイトル行がないか、対応する小計行がすでにすべてある
+CorrespondingTitleLine=対応するタイトル行
+SelectVATRate=VAT率を選択
+EnterRemisePercent=割引率を入力
+ApplyVATForBlock=このブロックにVATを適用する
+ApplyDiscountForBlock=このブロックに割引を適用する
+TitleUnderSameLevelSTLine=同じレベルのタイトルは、前のタイトルの小計行の下にある必要がある。
+TitleUnderSameLevelOrGreater=タイトルは、同じレベル以上のタイトルの下にある必要がある。
+TitleAfterStLineOfSameLevelTitle=タイトルは前のタイトルの小計行の後に置く必要がある。
+PreviousTitleLevelTooHigh=前のタイトルは、移動した行より 2 レベル以上大きいです。
+STLineUnderCorrespondingTitleDesc=小計行は、同じ説明を持つ同じレベルのタイトルの下にある必要がある。
+STLineUnderCorrespondingTitle=小計行は、同じレベルおよび同じ説明のタイトルの下にある必要がある。
+STLineUnderTitle=小計行はタイトルの下になければなりません
+UnsupportedModuleError=サポートされていないモジュールでは小計行を追加できない
+CorrespondingTitleNotFound=対応するタイトルが見つからなかった
+
+#
+# PDF
+#
+SubtotalOf=%s の小計:

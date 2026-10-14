@@ -31,9 +31,9 @@ UseDiscountOnTotal=På delsumma
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Anger om en global rabatt behandlas som en produkt, en tjänst, eller bara på delsumman för beräkning av marginal.
 MARGIN_TYPE=Köp/kostpris som föreslagits som standard för marginalberäkning
 MargeType1=Marginal på bästa leverantörspriset
-MargeType2=Marginal på vägt genomsnittligt pris (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marginal på kostpris
-MarginTypeDesc=* Marginal på bästa inköpspris = Försäljningspris - Bästa inköpspris angivet på produktkort <br> * Marginal på vägt genomsnittligt pris (WAP) = Försäljningspris - Produktviktat genomsnittspris (WAP) eller bästa inköpspris om WAP ännu inte angivits * Marginal på kostnadskurs = Försäljningspris - Kostpris angivet på produktkort eller WAP om kostpris inte angivits eller bästa inköpspris om WAP ännu inte angivits
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Kostpris
 UnitCharges=Enhetspris
 Charges=Avgifter

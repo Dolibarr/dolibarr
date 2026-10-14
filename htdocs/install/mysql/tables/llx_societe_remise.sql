@@ -31,4 +31,3 @@ create table llx_societe_remise
   note				text
 
 )ENGINE=innodb;
-

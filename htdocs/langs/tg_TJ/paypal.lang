@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Танзимоти модули PayPal
-PaypalDesc=Ин модул имкон медиҳад, ки мизоҷон тавассути <a href="http://www.paypal.com" target="_blank"> PayPal </a> пардохт кунанд. Ин метавонад барои пардохти муваққатӣ ё барои пардохти марбут ба объекти Dolibarr истифода шавад (фактура, фармоиш, ...)
+PaypalDesc=Ин модул имкон медиҳад, ки муштариён тавассути <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> пардохт кунанд. Ин метавонад барои пардохти муваққатӣ ё барои пардохти марбут ба объекти Dolibarr (инвойс, фармоиш, ...) истифода шавад.
 PaypalOrCBDoPayment=Бо PayPal пардохт кунед (Card ё PayPal)
 PaypalDoPayment=Бо PayPal пардохт кунед
 PAYPAL_API_SANDBOX=Санҷиши режим/қуттии рег
@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Танҳо пардохти "интеграл�
 PaypalModeIntegral=Интегралӣ
 PaypalModeOnlyPaypal=Танҳо PayPal
 ONLINE_PAYMENT_CSS_URL=URL -и ихтиёрии ҷадвали услуби CSS дар саҳифаи пардохти онлайн
-ThisIsTransactionId=Ин рамзи муомилот аст: <b> %s </b>
+ThisIsTransactionId=This is id of transaction
 PAYPAL_ADD_PAYMENT_URL=Ҳангоми фиристодани ҳуҷҷат тавассути почтаи электронӣ, URL -и пардохти PayPal -ро дохил кунед
 NewOnlinePaymentReceived=Пардохти нави онлайн гирифта шуд
 NewOnlinePaymentFailed=Пардохти нави онлайн кӯшиш кард, аммо ноком шуд
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Баргардонидани ҳама ама�
 ValidationOfPaymentFailed=Санҷиши пардохт ноком шуд
 CardOwner=Дорандаи корт
 PayPalBalance=Кредити PayPal
+OnlineSubscriptionPaymentLine=Обунаи онлайн дар %s<br>Пардохт тавассути %s<br>Суроғаи ибтидоии IP: %s<br>Идентификатсияи транзаксия: <spanteec24bz0f </span>

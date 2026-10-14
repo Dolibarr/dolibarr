@@ -27,4 +27,3 @@ create table llx_c_revenuestamp
   accountancy_code_sell	varchar(32) DEFAULT NULL,
   accountancy_code_buy	varchar(32) DEFAULT NULL
 )ENGINE=innodb;
-

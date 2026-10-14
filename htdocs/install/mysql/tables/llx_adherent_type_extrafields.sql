@@ -23,4 +23,3 @@ create table llx_adherent_type_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
-

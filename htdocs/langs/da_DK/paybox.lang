@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modul opsætning
-PayBoxDesc=Dette modul tilbyder sider at muliggøre betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> af kunderne. Dette kan bruges til en gratis betaling eller til en betaling på en bestemt Dolibarr genstand (faktura, ordre, ...)
-FollowingUrlAreAvailableToMakePayments=Følgende webadresser findes til at tilbyde en side til en kunde for at foretage en indbetaling på Dolibarr objekter
-PaymentForm=Betaling form
-WelcomeOnPaymentPage=Velkommen til vores online betalingstjeneste
-ThisScreenAllowsYouToPay=Dette skærmbillede giver dig mulighed for at foretage en online-betaling til %s.
-ThisIsInformationOnPayment=Dette er informationer om betaling for at gøre
-ToComplete=For at fuldføre
-YourEMail=E-mail til bekræftelse af betaling,
-Creditor=Kreditor
-PaymentCode=Betaling kode
+PayBoxDesc=Dette modul tilbyder sider for at tillade betaling på <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> af kunder. Dette kan bruges til en gratis betaling eller til en betaling på et bestemt Dolibarr-objekt (faktura, ordre, ...)
 PayBoxDoPayment=Betal med Paybox
 YouWillBeRedirectedOnPayBox=Du bliver omdirigeret om sikret Paybox siden til input du kreditkort informationer
-Continue=Næste
 SetupPayBoxToHavePaymentCreatedAutomatically=Opsæt din Paybox med url <b> %s </ b> for at få betaling oprettet automatisk, når den er godkendt af Paybox.
 YourPaymentHasBeenRecorded=Denne side bekræfter, at din betaling er registreret. Tak.
 YourPaymentHasNotBeenRecorded=Din betaling er IKKE blevet registreret, og transaktionen er blevet annulleret. Tak skal du have.
-AccountParameter=Konto parametre
-UsageParameter=Usage parametre
-InformationToFindParameters=Hjælp til at finde din %s kontooplysninger
 PAYBOX_CGI_URL_V2=URL PAYBOX CGI-modul til betaling
-VendorName=Navn på leverandør
-CSSUrlForPaymentForm=CSS stylesheet url til indbetalingskort
 NewPayboxPaymentReceived=Ny Paybox modtaget
 NewPayboxPaymentFailed=Ny Paybox betaling forsøgt men mislykkedes
 PAYBOX_PAYONLINE_SENDEMAIL=E-mail-meddelelse efter betalingsforsøg (succes eller fiasko)

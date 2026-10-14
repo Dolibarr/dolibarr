@@ -17,7 +17,7 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_c_holiday_types 
+CREATE TABLE llx_c_holiday_types
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity			integer DEFAULT 1 NOT NULL,

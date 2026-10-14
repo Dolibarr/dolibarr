@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var Object $object		Asset, AssetModel, ...
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ * @var AssetDepreciationOptions $assetdepreciationoptions
+ */
+'
+@phan-var-force ?Form $form
+@phan-var-force HookManager $hookmanager
+@phan-var-force array<string,mixed> $parameters
+@phan-var-force AssetDepreciationOptions $assetdepreciationoptions
+';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
 
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -54,7 +68,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$class_type = get_class($object) == 'Asset' ? 0 : 1;
-	print '<br>';
+
 	foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $mode_info) {
 		if (!empty($mode_info['enabled_field'])) {
 			$info = explode(':', $mode_info['enabled_field']);
@@ -77,11 +91,17 @@ if (empty($reshook)) {
 				}
 			}
 			// Discard if extrafield is a hidden field on form
-			if (abs($field_info['visible']) != 1 && abs($field_info['visible']) != 3 && abs($field_info['visible']) != 4 && abs($field_info['visible']) != 5) {
+			$isVisibleAbs = array_key_exists('visible', $field_info) ? abs((int) $field_info['visible']) : 0;
+			if (!in_array($isVisibleAbs, array(1, 3, 4, 5))) {
 				continue;
 			}
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
+			}
+			// This loop walks the raw definition of the fields, not the one filtered by
+			// setInfosForMode(), so the fields reserved to an asset must be discarded here too
+			if (!empty($field_info['only_on_asset']) && !empty($class_type)) {
+				continue;
 			}
 			$key = $mode_key . '_' . $field_key;
 			$value = $assetdepreciationoptions->deprecation_options[$mode_key][$field_key] ?? null;
@@ -95,7 +115,7 @@ if (empty($reshook)) {
 			if (!empty($field_info['help'])) {
 				print $form->textwithpicto($langs->trans($field_info['label']), $langs->trans($field_info['help']));
 			} else {
-				if (isset($field_info['copytoclipboard']) && $field_info['copytoclipboard'] == 1) {
+				if (isset($field_info['copytoclipboard']) && $field_info['copytoclipboard'] == 1) {  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 					print showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($field_info['label']));
 				} else {
 					print $langs->trans($field_info['label']);
@@ -113,7 +133,13 @@ if (empty($reshook)) {
 			if (in_array($field_info['type'], array('text', 'html'))) {
 				print '<div class="longmessagecut">';
 			}
-			if ($field_key == 'lang') {
+			if ($field_key == 'rate') {
+				// The rate is provided by the core, by getRate(), and has no column in the table. It is
+				// declared with a 'computed' expression, which routes showOutputField() to dol_eval().
+				// dol_eval() then refuses getRate(), absent from $dolibarr_main_restrict_eval_methods,
+				// and every asset shows "Bad string syntax to evaluate ..." instead of its rate.
+				print $assetdepreciationoptions->getRate($mode_key);
+			} elseif ($field_key == 'lang') {
 				$langs->load("languages");
 				$labellang = ($value ? $langs->trans('Language_' . $value) : '');
 				print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');

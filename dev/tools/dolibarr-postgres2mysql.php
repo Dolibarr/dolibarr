@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 2005-2011 James Grant 			<james@lightbox.org> 			Lightbox Technologies Inc.
  * Copyright (C) 2020 	   Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = dirname(__FILE__) . '/';
 
-// Test si mode batch
-$sapi_type = php_sapi_name();
+// Check if we run in CLI (batch) mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
 	exit();
@@ -44,7 +44,7 @@ define('VERSION', "2.0");
 // this is the default, it can be overridden here, or specified as the third parameter on the command line
 $config['engine'] = "InnoDB";
 
-if (!($argv[1] && $argv[2])) {
+if ($argc < 3 || empty($argv[1]) || empty($argv[2])) {
 	echo "Usage: php pg2mysql_cli.php <inputfilename> <outputfilename> [engine]\n";
 	exit();
 } else {
@@ -119,8 +119,17 @@ function formatsize($s)
  */
 function pg2mysql_large($infilename, $outfilename)
 {
-	$infp = fopen($infilename, "rt");
-	$outfp = fopen($outfilename, "wt");
+	$fh = fopen($infilename, "r");
+	if (!$fh) {
+		print 'Failed to open file '.$infilename."\n";
+		return -1;
+	}
+	$outfp = fopen($outfilename, "w");
+	if (!$outfp) {
+		print 'Failed to open file '.$outfilename."\n";
+		fclose($fh);
+		return -1;
+	}
 
 	$outputatend = '';
 	$arrayofprimaryalreadyintabledef = array();
@@ -132,15 +141,10 @@ function pg2mysql_large($infilename, $outfilename)
 	$inquotes = false;
 	$first = true;
 
-	if (empty($infp)) {
-		print 'Failed to open file '.$infilename."\n";
-		return -1;
-	}
-
 	$fs = filesize($infilename);
 	echo "Filesize: " . formatsize($fs) . "\n";
 
-	while ($instr = fgets($infp)) {
+	while ($instr = fgets($fh)) {
 		$linenum++;
 		$memusage = round(memory_get_usage(true) / 1024 / 1024);
 		$len = strlen($instr);
@@ -156,7 +160,7 @@ function pg2mysql_large($infilename, $outfilename)
 		}
 
 		if ($linenum % 10000 == 0) {
-			$currentpos = ftell($infp);
+			$currentpos = ftell($fh);
 			$percent = round($currentpos / $fs * 100);
 			$position = formatsize($currentpos);
 			printf("Reading    progress: %3d%%   position: %7s   line: %9d   sql chunk: %9d  mem usage: %4dM\r", $percent, $position, $linenum, $chunkcount, $memusage);
@@ -166,7 +170,7 @@ function pg2mysql_large($infilename, $outfilename)
 			$chunkcount++;
 
 			if ($linenum % 10000 == 0) {
-				$currentpos = ftell($infp);
+				$currentpos = ftell($fh);
 				$percent = round($currentpos / $fs * 100);
 				$position = formatsize($currentpos);
 				printf("Processing progress: %3d%%   position: %7s   line: %9d   sql chunk: %9d  mem usage: %4dM\r", $percent, $position, $linenum, $chunkcount, $memusage);
@@ -225,7 +229,7 @@ function pg2mysql_large($infilename, $outfilename)
 
 	printf("Completed! %9d lines   %9d sql chunks\n\n", $linenum, $chunkcount);
 
-	fclose($infp);
+	fclose($fh);
 	fclose($outfp);
 
 	return 0;
@@ -419,7 +423,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string'), but could also be (number, E'string'); so we can't search for the previous '
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and that's just stupid, so lets just hope this doesn't appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
@@ -439,7 +443,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and that's just stupid, so lets just hope this doesn't appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
@@ -457,7 +461,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 					// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 					// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-					// at a time, and that's just stupid, so lets just hope this doesn't appear anywhere in the actual data
+					// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 
 					// after the first line, we only need to check for it in the middle, not at the beginning of an insert (because the beginning will be on the first line)
 					// $after=str_replace(" (E'","' ('",$after);
@@ -497,7 +501,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				$reg2 = array();
 				if (preg_match('/ALTER TABLE ([^\s]+)/', $pkey, $reg2)) {
 					if (empty($arrayofprimaryalreadyintabledef[$reg2[1]])) {
-						// looks like we have a single line PRIMARY KEY definition, lets go ahead and add it
+						// looks like we have a single line PRIMARY KEY definition, let's go ahead and add it
 						$output .= str_replace("\n", "", $pkey);
 						// the postgres and mysql syntax for this is (at least, in the example im looking at)
 						// identical, so we can just add it as is.
@@ -545,14 +549,16 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 		if (substr($line, 0, 15) == 'CREATE DATABASE') {
 			$matches = array();
-			preg_match('/CREATE DATABASE ([a-zA-Z0-9_]*) .* ENCODING = \'(.*)\'/', $line, $matches);
-			$output .= "CREATE DATABASE `$matches[1]` DEFAULT CHARACTER SET $matches[2];\n\n";
+			if (preg_match('/CREATE DATABASE ([a-zA-Z0-9_]*) .* ENCODING = \'(.*)\'/', $line, $matches)) {
+				$output .= "CREATE DATABASE `$matches[1]` DEFAULT CHARACTER SET $matches[2];\n\n";
+			}
 		}
 
 		if (substr($line, 0, 8) == '\\connect') {
 			$matches = array();
-			preg_match('/connect ([a-zA-Z0-9_]*)/', $line, $matches);
-			$output .= "USE `$matches[1]`;\n\n";
+			if (preg_match('/connect ([a-zA-Z0-9_]*)/', $line, $matches)) {
+				$output .= "USE `$matches[1]`;\n\n";
+			}
 		}
 
 		if (substr($line, 0, 5) == 'COPY ') {

@@ -154,7 +154,7 @@ class Diff
 	 * Returns the partial diff for the specified sequences, in reverse order.
 	 * The parameters are:
 	 *
-	 * @param	array<array{0:string,1:int<0,2>}>	$table     	the table returned by the computeTable function
+	 * @param	array<array<int>>	$table     	the table returned by the computeTable function
 	 * @param	string	$sequence1 	the first sequence
 	 * @param	string	$sequence2 	the second sequence
 	 * @param	int		$start     	the starting index
@@ -371,8 +371,8 @@ class Diff
 	 * @param	array<array{0:string,1:int<0,2>}>	$diff        	the diff array
 	 * @param	string	$indentation 	indentation to add to every line of the generated HTML
 	 * @param	string	$separator   	the separator between lines
-	 * @param	string	$index       	the current index, passes by reference
-	 * @param	string	$type        	the type of line
+	 * @param	int 	$index       	the current index, passed by reference
+	 * @param	int<0,2> 	$type       the type of line
 	 * @return	string					HTML string
 	 */
 	private static function getCellContent($diff, $indentation, $separator, &$index, $type)

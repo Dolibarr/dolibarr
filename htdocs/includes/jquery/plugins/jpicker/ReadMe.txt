@@ -43,5 +43,5 @@ ______________
      - This will result in much faster operation and initialization for pages with multiple pickers.
 
   Add activateCallback option for calling a callback function when the jPicker is activated or its binding is switched to a different picker element.
-  
+
   Add multiple window modes for picker operation, include modal, popup, windowed, and exclusive.

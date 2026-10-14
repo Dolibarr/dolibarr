@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,15 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+
 
 restrictedArea($user, 'salaries');
 
@@ -56,6 +65,24 @@ $fk_user = GETPOSTINT('fk_user');
 $return_arr = array();
 
 if (!empty(GETPOSTINT('fk_user'))) {
+	// Check that the caller is allowed to read the salary of the requested user:
+	// salaries/readall = any user, salaries/readchild = self and subordinates,
+	// salaries/read = self only.
+	if (!$user->hasRight('salaries', 'readall')) {
+		if ($user->hasRight('salaries', 'readchild')) {
+			$childids = $user->getAllChildIds(1); // Includes the current user
+			if (!in_array($fk_user, $childids)) {
+				echo json_encode(array('nom' => 'NotAuthorized', 'label' => 'NotAuthorized', 'key' => 'NotAuthorized', 'value' => 'NotAuthorized'));
+				exit;
+			}
+		} else {
+			if ($fk_user != $user->id) {
+				echo json_encode(array('nom' => 'NotAuthorized', 'label' => 'NotAuthorized', 'key' => 'NotAuthorized', 'value' => 'NotAuthorized'));
+				exit;
+			}
+		}
+	}
+
 	$sql = "SELECT s.amount, s.rowid FROM ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE s.fk_user = ".((int) $fk_user);
 	$sql .= " AND s.paye = 1";

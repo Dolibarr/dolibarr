@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
 
 /**
  *       \file       htdocs/mymodule/ajax/myobject.php
- *       \brief      File to return Ajax response on product list request
+ *       \brief      File to return Ajax response on myobject list request
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -35,21 +37,62 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+$res = 0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+}
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
+	$i--;
+	$j--;
+}
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
+	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+}
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+}
+// Try main.inc.php using relative path
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	http_response_code(500);
+	die("Include of main fails");
+}
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+
 
 $mode = GETPOST('mode', 'aZ09');
+$objectId = GETPOSTINT('objectId');
+$field = GETPOST('field', 'aZ09');
+$value = GETPOST('value', 'aZ09');
+
+// @phan-suppress-next-line PhanUndeclaredClass
+$object = new MyObject($db);
 
 // Security check
-restrictedArea($user, 'mymodule', 0, 'myobject');
-
+if (!$user->hasRight('mymodule', 'myobject', 'write')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -57,12 +100,21 @@ restrictedArea($user, 'mymodule', 0, 'myobject');
 
 dol_syslog("Call ajax mymodule/ajax/myobject.php");
 
-top_httphead('application/json');
+top_httphead();
 
-$arrayresult = array();
+// Update the object field with the new value
+if ($objectId && $field && isset($value)) {
+	$object->fetch($objectId);
+	if ($object->id > 0) {
+		$object->$field = $value;
+	}
+	$result = $object->update($user);
 
-// ....
+	if ($result < 0) {
+		print json_encode(['status' => 'error', 'message' => 'Error updating '. $field]);
+	} else {
+		print json_encode(['status' => 'success', 'message' => $field . ' updated successfully']);
+	}
+}
 
 $db->close();
-
-print json_encode($arrayresult);

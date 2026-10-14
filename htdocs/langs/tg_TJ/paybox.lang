@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Танзими модули PayBox
-PayBoxDesc=Ин модул саҳифаҳоро пешниҳод мекунад, то аз ҷониби муштариён дар <a href="http://www.paybox.com" target="_blank"> Paybox </a> пардохт кунанд. Ин метавонад барои пардохти ройгон ё барои пардохт дар объекти мушаххаси Dolibarr истифода шавад (фактура, фармоиш, ...)
-FollowingUrlAreAvailableToMakePayments=URL -ҳои зерин барои пешниҳоди саҳифа ба муштарӣ барои пардохт дар объектҳои Dolibarr дастрасанд
-PaymentForm=Шакли пардохт
-WelcomeOnPaymentPage=Хуш омадед ба хидмати пардохти онлайни мо
-ThisScreenAllowsYouToPay=Ин экран ба шумо имкон медиҳад, ки пардохти онлайнро ба %s пардохт кунед.
-ThisIsInformationOnPayment=Ин маълумот дар бораи пардохт аст
-ToComplete=Барои анҷом додан
-YourEMail=Почтаи электронӣ барои гирифтани тасдиқи пардохт
-Creditor=Кредитор
-PaymentCode=Рамзи пардохт
+PayBoxDesc=Ин модул саҳифаҳоеро пешниҳод мекунад, ки ба муштариён пардохт дар <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> иҷозат диҳад. Ин метавонад барои пардохти ройгон ё пардохт дар объекти мушаххаси Dolibarr (инвойс, фармоиш, ...) истифода шавад.
 PayBoxDoPayment=Бо Paybox пардохт кунед
 YouWillBeRedirectedOnPayBox=Шумо барои ворид кардани маълумоти корти кредитӣ ба саҳифаи боэътимоди Paybox равона карда мешавед
-Continue=Баъдӣ
 SetupPayBoxToHavePaymentCreatedAutomatically=Паёмдони худро бо url <b> %s </b> танзим кунед, то пардохт ҳангоми тасдиқи Paybox ба таври худкор эҷод карда шавад.
 YourPaymentHasBeenRecorded=Ин саҳифа тасдиқ мекунад, ки пардохти шумо сабт шудааст. Сипос.
 YourPaymentHasNotBeenRecorded=Пардохти шумо сабт нашудааст ва муомилот бекор карда шудааст. Сипос.
-AccountParameter=Параметрҳои ҳисоб
-UsageParameter=Параметрҳои истифода
-InformationToFindParameters=Дар ёфтани маълумоти ҳисоби %s кумак кунед
 PAYBOX_CGI_URL_V2=URLи модули Paybox CGI барои пардохт
-CSSUrlForPaymentForm=URL -и варақаи услуби CSS барои шакли пардохт
 NewPayboxPaymentReceived=Пардохти нави Paybox гирифта шуд
 NewPayboxPaymentFailed=Пардохти нави Paybox кӯшиш шуд, аммо ноком шуд
 PAYBOX_PAYONLINE_SENDEMAIL=Огоҳинома тавассути почтаи электронӣ пас аз кӯшиши пардохт (муваффақият ё нокомӣ)

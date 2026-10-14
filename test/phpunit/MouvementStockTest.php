@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -36,7 +37,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -47,6 +48,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class MouvementStockTest extends CommonClassTest
 {
@@ -57,6 +62,8 @@ class MouvementStockTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -237,5 +244,41 @@ class MouvementStockTest extends CommonClassTest
 		$this->assertEquals($producttotest->pmp, 9.8);
 
 		return $localobject;
+	}
+
+	/**
+	 * testCalculateBalanceForProductBefore
+	 *
+	 * @return	void
+	 */
+	public function testCalculateBalanceForProductBefore()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref .= ' phpunit balance';
+		$product->label .= ' phpunit balance';
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product');
+
+		$warehouse = new Entrepot($db);
+		$warehouse->initAsSpecimen();
+		$warehouse->label .= ' phpunit balance';
+		$warehouseid = $warehouse->create($user);
+		$this->assertGreaterThan(0, $warehouseid, 'Failed to create warehouse');
+
+		$movement = new MouvementStock($db);
+		$movementdate = dol_mktime(0, 0, 0, 1, 1, 2020);
+		$result = $movement->reception($user, $productid, $warehouseid, 2.5, 0, 'Fractional qty for unit test', '', '', '', $movementdate, 0, 'Inventory Code Balance');
+		$this->assertGreaterThan(0, $result, 'Failed to create fractional stock movement');
+
+		$balance = $movement->calculateBalanceForProductBefore($productid, dol_now());
+		print __METHOD__." balance=".$balance."\n";
+		$this->assertEquals(2.5, $balance, 'Fractional stock balance must not be truncated to an integer');
 	}
 }

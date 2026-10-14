@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,19 +38,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	private $dynHandler;
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		print __METHOD__."\n";
-	}
-
-	/**
 	 * Global test setup
 	 *
 	 * @return void
@@ -68,9 +55,16 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		parent::setUp();
+
 		print __METHOD__."\n";
 		$this->handler = new class () {
 			use DolDeprecationHandler;
+
+			/**
+			 * @var bool Configuration enabling throwing exceptions
+			 *           for deprecated access.
+			 */
+			private $enableDeprecatedReporting = true;
 
 			/**
 			 * @var string Private var to check that magic
@@ -256,7 +250,15 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	 */
 	public function testDeprecatedPropertyUnset()
 	{
-		$this->handler->newProperty = "TestUnset";
+		// Initially the new property should be unset
+		$this->assertFalse(isset($this->handler->newProperty));
+
+		// Then we set the new property, so it should be set
+		$this->handler->newProperty = "ValueIsSet";
+		$this->assertTrue(isset($this->handler->newProperty));
+
+		// Then we set the new property using the old name,
+		// so it should be unset.
 		unset($this->handler->oldProperty);
 		$this->assertFalse(isset($this->handler->newProperty));
 	}
@@ -288,7 +290,7 @@ class DolDeprecationHandlerTest extends CommonClassTest
 		$this->expectExceptionMessage("Undefined property 'privateVarShouldTrigger'");
 		$this->handler->privateVarShouldTrigger;
 
-		$this->expectExceptionMessage("Accessing deprecated property 'privateDeprecated'. Use 'newProperty' instead.");
+		$this->expectExceptionMessage("Accessing deprecated property 'privateDeprecated'");
 		$this->handler->privateDeprecated;
 
 		// Restore error_reporting

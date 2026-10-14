@@ -46,6 +46,10 @@ IPP_Color=Szín
 IPP_Device=Eszköz
 IPP_Media=Nyomtató adathordozó
 IPP_Supported=Média típusa
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Nincs
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Szín
 DirectPrintingJobsDesc=Ez az oldal az elérhető nyomtatókhoz talált nyomtatási feladatokat sorolja fel.
 GoogleAuthNotConfigured=A Google OAuth nincs beállítva. Engedélyezze az OAuth modult, és állítson be egy Google ID-t/titkot.
 GoogleAuthConfigured=A rendszer a Google OAuth hitelesítő adatokat találta az OAuth modul beállításánál.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Konfigurációs változók a Google Cloud Print nyomt
 PrintingDriverDescprintipp=Konfigurációs változók a CUPS nyomtató-illesztőprogramjához.
 PrintTestDescprintgcp=A Google Cloud Print nyomtatóinak listája.
 PrintTestDescprintipp=CUPS nyomtatók listája.
-Testbbbb
+PrinterLocation=Printer location

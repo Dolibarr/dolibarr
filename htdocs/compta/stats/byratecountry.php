@@ -1,7 +1,9 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +26,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin", "accountancy"));
 
-$modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
+$modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : getDolGlobalString('ACCOUNTING_MODE'));
 
 // Date range
 $year = GETPOSTINT("year");
@@ -54,8 +64,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // Quarter
 $q = '';
@@ -272,9 +282,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+//} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+//}
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0);
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -289,7 +299,7 @@ $description .= '  <input type="hidden" name="modecompta" value="'.$modecompta.'
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 
@@ -300,7 +310,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -314,7 +324,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".((int) $i), "fd.total_ht", "0").") AS month".str_pad((string) ((int) $i), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -329,6 +339,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
+	// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+	$hookmanager->initHooks(array('turnoverreport'));
+	$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+	$sql .= $hookmanager->resPrint;
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
 	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
 	$sql .= " ORDER BY country, product_type, vatrate";
@@ -401,7 +416,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
+		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".((int) $i), "ffd.total_ht", "0").") AS month".str_pad((string) ((int) $i), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql2 .= "  SUM(ffd.total_ht) as total";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -416,6 +431,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$sql .= " AND ff.type IN (0,1,2,3,5)";
 	}
+	// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+	$hookmanager->initHooks(array('turnoverreport'));
+	$parameters = array('invoicealias' => 'ff', 'issupplier' => 1, 'datefield' => 'datef');
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+	$sql .= $hookmanager->resPrint;
 	$sql2 .= " AND ff.entity IN (".getEntity("facture_fourn", 0).")";
 	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label, cc.code ";
 	$sql2 .= " ORDER BY country, product_type, vatrate";

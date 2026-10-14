@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +39,21 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 //dol_include_once('/hrm/position.php');
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $id 	= GETPOSTINT('id');
 
-// Initialize technical objects
+// Initialize a technical objects
 $form = new Form($db);
 $object = new Position($db);
 $res = $object->fetch($id);
@@ -81,13 +91,13 @@ $fk_job = GETPOSTINT('fk_job');
 $ref 	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'positioncard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //	$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 //$object = new Position($db);
 //$res = $object->fetch($id);
 /*if ($res < 0) {
@@ -118,7 +128,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 /*
@@ -164,7 +174,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -195,6 +205,7 @@ displayPositionCard($object);
 function displayPositionCard(&$object)
 {
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
+	'@phan-var-force int<0,1> $permissiontodelete';
 
 	$id = $object->id;
 	$ref = $object->ref;
@@ -261,13 +272,13 @@ function displayPositionCard(&$object)
 
 
 		$head = positionCardPrepareHead($object);
-		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto);
+		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
 		// Confirmation to delete
 		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeletePosition'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeletePosition'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 		}
 
 		// Call Hook formConfirm
@@ -308,8 +319,8 @@ function displayPositionCard(&$object)
 		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 		//unset($object->fields['fk_project']);				// Hide field already shown in banner
 		//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-		$object->fields['fk_user']['visible']=0; // Already in banner
-		$object->fields['fk_job']['visible']=0; // Already in banner
+		$object->fields['fk_user']['visible'] = 0; // Already in banner
+		$object->fields['fk_job']['visible'] = 0; // Already in banner
 		include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -335,7 +346,7 @@ function displayPositionCard(&$object)
 		print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 
 		// Delete (need delete permission, or if draft, just need create/modify permission)
-		print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+		print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 	}
 }
 
@@ -349,7 +360,7 @@ function displayPositionCard(&$object)
 //		/*
 //		 * Generated documents
 //		 */
-//		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+//		$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
 //		$delallowed = $user->hasRight('societe', 'creer');
@@ -383,9 +394,12 @@ if ($action !== 'edit' && $action !== 'create') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('position'));
-	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('position'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
 
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';
 

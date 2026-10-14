@@ -5,7 +5,6 @@ Receptions=Lieferungen
 AllReceptions=Alle Lieferungen
 ShowReception=Lieferungen anzeige
 ReceptionsArea=Lieferungen
-ListOfReceptions=Liste der Lieferungen
 ReceptionMethod=Liefermethode
 LastReceptions=Die neusten %s Lieferungen
 StatisticsOfReceptions=Lieferstatistiken

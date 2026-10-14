@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -39,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
@@ -63,30 +72,26 @@ $result = restrictedArea($user, 'banque');
  * View
  */
 
-$form = new Form($db);
-$societestatic = new Societe($db);
-$memberstatic = new Adherent($db);
-$acc = new Account($db);
 $stripe = new Stripe($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
 $stripeacc = $stripe->getStripeAccount($service);
-/*if (empty($stripeaccount))
-{
+/*if (empty($stripeaccount)) {
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
 if (!$rowid) {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -98,12 +103,14 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeTransactionList");
-	$title .= (!empty($stripeacc) ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= $form->textwithpicto('', $stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
+	//$moreforfilter = '';
+
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -117,12 +124,14 @@ if (!$rowid) {
 
 	try {
 		if ($stripeacc) {
-			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+			$txn_all = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
-			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
+			$txn_all = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
+		'@phan-var-force \Stripe\BalanceTransaction $txn_all';  // TStripeObject is 'template' of StripeObject
 
-		foreach ($txn->data as $txn) {
+		foreach ($txn_all->data as $txn) {
+			'@phan-var-force \Stripe\BalanceTransaction $txn';  // TStripeObject is 'template' of StripeObject
 			//$charge = $txn;
 			//var_dump($txn);
 
@@ -208,17 +217,18 @@ if (!$rowid) {
 			//}
 			//print "</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($txn->created, 'dayhour')."</td>\n";
+			print '<td class="center">'.dol_print_date($txn->created, 'dayhour', 'gmt')." GMT</td>\n";
 			// Type
-			print '<td>'.$txn->type.'</td>';
+			print '<td>'.dolPrintHTML($txn->type).'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			print '<td class="right"><span class="amount">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			// Status
-			print "<td class='right'>";
+			print '<td class="center">';
+			//var_dump($txn->status);
 			if ($txn->status == 'available') {
 				print img_picto($langs->trans($txn->status), 'statut4');
-			} elseif ($txn->status == 'pending') {
+			} elseif ($txn->status == 'pending') {		// Warning, even when charge is ok on page charge, we have here 'pending'. Don't know why.
 				print img_picto($langs->trans($txn->status), 'statut7');
 			} elseif ($txn->status == 'failed') {
 				print img_picto($langs->trans($txn->status), 'statut8');

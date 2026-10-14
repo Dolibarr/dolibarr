@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +26,18 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -198,5 +200,34 @@ class FactureFournisseurTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
+	}
+
+	/**
+	 * testFactureFournisseurRecGetNextDate
+	 *
+	 * @return	void
+	 */
+	public function testFactureFournisseurRecGetNextDate()
+	{
+		global $db;
+
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('Europe/Paris');
+
+		try {
+			$localobject = new FactureFournisseurRec($db);
+			$localobject->frequency = 1;
+			$localobject->unit_frequency = 'm';
+
+			// Midnight of the 1st after a month of 30 days is the last day of the previous month in UTC
+			foreach (array('2026-10-01' => '2026-11-01', '2026-12-01' => '2027-01-01', '2026-03-01' => '2026-04-01') as $day => $expected) {
+				$localobject->date_when = dol_stringtotime($day.' 00:00:00', 0);
+				$result = dol_print_date($localobject->getNextDate(), '%Y-%m-%d %H:%M:%S', 'tzserver');
+				print __METHOD__." day=".$day." result=".$result."\n";
+				$this->assertEquals($expected.' 00:00:00', $result);
+			}
+		} finally {
+			date_default_timezone_set($savtz);
+		}
 	}
 }

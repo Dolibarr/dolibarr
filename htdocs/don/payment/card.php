@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -32,8 +40,10 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
+$outputlangs = $langs;
 
 // Security check
 $id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
@@ -42,8 +52,6 @@ $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO Add rule to restrict access payment
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
 if ($id > 0) {
@@ -53,15 +61,22 @@ if ($id > 0) {
 	}
 }
 
+restrictedArea($user, 'payment_donation', $object, '');
+
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
+
 
 /*
  * Actions
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', 'supprimer')) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -78,25 +93,32 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', '
 /*
  * View
  */
+
 $title = $langs->trans("Payment");
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 
 $don = new Don($db);
 $form = new Form($db);
 
+// Message if donation not found
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
+
 $h = 0;
 
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
+$head = [];
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id' => $id]);
 $head[$h][1] = $langs->trans("DonationPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
 
-/*
- * Confirm deleting of the payment
- */
+// Confirm deleting of the payment
 if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
@@ -119,7 +141,7 @@ print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$
 print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, getDolCurrency()).'</td></tr>';
 
 // Note public
 print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public)).'</td></tr>';
@@ -141,6 +163,7 @@ if (isModEnabled("bank")) {
 
 print '</table>';
 
+print '<br>';
 
 /*
  * List of donations paid
@@ -150,7 +173,7 @@ $disable_delete = 0;
 $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql .= ' WHERE pd.fk_donation = d.rowid';
-$sql .= ' AND d.entity = '.$conf->entity;
+$sql .= ' AND d.entity = '.((int) $conf->entity);
 $sql .= ' AND pd.rowid = '.((int) $id);
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);
@@ -189,7 +212,7 @@ if ($resql) {
 				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
@@ -214,15 +237,14 @@ print '<div class="tabsAction">';
 if (empty($action)) {
 	if ($user->hasRight('don', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
-			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', $_SERVER["PHP_SELF"].'?id='.$object->id.'#', '', 1, [ 'attr' => ['classOverride' => 'butActionRefused']]);
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id], false, '#'), '', 1, ['attr' => ['classOverride' => 'butActionRefused']]);
 		}
 	}
 }
 
 print '</div>';
-
 
 
 llxFooter();

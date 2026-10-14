@@ -5,7 +5,8 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,11 +87,11 @@ class UserBankAccount extends Account
 	/**
 	 * Create bank information record
 	 *
-	 * @param	User|null	$user		User
-	 * @param	int			$notrigger	1=Disable triggers
+	 * @param	User		$user		User
+	 * @param	int<0,1>	$notrigger	1=Disable triggers
 	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -101,7 +102,21 @@ class UserBankAccount extends Account
 			if ($this->db->affected_rows($resql)) {
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
-				return $this->update($user);
+				$result = $this->update($user, 1);
+				if ($result < 0) {
+					return $result;
+				}
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+					if ($result < 0) {
+						return -1;
+					}
+					// End call triggers
+				}
+
+				return $this->id;
 			} else {
 				return 0;
 			}
@@ -114,18 +129,18 @@ class UserBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User|null	$user		Object user
-	 *	@param	int			$notrigger	1=Disable triggers
+	 *	@param	User		$user		Object user
+	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		$error = 0;
 
 		$this->db->begin();
 
 		if (!$this->id) {
-			$this->create();
+			$this->create($user, $notrigger);
 		}
 
 		$sql = "UPDATE ".$this->db->prefix()."user_rib SET";
@@ -136,8 +151,8 @@ class UserBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address :$this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
@@ -216,22 +231,23 @@ class UserBankAccount extends Account
 
 				$this->id = $obj->rowid;
 				$this->userid = $obj->fk_user;
+				$this->entity = $obj->entity;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;
 				$this->number = $obj->number;
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
-				$this->iban = $obj->iban;
+				$this->iban = dolDecrypt($obj->iban);
 				$this->courant = self::TYPE_CURRENT;
 				$this->type = self::TYPE_CURRENT;
 
-				$this->domiciliation = $obj->address;
 				$this->address = $obj->address;
 
-				$this->proprio = $obj->owner_name;
 				$this->owner_name = $obj->owner_name;
+				$this->proprio = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
+
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
@@ -257,11 +273,11 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *  @param	User|null	$user		User deleting
-	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @param	?User		$user		User deleting
+	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -301,6 +317,16 @@ class UserBankAccount extends Account
 				$error++;
 				$this->error = "Error ".$this->db->lasterror();
 			}
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {

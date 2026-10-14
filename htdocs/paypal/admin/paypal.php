@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +34,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename = 'PayPal';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'stripe'));
 
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
@@ -102,12 +113,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	if (empty($conf->use_javascript_ajax)) {
-		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!($result > 0)) {
-			$error++;
-		}
-	}
 
 	if (!$error) {
 		$db->commit();
@@ -138,22 +143,22 @@ if ($action == "setlive") {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("PaypalSetup"));
+llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
 
 $head = paypaladmin_prepare_head();
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
 print dol_get_fiche_head($head, 'paypalaccount', '', -1);
 
-print '<span class="opacitymedium">'.$langs->trans("PaypalDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("PaypalDesc")."</div>\n";
 
 // Test if php curl exist
 if (!function_exists('curl_version')) {
@@ -188,20 +193,26 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.getDolGlobalString('PAYPAL_API_USER').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
+print ' &nbsp; <span class="opacitymedium small">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.getDolGlobalString('PAYPAL_API_PASSWORD').'">';
+print '<input size="32" type="password" id="PAYPAL_API_PASSWORD" name="PAYPAL_API_PASSWORD" value="'.getDolGlobalString('PAYPAL_API_PASSWORD').'">';
+if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
+	print showEyeForField('eyePAYPAL_API_PASSWORD', 'PAYPAL_API_PASSWORD');
+}
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.getDolGlobalString('PAYPAL_API_SIGNATURE').'">';
-print '<br><span class="opacitymedium">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
+print '<input size="64" type="password" id="PAYPAL_API_SIGNATURE" name="PAYPAL_API_SIGNATURE" value="'.getDolGlobalString('PAYPAL_API_SIGNATURE').'">';
+if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
+	print showEyeForField('eyePAYPAL_API_SIGNATURE', 'PAYPAL_API_SIGNATURE');
+}
+print '<br><span class="opacitymedium small">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
 print '</td></tr>';
 
 
@@ -241,8 +252,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PublicVendorName").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'" placeholder="'.dolPrintHTMLForAttribute($mysoc->name).'">';
 print '</td></tr>';
 
 if (isModEnabled("bank")) {
@@ -256,7 +266,7 @@ if (isModEnabled("bank")) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
+print ' &nbsp; <span class="opacitymedium small">'.$langs->trans("Example").': https://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -290,7 +300,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
-print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
+print ' &nbsp;  <span class="opacitymedium small">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 print '</table>';
@@ -316,16 +326,6 @@ if (!empty($conf->use_javascript_ajax)) {
 if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE'));
 }
 print '</td></tr>';
 
@@ -363,17 +363,19 @@ print 'Your API authentication information can be found with following steps. We
 print '</div>';
 
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-	            $("#apidoc").hide();
-	            $("#apidoca").click(function() {
-					console.log("We click on apidoca so we show/hide");
-	                $("#apidoc").show();
-	            	$("#apidoca").hide();
-					return false;
-	            })
-			});';
-	print '</script>';
+	print '
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#apidoc").hide();
+			$("#apidoca").click(function() {
+				console.log("We click on apidoca so we show/hide");
+				$("#apidoc").show();
+				$("#apidoca").hide();
+				return false;
+			})
+		});
+	</script>
+	';
 }
 
 print '<br><br>';

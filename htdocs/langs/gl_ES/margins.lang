@@ -23,7 +23,7 @@ ProductService=Produto ou servizo
 AllProducts=Todos os produtos e servizos
 ChooseProduct/Service=Eescolla o produto ou servizo
 ForceBuyingPriceIfNull=Forzar prezo de compra/custo ao prezo de venda se non se define
-ForceBuyingPriceIfNullDetails=Se o prezo de compra/custo non se proporciona cando engadimos unha nova liña e esta opción está "ACTIVADA", a marxe será do 0 %% na nova liña (prezo de compra/custo=prezo de venda). Se esta opción está "DESACTIVADA" (recomendada), a marxe será igual ao valor suxerido por defecto (e pode ser do 100 %% se non se atopa ningún valor predeterminado). 
+ForceBuyingPriceIfNullDetails=Se o prezo de compra/custo non se proporciona cando engadimos unha nova liña e esta opción está "ACTIVADA", a marxe será do 0 %% na nova liña (prezo de compra/custo=prezo de venda). Se esta opción está "DESACTIVADA" (recomendada), a marxe será igual ao valor suxerido por defecto (e pode ser do 100 %% se non se atopa ningún valor predeterminado).
 MARGIN_METHODE_FOR_DISCOUNT=Método de xestión de descontos globais
 UseDiscountAsProduct=Como un produto
 UseDiscountAsService=Como un servizo
@@ -31,9 +31,9 @@ UseDiscountOnTotal=Sobre o total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica se un desconto global toma en conta como un produto, servizo ou so no total a hora de calcular os marxes.
 MARGIN_TYPE=Prezo compra/custo suxerido por defecto polo cálculo de marxes
 MargeType1=Marxe en Mellor Prezo Proveedor
-MargeType2=Marxe en Prezo Medio Ponderado (PMP)
+MargeType2=Marxe sobre o custo medio ponderado (CMP)
 MargeType3=Marxe en Prezo de custo
-MarginTypeDesc=* Marxe en mellor prezo de compra = Prezo de venda - Mellor prezo de provedor definido na ficha do produto<br>* Marxe en Prezo promedio ponderado (PMP) = Prezo de venda - Prezo Medio Ponderado do produto (PMP), ou mellor prezo de provedor se PMP aínda non está definido <br > * Marxe en prezo de custo = Prezo de venda - prezo de custo definido na ficha do produto ou PMP se o prezo de custo non está definido, ou mellor prezo de provedor se PMP aínda non está definido
+MarginTypeDesc=* Marxe sobre o mellor prezo de compra = Prezo de venda - Mellor prezo do provedor definido na tarxeta do produto<br>* Marxe sobre o custo medio ponderado (CMP) = Prezo de venda - Prezo medio ponderado do produto (CMP) ou mellor prezo do provedor se o CMP aínda non está definido<br>* Marxe sobre o prezo de custo = Prezo de venda - Prezo de custo definido na tarxeta do produto ou CMP se o prezo de custo non está definido, ou mellor prezo do provedor se o CMP aínda non está definido
 CostPrice=Prezo de compra
 UnitCharges=Carga unitaria
 Charges=Cargas

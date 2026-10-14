@@ -45,44 +45,44 @@ abstract class EscposImage
      *  height of the image.
      */
     protected $imgHeight = 0;
-    
+
     /**
      * @var int $imgWidth
      *  width of the image
      */
     protected $imgWidth = 0;
-    
+
     /**
      * @var string $imgData
      *  Image data in rows: 1 for black, 0 for white.
      */
     private $imgData = null;
-    
+
     /**
      * @var array:string $imgColumnData
      *  Cached column-format data to avoid re-computation
      */
     private $imgColumnData = [];
-    
+
     /**
      * @var string $imgRasterData
      *  Cached raster format data to avoid re-computation
      */
     private $imgRasterData = null;
-    
+
     /**
      * @var string $filename
      *  Filename of image on disk - null if not loaded from disk.
      */
     private $filename = null;
-    
+
     /**
      * @var boolean $allowOptimisations
      *  True to allow faster library-specific rendering shortcuts, false to always just use
      *  image libraries to read pixels (more reproducible between systems).
      */
     private $allowOptimisations = true;
-    
+
     /**
      * Construct a new EscposImage.
      *
@@ -104,7 +104,7 @@ abstract class EscposImage
     {
         return $this -> imgHeight;
     }
-    
+
     /**
      * @return int Number of bytes to represent a row of this image
      */
@@ -112,7 +112,7 @@ abstract class EscposImage
     {
         return (int)(($this -> imgHeight + 7) / 8);
     }
-    
+
     /**
      * @return int Width of the image
      */
@@ -120,7 +120,7 @@ abstract class EscposImage
     {
         return $this -> imgWidth;
     }
-    
+
     /**
      * @return int Number of bytes to represent a row of this image
      */
@@ -158,7 +158,7 @@ abstract class EscposImage
         }
         return $this -> imgRasterData;
     }
-    
+
     /**
      * Output the image in column format.
      *
@@ -202,7 +202,7 @@ abstract class EscposImage
         $this -> setImgHeight(0);
         $this -> setImgData("");
     }
-    
+
     /**
      * Set image data.
      *
@@ -212,7 +212,7 @@ abstract class EscposImage
     {
         $this -> imgData = $data;
     }
-    
+
     /**
      * Set image width.
      *
@@ -222,7 +222,7 @@ abstract class EscposImage
     {
         $this -> imgWidth = $width;
     }
-    
+
     /**
      * Set image height.
      *
@@ -232,7 +232,7 @@ abstract class EscposImage
     {
         $this -> imgHeight = $height;
     }
-    
+
     /**
      * @param string $filename
      *  Filename to load from
@@ -245,7 +245,7 @@ abstract class EscposImage
         // No optimised implementation to provide
         return null;
     }
-    
+
     /**
      * @param string $filename
      *  Filename to load from
@@ -260,7 +260,7 @@ abstract class EscposImage
         // No optimised implementation to provide
         return null;
     }
-    
+
     /**
      * Get column fromat from loaded image pixels, line by line.
      *
@@ -306,7 +306,7 @@ abstract class EscposImage
         }
         return $data;
     }
-    
+
     /**
      * Get column fromat from loaded image pixels, line by line.
      *
@@ -325,7 +325,7 @@ abstract class EscposImage
         }
         return $out;
     }
-    
+
     /**
      * Output image in column format. Must be called once for each line of output.
      *
@@ -384,7 +384,7 @@ abstract class EscposImage
         }
         return $data;
     }
-    
+
     /**
      * @return boolean True if GD is loaded, false otherwise
      */
@@ -392,7 +392,7 @@ abstract class EscposImage
     {
         return extension_loaded('gd');
     }
-    
+
     /**
      * @return boolean True if Imagick is loaded, false otherwise
      */
@@ -400,7 +400,7 @@ abstract class EscposImage
     {
         return extension_loaded('imagick');
     }
-    
+
 
     /**
      * This is a convinience method to load an image from file, auto-selecting

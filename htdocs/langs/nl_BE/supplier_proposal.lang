@@ -4,3 +4,4 @@ SupplierProposalStatusDraft=Conceptfactuur (moet worden gevalideerd)
 SupplierProposalStatusClosed=Afgesloten
 SupplierProposalStatusDraftShort=Concept
 SupplierProposalStatusClosedShort=Afgesloten
+TypeContact_supplier_proposal_external_SERVICE=Vertegenwoordiger die de offerte opvolgt

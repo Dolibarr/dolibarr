@@ -25,5 +25,4 @@ ExtraFieldsEcmFiles=Archivos Ecm de campos extra
 ExtraFieldsEcmDirectories=Extrafields Ecm Directorios
 ECMSetup=Configuración de ECM
 SucessConvertImgWebp=Imágenes duplicadas con éxito
-ECMDirName=nombre de directorio
 ECMParentDirectory=Directorio de padres

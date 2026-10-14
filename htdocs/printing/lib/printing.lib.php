@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *  Define head array for tabs of printing tools setup pages
  *
  *  @param  string  $mode       Mode
- *  @return array               Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function printingAdminPrepareHead($mode)
 {
@@ -56,22 +57,22 @@ function printingAdminPrepareHead($mode)
 		$h++;
 	}
 
-	/** TODO This feature seem to be not ready yet.
+	/* TODO This feature seem to be not ready yet.
 	$head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
 	$head[$h][1] = $langs->trans("UserConf");
 	$head[$h][2] = 'userconf';
 	$h++;
 	 */
 
-	//$object=new stdClass();
+	// $object=new stdClass();
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);                                                   to remove a tab
-	//complete_head_from_modules($conf,$langs,$object,$head,$h,'printingadmin');
+	// complete_head_from_modules($conf,$langs,$object,$head,$h,'printingadmin');
 
-	//complete_head_from_modules($conf,$langs,$object,$head,$h,'printing','remove');
+	// complete_head_from_modules($conf,$langs,$object,$head,$h,'printing','remove');
 
 	return $head;
 }

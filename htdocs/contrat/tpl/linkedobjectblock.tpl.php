@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2018      Juanjo Menent <jmenent@2byte.es>
+/* Copyright (C) 2010-2011  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Juanjo Menent 			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +16,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @var Conf $conf
  */
 
 // Protection to avoid direct call of template
@@ -30,14 +36,28 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force Contrat[] $linkedObjectBlock';
+/** @var Contrat[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load("contracts");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">';
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -46,7 +66,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 <tr class="<?php echo $trclass; ?>">
 	<td><?php echo $langs->trans("Contract"); ?></td>
 	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td></td>
+	<td class="nopaddingtopimp nopaddingbottomimp tdoverflowmax150"><?php echo $refWithThirdparty; ?></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
 	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
@@ -55,8 +75,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	if ($user->hasRight('contrat', 'lire') && !getDolGlobalString('CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE')) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
-			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
-			$total = $total + $linecontrat->total_ht;
+			$totalcontrat += $linecontrat->total_ht;
+			$total += $linecontrat->total_ht;
 		}
 		echo price($totalcontrat);
 	} ?></td>

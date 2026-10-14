@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
-/* Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php'
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -47,13 +47,31 @@ $langs->load("main");
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanCompatibleVoidTypePHP70
  */
-class MyObjectTest extends PHPUnit\Framework\TestCase
+class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
+	// Note: Class must not inherit CommonClassTest like other core uit test as it is for a module store into a different dir.
+	/**
+	 * @var Conf Saved configuration object
+	 */
 	protected $savconf;
+	/**
+	 * @var User Saved User object
+	 */
 	protected $savuser;
+	/**
+	 * @var Translate Saved translations object (from $langs)
+	 */
 	protected $savlangs;
+	/**
+	 * @var DoliDB Saved database object
+	 */
 	protected $savdb;
+	/**
+	 * @var Societe Saved database object
+	 */
+	protected $savmysoc;
 
 	/**
 	 * Constructor
@@ -63,14 +81,15 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		//$this->sharedFixture
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$this->savconf = $conf;
 		$this->savuser = $user;
 		$this->savlangs = $langs;
 		$this->savdb = $db;
+		$this->savmysoc = $mysoc;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -80,11 +99,11 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Global test setup
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -93,15 +112,16 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Unit test setup
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		print __METHOD__."\n";
 	}
@@ -109,7 +129,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Unit test teardown
 	 *
-	 * @return void
+	 * @return void  No return value
 	 */
 	protected function tearDown(): void
 	{
@@ -119,11 +139,11 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Global test teardown
 	 *
-	 * @return void
+	 * @return void No return value
 	 */
 	public static function tearDownAfterClass(): void
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$db->rollback();
 
 		print __METHOD__."\n";
@@ -134,18 +154,20 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 * A sample test
 	 *
 	 * @return bool
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testSomething()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$result = true;
 
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." result=".((int) $result)."\n";
 		$this->assertTrue($result);
 
 		return $result;
@@ -155,14 +177,16 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 * testMyObjectCreate
 	 *
 	 * @return int
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testMyObjectCreate()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$localobject->initAsSpecimen();
@@ -182,14 +206,16 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @depends	testMyObjectCreate
 	 * The depends says test is run only if previous is ok
+	 * @phan-suppress PhanUndeclaredMethod
 	 */
 	public function testMyObjectDelete($id)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$result = $localobject->fetch($id);
@@ -199,4 +225,4 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
-}
+}  // @phan-suppress-current-line PhanUndeclaredClass
