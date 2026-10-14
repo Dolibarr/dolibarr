@@ -164,7 +164,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // Alias name of third party, shown on the right of the third party column
-$arrayfields['s.name_alias'] = array('label' => 'AliasNameShort', 'checked' => 0, 'enabled' => isModEnabled('societe'), 'position' => 50.5);
+$arrayfields['s.name_alias'] = array('label' => 'AliasNameShort', 'checked' => '0', 'enabled' => isModEnabled('societe'), 'position' => 51);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
