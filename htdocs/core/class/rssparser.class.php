@@ -521,8 +521,8 @@ class RssParser
 
 					$i++;
 
-					if ($i > $maxNb) {
-						break; // We get all records we want
+					if ($maxNb > 0 && $i >= $maxNb) {
+						break; // We get all records we want (0 = no limit)
 					}
 				}
 			}
