@@ -104,7 +104,9 @@ class modExpenseReport extends DolibarrModules
 		$this->tabs[] = [];
 
 		// Boxes
-		$this->boxes = []; // List of boxes
+		$this->boxes = [
+			['file' => 'box_expensereports_to_approve.php', 'enabledbydefaulton' => 'Home'],
+		];
 		$r = 0;
 
 		// Permissions

@@ -72,7 +72,9 @@ final class PredicateRule implements AccessRuleExpression
 	}
 
 	/**
-	 * @return string
+	 * Render the predicate as a PHP boolean expression.
+	 *
+	 * @return string	PHP boolean expression
 	 */
 	public function toPhp(): string
 	{

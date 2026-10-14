@@ -107,7 +107,7 @@ if (!$assistantEnabled) {
 	exit;
 }
 
-dol_syslog("parse_intent.php BEGIN", LOG_INFO, 0, '_ai');
+dol_syslog("parse_intent.php ***** BEGIN", LOG_INFO, 0, '_ai');
 
 set_time_limit($timeout + 5);
 
@@ -116,6 +116,11 @@ try {
 	$raw_input = file_get_contents('php://input');
 	$data = json_decode($raw_input, true);
 	$query = isset($data['query']) ? trim($data['query']) : '';
+	// Set by the chat when it calls back after running the read tool this
+	// endpoint flagged with needs_followup: the result is the last history turn.
+	$isFollowup = !empty($data['followup']);
+
+	dol_syslog("parse_intent.php isFollowup=".($isFollowup ? 1 : 0), LOG_DEBUG, 0, '_ai');
 
 	// --- Page context (optional): posted by the chat JS from the value the
 	// printCommonFooter hook emitted on the page being viewed. The POST is
@@ -214,6 +219,9 @@ try {
 				}
 				if (!empty($ctxObj->name)) {
 					$ctxNamesToMask[] = (string) $ctxObj->name;
+				}
+				if (!empty($ctxObj->name_alias)) {
+					$ctxNamesToMask[] = (string) $ctxObj->name_alias;	// the trade name is how people say it
 				}
 				$ctxRefPart = " with ref \"".$ctxObj->ref."\"";
 				if (!empty($doRedact) && in_array($ctxElement, array('societe', 'contact'), true)) {
@@ -396,94 +404,106 @@ try {
 
 	dol_syslog("parse_intent.php We have dynamicStopWords: ".implode(',', $dynamicStopWords), LOG_DEBUG, 0, '_ai');
 
-	$cleanQuery = preg_replace('/[^\p{L}\p{N}\s\-]/u', '', $query);							// Remove special chars from the prompt query
-	$words = preg_split('/\s+/', $cleanQuery, -1, PREG_SPLIT_NO_EMPTY);
-	$count = count($words);
-	$candidates = array();
-
-	// Helper function to validate a phrase without a dictionary.
-	// Returns 0 (not a candidate), 1 (candidate) or 2 (strict candidate, see RULE 2).
-	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): int {
-		$phrase = trim($phrase);
-
-		// RULE 1: Minimum Length
-		// Filter out extremely short words (1-3 chars).
-		// This catches "a", "le", "la", "de", "y", "to", "in", "von", "zu" in almost all languages.
-		if (mb_strlen($phrase) <= 3) {
-			return 0;
-		}
-
-		// RULE 2: First Word Check
-		// A phrase starting with a translated keyword ("Invoice Acme") is most
-		// often a verb or an object name read as a company. A single such word
-		// is never a candidate. A longer phrase is kept as a STRICT candidate:
-		// it only resolves when a company carries that whole phrase as its name
-		// (a third party legitimately named "Test Corp" was collateral damage of
-		// the plain rejection - review sonikf on #38356).
-		$parts = explode(' ', $phrase);
-		$firstWord = dol_strtolower($parts[0]);
-
-		if (in_array($firstWord, $dynamicStopWords)) {
-			return count($parts) > 1 ? 2 : 0;
-		}
-
-		return 1;
-	};
-
-	// Fill array $candidates of thirdparty name we may want to work with
-	$strictCandidates = array();	// phrases that must match a whole company name
-	for ($i = 0; $i < $count; $i++) {
-		$phrases = array($words[$i]);
-		if ($i + 1 < $count) {
-			$phrases[] = $words[$i] . ' ' . $words[$i + 1];
-		}
-		if ($i + 2 < $count) {
-			$phrases[] = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
-		}
-		foreach ($phrases as $phrase) {
-			$valid = $isValidPhrase($phrase);
-			if ($valid > 0) {
-				$candidates[] = $phrase;
-				if ($valid === 2) {
-					$strictCandidates[$phrase] = true;
-				}
+	// Third parties named in the request, found by matching the text against
+	// the words of their names and trade names in any order.
+	// The phrase that names one is resolved to its id before the model is called.
+	// When several fit, the user chooses before anything is sent
+	// the answer is built locally and the choice comes back with the same request.
+	// Privacy guard on: the phrase becomes "socid:N" so the name never reaches the provider.
+	// Privacy guard off: the name stays and the id is added "Name (socid:N)".
+	// A single word that is part of the whole name is asked about rather than wrongly resolved.
+	$aiNamesToMask = array();	// names masked in everything sent: query, history, tool results
+	$tpChoices = (!empty($data['thirdparty_choices']) && is_array($data['thirdparty_choices'])) ? $data['thirdparty_choices'] : array();
+	$tpFound = aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords);
+	$tpAsk = null;
+	$tpReplace = array();
+	foreach ($tpFound as $mt) {
+		$aiNamesToMask[] = $mt['raw'];
+		$visibleIds = array();
+		foreach ($mt['candidates'] as $cid => $c) {
+			$aiNamesToMask[] = $c['name'];
+			$aiNamesToMask[] = $c['name_alias'];
+			if ($c['visible']) {
+				$visibleIds[] = (int) $cid;
 			}
 		}
-	}
-
-	usort($candidates, function (string $a, string $b): int {
-		return mb_strlen($b) - mb_strlen($a);
-	});
-
-	// TODO The detection of candidates for thirdparties must use a more reliable method.
-	// First letter upper case detection (but not start of sentence) or whitelist patterns instead of blacklist of wordstops.
-	if (!getDolGlobalString('AI_TRY_TO_DETECT_THIRPARTY_USING_STOP_WORDS')) {
-		$candidates = array();
-	}
-
-	dol_syslog("parse_intent.php We have candidates into text that may be a thirdparty. List is: ".implode(',', $candidates), LOG_DEBUG, 0, '_ai');
-
-	if (!empty($candidates)) {
-		foreach ($candidates as $phrase) {
-			if (isset($strictCandidates[$phrase])) {
-				// Strict: the whole phrase must be the company name, or the name
-				// must continue with a space ("Test Corp" for "Test Corp SAS"),
-				// the shortest (closest) name first.
-				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $db->escape($phrase) . "' OR nom LIKE '" . $db->escape($phrase) . " %' ORDER BY LENGTH(nom) LIMIT 1";
+		$socidChosen = -1;
+		if (isset($tpChoices[$mt['phrase']]) && is_numeric($tpChoices[$mt['phrase']])) {
+			$chosen = (int) $tpChoices[$mt['phrase']];
+			// Only one of the candidates offered for this phrase, or 0 (none).
+			if ($chosen === 0 || in_array($chosen, $visibleIds, true)) {
+				$socidChosen = $chosen;
+			}
+		}
+		// A weak match (one word that is not the whole name) is confirmed by the
+		// user, even when the word is not the start of the name ("Jensen" for "Jon Jensen LLC").
+		// Under the guard the question is local.
+		$weak = (!$mt['exact'] && $mt['words'] === 1 && (empty($doRedact) || !$mt['first']));
+		if ($socidChosen < 0) {
+			if (count($visibleIds) === 1 && !$weak) {
+				$socidChosen = $visibleIds[0];
+			} elseif (count($visibleIds) === 0) {
+				$socidChosen = 0;	// nothing to offer: masked under the guard, left as written otherwise
 			} else {
-				// We use LIKE '...' to match the start of the company name.
-				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
-			}
-
-			$res = $db->query($sql);
-
-			if ($res && $obj = $db->fetch_object($res)) {
-				// Match found. Replace in the original query.
-				$query = preg_replace('/\b' . preg_quote($phrase, '/') . '\b/iu', "socid:" . $obj->rowid, $query);
-
-				break;
+				if ($tpAsk === null) {
+					$tpAsk = $mt;
+				}
+				continue;
 			}
 		}
+		if ($socidChosen > 0) {
+			$tpReplace[] = array($mt['start'], $mt['end'], empty($doRedact) ? $mt['raw'].' (socid:'.$socidChosen.')' : 'socid:'.$socidChosen);
+		}
+	}
+
+	if ($tpAsk !== null) {
+		$langs->loadLangs(array('companies', 'other'));
+		$options = array();
+		foreach ($tpAsk['candidates'] as $cid => $c) {
+			if (!$c['visible']) {
+				continue;
+			}
+			$nat = array();
+			if (in_array($c['client'], array(1, 3))) {
+				$nat[] = $langs->transnoentitiesnoconv('Customer');
+			}
+			if (in_array($c['client'], array(2, 3))) {
+				$nat[] = $langs->transnoentitiesnoconv('Prospect');
+			}
+			if ($c['fournisseur'] == 1) {
+				$nat[] = $langs->transnoentitiesnoconv('Supplier');
+			}
+			$options[] = array(
+				'id' => (int) $cid,
+				'label' => $c['name'].($c['name_alias'] !== '' ? ' ('.$c['name_alias'].')' : '').(!empty($nat) ? ' - '.implode(', ', $nat) : '').($c['town'] !== '' ? ' - '.$c['town'] : '')
+			);
+		}
+		$finalResponse = array(
+			'tool' => 'ask_for_clarification',
+			'arguments' => array(
+				'question' => $langs->transnoentitiesnoconv(count($options) === 1 ? 'AIIsThisThirdparty' : 'AIWhichThirdparty', $tpAsk['raw']),
+				'thirdparty_choice' => array('phrase' => $tpAsk['phrase'], 'options' => $options)
+			)
+		);
+		dol_syslog("parse_intent.php ".count($options)." third parties fit '".$tpAsk['phrase']."': the user chooses before anything is sent", LOG_DEBUG, 0, '_ai');
+		ai_log_request($db, $user, $query, $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
+		ob_end_clean();
+		echo json_encode($finalResponse);
+		exit;
+	}
+
+	// Right to left, so the offsets of the earlier phrases stay valid.
+	usort($tpReplace,
+		/**
+		 * @param array{0:int, 1:int, 2:string} $a Replacement
+		 * @param array{0:int, 1:int, 2:string} $b Replacement
+		 * @return int
+		 */
+		function ($a, $b) {
+			return $b[0] - $a[0];
+		});
+	foreach ($tpReplace as $r) {
+		$query = substr($query, 0, $r[0]).$r[2].substr($query, $r[1]);
 	}
 
 	// Token usage of the LLM call, filled after the adapter answered.
@@ -493,7 +513,7 @@ try {
 	$guard = null;
 	if ($doRedact && class_exists('PrivacyGuard')) {
 		$guard = new PrivacyGuard();
-		$query = $guard->mask($query);
+		$query = $guard->mask($guard->maskNames($query, $aiNamesToMask));
 		// In-context reinforcement, adjacent to the placeholders themselves:
 		// weak models weigh nearby text far more than distant system rules, and
 		// the system-rule variant alone proved insufficient in the field.
@@ -520,32 +540,21 @@ try {
 		$allToolsSchema = $mcp->getToolsSchema();
 		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
-		// Special case we ask debug info
+		$s = '';
+
+		// Special case we ask debug info: the tool families found into ai/tools/
 		if ($query == '/tools') {
-			$s = '----- loadedTools (scan of family tools, not tools)'."\n";
-			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			$s .= '----- toolsByName'."\n";
-			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			$s .= "\n";
-			$s .= "\n";
-			$s .= '----- allToolsSchema (non system + system)'."\n";
-			$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-
-			$finalResponse = [
-				"tool" => "respond_to_user",
-				"arguments" => [
-					"message" => $s
-				]
-			];
-
-			// Log the low confidence response
-			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
-
-			ob_end_clean();
-			echo json_encode($finalResponse);
-			exit;
+			$s .= '<div class="ai-tools-debug">';
+			$s .= '<strong>Tool families loaded ('.count($mcp->loadedTools).')</strong>';
+			$s .= '<ul class="small">';
+			foreach ($mcp->loadedTools as $familyKey => $familyInstance) {
+				/** @param object $instance */
+				$nbInFamily = count(array_filter($mcp->toolsByName, function ($instance) use ($familyInstance): bool {
+					return $instance === $familyInstance;
+				}));
+				$s .= '<li><strong>'.dol_escape_htmltag((string) $familyKey).'</strong> <span class="opacitymedium">'.dol_escape_htmltag(get_class($familyInstance)).' - '.$nbInFamily.' tool(s)</span></li>';
+			}
+			$s .= '</ul>';
 		}
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
@@ -591,33 +600,110 @@ try {
 		$isLargeSchema = count($toolsSchema) > 100;
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
+
+		// Special case we ask debug info
+		if ($query == '/tools') {
+			// Then the tools as sent to the LLM, one folded block per tool, its
+			// parameters as indented JSON.
+			$s .= '<strong>Tools sent to the LLM ('.count($toolsForLLM).')</strong>';
+			foreach ($toolsForLLM as $toolDef) {
+				$toolName = (string) ($toolDef['name'] ?? '');
+				$s .= '<details class="ai-tools-tool">';
+				$s .= '<summary><strong>'.dol_escape_htmltag($toolName).'</strong>';
+				if (isset($mcp->toolsByName[$toolName])) {
+					$s .= ' <span class="opacitymedium small">'.dol_escape_htmltag(get_class($mcp->toolsByName[$toolName])).'</span>';
+				}
+				$s .= '</summary>';
+				$s .= '<div class="small">'.dol_nl2br(dol_escape_htmltag((string) ($toolDef['description'] ?? ''), 1, 1)).'</div>';
+				$s .= '<pre class="small">'.dol_escape_htmltag((string) json_encode($toolDef['parameters'] ?? array(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, 1).'</pre>';
+				$s .= '</details>';
+			}
+			$s .= '</div>';
+
+			// 'html': already escaped here, shown as is by the chat instead of
+			// going through its markdown rendering.
+			$finalResponse = [
+				"tool" => "respond_to_user",
+				"arguments" => [
+					"message" => count($toolsForLLM)." tool(s)",
+					"html" => $s
+				]
+			];
+
+			// Log the low confidence response
+			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+			ob_end_clean();
+			echo json_encode($finalResponse);
+			exit;
+		}
+
+
+
 		// Build System Prompt
-		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
+		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
+		$systemPrompt .= "\n\n";
 
-		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
-		$systemRules .= "Answer JSON format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
-		$systemRules .= "ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language. ";
-		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. Only when genuinely NO tool can fulfill the request, use respond_to_user to say the feature is not available. ";
+		$systemRules = "## Rules:\n";
+		$systemRules .= "* Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
+		$systemRules .= '* Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
+		$systemRules .= "* ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language.\n";
+		$systemRules .= "* When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed.\n";
+		if (!$isFollowup) {
+			// The chat runs the search, then calls back with its result so the action can follow.
+			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it the requested search is itself the FINAL answer.";
+		}
+		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
+		$systemRules .= "\n";
 
-		// If MCP is disabled, we disable all tools
+		$systemPrompt .= $systemRules;
+
+		// If option is on, we disable all tools
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
 		}
 
-		$systemPrompt = $basePrompt . "\n\n";
-		$systemPrompt .= "Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		$systemPrompt .= "## Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
+		$systemPrompt .= "\n";
+
+		$systemPrompt .= "### sqlfilters format\n";
+		$systemPrompt .= "- Criterion: (field:operator:value). Each criterion has its own parentheses.\n";
+		$systemPrompt .= "- field: [a-zA-Z0-9_.]+ (e.g. t.ref).\n";
+		$systemPrompt .= "- operator: = != < > <= >= like notlike in notin is isnot.\n";
+		$systemPrompt .= "- value:\n";
+		$systemPrompt .= "  - 'text' or 'date' in single quotes, number, NULL, __NOW__ or __USER_ID__;\n";
+		$systemPrompt .= "  - never ( ) or a quote inside;\n";
+		$systemPrompt .= "  - like/notlike: % and _ wildcards;\n";
+		$systemPrompt .= "  - in/notin: comma-separated list, no parentheses (1,2,3);\n";
+		$systemPrompt .= "  - is/isnot: NULL only.\n";
+		$systemPrompt .= "- Combining: terms joined only by AND or OR (uppercase, surrounded by spaces).\n";
+		$systemPrompt .= "  Free nesting with balanced parentheses. No NOT.\n";
+		$systemPrompt .= "  Do not mix AND and OR at the same level without parentheses.\n";
+		// Disabled for the moment, as this could not be a generic rule of sqlfilters
+		// Wait test to see why we need this. We should not need it if field fk_soc is defined on each tool.
+		//$systemPrompt .= "- No sub-query (SELECT ...): to filter on a third party, use thirdparty_ids or (t.fk_soc:=:id) with its id.\n";
+		$systemPrompt .= "\n";
+		$systemPrompt .= "Valid:   ((t.client:=:1) OR (t.client:in:2,3)) AND (t.nom:like:'a%')\n";
+		$systemPrompt .= "Invalid: t.ref:=:'A' | (t.ref = 'A') | (t.status:in:(1,2)) | NOT (t.status:=:1) | ((t.a:=:1)\n";
+		$systemPrompt .= "\n";
+
 		// When redaction is active, the model sees [[TYPE_N]] placeholders where
 		// PII was. Without this rule it refuses tasks needing those values
 		// with it, placeholders travel verbatim through tool arguments and are restored server-side
 		// (unmaskAiResponse on the raw intent JSON) before execution, so the
 		// cloud never sees the data and the task still completes.
 		if ($doRedact) {
-			$systemRules .= " Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masked real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+			$systemPrompt .= "## Privacy rules\n";
+			$systemPrompt .= "Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]], [[NAME_6]] are masking real data, and socid:N is a third party given by its id. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+			$systemPrompt .= "\n";
 		}
 
 		// A bare date is not enough for weaker models: state explicitly that
 		// relative periods are the assistant's job to resolve, not the user's.
-		$systemPrompt .= $systemRules . " Current date: " . date('Y-m-d') . " (" . date('l') . ").";
+		// Use date ISO 8601
+		$date = new DateTime('now', new DateTimeZone('UTC'));
+		$systemPrompt .= "## Context\n";
+		$systemPrompt .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -628,9 +714,9 @@ try {
 			if (!empty($doRedact) && !empty($guard)) {
 				$aiPageContextLine = $guard->mask($guard->maskNames($aiPageContextLine, $ctxNamesToMask));
 			}
-			$systemPrompt .= "\n\nPage context: ".$aiPageContextLine;
+			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
 		}
-		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
+		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();
@@ -720,6 +806,11 @@ try {
 					if ($htext === '') {
 						continue;
 					}
+					if ($guard) {
+						// Names before the cut: half a name would no longer match.
+						$hdata = json_decode((string) preg_replace('/^\[[^\]]*\]\s*/', '', $htext), true);
+						$htext = $guard->maskNames($htext, array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $htext, $dynamicStopWords, $hdata)));
+					}
 					if (dol_strlen($htext) > 1500) {
 						$htext = dol_substr($htext, 0, 1500).' ...';
 					}
@@ -740,18 +831,30 @@ try {
 			// single tool call per answer the model picks the older one - field
 			// case: "set the phone of X" answered by creating "X bis".
 			if (!empty($history)) {
-				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+			}
+			if ($isFollowup) {
+				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why. Do not run the same search again and do not add needs_followup.";
 			}
 
-			dol_syslog('parse_intent.php systemPrompt='.$systemPrompt, LOG_DEBUG, 0, '_ai');
-			dol_syslog('parse_intent.php query='.$query, LOG_DEBUG, 0, '_ai');
+			// The rules come before the long tools list. Small models weigh what is
+			// near the question far more, and drift to another language when this
+			// rule is only up there: repeat it last.
+			$systemPrompt .= "\n\nREMINDER: write all user-facing text (message, question, answer) in the SAME LANGUAGE as the user's message.";
+
+			dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
+			dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
+
+			// Sent as separate messages, so not in the systemPrompt (masked when privacy masking is on).
+			dol_syslog('parse_intent.php history = '.json_encode($history, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOG_DEBUG, 0, '_ai');
 
 			// Call LLM and get answer string
+			dol_syslog("parse_intent.php call LLM - ".($isFollowup ? "step ".(count($history) + 1).": followup with the result of the search sent back by the chat" : "step 1: initial request")." (history turns: ".count($history).")", LOG_INFO, 0, '_ai');
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
-			dol_syslog('parse_intent.php rawResponse='.var_export($rawResponse, true), LOG_DEBUG, 0, '_ai');
-
+			// Commented for production version, the raw response can already be seen into dolibarr_curl.log
+			//dol_syslog('parse_intent.php rawResponse='.var_export($rawResponse, true), LOG_DEBUG, 0, '_ai');
 			//var_dump($rawResponse);exit;
 
 			// Capture logs
@@ -809,11 +912,20 @@ try {
 					$intentJSON = json_decode($clean, true);
 					dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 
-					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user' && empty($intentJSON['arguments']['message'])) {
-						// If answer is tool=respond_to_user but without message
-						dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
-
-						$intentJSON['arguments']['message'] = 'I could not produce an answer for this request. Please rephrase or add details.';
+					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user') {
+						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
+							// If answer is tool=respond_to_user but without message
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
+							$intentJSON['arguments']['message'] = "I don't understand the answer produced by the IA for this request. Please rephrase or add details.";
+						} else {
+							dol_syslog('parse_intent.php clean response is "respond_to_user" with a messageor content', LOG_DEBUG, 0, '_ai');
+							$intentJSON = [
+								"tool" => "respond_to_user",
+								'arguments' => [
+									"message" => $intentJSON['arguments']['message'] ?? ($intentJSON['arguments']['content'] ?? '')
+								]
+							];
+						}
 					} elseif (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'ask_for_clarification' && empty($intentJSON['arguments']['question'])) {
 						// If answer is tool=ask_for_clarification but without message
 						dol_syslog('parse_intent.php clean response is "ask_for_clarification" with a question', LOG_DEBUG, 0, '_ai');
@@ -996,7 +1108,7 @@ try {
 		}
 	}
 
-	// ask_for_confirmation is ours, built below around a real tool call; a model
+	// Ask_for_confirmation is ours, built below around a real tool call; a model
 	// that emits it by itself (it does, on a follow-up question: "do you really
 	// want to update the phone of X?") sends the client a confirmation with
 	// nothing to confirm, which it rejects as malformed. Hand the question to
@@ -1014,104 +1126,15 @@ try {
 		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
 	}
 
-	dol_syslog("parse_intent.php AI_CHAT_TWO_STEP_WRITE=" . getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE'), LOG_DEBUG, 0, '_ai');
+	// Tools answered by the chat itself, never a step of a write.
+	$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page', 'generate_navigation_url');
 
-	// --- Second step: a write was asked, a read was answered -------------------
-	// "Set the phone of X", "delete the draft order of Y": when the object's id
-	// is neither in the message nor in the context, the model answers with a
-	// READ tool (a search). The chat runs one tool per turn, so it would show
-	// the search result and stop, and the user has to ask again with the id.
-	// When the administrator allows it, that read is executed here (rights and
-	// allow-list apply exactly as for a client call), its result goes back to
-	// the model as one extra assistant turn, and the write it then produces
-	// lands in the confirmation gate below like a direct call would.
-	//
-	// SAFETY PROPERTY - ONE STEP, NEVER A LOOP: the second answer is taken only
-	// when it is a write tool of the schema; anything else (another read, a
-	// question, an error) ends the turn on the first answer, unchanged. There
-	// is no third call whatever the model answers.
-	$twoStepLabel = '';
-	// Only on the model path: the shortcut paths above (classifier, page
-	// context...) answer without $adapter / $mcp / $history / $systemPrompt.
-	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter, $mcp, $history, $systemPrompt, $toolsSchema) && is_object($adapter) && is_object($mcp) && is_array($history) && is_array($toolsSchema)) {
-		/**
-		 * @param string              $name Tool name
-		 * @param array<string,mixed> $args Tool arguments
-		 * @return bool                     True when the tool writes
-		 */
-		$isWriteTool = function ($name, array $args) use ($mcp) {
-			if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
-				return true;
-			}
-			$inst = $mcp->toolsByName[$name] ?? null;
-			if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
-				return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
-			}
-			return false;
-		};
-		$readArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
-		$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page');
-		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !$isWriteTool($toolName, $readArgs)) {
-			$readResult = $mcp->executeTool($toolName, $readArgs);
-			if (is_array($readResult) && !isset($readResult['error']) && (($readResult['resultType'] ?? '') !== 'input_required')) {
-				// The first call is a step of its own in the log (tokens included).
-				ai_log_request($db, $user, $query, $intentJSON, $providerUsed, microtime(true) - $startTime, $confidence, 'Step1', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
-
-				// Compact result, capped like a pinned tool result, and passed
-				// through the privacy guard exactly like the pinned history is.
-				$snippet = (string) json_encode($readResult, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-				if (dol_strlen($snippet) > 1500) {
-					$snippet = dol_substr($snippet, 0, 1500).' ...';
-				}
-				$snippet = '['.$toolName.' result] '.$snippet;
-				if ($guard) {
-					$snippet = $guard->mask($snippet);
-				}
-				$history2 = $history;
-				$history2[] = array('role' => 'assistant', 'text' => $snippet);
-				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
-
-				// Call LLM
-				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
-
-				$rawRequestLog = $adapter->lastRequest;
-				$rawResponseLog = $adapter->lastResponse;
-				if (!empty($adapter->lastUsage)) {
-					$usageContext = array(
-						'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
-						'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
-						'model' => (string) ($adapter->lastUsage['model'] ?? (isset($model) ? $model : '')),
-					);
-				}
-
-				$intent2 = null;
-				if (is_string($rawResponse2) && strpos($rawResponse2, 'Error:') !== 0) {
-					$clean2 = trim((string) preg_replace('/```json\s*|\s*```/s', '', $rawResponse2));
-					$m2 = array();
-					if (preg_match('/\{.*\}/s', $clean2, $m2)) {
-						$clean2 = $m2[0];
-					}
-					if ($guard) {
-						$clean2 = $guard->unmaskAiResponse($clean2);
-					}
-					$intent2 = json_decode((string) preg_replace('/[\r\n]/', ' ', $clean2), true);
-					if (is_array($intent2) && $guard && isset($intent2['arguments'])) {
-						$intent2['arguments'] = recursiveUnmaskValues($intent2['arguments'], $guard);
-					}
-				}
-				$args2 = (is_array($intent2) && isset($intent2['arguments']) && is_array($intent2['arguments'])) ? $intent2['arguments'] : array();
-				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && $isWriteTool($intent2['tool'], $args2)) {
-					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
-					$intentJSON = $intent2;
-					$toolName = $intent2['tool'];
-					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), (string) $rawResponse2);
-					// The preview must name the object the read resolved, not an id.
-					$twoStepLabel = aiLabelOfResolvedObject($readResult, $args2);
-				} else {
-					dol_syslog("parse_intent.php two-step: second answer is not a write, the turn ends on the read ".$toolName, LOG_INFO);
-				}
-			}
-		}
+	// Followup round: name the object the search resolved, so the confirmation
+	// says "NLTechno (id 10)" and not only "socid 10". The search result is sent
+	// back by the chat for this display only, it never goes to the model.
+	$resolvedLabel = '';
+	if ($isFollowup && !empty($data['followup_result']) && is_array($data['followup_result']) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) {
+		$resolvedLabel = aiLabelOfResolvedObject($data['followup_result'], $intentJSON['arguments']);
 	}
 
 	if ($askForConfirmation > 0) {
@@ -1121,6 +1144,32 @@ try {
 			$needsConfirmation = true;
 		} elseif ($askForConfirmation == 2) {
 			$needsConfirmation = true;
+		}
+	}
+
+	// A write gated by its tool is confirmed whatever AI_ASK_FOR_CONFIRMATION
+	// says: the tool will not run without the user's approval anyway, and
+	// without this card the chat received the bare confirmation request and
+	// nothing was ever written.
+	if (!$needsConfirmation && is_array($intentJSON) && $toolName !== '' && isset($mcp) && is_object($mcp)) {
+		$gatedTool = $mcp->toolsByName[$toolName] ?? null;
+		$gatedArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
+		if (is_object($gatedTool) && method_exists($gatedTool, 'writeConfirmationPreview') && ((string) $gatedTool->writeConfirmationPreview($toolName, $gatedArgs)) !== McpTool::NO_WRITE) {
+			$needsConfirmation = true;
+		}
+	}
+	// A write the tool already refuses (its third party missing, unknown or
+	// ambiguous) is answered now, with nothing to approve.
+	if ($needsConfirmation && isset($mcp) && is_object($mcp)) {
+		$gatedTool = $mcp->toolsByName[$toolName] ?? null;
+		$gatedArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
+		$refusal = ($gatedTool instanceof McpTool) ? (string) $gatedTool->writePrecheck($toolName, $gatedArgs) : '';
+		if ($refusal !== '') {
+			$finalResponse = array('tool' => 'respond_to_user', 'arguments' => array('message' => $refusal));
+			ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'Error', $refusal, $rawRequestLog, $rawResponseLog, $usageContext);
+			ob_end_clean();
+			echo json_encode($finalResponse);
+			exit;
 		}
 	}
 
@@ -1147,9 +1196,9 @@ try {
 				$action = $preview;
 			}
 		}
-		if (!empty($twoStepLabel)) {
-			// The id came from a read the user never saw: say which object it is.
-			$action .= ' - '.$twoStepLabel;
+		if ($resolvedLabel !== '') {
+			// The id came from a search the user never saw: say which object it is.
+			$action .= ' - '.dol_escape_htmltag($resolvedLabel);
 		}
 
 		$confirmationResponse = [
@@ -1189,6 +1238,31 @@ try {
 	// Add confidence note
 	if ($confidence < MEDIUM_CONFIDENCE && isset($intentJSON['arguments'])) {
 		$intentJSON['arguments']['_confidence_note'] = "I'm moderately confident about this interpretation. Please verify the results.";
+	}
+
+	// The model answered with a read that is only a step toward the action
+	// asked: either it says so itself (needs_followup in its JSON), or a write
+	// was asked and it answered with a read (a search for the id of the object
+	// to change). Tell the chat to send the result of that read back here, with
+	// followup=1, so the model can perform the action.
+	// Never on a followup call itself: one extra round at most, no loop.
+	$llmAsksFollowup = !empty($intentJSON['needs_followup']);
+	unset($intentJSON['needs_followup']);
+	if (!$isFollowup && isset($mcp) && is_object($mcp)
+		&& !in_array($toolName, $systemTools, true)
+		&& !aiIsWriteTool($mcp, $toolName, (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array())
+		&& ($llmAsksFollowup || aiQueryAsksForWrite($query, $langs))) {
+		$intentJSON['needs_followup'] = 1;
+	}
+	if (!empty($intentJSON['needs_followup'])) {
+		dol_syslog("parse_intent.php needs_followup on ".$toolName." (".($llmAsksFollowup ? 'asked by the model' : 'write asked, read answered').")", LOG_DEBUG, 0, '_ai');
+	} else {
+		dol_syslog("parse_intent.php needs_followup off ".$toolName, LOG_DEBUG, 0, '_ai');
+	}
+
+	if ($resolvedLabel !== '') {
+		// For the confirmation the chat shows when the write tool asks for it.
+		$intentJSON['resolved_label'] = $resolvedLabel;
 	}
 
 	// Success!
@@ -1265,21 +1339,36 @@ function aiQueryAsksForWrite($query, $langs)
 }
 
 /**
+ * Does the tool write (create / update / delete / ...)?
+ *
+ * @param McpHandler          $mcp  MCP handler with tools loaded
+ * @param string              $name Tool name
+ * @param array<string,mixed> $args Tool arguments
+ * @return bool                     True when the tool writes
+ */
+function aiIsWriteTool($mcp, $name, array $args)
+{
+	if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
+		return true;
+	}
+	$inst = $mcp->toolsByName[$name] ?? null;
+	if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
+		return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
+	}
+	return false;
+}
+
+/**
  * Name of the object a write targets, taken from the read result that
- * produced its id (so the confirmation names "Dupont SA", not "socid 2305").
+ * produced its id (so the confirmation names "Dupont SA (id 2305)", not "socid 2305").
  *
  * @param array<mixed> $readResult Result of the read tool (a row, a list of rows, or {data:[...]})
  * @param array<mixed> $writeArgs  Arguments of the write tool
- * @return string                  Name / ref / label of the matching row, '' when not found
+ * @return string                  Name / ref / label of the matching row followed by its id, '' when not found
  */
 function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
 {
-	$ids = array();
-	foreach ($writeArgs as $k => $v) {
-		if ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
-			$ids[] = (int) $v;
-		}
-	}
+	$ids = aiIdsOfArguments($writeArgs);
 	if (empty($ids)) {
 		return '';
 	}
@@ -1298,12 +1387,38 @@ function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
 		if ($rowid > 0 && in_array($rowid, $ids, true)) {
 			foreach (array('name', 'nom', 'ref', 'label', 'subject', 'title', 'login') as $key) {
 				if (!empty($row[$key]) && is_string($row[$key])) {
-					return dol_trunc($row[$key], 80);
+					return dol_trunc($row[$key], 80).' (id '.$rowid.')';
 				}
 			}
 		}
 	}
 	return '';
+}
+
+/**
+ * Ids passed to a tool: values of the id-like keys (id, *_id, socid, fk_*),
+ * also inside nested arrays and JSON encoded arguments (request_data).
+ *
+ * @param array<mixed> $args Arguments of the tool
+ * @return int[]             Ids found
+ */
+function aiIdsOfArguments(array $args)
+{
+	$ids = array();
+	foreach ($args as $k => $v) {
+		if (is_string($v) && preg_match('/^\s*\{/', $v)) {
+			$decoded = json_decode($v, true);
+			if (is_array($decoded)) {
+				$v = $decoded;
+			}
+		}
+		if (is_array($v)) {
+			$ids = array_merge($ids, aiIdsOfArguments($v));
+		} elseif ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
+			$ids[] = (int) $v;
+		}
+	}
+	return $ids;
 }
 
 /**
