@@ -156,15 +156,15 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
 // Alias name of third party, shown on the right of the third party column
-$arrayfields['s.name_alias'] = array('label' => 'AliasNameShort', 'checked' => 0, 'enabled' => isModEnabled('societe'), 'position' => 50.5);
+$arrayfields['s.name_alias'] = array('label' => 'AliasNameShort', 'checked' => '0', 'enabled' => (string) (int) isModEnabled('societe'), 'position' => 51);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
