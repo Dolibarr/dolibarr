@@ -742,12 +742,19 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		$count = 0;
 		//var_dump($arrayofmesures);
 		print '<div class="divadvancedsearchfield clearboth">';
-		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+		print '<!-- measureComponent -->'."\n";
+		print '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
+		print '<span class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></span>';
 		$simplearrayofmesures = array();
 		foreach ($arrayofmesures as $key => $val) {
 			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 		}
-		print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		} else {
+			print customReportsSelectMeasures('search_measures', $arrayofmesures, $sanitized_search_measures, $langs->transnoentitiesnoconv("Measures"));
+		}
+		print '</div>';
 		print '</div>';
 
 		// XAxis

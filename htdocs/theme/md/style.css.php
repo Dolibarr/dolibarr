@@ -924,7 +924,7 @@ select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
-select.flat, form.flat select, .divadvancedsearchfieldcompinput {
+select.flat, form.flat select {
 	height: 2em;
 }
 input.pageplusone {
@@ -1049,6 +1049,10 @@ select.placeholder { color: #ccc; }
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+#search_component_params_input::placeholder {
+	color: var(--colortext);
+	opacity: 0.5;
+}
 select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
 	color: var(--colortext);
 }
@@ -1727,6 +1731,8 @@ div.divsearchfield {
 	background: #fff;
 	border: solid 1px var(--inputbordercolor);
 	border-radius: 5px;
+	line-height: 36px;
+	/* height: 36px; Must use line-height or there is trouble when component is on several lines */
 }
 
 .search_component_params {
@@ -1739,7 +1745,10 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	line-height: 24px;
+	line-height: 25px;
+}
+input#search_component_params_input {
+	padding-left: 8px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1757,6 +1766,8 @@ div.divsearchfield {
 	background: #ddd;
 	border-radius: 4px;
 	display: inline-block;
+	height: 26px !important;
+	margin-right: 4px !important;
 }
 .tagsearchdelete {
 	color: #999;
@@ -1776,6 +1787,88 @@ div.divsearchfield {
 	margin-left: -12px;
 	margin-top: 0;
 	position: absolute;
+}
+
+/* Component to select measures of custom reports */
+.customreportsmeasures {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	text-align: start;
+}
+.customreportsmeasures .hidden {
+	display: none !important;
+}
+span.customreportsmeasures-placeholder {
+	padding-left: 8px;
+	opacity: 0.5;
+}
+
+.customreportsmeasures-caret {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0.5;
+}
+.customreportsmeasures-tags {
+	display: contents;
+}
+.customreportsmeasures-dropdown {
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	min-width: max(100%, 340px);
+	width: max-content;
+	max-width: 500px;
+	background-color: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
+	padding: 0;
+	line-height: 1.4;
+}
+.customreportsmeasures-list, .customreportsmeasures-variants {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.customreportsmeasures-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px;
+}
+.customreportsmeasures-variants {
+	padding-left: 26px;
+}
+.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.customreportsmeasures-fieldlabel {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-variants .customreportsmeasures-item {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-fieldlabel:hover, .customreportsmeasures-variants .customreportsmeasures-item:hover {
+	background-color: var(--colorbacklinepairhover);
+}
+.customreportsmeasures-expand, .customreportsmeasures-check {
+	width: 14px;
+	margin-left: auto;
+	padding-left: 8px;
+	text-align: center;
+}
+.customreportsmeasures-check {
+	visibility: hidden;
+}
+.customreportsmeasures-selected > .customreportsmeasures-check {
+	visibility: visible;
+}
+.customreportsmeasures-count {
+	margin-left: 6px;
 }
 
 <?php
@@ -5653,12 +5746,9 @@ img.boxhandle, img.boxclose {
 	display: none;
 	position: absolute;
 	background: var(--colorbackbody);
-	border-width: 1px 1px 2px;
-	border-style: solid;
-	border-color: rgb(204, 204, 204);
-	border-image: none; padding: 9px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
-	border-radius: 2px;
+	border: none;
+	padding: 9px;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
@@ -5679,10 +5769,9 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	font-size: 12px;
 	color: #333;
-	margin: 5px 0px 5px 0px
+	margin: 20px 0px 30px 0px;
 }
 .search-component-assistance .assistance-errors {
-	margin-bottom: 0px;
 	text-align: center;
 }
 .add-filter-btn {
@@ -5719,13 +5808,12 @@ img.boxhandle, img.boxclose {
 	left: 0;
 	width: 450px;
 	margin-top: 2px;
-	background: var(--colorbackbody);
-	border: 1px solid var(--inputbordercolor);
-	border-radius: 3px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	background: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1001;
 }
-.fieldcombo-search {
+.fieldcombo-search, .customreportsmeasures-search {
 	width: 95%;
 	margin: 0;
 	padding: 4px 8px;
@@ -8164,7 +8252,7 @@ dl.dropdown {
 	position:absolute;
 	top:2px;
 	list-style:none;
-	max-height: 264px;
+	max-height: 267px;
 	overflow: auto;
 	z-index: 1;
 }
