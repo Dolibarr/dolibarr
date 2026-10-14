@@ -2027,8 +2027,10 @@ while ($i < $imaxinloop) {
 
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
-			print $obj->alias;
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

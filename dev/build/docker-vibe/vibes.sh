@@ -126,6 +126,12 @@ if [ -d /var/log/apache2 ]; then
     LOG_ARGS+=(-e "HOST_APACHE_LOG_GID=$(stat -c %g /var/log/apache2)" --mount "type=bind,src=/var/log/apache2,dst=/var/log/apache2,readonly")
 fi
 
+# Share the Transifex credentials of the host with the tx client of the container (read-only mount).
+TX_ARGS=()
+if [ -f "$HOME/.transifexrc" ]; then
+    TX_ARGS+=(--mount "type=bind,src=$HOME/.transifexrc,dst=$HOME/.transifexrc,readonly")
+fi
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -135,6 +141,7 @@ sudo docker run --rm -it \
   "${GRAPHIC_ARGS[@]}" \
   "${TEST_ARGS[@]}" \
   "${LOG_ARGS[@]}" \
+  "${TX_ARGS[@]}" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \

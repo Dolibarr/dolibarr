@@ -447,6 +447,9 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 $morejs = array();
 $morecss = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -571,7 +574,12 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search("d.lastname", $search_lastname);
+	if (empty($arrayfields['d.firstname']['checked'])) {
+		// Firstname is shown into the lastname column, so search on both
+		$sql .= natural_search(array("d.lastname", "d.firstname"), $search_lastname);
+	} else {
+		$sql .= natural_search("d.lastname", $search_lastname);
+	}
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -913,8 +921,6 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1430,9 +1436,15 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdlineheightsmall">';
+			print '<div class="tdoverflowmax125 inline-block lineheightsmall">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
+			// Show firstname under the lastname when firstname column is not enabled
+			if (empty($arrayfields['d.firstname']['checked']) && !empty($obj->firstname)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->firstname).'</span>';
+			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
