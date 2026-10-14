@@ -466,7 +466,7 @@ function dol_print_object_info($object, $usetable = 0)
 
 	// Reconciliation
 	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
-		'@phan-var-force Account $object';
+		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}

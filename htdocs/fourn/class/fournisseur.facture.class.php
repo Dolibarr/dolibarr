@@ -1960,9 +1960,9 @@ class FactureFournisseur extends CommonInvoice
 							$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
 						}
 						if ($this->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr", $num));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 						} else {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr", $num));
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 						}
 						if ($result < 0) {
 							$this->setErrorsFromObject($mouvP);
@@ -3405,14 +3405,22 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 * Returns the rights used for this class
-	 * @return int
+	 * Check if user has a permission on supplier invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
 
-		return $user->hasRight("fournisseur", "facture");
+		return (bool) $user->hasRight("fournisseur", "facture", $mode);
 	}
 
 	/**

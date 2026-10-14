@@ -78,6 +78,11 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Third parties the user picked when a name fitted several: phrase -> id,
+    // 0 = none of them. They answer the request they were asked for only, the next
+    // question asks again.
+    let thirdpartyChoices = {};
+    let lastSent = null;          // { sentQuery, query } of the last request, resent once a choice is made
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
@@ -224,6 +229,7 @@ export function initAiAssistant(container) {
             }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
+            thirdpartyChoices = {};
             input.focus();
         }
     });
@@ -1330,6 +1336,21 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
+    // Several third parties fit a name the user wrote, and the privacy guard
+    // keeps names away from the provider: the server asked before sending
+    // anything. The same request goes again with the choice.
+    function handleThirdpartyChoice(question, choice) {
+        const pick = (id) => {
+            const msg = chat.lastElementChild;
+            if (msg && msg.classList.contains('clarification')) msg.remove();
+            thirdpartyChoices[choice.phrase] = id;
+            if (lastSent) handleQuery(lastSent);
+        };
+        const actions = (choice.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-building', onclick: () => pick(o.id) }));
+        actions.push({ text: t('AINoneOfThese'), icon: 'fa-times', onclick: () => pick(0) });
+        appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(question)}</div>`, actions);
+    }
+
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
@@ -1347,8 +1368,9 @@ export function initAiAssistant(container) {
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
         // A write tool sends a full sentence describing what it would write; it
-        // is the question itself, not a verb to slot into another sentence.
-        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        // is the question itself, not a verb to slot into another sentence. More
+        // than 2 words is a sentence too: a label may follow its final dot.
+        const isSentence = typeof action === 'string' && (/[.!?]\s*$/.test(action.trim()) || action.trim().split(/\s+/).length > 2);
         let messageHtml;
         if (isSentence) {
             messageHtml = `<strong>${action}</strong>`;
@@ -1583,7 +1605,7 @@ export function initAiAssistant(container) {
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = past.every((m) => !m.dataset.ctx);
         bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
-            t('Statistics').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
             ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('AIContextClear') + '</a>';
@@ -1630,14 +1652,34 @@ export function initAiAssistant(container) {
         }
     }
 
-    async function handleQuery() {
-        const query = input.value.trim();
-        const readyDocs = attachedDocs.filter((d) => !d.error);
-        if (!query && !readyDocs.length) return;
+    async function handleQuery(resend) {
+        // A resend (after the user picked a third party) posts the same request
+        // again, without a second bubble.
+        const isResend = !!(resend && typeof resend.sentQuery === 'string');
+        const query = isResend ? resend.query : input.value.trim();
+        const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
+        // "/status" is answered locally (no AI call): statistics of the whole
+        // conversation (the bar above the input already shows the selected
+        // context). Both bubbles have no raw text so they never travel as context.
+        if (query.toLowerCase() === '/status' && !readyDocs.length) {
+            const whole = pastContextBubbles().map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }));
+            const stats = t('AIContextCounter')
+                .replace('%s', String(whole.filter((p) => p.role === 'user').length))
+                .replace('%s', String(whole.length))
+                .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
+            appendMsg('user', escapeHtml(query));
+            appendMsg('bot', escapeHtml(stats));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
+
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
-        let sentQuery = query;
+        let sentQuery = isResend ? resend.sentQuery : query;
         let displayHtml = escapeHtml(query);
         if (readyDocs.length) {
             // One wrapped context block per document, so each keeps its own
@@ -1650,79 +1692,126 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
-        clearChip();
+        if (!isResend) {
+            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            clearChip();
+        }
+        lastSent = { sentQuery: sentQuery, query: query };
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
-        const loadingMsg = chat.lastElementChild;
+        let loadingMsg = chat.lastElementChild;
         try {
             const chosenModel = resolveModel();
-            const intentRes = await fetch(epUrl('parse_intent.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                // Page context (set by the printCommonFooter hook on card pages)
-                // lets the server resolve "this invoice" - it re-validates the
-                // ids against the user's rights before trusting them.
-                body: JSON.stringify(Object.assign(
-                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
-                    (function () {
-                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
-                        return pinned.length ? { history: pinned } : {};
-                    })(),
-                    (function () {
-                        const ctx = window.aiPageContext;
-                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
-                        // On list pages, the mass-action checkboxes carry the row
-                        // ids: checked ones are the user's live selection.
-                        if (ctx.list) {
-                            // The mass-action checkboxes carry rowids by core
-                            // convention on every list - a uniform source that
-                            // sidesteps the per-list SQL alias zoo server-side.
-                            const all = Array.from(document.querySelectorAll('.checkforselect'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
-                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
-                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
-                            if (sel.length) ctx.selected = sel;
-                        }
-                        return { context: ctx };
-                    })()
-                ))
-            });
-            const intent = await aiJson(intentRes);
-            loadingMsg.remove();
-            if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+            // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+            const pinned = collectPinnedContext();
+            // Result of the read flagged needs_followup, sent back on the second round.
+            let followupSnippet = null;
+            let followupResult = null;
+            // The third parties the user picked, for every round of this request.
+            const sentChoices = Object.assign({}, thirdpartyChoices);
+            // Two rounds at most: the server never flags a followup round itself.
+            for (let round = 0; round < 2; round++) {
+                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                const intentRes = await fetch(epUrl('parse_intent.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    // Page context (set by the printCommonFooter hook on card pages)
+                    // lets the server resolve "this invoice" - it re-validates the
+                    // ids against the user's rights before trusting them.
+                    body: JSON.stringify(Object.assign(
+                        chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                        (function () {
+                            // followup_result: only to name the object in the confirmation, never sent to the model.
+                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            return pinned.length ? { history: pinned } : {};
+                        })(),
+                        (function () {
+                            const ctx = window.aiPageContext;
+                            if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                            // On list pages, the mass-action checkboxes carry the row
+                            // ids: checked ones are the user's live selection.
+                            if (ctx.list) {
+                                // The mass-action checkboxes carry rowids by core
+                                // convention on every list - a uniform source that
+                                // sidesteps the per-list SQL alias zoo server-side.
+                                const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                                if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                                const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                                if (sel.length) ctx.selected = sel;
+                            }
+                            return { context: ctx };
+                        })()
+                    ))
+                });
+                const intent = await aiJson(intentRes);
+                loadingMsg.remove();
+                // Choices answer this request only: once it went through, the next question asks again.
+                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
+                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+                    // Debug output of /tools, built and escaped server side: shown as is,
+                    // never sent back as context. Only for that query: an 'html' argument
+                    // coming from the model is never trusted.
+                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
+                }
+                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'generate_navigation_url') {
+                    appendMsg('system', t('GeneratingLink'));
+                    const loadingNav = chat.lastElementChild;
+                    const navRes = await fetch(epUrl('execute_tool.php'), {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(intent)
+                    });
+                    const nav = await aiJson(navRes);
+                    loadingNav.remove();
+                    if (nav.error) { appendMsg('error', nav.error); }
+                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                    input.disabled = false; input.focus(); return;
+                }
 
-            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'generate_navigation_url') {
-                appendMsg('system', t('GeneratingLink'));
-                const loadingNav = chat.lastElementChild;
-                const navRes = await fetch(epUrl('execute_tool.php'), {
+                appendMsg('system', t('FetchingData'));
+                const loadingData = chat.lastElementChild;
+                const toolRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await aiJson(navRes);
-                loadingNav.remove();
-                if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                input.disabled = false; input.focus(); return;
+                const result = await aiJson(toolRes);
+                loadingData.remove();
+                // The read only fetched the ids the asked action needs: hand its result
+                // back to the model instead of showing it, and let it perform the action.
+                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                    appendMsg('system', t('AISearchDoneNowPreparingAction'));
+                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupResult = result;
+                    continue;
+                }
+                // A write tool does not write on its first call: it answers with the
+                // sentence to confirm and a requestState. Ask the user, the write runs
+                // when executePendingIntent() sends the state back.
+                if (result && result.resultType === 'input_required' && result.requestState) {
+                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+                    const confirmed = Object.assign({}, intent, {
+                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+                    });
+                    delete confirmed.needs_followup;
+                    delete confirmed.resolved_label;
+                    // The id came from a search the user never saw: say which object it is.
+                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
+                    input.disabled = false; input.focus(); return;
+                }
+                lastResult = { data: result, tool: intent.tool, query: query };
+                appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
+                resolveThirdpartyNames(chat.lastElementChild);
+                break;
             }
-
-            appendMsg('system', t('FetchingData'));
-            const loadingData = chat.lastElementChild;
-            const toolRes = await fetch(epUrl('execute_tool.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(intent)
-            });
-            const result = await aiJson(toolRes);
-            loadingData.remove();
-            lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
-            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();

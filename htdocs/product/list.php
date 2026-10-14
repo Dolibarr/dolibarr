@@ -1878,7 +1878,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdlineheightsmall" data-key="ref">';
-			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
 			print $product_static->getNomUrl(1, '', 0, -1, 0, '', 0, ' - ', 1);
 			if (empty($arrayfields['p.label']['checked'])) {
 				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
@@ -1928,7 +1928,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
 			print '<span class="spantitle">';
 			print dolPrintHTML($product_static->label);
 			print '</span>';

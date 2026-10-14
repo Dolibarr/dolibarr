@@ -882,7 +882,10 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					$currentline = $object->lines[$i];
+					'@phan-var-force FactureLigne $currentline';
+					/** @var FactureLigne $currentline */	// fetch_lines() of an invoice loads FactureLigne
+					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $currentline);
 
 					// Sum
 					$columkey = 'btpsomme';
@@ -3478,7 +3481,7 @@ class pdf_octopus extends ModelePDFFactures
 				$label = $outputlangs->transnoentities("SituationInvoiceTotalProposal");
 				$pdf->MultiCell($this->page_largeur - ($this->marge_droite + $this->marge_gauche), 3, $label, 0, 'L', false, 1, $posx, $posy + 1);
 
-				$amount = price($sign * ($total_ht + (! empty($propal->remise) ? $propal->remise : 0)));
+				$amount = price($sign * $total_ht);
 				$pdf->MultiCell($width2, 3, $amount, 0, 'R', false, 1, $posx + $width, $posy + 1);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -3567,7 +3570,7 @@ class pdf_octopus extends ModelePDFFactures
 			$total_ht = (isModEnabled('multicurrency') && $invoice->multicurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
 
 			$pdf->SetXY($posx + $width, $posy);
-			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)), 0, $outputlangs), 0, 'R', true);
+			$pdf->MultiCell($width2, $height, price($sign * $total_ht, 0, $outputlangs), 0, 'R', true);
 
 			$tvas = array();
 			$nblines = count($invoice->lines);
@@ -3793,7 +3796,7 @@ class pdf_octopus extends ModelePDFFactures
 			} else {
 				$idinv++;
 
-				$remain_to_pay_in_invoice = ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
+				$remain_to_pay_in_invoice = $sign * $total_ht;
 
 				$rem = 0;
 				if (count($invoice->lines)) {
