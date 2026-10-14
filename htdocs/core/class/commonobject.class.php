@@ -2450,14 +2450,17 @@ abstract class CommonObject
 		}
 
 
-		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
-			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		// Property holding the value, ex: opp_status for the field fk_opp_status of a project
+		$property = $this->getFieldPropertyName($fieldKey);
+
+		if (is_object($this->oldcopy) && property_exists($this, $property) && property_exists($this->oldcopy, $property)) {
+			$this->oldcopy->$property = $this->$property;
 		}
 
 		$this->fieldValueBeingSet[$fieldKey] = true;
 
 		// Set new value
-		$this->$fieldKey = $value;
+		$this->$property = $value;
 
 		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
 		// both declared as real properties on the object for backward compatibility, so PHP never triggers
@@ -2505,6 +2508,34 @@ abstract class CommonObject
 	protected function onFieldValueChanged($fieldKey, $value)
 	{
 		// Nothing to do by default.
+	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Some classes keep a field in a property with another name than the field (ex: the field fk_opp_status
+	 * of a project is in the property opp_status).
+	 * Override in child classes for their own fields, and return the result of the parent for the others.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		return $field;
+	}
+
+	/**
+	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
+	 * Use it instead of $object->$field when the field name comes from $fields (generic tools of the user interface...).
+	 *
+	 * @param	string	$field	Field name
+	 * @return	mixed			Value, null if the object has no property for this field
+	 */
+	public function getFieldUiValue($field)
+	{
+		$property = $this->getFieldPropertyName($field);
+
+		return property_exists($this, $property) ? $this->$property : null;
 	}
 
 	/**
