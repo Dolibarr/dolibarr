@@ -48,7 +48,7 @@ class mailing_pomme extends MailingTargets
 	public $require_module = array();
 
 	/**
-	 * @var int Module mailing actif pour user admin ou non
+	 * @var int<0,1> Module mailing actif pour user admin ou non
 	 */
 	public $require_admin = 1;
 
@@ -112,9 +112,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('u.email');
 
 		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
@@ -198,9 +196,7 @@ class mailing_pomme extends MailingTargets
 		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {
 			$sql .= " AND u.employee=0";
 		}
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('u.email');
 		$sql .= " ORDER BY u.email";
 
 		// Store recipients into targets

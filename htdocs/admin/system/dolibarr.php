@@ -450,6 +450,7 @@ $configfileparameters = array(
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
+	'?dolibarr_mail_allow_unrestricted_smtp_target' => 'Allow unrestricted SMTP target for emails',
 	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
@@ -582,6 +583,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
 print '<td></td>';
+print '<td class="center width="120px"">'.$langs->trans("DateModificationShort").'</td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
@@ -593,6 +595,7 @@ $sql .= ", ".$db->decrypt('name')." as name";
 $sql .= ", ".$db->decrypt('value')." as value";
 $sql .= ", type";
 $sql .= ", note";
+$sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
@@ -625,6 +628,7 @@ if ($resql) {
 			print dol_escape_htmltag($obj->value);
 		}
 		print '</td>'."\n";
+		print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>'."\n";
 		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}

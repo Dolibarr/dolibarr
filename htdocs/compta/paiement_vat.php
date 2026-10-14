@@ -56,6 +56,11 @@ if ($user->socid > 0) {
 
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
 
+// The page has no access check at all: main.inc.php only requires a session, and Tva::fetch()
+// selects on rowid without filtering the entity. Same call as compta/tva/card.php makes on the
+// declaration itself, so reading and paying one requires the rights on it.
+restrictedArea($user, 'tax', $chid, 'tva', 'charges');
+
 
 /*
  * Actions

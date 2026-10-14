@@ -23,7 +23,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/salaries/class/salary.class.php';
 require_once dirname(__FILE__).'/../../htdocs/salaries/class/paymentsalary.class.php';
@@ -98,6 +98,7 @@ class PaymentSalaryTest extends CommonClassTest
 		$salary->amount = 100;
 		$salary->datesp = dol_now();
 		$salary->dateep = dol_now() + (3600 * 24 * 30);
+		$salary->type_payment = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
 		$salaryid = $salary->create($user);
 		$this->assertGreaterThan(0, $salaryid, $salary->errorsToString());
 

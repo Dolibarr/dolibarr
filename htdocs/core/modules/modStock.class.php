@@ -502,17 +502,10 @@ class modStock extends DolibarrModules
 		$this->import_regex_array[$r] = array('e.statut' => '^[0|1]');
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'entrepot';
+		$keyforelement = 'warehouse';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'entrepot'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 		$this->import_examplevalues_array[$r] = array_merge(array('e.ref' => "ALM001",

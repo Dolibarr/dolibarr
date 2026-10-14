@@ -24,11 +24,17 @@
  *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:
+ *      			phpunit filename.php
+ *      			phpunit --stop-on-failure filename.php
  */
 
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
+print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
+print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
+print "DOL_CTI_ADMIN_LOGIN: ".getenv('DOL_CTI_ADMIN_LOGIN')."\n";
+print "DOL_CTI_ADMIN_PASSWORD: ".substr(getenv('DOL_CTI_ADMIN_PASSWORD'), 0, 3).'...'."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -39,9 +45,8 @@ if (! defined('NOREQUIREUSER')) {
 	define('PHPUNIT_MODE', 1);
 }
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
@@ -50,21 +55,39 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (isModEnabled('debugbar')) {
-	print "Error: Debugbar module should not be enabled. It generates troubles in db management.\n";
+
+// Check required and forbidden modules for tests
+$phpunit_modules_check = array(
+	// module name => array('required' => bool, 'blocking' => bool, 'message' => string)
+	'member' => array('required' => true, 'blocking' => true, 'message' => 'Module member must be enabled to have significant results.'),
+	'debugbar' => array('required' => false, 'blocking' => true, 'message' => 'Debugbar module should not be enabled. It generates troubles in db management.'),
+	'ldap' => array('required' => false, 'blocking' => true, 'message' => 'LDAP module should not be enabled.'),
+	// other external modules
+	'cabinetmed' => array('required' => false, 'blocking' => true, 'message' => 'DoliMed module should not be enabled.'),
+	'einvoicing' => array('required' => false, 'blocking' => true, 'message' => 'EInvoicing module should not be enabled.'),
+	'google' => array('required' => false, 'blocking' => true, 'message' => 'Google module should not be enabled.'),
+	'numberwords' => array('required' => false, 'blocking' => false, 'message' => 'Numberwords module should not be enabled.'),
+);
+
+$error = 0;
+foreach ($phpunit_modules_check as $module => $config) {
+	$enabled = isModEnabled($module);
+	if ($config['required'] && !$enabled) {
+		print "Error: ".$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	} elseif (!$config['required'] && $enabled) {
+		print ($config['blocking'] ? "Error: " : "Warning: ").$config['message']."\n";
+		if ($config['blocking']) {
+			$error++;
+		}
+	}
+}
+if ($error) {
 	exit(1);
 }
-if (!isModEnabled('member')) {
-	print "Error: Module member must be enabled to have significant results.\n";
-	exit(1);
-}
-if (isModEnabled('ldap')) {
-	print "Error: LDAP module should not be enabled.\n";
-	exit(1);
-}
-if (isModEnabled('google')) {
-	print "Warning: Google module should not be enabled.\n";
-}
+
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
@@ -75,19 +98,59 @@ $conf->global->MAIN_UMASK = '666';
 $now = dol_now();
 
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
-dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
 
+// Define test constants only if they are not already set, so we never overwrite
+// real values. Track which ones we created so we can remove them after tests
+// (restoring the "not set" state), even if tests fail or are interrupted.
+$phpunit_consts_created = array();
+$phpunit_test_consts = array(
+	'API_ENABLE_LOGIN_API' => '1',
+	'MAIN_FIRST_REGISTRATION_OK_DATE' => dol_print_date($now, 'dayhourlog', 'gmt'),
+	'BLOCKEDLOG_REGISTRATION_NAME' => 'MyBigCompanyByPHPUnit',
+	'BLOCKEDLOG_REGISTRATION_EMAIL' => 'mybigcompany@example.com',
+	'MAIN_INFO_SIREN' => 'phpunit123',
+	'MAIN_INFO_SIRET' => 'phpunit12312345',
+);
+foreach ($phpunit_test_consts as $constname => $testvalue) {
+	if (dolibarr_get_const($db, $constname) === '') {
+		dolibarr_set_const($db, $constname, $testvalue);
+		$phpunit_consts_created[] = $constname;
+	}
+}
 
-dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_NAME', 'MyBigCompanyByPHPUnit');
-dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_EMAIL', 'mybigcompany@example.com');
-dolibarr_set_const($db, 'MAIN_INFO_SIREN', 'phpunit123');
-dolibarr_set_const($db, 'MAIN_INFO_SIRET', 'phpunit12312345');
+// Cleanup: remove constants we created (they did not exist before tests).
+// register_shutdown_function ensures this runs even on failure/interrupt.
+if (!empty($phpunit_consts_created)) {
+	register_shutdown_function(function () use ($db, $phpunit_consts_created) {
+		global $conf;
+		foreach ($phpunit_consts_created as $constname) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($constname)."' AND entity = 1";
+			$db->query($sql);
+			unset($conf->global->$constname);
+		}
+		print "PHPUnit: Cleaned up ".count($phpunit_consts_created)." test constant(s).\n";
+	});
+}
+
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'blockedlog-1.end'";
 $db->query($sql);
 
 // Test there is no webhook enabled
-// TODO
+if (isModEnabled('webhook')) {
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."webhook_target";
+	$sql .= " WHERE entity IN (0, ".((int) $conf->entity).") AND status = 1";	// 1 = automatic trigger
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->nb > 0) {
+			print "Warning: ".$obj->nb." webhook(s) with automatic trigger are enabled. This may cause external HTTP calls during tests.\n";
+			exit;
+		}
+	} else {
+		print "Warning: Failed to check webhook targets: ".$db->lasterror()."\n";
+		exit;
+	}
+}
 
 
 
@@ -105,18 +168,31 @@ class AllTests
 	{
 		$suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
+		$filter = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
+
+
 		//require_once dirname(__FILE__).'/CoreTest.php';
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeTest');
+		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
+		//$suite->addTestSuite('AiMcpWireTest');
+		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
+		//$suite->addTestSuite('AiWriteConfirmationTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
+		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
+		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
 		$suite->addTestSuite('UtilsTest');
+
 		require_once dirname(__FILE__).'/LesscTest.php';
 		$suite->addTestSuite('LesscTest');
+
 		//require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -129,6 +205,8 @@ class AllTests
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
 		$suite->addTestSuite('JsonLibTest');
+		require_once dirname(__FILE__).'/LoadBoardTest.php';
+		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsLibTest.php';
@@ -139,11 +217,18 @@ class AllTests
 		$suite->addTestSuite('FunctionsBELibTest');
 		require_once dirname(__FILE__).'/ProfidLibTest.php';
 		$suite->addTestSuite('ProfidLibTest');
+		require_once dirname(__FILE__).'/EmailSignatureLibTest.php';
+		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function
+		// fails when output was already done (here by output log of unit tests)
+		//require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
+		//$suite->addTestSuite('PhpSessionInDbTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
+
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
 
@@ -157,6 +242,7 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+
 		require_once dirname(__FILE__).'/CronjobTest.php';
 		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
@@ -180,10 +266,16 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
+		require_once dirname(__FILE__).'/FormMailTest.php';
+		$suite->addTestSuite('FormMailTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
 		$suite->addTestSuite('ExpeditionTest');
+		require_once dirname(__FILE__).'/ExpeditionLineFetchTest.php';
+		$suite->addTestSuite('ExpeditionLineFetchTest');
+		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
+		$suite->addTestSuite('ExpeditionDispatchTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
@@ -193,6 +285,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
+		require_once dirname(__FILE__).'/VariantsTest.php';
+		$suite->addTestSuite('VariantsTest');
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
@@ -205,7 +299,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
-
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
 
@@ -241,6 +334,7 @@ class AllTests
 		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
+
 		$suite->addTestSuite('FactureTest');
 		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
 		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');
@@ -295,6 +389,8 @@ class AllTests
 		$suite->addTestSuite('EntrepotTest');
 		require_once dirname(__FILE__).'/MouvementStockTest.php';
 		$suite->addTestSuite('MouvementStockTest');
+		require_once dirname(__FILE__).'/StockTransferTest.php';
+		$suite->addTestSuite('StockTransferTest');
 		require_once dirname(__FILE__).'/InventoryTest.php';
 		$suite->addTestSuite('InventoryTest');
 
@@ -326,32 +422,39 @@ class AllTests
 		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
 		$suite->addTestSuite('BlockedLogAndLNETest');
 
-		// Rest
-		require_once dirname(__FILE__).'/RestAPIUserTest.php';
-		$suite->addTestSuite('RestAPIUserTest');
-		require_once dirname(__FILE__).'/RestAPIContactTest.php';
-		$suite->addTestSuite('RestAPIContactTest');
-		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
-		$suite->addTestSuite('RestAPIDocumentTest');
-		require_once dirname(__FILE__).'/RestAPIMoTest.php';
-		$suite->addTestSuite('RestAPIMoTest');
+		if ($filter !== 'PHPUNIT_DISABLE_API' && !getenv('PHPUNIT_DISABLE_API')) {
+			print "Run test on APIs.\n";
 
-		// Test only with php7.2 or less
-		//if ((float) phpversion() < 7.3)
-		//{
-		require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-		$suite->addTestSuite('WebservicesProductsTest');
-		require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-		$suite->addTestSuite('WebservicesInvoicesTest');
-		require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-		$suite->addTestSuite('WebservicesOrdersTest');
-		require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-		$suite->addTestSuite('WebservicesOtherTest');
-		require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-		$suite->addTestSuite('WebservicesThirdpartyTest');
-		require_once dirname(__FILE__).'/WebservicesUserTest.php';
-		$suite->addTestSuite('WebservicesUserTest');
-		//}
+			// Rest
+			require_once dirname(__FILE__).'/RestAPIUserTest.php';
+			$suite->addTestSuite('RestAPIUserTest');
+			require_once dirname(__FILE__).'/RestAPIContactTest.php';
+			$suite->addTestSuite('RestAPIContactTest');
+			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
+			$suite->addTestSuite('RestAPIDocumentTest');
+			require_once dirname(__FILE__).'/RestAPIMoTest.php';
+			$suite->addTestSuite('RestAPIMoTest');
+			require_once dirname(__FILE__).'/RestAPICronJobTest.php';
+			$suite->addTestSuite('RestAPICronJobTest');
+			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
+			$suite->addTestSuite('RestAPIBankAccountsTest');
+
+			// Old WS
+			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+			$suite->addTestSuite('WebservicesProductsTest');
+			require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+			$suite->addTestSuite('WebservicesInvoicesTest');
+			require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+			$suite->addTestSuite('WebservicesOrdersTest');
+			require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+			$suite->addTestSuite('WebservicesOtherTest');
+			require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+			$suite->addTestSuite('WebservicesThirdpartyTest');
+			require_once dirname(__FILE__).'/WebservicesUserTest.php';
+			$suite->addTestSuite('WebservicesUserTest');
+		} else {
+			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
+		}
 
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
@@ -377,29 +480,40 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+		require_once dirname(__FILE__).'/EmailCleanerTest.php';
+		$suite->addTestSuite('EmailCleanerTest');
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
-		// --- At end because it's the longer
-
-		// Rules into source files content
+		// Test /custom dir
 		require_once dirname(__FILE__).'/RepositoryTest.php';
 		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
+
+		// Test DDL functions
 		require_once dirname(__FILE__).'/DoliDBTest.php';
 		$suite->addTestSuite('DoliDBTest');
 
+		// --- At end because it's the longer
+
+		// Rules into source files content
+		if ($filter !== 'PHPUNIT_DISABLE_SOURCE_SCAN' && !getenv('PHPUNIT_DISABLE_SOURCE_SCAN')) {
+			print "Check on static source code is enabled, we run tests on source.\n";
+			require_once dirname(__FILE__).'/LangTest.php';
+			$suite->addTestSuite('LangTest');
+			require_once dirname(__FILE__).'/CodingSqlTest.php';
+			$suite->addTestSuite('CodingSqlTest');
+			require_once dirname(__FILE__).'/CodingPhpTest.php';
+			$suite->addTestSuite('CodingPhpTest');
+		} else {
+			print "Check on source code has been disabled by parameter or env var 'PHPUNIT_DISABLE_SOURCE_SCAN'.\n";
+		}
+
 		// --- At very end, the LAST ONE.
 
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		// For example, this call init that run DDL functionsand break commit/rollback features.
+		// Also enabling and disabling modules is changing really in database some variables (so we must run it at end)
+		// For example, this call init that run DDL functions and break commit/rollback features.
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
 

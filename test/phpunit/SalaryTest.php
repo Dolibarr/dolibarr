@@ -23,7 +23,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/salaries/class/salary.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -94,6 +94,7 @@ class SalaryTest extends CommonClassTest
 		$localobject->amount = 2000;
 		$localobject->datesp = dol_now();
 		$localobject->dateep = dol_now() + (3600 * 24 * 30);
+		$localobject->type_payment = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
 		$result = $localobject->create($user);
 
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());

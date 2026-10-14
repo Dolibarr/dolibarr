@@ -223,8 +223,8 @@ class DolGraph
 		}
 
 		// Load color of the theme
-		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
-		if (is_readable($color_file)) {
+		$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($color_file && is_readable($color_file)) {
 			include $color_file;
 			if (isset($theme_bordercolor)) {
 				$this->bordercolor = $theme_bordercolor;
@@ -937,7 +937,7 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar'))) {
 				foreach ($values as $x => $y) {
 					if (isset($y)) {
-						$series[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
+						$series[$i] .= 'd' . $i . '.push({"label":\'' . dol_escape_js($legends[$x]) . '\', "data":' . $y . '});' . "\n";
 					}
 				}
 			} else {
@@ -1131,7 +1131,7 @@ class DolGraph
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) {
 					$this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: ' . ($this->type[$i] == 'linesnopoint' ? 'false' : 'true') . ' }, ';
 				}
-				$this->stringtoshow .= 'color: "#' . $color . '", label: "' . (isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '') . '", data: d' . $i . ' }';
+				$this->stringtoshow .= 'color: "#' . $color . '", label: \'' . dol_escape_js(isset($this->Legend[$i]) ? $this->Legend[$i] : '') . '\', data: d' . $i . ' }';
 				$i++;
 			}
 			// shadowSize: 0 -> Drawing is faster without shadows

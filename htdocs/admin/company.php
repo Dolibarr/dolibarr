@@ -6,8 +6,8 @@
  * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
- * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Nick Fragoulis
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -214,14 +214,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					} else {
 						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+				} elseif (!is_numeric($result)) {	// $result is a translation key
 					$error++;
 					$langs->load("errors");
-					$tmparray = explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
-					$error++;
-					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+					setEventMessages($langs->trans($result), null, 'errors');
 				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -252,6 +248,18 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
+	// Payment identifier used when the reference mode is one reference for the company
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYMENT_ID", GETPOST("MAIN_INFO_SOCIETE_PAYMENT_ID", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
+	// DIAS merchant code, greek companies only. It is assigned by the bank and a wrong
+	// value would route payments to another creditor, so refuse anything but five digits.
+	$diascode = preg_replace('/[^0-9]/', '', GETPOST("MAIN_INFO_SOCIETE_DIAS_CODE", 'alphanohtml'));
+	if ($diascode == '' || preg_match('/^[0-9]{5}$/', $diascode)) {
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DIAS_CODE", $diascode, 'chaine', 0, '', $conf->entity);
+	} else {
+		setEventMessages($langs->trans("ErrorDIASCodeMustBe5Digits"), null, 'errors');
+	}
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOSTINT("SOCIETE_FISCAL_MONTH_START"), 'chaine', 0, '', $conf->entity);
 
@@ -529,20 +537,20 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_TEL'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_TEL'), 'phone', $mysoc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Phone mobile
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("PhoneMobile").'</label></td><td>';
-print img_picto('', 'object_phoning_mobile', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone_mobile" id="phone_mobile" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'), 'phone_mobile', $mysoc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150" name="fax" id="fax" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_FAX'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_FAX'), 'fax', $mysoc->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Email
@@ -632,6 +640,19 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintH
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
 print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
+
+// Payment identifier used to build the company wide payment reference
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("PaymentRefCompanyPaymentId"), $langs->trans("PaymentRefCompanyPaymentIdHelp")).'</td><td>';
+print '<input name="MAIN_INFO_SOCIETE_PAYMENT_ID" id="payment_id" class="minwidth250" maxlength="25" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')).'">';
+print '</td></tr>';
+
+// DIAS merchant code, greek companies only
+if ($mysoc->country_code == 'GR') {
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DIASCode"), $langs->trans("DIASCodeHelp")).'</td><td>';
+	print '<input name="MAIN_INFO_SOCIETE_DIAS_CODE" id="dias_code" class="minwidth100" maxlength="5" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE')).'">';
+	print ' <span class="opacitymedium">'.$langs->trans("DIASCodeExample").'</span>';
+	print '</td></tr>';
+}
 print '</td></tr>';
 
 // Tax ID Intra-community VAT number

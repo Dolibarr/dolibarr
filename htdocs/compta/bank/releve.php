@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -47,15 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
@@ -402,7 +400,7 @@ if (empty($numref)) {
 				$balancestart[$objp->numr] = $obj->amount;
 				$db->free($resqlstart);
 			}
-			print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
+			print '<td class="right"><span class="amount">'.price(price2num($balancestart[$objp->numr], 'MT'), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 			// Calculate end amount
 			$sql = "SELECT sum(b.amount) as amount";
@@ -415,7 +413,7 @@ if (empty($numref)) {
 				$content[$objp->numr] = $obj->amount;
 				$db->free($resqlend);
 			}
-			print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
+			print '<td class="right"><span class="amount">'.price(price2num(($balancestart[$objp->numr] + $content[$objp->numr]), 'MT'), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 			print '<td class="center">';
 			if ($user->hasRight('banque', 'consolidate') && $action != 'editbankreceipt') {
@@ -510,7 +508,7 @@ if (empty($numref)) {
 		// Row with the start balance of the bank statement
 		print '<tr class="oddeven"><td colspan="3"></td>';
 		print '<td colspan="3"><b>'.$langs->trans("InitialBankBalance")." :</b></td>";
-		print '<td class="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print '<td class="right"><b>'.price(price2num($total, 'MT')).'</b></td><td>&nbsp;</td>';
 		print "</tr>\n";
 
 		while ($i < $num) {

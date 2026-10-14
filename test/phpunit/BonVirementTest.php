@@ -23,7 +23,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
@@ -185,16 +185,13 @@ class BonVirementTest extends CommonClassTest
 	}
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * Init phpunit tests
 	 *
-	 * @param string       $name       Name
-	 * @param array<mixed> $data      Test data
-	 * @param string       $dataName   Test data name.
+	 * @return void
 	 */
-	public function __construct($name = null, array $data = array(), $dataName = '')
+	protected function setUp(): void
 	{
-		parent::__construct($name, $data, $dataName);
+		parent::setUp();
 
 		// This const is tested in prelevement_check_config(), it SHOULD be set.
 		$this->savconf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT = self::$fkBankAccount;
