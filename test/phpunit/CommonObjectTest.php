@@ -1737,6 +1737,41 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * The level of a line of evaluation is editable from the user interface only while its evaluation is a draft,
+	 * and only with a value in the range of levels
+	 *
+	 * @return void
+	 */
+	public function testEvaluationLineFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+
+		$line = new EvaluationLine($db);
+		$this->assertSame('Evaluation', getElementProperties($line->parent_element)['classname'], 'Parent of a line is the evaluation');
+
+		$line->fk_evaluation = 0;
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'rankorder'), 'Line without its evaluation is not editable');
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'required_rank'), 'Only the level is editable from UI');
+
+		$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
+		$savpost = $_POST;
+		foreach (array(-1 => -1, 0 => 0, $maxrank => $maxrank, $maxrank + 1 => null, -2 => null) as $posted => $expected) {
+			$_POST = array('ajaxfield_rankorder' => (string) $posted);
+			$this->assertSame($expected, $line->getFieldValueFromAjaxPost('rankorder'), 'Level '.$posted);
+		}
+		$_POST = $savpost;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void
