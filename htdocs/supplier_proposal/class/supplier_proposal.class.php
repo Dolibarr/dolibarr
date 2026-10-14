@@ -180,7 +180,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public $cond_reglement_doc;		// label doc
 	/**
-	 * @var string
+	 * @var string 	Label of the payment terms, used when there is no label for documents
 	 */
 	public $cond_reglement_label;
 
@@ -189,7 +189,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public $mode_reglement_code;
 	/**
-	 * @deprecated Use $mode_reglement_code
+	 * @deprecated 	Use $mode_reglement_code
 	 * @var string	Mode reglement
 	 */
 	public $mode_reglement;
