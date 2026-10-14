@@ -114,6 +114,15 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
+$freelines = !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
+if ($freelines) {
+	print '<span class="prod_entry_mode_free nowraponall">';
+	print '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.((GETPOST('prod_entry_mode', 'aZ09') == 'free' || (!GETPOSTISSET('prod_entry_mode') && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT'))) ? ' checked' : '').'>';
+	print '<label for="prod_entry_mode_free">'.$langs->trans('FreeLineOfType').'</label> ';
+	$form->select_type_of_lines(GETPOSTISSET('type') ? GETPOSTINT('type') : -1, 'type', 1, 1, 1, 'minwidth200');
+	print '</span><br>';
+}
+
 // Predefined product/service
 if (isModEnabled('product') || (isModEnabled('service') && (getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || getDolGlobalInt('SHIPMENT_SUPPORTS_SERVICES')))) {
 	$filtertype = 0;
@@ -131,10 +140,22 @@ if (isModEnabled('product') || (isModEnabled('service') && (getDolGlobalInt('STO
 	echo '<span class="prod_entry_mode_predef nowraponall">';
 
 	$statustoshow = -1;
-	print '<input type="hidden" name="prod_entry_mode" value="predef">';
+	if ($freelines) {
+		print '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.((GETPOST('prod_entry_mode', 'aZ09') != 'free' && (GETPOSTISSET('prod_entry_mode') || !getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT'))) ? ' checked' : '').'>';
+		print '<label for="prod_entry_mode_predef">'.$langs->trans('PredefinedItem').'</label> ';
+	} else {
+		print '<input type="hidden" name="prod_entry_mode" value="predef">';
+	}
 	$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 1, '', GETPOST('combinations', 'array:alphanohtml'));
 
 	echo '</span>';
+}
+
+if ($freelines) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	print '<br>';
+	$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 100), getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL') ? 'dolibarr_notes' : 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 2), '98%');
+	$doleditor->Create();
 }
 
 
@@ -188,6 +209,7 @@ jQuery(document).ready(function() {
 		  /* To set focus */
 		  if (jQuery('#idprod').val() > 0)
 			{
+			jQuery('#prod_entry_mode_predef').prop('checked', true);
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
 			/* focus if CKEDITOR */

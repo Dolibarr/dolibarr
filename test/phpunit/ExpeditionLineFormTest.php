@@ -25,6 +25,9 @@ if (!defined('DOL_URL_ROOT')) {
 if (!defined('MAIN_DB_PREFIX')) {
 	define('MAIN_DB_PREFIX', 'llx_');
 }
+if (!defined('ROWS_3')) {
+	define('ROWS_3', 3);
+}
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
@@ -65,6 +68,7 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 		global $conf, $langs, $user, $object, $form, $extrafields, $hookmanager, $forcetoshowtitlelines;
 		$conf = new Conf();
 		$conf->entity = 1;
+		$conf->global->MAIN_DISABLE_FREE_LINES = 1;
 		$conf->modules = array('product' => 1, 'stock' => 1);
 		$conf->use_javascript_ajax = 0;
 		$conf->browser->layout = 'classic';
@@ -141,6 +145,28 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('name="entrepot_id"', $html);
 		$this->assertStringContainsString('<option value="3" selected', $html);
 		$this->assertStringNotContainsString('name="price_ht"', $html);
+	}
+
+	/**
+	 * Free entry is available only when allowed, retaining input after an error.
+	 *
+	 * @return void
+	 */
+	public function testCreateFormRespectsFreeLineSetting()
+	{
+		global $conf, $form;
+		$_POST = array('prod_entry_mode' => 'free', 'type' => '0', 'dp_desc' => 'Packing & handling');
+		$form->expects($this->once())->method('select_type_of_lines')->with(0, 'type');
+		$conf->global->MAIN_DISABLE_FREE_LINES = 0;
+		$html = $this->renderCreateForm();
+		$this->assertStringContainsString('id="prod_entry_mode_free" value="free" checked', $html);
+		$this->assertStringContainsString('name="dp_desc"', $html);
+		$this->assertStringContainsString('Packing &amp; handling', $html);
+		$conf->global->MAIN_DISABLE_FREE_LINES = 1;
+		$html = $this->renderCreateForm();
+		$this->assertStringNotContainsString('id="prod_entry_mode_free"', $html);
+		$this->assertStringNotContainsString('name="dp_desc"', $html);
+		$this->assertStringContainsString('name="prod_entry_mode" value="predef"', $html);
 	}
 
 	/**

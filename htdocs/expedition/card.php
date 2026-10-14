@@ -1225,7 +1225,7 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOSTINT('idprod');
 		}
-		if ($idprod <= 0) {
+		if ($idprod <= 0 && (getDolGlobalString('MAIN_DISABLE_FREE_LINES') || $prod_entry_mode != 'free')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 			$error++;
 		}
@@ -1269,7 +1269,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $idprod > 0) {
+		if (!$error && ($idprod > 0 || (!getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $prod_entry_mode == 'free' && !empty($line_desc)))) {
 			// Clean parameters
 			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
