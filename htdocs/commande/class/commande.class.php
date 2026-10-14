@@ -146,6 +146,11 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
+
+	/**
 	 * @var double Deposit % for payment terms
 	 */
 	public $deposit_percent;
@@ -1931,6 +1936,7 @@ class Commande extends CommonOrder
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent = $obj->deposit_percent;
 				$this->fk_account = $obj->fk_account;
