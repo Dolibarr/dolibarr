@@ -220,4 +220,21 @@ class ProfidLibTest extends CommonClassTest
 		$this->assertFalse(isProfIdWithoutSpace(2, 'ES'));	// NASS, not checked by isValidProfIds()
 		$this->assertFalse(isProfIdWithoutSpace(1, 'GB'));	// no rule known for this country
 	}
+
+
+
+	/**
+	 * testIsProfIdWithoutDot
+	 *
+	 * @return void
+	 */
+	public function testIsProfIdWithoutDot()
+	{
+		$this->assertTrue(isProfIdWithoutDot(1, 'FR'));		// SIREN
+		$this->assertTrue(isProfIdWithoutDot(2, 'FR'));		// SIRET
+		$this->assertTrue(isProfIdWithoutDot(1, 'fr'));		// country code is case insensitive
+		$this->assertFalse(isProfIdWithoutDot(4, 'FR'));	// RCS/RM, free text
+		$this->assertFalse(isProfIdWithoutDot(1, 'BE'));	// enterprise number is checked with its dots "0123.456.789"
+		$this->assertFalse(isProfIdWithoutDot(1, 'GB'));	// no rule known for this country
+	}
 }
