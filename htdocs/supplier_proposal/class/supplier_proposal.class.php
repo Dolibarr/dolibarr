@@ -179,6 +179,9 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string
+	 */
 	public $cond_reglement_label;
 
 	/**
