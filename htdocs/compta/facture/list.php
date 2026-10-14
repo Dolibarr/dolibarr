@@ -2626,7 +2626,7 @@ if ($num > 0) {
 			// Alias name
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-				print dol_escape_htmltag($companystatic->name_alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($companystatic->name_alias).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

@@ -312,6 +312,7 @@ StockTransferIncrementation=Increase destination warehouses
 StockTransferDecrementationCancel=Cancel decrease of source warehouses
 StockTransferIncrementationCancel=Cancel increase of destination warehouses
 StockStransferDecremented=Source warehouses decreased
+StockStransferDecrementedStatus=In progress - Source warehouses decreased
 StockStransferDecrementedCancel=Decrease of source warehouses canceled
 StockStransferIncremented=Closed - Stocks transferred
 StockStransferIncrementedShort=Stocks transferred
