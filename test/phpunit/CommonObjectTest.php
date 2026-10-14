@@ -1204,6 +1204,37 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * setFieldValue() and getFieldUiValue() use the property holding a field when its name differs from the field
+	 * (the field fk_opp_status of a project is in the property opp_status)
+	 *
+	 * @return void
+	 */
+	public function testFieldPropertyName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		$project = new Project($db);
+		$project->opp_status = 3;
+		$this->assertSame(3, $project->getFieldUiValue('fk_opp_status'), 'Value read in the property opp_status');
+		$this->assertSame($project->title, $project->getFieldUiValue('title'), 'Other fields are read in the property of the same name');
+		$this->assertNull($project->getFieldUiValue('undefined_field'));
+
+		$project->fields['fk_opp_status']['enabled'] = 1;
+		$project->status = Project::STATUS_DRAFT;
+		$this->assertTrue($project->setFieldValue($user, 'fk_opp_status', 2, /* byPassUserPermission */ true), $project->getFieldError('fk_opp_status'));
+		$this->assertSame(2, $project->opp_status, 'Value set in the property opp_status');
+		$this->assertSame(2, $project->getFieldUiValue('fk_opp_status'));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void
