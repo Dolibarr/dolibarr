@@ -1039,7 +1039,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		// to the users that this rule applies to.
 		// The rule is selected on the table and not on the element of the object, because $object is an id and not
 		// an object for most of the callers, the card of an asset and the card of a workstation included.
-		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'pos_cash_fence', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
 			// None of these objects is linked to a third party, so an external user can own none of them. The
 			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
 			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
