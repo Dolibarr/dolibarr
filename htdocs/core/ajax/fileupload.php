@@ -70,6 +70,160 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
 }
 
+// The call of restrictedArea() above only checks the permission to read the object. Storing a file into its documents also
+// needs the permission to add a file, which is the one of the "Attached files" tab of the object.
+$permissiontoadd = false;
+switch ($object->element) {
+	case 'user':	// A user can add a file on his own card with user->self->creer
+		$permissiontoadd = (($user->id == $object->id && $user->hasRight('user', 'self', 'creer')) || ($user->id != $object->id && $user->hasRight('user', 'user', 'creer')));
+		break;
+	case 'product':	// Same element for a product and a service
+		$permissiontoadd = ($object->type == Product::TYPE_SERVICE ? $user->hasRight('service', 'creer') : $user->hasRight('produit', 'creer'));
+		break;
+	case 'productlot':
+		$permissiontoadd = $user->hasRight('produit', 'creer');
+		break;
+	case 'societe':
+		$permissiontoadd = $user->hasRight('societe', 'creer');
+		break;
+	case 'contact':
+		$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
+		break;
+	case 'project':
+	case 'project_task':
+	case 'conferenceorbooth':
+		$permissiontoadd = $user->hasRight('projet', 'creer');
+		break;
+	case 'action':
+		$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create')));
+		break;
+	case 'facture':
+	case 'payment':
+		$permissiontoadd = $user->hasRight('facture', 'creer');
+		break;
+	case 'invoice_supplier':
+	case 'payment_supplier':
+		$permissiontoadd = ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'));
+		break;
+	case 'order_supplier':
+		$permissiontoadd = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
+		break;
+	case 'reception':
+		$permissiontoadd = (isModEnabled('reception') ? $user->hasRight('reception', 'creer') : $user->hasRight('fournisseur', 'commande', 'receptionner'));
+		break;
+	case 'shipping':
+		$permissiontoadd = $user->hasRight('expedition', 'creer');
+		break;
+	case 'fichinter':
+		$permissiontoadd = $user->hasRight('ficheinter', 'creer');
+		break;
+	case 'member':
+		$permissiontoadd = $user->hasRight('adherent', 'creer');
+		break;
+	case 'bank_account':
+	case 'payment_various':
+		$permissiontoadd = $user->hasRight('banque', 'modifier');
+		break;
+	case 'chargesociales':
+	case 'tva':
+		$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+		break;
+	case 'expensereport':	// Only for an expense report of the user or of one of his subordinates, or with writeall_advance
+		$permissiontoadd = ($user->hasRight('expensereport', 'creer') && (in_array($object->fk_user_author, $user->getAllChildIds(1)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance'))));
+		break;
+	case 'holiday':	// The leave request must also be readable: readall, or of the user or a subordinate, or to approve by him
+		$permissiontoadd = ($user->hasRight('holiday', 'write') && ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $user->getAllChildIds(1))) || ($user->hasRight('holiday', 'approve') && $object->fk_validator == $user->id && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES'))));
+		break;
+	case 'salary':	// The salary must also be readable: readall, or of the user or a subordinate
+		$permissiontoadd = ($user->hasRight('salaries', 'write') && ($user->hasRight('salaries', 'readall') || ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $user->getAllChildIds(1)))));
+		break;
+	case 'job':
+	case 'position':
+	case 'skill':
+		$permissiontoadd = $user->hasRight('hrm', 'all', 'write');
+		break;
+	case 'evaluation':
+		$permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write');
+		break;
+	case 'recruitmentjobposition':
+	case 'recruitmentcandidature':
+		$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+		break;
+	case 'inventory':
+		$permissiontoadd = $user->hasRight('stock', 'creer');
+		break;
+	case 'dolresource':
+		$permissiontoadd = $user->hasRight('resource', 'write');
+		break;
+	case 'fiscalyear':
+		$permissiontoadd = (empty($user->socid) && $user->hasRight('accounting', 'fiscalyear', 'write'));
+		break;
+	case 'accounting_transaction_template':
+		$permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
+		break;
+	case 'webhook_triggerhistory':
+		$permissiontoadd = !empty($user->admin);
+		break;
+	case 'propal':
+		$permissiontoadd = $user->hasRight('propal', 'creer');
+		break;
+	case 'commande':
+		$permissiontoadd = $user->hasRight('commande', 'creer');
+		break;
+	case 'contrat':
+		$permissiontoadd = $user->hasRight('contrat', 'creer');
+		break;
+	case 'supplier_proposal':
+		$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
+		break;
+	case 'don':
+		$permissiontoadd = $user->hasRight('don', 'creer');
+		break;
+	case 'ticket':
+		$permissiontoadd = $user->hasRight('ticket', 'write');
+		break;
+	case 'asset':
+		$permissiontoadd = $user->hasRight('asset', 'write');
+		break;
+	case 'loan':
+		$permissiontoadd = $user->hasRight('loan', 'write');
+		break;
+	case 'partnership':
+		$permissiontoadd = $user->hasRight('partnership', 'write');
+		break;
+	case 'mo':
+		$permissiontoadd = $user->hasRight('mrp', 'write');
+		break;
+	case 'bom':
+		$permissiontoadd = $user->hasRight('bom', 'write');
+		break;
+	case 'knowledgerecord':
+		$permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+		break;
+	case 'workstation':
+		$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');
+		break;
+	case 'stocktransfer':
+		$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
+		break;
+	case 'availabilities':
+		$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
+		break;
+	case 'calendar':
+		$permissiontoadd = $user->hasRight('bookcal', 'calendar', 'write');
+		break;
+	case 'intracommreport':
+		$permissiontoadd = $user->hasRight('intracommreport', 'write');
+		break;
+	default:	// Permission on the object (module->object->write) or on the module (module->creer or module->write)
+		$permissiontoadd = ($user->hasRight($object->module, $object->element, 'write') || $user->hasRight($object->module, $object->element, 'creer') || $user->hasRight($object->module, 'write') || $user->hasRight($object->module, 'creer'));
+		break;
+}
+if (!$permissiontoadd) {
+	dol_syslog("fileupload.php not allowed to add a file on object ".$object->element." with id ".$object->id, LOG_WARNING);
+	httponly_accessforbidden('Not allowed');
+}
+
 
 /*
  * View
