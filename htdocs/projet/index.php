@@ -404,7 +404,8 @@ if (getDolGlobalString('PROJECT_SHOW_OPEN_PROJECTS_PER_THIRDPARTY_ON_PROJECT_ARE
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties").'<a href="'.DOL_URL_ROOT.'/projet/list.php?search_status=1"><span class="badge marginleftonlyshort">'.$totalnb.'</span></a>', $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+			$titletoshow = $langs->trans("OpenedProjectsByThirdparties").'<a href="'.DOL_URL_ROOT.'/projet/list.php?search_status=1"><span class="badge marginleftonlyshort">'.$totalnb.'</span></a>';
+			print_liste_field_titre($titletoshow, $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
 			print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
 		}

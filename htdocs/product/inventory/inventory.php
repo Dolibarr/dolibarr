@@ -26,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +33,13 @@ include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
