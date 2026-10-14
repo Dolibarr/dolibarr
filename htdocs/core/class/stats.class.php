@@ -448,27 +448,29 @@ abstract class Stats
 				$row = $this->db->fetch_object($resql);
 				$result[$i]['year'] = (string) $row->year;
 				$result[$i]['nb'] = (int) $row->nb;
-				if ($i > 0 && $row->nb > 0) {
+				// Delta is computed only against the immediately previous year (no delta if that year has no record)
+				$hasprevyear = ($i > 0 && (int) $result[$i - 1]['year'] == (int) $row->year + 1);
+				if ($hasprevyear && $row->nb > 0) {
 					$result[$i - 1]['nb_diff'] = ($result[$i - 1]['nb'] - $row->nb) / $row->nb * 100;
 				}
 				// For some $sql only
 				if (property_exists($row, 'total')) {
 					$result[$i]['total'] = (float) $row->total;
-					if ($i > 0 && $row->total > 0) {
+					if ($hasprevyear && $row->total > 0) {
 						$result[$i - 1]['total_diff'] = ($result[$i - 1]['total'] - $row->total) / $row->total * 100;
 					}
 				}
 				// For some $sql only
 				if (property_exists($row, 'total')) {
 					$result[$i]['avg'] = (float) $row->avg;
-					if ($i > 0 && $row->avg > 0) {
+					if ($hasprevyear && $row->avg > 0) {
 						$result[$i - 1]['avg_diff'] = ($result[$i - 1]['avg'] - $row->avg) / $row->avg * 100;
 					}
 				}
 				// For some $sql only
 				if (property_exists($row, 'weighted')) {
 					$result[$i]['weighted'] = (float) $row->weighted;
-					if ($i > 0 && $row->weighted > 0) {
+					if ($hasprevyear && $row->weighted > 0) {
 						$result[$i - 1]['avg_weighted'] = ($result[$i - 1]['weighted'] - $row->weighted) / $row->weighted * 100;
 					}
 				}
