@@ -138,7 +138,7 @@ if ($reshook < 0) {
 }
 
 // Lines can be updated only while the stock of the reception is not moved (same rule as the display of the form)
-if ($action == 'updatelines' && !($object->status == Reception::STATUS_DRAFT || ($object->status == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')))) {	// Test on permission not required, this only refuses the action when the status does not allow it
+if ($action == 'updatelines' && $permissiontoreceive && !($object->status == Reception::STATUS_DRAFT || ($object->status == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')))) {
 	setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
 	$action = '';
 }
