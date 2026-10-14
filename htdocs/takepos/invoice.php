@@ -170,6 +170,18 @@ function takeposDeleteLineWithChildren($invoice, $lineid)
 
 	// Delete supplements before their parent line so no orphan line remains visible on receipts.
 	foreach (array_reverse($linestodelete) as $deletelineid) {
+		// Properly unlink discount to make credit note available again
+		$sql_discount = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_facture_line = ".((int) $deletelineid);
+		$resql_discount = $invoice->db->query($sql_discount);
+		if ($resql_discount && $invoice->db->num_rows($resql_discount) > 0) {
+			$obj_discount = $invoice->db->fetch_object($resql_discount);
+			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+			$discount_to_unlink = new DiscountAbsolute($invoice->db);
+			if ($discount_to_unlink->fetch($obj_discount->rowid) > 0) {
+				$discount_to_unlink->unlink_invoice();
+			}
+		}
+
 		$result = $invoice->deleteLine($deletelineid);
 		if ($result < 0) {
 			return $result;
