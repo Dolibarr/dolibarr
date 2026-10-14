@@ -2510,7 +2510,7 @@ if ($action == 'create') {
 		$formorder->selectInputMethod(GETPOST('methodecommande'), 'methodecommande', 1);
 		$inputmethod = ob_get_clean();
 		$formquestion = array(
-			array('type' => 'date', 'name' => 're', 'label' => $langs->trans('OrderDate'), 'value' => GETPOSTISSET('reday') ? $date_com : dol_now(), 'datenow' => 1, 'tdclass' => 'fieldrequired'),
+			array('type' => 'date', 'name' => 're', 'label' => $langs->trans('OrderDate'), 'value' => GETPOSTISSET('reday') ? ($date_com ?: -1) : dol_now(), 'datenow' => 1, 'tdclass' => 'fieldrequired'),
 			array('type' => 'other', 'name' => 'methodecommande', 'label' => $langs->trans('OrderMode'), 'value' => $inputmethod, 'tdclass' => getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL') ? '' : 'fieldrequired'),
 			array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans('Comment'), 'value' => dol_escape_htmltag(GETPOST('comment')), 'morecss' => 'quatrevingtpercent')
 		);
