@@ -1763,7 +1763,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'nohtml'));
+			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'nohtml'));	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Robot file
@@ -1801,7 +1801,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'nohtml'));
+			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'nohtml'));	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Htaccess file
@@ -1868,7 +1868,7 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
-			$dataposted = trim(GETPOST('WEBSITE_README', 'nohtml'));
+			$dataposted = trim(GETPOST('WEBSITE_README', 'nohtml'));	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// README.md file
@@ -1907,7 +1907,7 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
-			$dataposted = trim(GETPOST('WEBSITE_LICENSE', 'nohtml'));
+			$dataposted = trim(GETPOST('WEBSITE_LICENSE', 'nohtml'));	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// LICENSE file
@@ -4162,7 +4162,7 @@ if ($action == 'editcss') {
 		// Clean the php htmlheader file to remove php code and get only html part
 		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $robotcontent);
 	} else {
-		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nohtml');
+		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
 	if (!trim($robotcontent)) {
 		$robotcontent .= "# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";

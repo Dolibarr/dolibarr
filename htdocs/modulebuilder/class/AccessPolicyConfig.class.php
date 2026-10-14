@@ -106,7 +106,7 @@ final class AccessPolicyConfig
 	 * Load a serialized policy, as produced by toJson().
 	 *
 	 * @param	string	$json	Serialized policy
-	 * @return	AccessPolicyConfig
+	 * @return	AccessPolicyConfig			The loaded policy
 	 * @throws	\InvalidArgumentException	When the content is not a valid policy
 	 */
 	public static function fromJson(string $json): self
@@ -129,7 +129,7 @@ final class AccessPolicyConfig
 	/**
 	 * Serialize the policy. The order of the rules is kept, so the output is deterministic.
 	 *
-	 * @return string
+	 * @return string	Serialized policy, in JSON
 	 */
 	public function toJson(): string
 	{
@@ -157,7 +157,7 @@ final class AccessPolicyConfig
 	 *
 	 * @param	mixed	$data	Serialized node
 	 * @param	int		$depth	Depth of the node, 1 for the root
-	 * @return	AccessRuleExpression
+	 * @return	AccessRuleExpression		The node built
 	 * @throws	\InvalidArgumentException	When the node is invalid or too deep
 	 */
 	private static function buildNode($data, int $depth): AccessRuleExpression

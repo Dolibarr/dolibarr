@@ -584,7 +584,7 @@ print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, '', 'ce
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 

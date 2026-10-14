@@ -1007,17 +1007,6 @@ class FormCompany extends Form
 		}
 
 		$selected = $preselected;
-		if (!$selected) {
-			if ($idprof == 1 && !empty($this->idprof1)) {
-				$selected = $this->idprof1;
-			} elseif ($idprof == 2 && !empty($this->idprof2)) {
-				$selected = $this->idprof2;
-			} elseif ($idprof == 3 && !empty($this->idprof3)) {
-				$selected = $this->idprof3;
-			} elseif ($idprof == 4 && !empty($this->idprof4)) {
-				$selected = $this->idprof4;
-			}
-		}
 
 		$maxlength = $formlength;
 		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");
@@ -1031,6 +1020,7 @@ class FormCompany extends Form
 		// the pasted text before it is inserted, so that maxlength applies to the id itself and not to its
 		// presentation: without it the browser silently truncates the paste.
 		$dataprofid = isProfIdWithoutSpace($idprof, $country_code) ? ' data-profidnospace="1"' : '';
+		$dataprofid .= isProfIdWithoutDot($idprof, $country_code) ? ' data-profidnodot="1"' : '';	// Same for dots (SIREN "849.943.618")
 
 		$out = '';
 

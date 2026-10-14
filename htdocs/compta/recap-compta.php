@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'exportpdf' && $id > 0 && $permissiontoreadinv
 		$totalDebit += $debit;
 		$totalCredit += $credit;
 
-		$pdf->Cell($widths[0], $rowheight, dol_print_date($data['date'], 'day', 'tzuser', $outputlangs), 1, 0, 'C');
+		$pdf->Cell($widths[0], $rowheight, dol_print_date($data['date'], 'day', 'auto', $outputlangs), 1, 0, 'C');
 		$pdf->Cell($widths[1], $rowheight, $outputlangs->convToOutputCharset((string) ($data['ref'] ?? '')), 1, 0, 'L', false, '', 1);
 		$pdf->Cell($widths[2], $rowheight, $outputlangs->convToOutputCharset((string) ($data['statuslabel'] ?? '')), 1, 0, 'L', false, '', 1);
 		$pdf->Cell($widths[3], $rowheight, ($debit ? price($debit, 0, $outputlangs) : ''), 1, 0, 'R');

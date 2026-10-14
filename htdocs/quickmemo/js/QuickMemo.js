@@ -92,6 +92,12 @@ class QuickMemo {
 		// Ensure notes stay within viewport on window resize
 		window.addEventListener('resize', () => this.ensureAllVisible());
 
+		// Do not lose the text typed just before leaving the page
+		window.addEventListener('pagehide', () => this.flushAllNotesOnPageHide());
+		document.addEventListener('visibilitychange', () => {
+			if (document.visibilityState === 'hidden') this.flushAllNotesOnPageHide();
+		});
+
 		// Initialize top-bar menu if user has write permissions
 		if (this.param.userWriteRight) {
 			this.initMenuMemoDropdown();
@@ -317,23 +323,24 @@ class QuickMemo {
 			<span class="quickmemo-info__date_update">
 				${hasDateChange ? `
 					<span class="quickmemo-info__date_update">
-						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${memo.date_change}
+						${await Dolibarr.tools.langs.trans('QuickMemoModified')} : ${this.escapeHTML(String(memo.date_change))}
 					</span>
 				` : ''}
 				${hasUserChange ? `
 					<span class="quickmemo-info__user-change-name">
-						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${memo.user_change_name}
+						${await Dolibarr.tools.langs.trans('QuickMemoBy')} ${this.escapeHTML(String(memo.user_change_name))}
 					</span>
 				` : ''}
 			</span>
 		`;
 
 
+		// User names and dates come from server data: always escaped
 		meta.innerHTML = `
 			<div class="quickmemo-info">
 				<span class="quickmemo-info__create">
-					<span class="quickmemo-info__user-create-name">${memo.user_name || ''}</span>
-					<span class="quickmemo-info__date_create">${memo.date_creation || ''}</span>
+					<span class="quickmemo-info__user-create-name">${this.escapeHTML(String(memo.user_name || ''))}</span>
+					<span class="quickmemo-info__date_create">${this.escapeHTML(String(memo.date_creation || ''))}</span>
 				</span>
 				${updateBlock}
 			</div>
@@ -466,19 +473,17 @@ class QuickMemo {
 		btnShare.addEventListener('click', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.shared_on_element;
 			memo.shared_on_element = memo.shared_on_element == 1 ? 0 : 1;
 
 			updateShareIcon();
 
-			await fetch(this.param.interfaceUrl + '?action=update-shared-on-element', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					shared_on_element: memo.shared_on_element,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-shared-on-element', note, {shared_on_element: memo.shared_on_element});
+			if (!saved) {
+				// Restore the real status, else the user would think the memo is shared (or not) while it is not
+				memo.shared_on_element = previous;
+				updateShareIcon();
+			}
 		});
 
 
@@ -516,19 +521,17 @@ class QuickMemo {
 		btnPrivate.addEventListener('click', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.private;
 			memo.private = parseInt(memo.private) === 1 ? 0 : 1; // Toggle private status
 
 			updatePrivateIcon();
 
-			await fetch(this.param.interfaceUrl + '?action=update-private', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					private: memo.private,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-private', note, {private: memo.private});
+			if (!saved) {
+				// Restore the real status, else the user would think the memo is private while it is visible by others
+				memo.private = previous;
+				updatePrivateIcon();
+			}
 		});
 
 		/* ===== COLOR PICKER ===== */
@@ -561,24 +564,27 @@ class QuickMemo {
 			e.stopPropagation(); // prevent triggering drag
 		});
 
-		colorInput.addEventListener('input', async (e) => {
+		// Live preview while the user moves in the color picker
+		colorInput.addEventListener('input', (e) => {
+			e.stopPropagation();
+			this.setMemoColor(note, e.target.value);
+		});
+
+		// Save only the final color ('input' is fired many times while moving in the picker)
+		colorInput.addEventListener('change', async (e) => {
 			e.stopPropagation();
 
+			const previous = memo.color;
 			const newColor = e.target.value;
-			// note.style.background = newColor;
-			// note.style.setProperty('--memo-color', newColor);
 			this.setMemoColor(note, newColor);
 			memo.color = newColor;
 
-			await fetch(this.param.interfaceUrl + '?action=update-color', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				body: new URLSearchParams({
-					id: note.dataset.id,
-					color: memo.color,
-					token: this.param.token
-				})
-			});
+			const saved = await this.postMemoAction('update-color', note, {color: newColor});
+			if (!saved && memo.color === newColor) {
+				memo.color = previous;
+				colorInput.value = previous || '#fff8a6';
+				this.setMemoColor(note, colorInput.value);
+			}
 		});
 
 		// Append buttons based on permissions
@@ -1383,6 +1389,40 @@ class QuickMemo {
 	================================= */
 
 	/**
+	 * Posts a change of a memo property to the interface and checks the response.
+	 * Waits for the memo creation if it is in progress.
+	 * @async
+	 * @param {string} action - Interface action (update-private, update-color...)
+	 * @param {HTMLElement} noteEl
+	 * @param {Object} params - Posted values, id and token are added
+	 * @returns {Promise<boolean>} True if saved, false if not (error message already displayed)
+	 */
+	async postMemoAction(action, noteEl, params) {
+		const id = await this.getMemoId(noteEl);
+		if (!id) return false;
+
+		try {
+			const res = await fetch(this.param.interfaceUrl + '?action=' + encodeURIComponent(action), {
+				method: 'POST',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				body: new URLSearchParams(Object.assign({}, params, {id: id, token: this.param.token}))
+			});
+			const json = await res.json();
+			if (!json.result) {
+				throw new Error(json.msg);
+			}
+			if (json.data && json.data.memo) {
+				await this.updateMemoTxt(json.data.memo, noteEl);
+			}
+			return true;
+		} catch (err) {
+			console.error('QuickMemo ' + action + ' error', err);
+			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoSaveError') + ' : ' + err, 'errors');
+			return false;
+		}
+	}
+
+	/**
 	 * Binds auto-save with debounce logic on textarea input.
 	 * @param {HTMLTextAreaElement} textarea
 	 * @param {HTMLElement} noteEl
@@ -1393,18 +1433,64 @@ class QuickMemo {
 
 		let m = this.getMemoFromElement(noteEl);
 
-		textarea.addEventListener('input', () => {
-
+		// Save the text if it changed since last save. m.memo.note is the last text sent to server.
+		const flush = async () => {
 			clearTimeout(timeout);
+			if (textarea.readOnly || textarea.value === (m.memo.note || '')) return;
 
-			timeout = setTimeout(() => {
-				const id = noteEl.dataset.id;
+			// Text typed while the memo is being created is saved once the creation is done
+			const id = await this.getMemoId(noteEl);
+			if (!id) return; // Creation failed, error already displayed
 
-				if (!id || id == 0) return; // Note not yet created in DB
+			const previousNote = m.memo.note;
+			const note = textarea.value;
+			m.memo.note = note;
+			const saved = await this.saveNote(id, note, noteEl);
+			if (!saved && m.memo.note === note) {
+				m.memo.note = previousNote; // Keep the text as not saved, so next flush retries
+			}
+		};
+		noteEl.quickmemoFlush = flush;
+
+		textarea.addEventListener('input', () => {
+			clearTimeout(timeout);
+			timeout = setTimeout(flush, 600);
+		});
+
+		// Do not wait the debounce delay when user leaves the memo
+		textarea.addEventListener('blur', flush);
+	}
+
+	/**
+	 * Returns the id of the memo, waiting for its creation in database if it is in progress.
+	 * @async
+	 * @param {HTMLElement} noteEl
+	 * @returns {Promise<number>} The memo id, 0 if the memo could not be created
+	 */
+	async getMemoId(noteEl) {
+		if (noteEl.quickmemoCreated) {
+			await noteEl.quickmemoCreated;
+		}
+		return parseInt(noteEl.dataset.id) || 0;
+	}
+
+	/**
+	 * Sends the unsaved texts when the page is hidden or closed (debounced save would be lost).
+	 * Uses sendBeacon because a fetch may be cancelled when the page is unloaded.
+	 */
+	flushAllNotesOnPageHide() {
+		this.memos.forEach(m => {
+			const textarea = m.el.querySelector('textarea');
+			const id = parseInt(m.el.dataset.id) || 0;
+			if (!textarea || textarea.readOnly || id <= 0 || textarea.value === (m.memo.note || '')) return;
+
+			const data = new FormData();
+			data.append('id', id);
+			data.append('note', textarea.value);
+			data.append('token', this.param.token);
+			if (navigator.sendBeacon(this.param.interfaceUrl + '?action=update_note', data)) {
 				m.memo.note = textarea.value;
-				this.saveNote(id, m.memo.note, noteEl);
-
-			}, 600);
+			}
 		});
 	}
 
@@ -1484,12 +1570,13 @@ class QuickMemo {
 	 * @param {number|string} id
 	 * @param {string} note
 	 * @param {HTMLElement} noteEl
+	 * @returns {Promise<boolean>} True if saved
 	 */
 	async saveNote(id, note, noteEl) {
 
 		let hookRes = await Dolibarr.executeHookAwait('QuickMemo:saveNote', {id, note});
 		if (hookRes > 0) {
-			return;
+			return true;
 		}
 
 		try {
@@ -1511,13 +1598,44 @@ class QuickMemo {
 
 			if (json.data && json.data.memo) {
 				await this.updateMemoTxt(json.data.memo, noteEl);
+				await this.syncNoteFromServer(noteEl, note, json.data.memo.note);
 			}
 
 			Dolibarr.executeHook('QuickMemo:saveNote:saved', {id, note, json});
+			return true;
 
 		} catch (err) {
 			console.error('QuickMemo save note error', err);
 			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoSaveError') + ' : ' + err, 'errors');
+			return false;
+		}
+	}
+
+	/**
+	 * The server filters the note (for example text looking like html tags is removed).
+	 * Show the note as it was really saved, so the user does not discover the difference after a reload.
+	 * @async
+	 * @param {HTMLElement} noteEl
+	 * @param {string} sentNote - The note sent to the server
+	 * @param {string} savedNote - The note returned by the server
+	 */
+	async syncNoteFromServer(noteEl, sentNote, savedNote) {
+		if (typeof savedNote !== 'string' || savedNote === sentNote) return;
+
+		const textarea = noteEl.querySelector('textarea');
+		// Do not overwrite what the user typed after this save, next save will handle it
+		if (!textarea || textarea.value !== sentNote) return;
+
+		const caret = Math.min(textarea.selectionStart, savedNote.length);
+		textarea.value = savedNote;
+		textarea.setSelectionRange(caret, caret);
+
+		const m = this.getMemoFromElement(noteEl);
+		if (m) m.memo.note = savedNote;
+
+		const preview = noteEl.querySelector('.quickmemo-markdown-preview');
+		if (preview && savedNote) {
+			await this.renderPreview(preview, savedNote);
 		}
 	}
 
@@ -2050,6 +2168,25 @@ class QuickMemo {
 	 * @param {boolean} force - Force refresh even if already loaded.
 	 */
 	async fetchMenuDropDown(force = false) {
+		// A load is already running (double click on menu...): wait for it instead of loading twice
+		if (this.menuDropDownLoading) {
+			return this.menuDropDownLoading;
+		}
+
+		this.menuDropDownLoading = this.loadMenuDropDown(force);
+		try {
+			return await this.menuDropDownLoading;
+		} finally {
+			this.menuDropDownLoading = null;
+		}
+	}
+
+	/**
+	 * Loads templates and color presets into the dropdown menu. Use fetchMenuDropDown() to call it.
+	 * @async
+	 * @param {boolean} force - Reload even if already loaded
+	 */
+	async loadMenuDropDown(force = false) {
 
 		const dropDown = document.getElementById(this.param.menuDropDownId);
 		const dropDownMenuToggleBtn = dropDown.querySelector('.dropdown-toggle');
@@ -2086,6 +2223,9 @@ class QuickMemo {
 			let models = json.data.modelTemplate.length ? json.data.modelTemplate : [];
 			let presets = json.data.presetTemplate.length ? json.data.presetTemplate : [];
 
+			modelListDiv.innerHTML = '';
+			presetListDiv.innerHTML = '';
+
 			// CREATE BTN TEMPLATE LIST
 			if (!models.length) {
 				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoTemplatesFound') + '</div>';
@@ -2100,7 +2240,7 @@ class QuickMemo {
 
 			// CREATE BTN FOR COLOR PRESETS LIST
 			if (!presets.length) {
-				modelListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
+				presetListDiv.innerHTML = '<div class="no-models">' + await Dolibarr.tools.langs.trans('NoPresetsFound') + '</div>';
 			} else {
 
 				presets.forEach(preset => {
@@ -2108,12 +2248,16 @@ class QuickMemo {
 					presetListDiv.appendChild(btn);
 				});
 
-				// Quick add default note on double click
-				dropDownMenuToggleBtn.addEventListener('dblclick', e => {
-					e.preventDefault();
-					this.createMemoFromModel(presets[0]);
-					dropdown.classList.remove('open');
-				});
+				// Quick add default note on double click (bind only once, else each reload creates one more memo)
+				this.menuDefaultPreset = presets[0];
+				if (!dropDownMenuToggleBtn.dataset.quickmemoDblclick) {
+					dropDownMenuToggleBtn.dataset.quickmemoDblclick = '1';
+					dropDownMenuToggleBtn.addEventListener('dblclick', e => {
+						e.preventDefault();
+						this.createMemoFromModel(this.menuDefaultPreset);
+						dropDown.classList.remove('open');
+					});
+				}
 			}
 
 			// Set loaded data flag
@@ -2173,6 +2317,12 @@ class QuickMemo {
 		const noteEl = await this.renderMemo(memo);
 		this.bringToTop(noteEl);
 
+		// Saves and toggles done before the end of creation wait for it (see getMemoId())
+		let resolveCreated;
+		noteEl.quickmemoCreated = new Promise(resolve => {
+			resolveCreated = resolve;
+		});
+
 		// Focus on the textarea
 		const textarea = noteEl.querySelector('textarea');
 		if (textarea) {
@@ -2222,6 +2372,9 @@ class QuickMemo {
 		} catch (err) {
 			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoCreateError') + ' : ' + err, 'errors');
 			console.error('QuickMemo create error', err);
+		} finally {
+			delete noteEl.quickmemoCreated;
+			resolveCreated(parseInt(noteEl.dataset.id) || 0);
 		}
 	}
 
@@ -2335,13 +2488,15 @@ class QuickMemo {
 	 * Toggles inline markdown with support for overlapping styles (***bold italic***)
 	 */
 	toggleInlineMarkdown(text, type) {
-		const patterns = {
-			bold: { tag: '**', regex: /^\*\*(.*)\*\*$/ },
-			italic: { tag: '*', regex: /^(\*\*\*|(?<!\*)\*(?!\*))(.*)(\*\*\*|(?<!\*)\*(?!\*))$/ },
-			underline: { tag: '__', regex: /^__(.*)__$/ }
+		// Toggle is done with startsWith/endsWith below. Do not add a regex with lookbehind (?<!...) in this file:
+		// it is a syntax error on Safari < 16.4 that prevents the whole QuickMemo.js from loading.
+		const tags = {
+			bold: '**',
+			italic: '*',
+			underline: '__'
 		};
 
-		const { tag, regex } = patterns[type];
+		const tag = tags[type];
 
 		// Special case for Italic to not conflict with Bold
 		if (type === 'italic') {
@@ -2726,12 +2881,22 @@ class QuickMemo {
 					return;
 				}
 
+				let modelCreated = false;
 				try {
+					// The template is made from the memo saved in database: save the text typed just before
+					if (note.quickmemoFlush) {
+						await note.quickmemoFlush();
+					}
+					const memoId = await this.getMemoId(note);
+					if (!memoId) {
+						throw new Error(Dolibarr.tools.langs.trans('ErrorMemoNotFound'));
+					}
+
 					const res = await fetch(this.param.interfaceUrl + '?action=create_model', {
 						method: 'POST',
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 						body: new URLSearchParams({
-							id: memo.id,
+							id: memoId,
 							element_type: elementType,
 							token: this.param.token,
 							tpl_private: TplPrivate,
@@ -2744,6 +2909,8 @@ class QuickMemo {
 					if (!json.result) {
 						throw new Error(json.msg);
 					}
+
+					modelCreated = true;
 
 					Dolibarr.executeHook('QuickMemo:openCreateModelDialog:ModelCreated', {
 						dialog,
@@ -2766,7 +2933,12 @@ class QuickMemo {
 
 				} finally {
 					dialog.close();
-					this.convertToModelWithAnimation(memo, note);
+					// Only when the server converted the memo, else the memo would disappear while it still exists
+					if (modelCreated) {
+						// The memo is now a template: no more a memo of the page (position save...)
+						this.memos = this.memos.filter(m => m.el !== note);
+						this.convertToModelWithAnimation(memo, note);
+					}
 				}
 			});
 

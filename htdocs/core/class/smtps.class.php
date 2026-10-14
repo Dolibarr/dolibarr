@@ -83,6 +83,11 @@ class SMTPs
 	private $_msgId = null;
 
 	/**
+	 * @var string Authentication method ('LOGIN', 'PLAIN', 'XOAUTH2', 'NONE'). If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 */
+	private $_smtpsAuthType = '';
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -541,13 +546,12 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
+	 * @param	bool	$withauth	False to only send EHLO and switch to TLS (STARTTLS) without login
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-	private function _server_authenticate()
+	private function _server_authenticate($withauth = true)
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvement as provided by 'SirSir' to
@@ -657,7 +661,7 @@ class SMTPs
 
 				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method)) {
 					$this->_setErr(132, 'STARTTLS connection failed.');
-					return $_retVal;
+					return false;
 				}
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
@@ -667,14 +671,18 @@ class SMTPs
 				}
 			}
 
-			// Default authentication method is LOGIN
-			if (!getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE')) {
-				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
+			if (!$withauth) {
+				// No login, only EHLO and STARTTLS were needed
+				return $_retVal;
 			}
+
+			// Default authentication method is LOGIN
+			// Authentication method of the send context, else of the main setup
+			$authtype = $this->_smtpsAuthType ? $this->_smtpsAuthType : getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
+			switch ($authtype) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -736,6 +744,9 @@ class SMTPs
 			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
+			} elseif (preg_match('@tls://@i', $this->getHost())) {
+				// No login but STARTTLS is on: the switch to TLS is needed before sending the message, or it is sent in clear text
+				$_retVal = $this->_server_authenticate(false);
 			} else {
 				// This is a "normal" SMTP Server "handshack"
 				// Send the RFC821 specified HELO.
@@ -803,17 +814,28 @@ class SMTPs
 					 * mark the last address as "bad" and start the address loop over again.
 					 * If any address fails, the entire message fails.
 					 */
-					$this->socket_send_str('RCPT TO: <'.$_address.'>', '250');
+					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
+						// Stop here, sending DATA would desynchronize the SMTP responses
+						fclose($this->socket);
+						return false;
+					}
 				}
 
 				// Tell the server we are ready to start sending data
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
-				$this->socket_send_str('DATA', '354');
+				if (!$this->socket_send_str('DATA', '354')) {
+					fclose($this->socket);
+					return false;
+				}
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$data = $this->getHeader().$this->getBodyContent();
+				// Dot-stuffing (RFC 5321 4.5.2): a line starting with a "." gets a second one, that the server removes.
+				// Without it, a line with only "." ends the data and the next lines are read by the server as SMTP commands.
+				$data = preg_replace('/^\./m', '..', $data);
+				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				fwrite($this->socket, 'QUIT');
@@ -1041,6 +1063,17 @@ class SMTPs
 	public function setToken($_strToken)
 	{
 		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Authentication method to use (the one of the send context)
+	 *
+	 * @param	string	$_strAuthType	'LOGIN', 'PLAIN', 'XOAUTH2' or 'NONE'. If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 * @return	void
+	 */
+	public function setAuthType($_strAuthType)
+	{
+		$this->_smtpsAuthType = (string) $_strAuthType;
 	}
 
 	/**
@@ -1690,7 +1723,7 @@ class SMTPs
 			$_msgData = $_msgData[$_types[0]];
 
 			$content = 'Content-Type: '.$_msgData['mimeType'].'; charset="'.$this->getCharSet().'"'."\r\n"
-			. 'Content-Transfer-Encoding: '.$this->getTransEncodeType()."\r\n"
+			. 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_msgData['data'])."\r\n"
 			. 'Content-Disposition: inline'."\r\n"
 			. 'Content-Description: Message'."\r\n";
 
@@ -1772,6 +1805,7 @@ class SMTPs
 				} else {
 					if (array_key_exists('image', $this->_msgContent)) {
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n";
 						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 						$content .= 'Content-Type: multipart/related; boundary="'.$this->_getBoundary('related').'"'."\r\n";
@@ -1786,6 +1820,7 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'])."\r\n";
 						$content .= "\r\n".$_content['dataText']."\r\n";
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
@@ -1793,6 +1828,7 @@ class SMTPs
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
 					$content .= "\r\n";
+					$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['data'])."\r\n";
 
 					if ($this->getMD5flag()) {
 						$content .= 'Content-MD5: '.$_content['md5']."\r\n";
@@ -1817,6 +1853,23 @@ class SMTPs
 		return $content;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Content-Transfer-Encoding of a text part: the text is sent as is, so it is '8bit' when it has non ASCII
+	 * characters (UTF-8 accents...), '7bit' is valid only for an ASCII text (RFC 2045).
+	 *
+	 * @param	string	$text	Text of the part
+	 * @return	string			Content-Transfer-Encoding
+	 */
+	private function _getTextTransferEncoding($text)
+	{
+		// phpcs:enable
+		if (preg_match('/[^\x00-\x7F]/', $text)) {
+			return '8bit';
+		}
+		return $this->getTransEncodeType();
+	}
+
 	/**
 	 * File attachments are added to the content array as sub-arrays,
 	 * allowing for multiple attachments for each outbound email
@@ -1832,13 +1885,17 @@ class SMTPs
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
-			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
-			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
-			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
-			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
+			// The key is the file name and the hash of its content: the same file given twice is attached once, but 2 different
+			// files with the same name (from different directories) are both attached.
+			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 'sha256');
+
+			$this->_msgContent['attachment'][$attachmentkey]['mimeType'] = $strMimeType;
+			$this->_msgContent['attachment'][$attachmentkey]['fileName'] = $strFileName;
+			$this->_msgContent['attachment'][$attachmentkey]['data']     = $strContent;
+			$this->_msgContent['attachment'][$attachmentkey]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, '3');
+				$this->_msgContent['attachment'][$attachmentkey]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}

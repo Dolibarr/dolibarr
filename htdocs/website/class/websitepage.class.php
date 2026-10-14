@@ -78,6 +78,11 @@ class WebsitePage extends CommonObject
 	public $pageurl;
 
 	/**
+	 * @var string	Full url of page, set by the wrapper of website templates to build the RSS feed
+	 */
+	public $fullpageurl;
+
+	/**
 	 * @var string 		Alias alt
 	 */
 	public $aliasalt;

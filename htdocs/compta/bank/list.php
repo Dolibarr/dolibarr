@@ -203,6 +203,9 @@ $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;d
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -233,7 +236,12 @@ if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
-	$sql .= natural_search('b.ref', $search_ref);
+	if (empty($arrayfields['b.label']['checked'])) {
+		// Label is shown into the ref column, so search on both
+		$sql .= natural_search(array('b.ref', 'b.label'), $search_ref);
+	} else {
+		$sql .= natural_search('b.ref', $search_ref);
+	}
 }
 if ($search_label != '') {
 	$sql .= natural_search('b.label', $search_label);
@@ -436,8 +444,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -681,7 +687,19 @@ foreach ($accounts as $key => $type) {
 		}
 		// Ref
 		if (!empty($arrayfields['b.ref']['checked'])) {
-			print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			if (empty($arrayfields['b.label']['checked'])) {
+				// Show label under the ref when label column is not enabled
+				print '<td class="tdlineheightsmall">';
+				print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+				print $objecttmp->getNomUrl(1);
+				if (!empty($objecttmp->label)) {
+					print '<br><span class="spantitle">'.dolPrintHTML($objecttmp->label).'</span>';
+				}
+				print '</div>';
+				print '</td>';
+			} else {
+				print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
