@@ -449,6 +449,11 @@ class RssParser
 				//var_dump($items);exit;
 			}
 
+			// The links of the feed are used as href: keep only http(s) links (a "javascript:" link would run in Dolibarr)
+			if (!empty($this->_link) && !preg_match('/^https?:\/\//i', $this->_link)) {
+				$this->_link = '';
+			}
+
 			$i = 0;
 
 			// Loop on each record
@@ -496,6 +501,10 @@ class RssParser
 						$itemAuthor = '';
 						$itemCategory = array();
 						print 'ErrorBadFeedFormat';
+					}
+
+					if (!preg_match('/^https?:\/\//i', $itemLink)) {
+						$itemLink = '';
 					}
 
 					// Add record to result array
