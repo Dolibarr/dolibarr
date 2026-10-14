@@ -1029,6 +1029,7 @@ class FormCompany extends Form
 		// the pasted text before it is inserted, so that maxlength applies to the id itself and not to its
 		// presentation: without it the browser silently truncates the paste.
 		$dataprofid = isProfIdWithoutSpace($idprof, $country_code) ? ' data-profidnospace="1"' : '';
+		$dataprofid .= isProfIdWithoutDot($idprof, $country_code) ? ' data-profidnodot="1"' : '';	// Same for dots (SIREN "849.943.618")
 
 		$out = '';
 
