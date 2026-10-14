@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
+class ExpeditionDispatchTest extends CommonClassTest
 {
 	/** @var Conf|null Original configuration */
 	private $savedConf;

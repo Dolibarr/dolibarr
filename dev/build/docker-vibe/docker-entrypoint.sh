@@ -69,6 +69,23 @@ else
         "$USER_NAME"
 fi
 
+# The home directory of the user is created by docker itself (as root) to
+# receive the volume mounts of vibes.sh, so it stays owned by root and the
+# user can not write into it. Give it to the user so the tools can create
+# their files into it (rtk: ~/.config/rtk, git: ~/.config/git, ...).
+chown "$USER_NAME:$GROUP_NAME" "/home/$USER_NAME"
+
+# Add the user to the group owning the Apache logs of the host (mounted by vibes.sh),
+# so they can be read. The group is created when the GID does not exist into the image.
+if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
+    LOG_GROUP=$(getent group "$HOST_APACHE_LOG_GID" | cut -d: -f1)
+    if [ -z "$LOG_GROUP" ]; then
+        LOG_GROUP="hostapachelog"
+        groupadd --gid "$HOST_APACHE_LOG_GID" "$LOG_GROUP"
+    fi
+    usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+fi
+
 
 # Allow the user to become root inside the container with a passwordless sudo
 # (the account is created without a password, so a sudo asking for one would never work).
@@ -92,10 +109,10 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	echo "Create link $WORKDIR/.vibe"
 	ln -fs .agents .vibe 2>/dev/null
 fi
-#if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
-#	echo "Create link $WORKDIR/AGENTS.md"
-#	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
-#fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
+	echo "Create link $WORKDIR/AGENTS.md"
+	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
+fi
 
 
 # Create .cache directory
@@ -104,6 +121,20 @@ chmod 700 "/home/$USER_NAME/.cache"
 chown -R "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.cache"
 
 export XDG_CACHE_HOME="/home/$USER_NAME/.cache"
+
+# Expose the host graphical session (mounted by vibes.sh) to the vibe user.
+# XDG_RUNTIME_DIR contains the sockets of the host session: the D-Bus session
+# bus (used by open-on-host to open links in the browser of the host through
+# the xdg-desktop-portal) and the Wayland socket (used to reach the clipboard).
+# See README.md.
+if [ -d "/run/user/$USER_ID" ]; then
+    if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
+        export XDG_RUNTIME_DIR="/run/user/$USER_ID"
+    fi
+    if [ -S "/run/user/$USER_ID/bus" ]; then
+        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$USER_ID/bus"
+    fi
+fi
 
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 

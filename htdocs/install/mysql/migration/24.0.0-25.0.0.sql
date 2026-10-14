@@ -295,6 +295,34 @@ ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_loan ADD COLUMN frequency integer DEFAULT 12 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN interest_basis smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN balloon_amount double(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_type smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_per_payment smallint DEFAULT 0 NOT NULL;
+-- History of the changes of a loan: rate changes, and payments that differ from the schedule,
+-- with how the unpaid payments were recalculated.
+create table llx_loan_change
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,
+  fk_loan			integer NOT NULL,
+  datec				datetime,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_change		date,							-- date from which the change applies
+  reason			varchar(16) NOT NULL,			-- 'rate' (rate change) or 'payment' (payment different from the schedule)
+  rate_old			double,
+  rate_new			double,
+  keep_mode			varchar(16),					-- 'term' (number of payments kept), 'payment' (repayment kept) or '' (no schedule)
+  payment_old		double(24,8),
+  payment_new		double(24,8),
+  nbterm_old		real,
+  nbterm_new		real,
+  fk_payment_loan	integer DEFAULT NULL,			-- payment that caused the change (reason 'payment')
+  fk_user_author	integer DEFAULT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
@@ -375,6 +403,11 @@ CREATE TABLE llx_extrafields_schemas (
 	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
+ALTER TABLE llx_schemas ADD UNIQUE INDEX uk_schemas_name (name, entity);
+ALTER TABLE llx_schemas ADD INDEX idx_schemas_uuid (uuid);
+ALTER TABLE llx_extrafields_schemas ADD UNIQUE INDEX uk_extrafields_schemas_name (fk_schema, name, entity);
+ALTER TABLE llx_extrafields_schemas ADD CONSTRAINT fk_extrafields_schemas_fk_schema FOREIGN KEY (fk_schema) REFERENCES llx_schemas (rowid);
+
 
 -- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
 -- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
@@ -438,6 +471,10 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday valida
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';
 
+-- The trigger BILL_SUPPLIER_CANCELED is renamed into BILL_SUPPLIER_CANCEL to be consistent with the trigger BILL_CANCEL of customer invoices.
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET code = 'BILL_SUPPLIER_CANCEL' WHERE code = 'BILL_SUPPLIER_CANCELED';
+
 -- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
@@ -446,7 +483,26 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES 
 -- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
 UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
 
+-- Indexes for the widgets of the home page: latest prospects and latest suppliers (sorted on tms) and balance of bank accounts
+ALTER TABLE llx_societe ADD INDEX idx_societe_fournisseur_tms(fournisseur, tms);
+ALTER TABLE llx_societe ADD INDEX idx_societe_client_tms(client, tms);
+ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
+
 -- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- API keys created from the user's token tab were written to the deprecated column token, while
+-- the API authenticates against tokenstring (where the upgrade that moves user api_key values
+-- puts them). Those keys never worked: copy them where they are read.
+UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+-- Multicurrency support for contracts. llx_contratdet already had these columns (unused until now);
+-- the header table had none, so a contract could never record the currency it was created in.
+ALTER TABLE llx_contrat ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;

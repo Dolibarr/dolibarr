@@ -2327,7 +2327,7 @@ function dolSlugify($stringtoslugify)
  * Returns text escaped for inclusion into JavaScript code.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and " with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -2355,7 +2355,8 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr((string) $stringtoescape, $substitjs);
+	// Escape also "</script" so the string can't close the <script> block that contains it ("<\/" is "</" in a JS string)
+	return preg_replace('/<\/(script)/i', '<\\/$1', strtr((string) $stringtoescape, $substitjs));
 }
 
 /**
@@ -3646,7 +3647,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		return '';
 	}
 	if (empty($countrycode)) {
-		$countrycode = $mysoc->country_code;
+		$countrycode = (is_object($mysoc) ? $mysoc->country_code : '');
 	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
@@ -6129,42 +6130,40 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$dom->loadHTML('<?xml encoding="UTF-8"><div id="' . $wrapperId . '">' . $stringtoclean . '</div>', LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 		error_reporting($savwarning);
 
-		if ($dom instanceof DOMDocument) {
-			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
-				$el = $els->item($i);
-				if (!$el instanceof DOMElement) {
-					continue;
-				}
-				$attrs = $el->attributes;
-				for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
-					//var_dump($attrs->item($ii));
-					if (!empty($attrs->item($ii)->name)) {
-						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
-							// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
-							$els->item($i)->removeAttribute($attrs->item($ii)->name);
-						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
-							// If attribute is 'style'
-							$valuetoclean = $attrs->item($ii)->value;
+		for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
+			$el = $els->item($i);
+			if (!$el instanceof DOMElement) {
+				continue;
+			}
+			$attrs = $el->attributes;
+			for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
+				//var_dump($attrs->item($ii));
+				if (!empty($attrs->item($ii)->name)) {
+					if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+						// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
+						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+						// If attribute is 'style'
+						$valuetoclean = $attrs->item($ii)->value;
 
-							if (isset($valuetoclean)) {
-								do {
-									$oldvaluetoclean = $valuetoclean;
-									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
-									}
+						if ($valuetoclean !== null) {
+							do {
+								$oldvaluetoclean = $valuetoclean;
+								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+									$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
+								}
 
-									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
-									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
-									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
-								} while ($oldvaluetoclean != $valuetoclean);
-							}
-
-							$attrs->item($ii)->value = $valuetoclean;
+								// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+								$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+								$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
+							} while ($oldvaluetoclean != $valuetoclean);
 						}
+
+						$attrs->item($ii)->value = $valuetoclean;
 					}
 				}
 			}
@@ -7028,7 +7027,12 @@ function safeArrayMap($callback, array $array)
 
 
 /**
- * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
+ * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'.
+ *
+ * Note: This function can be called thousand of times, so it should just make init of memory vars, with no db access. If you need a dynamic coming from the db,
+ * the return entry must be a simple "lazy load" string, like this example:
+ *   $substitutionarray['__SUBSTITUTION_KEY__@lazyload'] = '/pathtoclass.class.php:Object:methodToCall:id';
+ * The call of the dynamic code methodToCall() to read data will be done by the function make_substitutions() but only if the key __SUBSTITUTION_KEY__ is found into the source string.
  *
  * @param	Translate       $outputlangs    Output language
  * @param	int             $onlykey		1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
@@ -7061,7 +7065,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
-		if (is_object($user) && ($user instanceof User)) {
+		if (is_object($user)) {
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -7335,23 +7339,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (is_object($object) && $object->element == 'societe') {
 				/** @var Societe $object */
 				'@phan-var-force Societe $object';
-				$substitutionarray['__THIRDPARTY_ID__'] = $object->id ?? '';
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_ID__'] = ($object->id > 0 ? $object->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (string) $object->name;
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (string) $object->name_alias;
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
 				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code;
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF3__'] = $object->idprof3 ?? '';
@@ -7754,8 +7758,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$mysocuselocaltax2 = false;
 		if ($mysoc instanceof Societe && !empty($mysoc->country_code)) {
 			$tmparray = $mysoc->useLocalTax(-1);
-			$mysocuselocaltax1 = $tmparray[1];
-			$mysocuselocaltax2 = $tmparray[2];
+			if (is_array($tmparray)) {
+				$mysocuselocaltax1 = $tmparray[1];
+				$mysocuselocaltax2 = $tmparray[2];
+			}
 		}
 
 		// Local taxes
@@ -8071,7 +8077,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
+ *  @param  array<string,string|int|float|null>	$substitutionarray		Array substitution old value => new value value
  *  @param  Translate		$outputlangs            Output language
  *  @param  ?CommonObject	$object                 Source object
  *  @param  ?mixed			$parameters       		Add more parameters (useful to pass product lines)
@@ -10998,6 +11004,13 @@ function getElementProperties($elementType)
 		$subelement = $elementType;
 		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
 		$subdir = '/'.$elementType;
+	} elseif ($elementType == 'evaluationdet') {
+		$classpath = 'hrm/class';
+		$classfile = 'evaluationdet';
+		$classname = 'EvaluationLine';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'hrm';
+		$subelement = 'evaluationdet';
+		$table_element = 'hrm_evaluationdet';
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
