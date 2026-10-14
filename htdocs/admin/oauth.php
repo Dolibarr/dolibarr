@@ -444,6 +444,7 @@ if (count($listinsetup) > 0) {
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
 		print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
+		print '<span class="fa fa-eye paddingleft cursorpointer" title="'.dolPrintHTMLForAttribute($langs->trans("Show")).'" onclick="newtype = (jQuery(\'#'.dol_escape_js($key[2]).'\').attr(\'type\') == \'text\' ? \'password\' : \'text\'); jQuery(\'#'.dol_escape_js($key[2]).'\').attr(\'type\', newtype); jQuery(this).toggleClass(\'fa-eye fa-eye-slash\');"></span>';
 		print '</td>';
 		print '<td></td>';
 		print '</tr>';
