@@ -288,15 +288,15 @@ class RssParser
 						return -1;
 					}
 
-					xml_set_object($xmlparser, $this);
-					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
-					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
-					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
-					xml_set_character_data_handler($xmlparser, 'feed_cdata');
+					// Handlers given as callable arrays (xml_set_object() and handler names as strings are deprecated since PHP 8.4)
+					xml_set_element_handler($xmlparser, array($this, 'feed_start_element'), array($this, 'feed_end_element'));
+					xml_set_character_data_handler($xmlparser, array($this, 'feed_cdata'));
 
 					$status = xml_parse($xmlparser, $str, false);
 
-					xml_parser_free($xmlparser);
+					if (PHP_VERSION_ID < 80000) {
+						xml_parser_free($xmlparser);	// No effect since PHP 8.0, deprecated since PHP 8.5
+					}
 
 					$rss = $this;
 					//var_dump($status.' '.$rss->_format);exit;
@@ -460,6 +460,10 @@ class RssParser
 			if (is_array($items)) {
 				foreach ($items as $item) {
 					//var_dump($item);exit;
+					if (is_array($item)) {
+						// Optional elements of an item, to avoid PHP warnings when they are missing
+						$item += array('link' => '', 'title' => '', 'description' => '', 'guid' => '', 'author' => '', 'author_name' => '');
+					}
 					if ($rss->_format == 'rss') {
 						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 							$itemLink = sanitizeVal((string) $item->link);
@@ -567,10 +571,10 @@ class RssParser
 				$this->feed_version = '1.0';
 			} elseif ($el == 'rss') {
 				$this->_format = 'rss';
-				$this->feed_version = $attrs['version'];
+				$this->feed_version = (string) ($attrs['version'] ?? '');
 			} elseif ($el == 'feed') {
 				$this->_format = 'atom';
-				$this->feed_version = $attrs['version'];
+				$this->feed_version = (string) ($attrs['version'] ?? '');
 				$this->inchannel = true;
 			}
 			return;
