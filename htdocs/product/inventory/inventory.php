@@ -390,7 +390,7 @@ if (empty($reshook)) {
 
 	// Action 'update' of this page is the recording of the inventory (done above or refused), never the
 	// generic update of the object: it would overwrite the fields of the inventory with empty values.
-	if ($action == 'update') {
+	if ($action == 'update') {	// Test on permission not required here
 		$action = '';
 	}
 
