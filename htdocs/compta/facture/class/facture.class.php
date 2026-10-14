@@ -1106,8 +1106,12 @@ class Facture extends CommonInvoice
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
-				foreach ($this->lines as $i => $val) {
-					$line = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$line = $linestoadd[$i];
 					'@phan-var-force FactureLigne $line';
 
 					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
@@ -2532,6 +2536,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -3118,8 +3123,22 @@ class Facture extends CommonInvoice
 				$srcinvoice->fetch($remise->fk_facture_source);
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
+				// A deposit or credit note is converted into one discount per VAT rate, and a discount can be split,
+				// so keep only the cost of the source lines with the same VAT rate, prorated to the amount of the discount.
+				$srclinesofvat = array();
+				foreach ($srcinvoice->lines as $srcline) {
+					if (price2num($srcline->tva_tx) == price2num($remise->tva_tx)) {
+						$srclinesofvat[] = $srcline;
+					}
+				}
+				if (count($srclinesofvat) > 0) {
+					$srcinvoice->lines = $srclinesofvat;
+				}
 				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
 				$facligne->pa_ht = $arraytmp['pa_total'];
+				if ((float) $arraytmp['pv_total'] != 0 && price2num($arraytmp['pv_total'], 'MT') != price2num(abs((float) $remise->total_ht), 'MT')) {
+					$facligne->pa_ht = (float) price2num($arraytmp['pa_total'] * abs((float) $remise->total_ht / (float) $arraytmp['pv_total']), 'MU');
+				}
 			}
 
 			$facligne->total_ht  = -(float) $remise->total_ht;
@@ -3432,9 +3451,9 @@ class Facture extends CommonInvoice
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref));
 						} else {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
 						}
 					}
 				}
@@ -3992,7 +4011,7 @@ class Facture extends CommonInvoice
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
 							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
 								$this->setErrorsFromObject($mouvP);
@@ -4044,7 +4063,7 @@ class Facture extends CommonInvoice
 												// not enough (take all in batch)
 												$product_batch_qty = $batch->qty;
 											}
-											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
 												$this->setErrorsFromObject($mouvP);
@@ -4068,7 +4087,7 @@ class Facture extends CommonInvoice
 											} else {
 												// take in the first batch
 												$batch = $batchList[0];
-												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
 													$this->setErrorsFromObject($mouvP);
@@ -4080,7 +4099,7 @@ class Facture extends CommonInvoice
 							}
 
 							if (!$is_batch_line) {	// If stock move not yet processed
-								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
 									$this->setErrorsFromObject($mouvP);

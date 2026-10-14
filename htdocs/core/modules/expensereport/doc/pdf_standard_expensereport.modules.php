@@ -882,19 +882,6 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateApprove")." : ".dol_print_date($object->date_approve, "day", false, $outputlangs), 0, 'L');
 				}
 			}
-
-			if ($object->fk_statut == 6) {
-				if ($object->fk_user_paid > 0) {
-					$userfee = new User($this->db);
-					$userfee->fetch($object->fk_user_paid);
-					$posy += 6;
-					$pdf->SetXY($posx + 2, $posy);
-					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHORPAIEMENT")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
-					$posy += 5;
-					$pdf->SetXY($posx + 2, $posy);
-					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DATE_PAIEMENT")." : ".dol_print_date($object->date_paiement, "day", false, $outputlangs), 0, 'L');
-				}
-			}
 		}
 
 		return 0;

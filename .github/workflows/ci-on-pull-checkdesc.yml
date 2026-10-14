@@ -21,11 +21,14 @@ permissions: {}
 
 jobs:
   check-pr:
-    name: Check PR title and description
+    name: Check PR title and description syntax
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read # to get the list of files of the PR
+      issues: read # to get the comments of the PR
     steps:
-      - name: Check PR title
+      - name: Check PR title prefix
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
@@ -37,7 +40,7 @@ jobs:
           echo "::error::The title of the PR must start with one of the keywords (FIX|CLOSE|NEW|PERF|DOC|QUAL|SEC|UXUI) followed by a space or ':', then a description (Description can be free or '#ID' with ID of issue). Current title: '$PR_TITLE'"
           exit 1
 
-      - name: Check PR type when the PR targets a branch other than develop
+      - name: Check PR type compatibility with branch other than develop
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
@@ -55,7 +58,7 @@ jobs:
           echo "::error::The PR targets the branch '$PR_TARGET_BRANCH' which is not the branch develop, so only bugfix or security PR are allowed. Quality, log, perf or refactoring must be done in develop branch."
           exit 1
 
-      - name: Check PR description
+      - name: Check PR description mentions
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -66,14 +69,6 @@ jobs:
 
           echo "Description of PR is valid."
 
-  check-screenshot:
-    name: Check PR screenshot
-    needs: check-pr
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read # to get the list of files of the PR
-      issues: read # to get the comments of the PR
-    steps:
       - name: Check PR has a screenshot if UI is changed
         env:
           GH_TOKEN: ${{ github.token }}

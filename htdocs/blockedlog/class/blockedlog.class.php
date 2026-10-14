@@ -1454,14 +1454,16 @@ class BlockedLog
 						if (!file_exists($lockfile)) {
 							//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
 
-							$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+							if ($previousid > 0) {	// If $previousid is 0, the chain is empty: having no flag yet is the normal state of a new chain, not a deletion
+								$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
 
-							// The string of line to sign
-							$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+								// The string of line to sign
+								$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-							// The new hash, including previous hash
-							$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
-							$finalnote = $this->note;
+								// The new hash, including previous hash
+								$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+								$finalnote = $this->note;
+							}
 
 							$line = '';
 						} elseif (is_writable($lockfile)) {
@@ -1481,14 +1483,16 @@ class BlockedLog
 							} else {
 								//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
 
-								$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+								if ($previousid > 0) {	// If $previousid is 0, the chain is empty: having no flag yet is the normal state of a new chain, not a deletion
+									$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
 
-								// The string of line to sign
-								$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+									// The string of line to sign
+									$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-								// The new hash, including previous hash
-								$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
-								$finalnote = $this->note;
+									// The new hash, including previous hash
+									$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+									$finalnote = $this->note;
+								}
 
 								$line = '';
 							}
