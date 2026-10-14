@@ -83,6 +83,13 @@ The hooks environments are preloaded into the image when it is built (they are t
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
 
+## Transifex CLI
+
+The Transifex client `tx` is installed into the image (see https://github.com/transifex/cli).
+The project configuration is the file `.tx/config` at the repository root.
+When the file `~/.transifexrc` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so `tx` uses the API token of the host.
+Otherwise, provide the token with the environment variable `TX_TOKEN` (for example `export TX_TOKEN=...` into the container).
+
 ## Apache logs of the host
 
 When the directory `/var/log/apache2` exists on the host, `vibes.sh` mounts it read-only at the same path into the container, so the agent can read the Apache logs (for example `tail /var/log/apache2/error.log`).

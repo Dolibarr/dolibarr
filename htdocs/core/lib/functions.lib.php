@@ -11044,6 +11044,12 @@ function getElementProperties($elementType)
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
+	} elseif ($elementType == 'cashcontrol') {
+		$classpath = 'compta/cashcontrol/class';
+		$classfile = 'cashcontrol';
+		$classname = 'CashControl';
+		$module = 'takepos';
+		$table_element = 'pos_cash_fence';
 	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';

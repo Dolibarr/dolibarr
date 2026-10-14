@@ -336,7 +336,7 @@ if ($action == 'create') {
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input class="width200" name="libelle" value=""></td></tr>';
 
-	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="lieu" class="width300" value="'.dolPrintHTMLForAttribute(empty($object->lieu) ? '' : $object->lieu).'"></td></tr>';
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';

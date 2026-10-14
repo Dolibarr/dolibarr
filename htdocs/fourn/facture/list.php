@@ -2019,8 +2019,8 @@ while ($i < $imaxinloop) {
 		}
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150">';
-			print dol_escape_htmltag($thirdparty->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($thirdparty->name_alias).'">';
+			print '<span class="spantitle">'.dol_escape_htmltag($thirdparty->name_alias).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
