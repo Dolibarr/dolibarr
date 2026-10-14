@@ -5890,6 +5890,7 @@ class Form
 
 
 		$output = '<select class="flat minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
+		$num = 0;
 		if (is_array($cate_arbo)) {
 			$num = count($cate_arbo);
 
@@ -5927,7 +5928,7 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
-		$this->num = count($cate_arbo);
+		$this->num = $num;
 
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array
