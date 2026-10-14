@@ -177,6 +177,9 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
 	public $cond_reglement_label;
 
 	/**
