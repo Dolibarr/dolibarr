@@ -1798,6 +1798,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
