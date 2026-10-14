@@ -182,13 +182,17 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string 	Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
 
 	/**
 	 * @var string
 	 */
 	public $mode_reglement_code;
 	/**
-	 * @deprecated Use $mode_reglement_code
+	 * @deprecated 	Use $mode_reglement_code
 	 * @var string	Mode reglement
 	 */
 	public $mode_reglement;
@@ -1423,6 +1427,7 @@ class SupplierProposal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
 				$this->extraparams = (array) (!empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array());

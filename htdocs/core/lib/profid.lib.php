@@ -282,6 +282,30 @@ function isProfIdWithoutSpace($idprof, $country_code)
 
 
 /**
+ *  Return whether the recorded value of a professional id never holds a dot, in which case the dots of a
+ *  value copy/pasted from a document (SIREN "849.943.618") are only separators.
+ *
+ *  Unlike spaces, a dot may be part of the value: the Belgian enterprise number is checked as "0123.456.789".
+ *
+ *  @param		int			$idprof			1,2,3,4,5,6 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm)
+ *  @param		string		$country_code	Country code of the third party (Example: 'FR')
+ *  @return		bool						True if a dot can only be a separator
+ *  @since		Dolibarr V24
+ */
+function isProfIdWithoutDot($idprof, $country_code)
+{
+	// SIREN and SIRET are made of digits only
+	$idprofwithoutdot = array(
+		'FR' => array(1, 2),
+	);
+
+	$country_code = strtoupper((string) $country_code);
+
+	return isset($idprofwithoutdot[$country_code]) && in_array((int) $idprof, $idprofwithoutdot[$country_code], true);
+}
+
+
+/**
  *  Check the validity of a professional identifier according to the properties (country) of the company (siren, siret, ...)
  *
  *  @param	int			$idprof         1,2,3,4 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm)

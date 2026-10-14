@@ -1475,6 +1475,11 @@ textarea.centpercent {
 	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
 	z-index: 2;
 }
+.liste_titre.stickyagenda {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
 
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;

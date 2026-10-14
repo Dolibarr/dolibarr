@@ -1457,6 +1457,11 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_js($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
+
+		$input = "a</script><script>alert(1)</SCRIPT >";
+		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("a<\\/script><script>alert(1)<\\/SCRIPT >", $result, "Test closing script tag");
 	}
 
 
