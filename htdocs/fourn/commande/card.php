@@ -97,6 +97,7 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 $cancel    = GETPOST('cancel', 'alpha');
+$date_com = GETPOSTISSET('re') && GETPOST('re', 'alphanohtml') === '' ? '' : dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -1402,7 +1403,6 @@ if (empty($reshook)) {
 	}
 
 	// Force mandatory order method
-	$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder) {
 		$methodecommande = GETPOSTINT('methodecommande');
 
@@ -2506,7 +2506,6 @@ if ($action == 'create') {
 
 	// Confirm placing the supplier order
 	if ($action == 'createorder' && $usercanorder && $object->status == CommandeFournisseur::STATUS_ACCEPTED) {
-		$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		ob_start();
 		$formorder->selectInputMethod(GETPOST('methodecommande'), 'methodecommande', 1);
 		$inputmethod = ob_get_clean();
