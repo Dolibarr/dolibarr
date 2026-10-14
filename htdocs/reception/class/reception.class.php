@@ -1463,6 +1463,11 @@ class Reception extends CommonObject
 					dol_syslog(get_class($this)."::delete movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
+					// Same lines as the ones that moved the stock in valid() and setClosed()
+					if ($obj->qty == 0 || ($obj->qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
+						continue;
+					}
+
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
@@ -2267,15 +2272,29 @@ class Reception extends CommonObject
 
 		$error = 0;
 
+		// Protection: only a closed reception can be reopened (with stock on closing, it removes the stock added by the closing)
+		if ($this->statut != self::STATUS_CLOSED) {
+			$langs->load("receptions");
+			$this->error = $langs->trans('StatusOfRefMustBe', $this->ref, $langs->transnoentitiesnoconv('StatusReceptionProcessedShort'));
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
-		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut = '.self::STATUS_CLOSED;
 
 		$resql = $this->db->query($sql);
 		$rollbackStatus = $this->status;
 		$rollbackBilled = $this->billed;
 		if ($resql) {
+			if ($this->db->affected_rows($resql) <= 0) {
+				// Status in database is not closed (reopened meanwhile): no stock movement
+				$this->db->rollback();
+				$langs->load("receptions");
+				$this->error = $langs->trans('StatusOfRefMustBe', $this->ref, $langs->transnoentitiesnoconv('StatusReceptionProcessedShort'));
+				return -1;
+			}
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
@@ -2334,7 +2353,7 @@ class Reception extends CommonObject
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$inventorycode = '';
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, $inventorycode);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, 0, $inventorycode);
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
@@ -2414,11 +2433,20 @@ class Reception extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND fk_statut = ".((int) $this->statut);	// Status may have changed since the object was loaded
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		if ($this->db->query($sql)) {
-			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// Status in database is not the one of the object (changed meanwhile): no stock movement
+			$this->db->rollback();
+			$langs->load("receptions");
+			$this->error = $langs->trans('StatusOfRefMustBe', $this->ref, $langs->transnoentitiesnoconv($this->statut == self::STATUS_CLOSED ? 'StatusReceptionProcessedShort' : 'StatusReceptionValidatedShort'));
+			return -1;
+		}
+		if ($resql) {
+			// If stock increment is done on validation, or on closing and the reception was closed, we revert it
+			if (!$error && isModEnabled('stock') && (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE') && $this->statut == self::STATUS_CLOSED))) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");

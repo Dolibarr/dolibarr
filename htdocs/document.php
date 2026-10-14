@@ -50,8 +50,10 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
+	$needlogin = 0;
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -65,6 +67,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -129,8 +132,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 {
 }
 
-// Keep $_GET here: GETPOST is not available until main.inc.php is loaded.
-$needlogin = !isset($_GET['hashp']) && (!isset($_GET['modulepart']) || $_GET['modulepart'] !== 'medias');
 require 'main.inc.php'; // Load $user and permissions
 /**
  * @var Conf $conf
@@ -335,6 +336,13 @@ if (!empty($hashp) && $hashp != 'shared') {
 		}
 	}
 	*/
+}
+
+// Check permission on per object basis
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
