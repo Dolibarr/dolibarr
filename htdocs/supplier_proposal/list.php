@@ -1236,8 +1236,10 @@ if ($resql) {
 
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				print $companystatic->name_alias;
+				print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+				print '<span class="spantitle">';
+				print dolPrintHTML($companystatic->name_alias);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

@@ -873,7 +873,7 @@ while ($i < $imaxinloop) {
 
 		// Label payment
 		if (!empty($arrayfields['s.label']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'"><span class="spantitle">'.dol_escape_htmltag($obj->label)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
