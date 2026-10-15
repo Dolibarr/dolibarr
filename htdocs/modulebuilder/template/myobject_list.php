@@ -192,6 +192,12 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+// Definition of array of fields with hardcoded columns
+/*
+$arrayfields = array_merge($arrayfields, array(
+	't.anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));
+*/
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';

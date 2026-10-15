@@ -226,7 +226,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'confirm_reopen' && $permissiontoadd) {
+	if ($action == 'confirm_reopen' && $permissiontoadd && $object->status == $object::STATUS_PRODUCED) {	// The reopen of a canceled MO is done by $object->reopen() (with confirm=yes)
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
@@ -295,6 +295,13 @@ if (empty($reshook)) {
 		exit;
 	}
 
+	// Consumption and production are possible only on a validated or in progress MO
+	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $object->status != $object::STATUS_VALIDATED && $object->status != $object::STATUS_INPROGRESS) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorObjectHasWrongStatus", $object->ref), null, 'errors');
+		$action = '';
+	}
+
 	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
 		$stockmove = new MouvementStock($db);
 
@@ -321,7 +328,7 @@ if (empty($reshook)) {
 								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref), null, 'errors');
 								$error++;
 							}
-							if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
+							if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref), null, 'errors');
 								$error++;
@@ -338,7 +345,7 @@ if (empty($reshook)) {
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, '', '', GETPOST('batch-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -538,9 +545,15 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_editline' && $permissiontoadd) {
+	if ($action == 'confirm_editline' && $permissiontoadd && !in_array($object->status, array($object::STATUS_PRODUCED, $object::STATUS_CANCELED))) {
 		$moline = new MoLine($db);
-		$res = $moline->fetch(GETPOSTINT('lineid'));
+		$result = $moline->fetch(GETPOSTINT('lineid'));
+		if ($result > 0 && $moline->fk_mo != $object->id) {
+			$result = -1;	// The line must belong to this MO
+		}
+		if ($result > 0 && in_array($moline->role, array('consumed', 'produced'))) {
+			$result = -1;	// A consumed or produced quantity is changed by its stock movement, not here (only the quantities to consume or produce can be edited)
+		}
 		if ($result > 0) {
 			$extrafields->fetch_name_optionals_label($moline->table_element);
 			if (!empty($extrafields->attributes[$moline->table_element]['label'])) {
@@ -1846,9 +1859,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split All
 						print '<td></td>';
 					}
-					// Delete
+					// Delete, if nothing was produced for this line
 					if ($permissiontodelete) {
-						if ($line->origin_type == 'free') {
+						if ($line->origin_type == 'free' && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
