@@ -191,6 +191,11 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$error++;
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
+	// A part larger than the original discount would force the other part to be negative so the sum still matches.
+	if (!$error && ((float) $amount_ttc_1 <= 0 || (float) $amount_ttc_2 <= 0)) {
+		$error++;
+		setEventMessages($langs->trans("AmountMustBePositive"), null, 'errors');
+	}
 	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
 		$error++;
 		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
@@ -787,9 +792,10 @@ if ($socid > 0) {
 				} else {
 					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
 					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$splittotalattr = 'data-total="'.dol_escape_htmltag(price2num($showconfirminfo['amount_ttc'])).'" data-decimals="'.((int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 2)).'"';
 					$formquestion = array(
 						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5', 'moreattr' => $splittotalattr),
 						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 					);
 					$langs->load("dict");
@@ -1081,9 +1087,10 @@ if ($socid > 0) {
 				} else {
 					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
 					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$splittotalattr = 'data-total="'.dol_escape_htmltag(price2num($showconfirminfo['amount_ttc'])).'" data-decimals="'.((int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 2)).'"';
 					$formquestion = array(
 						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5', 'moreattr' => $splittotalattr),
 						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 					);
 					$langs->load("dict");
@@ -1451,6 +1458,77 @@ if ($socid > 0) {
 			print '</div>'; // class="fichecenter"
 		}
 	}
+}
+
+// Keep the two split amounts complementary. A part above the original total sets the other part to 0, never to a negative amount.
+if ($action == 'split' && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT') && !empty($conf->use_javascript_ajax)) {
+	print '<script nonce="'.dol_escape_htmltag(getNonce()).'" type="text/javascript">'."\n";
+	print <<<'JS'
+jQuery(function () {
+	var input1 = jQuery('#amount_ttc_1');
+	var input2 = jQuery('#amount_ttc_2');
+	if (!input1.length || !input2.length) {
+		return;
+	}
+	var total = parseFloat(String(input1.attr('data-total')).replace(',', '.'));
+	var decimals = parseInt(input1.attr('data-decimals'), 10);
+	if (!isFinite(total) || !(total > 0)) {
+		return;
+	}
+	if (!isFinite(decimals) || decimals < 0) {
+		decimals = 2;
+	}
+	var factor = Math.pow(10, decimals);
+
+	function readAmount(raw) {
+		if (raw === null || raw === undefined) {
+			return null;
+		}
+		raw = String(raw).trim().replace(',', '.');
+		if (raw === '' || raw === '-' || raw === '.' || raw === '-.') {
+			return null;
+		}
+		var value = parseFloat(raw);
+		if (!isFinite(value)) {
+			return null;
+		}
+		return value;
+	}
+
+	function formatAmount(value) {
+		var text = value.toFixed(decimals);
+		if (decimals > 0) {
+			text = text.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+		}
+		return text;
+	}
+
+	function updateSibling(source, target) {
+		var value = readAmount(source.val());
+		if (value === null) {
+			return;
+		}
+		if (!(value > 0) || value >= total) {
+			target.val('0');
+			return;
+		}
+		var remain = Math.round((total - value) * factor) / factor;
+		if (!(remain > 0)) {
+			target.val('0');
+			return;
+		}
+		target.val(formatAmount(remain));
+	}
+
+	input1.on('input', function () {
+		updateSibling(input1, input2);
+	});
+	input2.on('input', function () {
+		updateSibling(input2, input1);
+	});
+});
+JS;
+	print "\n</script>\n";
 }
 
 // End of page
