@@ -424,7 +424,9 @@ class Ai
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
 				if (is_scalar($decodedResponse['error'])) {
-					$generatedContent = $decodedResponse['error'];
+					// Cast needed because is_scalar() also accepts bool, int and float, while
+					// the method is declared to return a string or the error array.
+					$generatedContent = (string) $decodedResponse['error'];
 				} else {
 					$generatedContent = var_export($decodedResponse['error'], true);
 				}
