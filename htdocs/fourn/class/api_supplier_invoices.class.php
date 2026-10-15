@@ -936,6 +936,71 @@ class SupplierInvoices extends DolibarrApi
 		}
 	}
 
+	/**
+	 * Add a discount line into a draft supplier invoice using an available supplier discount
+	 *
+	 * Note that this consumes the discount. A discount larger than the invoice must be split before, see POST thirdparties/{id}/splitdiscount/{discountid}.
+	 *
+	 * @param int   $id             Id of supplier invoice
+	 * @param int   $discountid     Id of the available supplier discount
+	 * @return int
+	 *
+	 * @url     POST {id}/usediscount/{discountid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
+	 */
+	public function useDiscount($id, $discountid)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same conditions as the discount selector of the supplier invoice card
+		if ($this->invoice->status != FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(400, 'Supplier invoice must be a draft');
+		}
+		if ($this->invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE || $this->invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
+			throw new RestException(400, 'A discount cannot be used on a supplier credit note or deposit');
+		}
+
+		$discount = new DiscountAbsolute($this->db);
+		$result = $discount->fetch($discountid);
+		if ($result <= 0 || empty($discount->discount_type)) {
+			throw new RestException(404, 'Supplier discount not found');
+		}
+		if ($discount->fk_soc != $this->invoice->socid) {
+			throw new RestException(400, 'Discount does not belong to the supplier of the invoice');
+		}
+		if (!empty($discount->fk_invoice_supplier) || !empty($discount->fk_invoice_supplier_line)) {
+			throw new RestException(409, 'Discount already used');
+		}
+		if (price2num($discount->amount_ttc) > price2num($this->invoice->total_ttc)) {
+			throw new RestException(400, 'Discount is larger than the invoice, split it before');
+		}
+
+		$result = $this->invoice->insert_discount($discount->id);
+		if ($result < 0) {
+			throw new RestException(500, $this->invoice->errorsToString());
+		}
+
+		return $result;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
