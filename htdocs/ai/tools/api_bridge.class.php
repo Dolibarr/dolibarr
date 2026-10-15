@@ -598,7 +598,7 @@ class ToolApiBridge extends McpTool
 			]
 		];
 
-		$this->enrichments['project'] = [
+		$this->enrichments['projects'] = [
 			'label' => 'projects (including opportunities/leads)',
 			'methods' => [
 				'index' => [
