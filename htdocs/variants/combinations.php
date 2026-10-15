@@ -107,9 +107,6 @@ $usercanread = (($object->isProduct() && $user->hasRight('produit', 'lire')) || 
 $usercancreate = (($object->isProduct() && $user->hasRight('produit', 'creer')) || ($object->isService() && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->isProduct() && $user->hasRight('produit', 'supprimer')) || ($object->isService() && $user->hasRight('service', 'supprimer')));
 
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->creer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->creer)));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->supprimer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->supprimer)));
-
 
 /*
  * Actions
