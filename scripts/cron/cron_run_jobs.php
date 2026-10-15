@@ -309,6 +309,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		if (!verifCond($line->test)) {
+			echo " - not qualified (testok=0)\n";
 			continue;
 		}
 
