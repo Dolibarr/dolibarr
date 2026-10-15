@@ -1901,7 +1901,7 @@ class SupplierProposal extends CommonObject
 	 *	Update ProductFournisseur
 	 *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		Product $product				contain information to update
+	 * 	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User	$user					Object user
 	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
@@ -1924,7 +1924,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Create Price Fournisseur
 	 *
-	 *	@param		ProductFournisseur 	$product	Object Product TODO: Determine the correct type
+	 *	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User				$user		Object user
 	 *	@return     int								Return integer <0 if KO, >0 if OK
 	 */
