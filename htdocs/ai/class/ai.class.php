@@ -441,6 +441,16 @@ class Ai
 					}
 				}
 			} else {
+				// A provider answering 200 with a body that does not carry
+				// choices[0].message.content must not reach the code below: reading the missing
+				// keys emits PHP warnings, and a 'choices' entry that is a string instead of an
+				// array raises a TypeError, which the catch below does not take (TypeError
+				// implements Throwable but does not extend Exception) and so ends as a fatal
+				// error on the ajax endpoints calling this method.
+				if (!isset($decodedResponse['choices'][0]['message']['content'])
+					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
+					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
+				}
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
