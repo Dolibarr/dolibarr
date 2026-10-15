@@ -90,9 +90,6 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
-
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->creer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->creer)));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->supprimer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->supprimer)));
 
