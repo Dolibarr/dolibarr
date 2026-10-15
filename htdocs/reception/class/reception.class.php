@@ -189,6 +189,16 @@ class Reception extends CommonObject
 	public $date_valid;
 
 	/**
+	 * @var int ID of user author
+	 */
+	public $fk_user_author;
+
+	/**
+	 * @var int ID of user who validated
+	 */
+	public $fk_user_valid;
+
+	/**
 	 * @var array<int,string>
 	 */
 	public $meths;
@@ -498,6 +508,7 @@ class Reception extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.fk_projet as fk_project, e.billed";
+		$sql .= ", e.fk_user_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf, e.date_delivery, e.date_valid";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -537,6 +548,8 @@ class Reception extends CommonObject
 				$this->billed               = $obj->billed;
 				$this->fk_project	    	= $obj->fk_project;
 				$this->user_author_id       = $obj->fk_user_author;
+				$this->fk_user_author       = $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception       = $this->db->jdate($obj->date_reception); // Date real
