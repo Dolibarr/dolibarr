@@ -207,16 +207,6 @@ class SupplierProposals extends DolibarrApi
 			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
-		// update end of validity date
-		if (empty($this->supplier_proposal->fin_validite) && !empty($this->supplier_proposal->duree_validite) && !empty($this->supplier_proposal->date_creation)) {
-			$this->supplier_proposal->fin_validite = $this->supplier_proposal->date_creation + ($this->supplier_proposal->duree_validite * 24 * 3600);
-		}
-		if (!empty($this->supplier_proposal->fin_validite)) {
-			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
-				throw new RestException(500, $this->supplier_proposal->errorsToString());
-			}
-		}
-
 		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
