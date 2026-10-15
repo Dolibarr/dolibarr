@@ -424,11 +424,12 @@ class Ai
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
 				if (is_scalar($decodedResponse['error'])) {
-					// Cast needed because is_scalar() also accepts bool, int and float, while
-					// the method is declared to return a string or the error array.
+					// Casts needed because is_scalar() also accepts bool, int and float, and
+					// var_export() is typed as returning null when its second argument is not
+					// true, while the method is declared to return a string or the error array.
 					$generatedContent = (string) $decodedResponse['error'];
 				} else {
-					$generatedContent = var_export($decodedResponse['error'], true);
+					$generatedContent = (string) var_export($decodedResponse['error'], true);
 				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
