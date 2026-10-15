@@ -320,7 +320,7 @@ class modUser extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('u' => MAIN_DB_PREFIX.'user', 'extra' => MAIN_DB_PREFIX.'user_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(
-			'u.login' => "Login*", 'u.civility' => "CivilityCode", 'u.lastname' => "Name*", 'u.firstname' => "Firstname", 'u.employee' => "Employee*", 'u.job' => "PostOrFunction", 'u.gender' => "Gender",
+			'u.login' => "Login*", 'u.lastname' => "Name*", 'u.firstname' => "Firstname", 'u.employee' => "Employee*", 'u.job' => "PostOrFunction", 'u.gender' => "Gender",
 			'u.accountancy_code' => "UserAccountancyCode",
 			'u.pass_crypted' => "Password", 'u.admin' => "Administrator", 'u.fk_soc' => "Company*", 'u.address' => "Address", 'u.zip' => "Zip", 'u.town' => "Town",
 			'u.fk_state' => "StateId", 'u.fk_country' => "CountryCode",
@@ -332,6 +332,11 @@ class modUser extends DolibarrModules
 			'u.datec' => "DateCreation",
 			'u.statut' => 'Status'
 		);
+		// The civility of a user is only shown on its card when MAIN_USE_TITLE_FOR_USER is set
+		// (see user/card.php), so the import offers it under the same condition.
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_USER')) {
+			$this->import_fields_array[$r]['u.civility'] = "UserTitle";
+		}
 		// Add extra fields
 		$keyforselect = 'user';
 		$keyforelement = 'user';
