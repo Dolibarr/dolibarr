@@ -490,7 +490,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $filepaths = array(), $mimetypes = array(), $filenames = array())
 	{
-		global $conf, $mysoc, $user;
+		global $conf, $extrafields, $mysoc, $user;
 
 		$appli = $mysoc->name;
 
@@ -502,23 +502,21 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 		// Extrafields
-		// The global $extrafields is created empty by master.inc.php: its attributes are only filled
-		// by a fetch_name_optionals_label() call, which nothing guarantees for the ticket table on
-		// the paths reaching this trigger. The definitions are loaded here like
-		// composeAndSendAdminMessage() already does.
-		// A table with no extrafield at all leaves its key unset after the fetch, so the test below
-		// also has to tolerate a missing entry.
-		$extraFields = new ExtraFields($this->db);
-		$extraFields->fetch_name_optionals_label($object->table_element);
-		if (isset($extraFields->attributes[$object->table_element]['label']) && is_array($extraFields->attributes[$object->table_element]['label'])) {
-			foreach ($extraFields->attributes[$object->table_element]['label'] as $key => $value) {
+		// master.inc.php creates the global $extrafields object, but its attributes stay empty
+		// until a fetch_name_optionals_label() call, which nothing guarantees for the ticket
+		// table on the paths reaching this trigger.
+		// A table holding no extrafield at all leaves its key unset even after the fetch, so the
+		// test below also has to tolerate a missing entry.
+		$extrafields->fetch_name_optionals_label($object->table_element);
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
-				if ($enabled && isset($extraFields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval((string) $extraFields->attributes[$object->table_element]['list'][$key], 1);
+				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
-				if ($perms && isset($extraFields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval((string) $extraFields->attributes[$object->table_element]['perms'][$key], 1);
+				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
+					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;
