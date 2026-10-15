@@ -320,7 +320,7 @@ class modUser extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('u' => MAIN_DB_PREFIX.'user', 'extra' => MAIN_DB_PREFIX.'user_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(
-			'u.login' => "Login*", 'u.lastname' => "Name*", 'u.firstname' => "Firstname", 'u.employee' => "Employee*", 'u.job' => "PostOrFunction", 'u.gender' => "Gender",
+			'u.login' => "Login*", 'u.civility' => "CivilityCode", 'u.lastname' => "Name*", 'u.firstname' => "Firstname", 'u.employee' => "Employee*", 'u.job' => "PostOrFunction", 'u.gender' => "Gender",
 			'u.accountancy_code' => "UserAccountancyCode",
 			'u.pass_crypted' => "Password", 'u.admin' => "Administrator", 'u.fk_soc' => "Company*", 'u.address' => "Address", 'u.zip' => "Zip", 'u.town' => "Town",
 			'u.fk_state' => "StateId", 'u.fk_country' => "CountryCode",
@@ -351,7 +351,7 @@ class modUser extends DolibarrModules
 			'u.birth' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r] = array(
-			'u.lastname' => "Doe", 'u.firstname' => 'John', 'u.login' => 'jdoe', 'u.employee' => '0 or 1', 'u.job' => 'CTO', 'u.gender' => 'man or woman',
+			'u.lastname' => "Doe", 'u.firstname' => 'John', 'u.login' => 'jdoe', 'u.employee' => '0 or 1', 'u.job' => 'CTO', 'u.gender' => 'man or woman', 'u.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			'u.pass_crypted' => 'Encrypted password',
 			'u.fk_soc' => '0 (internal user) or company name (external user)', 'u.address' => "61 jump street",
 			'u.zip' => "123456", 'u.town' => "Big town", 'u.fk_country' => 'US, FR, DE...', 'u.office_phone' => "0101010101", 'u.office_fax' => "0101010102",
