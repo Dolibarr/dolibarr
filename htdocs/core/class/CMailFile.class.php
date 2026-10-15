@@ -605,11 +605,7 @@ class CMailFile
 				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
-			if ($msg === '.') {
-				$msg = "\n.\n";
-			}
-			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
-			$msg = preg_replace('/(\r|\n)\.(\r|\n)/ims', '\1..\2', $msg);
+			// Note: lines starting with a "." are escaped by SMTPs::sendMsg() (dot-stuffing)
 
 			if ($this->msgishtml) {
 				$smtps->setBodyContent($msg, 'html');
@@ -1142,6 +1138,8 @@ class CMailFile
 					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
+				// Authentication method of the send context (MAIN_MAIL_SMTPS_AUTH_TYPE_xxx when the context has its own setup)
+				$this->smtps->setAuthType(getDolGlobalString($keyforsmtpauthtype));
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array

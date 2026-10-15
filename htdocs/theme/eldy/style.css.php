@@ -678,11 +678,6 @@ div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div
 	<?php } ?>
 }
 
-.divadvancedsearchfieldcompinput {
-	background: #fff;
-	/* border-bottom: solid 1px var(--inputbordercolor); */
-	border-radius: 3px;
-}
 input[name=duration_value], input[name=durationhour]
 {
 	margin-right: 4px !important;
@@ -1162,6 +1157,10 @@ select.placeholder { color: #ccc; }
 .select2-selection__choice .placeholder { color: #aaa; }
 ::-webkit-input-placeholder { color: #ccc; }
 input:-moz-placeholder { color: #ccc; }
+#search_component_params_input::placeholder {
+	color: var(--colortext);
+	opacity: 0.5;
+}
 select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
 	color: var(--colortext);
 }
@@ -1473,6 +1472,11 @@ textarea.centpercent {
 	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
 	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
 	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
+	z-index: 2;
+}
+.liste_titre.stickyagenda {
+	position: sticky;
+	top: 0;
 	z-index: 2;
 }
 
@@ -1886,8 +1890,11 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	line-height: 24px;
+	line-height: 25px;
 	border-radius: 3px;
+}
+input#search_component_params_input {
+	padding-left: 8px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1909,6 +1916,10 @@ div.divsearchfield {
 	background: #ddd;
 	border-radius: 4px;
 	display: inline-block;
+	height: 26px !important;
+	margin-right: 4px !important;
+/*	margin-bottom: 2px;
+	margin-top: 1px;*/
 }
 .tagsearchdelete {
 	color: #999;
@@ -1928,6 +1939,89 @@ div.divsearchfield {
 	margin-left: -12px;
 	margin-top: 0;
 	position: absolute;
+}
+
+/* Component to select measures of custom reports */
+.customreportsmeasures {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	text-align: start;
+}
+.customreportsmeasures .hidden {
+	display: none !important;
+}
+span.customreportsmeasures-placeholder {
+	padding-left: 8px;
+	opacity: 0.5;
+}
+
+.customreportsmeasures-caret {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0.5;
+}
+.customreportsmeasures-tags {
+	display: contents;
+}
+.customreportsmeasures-dropdown {
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	min-width: max(100%, 340px);
+	width: max-content;
+	max-width: 500px;
+	background-color: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
+	border-radius: 6px;
+	padding: 0;
+	line-height: 1.4;
+}
+.customreportsmeasures-list, .customreportsmeasures-variants {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.customreportsmeasures-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px;
+}
+.customreportsmeasures-variants {
+	padding-left: 26px;
+}
+.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.customreportsmeasures-fieldlabel {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-variants .customreportsmeasures-item {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-fieldlabel:hover, .customreportsmeasures-variants .customreportsmeasures-item:hover {
+	background-color: var(--colorbacklinepairhover);
+}
+.customreportsmeasures-expand, .customreportsmeasures-check {
+	width: 14px;
+	margin-left: auto;
+	padding-left: 8px;
+	text-align: center;
+}
+.customreportsmeasures-check {
+	visibility: hidden;
+}
+.customreportsmeasures-selected > .customreportsmeasures-check {
+	visibility: visible;
+}
+.customreportsmeasures-count {
+	margin-left: 6px;
 }
 
 .a-filter, .a-mesure {
@@ -6008,16 +6102,22 @@ img.boxhandle, img.boxclose {
 }
 
 /* Search component assistance */
+.divadvancedsearchfieldcompinput {
+	background: #fff;
+	/* border-bottom: solid 1px var(--inputbordercolor); */
+	border-radius: 3px;
+	line-height: 36px;
+	/* height: 36px; Must use line-height or there is trouble when component is on several lines */
+}
+
 .search-component-assistance {
 	display: none;
 	position: absolute;
 	background: var(--colorbackbody);
-	border-width: 1px 1px 2px;
-	border-style: solid;
-	border-color: rgb(204, 204, 204);
-	border-image: none; padding: 9px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
-	border-radius: 2px;
+	border: none;
+	padding: 9px;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
+	border-radius: 6px;
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
@@ -6038,10 +6138,9 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	font-size: 12px;
 	color: #333;
-	margin: 5px 0px 5px 0px
+	margin: 20px 0px 30px 0px;
 }
 .search-component-assistance .assistance-errors {
-	margin-bottom: 0px;
 	text-align: center;
 }
 .add-filter-btn {
@@ -6079,13 +6178,13 @@ img.boxhandle, img.boxclose {
 	left: 0;
 	width: 450px;
 	margin-top: 2px;
-	background: var(--colorbackbody);
-	border: 1px solid var(--inputbordercolor);
-	border-radius: 3px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	background: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
+	border-radius: 6px;
 	z-index: 1001;
 }
-.fieldcombo-search {
+.fieldcombo-search, .customreportsmeasures-search {
 	width: 100%;
 	margin: 0;
 	padding: 4px 8px;
@@ -8664,7 +8763,7 @@ dl.dropdown {
 	position:absolute;
 	top:2px;
 	list-style:none;
-	max-height: 264px;
+	max-height: 267px;
 	overflow: auto;
 	border-radius: 6px;
 	z-index: 1;
