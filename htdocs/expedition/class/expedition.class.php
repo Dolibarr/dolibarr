@@ -102,6 +102,11 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
+	 * @var int ID of user who validated
+	 */
+	public $fk_user_valid;
+
+	/**
 	 * @var int
 	 */
 	public $socid;
@@ -830,7 +835,7 @@ class Expedition extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.signed_status, e.fk_projet as fk_project, e.billed";
-		$sql .= ", e.date_valid";
+		$sql .= ", e.date_valid, e.fk_user_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -872,6 +877,7 @@ class Expedition extends CommonObject
 				$this->signed_status		= $obj->signed_status;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated

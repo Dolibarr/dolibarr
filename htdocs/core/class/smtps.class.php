@@ -682,9 +682,14 @@ class SMTPs
 					$_retVal = true;
 					break;
 				case 'PLAIN':
-					$this->socket_send_str('AUTH PLAIN', '334');
-					// The error here just means the ID/password combo doesn't work.
-					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					$_retVal = $this->socket_send_str('AUTH PLAIN', '334');
+					if (!$_retVal) {
+						// The login and password must not be sent if the server does not wait for them
+						$this->_setErr(130, 'Error when asking for AUTH PLAIN');
+					} else {
+						// The error here just means the ID/password combo doesn't work.
+						$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					}
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
@@ -825,7 +830,7 @@ class SMTPs
 				$_retVal = $this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
-				fwrite($this->socket, 'QUIT');
+				$this->socket_send_str('QUIT');
 			} else {
 				// We got error code into $this->lastretval
 			}
@@ -1561,8 +1566,6 @@ class SMTPs
 	 */
 	public function getHeader()
 	{
-		global $conf;
-
 		$_header = 'From: '.$this->getFrom('org')."\r\n"
 		. 'To: '.$this->getTo()."\r\n";
 
@@ -1597,7 +1600,8 @@ class SMTPs
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
 		}
 		if ($this->getMoreInHeader()) {
-			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
+			// Value must include the "\r\n". With MAIN_FIX_FOR_BUGGED_MTA, CMailFile gives "\n", but SMTP needs "\r\n"
+			$_header .= preg_replace('/(?<!\r)\n/', "\r\n", $this->getMoreInHeader());
 		}
 
 		if ($this->getSensitivity()) {
@@ -1621,7 +1625,7 @@ class SMTPs
 		}
 
 		$_header .= 'X-Mailer: Dolibarr version '.DOL_VERSION.' (using SMTPs Mailer)'."\r\n";
-		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
+		$_header .= 'X-Dolibarr-Option: '.(getDolGlobalString('MAIN_MAIL_USE_MULTI_PART') ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
 		// Add also $this->references and In-Reply-To
@@ -2072,7 +2076,8 @@ class SMTPs
 		$limit = 0;
 
 		while (substr($server_response, 3, 1) != ' ' && $limit < 100) {
-			if (!($server_response = fgets($socket, 256))) {
+			// Read the whole line (a reply line longer than the read size would be read as 2 replies)
+			if (!($server_response = fgets($socket))) {
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 				break;
