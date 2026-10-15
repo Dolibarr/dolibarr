@@ -95,7 +95,7 @@ class modSociete extends DolibarrModules
 
 		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
+		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Enter the month number of the first month of the fiscal year, e. g. 9 for September";
 		$this->const[$r][4] = 0;
 		$r++;

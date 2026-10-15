@@ -620,7 +620,9 @@ class tcpdi_parser {
 				for ($c = 0; $c < 3; ++$c) {
 					// for every byte on the column
 					for ($b = 0; $b < $wb[$c]; ++$b) {
-						$sdata[$k][$c] += ($row[$i] << (($wb[$c] - 1 - $b) * 8));
+						if (isset($row[$i])) {
+							$sdata[$k][$c] += ($row[$i] << (($wb[$c] - 1 - $b) * 8));
+						}
 						++$i;
 					}
 				}

@@ -207,6 +207,14 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// Enforce the "edit lines" permission on every action that modifies an existing line
+// (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
+// the "run" permission elsewhere and must stay available to a plain cashier (#38949).
+if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), array(), 1);
+	$action = '';
+}
+
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
 	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
@@ -384,7 +392,7 @@ if (empty($reshook)) {
 					// var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);
 					if ($line->batch != '' && $warehouseid > 0) {
 						$prod_batch = new Productbatch($db);
-						$prod_batch->find(0, '', '', $line->batch, $warehouseid);
+						$prod_batch->find(0, '', '', $line->batch, $warehouseid, $line->fk_product);
 
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
@@ -2078,7 +2086,9 @@ if ($placeid > 0) {
 					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
 				}
 				$htmlforlines .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
-				$htmlforlines .= '<td class="right">';
+				// nowraponall keeps the qty and its '(stock)' block on one line: on narrow layouts
+				// the native display otherwise wraps over three lines inside the qty column.
+				$htmlforlines .= '<td class="right nowraponall">';
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && !getDolGlobalString('TAKEPOS_HIDE_STOCK_ON_LINE')) {

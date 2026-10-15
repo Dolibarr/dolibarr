@@ -136,7 +136,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+restrictedArea($user, 'produit|service', $object->id, 'product_lot');
 if (!$permissiontoread) {
 	accessforbidden();
 }
@@ -252,7 +252,7 @@ if (empty($reshook)) {
 	} */
 
 	if ($action == 'setqc_frequency' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
-		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
+		$result = $object->setValueFrom('qc_frequency', GETPOSTINT('qc_frequency'), '', null, 'int', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) { // Prévoir un test de format de durée
 			setEventMessages($object->error, null, 'errors');
 			$action = 'editqc_frequency';
@@ -261,7 +261,17 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'PRODUCT_LOT_MODIFY'; // Name of trigger action code to execute when we modify record
+	if ($action == 'setlifetime' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
+		$result = $object->setValueFrom('lifetime', GETPOSTINT('lifetime'), '', null, 'int', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action = 'editlifetime';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	$triggermodname = 'PRODUCTLOT_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -506,9 +516,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Sell by
 	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', $object->fields['sellby']['notnull']);
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $permissiontoadd, 'datepicker', '', $object->fields['sellby']['notnull']);
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $permissiontoadd, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
@@ -516,35 +526,35 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Eat by
 	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', $object->fields['eatby']['notnull']);
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $permissiontoadd, 'datepicker', '', $object->fields['eatby']['notnull']);
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $permissiontoadd, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
 
 	if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY')) {
-		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer')).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $permissiontoadd).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $permissiontoadd, 'datepicker').'</td>';
 		print '</tr>';
-		// print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->hasRight('stock', 'creer')).'</td>';
-		// print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
+		// print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $permissiontoadd).'</td>';
+		// print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $permissiontoadd, 'datepicker').'</td>';
 		// print '</tr>';
-		print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->hasRight('stock', 'creer')).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $permissiontoadd).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $permissiontoadd, 'datepicker').'</td>';
 		print '</tr>';
 	}
 
 	// Quality control
 	if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
-		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer')).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $permissiontoadd).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $permissiontoadd, 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->hasRight('stock', 'creer')).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->hasRight('stock', 'creer'), 'string').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $permissiontoadd).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $permissiontoadd, 'string').'</td>';
 		print '</tr>';
-		print '<tr><td>'.$form->editfieldkey($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer')).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer'), 'string').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $permissiontoadd).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $permissiontoadd, 'string').'</td>';
 		print '</tr>';
 	}
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			}
 
 			// move the temporary file
-			if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
+			// Note: the returned value is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+			$resultupload = dol_move_uploaded_file($file['tmp_name'], $dest_file, 0);
+			if (!is_numeric($resultupload) || $resultupload <= 0) {
 				dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
 			} else {
 				// check if all the parts present, and create the final destination file

@@ -352,7 +352,11 @@ if (empty($reshook)) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
-		$discount->unlink_invoice();
+		if ($result > 0 && $discount->fk_facture == $object->id) {	// The credit note must be linked to this invoice
+			$discount->unlink_invoice();
+		} else {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+		}
 	} elseif ($action == 'valid' && $usercancreate) {
 		// Validation
 		$object->fetch($id);
@@ -1054,15 +1058,18 @@ if (empty($reshook)) {
 		if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0) {
 			$paiement = new Paiement($db);
 			$result = $paiement->fetch(GETPOSTINT('paiement_id'));
-			if ($result > 0) {
+			$paymentbills = ($result > 0) ? $paiement->getBillsArray() : array();
+			if ($result > 0 && is_array($paymentbills) && in_array($object->id, $paymentbills)) {	// The payment must be linked to this invoice
 				$result = $paiement->delete($user); // If fetch ok and found
 				if ($result >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;
 				}
-			}
-			if ($result < 0) {
-				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				if ($result < 0) {
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 			}
 		}
 	} elseif ($action == 'add' && $usercancreate) {
@@ -2087,19 +2094,18 @@ if (empty($reshook)) {
 
 				$object->situation_counter += 1;
 
+				// Set extrafields from the create form BEFORE createFromCurrent(), so they are already
+				// present when create() inserts them and fires the BILL_CREATE trigger. This avoids firing
+				// BILL_CREATE a second time just to expose the extrafields (#32217).
+				$extrafields->fetch_name_optionals_label($object->table_element);
+				$extrafields->setOptionalsFromPost(null, $object);
+
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
 				} else {
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
-
-					// create extrafields with data from create form
-					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
-					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
-					if ($ret > 0) {
-						$nextSituationInvoice->insertExtraFields();
-					}
 
 					// Hooks
 					$parameters = array('origin_type' => $object->origin_type, 'origin_id' => $object->origin_id);
@@ -2498,12 +2504,15 @@ if (empty($reshook)) {
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreign currency
-			// If so, we update the pu_equiv as the equivalent price in base currency
+			// If so, we update the pu_equiv as the equivalent price in base currency.
+			// multicurrency_tx is the number of foreign currency units for 1 unit of base
+			// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+			// so the conversion back to base must divide, not multiply (see issue #33042).
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * $currency_tx;
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
 			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * $currency_tx;
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2676,12 +2685,15 @@ if (empty($reshook)) {
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreign currency
-		// If so, we update the pu_equiv as the equivalent price in base currency
+		// If so, we update the pu_equiv as the equivalent price in base currency.
+		// multicurrency_tx is the number of foreign currency units for 1 unit of base
+		// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+		// so the conversion back to base must divide, not multiply (see issue #33042).
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -3696,7 +3708,7 @@ if ($action == 'create') {
 						'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
 					);
 					$typedeposit = GETPOST('typedeposit', 'aZ09');
-					$valuedeposit = GETPOSTINT('valuedeposit');
+					$valuedeposit = GETPOSTFLOAT('valuedeposit');
 					if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {
 						$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
 						if (!empty($origin_payment_conditions_deposit_percent)) {
@@ -4362,7 +4374,7 @@ if ($action == 'create') {
 
 	$head = facture_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill', 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -4715,7 +4727,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -6016,7 +6028,7 @@ if ($action == 'create') {
 						if ($objectidnext) {
 							print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span>';
 						} else {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}

@@ -131,8 +131,6 @@ $note_private = null;
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercard', 'globalcard'));
 
-$result = restrictedArea($user, 'commande', $id);
-
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
 
@@ -141,6 +139,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
+
+$result = restrictedArea($user, 'commande', $id);	// After the fetch: the page may be called with the ref only, the security check must be done on the object found
 
 // Permissions / Rights
 $usercanread    =  $user->hasRight("commande", "lire");
@@ -1116,12 +1116,15 @@ if (empty($reshook)) {
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreign currency
-			// If so, we update the pu_equiv as the equivalent price in base currency
+			// If so, we update the pu_equiv as the equivalent price in base currency.
+			// multicurrency_tx is the number of foreign currency units for 1 unit of base
+			// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+			// so the conversion back to base must divide, not multiply (see issue #33042).
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
 			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one defined
@@ -1246,12 +1249,15 @@ if (empty($reshook)) {
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreign currency
-		// If so, we update the pu_equiv as the equivalent price in base currency
+		// If so, we update the pu_equiv as the equivalent price in base currency.
+		// multicurrency_tx is the number of foreign currency units for 1 unit of base
+		// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+		// so the conversion back to base must divide, not multiply (see issue #33042).
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2566,7 +2572,7 @@ if ($action == 'create' && $usercancreate) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
 		if (isModEnabled('project')) {

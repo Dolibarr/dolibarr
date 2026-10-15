@@ -1312,10 +1312,13 @@ if (!defined('NOLOGIN')) {
 		$_SESSION["dol_company"] = getDolGlobalString("MAIN_INFO_SOCIETE_NOM");
 		$_SESSION["dol_entity"] = $conf->entity;
 		// Store value into session (values stored only if defined)
-		if (!empty($dol_hide_topmenu)) {
+		// Note: do not store the hide-menu flags when the login was done from inside a dialog popup iframe
+		// (dol_openinpopup set, for example after a session timeout inside a popup opened by
+		// dolButtonToOpenUrlInDialogPopup()), otherwise the whole session loses its menus.
+		if (!empty($dol_hide_topmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_topmenu'] = $dol_hide_topmenu;
 		}
-		if (!empty($dol_hide_leftmenu)) {
+		if (!empty($dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_leftmenu'] = $dol_hide_leftmenu;
 		}
 		if (!empty($dol_optimize_smallscreen)) {

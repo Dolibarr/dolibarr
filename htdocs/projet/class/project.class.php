@@ -613,7 +613,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
@@ -864,8 +865,8 @@ class Project extends CommonObject
 	 * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...
 	 * 	@param		string		$tablename		name of table associated of the type
 	 * 	@param		string		$datefieldname	name of date field for filter
-	 *  @param		int			$date_start		Start date
-	 *  @param		int			$date_end		End date
+	 *  @param		?int		$date_start		Start date
+	 *  @param		?int		$date_end		End date
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
 	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
 	 */
@@ -1098,7 +1099,7 @@ class Project extends CommonObject
 		if (empty($error)) {
 			// We remove directory
 			$projectref = dol_sanitizeFileName($this->ref);
-			if ($conf->project->dir_output) {
+			if ($conf->project->dir_output && !empty($projectref)) {
 				$dir = $conf->project->dir_output."/".$projectref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);

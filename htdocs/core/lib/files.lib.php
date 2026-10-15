@@ -444,6 +444,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
+				// are connected into another entity. So we must also create record that was not found into the entity scan, so the one of the object).
+				$ecmfile->entity = empty($object->entity) ? $conf->entity : $object->entity;
+
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -3355,14 +3359,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
+	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier' || $modulepart == 'supplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les commandes fournisseurs
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output)) {
+	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping pour les factures fournisseurs
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;

@@ -104,6 +104,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
@@ -425,7 +426,7 @@ if (empty($reshook)) {
 												$outputlangs = new Translate("", $conf);
 												$outputlangs->setDefaultLang($newlang);
 											}
-											$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+											$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 										} else {
 											$prod->fetch($lines[$i]->fk_product);
 											$label = $lines[$i]->product_label;
@@ -825,7 +826,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->updateExtraField($attribute_name, 'INTERVENTION_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'FICHINTER_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -1153,8 +1154,10 @@ if ($action == 'create') {
 		}
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		$filter = '(s.status:=:1)';
+
+		print $form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
 

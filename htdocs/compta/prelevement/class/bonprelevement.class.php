@@ -1736,7 +1736,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "notify_def";
-		$sql .= " WHERE fk_user=" . ((int) $userid) . " AND fk_action='" . $this->db->escape($action) . "'";
+		$sql .= " WHERE fk_user = " . ((int) $userid) . " AND fk_action = " . ((int) $action);
 
 		if ($this->db->query($sql)) {
 			return 0;
@@ -1768,8 +1768,8 @@ class BonPrelevement extends CommonObject
 		if ($this->deleteNotification($user, $action) == 0) {
 			$now = dol_now();
 
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $userid) . ", 'NULL', 'NULL', '" . $this->db->escape($action) . "')";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify_def (datec, fk_user, fk_soc, fk_contact, fk_action)";
+			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $userid) . ", NULL, NULL, " . ((int) $action) . ")";
 
 			dol_syslog("adnotiff: " . $sql);
 			if ($this->db->query($sql)) {
@@ -2187,8 +2187,8 @@ class BonPrelevement extends CommonObject
 
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
-		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		// 3 char + '-' + 10 (yymmddHHMM) + '-' + id + '-' + code. Must be under 32 (SEPA char limit for MndtId is however 35).
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 17, 'right', 'UTF-8', 1);
 	}
 
 

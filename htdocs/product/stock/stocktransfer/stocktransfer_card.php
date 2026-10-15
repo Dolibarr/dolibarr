@@ -170,7 +170,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'addline' && $permissiontoadd) {
+	if ($action == 'addline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
@@ -209,6 +209,17 @@ if (empty($reshook)) {
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
 
+		// A serial number can be only once in a transfer (a line with the same product, warehouses and serial number would be merged into a qty of 2)
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					break;
+				}
+			}
+		}
+
 		if (empty($error)) {
 			$line = new StockTransferLine($db);
 			$records = $line->fetchAll('', '', 0, 0, '(fk_stocktransfer:=:'.((int) $id).') AND (fk_product:=:'.((int) $fk_product).') AND (fk_warehouse_source:=:'.((int) $fk_warehouse_source).') AND (fk_warehouse_destination:=:'.((int) $fk_warehouse_destination).') AND ('.(empty($batch) ? "(batch:=:'') OR (batch:IS:NULL)" : "batch:=:'".$db->escape($batch)."'").')');
@@ -231,7 +242,14 @@ if (empty($reshook)) {
 			}
 			$object->fetchLines();
 		}
-	} elseif ($action === 'updateline' && $permissiontoadd) {
+	} elseif ($action === 'updateline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
+		$line = new StockTransferLine($db);
+		if ($line->fetch($lineid) <= 0 || $line->fk_stocktransfer != $object->id) {
+			$error++;
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
+		}
+
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
@@ -271,6 +289,18 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 			$action = 'editline';
+		}
+
+		// A serial number can be only once in a transfer
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->id != $lineid && $tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					$action = 'editline';
+					break;
+				}
+			}
 		}
 
 		if (empty($error)) {
@@ -636,7 +666,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && !empty($object->thirdparty) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

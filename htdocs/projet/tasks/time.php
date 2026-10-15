@@ -36,6 +36,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
@@ -133,6 +134,8 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($projectstatic->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Load task
 if ($id > 0 || $ref) {
@@ -543,6 +546,8 @@ if ($action == 'confirm_generateinvoice') {
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -563,8 +568,11 @@ if ($action == 'confirm_generateinvoice') {
 							$idprodline = $fk_product;
 						}
 
-						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject);
+						// Add lines. Pass type=1 (service) explicitly so the invoice line is tagged
+						// as a service even when no product is bound to the time entry. Otherwise
+						// the default $type=0 leaks through and the PDF labels the operation as
+						// "Delivery of goods" instead of "Provision of services" (issue #34571).
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject, '', '', 0, 0, '', 'HT', 0, Product::TYPE_SERVICE);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -612,7 +620,9 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
 				}
 
+				$pu_ht_saved = $pu_ht;	// Save the base unit price (price of the selected product/service if any, 0 otherwise)
 				foreach ($arrayoftasks as $timespent_id => $value) {
+					$pu_ht = $pu_ht_saved;	// Reset for each line, so a line does not inherit the unit price computed for the previous one
 					$userid = $value['user'];
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 
@@ -621,7 +631,9 @@ if ($action == 'confirm_generateinvoice') {
 
 					// If no unit price known
 					if (empty($pu_ht)) {
-						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+						if ($value['timespent']) {
+							$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
+						}
 					}
 
 					// Add lines
@@ -644,6 +656,8 @@ if ($action == 'confirm_generateinvoice') {
 								$error++;
 								$langs->load("errors");
 								setEventMessages(null, $tmpproduct->errors, 'errors');
+								// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+								continue;
 							}
 
 							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -663,7 +677,11 @@ if ($action == 'confirm_generateinvoice') {
 						}
 						$idprodline = $value['fk_product'];
 					}
-					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject);
+					// Pass type=1 (service) explicitly so the invoice line is tagged as a service
+					// even when no product is bound to the time entry. Otherwise the default
+					// $type=0 leaks through and the PDF labels the operation as
+					// "Delivery of goods" instead of "Provision of services" (issue #34571).
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject, '', '', 0, 0, '', 'HT', 0, Product::TYPE_SERVICE);
 					if ($lineid < 0) {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -718,6 +736,8 @@ if ($action == 'confirm_generateinvoice') {
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -824,7 +844,7 @@ if ($action == 'confirm_generateinter') {
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinter->fk_project = $projectstatic->id;
-		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->label : '');
+		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->description : '');
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);
@@ -1381,10 +1401,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_timespent_duration_endmin=' . urlencode((string) ($search_timespent_endmin));
 		}
 
-		/*
-		 // Add $param from extra fields
-		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-		 */
+		// Add $param from extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		if ($id) {
 			$param .= '&id=' . urlencode((string) ($id));
 		}
@@ -1584,13 +1602,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
-		$sql .= " t.fk_product,";
-		$sql .= " pt.ref, pt.label, pt.fk_projet,";
+		$sql .= " t.fk_product, t.invoice_line_id,";
+		$sql .= " pt.ref, pt.label, pt.fk_projet, pt.billable,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
-		$sql .= " t.invoice_line_id,";
-		$sql .= " pt.billable";
+		if (!empty($extrafields->attributes['projet_task']['label'])) {
+			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+			}
+		}
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1604,6 +1625,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as prod ON prod.rowid = t.fk_product";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as pt ON pt.rowid = t.fk_element";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON pt.rowid = efpt.fk_object";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = pt.fk_projet";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON t.fk_user = u.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -1697,6 +1719,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		$sql .= dolSqlDateFilter('t.element_datehour', $search_day, $search_month, $search_year);
+
+		// Add where from extra fields
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'efpt.';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 		// Add where from hooks
 		$parameters = array();
@@ -2010,10 +2037,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<td class="liste_titre center">' . $form->selectyesno('search_valuebilled', $search_valuebilled, 1, false, 1) . '</td>';
 		}
 
-		/*
-		 // Extra fields
-		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-		 */
+		// Extra fields
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'ef.';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields);
 		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2096,10 +2123,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, '', $sortfield, $sortorder, 'center ', $langs->trans("SelectLinesOfTimeSpentToInvoice"));
 			$totalarray['nbfield']++;
 		}
-		/*
-		 // Extra fields
-		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-		 */
+		// Extra fields
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'ef.';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 		// Hook fields
 		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2489,10 +2516,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			/*
-			 // Extra fields
-			 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			 */
+			// Extra fields
+			$obj = $task_time;
+			$extrafieldsobjectkey = 'projet_task';
+			$extrafieldsobjectprefix = 'ef.';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'i' => $i, 'totalarray' => &$totalarray);
@@ -2700,10 +2728,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
-				/*
-				 // Extra fields
-				 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-				 */
+				// Extra fields
+				$obj = $task_time;
+				$extrafieldsobjectkey = 'projet_task';
+				$extrafieldsobjectprefix = 'ef.';
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split1');
@@ -2867,10 +2896,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
-				/*
-				 // Extra fields
-				 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-				 */
+				// Extra fields
+				$obj = $task_time;
+				$extrafieldsobjectkey = 'projet_task';
+				$extrafieldsobjectprefix = 'ef.';
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split2');

@@ -172,8 +172,8 @@ if ($result) {
 			print '<td class="left">'.$obj->label.'</td>';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_start), 'day').'</td>';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_end), 'day').'</td>';
-			print '<td class="center">'.$object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end).'</td>';
-			print '<td class="center">'.$object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end).'</td>';
+			print '<td class="center">'.$object->getAccountancyEntriesByFiscalYear($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
+			print '<td class="center">'.$object->getAccountancyMovementsByFiscalYear($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
 			print '<td class="right">'.$fiscalyearstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;

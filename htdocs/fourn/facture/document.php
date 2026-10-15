@@ -56,6 +56,12 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 
+$object = new FactureFournisseur($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -123,7 +129,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)</div>';
 	}
 	// Project
 	if (isModEnabled('project')) {

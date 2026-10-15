@@ -190,7 +190,7 @@ if (empty($reshook)) {
 					// Check amount
 					if ((abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
-						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
+						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
 					// Check date
 					if ($datepaye && ($datepaye < $tmpinvoice->date)) {
@@ -217,7 +217,7 @@ if (empty($reshook)) {
 					// Check amount
 					if ((abs((float) $multicurrency_amounts[$cursorfacid]) > abs((float) $multicurrency_amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
-						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
+						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
 					// Check date
 					if ($datepaye && ($datepaye < $tmpinvoice->date)) {

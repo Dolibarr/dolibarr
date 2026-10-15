@@ -188,7 +188,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'confirm_reopen' && $permissiontoadd) {
+	if ($action == 'confirm_reopen' && $permissiontoadd && $object->status == $object::STATUS_PRODUCED) {	// The reopen of a canceled MO is done by $object->reopen() (with confirm=yes)
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
@@ -257,6 +257,13 @@ if (empty($reshook)) {
 		exit;
 	}
 
+	// Consumption and production are possible only on a validated or in progress MO
+	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $object->status != $object::STATUS_VALIDATED && $object->status != $object::STATUS_INPROGRESS) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorObjectHasWrongStatus", $object->ref), null, 'errors');
+		$action = '';
+	}
+
 	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
 		$stockmove = new MouvementStock($db);
 
@@ -283,7 +290,7 @@ if (empty($reshook)) {
 								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 								$error++;
 							}
-							if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
+							if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
 								$error++;
@@ -496,9 +503,15 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_editline' && $permissiontoadd) {
+	if ($action == 'confirm_editline' && $permissiontoadd && !in_array($object->status, array($object::STATUS_PRODUCED, $object::STATUS_CANCELED))) {
 		$moline = new MoLine($db);
-		$res = $moline->fetch(GETPOSTINT('lineid'));
+		$result = $moline->fetch(GETPOSTINT('lineid'));
+		if ($result > 0 && $moline->fk_mo != $object->id) {
+			$result = -1;	// The line must belong to this MO
+		}
+		if ($result > 0 && in_array($moline->role, array('consumed', 'produced'))) {
+			$result = -1;	// A consumed or produced quantity is changed by its stock movement, not here (only the quantities to consume or produce can be edited)
+		}
 		if ($result > 0) {
 			$extrafields->fetch_name_optionals_label($moline->element);
 			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
@@ -666,7 +679,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 
@@ -1097,7 +1110,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', '', 1);
 						}
 						print '</td>';
 
@@ -1187,7 +1200,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', '', 1);
 						}
 						print '</td>';
 
@@ -1740,9 +1753,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split All
 						print '<td></td>';
 					}
-					// Delete
+					// Delete, if nothing was produced for this line
 					if ($permissiontodelete) {
-						if ($line->origin_type == 'free') {
+						if ($line->origin_type == 'free' && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';

@@ -436,7 +436,14 @@ class ProductCombination
 		$parent = new Product($this->db);
 		$parent->fetch($this->fk_product_parent);
 
-		$this->updateProperties($parent, $user);
+		// Propagate failure of updateProperties (otherwise an update where the variant
+		// percentage drives the new price below the parent product's price_min returns
+		// success but leaves the variant product at the price=0 it had right after
+		// createProductCombination, see issue #32372).
+		$result = $this->updateProperties($parent, $user);
+		if ($result < 0) {
+			return $result;
+		}
 
 		return 1;
 	}

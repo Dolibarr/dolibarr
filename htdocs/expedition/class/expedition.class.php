@@ -856,22 +856,24 @@ class Expedition extends CommonObject
 		if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 			$result = $this->manageStockMvtOnEvt($user, "ShipmentValidatedInDolibarr");
 			if ($result < 0) {
-				return -2;
+				$error++;
 			}
 		}
 
 		// Change status of order to "shipment in process"
-		$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
-		if ($this->origin == 'commande') {
-			$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
-		} else {
-			$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
-		}
+		if (!$error) {
+			$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
+			if ($this->origin == 'commande') {
+				$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
+			} else {
+				$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+			}
 
-		// TODO : load the origin object to trigger the right setStatus according to origin object
-		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
-		if (!$ret) {
-			$error++;
+			// TODO : load the origin object to trigger the right setStatus according to origin object
+			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
+			if (!$ret) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -1374,7 +1376,7 @@ class Expedition extends CommonObject
 						// We increment stock of batches
 						// We use warehouse selected for each line
 						foreach ($lotArray as $lot) {
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', $lot->batch); // Price is set to 0, because we don't want to see WAP changed. Dates are not given: those of the lot are used (the copy on the line may be outdated)
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1569,7 +1571,7 @@ class Expedition extends CommonObject
 						// We increment stock of batches
 						// We use warehouse selected for each line
 						foreach ($lotArray as $lot) {
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', $lot->batch); // Price is set to 0, because we don't want to see WAP changed. Dates are not given: those of the lot are used (the copy on the line may be outdated)
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1645,7 +1647,7 @@ class Expedition extends CommonObject
 
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);
-							if (!empty($conf->expedition->dir_output)) {
+							if (!empty($conf->expedition->dir_output) && !empty($ref)) {
 								$dir = $conf->expedition->dir_output.'/sending/'.$ref;
 								$file = $dir.'/'.$ref.'.pdf';
 								if (file_exists($file)) {
@@ -2361,7 +2363,7 @@ class Expedition extends CommonObject
 	 */
 	public function setClosed()
 	{
-		global $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2374,8 +2376,16 @@ class Expedition extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
+		$sql .= " AND fk_statut <> ".self::STATUS_CLOSED;
 
 		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// The shipment is not validated (draft, canceled or already closed): nothing to close and no stock must be moved.
+			// Return 0 (nothing done) as when it is already closed, so the workflow closing the shipments of an invoice is not stopped by a draft one.
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::setClosed shipment ".$this->id." is not validated, nothing done", LOG_WARNING);
+			return 0;
+		}
 		if ($resql) {
 			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
 			if ($this->origin == 'commande' && $this->origin_id > 0) {
@@ -2398,7 +2408,7 @@ class Expedition extends CommonObject
 				if ($shipments_match_order) {
 					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
 					// We close the order
-					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
+					$order->cloture($user, 0, 0);		// 0 = do not check the close permission: this is an automatic action of the shipment closing. Note this may also create an invoice if module workflow ask it
 				}
 			}
 
@@ -2609,9 +2619,17 @@ class Expedition extends CommonObject
 		$oldbilled = $this->billed;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut = 1';
-		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut = '.self::STATUS_CLOSED;
 
 		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// The shipment is not closed (draft or canceled), so no stock must be moved
+			$this->db->rollback();
+			$langs->load("sendings");
+			$this->error = $langs->trans("StatusOfRefMustBe", $this->ref, $langs->transnoentitiesnoconv("StatusSendingProcessedShort"));
+			$this->errors[] = $this->error;
+			return -1;
+		}
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
@@ -2670,7 +2688,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', '', '', $obj->batch, $obj->fk_origin_stock); // Dates are not given: those of the lot are used (the copy on the line may be outdated)
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;

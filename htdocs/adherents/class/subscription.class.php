@@ -185,6 +185,16 @@ class Subscription extends CommonObject
 			$this->fk_type = $type;
 		}
 
+		// Update the denormalized end date of subscription of the member, like update() and delete() do
+		if (!$error) {
+			$result = $member->update_end_date($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $member->error;
+				$this->errors[] = $this->error;
+			}
+		}
+
 		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
 			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
 		}

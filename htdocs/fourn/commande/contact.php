@@ -52,14 +52,18 @@ $id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$object = new CommandeFournisseur($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $hookmanager->initHooks(array('ordersuppliercardcontact', 'ordersuppliercontactcard', 'globalcard'));
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
-
-$object = new CommandeFournisseur($db);
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php

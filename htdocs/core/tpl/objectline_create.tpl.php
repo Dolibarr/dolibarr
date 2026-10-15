@@ -669,14 +669,14 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
-			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
-			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -927,6 +927,14 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#tva_tx option').removeAttr('selected');
 							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+
+							// Sync the measuring unit dropdown with the product's default fk_unit
+							// (issue #34610). Without this the dropdown keeps the static initial
+							// value (the first c_units row, typically "Kg") regardless of what
+							// the selected product is configured with.
+							if (typeof data.fk_unit != 'undefined' && data.fk_unit != null && $("#units").length) {
+								$("#units").val(data.fk_unit).trigger('change');
+							}
 
 								<?php
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {

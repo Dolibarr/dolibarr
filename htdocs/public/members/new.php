@@ -236,6 +236,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
+	} elseif (!getDolGlobalString('MEMBER_NEWFORM_FORCETYPE')) {
+		// The type must be one of the active types proposed by the form
+		// (when a type is forced by setup, the type posted is ignored and replaced by the forced one)
+		$tmpadht = new AdherentType($db);
+		if (!array_key_exists(GETPOSTINT('typeid'), $tmpadht->liste_array(1))) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorBadValueForParameter", GETPOSTINT('typeid'), $langs->transnoentitiesnoconv("Type"))."<br>\n";
+		}
 	}
 	if (!in_array(GETPOST('morphy'), array('mor', 'phy'))) {
 		$error++;

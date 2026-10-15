@@ -880,7 +880,8 @@ div#moreinfo, div#infowarehouse {
 		margin-left: 2px;
 	}
 
-	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
+	<?php $maxproductgrid = getDolGlobalInt('TAKEPOS_NB_MAXPRODUCT', 24); ?>
+	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv<?php echo($maxproductgrid - 2); ?>, #prodiv<?php echo($maxproductgrid - 1); ?>, .catwatermark {
 		display: none!important;
 	}
 

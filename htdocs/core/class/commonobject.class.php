@@ -264,19 +264,19 @@ abstract class CommonObject
 	public $thirdparty;
 
 	/**
-	 * @var User 			A related user
+	 * @var User|null 		A related user
 	 * @see fetch_user()
 	 */
 	public $user;
 
 	/**
-	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
+	 * @var string 			The type of originating object. Combined with $origin_id, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
 	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object. Combined with $origin_type, it allows to reload $origin_object
+	 * @var int 			The id of originating object. Combined with $origin_type, it allows to reload $origin_object
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
@@ -1402,6 +1402,18 @@ abstract class CommonObject
 		global $user;
 
 		$error = 0;
+
+		// When called on a loaded object, the link must be one of its own contacts (same filter as liste_contact())
+		if ($this->id > 0) {
+			$sql = "SELECT ec.rowid FROM ".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc";
+			$sql .= " WHERE ec.rowid = ".((int) $rowid)." AND ec.element_id = ".((int) $this->id);
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element = '".$this->db->escape($this->element)."'";
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -3503,6 +3515,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -9242,10 +9258,12 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
-						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST.
+						// Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
 						$ef_value = $this->array_options[$ef_name];
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -10057,7 +10075,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/^(?:tiny|small|medium|big)?int|int$/i', $info['type']))) {
 				return true;
 			} else {
 				return false;

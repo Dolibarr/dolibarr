@@ -437,7 +437,10 @@ class Form
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
 
-			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+			// ExtraLanguages::fetch_name_extralanguages() leaves $this->attributes empty
+			// when MAIN_USE_ALTERNATE_TRANSLATION_FOR is not configured, so PHP 8 raises
+			// 'Undefined array key' on the read below if we do not guard it (issue #34596).
+			if (empty($extralanguages->attributes[$object->element]) || !is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
 				return ''; // No extralang field to show
 			}
 
@@ -3617,11 +3620,11 @@ class Form
 		}
 
 		if ($stocktag == 1) {
-			$opt .= ' class="product_line_stock_ok" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_ok" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_ok"';
 		}
 		if ($stocktag == -1) {
-			$opt .= ' class="product_line_stock_too_low" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_too_low" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_too_low"';
 		}
 
@@ -6998,10 +7001,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
@@ -10312,7 +10315,9 @@ class Form
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (!empty($extralanguages->attributes['societe']['name'])) {
+				// Guard against PHP 8 'Undefined array key' when MAIN_USE_ALTERNATE_TRANSLATION_FOR
+				// is not configured and fetch_name_extralanguages() leaves attributes empty (issue #34596).
+				if (!empty($extralanguages->attributes['societe']) && !empty($extralanguages->attributes['societe']['name'])) {
 					$object->fetchValuesForExtraLanguages();
 
 					$htmltext = '';

@@ -93,6 +93,9 @@ $permissiontoapprove = $user->hasRight('holiday', 'approve');
 $canread = 0;
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$fuserid = $object->fk_user;	// On an existing leave request, permissions are checked on its owner, never on the fuserid parameter
+	}
 
 	// Check current user can read this leave request
 	if ($user->hasRight('holiday', 'readall')) {
@@ -520,12 +523,18 @@ if (empty($reshook)) {
 					}
 				}
 
-				// option to notify the validator if the balance is less than the request
+				// option to notify the validator if the balance is less than the request.
+				// Skip the warning when the leave type has affect=0 in c_holiday_types,
+				// i.e. the type is configured not to deduct days from the balance, so a
+				// shortage is irrelevant (see issue #38212).
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$typeaffectsbalance = (int) getDictionaryValue('c_holiday_types', 'affect', $object->fk_type, true);
+					if ($typeaffectsbalance) {
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
-					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
-						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
+							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						}
 					}
 				}
 
@@ -814,14 +823,25 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$oldstatus = $object->status;
-		$object->statut = Holiday::STATUS_DRAFT;
-		$object->status = Holiday::STATUS_DRAFT;
-
-		$result = $object->update($user);
-		if ($result < 0) {
+		// Same rules as the SetToDraft button: user allowed to edit the leave request of its owner, and canceled leave request only
+		if (!$user->hasRight('holiday', 'writeall') && !($user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids))) {
+			accessforbidden();
+		}
+		if ($object->status != Holiday::STATUS_CANCELED) {
 			$error++;
-			setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('Canceled')), null, 'errors');
+		}
+
+		if (!$error) {
+			$oldstatus = $object->status;
+			$object->statut = Holiday::STATUS_DRAFT;
+			$object->status = Holiday::STATUS_DRAFT;
+
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -832,6 +852,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+	}
+
+	// An approved leave request that is already over can be canceled only by an approver (same rule as the Cancel button)
+	if ($action == 'confirm_cancel' && $object->status == Holiday::STATUS_APPROVED && $object->date_fin <= dol_now() && empty($user->admin) && $user->id != $object->fk_user_approve && !$user->hasRight('holiday', 'approve')) {
+		setEventMessages($langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed"), null, 'errors');
+		$action = '';
 	}
 
 	// If confirmation of cancellation
@@ -864,6 +890,7 @@ if (empty($reshook)) {
 
 				$startDate = $object->date_debut_gmt;
 				$endDate = $object->date_fin_gmt;
+				$alreadydebited = true;
 
 				if (!empty($decrease)) {
 					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
@@ -872,13 +899,16 @@ if (empty($reshook)) {
 					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
 						$endDate = $endOfMonthBeforeLastUpdate;
 					} elseif ($object->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
-						$endDate = $startDate;
+						$alreadydebited = false;	// Leave after the last month processed by updateSoldeCP(), so nothing was debited yet
 					}
 				}
 
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
 
+				if (!$alreadydebited) {
+					$nbopenedday = 0;
+				}
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
 
@@ -1633,7 +1663,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 
 					if (($permissiontoadd || $permissiontoaddall) && $object->status == Holiday::STATUS_CANCELED) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft&token='.newToken().'" class="butAction">'.$langs->trans("SetToDraft").'</a>';
 					}
 					if ($candelete && ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED)) {	// If draft or canceled or refused
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';

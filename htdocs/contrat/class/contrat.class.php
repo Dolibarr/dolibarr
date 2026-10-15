@@ -1300,7 +1300,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->contrat->dir_output) {
+			if ($conf->contrat->dir_output && !empty($ref)) {
 				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -1914,6 +1914,18 @@ class Contrat extends CommonObject
 				if ($result < 0) {
 					$error++;
 					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
+				}
+			}
+
+			if (!$error) {
+				// Renumber remaining lines so rang stays a contiguous 1..N sequence.
+				// Without this, a deleted line leaves a permanent gap that breaks
+				// the up/down swap logic (updateLineUp/updateLineDown) for any pair
+				// of lines that no longer sit at an exact rang+/-1 from each other.
+				$result = $this->line_order(true, 'ASC', false);
+				if ($result < 0) {
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline line_order error";
 				}
 			}
 

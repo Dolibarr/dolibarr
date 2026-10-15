@@ -1178,7 +1178,10 @@ class Facture extends CommonInvoice
 
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
-		$this->fetch_optionals();
+		// (unless the caller already set array_options, e.g. from a create form, so we don't overwrite them)
+		if (empty($this->array_options)) {
+			$this->fetch_optionals();
+		}
 
 		if (!empty($this->array_options)) {
 			$facture->array_options = $this->array_options;
@@ -1276,6 +1279,12 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$object->fetch($fromid);
+		// fetch() clears $object->thirdparty, but the subsequent $object->create() path
+		// reaches addLine() -> getLocalTaxesFromRate() -> get_localtax() and uses the
+		// buyer thirdparty to decide whether IRPF/localtax2 applies. Without this fetch,
+		// get_localtax() sees $thirdparty_buyer = null, returns 0 and the cloned lines
+		// lose their localtax2_tx (see issue #29052).
+		$object->fetch_thirdparty();
 
 		// Load source object
 		$objFrom = clone $object;
@@ -2270,6 +2279,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -2670,6 +2680,11 @@ class Facture extends CommonInvoice
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
+			if ($this->socid > 0 && $remise->fk_soc != $this->socid) {	// The discount must belong to the thirdparty of the invoice
+				$this->error = $langs->trans("ErrorDiscountNotSameCompany");
+				$this->db->rollback();
+				return -6;
+			}
 			if ($remise->fk_facture) {	// Protection against multiple submission
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();

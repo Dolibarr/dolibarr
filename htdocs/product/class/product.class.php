@@ -1026,6 +1026,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 		// Barcode value
 		$this->barcode = trim($this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
@@ -1440,6 +1453,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 
 		$this->db->begin();
 
@@ -1454,7 +1480,8 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
+			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
 				$this->oldcopy = dol_clone($this, 1);
 			}
 			// Test if batch management is activated on existing product
@@ -2457,7 +2484,10 @@ class Product extends CommonObject
 			}
 		}
 
-		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
+		$localtax1 = get_localtax($tva_tx, 1, $thirdparty_buyer, $thirdparty_seller, $tva_npr);
+		$localtax2 = get_localtax($tva_tx, 2, $thirdparty_buyer, $thirdparty_seller, $tva_npr);
+
+		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr, 'localtax1' => $localtax1, 'localtax2' => $localtax2);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3434,7 +3464,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3506,7 +3536,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3559,7 +3589,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -3684,7 +3714,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -3746,7 +3776,7 @@ class Product extends CommonObject
 		$sql .= " AND ed.fk_elementdet = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
@@ -3825,7 +3855,7 @@ class Product extends CommonObject
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND cf.fk_soc = ".((int) $socid);
@@ -3886,7 +3916,7 @@ class Product extends CommonObject
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
 		$sql .= " AND (mp.disable_stock_change IN (0) OR mp.disable_stock_change IS NULL)";
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND m.fk_soc = ".((int) $socid);
@@ -4004,7 +4034,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND c.statut != 0";
 		if ($socid > 0) {
@@ -4075,7 +4105,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4147,7 +4177,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4218,7 +4248,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -6344,9 +6374,12 @@ class Product extends CommonObject
 	{
 		$result = array();
 
-		$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb, ".$this->db->prefix()."product_stock as ps";
-		$sql .= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
-		$sql .= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+		// The dates of the lot are read from llx_product_lot (eatby and sellby of llx_product_batch are deprecated and not updated when the lot is modified)
+		$sql = "SELECT pb.batch, pl.eatby, pl.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON pb.fk_product_stock = ps.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl ON pl.fk_product = ps.fk_product AND pl.batch = pb.batch";
+		$sql .= " WHERE ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
+		$sql .= " GROUP BY pb.batch, pl.eatby, pl.sellby";
 		dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -6994,7 +7027,10 @@ class Product extends CommonObject
 		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
 		} else {
-			$prodDurationHours = 0.0;
+			// Unknown unit: the duration cannot be converted. Returning 0 silently made callers
+			// compute a zero duration, and time.php divides by this value (#40805).
+			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
+			return -1;
 		}
 		$prodDurationHours *= $this->duration_value;
 

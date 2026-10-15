@@ -1742,10 +1742,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1773,6 +1769,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
@@ -2362,7 +2362,7 @@ class EmailCollector extends CommonObject
 								$contactid = $projectstatic->fk_contact;
 							}
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}
@@ -3103,7 +3103,7 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(array('emailcolector'));
+								$hookmanager->initHooks(['emailcolector', 'emailcollector']);
 								$parameters = array('arrayobject' => $arrayobject);
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
@@ -3243,7 +3243,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $projecttocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($projecttocreate->socid > 0) {
@@ -3398,7 +3399,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($tickettocreate->socid > 0) {
@@ -3430,7 +3432,7 @@ class EmailCollector extends CommonObject
 										$sender_contact = new Contact($this->db);
 										$sender_contact->fetch(0, null, '', $from);
 										if (!empty($sender_contact->id)) {
-											$tickettocreate->context['contactid'] = $sender_contact->id;
+											$tickettocreate->context['contact_id'] = $sender_contact->id;
 										}
 
 										$result = $tickettocreate->create($user);
@@ -3530,7 +3532,8 @@ class EmailCollector extends CommonObject
 								 if ($savesocid > 0) {
 								 if ($savesocid != $candidaturetocreate->socid) {
 								 $errorforactions++;
-								 setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+								 $this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value';
+								 $this->errors[] = $this->error;
 								 }
 								 } else {
 								 if ($candidaturetocreate->socid > 0)
@@ -3568,7 +3571,7 @@ class EmailCollector extends CommonObject
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
 							}
-							$hookmanager->initHooks(['emailcolector']);
+							$hookmanager->initHooks(['emailcolector', 'emailcollector']);
 
 							$parameters = array(
 								'connection' =>  $connection,

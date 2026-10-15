@@ -47,7 +47,7 @@ if ($rss) {
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -270,7 +270,8 @@ if ($rss) {
 	$outputfile = $dir_temp.'/'.$filename;
 	$result = readfile($outputfile);
 	if (!$result) {
-		print 'File '.$outputfile.' was empty.';
+		dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+		print 'File '.dol_escape_htmltag($filename).' was empty.';
 	}
 
 	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));

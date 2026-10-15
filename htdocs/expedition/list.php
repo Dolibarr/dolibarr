@@ -6,7 +6,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
@@ -629,30 +629,24 @@ if (empty($reshook)) {
 	}
 
 	// If massaction is close
-	if ($massaction == 'classifyclose') {
+	if ($massaction == 'classifyclose' && $permissiontoadd) {
 		$error = 0;
 		$selectids = GETPOST('toselect', 'array');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);
 			$result = $object->setClosed();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		$massaction = $action = 'classifyclose';
 
-		if ($result < 0) {
-			$error++;
-		}
-
-
 		if (!$error) {
-			$db->commit();
-
 			setEventMessage($langs->trans("Close Done"));
 			header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		} else {
-			$db->rollback();
 			exit;
 		}
 	}
@@ -743,13 +737,13 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= ' AND e.signed_status = '.urlencode($search_signed_status);
+	$sql .= " AND e.signed_status = ".((int) $search_signed_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.((int) $search_billed);
+	$sql .= " AND e.billed = ".((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1042,9 +1036,11 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if ($user->hasRight('expedition', 'creer')) {
+	$arrayofmassactions['classifyclose'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close");
+}
 if ($user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }

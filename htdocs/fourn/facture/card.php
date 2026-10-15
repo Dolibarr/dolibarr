@@ -13,7 +13,8 @@
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,9 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
+	}
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 	}
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) {
@@ -706,6 +710,15 @@ if (empty($reshook)) {
 				$discount->tva_tx = 0;
 				$discount->vat_src_code = '';
 
+				// multi-currency
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+				$discount->multicurrency_total_ht = $discount->multicurrency_total_ttc = (float) price2num((float) $discount->amount_ttc * (float) $object->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = 0;
+				// keep compatibility
+				$discount->multicurrency_amount_ht = $discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+				$discount->multicurrency_amount_tva = 0;
+
 				$result = $discount->create($user);
 				if ($result < 0) {
 					$error++;
@@ -716,9 +729,16 @@ if (empty($reshook)) {
 					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
 					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					// multi-currency
+					$discount->multicurrency_code = $object->multicurrency_code;
+					$discount->multicurrency_tx = $object->multicurrency_tx;
+					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					// keep compatibility
+					$discount->multicurrency_amount_ht = abs((float) $discount->multicurrency_total_ht);
+					$discount->multicurrency_amount_tva = abs((float) $discount->multicurrency_total_tva);
+					$discount->multicurrency_amount_ttc = abs((float) $discount->multicurrency_total_ttc);
 
 					// Clean vat code
 					$reg = array();
@@ -975,7 +995,10 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
-						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
+
+						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
+						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
+						$retAddLine = $object->addline($desc, -$remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
 
 						if ($retAddLine < 0) {
 							$error++;
@@ -3276,7 +3299,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -4142,7 +4165,7 @@ if ($action == 'create') {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
 						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}

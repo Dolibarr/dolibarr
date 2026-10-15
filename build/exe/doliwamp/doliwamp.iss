@@ -394,13 +394,13 @@ begin
 	
     phpDllCopy := 'libssh2.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuuc64.dll';
+    phpDllCopy := 'icuuc66.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuin64.dll';
+    phpDllCopy := 'icuin66.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuio64.dll';
+    phpDllCopy := 'icuio66.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icudt64.dll';
+    phpDllCopy := 'icudt66.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'libsasl.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);

@@ -71,10 +71,19 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 
 
-// Setup conf MYMODULE_MYPARAM4 : example of quick define write style
-$formSetup->newItem('INVOICE_USE_SITUATION')
-	->setAsYesNo()
-	->nameText = $langs->trans('UseSituationInvoices');
+// INVOICE_USE_SITUATION is a 3-state flag (0=off, 1=cumulative/legacy, 2=progressive), see admin/invoice.php.
+// A yes/no toggle can only write 0 or 1 and deletes the const when turned off (ajax_constantonoff calls
+// dolibarr_del_const): mode 2 could not be selected and was silently dropped. Use a 3-value select, which
+// writes the literal value via dolibarr_set_const and never deletes the const.
+$item = $formSetup->newItem('INVOICE_USE_SITUATION');
+$item->setAsSelect(array(
+	0 => $langs->trans('Disabled'),
+	1 => $langs->trans('SituationInvoiceModeCumulative'),
+	2 => $langs->trans('SituationInvoiceModeProgressive'),
+));
+$situationModeHelp = $langs->trans('SituationInvoiceModeHelp')
+	.'<br><b>'.$langs->trans('SituationInvoiceModeWarning').'</b>';
+$item->nameText = $langs->trans('SituationInvoiceMode').info_admin($situationModeHelp, 0, 0, 'warning', 'clearboth');
 
 $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 	->setAsYesNo()
