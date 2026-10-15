@@ -2154,8 +2154,18 @@ if (empty($reshook)) {
 
 							if ($diff != 0) {
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								// Apply rounding diff to the first real line, ignoring special lines
+								$targetLine = null;
+								foreach ($object->lines as $line) {
+									if (empty($line->special_code)) {
+										$targetLine = $line;
+										break;
+									}
+								}
+								if ($targetLine !== null) {
+									$subprice_diff = $targetLine->subprice - $diff / (1 + $targetLine->tva_tx / 100);
+									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $targetLine->tva_tx, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
+								}
 							}
 						}
 
