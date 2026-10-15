@@ -78,7 +78,11 @@ if ($place > 0) {
 	}
 }
 $object = new Facture($db);
-$object->fetch($facid);
+$result = $object->fetch($facid);
+// Only an invoice of the POS, in an entity of the user, can be printed from the POS
+if ($result <= 0 || $object->module_source != 'takepos' || !in_array($object->entity, explode(',', getEntity('invoice')))) {
+	accessforbidden();
+}
 
 // Call to external receipt modules if exist
 $parameters = array();
