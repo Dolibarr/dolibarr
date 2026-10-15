@@ -86,6 +86,19 @@ class Paiements extends DolibarrApi
 			throw new RestException(403, 'Access to this payment not allowed for this user');
 		}
 
+		// A payment is not attached to a thirdparty itself, so the access is checked on the
+		// invoices it pays: an external user restricted to its own thirdparty must not reach the
+		// payment of another one. The sibling api_invoices.class.php does the same after its fetch.
+		$billsarray = $this->paiement->getBillsArray();
+		if (!is_array($billsarray)) {
+			throw new RestException(500, 'Error when retrieving invoices of the payment : '.$this->paiement->errorsToString());
+		}
+		foreach ($billsarray as $billid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $billid)) {
+				throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			}
+		}
+
 		return $this->_cleanObjectDatas($this->paiement);
 	}
 
@@ -118,9 +131,21 @@ class Paiements extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT t.rowid";
+		// A payment has no thirdparty of its own, it is reached through the invoices it pays.
+		// A user bound to a thirdparty must only see the payments of that one, the same way
+		// api_invoices.class.php restricts its own list.
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
+
+		$sql = "SELECT DISTINCT t.rowid";
 		$sql .= " FROM ".$this->db->prefix().$tmpobject->table_element." AS t";
+		if ($socid > 0) {
+			$sql .= " INNER JOIN ".$this->db->prefix()."paiement_facture AS pf ON pf.fk_paiement = t.rowid";
+			$sql .= " INNER JOIN ".$this->db->prefix()."facture AS f ON f.rowid = pf.fk_facture";
+		}
 		$sql .= " WHERE 1 = 1";
+		if ($socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
 		}
@@ -201,6 +226,19 @@ class Paiements extends DolibarrApi
 			throw new RestException(403, 'Access to this payment not allowed for this user');
 		}
 
+		// A payment is not attached to a thirdparty itself, so the access is checked on the
+		// invoices it pays: an external user restricted to its own thirdparty must not reach the
+		// payment of another one. The sibling api_invoices.class.php does the same after its fetch.
+		$billsarray = $this->paiement->getBillsArray();
+		if (!is_array($billsarray)) {
+			throw new RestException(500, 'Error when retrieving invoices of the payment : '.$this->paiement->errorsToString());
+		}
+		foreach ($billsarray as $billid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $billid)) {
+				throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			}
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -250,6 +288,19 @@ class Paiements extends DolibarrApi
 		}
 		if (!$this->_checkAccessToPaymentForExternalUser((int) $this->paiement->id)) {
 			throw new RestException(403, 'Access to this payment not allowed for this user');
+		}
+
+		// A payment is not attached to a thirdparty itself, so the access is checked on the
+		// invoices it pays: an external user restricted to its own thirdparty must not reach the
+		// payment of another one. The sibling api_invoices.class.php does the same after its fetch.
+		$billsarray = $this->paiement->getBillsArray();
+		if (!is_array($billsarray)) {
+			throw new RestException(500, 'Error when retrieving invoices of the payment : '.$this->paiement->errorsToString());
+		}
+		foreach ($billsarray as $billid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $billid)) {
+				throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			}
 		}
 
 		if ($this->paiement->delete(DolibarrApiAccess::$user) == 0) {
