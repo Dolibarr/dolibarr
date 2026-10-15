@@ -482,6 +482,8 @@ class AllTests
 		$suite->addTestSuite('EmailCollectorTest');
 		require_once dirname(__FILE__).'/EmailCleanerTest.php';
 		$suite->addTestSuite('EmailCleanerTest');
+		require_once dirname(__FILE__).'/EmailCollectorMcpToolsTest.php';
+		$suite->addTestSuite('EmailCollectorMcpToolsTest');
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
