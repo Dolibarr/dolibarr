@@ -892,10 +892,6 @@ class Delivery extends CommonObject
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
 				$line->description	= $obj->description;
-				// We need ->desc because some code into CommonObject use desc (property defined for
-				// other elements). pdf_getlinedesc() reads ->desc first and, when it is empty, lets
-				// the multilingual description of the product win over ->description, so the text
-				// edited on the line was replaced by the product one in the generated PDF.
 				$line->desc = $obj->description;
 				$line->fk_product 	= $obj->fk_product;
 				$line->qty_asked 	= $obj->qty_asked;
