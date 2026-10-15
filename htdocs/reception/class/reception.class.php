@@ -1561,9 +1561,9 @@ class Reception extends CommonObject
 
 		$error = 0;
 
-		// Protection
+		// Protection. This avoid to move stock later when we should not
 		if ($this->statut == Reception::STATUS_CLOSED) {
-			dol_syslog(get_class($this)."::Already in closed status", LOG_WARNING);
+			dol_syslog(get_class($this)."::setClosed already in closed status", LOG_WARNING);
 			return 0;
 		}
 		// Only a validated reception can be closed (a draft reception must not move stock)
