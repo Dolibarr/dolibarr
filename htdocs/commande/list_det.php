@@ -66,7 +66,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "orders", 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array("categories", "orders", 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products', 'projects'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -245,7 +245,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Project columns use the same access scope for display, search and sorting.
 $canreadprojects = isModEnabled('project') && $user->hasRight('projet', 'lire');
 $projectcolumnenabled = $canreadprojects ? '1' : '0';
-$langs->load('projects');
 $arrayfields['p.ref'] = array('label' => 'RefProject', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.ref']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'], 'help' => '');
 $arrayfields['p.title'] = array('label' => 'ProjectLabel', 'langfile' => 'projects', 'checked' => (string) $arrayfields['p.title']['checked'], 'enabled' => $projectcolumnenabled, 'position' => (int) $arrayfields['p.ref']['position'] + 1, 'help' => '');
 
