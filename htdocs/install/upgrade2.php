@@ -206,6 +206,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// Load global conf
 	$conf->setValues($db);
 
+	// Init $mysoc, needed by the init() of some modules (e.g. BlockedLog)
+	require_once $dolibarr_main_document_root.'/societe/class/societe.class.php';
+	$mysoc = new Societe($db);
+	$mysoc->setMysoc($conf);
+
 
 	// Reforce log activation (samecode than into the inc.php)
 	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
