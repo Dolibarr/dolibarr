@@ -248,7 +248,12 @@ class DolEditor
 			}
 			$out .= ' '.($moreparam ? $moreparam : '');
 			$out .= ' class="flat '.dol_string_nohtmltag($this->toolbarname).' '.$morecss.'">';
-			$out .= htmlspecialchars($this->content);
+			// A content with no tag is a plain text stored escaped: decode it once, else the user reads '&gt;' for '>'
+			$contenttoshow = $this->content;
+			if (!preg_match('/<[a-z!\/]/i', $contenttoshow)) {
+				$contenttoshow = html_entity_decode($contenttoshow, ENT_QUOTES, 'UTF-8');
+			}
+			$out .= htmlspecialchars($contenttoshow);
 			$out .= '</textarea>';
 
 			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && isModEnabled('fckeditor')) {
