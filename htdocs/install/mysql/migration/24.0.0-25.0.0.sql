@@ -518,3 +518,9 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
 -- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
 ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
+
+-- OAuth Server module: grants are stored in llx_oauth_token with service 'dolibarr_oauth_server'
+ALTER TABLE llx_oauth_token ADD COLUMN fk_oauth_client integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN expire_refresh_at datetime NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh_previous varchar(80) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN date_refresh datetime NULL;

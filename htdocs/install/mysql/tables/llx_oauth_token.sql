@@ -41,5 +41,9 @@ CREATE TABLE llx_oauth_token (
     passkey_sign_count			integer NULL,			-- last signature counter returned by the authenticator (0 for synced passkeys)
     passkey_aaguid				varchar(36) NULL,		-- model of authenticator, as UUID
     passkey_backup_eligible		smallint NULL,			-- 1 if the passkey can be synced to other devices
-    passkey_backup_state		smallint NULL			-- 1 if the passkey was synced at last use
+    passkey_backup_state		smallint NULL,			-- 1 if the passkey was synced at last use
+    fk_oauth_client integer NULL,						-- for service 'dolibarr_oauth_server': id in llx_oauth_client
+    expire_refresh_at datetime NULL,					-- for service 'dolibarr_oauth_server': expiry of the refresh token
+    tokenstring_refresh_previous varchar(80) NULL,		-- for service 'dolibarr_oauth_server': hash of the refresh token replaced by the last rotation
+    date_refresh datetime NULL							-- for service 'dolibarr_oauth_server': date of the last rotation
 )ENGINE=innodb;
