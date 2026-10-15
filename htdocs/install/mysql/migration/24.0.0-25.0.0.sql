@@ -506,3 +506,9 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- OAuth Server module: grants are stored in llx_oauth_token with service 'dolibarr_oauth'
+ALTER TABLE llx_oauth_token ADD COLUMN fk_oauth_client integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN expire_refresh_at datetime NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh_previous varchar(80) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN date_refresh datetime NULL;

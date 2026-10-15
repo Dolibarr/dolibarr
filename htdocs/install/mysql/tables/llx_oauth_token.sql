@@ -33,5 +33,9 @@ CREATE TABLE llx_oauth_token (
     lastaccess    	datetime NULL,						-- updated at each api access
     apicount_previous_month BIGINT UNSIGNED DEFAULT 0,
     apicount_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
-    apicount_total BIGINT UNSIGNED DEFAULT 0			-- increased by 1 at each page access, no reset
+    apicount_total BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, no reset
+    fk_oauth_client integer NULL,						-- for service 'dolibarr_oauth': id in llx_oauth_client
+    expire_refresh_at datetime NULL,					-- for service 'dolibarr_oauth': expiry of the refresh token
+    tokenstring_refresh_previous varchar(80) NULL,		-- for service 'dolibarr_oauth': hash of the refresh token replaced by the last rotation
+    date_refresh datetime NULL							-- for service 'dolibarr_oauth': date of the last rotation
 )ENGINE=innodb;
