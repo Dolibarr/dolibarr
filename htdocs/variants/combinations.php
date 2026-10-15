@@ -85,6 +85,9 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->creer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->creer)));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && !empty($user->rights->produit->supprimer)) || ($object->type == Product::TYPE_SERVICE && !empty($user->rights->service->supprimer)));
+
 
 /*
  * Actions
@@ -190,15 +193,25 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 		$db->rollback();
 	}
-} elseif (!empty($massaction)) {
+} elseif (!empty($massaction) && ($massaction == 'delete' ? $usercandelete : $usercancreate)) {
 	$bulkaction = $massaction;
 	$error = 0;
 
-
+	// The mass action can only target the variants of this product
+	$childids = array();
+	$tmpcombinations = $prodcomb->fetchAllByFkProductParent($object->id);
+	if (is_array($tmpcombinations)) {
+		foreach ($tmpcombinations as $tmpcombination) {
+			$childids[] = (int) $tmpcombination->fk_product_child;
+		}
+	}
 
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
+		if (!in_array((int) $prodid, $childids)) {
+			continue;
+		}
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
 
