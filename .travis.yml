@@ -72,7 +72,7 @@ notifications:
 
 before_install:
 - |
-  echo "Remove awful phpenv and install packages"
+  echo "Remove awful phpenv and update apt"
   sudo rm -fr ~/.phpenv
   sudo rm -fr /root/.phpenv
   #sudo add-apt-repository -y ppa:ondrej/php
