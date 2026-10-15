@@ -807,15 +807,11 @@ class SMTPs
 					 */
 
 					/*
-					 * TODO
-					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
-					 * if not, the whole message will fail
-					 * If any email address fails, we will need to RESET the connection,
-					 * mark the last address as "bad" and start the address loop over again.
-					 * If any address fails, the entire message fails.
+					 * If any address fails, the entire message fails: the sending is reported as failed, so sending
+					 * the message to the other recipients would make duplicates when it is sent again.
+					 * Closing the connection before the end of the data cancels the message.
 					 */
 					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
-						// Stop here, sending DATA would desynchronize the SMTP responses
 						fclose($this->socket);
 						return false;
 					}
@@ -825,6 +821,7 @@ class SMTPs
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
 				if (!$this->socket_send_str('DATA', '354')) {
+					// The data must not be sent, the server would read it as SMTP commands
 					fclose($this->socket);
 					return false;
 				}
