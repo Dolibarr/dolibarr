@@ -212,16 +212,22 @@ class Ai
 			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 			$configurations = json_decode($configurationsJson, true);
 
+			// The custom prompts are saved by ai/admin/custom_prompt.php under the keys of
+			// getListOfAIFeatures(), which calls this feature 'textrephrase', while the editor
+			// toolbar sends 'textrephraser' as the function name. Without this translation the
+			// saved prompts of the text rephraser are never found and the default one is used.
+			$configurationkey = ($function == 'textrephraser' ? 'textrephrase' : $function);
+
 			$prePrompt = '';
 			$postPrompt = '';
 
-			if (isset($configurations[$function])) {
-				if (isset($configurations[$function]['prePrompt'])) {
-					$prePrompt = $configurations[$function]['prePrompt'];
+			if (isset($configurations[$configurationkey])) {
+				if (isset($configurations[$configurationkey]['prePrompt'])) {
+					$prePrompt = $configurations[$configurationkey]['prePrompt'];
 				}
 
-				if (isset($configurations[$function]['postPrompt'])) {
-					$postPrompt = $configurations[$function]['postPrompt'];
+				if (isset($configurations[$configurationkey]['postPrompt'])) {
+					$postPrompt = $configurations[$configurationkey]['postPrompt'];
 				}
 			}
 			//var_dump($prePrompt);
