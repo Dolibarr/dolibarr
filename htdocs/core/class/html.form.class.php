@@ -13083,7 +13083,7 @@ class Form
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
 		}
 
-		$ret = '<!-- searchComponent -->';
+		$ret = '<!-- filterComponent -->';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
@@ -13093,7 +13093,7 @@ class Form
 		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500 maxwidth300onsmartphone">';
 
 		// Show select fields as tags.
-		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
+		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block">';
 
 		if ($search_component_params_hidden) {
 			// Split the criteria on each AND
@@ -13174,7 +13174,7 @@ class Form
 
 			// Regenerate the search_component_params_hidden with all data-ufilter except the one to delete, and post the page
 			var newparamstring = \'\';
-			$(\'.tagsearch\').each(function(index, element) {
+			$(\'.tagsearch[data-ufilterid]\').each(function(index, element) {
 				tmpfilterid = $(this).attr("data-ufilterid");
 				if (tmpfilterid != filterid) {
 					// We keep this criteria
@@ -13399,16 +13399,20 @@ class Form
 		// Script jQuery to show/hide the floating assistance
 		$ret .= '<script>
 			$(document).ready(function() {
-				$("#search_component_params_input").on("click", function() {
-					const inputPosition = $(this).offset();
-					const inputHeight = $(this).outerHeight();
+				$("#search_component_params_input").closest(".divadvancedsearchfieldcompinput").on("click", function(e) {
+					// Open the assistance on a click in the zone of filters, except on a tag
+					if ($(e.target).closest(".tagsearch").length) {
+						return;
+					}
+					const inputPosition = $("#search_component_params_input").offset();
+					const inputHeight = $("#search_component_params_input").outerHeight();
 					$(".search-component-assistance").css({
 						top: inputPosition.top + inputHeight + 5 + "px",
 						left: $("#divsearch_component_params").position().left
 					}).slideToggle(200);
 				});
 				$(document).on("click", function(e) {
-					if (!$(e.target).closest("#search_component_params_input, .search-component-assistance, #ui-datepicker-div").length) {
+					if (!$(e.target).closest(".search-component-assistance, #ui-datepicker-div").length && !$(e.target).closest(".divadvancedsearchfieldcompinput").find("#search_component_params_input").length) {
 						$(".search-component-assistance").hide();
 					}
 				});
@@ -13442,6 +13446,10 @@ class Form
 					// Reset the search input and the filter, so the panel always opens with the first level open
 					// (the fields and the sub-tables of the main object are shown, the deeper levels stay closed)
 					$(this).closest(".fieldcombo").find(".fieldcombo-search").val("").trigger("keyup");
+					// Put the focus on the search input when the panel is opened
+					if ($(this).closest(".fieldcombo").find(".fieldcombo-panel").is(":visible")) {
+						$(this).closest(".fieldcombo").find(".fieldcombo-search").trigger("focus");
+					}
 				});
 
 				// Click on an element (a table): show the list of its sub-elements (indented) and the list of its fields.
