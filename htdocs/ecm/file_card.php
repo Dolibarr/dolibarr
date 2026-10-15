@@ -179,8 +179,11 @@ if ($action == 'update' && $permissiontoadd) {
 
 	if (!$error) {
 		if ($shareenabled) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$object->share = getRandomPassword(true);
+			// Keep the current key: a new one would break the links already sent
+			if (empty($object->share)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$object->share = getRandomPassword(true);
+			}
 		} else {
 			$object->share = '';
 		}
