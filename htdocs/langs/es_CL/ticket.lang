@@ -109,4 +109,3 @@ BoxLastTicketDescription=Últimos %s Tickets creados
 BoxLastTicketNoRecordedTickets=No hay Tickets recientes sin leer
 BoxLastModifiedTicketDescription=Los últimos Tickets modificados %s
 BoxLastModifiedTicketNoRecordedTickets=No hay Tickets modificados recientemente
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

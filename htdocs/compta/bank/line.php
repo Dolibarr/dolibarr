@@ -279,6 +279,18 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 		$result = $db->query($sql);
 
+		if ($result) {
+			$object->num_releve = $num_rel;
+			$object->rappro = (empty($num_rel) ? 0 : $rappro);
+
+			// Call trigger
+			$triggerres = $object->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($triggerres < 0) {
+				$result = false;
+			}
+			// End call triggers
+		}
+
 		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
 		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.
 		$filepath = '';
@@ -613,7 +625,7 @@ if ($result) {
 			print '<td>';
 			print '<input name="label" class="flat minwidth300" '.($objp->rappro ? ' disabled' : '').' value="';
 			if (preg_match('/^\((.*)\)$/i', $objp->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				print $langs->trans($reg[1]);
 			} else {
 				print dol_escape_htmltag($objp->label);
@@ -623,7 +635,7 @@ if ($result) {
 		} else {
 			print '<td>';
 			if (preg_match('/^\((.*)\)$/i', $objp->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				print $langs->trans($reg[1]);
 			} else {
 				print dol_escape_htmltag($objp->label);

@@ -165,7 +165,6 @@ BookmarksManagement =Gerenciamento de marcadores
 BookmarksMenuShortCut =Ctrl + Shift + M
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Escolha se a página vinculada deve abrir na guia atual ou em uma nova guia
 ListOfBookmarks =Lista de marcadores
-NoBookmarkFound =Nenhum marcador encontrado
 NoBookmarks =Nenhum marcador definido
 OpenANewWindow =Abra uma nova aba
 ReplaceWindow =Substituir guia atual

@@ -259,7 +259,7 @@ function dol_getcache($memoryid, $filecache = 0)
 		if ($json->expire > $now) {
 			return $json->data;
 		} else {
-			$result = dol_delete_file($pathcache.'/'.$memoryid.'.cache');
+			$result = dol_delete_file($pathcache.'/'.$memoryid.'.cache', 1);
 			if (!$result) {
 				return -2;
 			}

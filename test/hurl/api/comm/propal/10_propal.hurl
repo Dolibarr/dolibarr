@@ -36,10 +36,11 @@ jsonpath "$.pagination.page" >= 0
 jsonpath "$.pagination.page_count" >= 0
 jsonpath "$.pagination.limit" == 100
 
-# GET proposal with ID 0 - which should not exist
+# GET proposal with ID 0 - which should be refused
 GET http://{{hostnport}}/api/index.php/proposals/0
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: No proposal with id=0 can exist"}}
+[Asserts]
+jsonpath "$.error.message" == "Bad Request: No ID or Ref provided"
 
 # POST {}
 POST http://{{hostnport}}/api/index.php/proposals
@@ -47,9 +48,15 @@ POST http://{{hostnport}}/api/index.php/proposals
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: socid field missing"}}
 
-# POST topic required
+# Capture an existing thirdparty ID
+GET http://{{hostnport}}/api/index.php/thirdparties?limit=1
+HTTP 200
+[Captures]
+thirdparty_id: jsonpath "$[0]['id']"
+
+# POST date required
 POST http://{{hostnport}}/api/index.php/proposals
-{ "socid" : "22"}
+{ "socid" : "{{ thirdparty_id }}"}
 HTTP 500
 {"error":{"code":500,"message":"Internal Server Error: Error creating order","0":"Date of proposal is required"}}
 # this output should be adjusted for the real output when the check is done for required fields

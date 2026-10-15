@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Конференция или кабина
 AmountPaid = Платено количество
 DateOfRegistration = Дата от регистрацията
 ConferenceOrBoothAttendee = Участник на конференция или щанд
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Кандидат или посетител
 Speaker=Говорител
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Списък на участниците в проект�
 ListOfConfOrBoothOfEvent=Списък с конференции или щандове на проекти за събития
 DownloadICSLink=Изтегляне на ICS файл
 EVENTORGANIZATION_SECUREKEY=Seed за осигуряване на ключа за страницата за публична регистрация, за да предложи конференция
-SERVICE_BOOTH_LOCATION=Услуга, използвана за реда на фактурата относно местоположението на щанда
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Услуга, използвана за реда на фактурата за абонамент на присъстващ за събитие
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Брой гласове
 # Status
 EvntOrgDraft = Чернова
@@ -122,7 +123,7 @@ NewSubscription=Регистрация
 OrganizationEventConfRequestWasReceived=Вашето предложение за конференция е получено
 OrganizationEventBoothRequestWasReceived=Вашият Искане за щанд е получен
 OrganizationEventPaymentOfBoothWasReceived=Вашият плащане за вашия щанд е записан
-OrganizationEventPaymentOfRegistrationWasReceived=Вашият плащане за вашата регистрация за събитие е записан
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Това е напомняне за вашето участие в събитието като участник
 OrganizationEventBulkMailToSpeakers=Това е напомняне за вашето участие в събитието като лектор
 OrganizationEventLinkToThirdParty=Връзка към трета страна (Клиент, доставчик или партньор)

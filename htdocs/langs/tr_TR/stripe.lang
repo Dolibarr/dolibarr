@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=PBX SITE için değer
 PAYBOX_PBX_RANG=PBX Rang için değer
 PAYBOX_PBX_IDENTIFIANT=PBX ID için değer
 PAYBOX_HMAC_KEY=HMAC anahtarı
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

@@ -6,9 +6,10 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +253,7 @@ class Don extends CommonObject
 
 		$now = dol_now();
 
-		// Charge tableau des id de societe socids
+		// Load array of company ids socids
 		$socids = array();
 
 		$sql = "SELECT rowid";
@@ -316,29 +317,29 @@ class Don extends CommonObject
 		$err = 0;
 		$amount_invalid = 0;
 
-		if (dol_strlen(trim($this->societe)) == 0) {
-			if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0) {
+		if (dol_strlen(trim((string) $this->societe)) == 0) {
+			if ((dol_strlen(trim((string) $this->lastname)) + dol_strlen(trim((string) $this->firstname))) == 0) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Company').'/'.$langs->transnoentitiesnoconv('Firstname').'-'.$langs->transnoentitiesnoconv('Lastname'));
 				$err++;
 			}
 		}
 
-		if (dol_strlen(trim($this->address)) == 0) {
+		if (dol_strlen(trim((string) $this->address)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Address'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->zip)) == 0) {
+		if (dol_strlen(trim((string) $this->zip)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Zip'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->town)) == 0) {
+		if (dol_strlen(trim((string) $this->town)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Town'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->email)) == 0) {
+		if (dol_strlen(trim((string) $this->email)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMail'));
 			$err++;
 		}
@@ -362,7 +363,7 @@ class Don extends CommonObject
 				$err++;
 			} else {
 				if ($this->amount < $minimum && $minimum > 0) {
-					$error_string[] = $langs->trans('MinimumAmount', $minimum);
+					$error_string[] = $langs->trans('ErrorMinimumAmount', $minimum);
 					$err++;
 				}
 			}
@@ -441,9 +442,9 @@ class Don extends CommonObject
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
-		$sql .= ", '".$this->db->escape($this->address)."'";
-		$sql .= ", '".$this->db->escape($this->zip)."'";
-		$sql .= ", '".$this->db->escape($this->town)."'";
+		$sql .= ", '".$this->db->escape((string) $this->address)."'";
+		$sql .= ", '".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", '".$this->db->escape((string) $this->town)."'";
 		$sql .= ", ".(int) ($this->country_id > 0 ? $this->country_id : 0);
 		$sql .= ", ".(int) $this->public;
 		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
@@ -533,9 +534,9 @@ class Don extends CommonObject
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", zip='".$this->db->escape($this->zip)."'";
-		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
+		$sql .= ", zip='".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", town='".$this->db->escape((string) $this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
@@ -543,9 +544,9 @@ class Don extends CommonObject
 		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", datedon='".$this->db->idate($this->date)."'";
 		$sql .= ", date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
-		$sql .= ", email='".$this->db->escape(trim($this->email))."'";
-		$sql .= ", phone='".$this->db->escape(trim($this->phone))."'";
-		$sql .= ", phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", email='".$this->db->escape(trim((string) $this->email))."'";
+		$sql .= ", phone='".$this->db->escape(trim((string) $this->phone))."'";
+		$sql .= ", phone_mobile='".$this->db->escape(trim((string) $this->phone_mobile))."'";
 		$sql .= ", fk_statut=".((int) $this->status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -835,24 +836,48 @@ class Don extends CommonObject
 	/**
 	 *    Set donation to status cancelled
 	 *
-	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			Return integer <0 if KO, >0 if OK
+	 *    @param	int		$id   	    	id of donation
+	 *    @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *    @return   int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function set_cancel($id)
+	public function set_cancel($id, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
+
+		$error = 0;
+
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->status = -1;
-				return 1;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('DON_CANCEL', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 			} else {
+				$this->db->commit();
 				return 0;
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -1086,19 +1111,24 @@ class Don extends CommonObject
 		}
 
 		// Search template files
+		// The model name stored in llx_document_model already holds its prefix (html_cerfafr, pdf_xxx...),
+		// but a model name without prefix is also accepted.
 		$file = '';
-		$classname = '';
 		$filefound = 0;
+		$modelebasename = preg_replace('/^(html|doc|pdf)_/', '', $modele);
 		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
-				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
+				if ($modelebasename != $modele && strpos($modele, $prefix.'_') !== 0) {
+					continue;	// The prefix is part of the model name, so do not load a template of another type
+				}
+				$file = dol_sanitizeFileName($prefix."_".$modelebasename.".modules.php");
 
 				// Verify the path for the module
 				$file = dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file)) {
 					$filefound = 1;
-					$classname = $prefix.'_'.$modele;
+					$modele = $prefix.'_'.$modelebasename;	// Name of the class of the template
 					break;
 				}
 			}

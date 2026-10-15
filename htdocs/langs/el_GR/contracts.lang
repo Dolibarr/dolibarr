@@ -103,7 +103,13 @@ ConfirmCloneContract=Είστε σίγουροι ότι θέλετε να αντ
 LowerDateEndPlannedShort=Κατώτερη προγραμματισμένη ημερομηνία λήξης των ενεργών υπηρεσιών
 SendContractRef=Στοιχεία σύμβασης __REF__
 OtherContracts=Άλλες συμβάσεις
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Στατιστικά στοιχεία του Σύμβαση
+NbOfContracts=Αριθμός συμβάσεων
+NumberOfContractsByMonth=Αριθμός συμβάσεων ανά μήνα
+AmountOfServices=Αριθμός υπηρεσιών
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Εκπρόσωπος πωλήσεων αρμόδιος για την υπογραφή της σύμβασης
 TypeContact_contrat_internal_SALESREPFOLL=Εκπρόσωπος πωλήσεων υπεύθυνος για τη σύμβαση
 TypeContact_contrat_external_BILLING=Επαφή λογιστηρίου πελάτη

@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Ultime spedizioni cliente
 BoxTitleLastCustomerShipments=Ultimo %s modificato cliente spedizioni
 BoxTitleLastLeaveRequests=Ultime %s richieste di assenza modificate
 NoRecordedShipments=Nessuna spedizione cliente registrata
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Clienti con limite in sospeso raggiunto
 BoxTitleLastFediverseInfos=Ultimi post di %s da %s
 BoxLastFediverseInfos=Ultimo Aggiornamenti Fediverse: Notizie e Tendenze

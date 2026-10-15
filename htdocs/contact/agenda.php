@@ -9,6 +9,7 @@
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,8 +212,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$res = $object->fetch($id, $user);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {

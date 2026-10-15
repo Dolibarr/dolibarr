@@ -43,7 +43,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level > 10) {	// Protection against infinite loop
+	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofmesures;
 	}
 
@@ -68,6 +68,10 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
@@ -156,6 +160,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	}
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && !empty($tmptype[1]) && !empty($tmptype[2])) {
@@ -221,6 +230,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['measure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
@@ -325,6 +338,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -386,6 +404,10 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
+		// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool)
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (empty($val['isameasure'])) {
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
@@ -490,6 +512,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -517,11 +544,11 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	$arrayoffields	Array of fields already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	$arrayoffields	Array of fields already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string}>	Array of fields
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string,type:string,bi?:int<0,1>}>	Array of fields
  */
 function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayoffields, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -584,6 +611,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			if ((!isset($val['isamesaure']) || $val['isamesaure'] != 1) && (!isset($val['notnull']) || $val['notnull'] != '1')) {
 				$arrayoffields[$tablealias.'.'.$key]['maybenull'] = 1;
 			}
+			// Keep the attribute 'bi' of the field so the search component can discard the fields hidden on BI tool
+			if (isset($val['bi'])) {
+				$arrayoffields[$tablealias.'.'.$key]['bi'] = (int) $val['bi'];
+			}
 		}
 	}
 
@@ -610,6 +641,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
+		// Discard the linked objects of fields declared with attribute 'bi' set to 0 (field hidden on BI tool),
+		// so the sub element (the linked table) and all its sub fields are not added into the list
+		if (isset($val['bi']) && (int) $val['bi'] == 0) {
+			continue;
+		}
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
 			$tmptype = explode(':', $val['type'], 4);
 			if ($tmptype[0] == 'integer' && $tmptype[1] && $tmptype[2]) {
@@ -631,4 +667,111 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 	}
 
 	return $arrayoffields;
+}
+
+
+/**
+ * Return HTML of the component to select measures. Fields are listed first and, for fields with variants
+ * (sum, average, min, max, standard deviation), variants are shown in an expandable sub list.
+ * Behaviour is managed by core/js/customreports.js. Selection is posted with a hidden multiple select.
+ *
+ * @param	string		$htmlname			Name of the HTML field (posted as $htmlname[])
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofmesures		Array of measures (from fillArrayOfMeasures())
+ * @param	string[]	$selected			Array of selected keys
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $placeholder = '')
+{
+	global $langs;
+
+	$variantlabels = array(
+		'sum' => $langs->trans("Sum"),
+		'average' => $langs->trans("Average"),
+		'min' => $langs->trans("Minimum"),
+		'max' => $langs->trans("Maximum"),
+		'stddevpop' => $langs->trans("StandardDeviationPop"),
+	);
+
+	// Group measures by field. Keys of variants are 'alias.field-variant'.
+	$groups = array();
+	foreach ($arrayofmesures as $key => $val) {
+		$reg = array();
+		if (preg_match('/^(.+)-(sum|average|min|max|stddevpop)$/', $key, $reg)) {
+			$groupkey = $reg[1];
+			$variant = $reg[2];
+		} else {
+			$groupkey = $key;
+			$variant = '';
+		}
+		if (!isset($groups[$groupkey])) {
+			// The label is the picto of the object followed by the labelnohtml (and the variant suffix), so we extract the picto
+			$picto = '';
+			$pos = strpos($val['label'], $val['labelnohtml']);
+			if ($pos !== false) {
+				$picto = substr($val['label'], 0, $pos);
+			}
+			$groups[$groupkey] = array(
+				'picto' => $picto,
+				'labelnohtml' => $val['labelnohtml'],
+				'variants' => array()
+			);
+		}
+		$groups[$groupkey]['variants'][$key] = ($variant ? $variantlabels[$variant] : '');
+	}
+
+	$out = '<div class="customreportsmeasures divadvancedsearchfieldcompinput inline-block minwidth200 maxwidth500" id="'.dol_escape_htmltag($htmlname).'_component" data-htmlname="'.dol_escape_htmltag($htmlname).'">';
+
+	// Hidden select used to post values
+	$out .= '<select id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'[]" multiple class="hideobject">';
+	foreach ($arrayofmesures as $key => $val) {
+		$out .= '<option value="'.dol_escape_htmltag($key).'"'.(in_array($key, $selected) ? ' selected' : '').'>'.dol_escape_htmltag($val['labelnohtml']).'</option>';
+	}
+	$out .= '</select>';
+
+	// Visible area with tags of selected measures
+	$out .= '<div class="customreportsmeasures-control noborderbottom search_component_params inline-block" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox">';
+	$out .= '<span class="customreportsmeasures-tags"></span>';
+	$out .= '<span class="customreportsmeasures-placeholder opacitymedium">'.dol_escape_htmltag($placeholder).'</span>';
+	$out .= '<span class="fas fa-caret-down customreportsmeasures-caret"></span>';
+	$out .= '</div>';
+
+	// Dropdown with list of fields then variants
+	$out .= '<div class="customreportsmeasures-dropdown hidden">';
+	$out .= '<div class="liinputsearch"><input type="text" class="customreportsmeasures-search noborderfocus" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autocomplete="off"></div>';
+	$out .= '<ul class="customreportsmeasures-list" role="listbox">';
+	foreach ($groups as $groupkey => $group) {
+		$hasvariants = (count($group['variants']) > 1 || key($group['variants']) != $groupkey);
+		$out .= '<li class="customreportsmeasures-field'.($hasvariants ? ' customreportsmeasures-hasvariants' : '').'" data-search="'.dol_escape_htmltag(dol_strtolower($group['labelnohtml'])).'">';
+		if ($hasvariants) {
+			$out .= '<div class="customreportsmeasures-fieldlabel">';
+			$out .= '<span class="customreportsmeasures-text">'.$group['picto'].dol_escape_htmltag($group['labelnohtml']).'</span>';
+			$out .= '<span class="customreportsmeasures-count badge badge-secondary hidden"></span>';
+			$out .= '<span class="fas fa-caret-right customreportsmeasures-expand"></span>';
+			$out .= '</div>';
+			$out .= '<ul class="customreportsmeasures-variants hidden">';
+			foreach ($group['variants'] as $key => $variantlabel) {
+				$out .= '<li class="customreportsmeasures-item" role="option" data-value="'.dol_escape_htmltag($key).'" data-tag="'.dol_escape_htmltag($group['labelnohtml'].' ('.$variantlabel.')').'">';
+				$out .= '<span class="customreportsmeasures-text">'.dol_escape_htmltag($variantlabel).'</span>';
+				$out .= '<span class="fas fa-check customreportsmeasures-check"></span>';
+				$out .= '</li>';
+			}
+			$out .= '</ul>';
+		} else {
+			$out .= '<div class="customreportsmeasures-fieldlabel customreportsmeasures-item" role="option" data-value="'.dol_escape_htmltag($groupkey).'" data-tag="'.dol_escape_htmltag($group['labelnohtml']).'">';
+			$out .= '<span class="customreportsmeasures-text">'.$group['picto'].dol_escape_htmltag($group['labelnohtml']).'</span>';
+			$out .= '<span class="fas fa-check customreportsmeasures-check"></span>';
+			$out .= '</div>';
+		}
+		$out .= '</li>';
+	}
+	$out .= '</ul>';
+	$out .= '</div>';
+
+	$out .= '</div>';
+
+	$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsMeasures(\''.dol_escape_js($htmlname).'_component\'); });</script>';
+
+	return $out;
 }

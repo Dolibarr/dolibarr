@@ -126,7 +126,7 @@ if ($object->id) {
 
 	$head = vat_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution

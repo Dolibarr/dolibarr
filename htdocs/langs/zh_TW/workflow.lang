@@ -1,38 +1,38 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=工作流程模組設定
-WorkflowDesc=此模組提供了一些自動程序。默認情況下，工作流程是開啟的（您可以按想要的順序執行操作），但是在這裡您可以開啟一些自動程序。
-ThereIsNoWorkflowToModify=已啟動的模組無法可修改的工作流程。
+WorkflowDesc=此模組提供部分自動化動作。預設工作流程為開放式(你可以自由選擇執行順序)，但你可在此啟用某些自動化操作。
+ThereIsNoWorkflowToModify=啟用的模組中無可修改的工作流程。
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=簽署商業提案/建議書後自動創建銷售訂單（新訂單的金額將與提案/建議書相同）
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=在簽署商業提案/建議書後自動創建客戶發票（新發票將與提案/建議書相同的金額）
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=當合約生效，自動建立客戶發票
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=關閉銷售訂單後自動建立客戶發票（新發票的金額將與訂單金額相同）
-descWORKFLOW_TICKET_CREATE_INTERVENTION=在建立服務單時，自動建立干預。
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=當報價單簽署後，自動建立銷售訂單(訂單金額與報價單相同)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=當報價單簽署後，自動建立客戶發票(發票金額與報價單相同)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=當合約確認後，自動建立客戶發票
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=當銷售訂單完成後，自動建立客戶發票(發票金額與訂單相同)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=工單建立時，自動建立工作服務單
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=銷售訂單設為已開票時，自動將相關來源報價單標記為已開票(前提為訂單金額等於所有簽署報價單總和)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=客戶發票確認時，自動將相關來源報價單標記為已開票(前提為發票金額等於所有簽署報價單總和)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=客戶發票設為已付款時，自動將相關來源訂單標記為已開票(前提為發票金額等於所有相關訂單總和)。若一張發票涵蓋多張訂單，則會將所有訂單標記為已開票。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=客戶發票確認時，自動將所有相關來源訂單標記為已開票(前提為發票金額等於所有相關訂單總和)。若一張共同發票涵蓋多張訂單，會將所有訂單標記為已開票。
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=客戶發票確認時，若連結的銷售訂單只有一筆，且該訂單的總金額等於所有從該訂單開立的發票總和，則將該訂單標記為已開票。若一張訂單拆成多張發票，當所有發票均確認時，即可將訂單標記為已開票。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=出貨確認時，自動將相關來源訂單標記為已出貨(前提為所有出貨的數量合計等於訂單數量)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=出貨完成時，自動將相關來源訂單標記為已出貨(前提為所有出貨的數量合計等於訂單數量)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=供應商發票確認時，自動將相關來源供應商提案標記為已開票(前提為發票金額等於相關提案總和)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=供應商發票確認時，自動將相關來源採購訂單標記為已開票(前提為發票金額等於相關訂單總和)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=驗收確認時，自動將相關來源採購訂單標記為已收貨(前提為所有驗收數量合計等於採購訂單數量)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=驗收完成時，自動將相關來源採購訂單標記為已收貨(前提為所有驗收數量合計等於採購訂單數量)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=客戶發票確認時，自動將相關出貨標記為已完成(前提為發票金額等於相關出貨總和)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=客戶發票確認時，自動將相關出貨標記為已開票(前提為發票金額等於相關出貨總和)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=採購發票確認時，自動將相關驗收標記為已完成(前提為發票金額等於相關驗收總和)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=採購發票確認時，自動將相關驗收標記為已開票(前提為發票金額等於相關驗收總和)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=工單建立時，自動連結同一往來對象的可用合約
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=自動連結工單至合約時，也搜尋母公司之合約
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=關閉服務單後，關閉與服務單連結的所有干預措施
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=工單關閉時，自動關閉所有連結的工作服務單
 AutomaticCreation=自動建立
 AutomaticClassification=自動分類
 AutomaticClosing=自動關閉

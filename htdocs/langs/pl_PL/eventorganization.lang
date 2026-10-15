@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferencja lub stoisko
 AmountPaid = Wartość zapłacona
 DateOfRegistration = Data rejestracji
 ConferenceOrBoothAttendee = Uczestnik konferencji lub stoiska
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Wnioskodawca lub gość
 Speaker=Głośnik
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Lista uczestników projektów eventowych
 ListOfConfOrBoothOfEvent=Lista konferencji lub stoisk projektów eventowych
 DownloadICSLink=Pobierz plik ICS
 EVENTORGANIZATION_SECUREKEY=Seed, aby zabezpieczyć klucz do strony rejestracji publicznej, aby zasugerować konferencję
-SERVICE_BOOTH_LOCATION=Usługa używana do wiersza faktury o lokalizacji stoiska
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Usługa używana w wierszu faktury dotyczącej subskrypcji uczestnika wydarzenia
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Liczba głosów
 # Status
 EvntOrgDraft = Szkic
@@ -122,7 +123,7 @@ NewSubscription=Rejestracja
 OrganizationEventConfRequestWasReceived=Otrzymaliśmy Twoją propozycję zorganizowania konferencji
 OrganizationEventBoothRequestWasReceived=Otrzymaliśmy Twoją prośbę o stoisko
 OrganizationEventPaymentOfBoothWasReceived=Twoja płatność za stoisko została zarejestrowana
-OrganizationEventPaymentOfRegistrationWasReceived=Twoja płatność za rejestrację na wydarzenie została zarejestrowana
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=To przypomnienie o Twoim udziale w wydarzeniu jako uczestnik
 OrganizationEventBulkMailToSpeakers=To jest przypomnienie o Twoim udziale w wydarzeniu w charakterze prelegenta
 OrganizationEventLinkToThirdParty=Link do strony trzeciej (klienta, dostawcy lub partnera)

@@ -103,7 +103,13 @@ ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Data më e ulët e planifikuar e përfundimit të shërbimeve aktive
 SendContractRef=Informacioni i kontratës __REF__
 OtherContracts=Kontrata të tjera
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Përfaqësuesi i shitjeve nënshkrimi i kontratës
 TypeContact_contrat_internal_SALESREPFOLL=Kontrata vijuese e përfaqësuesit të shitjeve
 TypeContact_contrat_external_BILLING=Faturimi i kontaktit me klientin

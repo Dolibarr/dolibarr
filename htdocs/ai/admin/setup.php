@@ -94,6 +94,7 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['showEyeButton'] = 1;
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
 	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
@@ -154,6 +155,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
@@ -163,7 +165,7 @@ if ($action == 'edit') {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 } else {
-	print '<br>'.$langs->trans("NothingToSetup");
+	print $langs->trans("NothingToSetup");
 }
 
 
@@ -189,7 +191,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['url']).'\'';
 }
 print '};
 				const arrayofextlink = {';
@@ -202,7 +204,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['setup']).'\'';
 }
 print '};
 				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);

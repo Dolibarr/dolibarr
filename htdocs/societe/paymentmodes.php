@@ -149,6 +149,19 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Security: any action that references a bank account / payment mode by a posted id or ribid must
+	// only act on a record of the thirdparty of the page. Without this, the id of a societe_rib row of
+	// another company (or another entity) could be forged to read (IBAN...), update or delete it.
+	if (in_array($action, ['update', 'updatecard', 'edit', 'editcard', 'setasbankdefault', 'confirm_deletecard', 'confirm_deletebank', 'synccardtostripe', 'syncsepatostripe'])) {
+		$idtocheckowner = ($ribid > 0 ? $ribid : $id);
+		if ($idtocheckowner > 0) {
+			$tmppaymentinfo = new CompanyBankAccount($db);
+			if ($tmppaymentinfo->fetch($idtocheckowner) <= 0 || $tmppaymentinfo->socid != $object->id) {
+				accessforbidden($langs->trans('ErrorRecordNotFound'));
+			}
+		}
+	}
+
 	if ($action == 'update' && $permissiontoaddupdatepaymentinformation) {
 		// Update the bank account
 		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') != 0))) {
@@ -839,7 +852,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
@@ -872,7 +885,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
@@ -1345,7 +1358,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="right minwidth50 nowraponall">';
 							if ($permissiontoaddupdatepaymentinformation) {
 								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref)) {
-									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
+									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&token='.newToken().'&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard&token='.newToken().'">';
@@ -1720,7 +1733,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$out = '';
 			if (is_array($modellist) && count($modellist)) {
-				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" spellcheck="false">';
+				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" autocomplete="off" spellcheck="false">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -2118,7 +2131,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->address);
+	print dolPrintText($companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2127,7 +2140,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintHTMLForTextArea($companybankaccount->owner_address);
+	print dolPrintText($companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';

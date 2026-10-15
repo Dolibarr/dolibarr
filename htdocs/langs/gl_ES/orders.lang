@@ -166,6 +166,7 @@ PDFEdisonDescription=Modelo de pedimento simple
 PDFProformaDescription=Unha factura proforma completa (logo...)
 CreateInvoiceForThisCustomer=Facturar pedimentos de cliente
 CreateInvoiceForThisSupplier=Facturar pedimentos a provedor
+WarningOrderNotEligibleForInvoicing=O pedimento %s foi omitido: o seu estado non permite crear unha factura
 CreateInvoiceForThisReceptions=Facturas recibidas
 NoOrdersToInvoice=Sen pedimentos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" os pedimentos seleccionados.

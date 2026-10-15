@@ -121,7 +121,6 @@ ValideTrip=اخراجات کی رپورٹ منظور کریں۔
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=ناشتہ
@@ -159,3 +158,4 @@ TF_TRAIN=ٹرین
 TF_TRIP=نقل و حمل
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

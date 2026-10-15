@@ -44,7 +44,7 @@ if (!$user->admin) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors", 'sendings'));
+$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", 'sendings'));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -280,7 +280,7 @@ if (count($workflowcodes) < 1) {
 // Sort on position
 $workflowcodes = dol_sort_array($workflowcodes, 'position');
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvarworkflow">';
 print '<input type="hidden" name="page_y" value="">';

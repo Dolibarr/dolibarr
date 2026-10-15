@@ -29,11 +29,11 @@ UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako usługa
 UseDiscountOnTotal=Na podsumy
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
-MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
-MargeType1=Marża na najlepszej cenie dostawcy
-MargeType2=Marża na Średniej Cenie Produktu (ŚCP)
-MargeType3=Marża na cenie fabrycznej
-MarginTypeDesc=* Marża od najlepszej ceny zakupu = cena sprzedaży - najlepsza cena dostawcy określona na karcie produktu <br> * Marża od średniej ważonej ceny (WAP) = cena sprzedaży - średnia cena ważona produktu (WAP) lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany <br> * Marża Cena kosztowa = Cena sprzedaży - Cena własna zdefiniowana na karcie produktu lub WAP, jeśli cena kosztowa nie została zdefiniowana, lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany
+MARGIN_TYPE=Domyślny koszt/cena zakupu do obliczenia marży
+MargeType1=Marża liczona od najlepszej ceny dostawcy
+MargeType2=Marża liczona od średniego ważonego kosztu (WAC)
+MargeType3=Marża liczona od podanego kosztu
+MarginTypeDesc=* Marża wg najlepszej ceny zakupu = Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu<br> * Marża wg średniego ważonego kosztu (WAC) = Cena sprzedaży - Średnia ważona ceny produktu (WAP) lub Najlepsza cena dostawcy jeśli WAP nie został jeszcze zdefiniowany <br> * Marża wg ceny kosztowej = Cena sprzedaży - Koszt zdefiniowany na karcie produktowej lub WAC jeśli nie zdefiniowano Kosztu lub Najlepsza cena dostawcy jeśli WAC nie został jeszcze zdefiniowany
 CostPrice=Koszt
 UnitCharges=Opłaty jednostkowe
 Charges=Opłaty

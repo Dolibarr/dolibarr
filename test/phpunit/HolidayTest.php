@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -278,6 +278,13 @@ class HolidayTest extends CommonClassTest
 
 		$result = $localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
 		$this->assertTrue($result, 'result should be true, there is no overlapping');
+
+		$date_start_enclosing = dol_mktime(0, 0, 0, 12, 31, 2019);
+		$date_end_enclosing = dol_mktime(0, 0, 0, 1, 3, 2020);
+		foreach (array(0, -1, 1, 2) as $halfday) {
+			$result = $localobjectc->verifDateHolidayCP($user->id, $date_start_enclosing, $date_end_enclosing, $halfday);
+			$this->assertFalse($result, 'result should be false, an enclosing leave overlaps existing leave requests.');
+		}
 	}
 
 	/**

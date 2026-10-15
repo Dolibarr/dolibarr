@@ -48,6 +48,7 @@ ShowSubContainersOnOff=El modo para ejecutar 'contenido dinámico' es %s
 UseManifest=Proporcione un archivo manifest.json
 RSSFeed=RSS
 WebPortalAccessHidden=Oculto
+WebPortalInterDateEnd=Fecha final
 WebPortalPropalListMenu=Propuestas
 WebPortalPropalListTitle=Propuestas
 WebPortalOrderListMenu=Ordenes de venta

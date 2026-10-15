@@ -36,10 +36,18 @@ ActivateAllOnContract=បើកដំណើរការសេវាកម្ម�
 CloseAContract=បិទកិច្ចសន្យា
 ConfirmDeleteAContract=តើអ្នកប្រាកដថាចង់លុបកិច្ចសន្យានេះ និងសេវាកម្មទាំងអស់របស់វាមែនទេ?
 ConfirmValidateContract=តើអ្នកប្រាកដថាចង់ធ្វើឱ្យកិច្ចសន្យានេះមានសុពលភាពក្រោមឈ្មោះ <b>%s</b> ?
+ConfirmSignContract=Are you sure you want to set this contract as signed ?
+ConfirmUnsignContract=Are you sure you want to set this contract as unsigned ?
 ConfirmActivateAllOnContract=វានឹងបើកសេវាកម្មទាំងអស់ (មិនទាន់ដំណើរការ)។ តើអ្នកប្រាកដថាចង់បើកសេវាកម្មទាំងអស់មែនទេ?
 ConfirmCloseContract=វានឹងបិទសេវាកម្មទាំងអស់ (ផុតកំណត់ឬអត់)។ តើអ្នកប្រាកដថាចង់បិទកិច្ចសន្យានេះទេ?
 ConfirmCloseService=តើអ្នកប្រាកដថាចង់បិទសេវាកម្មនេះជាមួយនឹងកាលបរិច្ឆេទ <b>%s</b> ?
 ValidateAContract=ធ្វើឱ្យកិច្ចសន្យាមានសុពលភាព
+UnsignContract=Unsign contract
+ContractSign=Set Signed
+ContractUnsign=Set Unsigned
+ContractSignedInDolibarr=Contract signed
+ContractSignedOnline=Contract signed online
+ContractUnsignedInDolibarr=Contract unsigned
 ActivateService=បើកដំណើរការសេវាកម្ម
 ConfirmActivateService=តើ​អ្នក​ប្រាកដ​ជា​ចង់​បើក​ដំណើរការ​សេវាកម្ម​នេះ​ជាមួយ​កាលបរិច្ឆេទ <b>%s</b> ?
 RefContract=ឯកសារយោងកិច្ចសន្យា
@@ -95,7 +103,13 @@ ConfirmCloneContract=តើអ្នកប្រាកដថាចង់ក្�
 LowerDateEndPlannedShort=កាលបរិច្ឆេទបញ្ចប់ដែលបានគ្រោងទុកទាបនៃសេវាកម្មសកម្ម
 SendContractRef=ព័ត៌មានកិច្ចសន្យា __REF__
 OtherContracts=កិច្ចសន្យាផ្សេងៗ
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=តំណាងផ្នែកលក់ចុះកិច្ចសន្យា
 TypeContact_contrat_internal_SALESREPFOLL=អ្នកតំណាងលក់បន្តកិច្ចសន្យា
 TypeContact_contrat_external_BILLING=ទំនាក់ទំនងអតិថិជនចេញវិក្កយបត្រ

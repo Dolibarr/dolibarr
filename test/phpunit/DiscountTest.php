@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -157,23 +157,10 @@ class DiscountTest extends CommonClassTest
 	 *
 	 * test the scenario of action 'confirm_split' in remx.php, also support 'confirm_split_more'
 	 *
-	 * @param	float 	$total_amount initial amount of discount to split
-	 * @param	float 	$splitamount_1 first half of split discount
-	 * @param	float	$tva_tx vat rate
-	 * @param	float	$localtax1_tx localtax1 rate
-	 * @param	int		$localtax1_type localtax1 type
-	 * @param	float	$localtax2_tx localtax2 rate
-	 * @param	int		$localtax2_type localtax1 type
-	 * @param	float	$ex_ht_amount1 expected amount 1 HT
-	 * @param	float	$ex_total_amount1 expected amount 1 TTC
-	 * @param	float	$ex_ht_amount2 expected amount 2 HT
-	 * @param	float	$ex_total_amount2 expected amount 2 TTC
 	 * @return	int
-	 *
-	 * @dataProvider providerSplitRemiseData
 	 * @depends	testDiscountDelete
 	 */
-	public function testDiscountSplitScenarioConfirmSplit($total_amount, $splitamount_1, $tva_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $ex_ht_amount1, $ex_total_amount1, $ex_ht_amount2, $ex_total_amount2)
+	public function testDiscountSplitScenarioConfirmSplit()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -181,32 +168,36 @@ class DiscountTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		/**
-		 * Create a DiscountAbsolute object from spec, split it and
-		 * test results with expected.
-		 */
+		foreach ($this->providerSplitRemiseData() as $case) {
+			list($total_amount, $splitamount_1, $tva_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $ex_ht_amount1, $ex_total_amount1, $ex_ht_amount2, $ex_total_amount2) = $case;
 
-		$localobject = new DiscountAbsolute($db);
-		$localobject->tva_tx = $tva_tx;
-		$localobject->localtax1_tx = $localtax1_tx;
-		$localobject->localtax1_type = $localtax1_type;
-		$localobject->localtax2_tx = $localtax2_tx;
-		$localobject->localtax2_type = $localtax2_type;
-		$newDiscounts = $localobject->splitAmount($splitamount_1, $total_amount - $splitamount_1);
-		$newdiscount1 = $newDiscounts[0];
-		$newdiscount2 = $newDiscounts[1];
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_ht_amount1, $newdiscount1->amount_ht);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_amount1, $newdiscount1->amount_ttc);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_ht_amount2, $newdiscount2->amount_ht);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_amount2, $newdiscount2->amount_ttc);
-		$result = 1;
+			/**
+			 * Create a DiscountAbsolute object from spec, split it and
+			 * test results with expected.
+			 */
 
-		print __METHOD__." total_amount=".$total_amount." splitamount_1=".$splitamount_1." tva_tx=".$tva_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." result=".$result."\n";
-		print __METHOD__." discount2: amount_ht=".$newdiscount2->amount_ht." vat=".$newdiscount2->total_tva." localtax1=".$newdiscount2->total_localtax1." localtax2=".$newdiscount2->total_localtax2." ttx=".$newdiscount2->total_ttc."\n";
+			$localobject = new DiscountAbsolute($db);
+			$localobject->tva_tx = $tva_tx;
+			$localobject->localtax1_tx = $localtax1_tx;
+			$localobject->localtax1_type = $localtax1_type;
+			$localobject->localtax2_tx = $localtax2_tx;
+			$localobject->localtax2_type = $localtax2_type;
+			$newDiscounts = $localobject->splitAmount($splitamount_1, $total_amount - $splitamount_1);
+			$newdiscount1 = $newDiscounts[0];
+			$newdiscount2 = $newDiscounts[1];
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_ht_amount1, $newdiscount1->amount_ht);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_amount1, $newdiscount1->amount_ttc);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_ht_amount2, $newdiscount2->amount_ht);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_amount2, $newdiscount2->amount_ttc);
+			$result = 1;
+
+			print __METHOD__." total_amount=".$total_amount." splitamount_1=".$splitamount_1." tva_tx=".$tva_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." result=".$result."\n";
+			print __METHOD__." discount2: amount_ht=".$newdiscount2->amount_ht." vat=".$newdiscount2->total_tva." localtax1=".$newdiscount2->total_localtax1." localtax2=".$newdiscount2->total_localtax2." ttx=".$newdiscount2->total_ttc."\n";
+		}
 
 		return $result;
 	}
@@ -236,23 +227,9 @@ class DiscountTest extends CommonClassTest
 	 *
 	 * test the scenario of function set_remise_exept of class Societe
 	 *
-	 * @param	float 	$amount amount of discount
-	 * @param	float	$vat_tx vat rate
-	 * @param	float	$localtax1_tx localtax1 rate
-	 * @param	int		$localtax1_type localtax1 type
-	 * @param	float	$localtax2_tx localtax2 rate
-	 * @param	int		$localtax2_type localtax1 type
-	 * @param	string	$price_base ('HT' or something else)
-	 * @param	float	$ex_total_tva expected discount vat amount
-	 * @param	float	$ex_total_localtax1 expected discount localtax1 amount
-	 * @param	float	$ex_total_localtax2 expected discount localtax2 amount
-	 * @param	float	$ex_total_ttc expected discount total TTC amount
-	 * @param	float	$ex_total_ht expected discount HT amount
 	 * @return	int
-	 *
-	 * @dataProvider providerRemiseData
 	 */
-	public function testDiscountScenarioSetRemise($amount, $vat_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $price_base, $ex_total_tva, $ex_total_localtax1, $ex_total_localtax2, $ex_total_ttc, $ex_total_ht)
+	public function testDiscountScenarioSetRemise()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -260,26 +237,30 @@ class DiscountTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		/**
-		 * Create a DiscountAbsolute object with spec and test with expected result
-		 */
-		$localobject = new DiscountAbsolute($db);
+		foreach ($this->providerRemiseData() as $case) {
+			list($amount, $vat_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $price_base, $ex_total_tva, $ex_total_localtax1, $ex_total_localtax2, $ex_total_ttc, $ex_total_ht) = $case;
 
-		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
+			/**
+			 * Create a DiscountAbsolute object with spec and test with expected result
+			 */
+			$localobject = new DiscountAbsolute($db);
 
-		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base."\n";
+			$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ht, $localobject->total_ht);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ttc, $localobject->total_ttc);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_tva, $localobject->total_tva);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
-		$result = 1;
+			print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base."\n";
+
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_ht, $localobject->total_ht);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_ttc, $localobject->total_ttc);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_tva, $localobject->total_tva);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
+			$result = 1;
+		}
 
 		return $result;
 	}

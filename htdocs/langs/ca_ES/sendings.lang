@@ -74,7 +74,7 @@ ShipmentUpdated=L'enviament s'ha actualitzat correctament
 ShipmentIncrementStockOnDelete = Augmenta estoc en suprimir
 ConfirmSignShipping=Confirmar i signar l'enviament
 ConfirmUnsignShipping=Confirmar l'enviament sense signar
-SignShipping=Enviament de senyals
+SignShipping=Signatura d'enviaments
 UnsignShipping=Dessignar enviament
 
 # Deliveries
@@ -128,6 +128,7 @@ ShipmentDistribution=Distribució de l'enviament
 ErrorTooManyCombinationBatchcode=No hi ha enviament per a la línia %s perquè s'han trobat massa combinacions de codi de magatzem, producte i lot (%s).
 ErrorNoCombinationBatchcode=No s'ha pogut desar la línia %s com a combinació de warehouse-product-lot/serial (%s, %s, %s) no s'ha trobat a estoc.
 ErrorTooMuchShipped=La quantitat enviada no hauria de ser més gran que la quantitat comandada per a la línia %s
+NoShipmentLineChangeDetected=No s'ha detectat cap canvi a la línia d'enviament.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Responsable del seguiment de la recepció
 TypeContact_shipping_external_BILLING=Contacte client de facturació pressupost

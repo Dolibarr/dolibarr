@@ -169,7 +169,7 @@ if (isModEnabled("supplier_order")) {
 
 // Draft invoices
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
-	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
+	$sql = "SELECT ff.ref, ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -300,7 +300,7 @@ if ($resql) {
 $companystatic->LoadSupplierCateg();
 $categstatic = new Categorie($db);
 
-if (count($companystatic->SupplierCategories)) {
+if (count($companystatic->supplierCategories)) {
 	print '<br>';
 
 	print '<table class="liste centpercent">';
@@ -308,7 +308,7 @@ if (count($companystatic->SupplierCategories)) {
 	print $langs->trans("Category");
 	print "</td></tr>\n";
 
-	foreach ($companystatic->SupplierCategories as $rowid => $label) {
+	foreach ($companystatic->supplierCategories as $rowid => $label) {
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
 		$categstatic->id = (int) $rowid;

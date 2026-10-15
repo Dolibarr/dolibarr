@@ -31,9 +31,9 @@ UseDiscountOnTotal=Vahesumma peal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määratleb, kas üldist allahindlust käsitletakse tootena, teenusena või ainult vahesummana hinnalisandi arvutamisel.
 MARGIN_TYPE=Hinnalisandi arvutamiseks on vaikimisi soovitatud ostu/kulu hind
 MargeType1=Hinnalisand tarnija parimal hinnal
-MargeType2=Hinnalisand Kaalutud Keskmisel Hinnal (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Hinnalisand omahinnal
-MarginTypeDesc=* Parima ostuhinna hinnalisand = Müügihind - tootekaardil määratud Parim tarnija hind <br>* Kaalutud Keskmise Hinna (KKH) hinnalisand = Müügihind - Toote Kaalutud Keskmine Hind (KKH) või kui KKH ei ole määratud, siis Parim Tarnija Hind <br>* Omahinna hinnalisand = Müügihind - Tootekaardil määratud Omahind või KKH kui omahind ei ole määratud või siis Parim Tarnija hind kui KKH ei ole veel määratud
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Omahind
 UnitCharges=Ühiku kulud
 Charges=Kulud

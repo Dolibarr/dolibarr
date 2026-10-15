@@ -5,7 +5,6 @@ SupplierInvoices=Piegādātāja rēķini
 ShowSupplierInvoice=Rādīt piegādātāja rēķinu
 NewSupplier=Jauns pārdevējs
 NewSupplierInvoice = Jauns piegādātāja rēķins
-History=Vēsture
 ListOfSuppliers=Pārdevēju saraksts
 ShowSupplier=Rādīt pārdevēju
 BuyingPriceMin=Labākā pirkuma cena

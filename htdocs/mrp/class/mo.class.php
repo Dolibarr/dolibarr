@@ -273,6 +273,14 @@ class Mo extends CommonObject
 	 */
 	public $tpl = array();
 
+	/**
+	 * @var int[] Ids of BOM lines (with a sub-BOM) that must not be flattened into their raw materials
+	 *            when generating the consume/produce lines, because the user asked to generate a child MO
+	 *            for them instead (see mo_card.php "Generate Child MO"). A single MoLine anchored on the
+	 *            sub-assembly product is created for these lines instead of recursing into the sub-BOM.
+	 */
+	public $noFlattenBomLineIds = array();
+
 
 	/**
 	 * Constructor
@@ -303,10 +311,12 @@ class Mo extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -546,7 +556,7 @@ class Mo extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -646,6 +656,24 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if consumption or production has started on the MO (it has consumed or produced lines).
+	 * If yes, $this->error is set with the message to show.
+	 *
+	 * @return 	bool		True if the MO has consumed or produced lines
+	 */
+	public function hasConsumedOrProducedLines()
+	{
+		global $langs;
+
+		if (count($this->fetchLinesLinked('consumed')) || count($this->fetchLinesLinked('produced'))) {
+			$langs->load('mrp');
+			$this->error = $langs->trans('ErrorMoConsumptionOrProductionStarted');
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Count number of movement with origin of MO
@@ -725,6 +753,11 @@ class Mo extends CommonObject
 	{
 		$error = 0;
 		$role = "";
+
+		// The consumed and produced lines can't be deleted here, their stock movements would not be reversed
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		if ($this->status != self::STATUS_DRAFT) {
 			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
@@ -811,11 +844,11 @@ class Mo extends CommonObject
 
 		$quantity /= $bom->qty;
 		foreach ($bom->lines as $line) {
-			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);
-			if ($line->fk_bom_child > 0) {
+			if ($line->fk_bom_child > 0 && !in_array($line->id, $this->noFlattenBomLineIds)) {
 				$bom = new BOM($this->db);
 				$bom->fetch((int) $line->fk_bom_child);
 				$error += $this->processBOM($user, $role, $bom, $quantity_line);
@@ -941,6 +974,18 @@ class Mo extends CommonObject
 			}
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_mo";
+			$sql .= " WHERE fk_mo = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$result = $this->deleteCommon($user, $notrigger);
 			if ($result < 0) {
@@ -975,9 +1020,27 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+
+		// The line must belong to this MO (checked before any stock movement is reversed)
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_mo = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql || !$this->db->num_rows($resql)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$productstatic = new Product($this->db);
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
+
+		// A line to produce can't be deleted once something was produced from it (the production would stay in stock)
+		$arrayofproducedlines = $this->fetchLinesLinked('produced', $idline);
+		if (!empty($arrayofproducedlines)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordHasChildren');
+			return -1;
+		}
 
 		$result = 0;
 		$error = 0;
@@ -991,21 +1054,26 @@ class Mo extends CommonObject
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
-			$moline = array_shift($TArrayMoLine);
+			$moline = is_array($TArrayMoLine) ? array_shift($TArrayMoLine) : null;
+			if (!is_object($moline) || (int) $moline->fk_mo !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);
 			$productstatic->fetch($movement->product_id);
-			$qtytoprocess = $movement->qty;
+			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-			$codemovementCancel = $langs->trans("StockIncrease");
+			$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
 			} else {
-				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
 				$this->setErrorsFromObject($stockmove);
@@ -1023,14 +1091,14 @@ class Mo extends CommonObject
 				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
+				$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 
 				if ($qtytoprocess >= 0) {
 					$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$error++;
@@ -1254,6 +1322,10 @@ class Mo extends CommonObject
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
+		// Once consumption or production has started, the lines can't be changed or reset any more
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
 		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
@@ -1388,15 +1460,15 @@ class Mo extends CommonObject
 					$qtytoprocess = $lineDetails['qty'];
 
 					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
+					$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1434,7 +1506,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -2049,8 +2121,13 @@ class Mo extends CommonObject
 		}
 
 		$now = dol_now();
+		$warning_delay = $conf->mrp->progress->warning_delay;
 
-		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
+		// The count and the number of late MO are computed by the database instead of reading every MO. A MO is late when it has
+		// a planned end date and that date is before now minus the warning delay.
+		$sql = "SELECT COUNT(rowid) as nb,";
+		$sql .= " SUM(CASE WHEN date_end_planned IS NOT NULL AND date_end_planned < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
+		$sql .= " FROM ".$this->db->prefix()."mrp_mo";
 		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
 		$sql .= " AND entity IN (".getEntity('mrp_mo').")";
 
@@ -2058,7 +2135,6 @@ class Mo extends CommonObject
 		if ($resql) {
 			$langs->load("mrp");
 			$response = new WorkboardResponse();
-			$warning_delay = $conf->mrp->progress->warning_delay ;
 			$response->warning_delay = $warning_delay / 86400;
 			$response->label = $langs->trans("MOProgress");
 			$response->labelShort = $langs->trans("MOProgress");
@@ -2066,15 +2142,12 @@ class Mo extends CommonObject
 			$response->img = img_object('', "mrp");
 
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if (!empty($obj->date_end_planned)) {
-					$date_end_planned = $this->db->jdate($obj->date_end_planned);
-					if ($now > ($date_end_planned + $warning_delay)) {
-						$response->nbtodolate++;
-						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
-					}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
+					$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
 				}
 			}
 

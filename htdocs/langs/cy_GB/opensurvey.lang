@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s wedi llenwi llinell.\nGallwch ddod o hyd i'ch arolwg barn a
 ShowSurvey=Dangos arolwg
 UserMustBeSameThanUserUsedToVote=Mae'n rhaid eich bod wedi pleidleisio a defnyddio'r un enw defnyddiwr a'r un a ddefnyddiwyd i bleidleisio, i bostio sylw
 ListOfOpenSurveys=Rhestr o arolygon agored
+AddTheVote=Click to add the vote

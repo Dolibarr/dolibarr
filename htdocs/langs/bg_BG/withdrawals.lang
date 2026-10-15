@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Заплати в очакване на плащане ч�
 RefSalary=Заплата
 NoSalaryInvoiceToWithdraw=Не се чака заплата за '%s'. Отидете на раздела „%s“ на картата със заплата, за да направите Искане.
 SalaryInvoiceWaitingWithdraw=Заплати в очакване на плащане чрез кредитен превод
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

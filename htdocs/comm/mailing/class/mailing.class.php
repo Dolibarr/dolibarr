@@ -188,7 +188,7 @@ class Mailing extends CommonObject
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
 	);
 
 	const STATUS_DRAFT = 0;
@@ -335,7 +335,7 @@ class Mailing extends CommonObject
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
-		$sql .= ", fk_project = '".((int) $this->fk_project)."'";
+		$sql .= ", fk_project = ".((int) $this->fk_project);
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -527,7 +527,7 @@ class Mailing extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';

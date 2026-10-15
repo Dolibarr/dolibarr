@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttributeValue.class.php';
 require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductCombination2ValuePair.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 
 /**
  * API class for products
@@ -49,6 +51,16 @@ class Products extends DolibarrApi
 	);
 
 	/**
+	 * Shared-cache key holding the current "generation" stamp of the product API
+	 * read cache. It is bumped by the trigger
+	 * core/triggers/interface_99_modProduct_ApiCache.class.php on every product
+	 * write (PRODUCT_CREATE / PRODUCT_MODIFY / PRODUCT_DELETE / PRODUCT_PRICE_MODIFY),
+	 * which transparently invalidates every cached entry at once (memcached/shmop
+	 * offer no delete-by-pattern).
+	 */
+	const CACHE_GENERATION_KEY = 'productapicache_generation';
+
+	/**
 	 * @var Product {@type Product}
 	 */
 	public $product;
@@ -63,7 +75,7 @@ class Products extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->product = new Product($this->db);
@@ -416,7 +428,9 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 2);
+		$this->product->oldcopy = dol_clone($this->product, 1);
+
+		$oldproduct = $this->product->oldcopy;
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -445,7 +459,9 @@ class Products extends DolibarrApi
 			$updatetype = true;
 		}
 
-		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
+		$this->db->begin();
+
+		$result = $this->product->update($id, DolibarrApiAccess::$user, 0, 'update', $updatetype);
 
 		// If price mode is 1 price per product or price by client
 		if ($result > 0 && (getDolGlobalString('PRODUCT_PRICE_UNIQ') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES'))) {
@@ -546,8 +562,11 @@ class Products extends DolibarrApi
 		}
 
 		if ($result <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
@@ -1102,7 +1121,6 @@ class Products extends DolibarrApi
 					$this->_cleanObjectDatas($tmpobj);
 				}
 
-				//var_dump($product_fourn_list->db);exit;
 				$obj_ret[$obj->rowid] = $product_fourn_list;
 
 				$i++;
@@ -2126,6 +2144,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url PUT variants/{id}
 	 */
@@ -2136,7 +2155,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->fetch((int) $id);
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'rowid') {
@@ -2168,6 +2189,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url DELETE variants/{id}
 	 */
@@ -2178,7 +2200,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->id = (int) $id;
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 		$result = $prodcomb->delete(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, "Error deleting variant");
@@ -2434,6 +2458,49 @@ class Products extends DolibarrApi
 		}
 
 		unset($object->module);
+
+		// Document/line totals carried by CommonObject: always empty for a standalone product
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_ttc);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+
+		// Validation/closure workflow fields: a product is never validated or closed
+		unset($object->date_validation);
+		unset($object->date_cloture);
+		unset($object->user_validation_id);
+		unset($object->user_closing_id);
+
+		// Supplier buying-price context: only filled after get_buyprice(), not by a plain read
+		// (complements fourn_pu / fourn_socid / ref_fourn / product_fourn_id already removed above)
+		unset($object->buyprice);
+		unset($object->fourn_qty);
+		unset($object->fourn_multicurrency_price);
+		unset($object->fourn_multicurrency_unitprice);
+		unset($object->fourn_multicurrency_tx);
+		unset($object->fourn_multicurrency_id);
+		unset($object->fourn_multicurrency_code);
+		unset($object->vatrate_supplier);
+		unset($object->desc_supplier);
+		unset($object->default_vat_code_supplier);
+		unset($object->product_fourn_price_id);
+
+		// Transient scaffolding not related to the product record
+		unset($object->specimen);
+		unset($object->canvas);
+		unset($object->res);
+		unset($object->other);
+		unset($object->warehouse);
+		unset($object->warehouse_id);
+
 		return $object;
 	}
 
@@ -2490,6 +2557,30 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		// Optional shared read cache (disabled by default, enabled with constant PRODUCT_API_CACHE_ENABLE).
+		// Only successful reads are cached. The cache key embeds the caller identity (entity, user,
+		// relevant permissions) so a cached hit can safely bypass the checks below, and a generation
+		// stamp bumped by the product trigger so writes invalidate every entry.
+		$usecache = $this->isApiCacheEnabled();
+		$cachekey = '';
+		if ($usecache) {
+			$cachekey = $this->getApiCacheKey(array(
+				'id' => (int) $id,
+				'ref' => (string) $ref,
+				'ref_ext' => (string) $ref_ext,
+				'barcode' => (string) $barcode,
+				'includestockdata' => (int) $includestockdata,
+				'includesubproducts' => $includesubproducts ? 1 : 0,
+				'includeparentid' => $includeparentid ? 1 : 0,
+				'includeifobjectisused' => $includeifobjectisused ? 1 : 0,
+				'includetrans' => $includetrans ? 1 : 0,
+			));
+			$cached = dol_getcache($cachekey, 1);
+			if (is_array($cached)) {
+				return $cached;
+			}
+		}
+
 		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode, 0, 0, ($includetrans ? 0 : 1));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
@@ -2537,6 +2628,69 @@ class Products extends DolibarrApi
 			$this->product->is_object_used = ($this->product->isObjectUsed() > 0);
 		}
 
-		return $this->_cleanObjectDatas($this->product);
+		$objectcleaned = $this->_cleanObjectDatas($this->product);
+
+		if ($usecache) {
+			// Normalize to a plain array so the payload is safely serializable in the
+			// shared cache (and identical to what the API would encode to JSON anyway).
+			$encoded = json_encode($objectcleaned);
+			if ($encoded !== false) {
+				$arrayresult = json_decode($encoded, true);
+				dol_setcache($cachekey, $arrayresult, getDolGlobalInt('PRODUCT_API_CACHE_TTL', 300), 1, 1);
+				return $arrayresult;
+			}
+		}
+
+		return $objectcleaned;
+	}
+
+	/**
+	 * Return whether the product API shared read cache is enabled.
+	 *
+	 * @return bool
+	 */
+	private function isApiCacheEnabled()
+	{
+		return getDolGlobalString('PRODUCT_API_CACHE_ENABLE') ? true : false;
+	}
+
+	/**
+	 * Return the current generation stamp of the product API read cache.
+	 * Any product write bumps it (see the ApiCache trigger), which invalidates
+	 * every previously cached entry.
+	 *
+	 * @return string
+	 */
+	private function getApiCacheGeneration()
+	{
+		$generation = dol_getcache(self::CACHE_GENERATION_KEY, 1);
+		return is_scalar($generation) ? (string) $generation : '0';
+	}
+
+	/**
+	 * Build a shared-cache key for a product read.
+	 * The key isolates every dimension that changes the returned payload or the
+	 * visibility of its content: cache generation, entity, caller, caller rights,
+	 * default language and the read parameters.
+	 *
+	 * @param  array<string,int|string>  $params  Read parameters
+	 * @return string
+	 */
+	private function getApiCacheKey($params)
+	{
+		global $conf, $langs;
+
+		$signature = array(
+			'v' => 1,
+			'generation' => $this->getApiCacheGeneration(),
+			'entity' => (int) $conf->entity,
+			'user' => (int) DolibarrApiAccess::$user->id,
+			'right_produit_lire' => DolibarrApiAccess::$user->hasRight('produit', 'lire') ? 1 : 0,
+			'right_stock_lire' => DolibarrApiAccess::$user->hasRight('stock', 'lire') ? 1 : 0,
+			'lang' => $langs->defaultlang,
+			'params' => $params,
+		);
+
+		return 'productapicache_'.md5(json_encode($signature));
 	}
 }

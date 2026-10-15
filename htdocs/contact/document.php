@@ -131,7 +131,7 @@ if ($object->id) {
 	$head = contact_prepare_head($object);
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -188,9 +188,11 @@ if ($object->id) {
 	}*/
 
 	// Civility
-	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';

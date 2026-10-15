@@ -13,6 +13,7 @@ printEatby=Consumido-por: %s
 printSellby=Vendido-por: %s
 printQty=Cantidad: %d
 AddDispatchBatchLine=Agregar una linea de Vida Útil para despacho
+WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/Serial está activo, algunos modos de disminución o aumento automático de stock pueden estar forzados.
 ProductDoesNotUseBatchSerial=Este producto no utiliza el número de lote/serie
 ProductLotSetup=Configuración del módulo lote/serie
 ShowCurrentStockOfLot=Mostrar las existencias actuales para la relación producto/lote
@@ -22,3 +23,8 @@ EndOfLife=Vida útil
 OutOfOrder=Fuera de orden
 ToReplace=Reemplazo
 CantMoveNonExistantSerial=Error. Pides un movimiento en un registro de un serial que ya no existe. Puede ser que tome el mismo serial en el mismo almacén varias veces en el mismo envío o que haya sido utilizado por otro envío. Retire este envío y prepare otro.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Tabla de lotes incompleta, ejecute la reparación con el parámetro '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers=Se requiere corrección de stock por número serial único.
+ErrorBatchesNeedStockManagement=Error. Un producto con gestión de lote/serial también debe tener gestión de stock.
+ForceBatchesNeedStockManagement=Un producto con gestión de lote/serial debe tener gestión de stock (se fuerza a sí).
+BatchInformationNotfound=Información de lote no encontrada

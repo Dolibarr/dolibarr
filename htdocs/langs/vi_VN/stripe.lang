@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Giá trị cho PBX SITE
 PAYBOX_PBX_RANG=Giá trị cho PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Giá trị cho PBX ID
 PAYBOX_HMAC_KEY=Khóa HMAC
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

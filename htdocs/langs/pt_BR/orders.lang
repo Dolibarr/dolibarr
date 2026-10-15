@@ -64,6 +64,7 @@ ShowOrder=Mostrar Pedido
 OrdersOpened=Pedidos a processar
 NoDraftOrders=Não há projetos de pedidos
 NoOrder=Sem pedidos
+NoSupplierOrder=Sem ordem de compra
 LastOrders=Últimos %sPedidos de vendas
 LastCustomerOrders=Últimos %s Pedidos de vendas
 LastSupplierOrders=Últimos pedidos de compra %s
