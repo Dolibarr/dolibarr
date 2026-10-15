@@ -771,7 +771,7 @@ function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $pla
 	$out .= '</div>';
 
 	$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
-	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsMeasures("'.dol_escape_js($htmlname).'_component"); });</script>';
+	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsMeasures(\''.dol_escape_js($htmlname).'_component\'); });</script>';
 
 	return $out;
 }
