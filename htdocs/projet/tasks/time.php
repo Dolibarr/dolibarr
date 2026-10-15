@@ -2439,7 +2439,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 					print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($task_time->label).'">';
 					if (!empty($arrayfields['t.element_ref']['checked'])) {
-						print dolPrintHTML($task_time->label);
+						print '<span class="spantitle">'.dolPrintHTML($task_time->label).'</span>';
 					} else {
 						$tasktmp->id = $task_time->fk_element;
 						$tasktmp->ref = $task_time->ref;
@@ -2770,7 +2770,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.element_label']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 						print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
-						print dol_escape_htmltag($task_time->label);
+						print '<span class="spantitle">'.dol_escape_htmltag($task_time->label).'</span>';
 						print '</td>';
 					}
 				}
@@ -2942,7 +2942,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.element_label']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 						print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($task_time->label).'">';
-						print dol_escape_htmltag($task_time->label);
+						print '<span class="spantitle">'.dol_escape_htmltag($task_time->label).'</span>';
 						print '</td>';
 					}
 				}
