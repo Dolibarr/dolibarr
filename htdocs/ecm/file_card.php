@@ -168,7 +168,13 @@ if ($action == 'update' && $permissiontoadd) {
 	// Now we update index of file
 	$db->begin();
 	//print $oldfile.' - '.$newfile;
-	if ($newlabel != $oldlabel) {
+	if ($newlabel != $oldlabel && dol_is_file($newfileformove)) {
+		// Do not overwrite another file of the directory
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorDestinationAlreadyExists', $newlabel), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newlabel != $oldlabel) {
 		$result = dol_move($oldfile, $newfileformove); // This include update of database
 		if (!$result) {
 			$langs->load('errors');
