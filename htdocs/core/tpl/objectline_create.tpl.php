@@ -1422,6 +1422,28 @@ if (!empty($object->thirdparty)) {
 				'json');
 			}
 
+			<?php if (getDolGlobalString('PRODUCT_USE_UNITS') && !empty($senderissupplier)) { ?>
+			// The unit synchronisation above lives in the margin block, whose ajax call is only
+			// made when the margin module is enabled and the user may edit it. A supplier order is
+			// normally created with that module off, so the unit stayed on the first one of the
+			// list. The same information is fetched here, outside of the margin condition.
+			if (!(jsConf.conf.usemargins && jsConf.userRight.margins.creer)) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': jsConf.conf.token }, function(data) {
+					if (data && data.length > 0) {
+						var fkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && fkUnit === null) {
+								fkUnit = this.fk_unit;
+							}
+						});
+						if (fkUnit !== null && $("#units").length) {
+							$("#units").val(fkUnit).trigger('change');
+						}
+					}
+				},
+				'json');
+			}
+			<?php } ?>
 
 			if (jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY || jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) {
 				/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
