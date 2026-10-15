@@ -258,13 +258,6 @@ if (empty($reshook)) {
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				if (isModEnabled('category')) {
-					$categories = GETPOST('categories', 'array:int');
-					if (method_exists($object, 'setCategories')) {
-						$object->setCategories($categories);
-					}
-				}
-
 				$db->commit();
 
 				// Define output language
@@ -1506,6 +1499,13 @@ if (empty($reshook)) {
 			$action = 'create';
 			//$_GET['socid'] = $_POST['socid'];
 		} else {
+			if (isModEnabled('category')) {
+				$categories = GETPOST('categories', 'array:int');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
