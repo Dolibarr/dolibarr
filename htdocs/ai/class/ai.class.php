@@ -438,8 +438,8 @@ class Ai
 				$generatedContent = '';
 				if (!empty($decodedResponse['candidates'][0]['content']['parts'])) {
 					foreach ($decodedResponse['candidates'][0]['content']['parts'] as $part) {
-						if (isset($part['text'])) {
-							$generatedContent .= $part['text'];
+						if (isset($part['text']) && is_scalar($part['text'])) {
+							$generatedContent .= (string) $part['text'];
 						}
 					}
 				}
@@ -456,6 +456,11 @@ class Ai
 				}
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
+			// All the branches above assign a string, but the inference of the analyser does not
+			// follow them through the enclosing try block, so the type is pinned here before the
+			// value is passed to functions declared to take a string.
+			$generatedContent = (string) $generatedContent;
+
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
 
 			$this->tokenUsage = $decodedResponse['usage'] ?? null;
