@@ -402,6 +402,170 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Get one supplier order line after checking access to its parent.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $lineid Line ID
+	 * @return Object Order line
+	 * @url GET {id}/lines/{lineid}
+	 */
+	public function getLine($id, $lineid)
+	{
+		$this->loadOrderForOperation($id);
+		foreach ($this->order->lines as $line) {
+			if ((int) $line->id === (int) $lineid) {
+				return $this->_cleanObjectDatas(clone $line);
+			}
+		}
+		throw new RestException(404, 'Line not found in this supplier order');
+	}
+
+	/**
+	 * Update selected fields of a draft supplier order line.
+	 *
+	 * Omitted fields keep their current value. Dates are Unix timestamps or null.
+	 * A replacement fk_product requires explicit description, unit price and VAT.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $lineid Line ID
+	 * @param array<string,mixed>|null $request_data Fields to change
+	 * @return Object Updated line
+	 * @url PUT {id}/lines/{lineid}
+	 */
+	public function putLine($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'creer')) {
+			throw new RestException(403);
+		}
+		$line = $this->getLine($id, $lineid);
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_DRAFT) {
+			throw new RestException(409, 'Only draft supplier orders accept line changes. Reopen the order explicitly first.');
+		}
+		if (!is_array($request_data) || empty($request_data)) {
+			throw new RestException(400, 'A non-empty object of line changes is required');
+		}
+		$allowed = array('desc', 'subprice', 'subprice_ttc', 'qty', 'remise_percent', 'tva_tx', 'localtax1_tx', 'localtax2_tx', 'date_start', 'date_end', 'array_options', 'fk_unit', 'multicurrency_subprice', 'ref_supplier', 'fk_product');
+		foreach ($request_data as $field => $value) {
+			if (!in_array($field, $allowed, true)) {
+				throw new RestException(400, 'Unsupported line field: '.$field);
+			}
+			if ($field === 'array_options') {
+				if (!is_array($value)) {
+					throw new RestException(400, 'array_options must be an object');
+				}
+				foreach ($value as $key => $optional) {
+					$line->array_options[$key] = $this->_checkValExtrafieldsForAPI($key, $optional, $line);
+				}
+			} elseif (in_array($field, array('date_start', 'date_end', 'fk_unit'), true)) {
+				if ($value !== null && (!is_numeric($value) || (int) $value != $value || $value < 0)) {
+					throw new RestException(400, 'Expected an integer or null for '.$field);
+				}
+				$line->$field = $value === null ? null : (int) $value;
+			} elseif (in_array($field, array('desc', 'ref_supplier'), true)) {
+				if (!is_string($value)) {
+					throw new RestException(400, 'Expected a string for '.$field);
+				}
+				$line->$field = $this->_checkValForAPI($field, $value, $line);
+			} elseif (!is_numeric($value) || !is_finite((float) $value)) {
+				throw new RestException(400, 'Expected a numeric value for '.$field);
+			} elseif ($field !== 'fk_product') {
+				$line->$field = $value;
+			}
+		}
+		$pricefields = array_intersect(array_keys($request_data), array('subprice', 'subprice_ttc', 'multicurrency_subprice'));
+		if (count($pricefields) > 1) {
+			throw new RestException(400, 'Give only one unit price: subprice, subprice_ttc or multicurrency_subprice');
+		}
+		if (isset($request_data['qty']) && (float) $request_data['qty'] == 0) {
+			throw new RestException(400, 'Quantity must not be zero');
+		}
+		$replacement = null;
+		if (isset($request_data['fk_product']) && ((int) $request_data['fk_product'] <= 0 || (int) $request_data['fk_product'] != $request_data['fk_product'])) {
+			throw new RestException(400, 'fk_product must be a positive integer');
+		}
+		if (isset($request_data['fk_product']) && (int) $request_data['fk_product'] !== (int) $line->fk_product) {
+			$replacement = (int) $request_data['fk_product'];
+			if (!static::_checkAccessToResource('product', $replacement)) {
+				throw new RestException(403, 'Access denied to replacement product');
+			}
+			if (!isset($request_data['desc'], $request_data['tva_tx']) || !$pricefields) {
+				throw new RestException(400, 'Replacing a product requires desc, tva_tx and an explicit unit price');
+			}
+			$line->ref_supplier = $request_data['ref_supplier'] ?? '';
+		}
+		$includingtax = isset($request_data['subprice_ttc']) || (!isset($request_data['subprice']) && $line->wasEnteredIncludingTax());
+		if (isset($request_data['multicurrency_subprice'])) {
+			$line->subprice = 0;
+			$includingtax = false;
+		} elseif ($pricefields) {
+			$line->multicurrency_subprice = 0;
+		}
+		$vatrate = $line->tva_tx;
+		if (!isset($request_data['tva_tx']) && !empty($line->vat_src_code)) {
+			$vatrate .= ' ('.$line->vat_src_code.')';
+		}
+		if ($this->order->fetch_thirdparty() <= 0) {
+			throw new RestException(500, 'Unable to load supplier for tax calculations');
+		}
+		$result = $this->order->updateline(
+			$lineid, $line->desc, $includingtax ? $line->subprice_ttc : $line->subprice,
+			$line->qty, $line->remise_percent, $vatrate, $line->localtax1_tx, $line->localtax2_tx,
+			$includingtax ? 'TTC' : 'HT', $line->info_bits, $line->product_type, 0,
+			$line->date_start, $line->date_end, $line->array_options, $line->fk_unit,
+			$line->multicurrency_subprice, $line->ref_supplier, $replacement
+		);
+		if ($result <= 0) {
+			throw new RestException(400, $this->order->errorsToString());
+		}
+		return $this->getLine($id, $lineid);
+	}
+
+	/**
+	 * Reopen one step using the standard supplier order workflow.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $expected_status Current status expected by the caller
+	 * @return Object Updated supplier order
+	 * @url POST {id}/reopen
+	 */
+	public function reopen($id, $expected_status)
+	{
+		if (!is_numeric($expected_status) || (int) $expected_status != $expected_status) {
+			throw new RestException(400, 'expected_status must be an integer');
+		}
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'creer')) {
+			throw new RestException(403);
+		}
+		$this->loadOrderForOperation($id);
+		if ((int) $this->order->status !== (int) $expected_status) {
+			throw new RestException(409, 'Supplier order status changed; reload the order before reopening it');
+		}
+		if ($this->order->setReopen(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(400, $this->order->errorsToString());
+		}
+		return $this->get($id);
+	}
+
+	/**
+	 * Load an authorised order without sanitising its live database handle.
+	 *
+	 * @param int $id Supplier order ID
+	 * @return void
+	 */
+	protected function loadOrderForOperation($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire')) {
+			throw new RestException(403);
+		}
+		if ($this->order->fetch($id) <= 0) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+		if (!static::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access denied to supplier order');
+		}
+	}
+
+	/**
 	 * Get contacts of given supplier order
 	 *
 	 * Return an array with contact information

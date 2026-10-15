@@ -330,6 +330,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
 		$suite->addTestSuite('CommandeFournisseurTest');
+		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
+		$suite->addTestSuite('SupplierOrdersLineApiTest');
 
 		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
 		$suite->addTestSuite('CommonInvoiceTest');

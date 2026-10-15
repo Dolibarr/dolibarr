@@ -379,7 +379,25 @@ class ToolApiBridge extends McpTool
 					'params' => ['sqlfilters' => "Universal filter, e.g. (t.fk_soc:=:2)", 'limit' => "Rows to return."]
 				],
 				'get' => ['description' => "Get one record by rowid, with its lines."],
-				'postLine' => $this->addLineMethod('supplier order', 'api_supplier_orders_list', 'CommandeFournisseur', ['fournisseur', 'commande', 'creer'], true)
+				'postLine' => $this->addLineMethod('supplier order', 'api_supplier_orders_list', 'CommandeFournisseur', ['fournisseur', 'commande', 'creer'], true),
+				'getLine' => ['suffix' => 'get_line'],
+				'put' => [
+					'suffix' => 'update',
+					'description' => 'Update selected supplier order header fields after confirmation. Other properties are preserved. Do not use this to change status or totals.',
+					'write' => ['patch' => true, 'parent' => 'id', 'object' => 'CommandeFournisseur', 'right' => ['fournisseur', 'commande', 'creer']],
+					'input_schema' => $this->supplierOrderUpdateSchema(false)
+				],
+				'putLine' => [
+					'suffix' => 'update_line',
+					'description' => 'Update selected fields of ONE existing DRAFT supplier order line. Preserve omitted fields. A replacement fk_product requires an explicit desc, unit price and tva_tx. Give only one price: subprice (company currency excl. tax), subprice_ttc (company currency incl. tax), or multicurrency_subprice (order currency excl. tax). Dates are Unix timestamps or null. Reopen a non-draft explicitly before requesting a line change.',
+					'write' => ['patch' => true, 'line' => 'lineid', 'parent' => 'id', 'object' => 'CommandeFournisseur', 'right' => ['fournisseur', 'commande', 'creer']],
+					'input_schema' => $this->supplierOrderUpdateSchema(true)
+				],
+				'reopen' => [
+					'suffix' => 'reopen',
+					'description' => 'Reopen a supplier order by ONE standard workflow step, after explicit confirmation. Supply its current expected_status. An ordered order goes to approved, not directly to draft; never repeat this automatically.',
+					'write' => ['reopen' => true, 'parent' => 'id', 'object' => 'CommandeFournisseur', 'right' => ['fournisseur', 'commande', 'creer']]
+				]
 			]
 		];
 
@@ -935,6 +953,41 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Explicit partial-update schema: omitted prices never fall back to catalogue values.
+	 *
+	 * @param bool $line Whether this is a line update
+	 * @return array<string,mixed> Tool input schema
+	 */
+	private function supplierOrderUpdateSchema($line)
+	{
+		$decimal = ['type' => ['number', 'string'], 'pattern' => '^-?[0-9]+(\\.[0-9]+)?$'];
+		$date = ['type' => ['integer', 'null'], 'minimum' => 0];
+		$fields = $line ? [
+			'desc' => ['type' => 'string'], 'subprice' => $decimal, 'subprice_ttc' => $decimal,
+			'qty' => $decimal, 'remise_percent' => $decimal, 'tva_tx' => $decimal,
+			'localtax1_tx' => $decimal, 'localtax2_tx' => $decimal,
+			'date_start' => $date, 'date_end' => $date,
+			'fk_unit' => ['type' => ['integer', 'null'], 'minimum' => 1],
+			'multicurrency_subprice' => $decimal, 'ref_supplier' => ['type' => 'string'],
+			'fk_product' => ['type' => 'integer', 'minimum' => 1],
+			'array_options' => ['type' => 'object']
+		] : [
+			'ref_supplier' => ['type' => 'string'], 'note_private' => ['type' => 'string'],
+			'note_public' => ['type' => 'string'], 'delivery_date' => $date,
+			'fk_project' => ['type' => ['integer', 'null'], 'minimum' => 1],
+			'array_options' => ['type' => 'object']
+		];
+		$properties = ['id' => ['type' => 'integer', 'minimum' => 1]];
+		$required = ['id', 'request_data'];
+		if ($line) {
+			$properties['lineid'] = ['type' => 'integer', 'minimum' => 1];
+			$required[] = 'lineid';
+		}
+		$properties['request_data'] = ['type' => 'object', 'minProperties' => 1, 'additionalProperties' => false, 'properties' => $fields];
+		return ['type' => 'object', 'additionalProperties' => false, 'properties' => $properties, 'required' => $required];
+	}
+
+	/**
 	 * Enrichment of the postLine method of a document (order, proposal, invoice,
 	 * and their supplier counterparts): add ONE line to an existing draft.
 	 *
@@ -1459,6 +1512,9 @@ class ToolApiBridge extends McpTool
 		if ($required) {
 			$schema['required'] = $required;
 		}
+		if (!empty($meta['input_schema'])) {
+			$schema = $meta['input_schema'];
+		}
 
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
 		// When an explicit description is given, it has priority on auto-generated description
@@ -1611,6 +1667,9 @@ class ToolApiBridge extends McpTool
 		// preview for a write the user could never perform.
 		$write = $this->writeMetaFor($toolName);
 		if (!empty($write['right'])) {
+			if (!empty($write['patch']) || !empty($write['reopen'])) {
+				return array($write['right'], array('fournisseur', 'commande', 'lire'));
+			}
 			return array($write['right']);
 		}
 
@@ -1778,6 +1837,9 @@ class ToolApiBridge extends McpTool
 	private function normaliseWriteArgs(array $args, array $write = array())
 	{
 		$this->unresolvedProducts = array();
+		if (!empty($write['patch']) || !empty($write['reopen'])) {
+			return $args;
+		}
 
 		if (isset($args['request_data'])) {
 			$body = $args['request_data'];
@@ -1990,6 +2052,12 @@ class ToolApiBridge extends McpTool
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
 		}
+		if (!empty($write['patch'])) {
+			return $langs->trans('AIPreviewUpdateSupplierOrder', (int) ($args['id'] ?? 0), (int) ($args['lineid'] ?? 0), json_encode($args['request_data'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+		}
+		if (!empty($write['reopen'])) {
+			return $langs->trans('AIPreviewReopenSupplierOrder', (int) ($args['id'] ?? 0), (int) ($args['expected_status'] ?? -1));
+		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
 
@@ -2070,6 +2138,37 @@ class ToolApiBridge extends McpTool
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
+
+		if (!empty($write['patch']) || !empty($write['reopen'])) {
+			if (!checkUserAccessToObject($this->user, ['fournisseur'], (int) ($args['id'] ?? 0), 'commande_fournisseur', 'commande')) {
+				return $langs->trans('NotEnoughPermissions');
+			}
+			$parent = $this->fetchWriteParent($write, $args);
+			if (!$parent) {
+				return 'Supplier order not found';
+			}
+			if (!empty($write['reopen'])) {
+				if (!in_array((int) $parent->status, array(1, 2, 3, 4, 5, 6, 7, 9), true)) {
+					return 'Supplier order is not in a status that can be reopened';
+				}
+				return isset($args['expected_status']) && (int) $parent->status === (int) $args['expected_status'] ? '' : 'Supplier order status changed; reload it before reopening';
+			}
+			if (!empty($write['line']) && (int) $parent->status !== 0) {
+				return 'Only a draft supplier order accepts line changes; reopen it explicitly first';
+			}
+			$body = $args['request_data'] ?? null;
+			$schema = $this->supplierOrderUpdateSchema(!empty($write['line']));
+			if (!is_array($body) || !$body || array_diff(array_keys($body), array_keys($schema['properties']['request_data']['properties']))) {
+				return 'Expected a non-empty request_data object containing only the permitted update fields';
+			}
+			if (!empty($body['fk_project']) && !checkUserAccessToObject($this->user, ['projet'], (int) $body['fk_project'], 'projet')) {
+				return $langs->trans('NotEnoughPermissions');
+			}
+			if (!empty($write['line']) && !$parent->isLineOfObject((int) ($args['lineid'] ?? 0))) {
+				return 'Line does not belong to this supplier order';
+			}
+			return '';
+		}
 
 		if (!empty($write['thirdparty'])) {
 			$field = (string) $write['thirdparty'];
@@ -2315,7 +2414,7 @@ class ToolApiBridge extends McpTool
 			// advertises the fields flat, because that is what a model fills
 			// in, so the body is rebuilt here from everything it sent.
 			if ($pname === 'request_data') {
-				$body = $args;
+				$body = !empty($writemeta['patch']) ? ($args['request_data'] ?? []) : $args;
 				unset($body['requestState']);
 				foreach (($writemeta['defaults'] ?? array()) as $field => $default) {
 					if (!isset($body[$field])) {

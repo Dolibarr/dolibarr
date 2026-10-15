@@ -447,6 +447,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= "  description='".$this->db->escape($this->desc)."'";
+		if (isset($this->fk_product)) {
+			$sql .= ', fk_product = '.($this->fk_product > 0 ? ((int) $this->fk_product) : 'null');
+		}
 		$sql .= ", ref='".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", subprice = ".((float) price2num($this->subprice));
 		$sql .= ", subprice_ttc = ".((float) price2num($this->subprice_ttc));

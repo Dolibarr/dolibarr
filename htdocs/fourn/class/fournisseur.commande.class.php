@@ -3162,9 +3162,10 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param 		int|null			$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		int|float			$pu_ht_devise		Unit price in currency
 	 *  @param		string				$ref_supplier		Supplier ref
+	 *  @param      int|null            $fk_product         Replacement product/service, null to keep the current one
 	 *	@return    	int         	    					Return integer < 0 if error, > 0 if ok
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = 0, $date_end = 0, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = 0, $date_end = 0, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '', $fk_product = null)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -3179,6 +3180,15 @@ class CommandeFournisseur extends CommonOrder
 		$error = 0;
 
 		if ($this->status == self::STATUS_DRAFT) {
+			if ($fk_product !== null) {
+				$replacement = new ProductFournisseur($this->db);
+				if ($fk_product <= 0 || $replacement->fetch($fk_product) <= 0) {
+					$this->error = 'ErrorProductNotFound';
+					return -1;
+				}
+				$type = $replacement->type;
+			}
+
 			// Clean parameters
 			if (empty($qty)) {
 				$qty = 0;
@@ -3243,6 +3253,21 @@ class CommandeFournisseur extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 				$tmpline = new CommandeFournisseurLigne($this->db);
 				if ($tmpline->fetch($rowid) > 0) {
+					if ($fk_product !== null && (int) $fk_product !== (int) $tmpline->fk_product) {
+						$sqlpackaging = 'SELECT packaging FROM '.$this->db->prefix().'product_fournisseur_price';
+						$sqlpackaging .= ' WHERE entity IN ('.getEntity('productsupplierprice').')';
+						$sqlpackaging .= ' AND fk_product = '.((int) $fk_product).' AND fk_soc = '.((int) $this->socid);
+						$sqlpackaging .= " AND ref_fourn = '".$this->db->escape($ref_supplier)."' AND quantity <= ".abs((float) $qty);
+						$sqlpackaging .= ' ORDER BY packaging ASC'.$this->db->plimit(1);
+						$respackaging = $this->db->query($sqlpackaging);
+						if (!$respackaging) {
+							$this->error = $this->db->lasterror();
+							$this->db->rollback();
+							return -1;
+						}
+						$packaging = $this->db->fetch_object($respackaging);
+						$tmpline->packaging = $packaging ? (float) $packaging->packaging : 1;
+					}
 					$newqty = $this->roundQtyToPackaging($qty, $tmpline->packaging);
 					if ($newqty != $qty) {
 						$qty = $newqty;
@@ -3277,6 +3302,9 @@ class CommandeFournisseur extends CommonOrder
 
 			$oldline = clone $this->line;
 			$this->line->oldline = $oldline;
+			if ($fk_product !== null) {
+				$this->line->fk_product = (int) $fk_product;
+			}
 
 			$this->line->context = $this->context;
 
