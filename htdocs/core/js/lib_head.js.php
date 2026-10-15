@@ -1146,7 +1146,12 @@ function document_preview(file, type, title)
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
-		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+		/* The content of the object tag is displayed by the browser when it cannot render the
+		   document itself. Chrome on Android does not render a PDF inside an object, so without
+		   this the preview area stays empty and the file cannot be reached at all. */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam">';
+		newElem += '<a href="'+file+'" target="_blank" rel="noopener noreferrer">'+<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Download"))."'"; ?>+'</a>';
+		newElem += '</object>';
 
 		optionsbuttons = {}
 		if (mode == 'image') {
