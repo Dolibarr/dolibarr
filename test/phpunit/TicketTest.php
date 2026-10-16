@@ -67,10 +67,12 @@ class TicketTest extends CommonClassTest
 		$localobject = new Ticket($db);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
+		$transactionlevel = $db->transaction_opened;
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
+		$this->assertEquals($transactionlevel, $db->transaction_opened, 'create() failing on verify must not rollback the caller transaction');
 
 		// Try to create one with correct values
 		$localobject = new Ticket($db);
