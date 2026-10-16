@@ -341,7 +341,11 @@ if (!empty($hashp) && $hashp != 'shared') {
 if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
 	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
-	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
+	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+
+	if (is_object($object)) {
+		$accessallowed = restrictedArea($user, $modulepart, $object);
+	}
 }
 
 // Security:

@@ -2276,7 +2276,9 @@ class Product extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		if ($langs instanceOf Translate) {
+			$current_lang = $langs->getDefaultLang();
+		}
 
 		$sql = "SELECT lang, label, description, note as other";
 		$sql .= " FROM ".$this->db->prefix()."product_lang";
