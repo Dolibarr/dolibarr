@@ -946,6 +946,21 @@ class FunctionsLibTest extends CommonClassTest
 		$after = dol_htmlentitiesbr($input);
 		$this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string", $after);
 
+		// Text detected as HTML only because of its entities, so without any tag at all: its line
+		// feeds are the only separator of its lines, they must be converted
+
+		$input = "A string\nwith an escaped &gt; and an &amp;.";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
+		$this->assertEquals("A string<br>\nwith an escaped &gt; and an &amp;.", $after);
+
+		$input = "A string\nwith an escaped &gt; and an &amp;.";
+		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
+		$this->assertEquals("A string<br>with an escaped &gt; and an &amp;.", $after);
+
+		$input = "L&#039;onduleur\nis to be replaced.";
+		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
+		$this->assertEquals("L&#039;onduleur<br>is to be replaced.", $after);
+
 		// TODO Add test with param $removelasteolbr = 0
 
 		return true;
