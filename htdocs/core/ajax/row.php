@@ -142,6 +142,35 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 
+	// The lines must be the lines of an object the user can access, and this object must be a draft, as on its card.
+	// Table of lines => column with the id of the object, table of the object, its status field ('' = no status check), features for restrictedArea
+	$linetables = array(
+		'propaldet' => array('fk_propal', 'propal', 'fk_statut', 'propal', ''),
+		'commandedet' => array('fk_commande', 'commande', 'fk_statut', 'commande', ''),
+		'facturedet' => array('fk_facture', 'facture', 'fk_statut', 'facture', ''),
+		'facturedet_rec' => array('fk_facture', 'facture_rec', '', 'facture', ''),
+		'supplier_proposaldet' => array('fk_supplier_proposal', 'supplier_proposal', 'fk_statut', 'supplier_proposal', ''),
+		'commande_fournisseurdet' => array('fk_commande', 'commande_fournisseur', 'fk_statut', 'fournisseur', 'commande'),
+		'facture_fourn_det' => array('fk_facture_fourn', 'facture_fourn', 'fk_statut', 'fournisseur', 'facture'),
+		'facture_fourn_det_rec' => array('fk_facture_fourn', 'facture_fourn_rec', '', 'supplier_invoicerec', ''),
+	);
+	if (isset($linetables[$table_element_line])) {
+		$linetable = $linetables[$table_element_line];
+		if ($fk_element != $linetable[0]) {
+			dol_syslog('Bad parent field to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
+			accessforbidden('Bad parent field to modify position of lines for object in table '.$table_element_line);
+		}
+		restrictedArea($user, $linetable[3], $element_id, $linetable[1], $linetable[4]);
+		if ($linetable[2]) {
+			$resql = $db->query("SELECT ".$linetable[2]." as status FROM ".MAIN_DB_PREFIX.$linetable[1]." WHERE rowid = ".((int) $element_id));
+			$obj = ($resql ? $db->fetch_object($resql) : null);
+			if (!$obj || (int) $obj->status != 0) {
+				dol_syslog('Lines of a non draft object can not be moved, table='.$table_element_line.', element_id='.$element_id, LOG_WARNING);
+				accessforbidden('Lines of a non draft object can not be moved');
+			}
+		}
+	}
+
 	$rowordertab = explode(',', $roworder);
 	$newrowordertab = array();
 	foreach ($rowordertab as $value) {
