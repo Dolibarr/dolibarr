@@ -839,6 +839,10 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 	$out .= '<div class="customreportscombo-list">';
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
+	/**
+	 * @param int|string $elementkey
+	 * @return string
+	 */
 	$renderElement = function ($elementkey) use ($elements, $selectedkey, &$renderElement) {
 		$element = $elements[$elementkey];
 		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
