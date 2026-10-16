@@ -539,6 +539,7 @@ if ($result >= 0) {
 
 	// Payment mode
 	print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
 	$form->select_types_paiements((GETPOST('paiementcode') ? GETPOST('paiementcode') : $facture->mode_reglement_code), 'paiementcode', '', 2);
 	print "</td>\n";
 	print '</tr>';
@@ -658,7 +659,6 @@ if ($result >= 0) {
 
 			$i = 0;
 			//print '<tr><td colspan="3">';
-			print '<br>';
 
 			$moreHtmlRight = '';
 			if ($action=='create') {
@@ -676,8 +676,12 @@ if ($result >= 0) {
 					}
 				}
 
-				$btnIcon = empty($displayAllInvoices) ? 'fa fa-eye' : 'fa fa-eye-slash';
-				$moreHtmlRight.= dolGetButtonTitle($btnTitle, '', $btnIcon, $urlToggleDisplayMod);
+				// Show a +/- sign to toggle the visibility of credit notes with the credit note picto (grey when not active, colored when active)
+				$btnCssGray = empty($displayAllInvoices) ? ' opacitymediumbycolor' : '';
+				$moreHtmlRight .= '<a class="btnTitle" title="'.dolPrintHTMLForAttribute($btnTitle).'" href="'.dol_escape_htmltag($urlToggleDisplayMod).'">';
+				$moreHtmlRight .= '<span class="fa '.(empty($displayAllInvoices) ? 'fa-plus' : 'fa-minus').' btnTitle-icon inline-blockimp valignmiddle'.$btnCssGray.'" style="font-size:1.6em"></span>';
+				$moreHtmlRight .= img_picto('', empty($displayAllInvoices) ? 'billa_nocolor' : 'billa', 'style="font-size:1.6em"', 0, 0, 1, '', 'inline-blockimp valignmiddle marginleftonlyshort'.$btnCssGray);
+				$moreHtmlRight .= '</a>';
 			}
 
 			print_barre_liste($langs->trans('Invoices'), 0, $_SERVER["PHP_SELF"], '', '', '', '', $num, $totalnboflines, 'bill', 0, $moreHtmlRight, '', 0, 0, 0, 1);

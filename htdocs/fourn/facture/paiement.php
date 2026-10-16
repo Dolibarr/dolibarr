@@ -542,6 +542,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print $form->selectDate($dateinvoice, '', 0, 0, 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
+			print img_picto('', 'bank', 'class="pictofixedwidth"');
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
 			if (isModEnabled("bank")) {
@@ -612,7 +613,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$num = $db->num_rows($resql);
 					if ($num > 0) {
 						$i = 0;
-						print '<br>';
 
 						if (!empty($conf->use_javascript_ajax)) {
 							//Add js for AutoFill
@@ -642,8 +642,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								}
 							}
 
-							$btnIcon = empty($displayAllInvoices) ? 'fa fa-eye' : 'fa fa-eye-slash';
-							$moreHtmlRight.= dolGetButtonTitle($btnTitle, '', $btnIcon, $urlToggleDisplayMod);
+							// Show a +/- sign to toggle the visibility of credit notes with the credit note picto (grey when not active, colored when active)
+							$btnCssGray = empty($displayAllInvoices) ? ' opacitymediumbycolor' : '';
+							$moreHtmlRight .= '<a class="btnTitle" title="'.dolPrintHTMLForAttribute($btnTitle).'" href="'.dol_escape_htmltag($urlToggleDisplayMod).'">';
+							$moreHtmlRight .= '<span class="fa '.(empty($displayAllInvoices) ? 'fa-plus' : 'fa-minus').' btnTitle-icon inline-blockimp valignmiddle'.$btnCssGray.'" style="font-size:1.6em"></span>';
+							$moreHtmlRight .= img_picto('', empty($displayAllInvoices) ? 'supplier_invoicea_nocolor' : 'supplier_invoicea', 'style="font-size:1.6em"', 0, 0, 1, '', 'inline-blockimp valignmiddle marginleftonlyshort'.$btnCssGray);
+							$moreHtmlRight .= '</a>';
 						}
 
 						print_barre_liste($langs->trans('Invoices'), 0, $_SERVER["PHP_SELF"], '', '', '', '', $num, $totalnboflines, 'bill', 0, $moreHtmlRight, '', 0, 0, 0, 1);
