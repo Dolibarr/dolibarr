@@ -348,3 +348,7 @@ VATExemptionCodeDesc=If the VAT rate is 0, you can enter here the code of the re
 VATExemptionCodeDesc2=You can pick any valid value among the list on https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/ or keep it empty to use the default code.
 VATExemptionCodeDesc3=This code is not used for accounting. It is used only if your are using an E-invoice generation module.
 WeWillUseThisValueAsNumber=We will use this value as full registration number
+TotalsReference=Totals reference
+TotalsFromLines=Sum of the lines
+TotalsAlignedOnForeignCurrency=Aligned on %s
+TotalsReferenceDesc=Totals in the company currency are the sum of the converted lines, so they may differ by a few cents from the exact conversion of the total in %s, which is %s. Align them on that conversion when the amount due in the foreign currency is the reference. This can be undone as long as the invoice has not been transferred to accounting.
