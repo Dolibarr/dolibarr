@@ -299,8 +299,6 @@ $title = $langs->trans("RepeatableInvoices");
 $morejs = array();
 $morecss = array();
 
-$tmparray = dol_getdate($now);
-$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -899,6 +897,7 @@ while ($i < $imaxinloop) {
 	$invoicerectmp->frequency = $objp->frequency;
 	$invoicerectmp->suspended = $objp->suspended;
 	$invoicerectmp->unit_frequency = $objp->unit_frequency;
+	$invoicerectmp->date_when = $db->jdate($objp->date_when);
 	$invoicerectmp->nb_gen_max = $objp->nb_gen_max;
 	$invoicerectmp->nb_gen_done = $objp->nb_gen_done;
 	$invoicerectmp->ref = $objp->title;
@@ -915,7 +914,7 @@ while ($i < $imaxinloop) {
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
-			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
+			} elseif (empty($objp->frequency) || $invoicerectmp->isDueForGeneration()) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="none"');
 				print '</a>';
@@ -1114,7 +1113,7 @@ while ($i < $imaxinloop) {
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
-			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
+			} elseif (empty($objp->frequency) || $invoicerectmp->isDueForGeneration()) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
 				//print $langs->trans("CreateBill");
