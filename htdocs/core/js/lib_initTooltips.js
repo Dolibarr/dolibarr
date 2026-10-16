@@ -17,9 +17,12 @@ function initTooltips(root) {
 			$el.tooltip("destroy");
 		}
 
+		// Action buttons (butAction, butActionRefused, butActionDelete...) show their tooltip after a longer delay
+		const showDelay = /(^|\s)butAction/.test(this.className) ? 600 : 50;
+
 		$el.tooltip({
 			tooltipClass: "mytooltip",
-			show: { collision: "flipfit", effect: "toggle", delay: 50, duration: 20 },
+			show: { collision: "flipfit", effect: "toggle", delay: showDelay, duration: 20 },
 			hide: { delay: 250, duration: 20 },
 			content: function () {
 				return $el.prop("title");
