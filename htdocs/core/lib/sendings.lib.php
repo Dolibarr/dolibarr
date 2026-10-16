@@ -29,6 +29,118 @@ require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 
 
 /**
+ * Whether the shipment accepts a new catalog line without an origin order line.
+ * The caller must separately check shipment access and creation permissions.
+ *
+ * @param Expedition $object Shipment
+ * @return bool
+ */
+function shippingCanAddCatalogLine($object)
+{
+	if ($object->id <= 0 || $object->status != Expedition::STATUS_DRAFT) {
+		return false;
+	}
+	if (empty($object->origin_id)) {
+		return (bool) getDolGlobalInt('SHIPMENT_STANDALONE');
+	}
+	// The order dispatch page cannot move stock for lines without an order line.
+	if (getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER')) {
+		return false;
+	}
+	return in_array($object->origin, array('commande', 'order'), true) && getDolGlobalInt('SHIPMENT_FROM_ORDER_CAN_ADD_LINE') > 0;
+}
+
+
+/**
+ * Suggest an open warehouse and preview stock after the loaded draft shipment.
+ * The caller must check access to the shipment and the selected product.
+ *
+ * @param Expedition $object Shipment with all its lines loaded
+ * @param Product $product Selected catalog product
+ * @param float $qty Quantity to add
+ * @param int $warehouseId Requested warehouse
+ * @param bool $keepWarehouse Preserve an explicit warehouse selection
+ * @return array{selected:int,stock_available:?float,stock_after:?float,insufficient:bool}|false Preview, false on a database error
+ */
+function shippingGetStockPreview($object, $product, $qty, $warehouseId = 0, $keepWarehouse = false)
+{
+	global $user;
+
+	$preview = array('selected' => 0, 'stock_available' => null, 'stock_after' => null, 'insufficient' => false);
+	if (!isModEnabled('stock') || $object->id <= 0 || $object->status != Expedition::STATUS_DRAFT || $product->id <= 0 || $qty <= 0
+		|| $product->stockable_product != Product::ENABLED_STOCK || ($product->type == Product::TYPE_SERVICE && !getDolGlobalInt('STOCK_SUPPORTS_SERVICES'))) {
+		return $preview;
+	}
+	// Dispatch may already have moved draft stock; do not subtract it twice.
+	if (getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER')) {
+		return $preview;
+	}
+	// A component-based kit cannot be represented by the parent's physical stock.
+	if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && $product->hasFatherOrChild(1) > 0) {
+		return $preview;
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	$formproduct = new FormProduct($object->db);
+	if ($formproduct->loadWarehouses($product->id, '', 'warehouseopen', true, array(), false, 'e.ref') < 0) {
+		return false;
+	}
+	$warehouses = $formproduct->cache_warehouses;
+	$available = array();
+	foreach ($warehouses as $id => $warehouse) {
+		$available[$id] = (float) $warehouse['stock'];
+	}
+	foreach ($object->lines as $line) {
+		if ($line->fk_product != $product->id) {
+			continue;
+		}
+		if (!empty($line->details_entrepot)) {
+			foreach ($line->details_entrepot as $allocation) {
+				if (isset($available[$allocation->entrepot_id])) {
+					$available[$allocation->entrepot_id] -= $allocation->qty_shipped;
+				}
+			}
+		} elseif (isset($available[$line->entrepot_id])) {
+			$available[$line->entrepot_id] -= $line->qty;
+		}
+	}
+
+	$defaultWarehouse = 0;
+	if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
+		$defaultWarehouse = getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE');
+	} elseif (getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		$defaultWarehouse = (int) $user->fk_warehouse;
+	}
+	if ($keepWarehouse) {
+		$preview['selected'] = isset($available[$warehouseId]) ? $warehouseId : 0;
+	} elseif (isset($available[$defaultWarehouse]) && $available[$defaultWarehouse] >= $qty) {
+		$preview['selected'] = $defaultWarehouse;
+	} else {
+		arsort($available, SORT_NUMERIC);
+		foreach ($available as $id => $stock) {
+			if ($stock >= $qty) {
+				$preview['selected'] = (int) $id;
+				break;
+			}
+		}
+		if (!$preview['selected']) {
+			if (isset($available[$defaultWarehouse])) {
+				$preview['selected'] = $defaultWarehouse;
+			} elseif (count($available) == 1) {
+				$preview['selected'] = (int) key($available);
+			}
+		}
+	}
+	if ($preview['selected'] > 0) {
+		$preview['stock_available'] = (float) price2num($available[$preview['selected']], 'MS');
+		$preview['stock_after'] = (float) price2num($preview['stock_available'] - $qty, 'MS');
+		$preview['insufficient'] = $preview['stock_after'] < 0;
+	}
+	return $preview;
+}
+
+
+/**
  * Resolve a standalone dispatch group from the loaded shipment lines.
  * The caller must separately check shipment access and write permissions.
  *
