@@ -121,7 +121,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0]; $tmpobject = preg_replace('/line$/', '', $tmparray[1]);
-		if (!empty($tmpmodule) && !empty($tmpobject) && !empty($conf->$tmpmodule->enabled) && !empty($user->rights->$tmpobject->write)) {
+		if (!empty($tmpmodule) && !empty($tmpobject) && !empty($conf->$tmpmodule->enabled) && (!empty($user->rights->$tmpmodule->$tmpobject->write) || !empty($user->rights->$tmpobject->write))) {
 			$perm = 1;
 		}
 	}
