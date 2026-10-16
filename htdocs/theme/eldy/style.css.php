@@ -9815,7 +9815,7 @@ table.jPicker {
 	}
 
 	.dropdown dd ul {
-		max-width: 370px;
+		max-width: 450px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again (<?php echo $nbtopmenuentries ?> menu entries) */
