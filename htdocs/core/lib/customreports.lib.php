@@ -825,7 +825,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 		}
 	}
 
-	$out = '<div class="customreportscombo" id="'.dol_escape_htmltag($htmlname).'_component">';
+	$out = '<div class="customreportscombo divadvancedsearchfieldcompinput" id="'.dol_escape_htmltag($htmlname).'_component">';
 	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
 	$out .= '<button type="button" class="customreportscombo-toggle">';
 	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'" data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';

@@ -551,6 +551,25 @@ if (count($sanitized_search_groupby)) {
 			$sql .= forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
 		}
 		*/
+		// Add the AND parts of the filter that use only the field of the group by, so the count of distinct values takes them into account
+		if ($search_component_params_hidden) {
+			$fieldofgroupby = preg_replace('/\-(year|month|day)$/', '', $gvalsanitized);
+			$sqlwhere = '';
+			foreach (dolForgeExplodeAnd($search_component_params_hidden) as $andpart) {
+				$matches = array();
+				preg_match_all('/\(([a-zA-Z0-9_\.]+):[<>!=insotlke]+:/i', $andpart, $matches);
+				if (!empty($matches[1]) && count(array_unique($matches[1])) == 1 && $matches[1][0] == $fieldofgroupby) {
+					$errormessage = '';
+					$tmpsql = forgeSQLFromUniversalSearchCriteria($andpart, $errormessage, 0, 0, 1);
+					if (!$errormessage) {
+						$sqlwhere .= $tmpsql;
+					}
+				}
+			}
+			if ($sqlwhere) {
+				$sql .= " WHERE 1 = 1".$sqlwhere;
+			}
+		}
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 

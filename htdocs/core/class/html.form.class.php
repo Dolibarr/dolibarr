@@ -13568,7 +13568,12 @@ class Form
 
 					// Populate operators
 					Object.entries(operators).forEach(function([operator, label]) {
-						operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
+						if (operator.indexOf("separator") === 0) {
+							// A non empty value is required, else select2 hides the option (it is considered as the placeholder)
+							operatorSelector.append("<option value=\'" + operator + "\' disabled>" + label + "</option>");
+						} else {
+							operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
+						}
 					});
 
 					operatorSelector.trigger("change.select2");
