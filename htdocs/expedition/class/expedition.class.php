@@ -96,12 +96,12 @@ class Expedition extends CommonObject
 	public $user_author_id;
 
 	/**
-	 * @var int ID of user author
+	 * @var ?int ID of user author
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID of user who validated
+	 * @var ?int ID of user who validated
 	 */
 	public $fk_user_valid;
 
