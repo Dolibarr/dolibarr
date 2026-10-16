@@ -725,7 +725,7 @@ function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $pla
 		$groups[$groupkey]['variants'][$key] = ($variant ? $variantlabels[$variant] : '');
 	}
 
-	$out = '<div class="customreportsmeasures divadvancedsearchfieldcompinput inline-block minwidth200 maxwidth500" id="'.dol_escape_htmltag($htmlname).'_component" data-htmlname="'.dol_escape_htmltag($htmlname).'">';
+	$out = '<div class="customreportsmeasures divadvancedsearchfieldcompinput inline-block minwidth300 maxwidth500" id="'.dol_escape_htmltag($htmlname).'_component" data-htmlname="'.dol_escape_htmltag($htmlname).'">';
 
 	// Hidden select used to post values
 	$out .= '<select id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'[]" multiple class="hideobject">';
@@ -834,7 +834,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	$out = '<div class="customreportscombo divadvancedsearchfieldcompinput" id="'.dol_escape_htmltag($htmlname).'_component">';
 	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
-	$out .= '<button type="button" class="customreportscombo-toggle noborderbottom search_component_params">';
+	$out .= '<button type="button" class="customreportscombo-toggle noborderbottom search_component_params minwidth300">';
 	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'"'.($selectedtitle ? ' title="'.dolPrintHTMLForAttribute($selectedtitle).'"' : '').' data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
 	if ($allowclear) {
 		$out .= '<span class="fas fa-times customreportscombo-clear'.($selectedlabel ? '' : ' hideobject').'" title="'.dol_escape_htmltag($langs->trans('Reset')).'"></span>';
@@ -847,7 +847,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
 	/**
-	 * @param	int|string	$elementkey		Key of the element to render
+	 * @param	string		$elementkey		Key of the element to render
 	 * @return	string						HTML of the element and of its sub-elements
 	 */
 	$renderElement = function (string $elementkey) use ($elements, $selectedkey, &$renderElement): string {
