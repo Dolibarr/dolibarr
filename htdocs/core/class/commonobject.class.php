@@ -12654,4 +12654,103 @@ abstract class CommonObject
 		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
 		dol_syslog($syslogMessage, $loglevel);
 	}
+
+	/**
+	 * Show preview link of the element (last generate or *<ref>*.pdf) if found and authorized to show the preview (file type)
+	 * @see dolIsAllowedForPreview()
+	 *
+	 * @param	string		$rootdir		Root directory of the file
+	 * @param	string		$relativepath	Relative directory of the file (from the root directory)
+	 * @return	string						Output string with HTML
+	 */
+	public function showLastFilePreview($rootdir = '', $relativepath = '')
+	{
+		global $conf, $formfile, $langs;
+
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+
+		// Clean and check root path
+		if (empty($rootdir)) {
+			$element = $this->element;
+			$rootdir = $conf->$element->multidir_output[$this->entity];
+		}
+		if (!empty($rootdir)) {
+			$rootdir = rtrim($rootdir, '/') . '/';
+		}
+		if (!file_exists($rootdir) || !dol_is_dir($rootdir)) {
+			return '';
+		}
+
+		// Clean relative path
+		if (empty($relativepath)) {
+			$relativepath = dol_sanitizeFileName($this->ref);
+		}
+		if (!empty($relativepath)) {
+			$relativepath = rtrim($relativepath, '/') . '/';
+		}
+
+		// Set, clean and check file directory
+		$filedir = $rootdir . $relativepath;
+		if (!empty($filedir)) {
+			$filedir = rtrim($filedir, '/') . '/';
+		}
+		if (empty($filedir) || !file_exists($filedir) || !dol_is_dir($filedir)) {
+			return '';
+		}
+
+		$found = false;
+		$file = array();
+		$relativefilepath = '';
+
+		// Search with last_main_doc
+		if (!empty($this->last_main_doc) && dolIsAllowedForPreview($this->last_main_doc)) {
+			$filename = basename($this->last_main_doc);
+			$filepath = $filedir . $filename;
+			if (file_exists($filepath) && dol_is_file($filepath)) {
+				$relativefilepath = $relativepath . $filename;
+				$found = true;
+			}
+		}
+
+		// Search with *<ref>*.pdf
+		if (!$found) {
+			$filelist = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($this->ref) . '.*\.pdf$', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+			if (is_array($filelist) && !empty($filelist)) {
+				// Defined relative dir to DOL_DATA_ROOT
+				$relativedir = '';
+				if ($filedir) {
+					$relativedir = preg_replace('/^' . preg_quote(DOL_DATA_ROOT, '/') . '/', '', $filedir);
+					$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				}
+				// Get list of files stored into database for same relative directory
+				if ($relativedir) {
+					completeFileArrayWithDatabaseInfo($filelist, $relativedir);
+					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filelist';
+
+					//var_dump($sortfield.' - '.$sortorder);
+					if (!empty($sortfield) && !empty($sortorder)) {    // If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+						$filelist = dol_sort_array($filelist, $sortfield, $sortorder);
+					}
+				}
+				$filename = $filelist[0]['name'];
+				$filepath = $filedir . $filename;
+				if (file_exists($filepath) && dol_is_file($filepath) && dolIsAllowedForPreview($filename)) {
+					$file = $filelist[0];
+					$relativefilepath = $relativepath . $filename;
+					$found = true;
+				}
+			}
+		}
+
+		// Print preview link
+		if ($found) {
+			if (!is_object($formfile)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+				$formfile = new FormFile($this->db);
+			}
+			return $formfile->showPreview($file, $this->element, $relativefilepath, 0, 'entity=' . $this->entity);
+		}
+
+		return '';
+	}
 }
