@@ -1372,7 +1372,7 @@ $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -1991,7 +1991,7 @@ while ($i < $imaxinloop) {
 			if ($contextpage == 'poslist') {
 				print dolPrintHTML($companystatic->name);
 			} else {
-				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1);
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1, '', 'valignmiddle', 1);
 				if (empty($arrayfields['s.name_alias']['checked'])) {
 					print '<br><span class="spantitle">'.dolPrintHTML($companystatic->name_alias).'</span>';
 				}

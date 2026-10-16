@@ -187,13 +187,15 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	//$pdfa = false; // PDF default version
-	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// 0=PDF 1.7, 1=PDF 1.4/A-1b ou 3=PDF 1.7/A-3b
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
+	// Allow "file://..." image src values (used to embed local server paths translated from a public URL)
+	$pdf->setAllowLocalFiles(true);
 
 	// Protection and encryption of pdf
 	if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
@@ -472,7 +474,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *   	@param  Societe|string|null   $targetcompany		Target company object
  *      @param  Contact|string|null	  $targetcontact	    Target contact object
  * 		@param	int			          $usecontact		    Use contact instead of company
- * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetshipping', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  ?CommonObject         $object               Object we want to build document for
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
@@ -483,7 +485,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if ($mode == 'source' && !is_object($sourcecompany)) {
 		return -1;
 	}
-	if ($mode == 'target' && !is_object($targetcompany)) {
+	if (($mode == 'target' || $mode == 'targetshipping') && !is_object($targetcompany)) {
 		return -1;
 	}
 
@@ -592,7 +594,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 		}
 
-		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
+		if ($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) {
 			if ($usecontact && (is_object($targetcontact))) {
 				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
@@ -768,7 +770,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				if ($mode == 'source' && !empty($sourcecompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($sourcecompany->note_public);
 				}
-				if (($mode == 'target' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
+				if (($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($targetcompany->note_public);
 				}
 			}
@@ -2916,7 +2918,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 					// new mode: we need to compute the total (sum of previous + delta)
 					$prev_progress + $object->lines[$i]->situation_percent;
 			}
-			$result = round($result, 1).'%';
+			$result = round($result, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).'%';
 		}
 	}
 	return $result;

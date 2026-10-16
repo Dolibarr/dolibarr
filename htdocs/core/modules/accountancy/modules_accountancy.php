@@ -184,7 +184,9 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 		$curentCellPaddinds = $pdf->getCellPaddings();
 		// set cell padding with column content definition
 		$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-		$pdf->writeHTMLCell($this->page_largeur - $this->marge_droite, 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
+		// The second argument is a width, not an x coordinate: passing the right edge of the page made
+		// the cell start at the column x and overflow the margin, truncating long labels (#40790).
+		$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
 		$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 		// restore cell padding

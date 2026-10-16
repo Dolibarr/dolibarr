@@ -61,7 +61,7 @@ $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("admin", "install", "errors"));
+$langs->loadLangs(array("admin", "install"));
 
 // Dolibarr pages directory
 $main_dir = GETPOST('main_dir') ? GETPOST('main_dir') : (empty($argv[3]) ? '' : $argv[3]);
@@ -244,10 +244,12 @@ if (empty($db_user) && !$is_sqlite) {
 	$error++;
 }
 if (!empty($db_port) && !is_numeric($db_port)) {
+	$langs->load('errors');
 	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $db_port, $langs->transnoentities("Port")).'</div>';
 	$error++;
 }
 if (!empty($db_prefix) && !preg_match('/^[a-z0-9]+_$/i', $db_prefix)) {
+	$langs->load('errors');
 	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $db_prefix, $langs->transnoentities("DatabasePrefix")).'</div>';
 	$error++;
 }
@@ -257,6 +259,7 @@ $main_dir = dol_sanitizePathName($main_dir);
 $main_data_dir = dol_sanitizePathName($main_data_dir);
 
 if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
+	$langs->load('errors');
 	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_url, $langs->transnoentitiesnoconv("URLRoot")).'</div>';
 	print '<br>';
 	print $langs->trans("ErrorGoBackAndCorrectParameters");
@@ -274,6 +277,7 @@ if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 }
 
 if (!dol_is_dir($main_dir.'/core/db/')) {
+	$langs->load('errors');
 	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_dir, $langs->transnoentitiesnoconv("WebPagesDirectory")).'</div>';
 	print '<br>';
 	//print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
@@ -329,6 +333,7 @@ if (!$error) {
 			} elseif ($db->error && !(!empty($db_create_database) && $db->connected)) {
 				// Note: you may experience error here with message "No such file or directory" when mysql was installed for the first time but not yet launched.
 				if ($db->error == "No such file or directory") {
+					$langs->load('errors');
 					print '<div class="error">'.$langs->trans("ErrorToConnectToMysqlCheckInstance").'</div>';
 				} else {
 					print '<div class="error">'.$db->error.'</div>';
@@ -547,6 +552,7 @@ if (!$error && $db !== null && $db->connected && $action == "set") {	// Test on 
 					dol_mkdir($dirodt);
 					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
+						$langs->load('errors');
 						print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
 					}
 				}
@@ -980,7 +986,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls\';');
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, dolSort, abs, min, max, round, dol_now, preg_match\';');

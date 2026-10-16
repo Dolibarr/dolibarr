@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Open-Dsi	<support@open-dsi.fr>
+ * Copyright (C) 2026		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ function dol_build_phone($db, $code, $number)
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '' && $obj->trunk_prefix !== null) {
+			if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '') {
 				$prefix = $obj->trunk_prefix;
 				if (strpos($number, $prefix) === 0) {
 					$number = substr($number, strlen($prefix));
@@ -121,7 +122,7 @@ function dol_get_trunk_prefix($db, $phone_code)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '' && $obj->trunk_prefix !== null) {
+		if ($obj && isset($obj->trunk_prefix) && $obj->trunk_prefix !== '') {
 			$db->free($resql);
 			return $obj->trunk_prefix;
 		}
@@ -187,7 +188,7 @@ function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
 		}
 	}
 
-	$candidates = array_values(array_unique(array_filter($candidates, function (string $c) {
+	$candidates = array_values(array_unique(array_filter($candidates, /** @return bool */ function (string $c) {
 		return $c !== '';
 	})));
 	if (empty($candidates)) {

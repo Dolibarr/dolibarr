@@ -81,7 +81,7 @@ class modSupplierProposal extends DolibarrModules
 			[
 				"SUPPLIER_PROPOSAL_ADDON_PDF",
 				"chaine",
-				"aurore",
+				"zenith",
 				'Name of submodule to generate PDF for supplier quotation request',
 				0,
 			],
@@ -162,6 +162,8 @@ class modSupplierProposal extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
+		$this->_load_tables('/install/mysql/', 'supplier_proposal');
 
 		// Remove permissions and default values
 		$this->remove($options);

@@ -144,7 +144,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = reception_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, $object->picto);
+		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 		// Build file list
@@ -178,7 +178,7 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

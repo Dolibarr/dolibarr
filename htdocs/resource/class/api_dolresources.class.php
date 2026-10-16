@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2026		Dolicraft				<contact@dolicraft.com>
+ * Copyright (C) 2026		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +232,8 @@ class Dolresources extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$this->resource->oldcopy = dol_clone($this->resource, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -252,7 +255,7 @@ class Dolresources extends DolibarrApi
 		}
 
 		if ($this->resource->update(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, $this->resource->error);
+			throw new RestException(500, $this->resource->errorsToString());
 		}
 
 		return $this->get($id);
@@ -286,7 +289,7 @@ class Dolresources extends DolibarrApi
 		}
 
 		if ($this->resource->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when deleting resource: '.$this->resource->error);
+			throw new RestException(500, 'Error when deleting resource: '.$this->resource->errorsToString());
 		}
 
 		return array(
@@ -392,7 +395,7 @@ class Dolresources extends DolibarrApi
 		}
 
 		if ($element->add_element_resource($resource_id, $this->resource->element, $busy, $mandatory) <= 0) {
-			throw new RestException(500, 'Error when linking resource: '.$element->error);
+			throw new RestException(500, 'Error when linking resource: '.$element->errorsToString());
 		}
 
 		foreach ($this->resource->getElementResources($element->element, $element->id) as $link) {
@@ -442,7 +445,7 @@ class Dolresources extends DolibarrApi
 		}
 
 		if ($element->delete_resource($id, $element->element) <= 0) {
-			throw new RestException(500, 'Error when unlinking resource: '.$element->error);
+			throw new RestException(500, 'Error when unlinking resource: '.$element->errorsToString());
 		}
 
 		return array(
@@ -491,7 +494,7 @@ class Dolresources extends DolibarrApi
 
 		$conflicts = $this->resource->getBookingConflicts($this->resource->id, $this->resource->element, $start, $end);
 		if (!is_array($conflicts)) {
-			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->error);
+			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->errorsToString());
 		}
 
 		return $conflicts;
@@ -619,7 +622,7 @@ class Dolresources extends DolibarrApi
 
 		$conflicts = $this->resource->getBookingConflicts($resource_id, $this->resource->element, $date_start, $date_end, $element->element, $element->id);
 		if (!is_array($conflicts)) {
-			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->error);
+			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->errorsToString());
 		}
 
 		return $conflicts;

@@ -25,7 +25,7 @@
  *      \remarks    To run this script as CLI: phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning

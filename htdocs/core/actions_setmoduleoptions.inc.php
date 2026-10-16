@@ -114,6 +114,7 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 		$tmpdir = DOL_DATA_ROOT.'/'.$tmpdir;	// Complete with DOL_DATA_ROOT. Only files into DOL_DATA_ROOT can be reach/set
 		if (!is_dir($tmpdir)) {
 			if (empty($nomessageinsetmoduleoptions)) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
 			}
 		} else {
@@ -174,6 +175,7 @@ if ($action == 'setModuleOptions' && !empty($user->admin)) {
 			$tmpdir = DOL_DATA_ROOT.'/'.$tmpdir;	// Complete with DOL_DATA_ROOT. Only files into DOL_DATA_ROOT can be reach/set
 			if (!is_dir($tmpdir)) {
 				if (empty($nomessageinsetmoduleoptions)) {
+					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
 				}
 			} else {

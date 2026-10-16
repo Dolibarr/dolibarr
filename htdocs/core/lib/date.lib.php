@@ -116,14 +116,15 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
+ *  @param      int			$time               Date timestamp (Must be a UTC timestamp, unless $tz is set)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, mn|i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior when $duration_unit = 'm' and new date reaches a non existing date. Use 0 (PHP behaviour) or 1
+ *  @param      string      $tz                 Timezone in which days, months and years are added: ''='gmt' or 'tzserver'
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
  */
-function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
+function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0, $tz = '')
 {
 	if (empty($duration_value)) {
 		return $time;
@@ -169,10 +170,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!function_exists('getDolGlobalString') || !getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_NOT_GMT')) {	// Add function_exists to allow usage of this function with minimal context
-		$date->setTimezone(new DateTimeZone('UTC'));
+	if (empty($tz) || $tz == 'gmt') {
+		$date->setTimezone(new DateTimeZone('UTC'));	// The default, try to always use this case
+	} else {
+		$date->setTimezone(new DateTimeZone($tz == 'tzserver' ? date_default_timezone_get() : $tz));
 	}
-
 
 	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
@@ -184,7 +186,15 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	// Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
-	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
+	if ($ruleforendofmonth == 1 && $duration_unit == 'm' && $tz !== '') {
+		// Months are compared in the same timezone than the one used to add the delay
+		$origin = new DateTime('@'.((int) $time));
+		$origin->setTimezone($date->getTimezone());
+		$monthsexpected = ((int) $origin->format('Y') * 12) + (int) $origin->format('n') + (int) $duration_value;
+		if (((int) $date->format('Y') * 12) + (int) $date->format('n') != $monthsexpected) {
+			$date->modify('last day of previous month');	// Keep the time of the day
+		}
+	} elseif ($ruleforendofmonth == 1 && $duration_unit == 'm') {
 		$timeyear = (int) dol_print_date($time, '%Y');
 		$timemonth = (int) dol_print_date($time, '%m');
 		$timetotalmonths = (($timeyear * 12) + $timemonth);
@@ -423,25 +433,26 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *	Convert a string date into a GM Timestamps date
  *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
- *	@param	string		$string		Date in a string
- *				     		        YYYYMMDD
- *	                 				YYYYMMDDHHMMSS
- *									YYYYMMDDTHHMMSSZ
- *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
- *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
+ *	@param	string		$string					Date in a string
+ *				     		        			YYYYMMDD
+ *	                 							YYYYMMDDHHMMSS
+ *												YYYYMMDDTHHMMSSZ
+ *												YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+ *		                						DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                						DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
  *  @param  int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'|'dayrfc'	$gm		'gmt' or 1 =Input date is GM date,
  *                                                                                  'tzserver' or 0 =Input date is date using PHP server timezone
- *  @return	int						Date as a timestamp
- *		                			19700101020000 -> 7200 with gm=1
- *									19700101000000 -> 0 with gm=1
+ *  @param	int			$processnotimeasnoon	If set to 1, if time is not provided, we take noon (12:00:00) instead of midnight (00:00:00)
+ *  @return	int									Date as a timestamp
+ *		                						19700101020000 -> 7200 with gm=1
+ *												19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
-function dol_stringtotime($string, $gm = 1)
+function dol_stringtotime($string, $gm = 1, $processnotimeasnoon = 0)
 {
 	$reg = array();
-	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
+	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used as receiving a non standard format should not happen.
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
 		// Date is in format 'DD/MM/YY' or 'DD/MM/YY HH:MM:SS'
@@ -473,7 +484,12 @@ function dol_stringtotime($string, $gm = 1)
 	}
 
 	$string = preg_replace('/([^0-9])/i', '', $string);
-	$tmp = $string.'000000';
+	// If not time was provided, we add it (if it was, it won't be seen)
+	if ($processnotimeasnoon) {
+		$tmp = $string.'120000';
+	} else {
+		$tmp = $string.'000000';
+	}
 	// Clean $gm
 	if ($gm === 1) {
 		$gm = 'gmt';

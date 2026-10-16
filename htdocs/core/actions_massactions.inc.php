@@ -137,6 +137,21 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 	$error++;
 }
 
+// The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
+// request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
+// lists and the cards (entity, third parties of the sales representative, projects the user can see...).
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
+	$objecttmpforaccesscheck = new $objectclass($db);
+	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
+	if (!empty($refusedids)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		$error++;
+	}
+}
+
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
@@ -521,8 +536,15 @@ if (!$error && $massaction == 'confirm_presend') {
 					if ($obj) {
 						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
+				} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+					$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates WHERE rowid = ".(int) $reg[1];
+					$resql = $db->query($sql);
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$email_from = $obj->email_from;
+					}
 				} else {
-					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail', 'email').'>';
 				}
 
 				$replyto = $email_from;
@@ -1186,6 +1208,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 	$nbok = 0;
 	$nbignored = 0;
 	/** @var string[] $TMsg */
@@ -1280,9 +1304,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	// Complete with classes that use this massaction
-	<<<'EOPHAN'
-@phan-var-force 'Commande'|'CommandeFournisseur'|'Contrat'|'Expedition'|'ExpenseReport'|'Facture'|'FactureFournisseur'|'Fichinter'|'Project'|'Propal'|'SupplierProposal' $objectclass
-EOPHAN;
+	'@phan-var-force \'Commande\'|\'CommandeFournisseur\'|\'Contrat\'|\'Expedition\'|\'ExpenseReport\'|\'Facture\'|\'FactureFournisseur\'|\'Fichinter\'|\'Project\'|\'Propal\'|\'SupplierProposal\' $objectclass';
 
 	$db->begin();
 	$nbok = 0;
@@ -1650,6 +1672,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields();
+				$nbok++;
 			} else {
 				$error++;
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1663,9 +1686,9 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("save"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
@@ -1782,6 +1805,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+				} else {
+					$nbok++;
 				}
 
 				// If no SQL error, we redirect to the request form
@@ -1794,67 +1819,29 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 
 				if (!$error) {
-					// To
-					$destinataire = new User($db);
-					$destinataire->fetch($objecttmp->fk_user);
-					$emailTo = $destinataire->email;
-
-					if (!$emailTo) {
-						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-					} else {
-						// From
-						$expediteur = new User($db);
-						$expediteur->fetch($objecttmp->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-						// Subject
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
-
-						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-						// Content
-						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
-						$message .= "\n";
-
-						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
-						$message .= "\n";
-
-						$trackid = 'leav'.$objecttmp->id;
-
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
-
-						// Sending email
-						$result = $mail->sendfile();
-
-						if (!$result) {
-							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-							$action = '';
-						}
+					$result = $objecttmp->sendApprovalEmail();
+					if ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+						$action = '';
 					}
 				}
 			} else {
@@ -1880,7 +1867,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+// Changing the balance of users requires the same permission than the single user update (holiday/define_holiday.php)
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $user->hasRight('holiday', 'define_holiday') && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	/** @var Holiday $holiday */
 	$db->begin();

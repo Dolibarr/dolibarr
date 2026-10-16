@@ -599,7 +599,6 @@ Permission20007=Aprobar solicitudes de licencia
 Permission23001=Leer trabajo programado
 Permission23002=Crear / actualizar trabajo programado
 Permission23003=Programa de trabajo
-Permission23004=Ejecutar trabajo programado
 Permission50201=Leer transacciones
 Permission50202=Importar transacciones
 Permission50401=Vincula productos y facturas con cuentas contables

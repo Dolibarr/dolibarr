@@ -277,7 +277,7 @@ class FormProduct
 			return $final_label;
 		} else {
 			if (!empty($this->cache_warehouses[$tab['parent_id']])) {
-				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') === 2 && empty($this->cache_warehouses[$tab['parent_id']]['parent_id']))) {
+				if (getDolGlobalInt('MAIN_WAREHOUSE_LIST_DISPLAY_MODE') !== 2 || empty($this->cache_warehouses[$tab['parent_id']]['parent_id'])) {
 					$final_label = $this->cache_warehouses[$tab['parent_id']]['label'] . ' >> ' . $final_label;
 				}
 
@@ -461,14 +461,8 @@ class FormProduct
 		}
 
 		if (strpos($htmlname, 'search_') !== 0) {
-			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
-				}
-			} else {
-				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = $user->fk_workstation;
-				}
+			if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
+				$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 			}
 		}
 

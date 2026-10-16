@@ -5,9 +5,10 @@
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2026		Mélina Joum					<melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,8 @@ $search_phone = GETPOST("search_phone", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
+$search_amount = GETPOST("search_amount", 'alpha');
+$search_minimumamount = GETPOST("search_minimumamount", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
 if (isModEnabled('mailing')) {
 	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOSTINT("search_no_email") : -1;
@@ -177,6 +180,8 @@ $arrayfields = array(
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
 	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
+	't.amount' => array('label' => "RecommendedAmount", 'checked' => 1, 'position' => 55),
+	't.minimumamount' => array('label' => "MinimumAmountShort", 'checked' => 1, 'position' => 55),
 	'd.address' => array('label' => "Address", 'checked' => 0),
 	'd.zip' => array('label' => "Zip", 'checked' => 0),
 	'd.town' => array('label' => "Town", 'checked' => 0),
@@ -275,6 +280,8 @@ if (empty($reshook)) {
 		$search_login = "";
 		$search_company = "";
 		$search_type = "";
+		$search_amount = "";
+		$search_minimumamount = "";
 		$search_email = "";
 		$search_no_email = -1;
 		$search_address = "";
@@ -300,7 +307,7 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
+	if ($massaction == 'close' && $permissiontoadd) {
 		$tmpmember = new Adherent($db);
 		$nbclose = 0;
 
@@ -310,12 +317,11 @@ if (empty($reshook)) {
 			$tmpmember->fetch($idtoclose);
 			$result = $tmpmember->resiliate($user);
 
-			if ($result < 0 && !count($tmpmember->errors)) {
+			if ($result < 0) {
+				$error++;
 				setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-			} else {
-				if ($result > 0) {
-					$nbclose++;
-				}
+			} elseif ($result > 0) {
+				$nbclose++;
 			}
 		}
 
@@ -344,12 +350,11 @@ if (empty($reshook)) {
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 
-				if ($result < 0 && !count($tmpmember->errors)) {
-					setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-				} else {
-					if ($result > 0) {
-						$nbcreated++;
-					}
+				if ($result < 0) {
+					$error++;
+					setEventMessages($nuser->error, $nuser->errors, 'errors');
+				} elseif ($result > 0) {
+					$nbcreated++;
 				}
 			}
 		}
@@ -364,7 +369,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
+	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'cotisation', 'creer')) {	// Same permission as the subscription form of a member
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
 		$label = GETPOST("label");
@@ -442,6 +447,9 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 $morejs = array();
 $morecss = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -453,7 +461,7 @@ $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec a
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
-$sql .= " t.libelle as type, t.subscription,";
+$sql .= " t.libelle as type, t.subscription, t.amount, t.minimumamount,";
 $sql .= " state.code_departement as state_code, state.nom as state_name";
 
 if (isModEnabled('mailing')) {
@@ -526,6 +534,12 @@ if ($search_all) {
 if ($search_type > 0) {
 	$sql .= " AND t.rowid=".((int) $search_type);
 }
+if ($search_amount != '') {
+	$sql .= natural_search('t.amount', $search_amount, 1);
+}
+if ($search_minimumamount != '') {
+	$sql .= natural_search('t.minimumamount', $search_minimumamount, 1);
+}
 if ($search_filter == 'withoutsubscription') {
 	$sql .= " AND (datefin IS NULL)";
 }
@@ -560,7 +574,12 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search("d.lastname", $search_lastname);
+	if (empty($arrayfields['d.firstname']['checked'])) {
+		// Firstname is shown into the lastname column, so search on both
+		$sql .= natural_search(array("d.lastname", "d.firstname"), $search_lastname);
+	} else {
+		$sql .= natural_search("d.lastname", $search_lastname);
+	}
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -774,6 +793,12 @@ if ($search_import_key != '') {
 if ($search_type > 0) {
 	$query += ['search_type' => $search_type];
 }
+if ($search_amount != '') {
+	$query += ['search_amount' => $search_amount];
+}
+if ($search_minimumamount != '') {
+	$query += ['search_minimumamount' => $search_minimumamount];
+}
 if ($search_datec_start) {
 	$query += [
 		'search_datec_start_day' => dol_print_date($search_datec_start, '%d'),
@@ -816,7 +841,7 @@ if (isModEnabled('category') && $user->hasRight('adherent', 'creer')) {
 if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if ($user->hasRight('adherent', 'creer')) {
+if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	$arrayofmassactions['createsubscription'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("CreateSubscription");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -896,8 +921,6 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1005,6 +1028,20 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 	$listetype = $membertypestatic->liste_array();
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32, 0, '', 'minwidth75 maxwidth100');
+	print '</td>';
+}
+
+// Amount
+if (!empty($arrayfields['t.amount']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+	print '</td>';
+}
+
+// Minimum amount
+if (!empty($arrayfields['t.minimumamount']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" size="4" name="search_minimumamount" value="'.dol_escape_htmltag($search_minimumamount).'">';
 	print '</td>';
 }
 
@@ -1200,6 +1237,14 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 	print_liste_field_titre($arrayfields['t.libelle']['label'], $_SERVER["PHP_SELF"], 't.libelle', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['t.amount']['checked'])) {
+	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER["PHP_SELF"], 't.amount', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.minimumamount']['checked'])) {
+	print_liste_field_titre($arrayfields['t.minimumamount']['label'], $_SERVER["PHP_SELF"], 't.minimumamount', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['d.address']['checked'])) {
 	print_liste_field_titre($arrayfields['d.address']['label'], $_SERVER["PHP_SELF"], 'd.address', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1391,9 +1436,15 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdlineheightsmall">';
+			print '<div class="tdoverflowmax125 inline-block lineheightsmall">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
+			// Show firstname under the lastname when firstname column is not enabled
+			if (empty($arrayfields['d.firstname']['checked']) && !empty($obj->firstname)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->firstname).'</span>';
+			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1448,6 +1499,24 @@ while ($i < $imaxinloop) {
 			$membertypestatic->label = $obj->type;
 			print '<td class="nowraponall tdoverflowmax100">';
 			print $membertypestatic->getNomUrl(1, 32);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Amount
+		if (!empty($arrayfields['t.amount']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax100">';
+			print price($obj->amount);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Minimum amount
+		if (!empty($arrayfields['t.minimumamount']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax100">';
+			print price($obj->minimumamount);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

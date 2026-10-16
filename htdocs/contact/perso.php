@@ -70,7 +70,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
-	} elseif (!empty($_FILES['photo']['name'])) {
+	} elseif (!empty($_FILES['photo']['name']) && empty($_FILES['photo']['error'])) {	// A refused upload keeps the current photo
 		$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 	}
 
@@ -110,16 +110,18 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 					}
 				}
 			} else {
-				setEventMessages("ErrorBadImageFormat", null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		} else {
 			switch ($_FILES['photo']['error']) {
 				case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 				case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					$errors[] = "ErrorFileSizeTooLarge";
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
 					break;
 				case 3: //uploaded file was only partially uploaded
-					$errors[] = "ErrorFilePartiallyUploaded";
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 					break;
 			}
 		}
@@ -312,6 +314,7 @@ if ($action == 'edit') {
 
 		print ' &nbsp; ';
 		//var_dump($birthdatearray);
+		print '<span class="opacitymedium">';
 		$ageyear = (int) convertSecondToTime($now - $object->birthday, 'year') - 1970;
 		$agemonth = (int) convertSecondToTime($now - $object->birthday, 'month') - 1;
 		if ($ageyear >= 2) {
@@ -321,14 +324,15 @@ if ($action == 'edit') {
 		} else {
 			print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
 		}
+		print '</span>';
 
-
-		print ' &nbsp; - &nbsp; ';
+		print ' &nbsp; <span class="opacitymedium">- &nbsp; ';
 		if ($object->birthday_alert) {
-			print $langs->trans("BirthdayAlertOn");
+			print img_picto('', 'birthday-cake', 'class="pictofixedwidth"').$langs->trans("BirthdayAlertOn");
 		} else {
 			print $langs->trans("BirthdayAlertOff");
 		}
+		print '</span>';
 		print '</td>';
 	} else {
 		print '<td>'.$langs->trans("DateOfBirth").'</td><td colspan="3"></td>';

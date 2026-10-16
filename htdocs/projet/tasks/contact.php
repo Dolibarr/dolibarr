@@ -96,7 +96,7 @@ if (empty($reshook)) {
 				$typeid = GETPOST('typecontact');
 			}
 			if ($idfortaskuser == -2) {
-				$result = $projectstatic->fetch($object->fk_project);
+				$result = $projectstatic->fetch((int) $object->fk_project);
 				if ($result <= 0) {
 					dol_print_error($db, $projectstatic->error, $projectstatic->errors);
 				} else {
@@ -166,7 +166,7 @@ $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
-$result = $projectstatic->fetch($object->fk_project);
+$result = $projectstatic->fetch((int) $object->fk_project);
 
 $title = $object->ref . ' - ' . $langs->trans("Contacts");
 if (!empty($withproject)) {
@@ -365,7 +365,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Project
 		if (empty($withproject)) {
-			$result = $projectstatic->fetch($object->fk_project);
+			$result = $projectstatic->fetch((int) $object->fk_project);
 			$morehtmlref .= '<div class="refidno">';
 			$morehtmlref .= $langs->trans("Project").': ';
 			$morehtmlref .= $projectstatic->getNomUrl(1);

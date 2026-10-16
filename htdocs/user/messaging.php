@@ -215,7 +215,7 @@ if (isModEnabled('agenda')) {
 	}
 }
 
-if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
+if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 	$param = '&userid='.urlencode((string) ($object->id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

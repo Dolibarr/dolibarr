@@ -446,7 +446,7 @@ class Productlot extends CommonObject
 			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
 			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : ((int) $this->fk_user_creat)) . ',';
 			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : ((int) $this->fk_user_modif)) . ',';
-			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : '"'.$this->db->escape($this->import_key).'"');
+			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 			$sql .= ')';
 
 			$this->db->begin();
@@ -652,7 +652,7 @@ class Productlot extends CommonObject
 			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null") . ',';
-			$sql .= ' import_key = ' . (isset($this->import_key) ? '"'.$this->db->escape($this->import_key).'"' : "null");
+			$sql .= ' import_key = ' . (isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ' WHERE rowid=' . ((int) $this->id);
 
 			$this->db->begin();
@@ -705,6 +705,8 @@ class Productlot extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -751,18 +753,21 @@ class Productlot extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// TODO
-		//if (!$error) {
-		//if (!$notrigger) {
-		// Uncomment this and change PRODUCTLOT to your own tag if you
-		// want this action calls a trigger.
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('PRODUCTLOT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 
-		//// Call triggers
-		//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
-		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//// End call triggers
-		//}
-		//}
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
@@ -783,6 +788,19 @@ class Productlot extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the lot
+			if (!empty($conf->productbatch->multidir_output[$this->entity])) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				$dir = $conf->productbatch->multidir_output[$this->entity].'/'.get_exdir(0, 0, 0, 1, $this, 'product_batch');
+				if (file_exists($dir)) {
+					if (!dol_delete_dir_recursive($dir)) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
+						return -2;
+					}
+				}
+			}
 
 			return 1;
 		}
@@ -1062,7 +1080,7 @@ class Productlot extends CommonObject
 	/**
 	 *  Load the array of shipment stats for the lot/serial number
 	 *
-	 * @param  int $socid Id societe
+	 * @param  int $socid 	Id thirdparty
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
 	public function loadStatsMo($socid = 0)
@@ -1079,9 +1097,9 @@ class Productlot extends CommonObject
 			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
-			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
-				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo = c.rowid";
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
 			$sql .= " c.entity IN (".getEntity('mo').")";

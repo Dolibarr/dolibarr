@@ -78,6 +78,7 @@ create table llx_actioncomm
   event_paid        smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
   status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module for now, but could be use after for event global status
   max_participants  integer DEFAULT NULL,           -- Maximum number of participants allowed for this action (event, meeting, shift)
+  registration_enabled smallint NOT NULL DEFAULT 0, -- Allow public registrations for this action
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)

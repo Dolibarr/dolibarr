@@ -41,7 +41,7 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 // Per-user gate: the Assistant page is now governed by the standard
-// 'ai/assistant/use' right (granted by default to new users), so admins
+// 'ai/assistant/use' right (NOT granted by default to new users), so admins
 // can revoke access per user/group via the standard permission UI.
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
@@ -57,7 +57,7 @@ llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 ?>
 
 <!-- CSS & JS INCLUDES -->
-<link rel="stylesheet" href="<?php echo dol_buildpath('/ai/css/ai_assistant.css', 1); ?>">
+<link rel="stylesheet" href="<?php echo dol_buildpath('/ai/css/ai_assistant.css', 1).'?v='.urlencode((string) (@filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css') ?: DOL_VERSION)); ?>">
 
 <script type="module" src="<?php echo dol_buildpath('/ai/js/ai_assistant.js', 1).'?v='.urlencode((string) (@filemtime(DOL_DOCUMENT_ROOT.'/ai/js/ai_assistant.js') ?: DOL_VERSION)); ?>"></script>
 

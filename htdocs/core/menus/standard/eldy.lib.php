@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -339,7 +339,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
-		'link' => dolBuildUrl('/compta/bank/list.php', ['mainmenu' => 'bank', 'leftmenu' => '', 'search_status' => 'opened']),
+		'link' => dolBuildUrl('/compta/bank/index.php', ['mainmenu' => 'bank', 'leftmenu' => '']),
 		'title' =>  "MenuBankCash",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -439,9 +439,32 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tools
+	// For an external user, show the entry only if its left menu contains at least one entry this user is
+	// allowed to use: the hardcoded entries of get_left_menu_tools() and the entries added by modules into
+	// $tabMenu (already filtered on user type, enabled and perms by menuLoad()).
+	$toolsperms = 1;
+	if ($type_user) {
+		$toolsperms = 0;
+		$tmpmenu = new Menu();
+		get_left_menu_tools('tools', $tmpmenu, 0, 'none', $type_user);
+		foreach ($tmpmenu->liste as $val) {
+			if (!empty($val['enabled'])) {
+				$toolsperms = 1;
+				break;
+			}
+		}
+		if (!$toolsperms) {
+			foreach ($tabMenu as $val) {
+				if ($val['type'] == 'left' && $val['fk_mainmenu'] == 'tools' && $val['perms']) {
+					$toolsperms = 1;
+					break;
+				}
+			}
+		}
+	}
 	$tmpentry = array(
 		'enabled' => 1,
-		'perms' => '1',
+		'perms' => (string) $toolsperms,
 		'module' => ''
 	);
 	$menu_arr[] = array(
@@ -581,15 +604,16 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Show logo company
 	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-		$mysoc->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
+		// Use a local variable: $mysoc may not be loaded (pages defining NOREQUIRESOC)
+		$logosquarredmini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
 			$logoContainerAdditionalClass = '';
 		}
 
-		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['cache' => 1, 'modulepart' => 'mycompany', 'file' => 'logos/thumbs/'.$mysoc->logo_squarred_mini]);
+		if (!empty($logosquarredmini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosquarredmini)) {
+			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['cache' => 1, 'modulepart' => 'mycompany', 'file' => 'logos/thumbs/'.$logosquarredmini]);
 			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
@@ -2169,7 +2193,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Bank-Cash account
 		if (isModEnabled('bank')) {
-			$newmenu->add("/compta/bank/list.php?leftmenu=bank&mainmenu=bank&search_status=opened", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/bank/index.php?leftmenu=bank&mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
 			$newmenu->add("/compta/bank/card.php?action=create&token=" . newToken(), $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
 			$newmenu->add("/compta/bank/list.php?leftmenu=bank&mainmenu=bank&search_status=opened", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');
