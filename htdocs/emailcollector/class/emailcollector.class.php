@@ -4481,19 +4481,24 @@ class EmailCollector extends CommonObject
 		}
 
 		$tmp = explode('.', $filename);
-		$ext = array_pop($tmp);
+		$ext = (count($tmp) > 1 ? '.' . array_pop($tmp) : '');	// A file name with no dot has no extension
 		$filename = implode('.', $tmp);
 
 		$i = 1;
-		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '.' . $ext;
+		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . $ext;
 
 		while (file_exists($filepath)) {
-			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ').' . $ext;
+			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ')' . $ext;
 			$i++;
 		}
 
-		file_put_contents($filepath, $content);
+		if (file_put_contents($filepath, $content) === false) {
+			return -1;	// Nothing saved, so nothing to index
+		}
 		dolChmod($filepath);
+
+		// The name of the file saved, with its extension and the suffix added if a file with the same name already exists
+		$filename = basename($filepath);
 
 		if (image_format_supported($filename) == 1) {
 			$tmparraysize = getDefaultImageSizes();

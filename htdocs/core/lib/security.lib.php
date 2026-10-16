@@ -953,6 +953,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
+		if ($feature == 'produit') {
+			// The module (and its permissions) is named 'produit', but the table of the product object is 'llx_product'
+			$dbtablename = 'product';
+		}
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
