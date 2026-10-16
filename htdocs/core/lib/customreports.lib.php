@@ -174,7 +174,8 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -352,7 +353,8 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -526,7 +528,8 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -655,9 +658,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 					$tmpobject = new $newobject($db);
 					$count++;
 					if (!empty($val['nodepth'])) {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tmptablepath);
 					} else {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tmptablepath);
 					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
@@ -798,6 +803,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	$selectedkey = (is_array($selected) && count($selected)) ? (string) reset($selected) : '';
 	$selectedlabel = '';
+	$selectedtitle = '';	// Full label of the selected field, shown as a tooltip because the label may be truncated
 
 	// Group fields by element. The element is the part of the key before the last dot ('t.ref' -> 't'), extrafields 'te...' are mapped onto 't...'.
 	$elements = array();
@@ -822,13 +828,14 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 		$elements[$elementkey]['fields'][$key] = $fieldlabel;
 		if ($key === $selectedkey) {
 			$selectedlabel = $picto.' '.dol_escape_htmltag($elementlabel.': '.$fieldlabel);
+			$selectedtitle = $elementlabel.': '.$fieldlabel;
 		}
 	}
 
-	$out = '<div class="customreportscombo" id="'.dol_escape_htmltag($htmlname).'_component">';
+	$out = '<div class="customreportscombo divadvancedsearchfieldcompinput" id="'.dol_escape_htmltag($htmlname).'_component">';
 	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
-	$out .= '<button type="button" class="customreportscombo-toggle">';
-	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'" data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
+	$out .= '<button type="button" class="customreportscombo-toggle noborderbottom search_component_params">';
+	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'"'.($selectedtitle ? ' title="'.dolPrintHTMLForAttribute($selectedtitle).'"' : '').' data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
 	if ($allowclear) {
 		$out .= '<span class="fas fa-times customreportscombo-clear'.($selectedlabel ? '' : ' hideobject').'" title="'.dol_escape_htmltag($langs->trans('Reset')).'"></span>';
 	}
@@ -839,6 +846,10 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 	$out .= '<div class="customreportscombo-list">';
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
+	/**
+	 * @param	int|string	$elementkey		Key of the element to render
+	 * @return	string						HTML of the element and of its sub-elements
+	 */
 	$renderElement = function ($elementkey) use ($elements, $selectedkey, &$renderElement) {
 		$element = $elements[$elementkey];
 		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
