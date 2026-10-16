@@ -839,7 +839,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 	$out .= '<div class="customreportscombo-list">';
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
-	$renderElement = function (int|string $elementkey) use ($elements, $selectedkey, &$renderElement) {
+	$renderElement = function (string $elementkey) use ($elements, $selectedkey, &$renderElement) {
 		$element = $elements[$elementkey];
 		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
 		$out .= '<div class="customreportscombo-elementheader" tabindex="0"><span class="customreportscombo-elementlabel">'.$element['picto'].' '.dol_escape_htmltag($element['label']).'</span><span class="fas fa-caret-right customreportscombo-elementcaret"></span></div>';
@@ -858,7 +858,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 			$out .= '<div class="customreportscombo-children" style="display:none">'.$children.'</div>';
 		}
 		$out .= '</div>';
-		return $out;
+		return (string) $out;
 	};
 	// At root level, we render only the elements without parent element (or with a parent not found)
 	foreach (array_keys($elements) as $elementkey) {
