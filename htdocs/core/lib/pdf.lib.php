@@ -1300,6 +1300,26 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 					$pdf->SetXY($dims['lm'], -$posy);
 					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
 				}
+
+				// The last line above is printed with a MultiCell that wraps when the text is long, while
+				// $posy still points at its first row. Follow the wrap so the page number lands on the last
+				// printed row instead of being overprinted by the text that flows under it.
+				$lastfooterline = '';
+				if (!empty($line4)) {
+					$lastfooterline = $line4;
+				} elseif (!empty($line3)) {
+					$lastfooterline = $line3;
+				} elseif (!empty($line2)) {
+					$lastfooterline = $line2;
+				} elseif (!empty($line1)) {
+					$lastfooterline = $line1;
+				}
+				if ($lastfooterline !== '') {
+					$nboflines = $pdf->getNumLines($lastfooterline, $dims['wk'] - $dims['rm'] - $dims['lm']);
+					if ($nboflines > 1) {
+						$posy -= 3 * ($nboflines - 1);
+					}
+				}
 			}
 		}
 	}
