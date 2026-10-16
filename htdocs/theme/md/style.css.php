@@ -5786,7 +5786,7 @@ img.boxhandle, img.boxclose {
 	display: inline-block;
 	vertical-align: middle;
 }
-.fieldcombo-toggle, .customreportscombo-toggle {
+.fieldcombo-toggle {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -5804,6 +5804,33 @@ img.boxhandle, img.boxclose {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+/* The toggle of combos of custom reports uses the classes 'search_component_params' and 'noborderbottom' to look like the measures component */
+.customreportscombo-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 250px;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-<?php echo $right; ?>: 6px;
+	border: none;
+	text-align: start;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: 36px;	/* Same height than the line of 'divadvancedsearchfieldcompinput' */
+	color: inherit;
+}
+.customreportscombo-toggle .customreportscombo-label {
+	padding-<?php echo $left; ?>: 8px;
+}
+.customreportscombo-caret {
+	opacity: 0.5;
+}
+.customreportscombo-panel {
+	line-height: 1.4;	/* Do not inherit the line-height of 'divadvancedsearchfieldcompinput' */
 }
 .customreportscombo-clear {
 	opacity: 0.5;
