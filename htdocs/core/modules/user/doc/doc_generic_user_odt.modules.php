@@ -155,7 +155,7 @@ class doc_generic_user_odt extends ModelePDFUser
 
 		// Scan directories
 		if (count($listofdir)) {
-			$out .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			$out .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
 
 			if ($odtChosen) {
 				// Model for creation
@@ -183,7 +183,8 @@ class doc_generic_user_odt extends ModelePDFUser
 			$out .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$out .= '- '.$file['name'].' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/document.php', ['modulepart' => 'doctemplates', 'file' => 'users/'.basename($file['name'])]).'">'.img_picto('', 'listlight').'</a>';
+				$filetooltip = dol_print_date(dol_filemtime($file['fullname']), 'dayhour', 'tzserver');
+				$out .= '- <span title="'.dolPrintHTMLForAttribute($filetooltip).'">'.$file['name'].'</span> <a href="'.dolBuildUrl(DOL_URL_ROOT.'/document.php', ['modulepart' => 'doctemplates', 'file' => 'users/'.basename($file['name'])]).'">'.img_picto('', 'listlight').'</a>';
 				$out .= ' &nbsp; <a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['modulepart' => 'doctemplates', 'keyforuploaddir' => 'USER_ADDON_PDF_ODT_PATH', 'action' => 'deletefile', 'file' => basename($file['name'])], true).'">'.img_picto('', 'delete').'</a>';
 				$out .= '<br>';
 			}
@@ -191,6 +192,9 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 
 		$out .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$out .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$out .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		$out .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$out .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$out .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
@@ -201,7 +205,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$out .= '<br></div></div>';
 
 		// Add input to upload a new template file.
-		$out .= '<div>'.$langs->trans("UploadNewTemplate");
+		$out .= '<div>';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -210,6 +214,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$out .= ' <input type="file" name="uploadfile">';
 		$out .= '<input type="hidden" value="USER_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$out .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$out .= '</div>';
 		$out .= '</div>';
 
 		$out .= '</td>';

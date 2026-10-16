@@ -1359,7 +1359,7 @@ class Categorie extends CommonObject
 		global $langs;
 
 		if (!is_numeric($type)) {
-			$type = $this->MAP_ID[$type];
+			$type = isset($this->MAP_ID[$type]) ? $this->MAP_ID[$type] : null;
 		}
 		if (is_null($type)) {
 			$this->error = 'BadValueForParameterType';

@@ -1302,6 +1302,12 @@ if (empty($reshook)) {
 			$discount->socid = $object->socid;
 			$discount->fk_facture_source = $object->id;
 
+			// Copy multicurrency fields of source invoice (only if the source invoice was in a foreign currency)
+			if (isModEnabled('multicurrency') && $object->multicurrency_code && $object->multicurrency_code != getDolCurrency()) {
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+			}
+
 			$error = 0;
 
 
@@ -1413,10 +1419,10 @@ if (empty($reshook)) {
 					}
 
 					$discount->tva_tx = abs((float) $tva_tx);
-					$discount->localtax1_tx = $taxes['localtax1'];
-					$discount->localtax1_type = $taxes['localtax1_type'];
-					$discount->localtax2_tx = $taxes['localtax2'];
-					$discount->localtax2_type = $taxes['localtax2_type'];
+					$discount->localtax1_tx = !empty($taxes['localtax1']) ? $taxes['localtax1'] : 0;
+					$discount->localtax1_type = !empty($taxes['localtax1_type']) ? $taxes['localtax1_type'] : 0;
+					$discount->localtax2_tx = !empty($taxes['localtax2']) ? $taxes['localtax2'] : 0;
+					$discount->localtax2_type = !empty($taxes['localtax2_type']) ? $taxes['localtax2_type'] : 0;
 					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
@@ -2207,6 +2213,20 @@ if (empty($reshook)) {
 									}
 									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString('CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE')))) {
 										continue;
+									}
+
+									// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && $lines[$i]->fk_product > 0) {
+										$tmpprod = new Product($db);
+										if ($tmpprod->fetch($lines[$i]->fk_product) > 0) {
+											$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $object->thirdparty);
+											$lines[$i]->subprice = $datapriceofproduct['pu_ht'];
+											$lines[$i]->tva_tx = $datapriceofproduct['tva_tx'];
+											$lines[$i]->product_type = $tmpprod->type;
+										}
+									}
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && empty($lines[$i]->desc)) {
+										$lines[$i]->desc = $lines[$i]->description;
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');

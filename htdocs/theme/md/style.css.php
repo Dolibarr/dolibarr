@@ -924,7 +924,7 @@ select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
-select.flat, form.flat select, .divadvancedsearchfieldcompinput {
+select.flat, form.flat select {
 	height: 2em;
 }
 input.pageplusone {
@@ -1049,6 +1049,10 @@ select.placeholder { color: #ccc; }
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+#search_component_params_input::placeholder {
+	color: var(--colortext);
+	opacity: 0.5;
+}
 select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
 	color: var(--colortext);
 }
@@ -1727,6 +1731,8 @@ div.divsearchfield {
 	background: #fff;
 	border: solid 1px var(--inputbordercolor);
 	border-radius: 5px;
+	line-height: 36px;
+	/* height: 36px; Must use line-height or there is trouble when component is on several lines */
 }
 
 .search_component_params {
@@ -1739,7 +1745,13 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	line-height: 24px;
+	line-height: 25px;
+}
+.customreportsmeasures-control.search_component_params {
+	padding-<?php echo $right; ?>: 20px;
+}
+input#search_component_params_input {
+	padding-left: 8px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1757,6 +1769,8 @@ div.divsearchfield {
 	background: #ddd;
 	border-radius: 4px;
 	display: inline-block;
+	height: 26px !important;
+	margin-right: 4px !important;
 }
 .tagsearchdelete {
 	color: #999;
@@ -1776,6 +1790,88 @@ div.divsearchfield {
 	margin-left: -12px;
 	margin-top: 0;
 	position: absolute;
+}
+
+/* Component to select measures of custom reports */
+.customreportsmeasures {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	text-align: start;
+}
+.customreportsmeasures .hidden {
+	display: none !important;
+}
+span.customreportsmeasures-placeholder {
+	padding-left: 8px;
+	opacity: 0.5;
+}
+
+.customreportsmeasures-caret {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0.5;
+}
+.customreportsmeasures-tags {
+	display: contents;
+}
+.customreportsmeasures-dropdown {
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	min-width: max(100%, 340px);
+	width: max-content;
+	max-width: 500px;
+	background-color: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
+	padding: 0;
+	line-height: 1.4;
+}
+.customreportsmeasures-list, .customreportsmeasures-variants {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.customreportsmeasures-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px;
+}
+.customreportsmeasures-variants {
+	padding-left: 26px;
+}
+.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.customreportsmeasures-fieldlabel {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-variants .customreportsmeasures-item {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-fieldlabel:hover, .customreportsmeasures-variants .customreportsmeasures-item:hover {
+	background-color: var(--colorbacklinepairhover);
+}
+.customreportsmeasures-expand, .customreportsmeasures-check {
+	width: 14px;
+	margin-left: auto;
+	padding-left: 8px;
+	text-align: center;
+}
+.customreportsmeasures-check {
+	visibility: hidden;
+}
+.customreportsmeasures-selected > .customreportsmeasures-check {
+	visibility: visible;
+}
+.customreportsmeasures-count {
+	margin-left: 6px;
 }
 
 <?php
@@ -5653,12 +5749,9 @@ img.boxhandle, img.boxclose {
 	display: none;
 	position: absolute;
 	background: var(--colorbackbody);
-	border-width: 1px 1px 2px;
-	border-style: solid;
-	border-color: rgb(204, 204, 204);
-	border-image: none; padding: 9px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
-	border-radius: 2px;
+	border: none;
+	padding: 9px;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
@@ -5679,22 +5772,21 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	font-size: 12px;
 	color: #333;
-	margin: 5px 0px 5px 0px
+	margin: 20px 0px 30px 0px;
 }
 .search-component-assistance .assistance-errors {
-	margin-bottom: 0px;
 	text-align: center;
 }
 .add-filter-btn {
 	margin: 0 !important;
 }
-/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
-.fieldcombo {
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field (also used by the X axis and group by combos of custom reports) */
+.fieldcombo, .customreportscombo {
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
 }
-.fieldcombo-toggle {
+.fieldcombo-toggle, .customreportscombo-toggle {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -5707,37 +5799,42 @@ img.boxhandle, img.boxclose {
 	cursor: pointer;
 	height: 28px;
 }
-.fieldcombo-label {
+.fieldcombo-label, .customreportscombo-label {
 	flex: 1 1 auto;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.fieldcombo-panel {
+.customreportscombo-clear {
+	opacity: 0.5;
+}
+.customreportscombo-clear:hover {
+	opacity: 1;
+}
+.fieldcombo-panel, .customreportscombo-panel {
 	position: absolute;
 	top: 100%;
 	left: 0;
 	width: 450px;
 	margin-top: 2px;
-	background: var(--colorbackbody);
-	border: 1px solid var(--inputbordercolor);
-	border-radius: 3px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	background: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1001;
 }
-.fieldcombo-search {
+.fieldcombo-search, .customreportscombo-search, .customreportsmeasures-search {
 	width: 95%;
 	margin: 0;
 	padding: 4px 8px;
 	border: 0;
 	border-bottom: 1px solid var(--inputbordercolor);
 }
-.fieldcombo-list {
+.fieldcombo-list, .customreportscombo-list {
 	max-height: 300px;
 	overflow-y: auto;
 	padding-bottom: 10px
 }
-.fieldcombo-elementheader {
+.fieldcombo-elementheader, .customreportscombo-elementheader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -5745,31 +5842,31 @@ img.boxhandle, img.boxclose {
 	cursor: pointer;
 	font-weight: bold;
 }
-.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+.fieldcombo-elementheader:hover, .customreportscombo-elementheader:hover, .fieldcombo-elementheader:focus, .customreportscombo-elementheader:focus {
 	background: var(--colorbacklinepairhover);
 }
-.fieldcombo-elementcaret {
+.fieldcombo-elementcaret, .customreportscombo-elementcaret {
 	flex: 0 0 auto;
 }
-.fieldcombo-element.open .fieldcombo-elementcaret {
+.fieldcombo-element.open .fieldcombo-elementcaret, .customreportscombo-element.open > .customreportscombo-elementheader .customreportscombo-elementcaret {
 	transform: rotate(90deg);
 }
-.fieldcombo-children {
+.fieldcombo-children, .customreportscombo-children {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-fields {
+.fieldcombo-fields, .customreportscombo-fields {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-field {
+.fieldcombo-field, .customreportscombo-field {
 	padding: 4px 8px;
 	cursor: pointer;
 }
-.fieldcombo-field:hover, .fieldcombo-field:focus {
+.fieldcombo-field:hover, .customreportscombo-field:hover, .fieldcombo-field:focus, .customreportscombo-field:focus {
 	background: var(--colorbacklinepairhover);
 }
-.fieldcombo-field.selected {
+.fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
 }
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
@@ -8164,7 +8261,7 @@ dl.dropdown {
 	position:absolute;
 	top:2px;
 	list-style:none;
-	max-height: 264px;
+	max-height: 267px;
 	overflow: auto;
 	z-index: 1;
 }

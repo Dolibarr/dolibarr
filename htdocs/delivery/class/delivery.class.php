@@ -892,6 +892,7 @@ class Delivery extends CommonObject
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
 				$line->description	= $obj->description;
+				$line->desc = $obj->description;
 				$line->fk_product 	= $obj->fk_product;
 				$line->qty_asked 	= $obj->qty_asked;
 				$line->qty_shipped	= $obj->qty_shipped;
@@ -1291,6 +1292,11 @@ class DeliveryLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_origin_line;
+
+	/**
+	 * @var int	Never set: a delivery line has no parent line, but the generic PDF functions read it
+	 */
+	public $fk_parent_line;
 	/**
 	 * @var int
 	 */

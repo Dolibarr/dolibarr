@@ -1415,6 +1415,22 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Override of CommonObject::getFieldPropertyName(): the opportunity status is in the property opp_status.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		if ($field == 'fk_opp_status') {
+			return 'opp_status';
+		}
+
+		return parent::getFieldPropertyName($field);
+	}
+
+	/**
 	 * 	Return clickable name (with optional picto)
 	 *
 	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto

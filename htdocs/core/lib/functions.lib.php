@@ -645,7 +645,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew =
 /**
  * 	Get list of entity id to use.
  *
- * 	@param	string	$element		Current element
+ * 	@param	string	$element		Current element. The value is usually coming from $object->element property. Example:
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
  *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
@@ -688,7 +688,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans', 'extrafields');
 		if (getDolGlobalString('HOLIDAY_ALLOW_ZERO_IN_DIC')) { // this constant break the dictionary admin without Multicompany
 			$addzero[] = 'c_holiday_types';
 		}
@@ -11044,6 +11044,12 @@ function getElementProperties($elementType)
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
+	} elseif ($elementType == 'cashcontrol') {
+		$classpath = 'compta/cashcontrol/class';
+		$classfile = 'cashcontrol';
+		$classname = 'CashControl';
+		$module = 'takepos';
+		$table_element = 'pos_cash_fence';
 	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';
