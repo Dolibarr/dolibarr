@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Carlos Herrera			<cehojac@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -573,8 +574,120 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['tickets'] = [
 			'label' => 'support tickets',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a support ticket. The user confirms before anything is written. subject and message are mandatory; socid is optional (a ticket may belong to no third party).",
+					'write' => [
+						'preview' => 'AIPreviewCreateTicket',
+						'required' => ['subject', 'message'],
+						'object' => 'Ticket',
+						'thirdparty' => 'socid',
+						'right' => ['ticket', 'write'],
+						'args' => ['subject', 'message'],
+						// The ticket API validates 'socid' but the object persists
+						// 'fk_soc'; the status column reads 'status'.
+						'copy' => ['socid' => 'fk_soc'],
+						'rename' => ['fk_statut' => 'status'],
+						// Silent by default: the assistant must not turn a
+						// creation the human approved into an emailed
+						// notification nobody saw coming.
+						'defaults' => ['notify_tiers_at_create' => 0],
+					],
+					'params' => [
+						'subject' => "Ticket subject (required).",
+						'message' => "First message describing the request (required).",
+						'socid' => "Rowid of the customer the ticket belongs to, or its name as said (resolved here). Omit or 0 for a ticket not linked to a third party.",
+						'fk_user_assign' => "Rowid of the user to assign the ticket to.",
+						'type_code' => "Nature of the request, e.g. COM=commercial question, ISSUE=incident, HELP=request, OTHER.",
+						'category_code' => "Ticket group/category code.",
+						'severity_code' => "Severity: LOW, NORMAL, HIGH or BLOCKING.",
+						'fk_project' => "Rowid of a project the ticket relates to.",
+						'notify_tiers_at_create' => "1 to notify the third party by email on creation, 0 (default) silent."
+					]
+				],
+				'postNewMessage' => [
+					'suffix' => 'reply',
+					'description' => "Post a message on an existing support ticket. Needs the ticket public tracking id (track_id): when only the rowid or ref is known, read the ticket first with api_tickets_get or api_tickets_get_by_ref to get it. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewReplyTicket',
+						'required' => ['track_id', 'message'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['track_id', 'message'],
+					],
+					'params' => [
+						'track_id' => "Public tracking id of the ticket (the hash the customer received by email). Required.",
+						'message' => "Message text to post on the ticket (required).",
+						'private' => "1 for an internal note the customer never sees, 0 (default) for a public message."
+					]
+				],
+				'put' => [
+					'suffix' => 'update',
+					'description' => "Update fields of an existing support ticket: assign a user (fk_user_assign), change status (fk_statut), severity, type... Only the fields given are changed. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUpdateTicket',
+						'required' => ['id'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['id'],
+						// Same name mismatch as the create: the API validates
+						// 'socid' while Ticket::update persists 'fk_soc', and
+						// the status column reads 'status' (fk_statut is a
+						// read-only backward-compatible alias).
+						'copy' => ['socid' => 'fk_soc'],
+						'rename' => ['fk_statut' => 'status'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket to update (required). When only the ref is known, look it up with api_tickets_get_by_ref.",
+						'subject' => "New subject.",
+						'socid' => "Rowid of the customer to link the ticket to, or its name as said.",
+						'fk_user_assign' => "Rowid of the user to assign the ticket to.",
+						'fk_statut' => "New status: 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled.",
+						'severity_code' => "New severity: LOW, NORMAL, HIGH or BLOCKING.",
+						'type_code' => "New nature: COM, ISSUE, HELP or OTHER.",
+						'category_code' => "New group/category code.",
+						'fk_project' => "Rowid of a project to relate the ticket to."
+					]
+				],
+				'postContact' => [
+					'suffix' => 'add_contact',
+					'description' => "Link a contact to a support ticket. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTicketContact',
+						'required' => ['id', 'contactid', 'type'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['contactid', 'id'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket (required).",
+						'contactid' => "Rowid of the contact to link (required).",
+						'type' => "Contact role on the ticket, e.g. 'contributor', 'observer', 'assignee' (required).",
+						'source' => "'external' (default) for a third-party contact, 'internal' for a Dolibarr user."
+					]
+				],
+				'deleteContact' => [
+					'suffix' => 'remove_contact',
+					'description' => "Unlink a contact from a support ticket. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewRemoveTicketContact',
+						'required' => ['id', 'contactid', 'type'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['contactid', 'id'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket (required).",
+						'contactid' => "Rowid of the contact to unlink (required).",
+						'type' => "Contact role to remove (required).",
+						'source' => "'external' (default) or 'internal'."
+					]
+				],
 				'index' => [
-					'default_properties' => 'id,ref,track_id,subject,fk_soc,fk_statut,severity_code,type_code,datec',
+					// track_id stays out of list results on purpose: it is the
+					// bearer credential of the public ticket interface, and api_tickets_get
+					// still returns it when the reply flow needs it.
+					'default_properties' => 'id,ref,subject,fk_soc,fk_statut,severity_code,type_code,datec',
 					'description' => "Statuses (t.fk_statut): 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled. Open tickets = fk_statut < 8. Severity in severity_code (LOW, NORMAL, HIGH, BLOCKING), nature in type_code (COM=commercial, ISSUE=incident, ...). Useful sqlfilters fields: t.subject, t.fk_statut, t.severity_code, t.type_code, t.datec (creation), t.fk_user_assign (assigned user rowid).",
 					'params' => [
 						'socid' => "Third-party rowid to restrict tickets to one customer (0 = all).",
@@ -1675,7 +1788,8 @@ class ToolApiBridge extends McpTool
 			'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 			'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 			'Societe' => '/societe/class/societe.class.php',
-			'Product' => '/product/class/product.class.php'
+			'Product' => '/product/class/product.class.php',
+			'Ticket' => '/ticket/class/ticket.class.php'
 		);
 		if (empty($paths[$class]) || (int) $id <= 0) {
 			return null;
@@ -2008,13 +2122,24 @@ class ToolApiBridge extends McpTool
 			return $langs->trans($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT')));
 		}
 
-		// A single record (third party, product, category) has no lines: it
-		// names the arguments that make up its sentence instead.
+		// A single record (third party, product, category, ticket) has no lines:
+		// it names the arguments that make up its sentence, then every other
+		// argument actually provided, so the human approves nothing they did
+		// not get to see. Language keys opt in to that extra list with a
+		// trailing %s; keys without it simply ignore the appended value.
 		if (!empty($write['args'])) {
 			$values = array();
 			foreach ($write['args'] as $argname) {
 				$values[] = dol_trunc((string) ($args[$argname] ?? ''), 60);
 			}
+			$extra = array();
+			foreach ($args as $argname => $argvalue) {
+				if (in_array($argname, $write['args'], true) || $argname === 'requestState' || is_array($argvalue)) {
+					continue;
+				}
+				$extra[] = $argname.'='.dol_trunc((string) $argvalue, 40);
+			}
+			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
 			return $langs->trans($write['preview'], ...$values);
 		}
 
@@ -2073,7 +2198,15 @@ class ToolApiBridge extends McpTool
 
 		if (!empty($write['thirdparty'])) {
 			$field = (string) $write['thirdparty'];
-			if (empty($args[$field]) || !is_numeric($args[$field]) || (int) $args[$field] <= 0) {
+			// A third party field the write does not require may be left empty
+			// (a ticket can legally have no customer): it is checked only when a
+			// value was actually provided. When it is required, any missing,
+			// non-numeric or non-positive value stays refused as before.
+			$missing = empty($args[$field]) || (is_numeric($args[$field]) && (int) $args[$field] <= 0);
+			$namedNotResolved = !empty($args[$field]) && !is_numeric($args[$field]);
+			$checkThirdparty = $namedNotResolved
+				|| ($missing && in_array($field, (array) ($write['required'] ?? array()), true));
+			if ($checkThirdparty) {
 				$langs->load('other');
 				$named = '';
 				foreach (array($field, 'thirdparty', 'company', 'customer', 'supplier') as $key) {
@@ -2317,6 +2450,14 @@ class ToolApiBridge extends McpTool
 			if ($pname === 'request_data') {
 				$body = $args;
 				unset($body['requestState']);
+				// Only the fields the tool advertised may be written: the human
+				// approved a preview of those, not of arbitrary object properties
+				// (a ticket update must not rewrite track_id, fk_user_create,
+				// origin_email, dates...). 'parent' writes keep the flat line
+				// fields, which are not individually declared in 'params'.
+				if (!empty($writemeta) && empty($writemeta['parent']) && !empty($methodmeta['params'])) {
+					$body = array_intersect_key($body, $methodmeta['params']);
+				}
 				foreach (($writemeta['defaults'] ?? array()) as $field => $default) {
 					if (!isset($body[$field])) {
 						$body[$field] = ($default === 'now') ? dol_now() : $default;
@@ -2330,10 +2471,22 @@ class ToolApiBridge extends McpTool
 						unset($body[$from]);
 					}
 				}
+				// Fields the object persists under another name while the API
+				// still validates the documented one (the ticket API checks
+				// access on 'socid' but Ticket::create/update write 'fk_soc').
+				foreach (($writemeta['copy'] ?? array()) as $from => $to) {
+					if (isset($body[$from])) {
+						$body[$to] = $body[$from];
+					}
+				}
 				$callArgs[] = $body;
 				continue;
 			}
-			if (array_key_exists($pname, $args)) {
+			// A write tool advertises a flat schema: only the declared arguments
+			// may reach a positional parameter (a caller must not fill
+			// 'notrigger' or any other option the schema never showed).
+			if (array_key_exists($pname, $args)
+				&& (empty($writemeta) || empty($methodmeta['params']) || array_key_exists($pname, $methodmeta['params']))) {
 				// Cap an explicit 'limit': one call must not pull thousands of full objects.
 				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
 			} elseif ($p->isOptional()) {
