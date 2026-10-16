@@ -175,6 +175,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');
+		require_once dirname(__FILE__).'/SupplierOrdersHeaderApiTest.php';
+		$suite->addTestSuite('SupplierOrdersHeaderApiTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
 
