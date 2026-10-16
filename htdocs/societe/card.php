@@ -1121,12 +1121,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$object->mode_reglement_id = $paymentTypeId;
 		$object->barcode = GETPOST('barcode', 'alphanohtml');
-		$object->idprof1 = GETPOST('idprof1', 'alphanohtml');
-		$object->idprof2 = GETPOST('idprof2', 'alphanohtml');
-		$object->idprof3 = GETPOST('idprof3', 'alphanohtml');
-		$object->idprof4 = GETPOST('idprof4', 'alphanohtml');
-		$object->idprof5 = GETPOST('idprof5', 'alphanohtml');
-		$object->idprof6 = GETPOST('idprof6', 'alphanohtml');
+		// Only the professional ids displayed by the form are posted: the edit form renders the id N
+		// only when N <= THIRDPARTY_MIN_NB_PROF_ID or when the key ProfId<N><country code> is
+		// translated for the language of the user. Reading the 6 of them unconditionally erases the
+		// value stored for a hidden one, so keep the current value when the field was not submitted.
+		for ($i = 1; $i <= 6; $i++) {
+			$key = 'idprof'.$i;
+			if (GETPOSTISSET($key)) {
+				$object->$key = GETPOST($key, 'alphanohtml');
+			}
+		}
 		$object->typent_id = GETPOSTINT('typent_id');
 		$object->effectif_id = GETPOSTINT('effectif_id');
 		$object->civility_id = GETPOST('civility_id', 'alpha');
