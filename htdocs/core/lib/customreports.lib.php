@@ -847,7 +847,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
 	/**
-	 * @param	int|string	$elementkey		Key of the element to render
+	 * @param	string		$elementkey		Key of the element to render
 	 * @return	string						HTML of the element and of its sub-elements
 	 */
 	$renderElement = function (string $elementkey) use ($elements, $selectedkey, &$renderElement): string {
