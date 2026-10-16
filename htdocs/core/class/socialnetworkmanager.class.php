@@ -41,7 +41,7 @@ class SocialNetworkManager
 	private $platform;
 
 	/**
-	 * @var MastodonHandler	Instance of class handler
+	 * @var MastodonHandler|DiasporaHandler|RedditHandler|null	Instance of class handler
 	 */
 	private $handler;
 

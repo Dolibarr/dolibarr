@@ -188,7 +188,7 @@ class RedditHandler
 					if ($count >= $maxNb) {
 						break;
 					}
-					$this->posts[$count] = $this->normalizeData($postData['data']);
+					$this->posts[$count] = $this->normalizeData($postData['data'] ?? []);
 					$count++;
 				}
 
