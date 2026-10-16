@@ -224,7 +224,7 @@ $sql .= " ORDER BY f.datef, f.ref";
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
 $tabfac = array();
 $tabht = array();
-$tabaccrual = array();
+$tabsplit = array();
 $tabtva = array();
 $def_tva = array();
 $tabwarranty = array();
@@ -380,9 +380,6 @@ if ($result) {
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
 			$tabttc[$obj->rowid][$compta_soc] = 0;
 		}
-		if (!isset($tabht[$obj->rowid][$compta_prod])) {
-			$tabht[$obj->rowid][$compta_prod] = 0;
-		}
 		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
 			$tabtva[$obj->rowid][$compta_tva] = 0;
 		}
@@ -413,23 +410,26 @@ if ($result) {
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
 		$amountht = $obj->total_ht * $situation_ratio;
+		$splitlines = array();
 		if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS') && !empty($obj->date_start) && !empty($obj->date_end) && !accountingAccountIsExcludedFromSplit($compta_prod)) {
-			$docyear = (int) substr($obj->df, 0, 4);
-			foreach (accountingSplitAmountPerYear((float) $amountht, $obj->date_start, $obj->date_end, $docyear) as $year => $share) {
-				if ($year == $docyear) {
-					$amountht = $share['amount'];
-					continue;
-				}
-				$accrualaccount = getDolGlobalString($year < $docyear ? 'ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME' : 'ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined');
-				$accruallabel = $langs->transnoentities('AccrualShare', (string) $year, (string) $share['days'], (string) $share['percent']);
-				$accrualkey = $accrualaccount.'|'.$compta_prod.'|'.$accruallabel;
-				if (!isset($tabaccrual[$obj->rowid][$accrualkey])) {
-					$tabaccrual[$obj->rowid][$accrualkey] = array('account' => $accrualaccount, 'subledger' => $compta_prod, 'label' => $accruallabel, 'amount' => 0);
-				}
-				$tabaccrual[$obj->rowid][$accrualkey]['amount'] += $share['amount'];
+			$splitlines = accountingSplitLinesPerYear((float) $amountht, $obj->date_start, $obj->date_end, (int) substr($obj->df, 0, 4), $compta_prod, getDolGlobalString('ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME', 'NotDefined'), getDolGlobalString('ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined'), (string) $obj->description);
+		}
+		if (empty($splitlines)) {
+			if (!isset($tabht[$obj->rowid][$compta_prod])) {
+				$tabht[$obj->rowid][$compta_prod] = 0;
+			}
+			$tabht[$obj->rowid][$compta_prod] += $amountht;
+		} elseif (!isset($tabht[$obj->rowid])) {
+			$tabht[$obj->rowid] = array();
+		}
+		foreach ($splitlines as $splitline) {
+			$splitkey = $splitline['account'].'|'.$splitline['subledger'].'|'.$splitline['label'];
+			if (isset($tabsplit[$obj->rowid][$splitkey])) {
+				$tabsplit[$obj->rowid][$splitkey]['amount'] += $splitline['amount'];
+			} else {
+				$tabsplit[$obj->rowid][$splitkey] = $splitline;
 			}
 		}
-		$tabht[$obj->rowid][$compta_prod] += $amountht;
 		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
@@ -816,14 +816,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			}
 		}
 
-		// Accruals
-		if (!$errorforline && !empty($tabaccrual[$key])) {
-			foreach ($tabaccrual[$key] as $accrual) {
-				$mt = $accrual['amount'];
+		// Split across years
+		if (!$errorforline && !empty($tabsplit[$key])) {
+			foreach ($tabsplit[$key] as $splitline) {
+				$mt = $splitline['amount'];
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $accrual['account'], true);
+				$accountingaccount->fetch(0, $splitline['account'], true);
 				$subledgeraccount = new AccountingAccount($db);
-				$subledgeraccount->fetch(0, $accrual['subledger'], true);
+				$subledgeraccount->fetch(0, $splitline['subledger'], true);
 
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
@@ -834,11 +834,11 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->fk_doc = $key;
 				$bookkeeping->fk_docdet = 0;
 				$bookkeeping->thirdparty_code = $companystatic->code_client;
-				$bookkeeping->subledger_account = $accrual['subledger'];
+				$bookkeeping->subledger_account = $splitline['subledger'];
 				$bookkeeping->subledger_label = $subledgeraccount->label;
-				$bookkeeping->numero_compte = $accrual['account'];
+				$bookkeeping->numero_compte = $splitline['account'];
 				$bookkeeping->label_compte = $accountingaccount->label;
-				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accrual['label']);
+				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $splitline['label']);
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 				$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -1356,20 +1356,20 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//}
 		}
 
-		// Accruals
-		foreach ($tabaccrual[$key] ?? array() as $accrual) {
-			$mt = $accrual['amount'];
+		// Split across years
+		foreach ($tabsplit[$key] ?? array() as $splitline) {
+			$mt = $splitline['amount'];
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $accrual['account'], true);
+			$accountingaccount->fetch(0, $splitline['account'], true);
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($accrual['account'])).'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($accrual['account'])).'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($accrual['subledger'])).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['subledger'])).'"'.$sep;
 			print '"'.csvClean(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accrual['label'])).'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $splitline['label'])).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -1781,16 +1781,16 @@ if (empty($action) || $action == 'view') {
 			$i++;
 		}
 
-		// Accruals
-		foreach ($tabaccrual[$key] ?? array() as $accrual) {
-			$mt = $accrual['amount'];
+		// Split across years
+		foreach ($tabsplit[$key] ?? array() as $splitline) {
+			$mt = $splitline['amount'];
 			print '<tr class="oddeven">';
-			print "<!-- Accrual -->";
+			print "<!-- Split across years -->";
 			print "<td>".$date."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg($accrual['account']);
+			$accountoshow = length_accountg($splitline['account']);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("AccountNotDefined").'</span>';
 			} else {
@@ -1798,8 +1798,8 @@ if (empty($action) || $action == 'view') {
 			}
 			print "</td>";
 			// Subledger account
-			print "<td>".length_accountg($accrual['subledger'])."</td>";
-			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accrual['label'], 1)."</td>";
+			print "<td>".length_accountg($splitline['subledger'])."</td>";
+			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $splitline['label'], 1)."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";

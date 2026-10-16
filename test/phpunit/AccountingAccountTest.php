@@ -237,6 +237,28 @@ class AccountingAccountTest extends CommonClassTest
 	}
 
 	/**
+	 * testAccountingSplitLinesPerYear
+	 *
+	 * @return	void
+	 */
+	public function testAccountingSplitLinesPerYear()
+	{
+		global $langs;
+		$langs->load('accountancy');
+
+		$this->assertSame(array(), accountingSplitLinesPerYear(1200, '2026-02-01', '2026-11-30', 2026, '706', '7718', '487', 'Subscription'));
+
+		$this->assertSame(array(
+			array('account' => '7718', 'subledger' => '706', 'label' => 'Subscription July to June - 2025: 184 days (25.21 %)', 'amount' => 252.05),
+			array('account' => '706', 'subledger' => '', 'label' => 'Subscription July to June - 2026: 365 days (50 %)', 'amount' => 500.0),
+			array('account' => '487', 'subledger' => '706', 'label' => 'Subscription July to June - 2027: 181 days (24.79 %)', 'amount' => 247.95),
+		), accountingSplitLinesPerYear(1000, '2025-07-01', '2027-06-30', 2026, '706', '7718', '487', "<b>Subscription</b>\nJuly to June"));
+
+		$result = accountingSplitLinesPerYear(1200, '2027-01-01', '2027-12-31', 2026, '706', '7718', '487', '');
+		$this->assertSame(array(array('account' => '487', 'subledger' => '706', 'label' => '2027: 365 days (100 %)', 'amount' => 1200.0)), $result);
+	}
+
+	/**
 	 * testAccountingAccountIsExcludedFromSplit
 	 *
 	 * @return	void
