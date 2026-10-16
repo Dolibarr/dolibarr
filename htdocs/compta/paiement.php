@@ -721,6 +721,7 @@ if ($result >= 0) {
 			$multicurrency_totalrecu = 0;
 			$multicurrency_totalrecucreditnote = 0;
 			$multicurrency_totalrecudeposits = 0;
+			$multicurrencycodetotal = '';
 			$showtotalmulticurrency = true;
 			$sign = 1;
 
@@ -814,7 +815,7 @@ if ($result >= 0) {
 				if (isModEnabled('multicurrency')) {
 					print '<td class="right">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						print '<span class="amount classfortooltip" title="'.$tooltiponmulticurrencyfullamount.'">' . price($sign * $objp->multicurrency_total_ttc);
+						print '<span class="amount classfortooltip" title="'.$tooltiponmulticurrencyfullamount.'">' . price($sign * $objp->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 					}
 					print '</span></td>';
 
@@ -822,12 +823,12 @@ if ($result >= 0) {
 					print '<td class="right">';
 					print '<span class="amount">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						print price($sign * $multicurrency_payment);
+						print price($sign * $multicurrency_payment, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 						if ($multicurrency_creditnotes) {
-							print '+'.price($multicurrency_creditnotes);
+							print '+'.price($multicurrency_creditnotes, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 						}
 						if ($multicurrency_deposits) {
-							print '+'.price($multicurrency_deposits);
+							print '+'.price($multicurrency_deposits, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 						}
 					}
 					print '</span>';
@@ -836,7 +837,7 @@ if ($result >= 0) {
 					// Multicurrency remain to pay
 					print '<td class="right">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						print '<span class="amount">'.price($sign * (float) $multicurrency_remaintopay).'</span>';
+						print '<span class="amount">'.price($sign * (float) $multicurrency_remaintopay, 0, $langs, 0, -1, -1, $objp->multicurrency_code).'</span>';
 					}
 					print '</td>';
 
@@ -861,10 +862,10 @@ if ($result >= 0) {
 								print img_picto("Auto fill", 'rightarrow.png');
 								print '</button>';
 							}
-							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount maxwidth100" name="'.$namef.'" value="'.GETPOST($namef).'">';
+							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount maxwidth100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
 							print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 						} else {
-							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
+							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
 							print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 						}
 					}
@@ -965,6 +966,9 @@ if ($result >= 0) {
 					if (empty($objp->multicurrency_code) || $objp->multicurrency_code == getDolCurrency()) {
 						$showtotalmulticurrency = false;
 					}
+					if (empty($multicurrencycodetotal)) {
+						$multicurrencycodetotal = $objp->multicurrency_code;
+					}
 					$multicurrency_total_ttc += $objp->multicurrency_total_ttc;
 					$multicurrency_totalrecu += $multicurrency_payment;
 					$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
@@ -989,16 +993,16 @@ if ($result >= 0) {
 				if (isModEnabled('multicurrency')) {
 					print '<td></td>';
 					if ($showtotalmulticurrency) {
-						print '<td class="right"><b>'.price($sign * $multicurrency_total_ttc).'</b></td>';
-						print '<td class="right"><b>'.price($sign * $multicurrency_totalrecu);
+						print '<td class="right"><b>'.price($sign * $multicurrency_total_ttc, 0, $langs, 0, -1, -1, $multicurrencycodetotal).'</b></td>';
+						print '<td class="right"><b>'.price($sign * $multicurrency_totalrecu, 0, $langs, 0, -1, -1, $multicurrencycodetotal);
 						if ($multicurrency_totalrecucreditnote) {
-							print '+'.price($multicurrency_totalrecucreditnote);
+							print '+'.price($multicurrency_totalrecucreditnote, 0, $langs, 0, -1, -1, $multicurrencycodetotal);
 						}
 						if ($multicurrency_totalrecudeposits) {
-							print '+'.price($multicurrency_totalrecudeposits);
+							print '+'.price($multicurrency_totalrecudeposits, 0, $langs, 0, -1, -1, $multicurrencycodetotal);
 						}
 						print '</b></td>';
-						print '<td class="right"><b>'.price($sign * (float) price2num($multicurrency_total_ttc - $multicurrency_totalrecu - $multicurrency_totalrecucreditnote - $multicurrency_totalrecudeposits, 'MT')).'</b></td>';
+						print '<td class="right"><b>'.price($sign * (float) price2num($multicurrency_total_ttc - $multicurrency_totalrecu - $multicurrency_totalrecucreditnote - $multicurrency_totalrecudeposits, 'MT'), 0, $langs, 0, -1, -1, $multicurrencycodetotal).'</b></td>';
 						print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 					} else {
 						print '<td></td>';

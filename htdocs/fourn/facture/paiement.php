@@ -774,25 +774,26 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 								print '<td data-col="multicurrency-total-ttc" class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($objp->multicurrency_total_ttc);
+									print '<span class="amount">'.price($objp->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $objp->multicurrency_code).'</span>';
 								}
 								print '</td>';
 
 								print '<td data-col="multicurrency-payment" class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($sign * $multicurrency_payment);
+									print '<span class="amount">'.price($sign * $multicurrency_payment, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 									if ($multicurrency_creditnotes) {
-										print '+'.price($multicurrency_creditnotes);
+										print '+'.price($multicurrency_creditnotes, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 									}
 									if ($multicurrency_deposits) {
-										print '+'.price($multicurrency_deposits);
+										print '+'.price($multicurrency_deposits, 0, $langs, 0, -1, -1, $objp->multicurrency_code);
 									}
+									print '</span>';
 								}
 								print '</td>';
 
 								print '<td data-col="remain-to-pay" class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($sign * (float) $multicurrency_remaintopay);
+									print '<span class="amount">'.price($sign * (float) $multicurrency_remaintopay, 0, $langs, 0, -1, -1, $objp->multicurrency_code).'</span>';
 								}
 								print '</td>';
 
@@ -818,9 +819,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print '</button>';
 										}
 										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount width100" name="'.$namef.'" value="'.GETPOST($namef).'">';
+										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount width100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
 									} else {
-										print '<input type="text" class="width100" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+										print '<input type="text" class="width100" name="'.$namef.'_disabled" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'" disabled>';
 										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									}
 								}
