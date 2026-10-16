@@ -7370,7 +7370,7 @@ class Form
 
 				var button = "' . $button . '";
 				if (button.length > 0) {
-					$( "#" + button ).click(function() {
+					$( "#" + button ).click(function(e) { e.preventDefault();
 						$("#' . $dialogconfirm . '").dialog("open");
 					});
 				}
@@ -11318,7 +11318,7 @@ class Form
 					$sfortag .= ' title="' . dolPrintHTMLForAttribute($titlestring) . '"';
 					$sfortag .= '>';
 					if ($rendermode == 1) {
-						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'">';
+						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'" tabindex="-1">';
 						$sfortag .= img_picto('', 'category', 'class="paddingright"');
 						if ($conf->dol_optimize_smallscreen) {
 							$sfortag .= dolPrintHTML(dol_trunc($c->label, 8));

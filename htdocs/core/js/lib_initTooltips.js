@@ -28,6 +28,18 @@ function initTooltips(root) {
 				return $el.prop("title");
 			}
 		});
+
+		// Close the tooltip on click to cancel the pending show timer, so the tooltip does not appear
+		// behind a modal dialog opened by the click. Also re-close it once on the next focusin, because
+		// a jQuery UI modal dialog restores the focus to the triggering element on close, which reopens
+		// the tooltip (jQuery UI close() clears the fx queue and cancels the pending show).
+		$el.off("click.closetooltip focusin.closetooltip").on("click.closetooltip", function () {
+			$el.tooltip("close");
+			console.log("close tooltip");
+			$el.off("focusin.closetooltip").one("focusin.closetooltip", function () {
+				$el.tooltip("close");
+			});
+		});
 	});
 }
 
