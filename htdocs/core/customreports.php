@@ -62,6 +62,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$mode = GETPOST('mode', 'alpha');
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
+	if ($objecttype == '-1') {	// -1 is the empty value of the combo of object types
+		$objecttype = '';
+	}
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
@@ -172,9 +175,12 @@ if (!isset($search_graph)) {
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
-if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
-	$objecttype = 'thirdparty';
+if (!is_string($objecttype)) {	// No object type is preselected
+	$objecttype = '';
 }
+/*if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
+	$objecttype = 'thirdparty';
+}*/
 '@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
 
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
@@ -414,7 +420,11 @@ if (!empty($object->element_for_permission)) {
 // Test on permission can be done on a given selected feature only
 
 // Security check (do not stop here, get only result to show message later)
-$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+if ($features) {
+	$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+} else {
+	$resultcheck = 1;	// No object type selected yet, so there is no data to protect
+}
 
 
 /*
@@ -730,10 +740,10 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock liste_titre_bydiv_nothingafter centpercent">';
 
 	// Select object
-	print '<div class="divadvancedsearchfield center floatnone">';
-	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-
-	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth250 customreportsobjecttype noborderfocus', 1, '', 0, 1);
+	print '<div class="divadvancedsearchfield floatnone">';
+	//print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
+	print img_picto('', 'generic', 'class="paddingright pictofixedwidth"');
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, $langs->trans("StatisticsOn"), 0, 0, '', 1, 0, 0, '', 'minwidth250 customreportsobjecttype noborderfocus', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 	} else {
@@ -747,9 +757,17 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	        });
 	    </script>';
 	}
+	// When no object type is selected, the focus goes on the combo of object types
+	if (empty($objecttype)) {
+		print '<script nonce="'.getNonce().'">jQuery(document).ready(function() {
+			var objecttypeselection = jQuery("#objecttype").next(".select2").find(".select2-selection");
+			(objecttypeselection.length ? objecttypeselection : jQuery("#objecttype")).trigger("focus");
+		});</script>';
+	}
 	print '</div><div class="clearboth"></div>';
 
-	if (!empty($newarrayoftype)) {
+	// The components to select the filter, measures, X axis and group by are shown only once an object type is selected
+	if (!empty($newarrayoftype) && !empty($object)) {
 		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 		if (!empty($object)) {
 			print '<div class="divadvancedsearchfield divadvancedsearchfieldusf">';
@@ -804,7 +822,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '</div>';
 	}
 
-	if ($mode == 'grid') {
+	if ($mode == 'grid' && !empty($object)) {
 		// YAxis
 		print '<div class="divadvancedsearchfield">';
 		foreach ($object->fields as $key => $val) {
@@ -865,7 +883,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '</div>';
 	}
 
-	if (!empty($newarrayoftype)) {
+	if (!empty($newarrayoftype) && !empty($object)) {
 		print '<div class="divadvancedsearchfield">';
 		print '<button type="submit" class="butAction nomargintop customreportsrefresh">'.$langs->trans("Refresh").'</button>';
 		print '</div>';

@@ -1905,7 +1905,7 @@ div#divsearch_component_params {
 	margin-left: 1px;
 }
 input#search_component_params_input {
-	padding-left: 8px;
+	padding-left: 3px;
 	margin-right: 1px;
 	margin-left: 1px;
 }
@@ -6172,6 +6172,10 @@ img.boxhandle, img.boxclose {
 	font-family: inherit;	/* A button does not inherit the font of the page, so we force it to look like the a.butAction */
 	font-size: inherit;
 }
+.customreportsrefresh:focus-visible {
+	outline: auto 1px #101010;	/* Same focus than the a.butAction (the theme removes the outline of buttons) */
+	outline-offset: 1px;
+}
 .add-filter-btn {
 	margin: 0 !important;
 	font-family: inherit;	/* A button does not inherit the font of the page, so we force it to look like the a.butAction */
@@ -6394,6 +6398,34 @@ img.boxhandle, img.boxclose {
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
 		margin: 0px
+	}
+}
+/* On smartphones, the dropdown of measures, X axis and group by of custom reports must not be wider than the screen */
+@media only screen and (max-width: 570px) {
+	.customreportsmeasures-dropdown {
+		min-width: 0;
+		width: 260px;
+		max-width: 260px;
+	}
+	.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+		white-space: normal;	/* Long labels are wrapped instead of adding a horizontal scrollbar */
+	}
+	.fieldcombo-panel, .customreportscombo-panel {
+		width: 260px;
+		max-width: 260px;
+	}
+	/* The zone of measures has the same width than the X axis and group by combos (the class minwidth300 is disabled on small screens) */
+	.customreportsmeasures {
+		min-width: 250px;
+	}
+	.customreportsmeasures-control {
+		min-width: 100%;
+		box-sizing: border-box;
+	}
+	/* The input of filters must not be wider than its zone, otherwise it goes on a new line under an empty line */
+	.divadvancedsearchfieldusf .search_component_input {
+		max-width: calc(100% - 8px);	/* Keep room for the space after the zone of criteria */
+		box-sizing: border-box;
 	}
 }
 
