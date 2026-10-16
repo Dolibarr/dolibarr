@@ -73,7 +73,7 @@ class RedditHandler
 	/**
 	 * @var array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts of the social network
 	 */
-	private $posts;
+	private $posts = [];
 
 	/**
 	 * Constructor to initialize RedditHandler.
