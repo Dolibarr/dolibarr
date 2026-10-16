@@ -131,21 +131,9 @@ class Paiements extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		// A payment has no thirdparty of its own, it is reached through the invoices it pays.
-		// A user bound to a thirdparty must only see the payments of that one, the same way
-		// api_invoices.class.php restricts its own list.
-		$socid = DolibarrApiAccess::$user->socid ?: 0;
-
-		$sql = "SELECT DISTINCT t.rowid";
+		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix().$tmpobject->table_element." AS t";
-		if ($socid > 0) {
-			$sql .= " INNER JOIN ".$this->db->prefix()."paiement_facture AS pf ON pf.fk_paiement = t.rowid";
-			$sql .= " INNER JOIN ".$this->db->prefix()."facture AS f ON f.rowid = pf.fk_facture";
-		}
 		$sql .= " WHERE 1 = 1";
-		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".((int) $socid);
-		}
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
 		}
