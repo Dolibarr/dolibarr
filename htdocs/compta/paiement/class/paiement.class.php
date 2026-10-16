@@ -346,7 +346,13 @@ class Paiement extends CommonObject
 				if ($way == 'dolibarr') {
 					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
 				} else {
-					$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					$invoice = new Facture($this->db);
+					$invoice->fetch($key);
+					if ((float) price2num($value, 'MT') == (float) $invoice->getRemainToPay(1)) {
+						$value_converted = (float) $invoice->getRemainToPay(0);
+					} else {
+						$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					}
 				}
 			} else {
 				$invoice_multicurrency_tx = false;
