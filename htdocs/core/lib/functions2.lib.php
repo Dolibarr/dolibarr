@@ -1515,7 +1515,7 @@ function get_string_between($string, $start, $end)
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int|string		    <0 or error string if KO, 0 if OK
+ * @return	int|string		    Return integer <0 or error string if KO, 0 if OK
  */
 function check_value($mask, $value)
 {
@@ -1785,7 +1785,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
  *	@param	array	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		<0 if KO, >0 if OK
+ *	@return int         		Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */

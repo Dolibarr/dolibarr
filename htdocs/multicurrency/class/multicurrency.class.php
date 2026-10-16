@@ -111,7 +111,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param  User $user      	User that creates
 	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, Id of created object if OK
+	 * @return int 				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $trigger = true)
 	{
@@ -186,7 +186,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param int    $id  		Id object
 	 * @param string $code 		code
-	 * @return int 				<0 if KO, 0 if not found, >0 if OK
+	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
 	{
@@ -239,7 +239,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load all rates in object from the database
 	 *
-	 * @return int <0 if KO, >=0 if OK
+	 * @return int Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetchAllCurrencyRate()
 	{
@@ -277,7 +277,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param  User $user      	User that modifies
 	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, >0 if OK
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $trigger = true)
 	{
@@ -335,7 +335,7 @@ class MultiCurrency extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param bool $trigger true=launch triggers after, false=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($trigger = true)
 	{
@@ -463,7 +463,7 @@ class MultiCurrency extends CommonObject
 	  * Add new entry into llx_multicurrency_rate
 	  *
 	  * @param double	$rate	rate value
-	  * @return int <0 if KO, >0 if OK
+	  * @return int Return integer <0 if KO, >0 if OK
 	  */
 	public function updateRate($rate)
 	{
@@ -473,7 +473,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Fetch CurrencyRate object in $this->rate
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function getRate()
 	{
@@ -642,7 +642,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
 	 * @param   int     $addifnotfound      Add if not found
-	 * @return  int							<0 if KO, >0 if OK
+	 * @return  int							Return integer <0 if KO, >0 if OK
 	 */
 	public function syncRates($key, $addifnotfound = 0)
 	{
@@ -765,7 +765,7 @@ class CurrencyRate extends CommonObjectLine
 	 *
 	 * @param  int	$fk_multicurrency	Id of currency
 	 * @param  bool	$trigger			true=launch triggers after, false=disable triggers
-	 * @return int 						<0 if KO, Id of created object if OK
+	 * @return int 						Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($fk_multicurrency, $trigger = true)
 	{
@@ -831,7 +831,7 @@ class CurrencyRate extends CommonObjectLine
 	 * Load object in memory from the database
 	 *
 	 * @param 	int    $id  Id object
-	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -873,7 +873,7 @@ class CurrencyRate extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  bool $trigger	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, >0 if OK
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function update($trigger = true)
 	{
@@ -929,7 +929,7 @@ class CurrencyRate extends CommonObjectLine
 	 * Delete object in database
 	 *
 	 * @param 	bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($trigger = true)
 	{

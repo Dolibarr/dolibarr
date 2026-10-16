@@ -425,7 +425,7 @@ class Contact extends CommonObject
 	/**
 	 *  Load indicators into this->nb for board
 	 *
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -474,7 +474,7 @@ class Contact extends CommonObject
 	 *
 	 *  @param      User	$user           Object user that create
 	 *  @param      int     $notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *  @return     int      			    <0 if KO, >0 if OK
+	 *  @return     int      			    Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -588,7 +588,7 @@ class Contact extends CommonObject
 	 *      @param      int		$notrigger	    0=no, 1=yes
 	 *      @param		string	$action			Current action for hookmanager
 	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
@@ -902,7 +902,7 @@ class Contact extends CommonObject
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
 	 *  @param      int		    $notrigger	0=no, 1=yes
-	 *  @return     int         			<0 if KO, >=0 if OK
+	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
 	{
@@ -1197,7 +1197,7 @@ class Contact extends CommonObject
 	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
-	 *  @return     int             					<0 if KO, >=0 if OK
+	 *  @return     int             					Return integer <0 if KO, >=0 if OK
 	 */
 	public function load_ref_elements()
 	{
@@ -1240,7 +1240,7 @@ class Contact extends CommonObject
 	 *  // TODO Add $user as first param
 	 *
 	 *  @param		int		$notrigger		Disable all trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -1719,7 +1719,7 @@ class Contact extends CommonObject
 	 *  Change status of a user
 	 *
 	 *	@param	int		$status		Status to set
-	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function setstatus($status)
 	{
@@ -1770,7 +1770,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1799,7 +1799,7 @@ class Contact extends CommonObject
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
-	 * @return 	int			<0 if KO, Nb of roles found if OK
+	 * @return 	int			Return integer <0 if KO, Nb of roles found if OK
 	 * @see updateRoles()
 	 */
 	public function fetchRoles()
@@ -1965,7 +1965,7 @@ class Contact extends CommonObject
 	 *  Load array of prospect status
 	 *
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function loadCacheOfProspStatus($active = 1)
 	{
@@ -2019,7 +2019,7 @@ class Contact extends CommonObject
 	 *  Set prospect level
 	 *
 	 *  @param  User	$user		Utilisateur qui definie la remise
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
 	public function setProspectLevel(User $user)
@@ -2111,7 +2111,7 @@ class Contact extends CommonObject
 	 *  Set "blacklist" mailing status
 	 *
 	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
 	{
@@ -2168,7 +2168,7 @@ class Contact extends CommonObject
 	 *  get "blacklist" mailing status
 	 * 	set no_email attribut to 1 or 0
 	 *
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getNoEmail()
 	{

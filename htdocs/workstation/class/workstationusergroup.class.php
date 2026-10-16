@@ -100,7 +100,7 @@ class WorkstationUserGroup extends CommonObject
 	 * Function used to remove all usergroups linked to a workstation
 	 *
 	 * @param	int		$fk_workstation		Id of workstation we need to remove linked usergroups
-	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
+	 * @return 	int							Return integer <0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	public static function deleteAllGroupsOfWorkstation($fk_workstation)
 	{

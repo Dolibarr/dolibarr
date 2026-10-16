@@ -398,7 +398,7 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	int		$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
-	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
+	 * 	@return	int							Return integer <0 if KO, 0 not found, >0 if OK
 	 */
 	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
 	{
@@ -1339,7 +1339,7 @@ class User extends CommonObject
 	 *  Change status of a user
 	 *
 	 *	@param	int		$status		Status to set
-	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function setstatus($status)
 	{
@@ -1398,7 +1398,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1410,7 +1410,7 @@ class User extends CommonObject
 	 *  Delete the user
 	 *
 	 *	@param		User	$user	User than delete
-	 * 	@return		int				<0 if KO, >0 if OK
+	 * 	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -1497,7 +1497,7 @@ class User extends CommonObject
 	 *
 	 *  @param	User	$user        	Objet user doing creation
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
-	 *  @return int			         	<0 if KO, id of created user if OK
+	 *  @return int			         	Return integer <0 if KO, id of created user if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1640,7 +1640,7 @@ class User extends CommonObject
 	 *  @param	Contact	$contact    Object for source contact
 	 * 	@param  string	$login      Login to force
 	 *  @param  string	$password   Password to force
-	 *  @return int 				<0 if error, if OK returns id of created user
+	 *  @return int 				Return integer <0 if error, if OK returns id of created user
 	 */
 	public function create_from_contact($contact, $login = '', $password = '')
 	{
@@ -1724,7 +1724,7 @@ class User extends CommonObject
 	 *
 	 *  @param	Adherent		$member		Object member source
 	 * 	@param	string			$login		Login to force
-	 *  @return int							<0 if KO, if OK, return id of created account
+	 *  @return int							Return integer <0 if KO, if OK, return id of created account
 	 */
 	public function create_from_member($member, $login = '')
 	{
@@ -1858,7 +1858,7 @@ class User extends CommonObject
 	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
 	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
 	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
-	 *    	@return int 		        		<0 if KO, >=0 if OK
+	 *    	@return int 		        		Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
 	{
@@ -2206,7 +2206,7 @@ class User extends CommonObject
 	 *  Mise a jour en base de la date de derniere connexion d'un utilisateur
 	 *  Fonction appelee lors d'une nouvelle connexion
 	 *
-	 *  @return int     <0 si echec, >=0 si ok
+	 *  @return int     Return integer <0 si echec, >=0 si ok
 	 */
 	public function update_last_login_date()
 	{
@@ -2388,7 +2388,7 @@ class User extends CommonObject
 	 *  @param	User	$user           Object user that send the email (not the user we send to) @todo object $user is not used !
 	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
-	 *  @return int 		            < 0 si erreur, > 0 si ok
+	 *  @return int 		            Return integer < 0 si erreur, > 0 si ok
 	 */
 	public function send_password($user, $password = '', $changelater = 0)
 	{
@@ -2515,7 +2515,7 @@ class User extends CommonObject
 	/**
 	 *  Read clicktodial information for user
 	 *
-	 *  @return int <0 if KO, >0 if OK
+	 *  @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_clicktodial()
 	{
@@ -2549,7 +2549,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	int  <0 if KO, >0 if OK
+	 *  @return	int  Return integer <0 if KO, >0 if OK
 	 */
 	public function update_clicktodial()
 	{
@@ -2590,7 +2590,7 @@ class User extends CommonObject
 	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function SetInGroup($group, $entity, $notrigger = 0)
 	{
@@ -2647,7 +2647,7 @@ class User extends CommonObject
 	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
-	 *  @return int  			     <0 if KO, >0 if OK
+	 *  @return int  			     Return integer <0 if KO, >0 if OK
 	 */
 	public function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
@@ -3484,7 +3484,7 @@ class User extends CommonObject
 	 *  Update user using data from the LDAP
 	 *
 	 *  @param	Object	$ldapuser	Ladp User
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
 	{
@@ -3566,7 +3566,7 @@ class User extends CommonObject
 	/**
 	 *  Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @return     int     Return integer <0 if KO, >0 if OK
 	 */
 	private function loadParentOf()
 	{
@@ -3746,7 +3746,7 @@ class User extends CommonObject
 	 *
 	 * 	@param		int		$id_user		id_user entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
-	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
+	 *	@return		int                     Return integer < 0 if KO (infinite loop), >= 0 if OK
 	 */
 	public function build_path_from_id_user($id_user, $protection = 0)
 	{
@@ -3804,7 +3804,7 @@ class User extends CommonObject
 	/**
 	 *      Load metrics this->nb for dashboard
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -3952,7 +3952,7 @@ class User extends CommonObject
 	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
 	 *  @param  bool        $entityfilter	Activate entity filter
-	 *  @return int							<0 if KO, >0 if OK
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
 	{
@@ -4040,7 +4040,7 @@ class User extends CommonObject
 	 * to disable exact e-mail search
 	 *
 	 * @param string	$email	The full e-mail (or a part of a e-mail)
-	 * @return int				<0 = user was not found, >0 = The id of the user
+	 * @return int				Return integer <0 = user was not found, >0 = The id of the user
 	 */
 	public function findUserIdByEmail($email)
 	{

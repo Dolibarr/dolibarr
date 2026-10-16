@@ -2214,7 +2214,7 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
  */
 function sort_events_by_date($a, $b)
 {
@@ -2253,7 +2253,7 @@ function sort_events_by_date($a, $b)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
  */
 function sort_events_by_percentage($a, $b)
 {

@@ -133,7 +133,7 @@ class EcmDirectory extends CommonObject
 	 *  Create record into database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -238,7 +238,7 @@ class EcmDirectory extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param 	int		$notrigger	    0=no, 1=yes (no update trigger)
-	 *  @return int 			       	<0 if KO, >0 if OK
+	 *  @return int 			       	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -292,7 +292,7 @@ class EcmDirectory extends CommonObject
 	 *	Update cache of nb of documents into database
 	 *
 	 * 	@param	string	$value		'+' (one more) or '-' (one less) or new number (like '5') or 'database' (recompute from database)
-	 *  @return int		         	<0 if KO, >0 if OK
+	 *  @return int		         	Return integer <0 if KO, >0 if OK
 	 */
 	public function changeNbOfFiles($value)
 	{
@@ -353,7 +353,7 @@ class EcmDirectory extends CommonObject
 	 * 	Load object in memory from database
 	 *
 	 *  @param	int		$id			Id of object
-	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
+	 *  @return int 		        Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -408,7 +408,7 @@ class EcmDirectory extends CommonObject
 	 *	@param	User	$user					User that delete
 	 *  @param	string	$mode					'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
 	 *  @param	int		$deletedirrecursive		1=Agree to delete content recursiveley (otherwise an error will be returned when trying to delete)
-	 *	@return	int								<0 if KO, >0 if OK
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $mode = 'all', $deletedirrecursive = 0)
 	{
@@ -583,7 +583,7 @@ class EcmDirectory extends CommonObject
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_motherof()
 	{

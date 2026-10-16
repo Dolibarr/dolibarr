@@ -131,7 +131,7 @@ class Loan extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id		 id object
-	 *  @return int				 <0 error , >=0 no error
+	 *  @return int				 Return integer <0 error , >=0 no error
 	 */
 	public function fetch($id)
 	{
@@ -182,7 +182,7 @@ class Loan extends CommonObject
 	 *  Create a loan into database
 	 *
 	 *  @param	User	$user	User making creation
-	 *  @return int				<0 if KO, id if OK
+	 *  @return int				Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -288,7 +288,7 @@ class Loan extends CommonObject
 	 *  Delete a loan
 	 *
 	 *  @param	User	$user	Object user making delete
-	 *  @return int 			<0 if KO, >0 if OK
+	 *  @return int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -349,7 +349,7 @@ class Loan extends CommonObject
 	 *  Update loan
 	 *
 	 *  @param	User	$user	User who modified
-	 *  @return int				<0 if error, >0 if ok
+	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
 	public function update($user)
 	{
@@ -391,7 +391,7 @@ class Loan extends CommonObject
 	 *  Tag loan as paid completely
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -417,7 +417,7 @@ class Loan extends CommonObject
 	 *	@deprecated
 	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
@@ -430,7 +430,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment started
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setStarted($user)
 	{
@@ -453,7 +453,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{

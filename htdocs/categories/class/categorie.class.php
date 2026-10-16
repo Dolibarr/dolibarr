@@ -325,7 +325,7 @@ class Categorie extends CommonObject
 	 *  @param		string	$label   Label of category
 	 *  @param		string	$type    Type of category ('product', '...') or (0, 1, ...)
 	 *  @param		string	$ref_ext External reference of object
-	 * 	@return		int				<0 if KO, >0 if OK
+	 * 	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
@@ -600,7 +600,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int                 <0 KO >0 OK
+	 *	@return	int                 Return integer <0 KO >0 OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1045,7 +1045,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return direct childs id of a category into an array
 	 *
-	 * @return	array|int   <0 KO, array ok
+	 * @return	array|int   Return integer <0 KO, array ok
 	 */
 	public function get_filles()
 	{
@@ -1073,7 +1073,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	protected function load_motherof()
 	{
@@ -1222,7 +1222,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 *  @see get_full_arbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
@@ -1426,7 +1426,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
-	 *	@return	int|array <0 KO, array OK
+	 *	@return	int|array Return integer <0 KO, array OK
 	 */
 	public function get_meres()
 	{
@@ -1860,7 +1860,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -1930,7 +1930,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Load array this->multilangs
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{

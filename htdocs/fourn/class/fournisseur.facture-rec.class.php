@@ -248,7 +248,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User 	$user 			User object
 	 * @param 	int 	$facFournId		Id invoice
 	 * @param 	int 	$notrigger 		No trigger
-	 * @return	int                    	<0 if KO, id of invoice created if OK
+	 * @return	int                    	Return integer <0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facFournId, $notrigger = 0)
 	{
@@ -474,7 +474,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -797,7 +797,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	@param     	User	$user          	User that delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -876,7 +876,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$rang 			Position of line
 	 * @param string 	$fk_unit 		Unit
 	 * @param int 		$pu_ht_devise 	Unit price in currency
-	 * @return int                  	<0 if KO, Id of line if OK
+	 * @return int                  	Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1068,7 +1068,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
 	 * @param int 		$pu_ht_devise 		Unit price in currency
-	 * @return int  		                <0 if KO, Id of line if OK
+	 * @return int  		                Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1773,7 +1773,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -1813,7 +1813,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -1846,7 +1846,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the maximum period
 	 *
 	 *	@param     	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -1878,7 +1878,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto validate flag of invoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -1906,7 +1906,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto generate documents
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate)
 	{
@@ -1934,7 +1934,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *  Update the model for documents
 	 *
 	 *  @param     	string		$model		model of document generator
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setModelPdf($model)
 	{
@@ -2029,7 +2029,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 * @param User $user Object user
 	 * @param int $notrigger Disable triggers
-	 * @return        int                    <0 if KO, >0 if OK
+	 * @return        int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -2157,7 +2157,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

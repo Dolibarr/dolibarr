@@ -207,7 +207,7 @@ class BlockedLogAuthority
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -255,7 +255,7 @@ class BlockedLogAuthority
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -289,7 +289,7 @@ class BlockedLogAuthority
 	/**
 	 *	For cron to sync to authority.
 	 *
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function syncSignatureWithAuthority()
 	{

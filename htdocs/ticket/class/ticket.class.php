@@ -455,7 +455,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that creates
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                      <0 if KO, Id of created object if OK
+	 *  @return int                      Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -599,7 +599,7 @@ class Ticket extends CommonObject
 	 *  @param	string		$ref			Ref
 	 *  @param	string		$track_id		Track id, a hash like ref
 	 *  @param	string		$email_msgid	Email msgid
-	 *  @return int              			<0 if KO, >0 if OK
+	 *  @return int              			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
@@ -733,7 +733,7 @@ class Ticket extends CommonObject
 	 * @param  int    $arch      archive or not (not used)
 	 * @param  array  $filter    Filter for query
 	 *                           output
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
@@ -897,7 +897,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that modifies
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -1049,7 +1049,7 @@ class Ticket extends CommonObject
 	 *
 	 *     @param  User $user      User that deletes
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1563,7 +1563,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User		$user			Object user
 	 *    @param	int			$notrigger		No trigger
-	 *    @return   int							<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function markAsRead($user, $notrigger = 0)
 	{
@@ -1633,7 +1633,7 @@ class Ticket extends CommonObject
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
 	 *    @param    int 	$notrigger        	Disable trigger
-	 *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
@@ -1693,7 +1693,7 @@ class Ticket extends CommonObject
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
 	 * @param boolean	 $send_email      Whether the message is sent by email
-	 * @return int						  <0 if KO, >0 if OK
+	 * @return int						  Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
 	{
@@ -1818,7 +1818,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User    $user      	User that close
 	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
-	 *    @return   int		           	<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int		           	Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function close(User $user, $mode = 0)
 	{
@@ -2004,7 +2004,7 @@ class Ticket extends CommonObject
 	 *    Define parent commany of current ticket
 	 *
 	 *    @param  int $id		Id of thirdparty to set or '' to remove
-	 *    @return int           <0 if KO, >0 if OK
+	 *    @return int           Return integer <0 if KO, >0 if OK
 	 */
 	public function setCustomer($id)
 	{
@@ -2028,7 +2028,7 @@ class Ticket extends CommonObject
 	 *    Define progression of current ticket
 	 *
 	 *    @param  int $percent Progression percent
-	 *    @return int             <0 if KO, >0 if OK
+	 *    @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function setProgression($percent)
 	{
@@ -2052,7 +2052,7 @@ class Ticket extends CommonObject
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
-	 *     @return int                        <0 if KO, >0 if OK
+	 *     @return int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setContract($contractid)
 	{
@@ -2449,7 +2449,7 @@ class Ticket extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -2495,7 +2495,7 @@ class Ticket extends CommonObject
 	 * @param   string  $action     	Action string
 	 * @param   int     $private    	1=Message is private. TODO Implement this. What does this means ?
 	 * @param   int     $public_area    1=Is the public area
-	 * @return  int						<0 if KO, >= 0 if OK
+	 * @return  int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
@@ -2940,7 +2940,7 @@ class Ticket extends CommonObject
 	 *
 	 *      @param          User	$user   Object user
 	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *      @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
+	 *      @return         WorkboardResponse|int             Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3008,7 +3008,7 @@ class Ticket extends CommonObject
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{

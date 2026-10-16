@@ -291,7 +291,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $user   User that create
 	 * @param   int     $notrigger   Disable triggers
-	 * @return  int             <0 if KO, >0 if OK
+	 * @return  int             Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -539,7 +539,7 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $user                   User making change
 	 * @param   int     $notrigger              Disable triggers
 	 * @param   User    $userofexpensereport    New user we want to have the expense report on.
-	 * @return  int                             <0 if KO, >0 if OK
+	 * @return  int                             Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0, $userofexpensereport = null)
 	{
@@ -601,7 +601,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 *  @param  int     $id     Id                      {@min 1}
 	 *  @param  string  $ref    Ref                     {@name ref}
-	 *  @return int             <0 if KO, >0 if OK
+	 *  @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -717,7 +717,7 @@ class ExpenseReport extends CommonObject
 	 *  @param    int     $id                 Id of expense report
 	 *  @param    user    $fuser              User making change
 	 *  @param    int     $notrigger          Disable triggers
-	 *  @return   int                         <0 if KO, >0 if OK
+	 *  @return   int                         Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($id, $fuser, $notrigger = 0)
 	{
@@ -732,7 +732,7 @@ class ExpenseReport extends CommonObject
 	 *    @param    int     $id                 Id of expense report
 	 *    @param    user    $fuser              User making change
 	 *    @param    int     $notrigger          Disable triggers
-	 *    @return   int                         <0 if KO, >0 if OK
+	 *    @return   int                         Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($id, $fuser, $notrigger = 0)
 	{
@@ -947,7 +947,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   int     $projectid      Project id
 	 * @param   User    $user           User
-	 * @return  int                     <0 if KO, >0 if OK
+	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_line_by_project($projectid, $user = '')
 	{
@@ -1047,7 +1047,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * fetch_lines
 	 *
-	 * @return  int     <0 if OK, >0 if KO
+	 * @return  int     Return integer <0 if OK, >0 if KO
 	 */
 	public function fetch_lines()
 	{
@@ -1143,7 +1143,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User|null   $user       User that delete
 	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
-	 * @return  int         	        <0 if KO, >0 if OK
+	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = false)
 	{
@@ -1264,7 +1264,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setValidate($fuser, $notrigger = 0)
 	{
@@ -1385,7 +1385,7 @@ class ExpenseReport extends CommonObject
 	 * set_save_from_refuse
 	 *
 	 * @param   User    $fuser      User
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function set_save_from_refuse($fuser)
 	{
@@ -1426,7 +1426,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setApproved($fuser, $notrigger = 0)
 	{
@@ -1539,7 +1539,7 @@ class ExpenseReport extends CommonObject
 	 *  @see setUnpaid()
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($fuser, $notrigger = 0)
 	{
@@ -1553,7 +1553,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($fuser, $notrigger = 0)
 	{
@@ -1606,7 +1606,7 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $fuser      User
 	 * @param   string  $detail     Detail
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function set_cancel($fuser, $detail, $notrigger = 0)
 	{
@@ -1876,7 +1876,7 @@ class ExpenseReport extends CommonObject
 	 * @param    int         $fk_c_exp_tax_cat         Car category id
 	 * @param    int         $type                     Type line
 	 * @param    int         $fk_ecm_files             Id of ECM file to link to this expensereport line
-	 * @return   int                                   <0 if KO, >0 if OK
+	 * @return   int                                   Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
@@ -2165,7 +2165,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int         $fk_c_exp_tax_cat       Id of category of car
 	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
 	 * @param   int     	$notrigger      		1=No trigger
-	 * @return  int                                 <0 if KO, >0 if OK
+	 * @return  int                                 Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
@@ -2293,7 +2293,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $rowid      	Row id
 	 * @param   User    $fuser      	User
 	 * @param   int     $notrigger      1=No trigger
-	 * @return  int                 	<0 if KO, >0 if OK
+	 * @return  int                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteline($rowid, $fuser = '', $notrigger = 0)
 	{
@@ -2337,7 +2337,7 @@ class ExpenseReport extends CommonObject
 	 * @param   User       $fuser          User
 	 * @param   integer    $date_debut     Start date
 	 * @param   integer    $date_fin       End date
-	 * @return  int                        <0 if KO, >0 if OK
+	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function periode_existe($fuser, $date_debut, $date_fin)
 	{
@@ -2490,7 +2490,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -2529,7 +2529,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string  $option         'topay' or 'toapprove'
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $option = 'topay')
 	{
@@ -2625,7 +2625,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -2683,7 +2683,7 @@ class ExpenseReport extends CommonObject
 	 *  @param     int		$fk_cat           Category of the vehicule used
 	 *  @param     float	$qty              Number of kilometers
 	 *  @param     float	$tva              VAT rate
-	 *  @return    int              		  <0 if KO, total ttc if OK
+	 *  @return    int              		  Return integer <0 if KO, total ttc if OK
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
@@ -2926,7 +2926,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 * Fetch record for expense report detailed line
 	 *
 	 * @param   int     $rowid      Id of object to load
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -2994,7 +2994,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 *
 	 * @param   int     $notrigger      1=No trigger
 	 * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
-	 * @return  int                     <0 if KO, >0 if OK
+	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $fromaddline = false)
 	{
@@ -3136,7 +3136,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 * Update line
 	 *
 	 * @param   User    $user      User
-	 * @return  int                <0 if KO, >0 if OK
+	 * @return  int                Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user)
 	{

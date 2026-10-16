@@ -481,7 +481,7 @@ class Commande extends CommonOrder
 	 *	@param		User	$user     		User making status change
 	 *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -641,7 +641,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $idwarehouse = -1)
 	{
@@ -727,7 +727,7 @@ class Commande extends CommonOrder
 	 *	Function used when order is reopend after being closed.
 	 *
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function set_reopen($user)
 	{
@@ -782,7 +782,7 @@ class Commande extends CommonOrder
 	 *
 	 * 	@param      User	$user       Objet user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function cloture($user, $notrigger = 0)
 	{
@@ -842,7 +842,7 @@ class Commande extends CommonOrder
 	 * 	If stock is decremented on order validation, we must reincrement it
 	 *
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function cancel($idwarehouse = -1)
 	{
@@ -915,7 +915,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int	    $notrigger	Disable all triggers
-	 *	@return 	int			        <0 if KO, >0 if OK
+	 *	@return 	int			        Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1333,7 +1333,7 @@ class Commande extends CommonOrder
 	 *
 	 *  @param      Object			$object 	        Object source
 	 *  @param		User			$user				User making creation
-	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromProposal($object, User $user)
 	{
@@ -2106,7 +2106,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param		int		$only_product			Return only physical products, not services
 	 *	@param		int		$loadalsotranslation	Return translation for products
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
@@ -2237,7 +2237,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Return number of line with type product.
 	 *
-	 *	@return		int		<0 if KO, Nbr of product lines if OK
+	 *	@return		int		Return integer <0 if KO, Nbr of product lines if OK
 	 */
 	public function getNbOfProductsLines()
 	{
@@ -2253,7 +2253,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Return number of line with type service.
 	 *
-	 *	@return		int		<0 if KO, Nbr of service lines if OK
+	 *	@return		int		Return integer <0 if KO, Nbr of service lines if OK
 	 */
 	public function getNbOfServicesLines()
 	{
@@ -2269,7 +2269,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Count number of shipments for this order
 	 *
-	 * 	@return     int                			<0 if KO, Nb of shipment found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of shipment found if OK
 	 */
 	public function getNbOfShipments()
 	{
@@ -2305,7 +2305,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      int		$filtre_statut      Filter on shipment status
 	 *  @param		int		$fk_product			Add a filter on a product
-	 * 	@return     int                			<0 if KO, Nb of lines found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of lines found if OK
 	 */
 	public function loadExpeditions($filtre_statut = -1, $fk_product = 0)
 	{
@@ -2477,7 +2477,7 @@ class Commande extends CommonOrder
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@return		int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
@@ -2492,7 +2492,7 @@ class Commande extends CommonOrder
 	 * 	@param     	User		$user		User setting the discount
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@return		int 					Return integer <0 if KO, >0 if OK
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
@@ -2556,7 +2556,7 @@ class Commande extends CommonOrder
 	 * 		@param     	User		$user 		User qui positionne la remise
 	 * 		@param     	float		$remise		Discount
 	 * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *		@return		int 					<0 if KO, >0 if OK
+	 *		@return		int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
@@ -2622,7 +2622,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user       Object user making change
 	 *	@param      int		$date		Date
 	 * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date($user, $date, $notrigger = 0)
 	{
@@ -2680,7 +2680,7 @@ class Commande extends CommonOrder
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
@@ -2695,7 +2695,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user        		Objet utilisateur qui modifie
 	 *	@param      int		$delivery_date     Delivery date
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 si ko, >0 si ok
+	 *	@return     int         				Return integer <0 si ko, >0 si ok
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
@@ -2953,7 +2953,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user           User that make change
 	 *	@param      string	$ref_client     Customer ref
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return     int             		<0 if KO, >0 if OK
+	 *	@return     int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
@@ -3009,7 +3009,7 @@ class Commande extends CommonOrder
 	 *
 	 * @param	User    $user       Object user making the change
 	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 * @return	int                 <0 if KO, 0 if already billed,  >0 if OK
+	 * @return	int                 Return integer <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0)
 	{
@@ -3063,7 +3063,7 @@ class Commande extends CommonOrder
 	 *
 	 * @param	User    $user       Object user making the change
 	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 * @return  int     			<0 if ko, >0 if ok
+	 * @return  int     			Return integer <0 if ko, >0 if ok
 	 */
 	public function classifyUnBilled(User $user, $notrigger = 0)
 	{
@@ -3139,7 +3139,7 @@ class Commande extends CommonOrder
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
 	 * @param       integer $rang   line rank
-	 *  @return   	int              					< 0 if KO, > 0 if OK
+	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
@@ -3351,7 +3351,7 @@ class Commande extends CommonOrder
 	 *
 	 *      @param      User	$user        	User that modify
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -3461,7 +3461,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int					<=0 if KO, >0 if OK
+	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -3591,7 +3591,7 @@ class Commande extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
-	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
@@ -4073,7 +4073,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *
-	 *	@return     int         <0 si ko, >0 si ok
+	 *	@return     int         Return integer <0 si ko, >0 si ok
 	 */
 	public function load_state_board()
 	{
@@ -4309,7 +4309,7 @@ class OrderLine extends CommonOrderLine
 	 *  Load line order
 	 *
 	 *  @param  int		$rowid          Id line order
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -4400,7 +4400,7 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	 int  <0 si ko, >0 si ok
+	 *	@return	 int  Return integer <0 si ko, >0 si ok
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -4488,7 +4488,7 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($user = null, $notrigger = 0)
 	{
@@ -4655,7 +4655,7 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -4820,7 +4820,7 @@ class OrderLine extends CommonOrderLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{

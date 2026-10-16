@@ -230,7 +230,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	User	$user 		Object of user making creation
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    <0 if KO, Id of created object if OK
+	 *  @return int				    Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -301,7 +301,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -359,7 +359,7 @@ class Mailing extends CommonObject
 	 *
 	 *	@param	int		$rowid      Id of emailing
 	 *	@param	string	$ref		Title to search from title
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -554,7 +554,7 @@ class Mailing extends CommonObject
 	 *  Validate emailing
 	 *
 	 *  @param	User	$user      	Objet user qui valide
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user)
 	{
@@ -656,7 +656,7 @@ class Mailing extends CommonObject
 	 *  Change status of each recipient
 	 *
 	 *	@param	User	$user      	Objet user qui valide
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reset_targets_status($user)
 	{
@@ -714,7 +714,7 @@ class Mailing extends CommonObject
 	 *  Refresh denormalized value ->nbemail into emailing record
 	 *  Note: There is also the method update_nb into modules_mailings that is used for this.
 	 *
-	 *  @return int        		<0 if KO, >0 if OK
+	 *  @return int        		Return integer <0 if KO, >0 if OK
 	 */
 	public function refreshNbOfTargets()
 	{

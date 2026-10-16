@@ -167,7 +167,7 @@ class FormActions
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
 	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
-	 *	@return	int								<0 if KO, >=0 if OK
+	 *	@return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{

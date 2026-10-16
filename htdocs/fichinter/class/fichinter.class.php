@@ -198,7 +198,7 @@ class Fichinter extends CommonObject
 	/**
 	 *  Load indicators into this->nb for board
 	 *
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -237,7 +237,7 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -372,7 +372,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -434,7 +434,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		int		$rowid		Id of intervention
 	 *	@param		string	$ref		Ref of intervention
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -513,7 +513,7 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			    <0 if KO, >0 if OK
+	 *	@return		int			    Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user)
 	{
@@ -564,7 +564,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -1001,7 +1001,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who delete
 	 *	@param		int		$notrigger		Disable trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -1122,7 +1122,7 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param      User	$user				Object user who define
 	 *  @param      integer	$date_delivery   	date of delivery
-	 *  @return     int							<0 if KO, >0 if OK
+	 *  @return     int							Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date_delivery($user, $date_delivery)
 	{
@@ -1152,7 +1152,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who modify
 	 *	@param      string	$description    description
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function set_description($user, $description)
 	{
@@ -1183,7 +1183,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who modify
 	 *	@param      int		$contractid		Description
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function set_contrat($user, $contractid)
 	{
@@ -1384,7 +1384,7 @@ class Fichinter extends CommonObject
 	/**
 	 *	Load array lines ->lines
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -1453,7 +1453,7 @@ class Fichinter extends CommonObject
 	 *  @param      User	$user			Object user that modify
 	 *  @param      string	$ref_client		Customer reference
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if ko, >0 if ok
+	 *  @return     int						Return integer <0 if ko, >0 if ok
 	 */
 	public function setRefClient($user, $ref_client, $notrigger = 0)
 	{
@@ -1611,7 +1611,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	Retrieve the line of intervention
 	 *
 	 *	@param  int		$rowid		Line id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -1649,7 +1649,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -1738,7 +1738,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -1799,7 +1799,7 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Update total duration into llx_fichinter
 	 *
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update_total()
 	{

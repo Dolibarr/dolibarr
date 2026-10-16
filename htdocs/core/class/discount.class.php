@@ -129,7 +129,7 @@ class DiscountAbsolute extends CommonObject
 	 *  @param      int		$rowid       					id discount to load
 	 *  @param      int		$fk_facture_source				fk_facture_source
 	 *  @param		int		$fk_invoice_supplier_source		fk_invoice_supplier_source
-	 *	@return		int										<0 if KO, =0 if not found, >0 if OK
+	 *	@return		int										Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
 	{
@@ -223,7 +223,7 @@ class DiscountAbsolute extends CommonObject
 	 *      Create a discount into database
 	 *
 	 *      @param      User	$user       User that create
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -300,7 +300,7 @@ class DiscountAbsolute extends CommonObject
 	 *  Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed
 	 *
 	 *  @param      User    $user       Object of user asking to delete
-	 *  @return     int                 <0 if KO, >0 if OK
+	 *  @return     int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -424,7 +424,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
 	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function link_to_invoice($rowidline, $rowidinvoice)
 	{
@@ -480,7 +480,7 @@ class DiscountAbsolute extends CommonObject
 	 *	Link the discount to a particular invoice line or a particular invoice.
 	 *	Do not call this if discount is linked to a reconcialiated invoice
 	 *
-	 *	@return		int							<0 if KO, >0 if OK
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function unlink_invoice()
 	{
@@ -513,7 +513,7 @@ class DiscountAbsolute extends CommonObject
 	 * 	@param		int			$maxvalue		Filter on max value for discount
 	 *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
 	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
-	 * 	@return		int						<0 if KO, amount otherwise
+	 * 	@return		int						Return integer <0 if KO, amount otherwise
 	 */
 	public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
@@ -567,7 +567,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
 	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		int				     			Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($invoice, $multicurrency = 0)
 	{
@@ -608,7 +608,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
 	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return     int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
+	 *	@return     int					        		Return integer <0 if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
@@ -648,7 +648,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param		CommonInvoice	  $invoice	    	Object invoice
 	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		int					        		Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
 	{

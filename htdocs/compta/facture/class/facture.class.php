@@ -489,7 +489,7 @@ class Facture extends CommonInvoice
 	 *	@param	User	$user      		Object user that create
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
 	 * 	@param	int		$forceduedate	If set, do not recalculate due date from payment condition but force it with value
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create(User $user, $notrigger = 0, $forceduedate = 0)
 	{
@@ -1154,7 +1154,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param      User	$user    		Object user that ask creation
 	 *	@param		int		$invertdetail	Reverse sign of amounts for lines
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function createFromCurrent(User $user, $invertdetail = 0)
 	{
@@ -1391,7 +1391,7 @@ class Facture extends CommonInvoice
 	 *
 	 *  @param      Object			$object         	Object source
 	 *  @param		User			$user				Object user
-	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromOrder($object, User $user)
 	{
@@ -1522,7 +1522,7 @@ class Facture extends CommonInvoice
 	 *  @param      Object			$object         	Object source
 	 *  @param		User			$user				Object user
 	 * 	@param		array			$lines				Ids of lines to use for invoice. If empty, all lines will be used.
-	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromContract($object, User $user, $lines = array())
 	{
@@ -2480,7 +2480,7 @@ class Facture extends CommonInvoice
 	 *
 	 *      @param      User	$user        	User that modify
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2720,7 +2720,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	string	$ref_client		Customer ref
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function set_ref_client($ref_client, $notrigger = 0)
 	{
@@ -2780,7 +2780,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user      	    User making the deletion.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, 0=Refused, >0 if OK
+	 *	@return		int						Return integer <0 if KO, 0=Refused, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -2973,7 +2973,7 @@ class Facture extends CommonInvoice
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
@@ -2989,7 +2989,7 @@ class Facture extends CommonInvoice
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user, $close_code = '', $close_note = '')
 	{
@@ -3052,7 +3052,7 @@ class Facture extends CommonInvoice
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user that change status
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
@@ -3067,7 +3067,7 @@ class Facture extends CommonInvoice
 	 * 	ou quand une facture annulee et reouverte.
 	 *
 	 *  @param	User	$user       Object user that change status
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -3117,7 +3117,7 @@ class Facture extends CommonInvoice
 	 *	@param	User	$user        	Object user making change
 	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
-	 *	@return int         			<0 if KO, >0 if OK
+	 *	@return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_canceled($user, $close_code = '', $close_note = '')
 	{
@@ -3134,7 +3134,7 @@ class Facture extends CommonInvoice
 	 *	@param	User	$user        	Object user making change
 	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
-	 *	@return int         			<0 if KO, >0 if OK
+	 *	@return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function setCanceled($user, $close_code = '', $close_note = '')
 	{
@@ -3193,7 +3193,7 @@ class Facture extends CommonInvoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
-	 * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
+	 * @return	int						Return integer <0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
@@ -3682,7 +3682,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $idwarehouse = -1)
 	{
@@ -3805,7 +3805,7 @@ class Facture extends CommonInvoice
 	 *  @param		double		$pu_ht_devise		Unit price in foreign currency
 	 *  @param		string		$ref_ext		    External reference of the line
 	 *  @param		int			$noupdateafterinsertline	No update after insert of line
-	 *  @return    	int             				<0 if KO, Id of line if OK
+	 *  @return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline(
 		$desc,
@@ -4101,7 +4101,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @param		string		$ref_ext		    External reference of the line
 	 *  @param		integer		$rang		    	rank of line
-	 *  @return    	int             				< 0 if KO, > 0 if OK
+	 *  @return    	int             				Return integer < 0 if KO, > 0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
@@ -4389,7 +4389,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param		int		$rowid		Id of line to delete
 	 *  @param		int		$id			Id of object (for a check)
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteline($rowid, $id = 0)
 	{
@@ -4451,7 +4451,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 				<0 if KO, >0 if OK
+	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
@@ -4466,7 +4466,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 				<0 if KO, >0 if OK
+	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
@@ -4531,7 +4531,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user 		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 				<0 if KO, >0 if OK
+	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
@@ -4955,7 +4955,7 @@ class Facture extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param  User					$user    	Object user
-	 *	@return WorkboardResponse|int 				<0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int 				Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
@@ -5200,7 +5200,7 @@ class Facture extends CommonInvoice
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @return         int     <0 if KO, >0 if OK
+	 *      @return         int     Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -5254,7 +5254,7 @@ class Facture extends CommonInvoice
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
 	 *  @param  null|array  $moreparams     Array to provide more information
-	 *	@return int        					<0 if KO, >0 if OK
+	 *	@return int        					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -5359,7 +5359,7 @@ class Facture extends CommonInvoice
 	 *
 	 *  @param  	User	$user    	Object user
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 				<0 if KO, >0 if OK
+	 *	@return		int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function setFinal(User $user, $notrigger = 0)
 	{
@@ -6143,7 +6143,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	Load invoice line from database
 	 *
 	 *	@param	int		$rowid      id of invoice line to get
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -6241,7 +6241,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 *	@param      int		$notrigger		                 1 no triggers
 	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
-	 *	@return		int						                 <0 if KO, >0 if OK
+	 *	@return		int						                 Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
@@ -6486,7 +6486,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 *	@param		User	$user		User object
 	 *	@param		int		$notrigger	Disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = '', $notrigger = 0)
 	{
@@ -6668,7 +6668,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param 	User 	$tmpuser    User that deletes
 	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 * @return 	int		           	<0 if KO, >0 if OK
+	 * @return 	int		           	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($tmpuser = null, $notrigger = false)
 	{
@@ -6735,7 +6735,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{

@@ -68,7 +68,7 @@ class ActionsDatapolicy
 	 * @param   array           $parameters		Array of parameters
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string          $action      	'add', 'update', 'view'
-	 * @return  int         					<0 if KO,
+	 * @return  int         					Return integer <0 if KO,
 	 *                           				=0 if OK but we want to process standard actions too,
 	 *                            				>0 if OK and we want to replace standard actions.
 	 */
@@ -86,7 +86,7 @@ class ActionsDatapolicy
 	 * @param   Societe|CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string         			$action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     		$hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                     		        < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                     		        Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
@@ -163,7 +163,7 @@ class ActionsDatapolicy
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string          $action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                             Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function doMassActions($parameters, &$object, &$action, $hookmanager)
 	{
@@ -196,7 +196,7 @@ class ActionsDatapolicy
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string          $action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                             Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
 	{
@@ -223,7 +223,7 @@ class ActionsDatapolicy
 	 * @param   array   $parameters     Array of parameters
 	 * @param   Object  $object         Object output on PDF
 	 * @param   string  $action         'add', 'update', 'view'
-	 * @return  int                     <0 if KO,
+	 * @return  int                     Return integer <0 if KO,
 	 *                                  =0 if OK but we want to process standard actions too,
 	 *                                  >0 if OK and we want to replace standard actions.
 	 */

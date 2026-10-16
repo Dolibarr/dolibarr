@@ -182,7 +182,7 @@ $bc[true] = ' class="bg2"';
  *	Load conf file (file must exists)
  *
  *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	@return	int											<0 if KO, >0 if OK
+ *	@return	int											Return integer <0 if KO, >0 if OK
  */
 function loadconf($dolibarr_main_document_root)
 {

@@ -325,7 +325,7 @@ class AccountancyExport
 	 * @param	int		$outputMode					[=0] Print on screen
 	 * 												or 1 to write in file and uses a temp directory - Forced by default when use withAttachment = 1
 	 * 												or 2 to write in file a default export directory (accounting/export/)
-	 * @return 	int		<0 if KO, >0 OK
+	 * @return 	int		Return integer <0 if KO, >0 OK
 	 */
 	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0)
 	{

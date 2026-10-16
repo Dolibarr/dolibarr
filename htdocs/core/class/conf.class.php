@@ -200,7 +200,7 @@ class Conf
 	 *
 	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
-	 * @return	int					< 0 if KO, >= 0 if OK
+	 * @return	int					Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setEntityValues($db, $entity)
 	{
@@ -218,7 +218,7 @@ class Conf
 	 *  Note that this->db->xxx, this->file->xxx have been already set when setValues is called.
 	 *
 	 *  @param      DoliDB      $db     Database handler
-	 *  @return     int                 < 0 if KO, >= 0 if OK
+	 *  @return     int                 Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setValues($db)
 	{
