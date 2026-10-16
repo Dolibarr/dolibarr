@@ -1373,6 +1373,7 @@ Contains=Contains
 DoesNotContain=Does not contain
 Is=Is
 IsNot=Is not
+Split=Split
 StartsWith=Starts with
 EndsWith=Ends with
 IsBefore=Is before
