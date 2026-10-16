@@ -577,13 +577,23 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Set accepted/refused
-		if (!GETPOST('statut')) {
+		$status = GETPOSTINT('statut');
+		if (!in_array($status, array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED), true)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->status == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOSTINT('statut'), GETPOST('note', 'restricthtml'));
+				$result = $object->cloture($user, $status, GETPOST('note', 'restricthtml'));
+				if ($result > 0) {
+					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+					exit();
+				}
+				setEventMessages($object->error, $object->errors, 'errors');
+				$ret = $object->fetch($object->id);
+				if ($ret > 0) {
+					$action = 'statut';
+				}
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('updateallvatlinesblock', 'alpha') && GETPOST('vatforblocklines', 'alpha') !== '' && $usercancreate) {
@@ -1529,7 +1539,11 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card');
+$arrayofjs = array();
+if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
+	$arrayofjs[] = '/supplier_proposal/js/acceptrefuse.js';
+}
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, '', '', 'mod-supplierproposal page-card');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1984,6 +1998,22 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 		}
 	}
+	// Form to set the supplier proposal accepted/refused
+	if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
+		$formconfirm = '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" id="formacceptrefuse" data-title="'.dol_escape_htmltag($langs->transnoentities('SetAcceptedRefused')).'" data-cancel-url="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$formconfirm .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$formconfirm .= '<input type="hidden" name="action" value="setstatut">';
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
+			$formconfirm .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
+		}
+		$formconfirm .= '<label for="note">'.$langs->trans('Note').'</label>';
+		$formconfirm .= '<textarea id="note" name="note" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private).'</textarea>';
+		$formconfirm .= '<div class="center formacceptrefuse-buttons">';
+		$formconfirm .= '<button type="submit" name="statut" value="'.SupplierProposal::STATUS_SIGNED.'" class="button">'.$langs->trans('ToAccept').'</button>';
+		$formconfirm .= '<button type="submit" name="statut" value="'.SupplierProposal::STATUS_NOTSIGNED.'" class="button">'.$langs->trans('ToRefuse').'</button>';
+		$formconfirm .= '<button type="submit" name="cancel" value="1" class="button button-cancel">'.$langs->trans('Cancel').'</button>';
+		$formconfirm .= '</div></form>';
+	}
 	// Subtotal line form
 	if ($action == 'add_title_line') {
 		$langs->load('subtotals');
@@ -2360,34 +2390,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	if ($action == 'statut') {
-		// Form to set proposal accepted/refused
-		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce paddingbottom paddingleft paddingright">';
-		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
-
-		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
-			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
-		}
-		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
-		$form_close .= '<tr><td>'.$langs->trans("CloseAs").'</td><td class="left">';
-		$form_close .= '<select id="statut" name="statut" class="flat">';
-		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">'.$langs->trans('SupplierProposalStatusSigned').'</option>';
-		$form_close .= '<option value="3">'.$langs->trans('SupplierProposalStatusNotSigned').'</option>';
-		$form_close .= '</select>';
-		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		$form_close .= $object->note_private;
-		$form_close .= '</textarea></td></tr>';
-		$form_close .= '</table>';
-		$form_close .= $form->buttonsSaveCancel();
-		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</form>';
-
-		print $form_close;
-	}
-
 	/*
 	 * Boutons Actions
 	 */
@@ -2471,7 +2473,7 @@ if ($action == 'create') {
 
 				// Set accepted/refused
 				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut'.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 
