@@ -12677,7 +12677,7 @@ abstract class CommonObject
 		if (!empty($rootdir)) {
 			$rootdir = rtrim($rootdir, '/') . '/';
 		}
-		if (!file_exists($rootdir) || !dol_is_dir($rootdir)) {
+		if (empty($rootdir) || !file_exists($rootdir) || !dol_is_dir($rootdir)) {
 			return '';
 		}
 
