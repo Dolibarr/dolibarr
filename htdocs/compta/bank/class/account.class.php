@@ -2889,6 +2889,7 @@ class AccountLine extends CommonObjectLine
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 				$this->user_rappro = $obj->fk_user_rappro;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
