@@ -1252,31 +1252,41 @@ function dolSubmitConfirmForm(urljump, page, options, maxurllength)
 function getOperatorsForFieldType(type, maybenull = 0) {
 	console.log('Get list of operators for type='+type);
 
-	// Define the list of operators for each general field category
+	// Define the list of operators for each general field category (keys starting with 'separator' are shown as a non selectable separator)
 	const operatorList = {
 		selectlink: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
 		},
 		text: {
-			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
-			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
+			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
+			separator2: '--------',
 			StartsWith: <?php print "'".dol_escape_js($langs->trans('StartsWith'))."'"; ?>,
-			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>
+			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>,
+			separator3: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		number: {
 			'=': <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			'!=': <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			'<': <?php print "'".dol_escape_js($langs->trans('IsLowerThan'))."'"; ?>,
 			'>': <?php print "'".dol_escape_js($langs->trans('IsHigherThan'))."'"; ?>,
 			'<=': <?php print "'".dol_escape_js($langs->trans('IsLowerThanOrEqual'))."'"; ?>,
 			'>=': <?php print "'".dol_escape_js($langs->trans('IsHigherThanOrEqual'))."'"; ?>,
+			separator2: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>,
 		},
 		date: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			IsBefore: <?php print "'".dol_escape_js($langs->trans('IsBefore'))."'"; ?>,
 			IsAfter: <?php print "'".dol_escape_js($langs->trans('IsAfter'))."'"; ?>,
 			IsOnOrBefore: <?php print "'".dol_escape_js($langs->trans('IsOnOrBefore'))."'"; ?>,
@@ -1310,6 +1320,7 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 
 	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
 	if (maybenull === 1) {
+		operatorList[generalType]["separatordefined"] = '--------';
 		operatorList[generalType]["IsDefined"] = <?php print "'".dol_escape_js($langs->trans('IsDefined'))."'"; ?>;
 		operatorList[generalType]["IsNotDefined"] = <?php print "'".dol_escape_js($langs->trans('IsNotDefined'))."'"; ?>;
 	}
@@ -1345,6 +1356,19 @@ function generateFilterString(column, operator, context, fieldType) {
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
 			break;
+		case "IsInList":
+		case "IsNotInList": {
+			// The value is a list of values separated with spaces or commas. We forge directly the universal filter syntax.
+			// Values are quoted, except for numeric fields (quotes and parenthesis are not allowed into values).
+			const isnumericfield = /^(int|integer|float|double|decimal|numeric|tinyint|smallint)/i.test(fieldType);
+			const listofvalues = String(context).replace(/['()]/g, "").split(/[\s,]+/).filter(function(v) { return v !== ""; }).map(function(v) {
+				return ((isnumericfield && /^-?[0-9]+(\.[0-9]+)?$/.test(v)) ? v : "\'" + v + "\'");
+			});
+			if (listofvalues.length > 0) {
+				filter = "(" + column + (operator === "IsNotInList" ? ":notin:" : ":in:") + listofvalues.join(",") + ")";
+			}
+			break;
+		}
 		case "IsDefined":
 			filter = column + ":isnot:null";
 			break;
