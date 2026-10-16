@@ -1906,6 +1906,8 @@ div#divsearch_component_params {
 }
 input#search_component_params_input {
 	padding-left: 8px;
+	margin-right: 1px;
+	margin-left: 1px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -6250,6 +6252,25 @@ img.boxhandle, img.boxclose {
 }
 .customreportscombo-clear:hover {
 	opacity: 1;
+}
+/* The select2 of the object type of custom reports looks like the toggle of the group by combo */
+.select2-container .select2-selection--single.customreportsobjecttype,
+.select2-container--focus span.select2-selection.select2-selection--single.customreportsobjecttype {
+	height: 36px;
+	border: none !important;
+	border-radius: 3px !important;
+	background: #fff;
+}
+.select2-container .select2-selection--single.customreportsobjecttype .select2-selection__rendered {
+	line-height: 36px;
+	padding-<?php echo $left; ?>: 8px;
+}
+.select2-container .select2-selection--single.customreportsobjecttype .select2-selection__arrow {
+	height: 34px;
+	opacity: 0.5;
+}
+.select2-container--focus span.select2-selection--single.customreportsobjecttype, .select2-container--open span.select2-selection--single.customreportsobjecttype {
+	box-shadow: inset 0 0 0 1px #666 !important;	/* Override the box-shadow: none !important of the select2 of the theme */
 }
 .fieldcombo-panel, .customreportscombo-panel {
 	position: absolute;
