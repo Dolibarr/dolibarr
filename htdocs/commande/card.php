@@ -2346,7 +2346,8 @@ if ($action == 'create' && $usercancreate) {
 						// reload page
 						$("input[name=action]").val("create");
 						$("input[name=changecompany]").val("1");
-						$("form[name=crea_commande]").submit();
+						// Native submit: this reload is not a user save, it must not be cancelled by the form validators
+						$("form[name=crea_commande]")[0].submit();
 					});
 				});
 				</script>';
