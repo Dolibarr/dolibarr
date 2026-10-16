@@ -151,7 +151,9 @@ class MyObject extends CommonObject
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax150', 'lang' => 'mymodule@mymodule'),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2, 'lang' => 'mymodule@mymodule'),
+		// BEGIN MODULEBUILDER DOCGENERATION
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
+		// END MODULEBUILDER DOCGENERATION
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 	);
 
@@ -1212,10 +1214,10 @@ class MyObject extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $langs;
-
 		$result = 0;
-		$includedocgeneration = 0;
+
+		// BEGIN MODULEBUILDER DOCGENERATION
+		global $langs;
 
 		$langs->load("mymodule@mymodule");
 
@@ -1229,9 +1231,10 @@ class MyObject extends CommonObject
 
 		$modelpath = "core/modules/mymodule/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
+		// END MODULEBUILDER DOCGENERATION
 
 		return $result;
 	}
