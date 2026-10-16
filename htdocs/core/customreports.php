@@ -742,7 +742,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	        jQuery(document).ready(function() {
 	        	jQuery("#objecttype").change(function() {
 	        		console.log("Reload for "+jQuery("#objecttype").val());
-	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
+	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"&focusonfilter=1'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
 	        	});
 	        });
 	    </script>';
@@ -755,6 +755,10 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 			print '<div class="divadvancedsearchfield divadvancedsearchfieldusf">';
 			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
 			print '</div>';
+			// After a change of the object type, the page is reloaded with focusonfilter=1 so the focus goes on the filter
+			if (GETPOSTINT('focusonfilter')) {
+				print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("#search_component_params_input").trigger("focus"); });</script>';
+			}
 		}
 
 		// YAxis (add measures into array)
@@ -863,7 +867,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	if (!empty($newarrayoftype)) {
 		print '<div class="divadvancedsearchfield">';
-		print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+		print '<button type="submit" class="butAction nomargintop customreportsrefresh">'.$langs->trans("Refresh").'</button>';
 		print '</div>';
 	}
 

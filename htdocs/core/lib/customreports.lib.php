@@ -798,6 +798,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 
 	$selectedkey = (is_array($selected) && count($selected)) ? (string) reset($selected) : '';
 	$selectedlabel = '';
+	$selectedtitle = '';	// Full label of the selected field, shown as a tooltip because the label may be truncated
 
 	// Group fields by element. The element is the part of the key before the last dot ('t.ref' -> 't'), extrafields 'te...' are mapped onto 't...'.
 	$elements = array();
@@ -822,13 +823,14 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 		$elements[$elementkey]['fields'][$key] = $fieldlabel;
 		if ($key === $selectedkey) {
 			$selectedlabel = $picto.' '.dol_escape_htmltag($elementlabel.': '.$fieldlabel);
+			$selectedtitle = $elementlabel.': '.$fieldlabel;
 		}
 	}
 
 	$out = '<div class="customreportscombo divadvancedsearchfieldcompinput" id="'.dol_escape_htmltag($htmlname).'_component">';
 	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
 	$out .= '<button type="button" class="customreportscombo-toggle noborderbottom search_component_params">';
-	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'" data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
+	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'"'.($selectedtitle ? ' title="'.dolPrintHTMLForAttribute($selectedtitle).'"' : '').' data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
 	if ($allowclear) {
 		$out .= '<span class="fas fa-times customreportscombo-clear'.($selectedlabel ? '' : ' hideobject').'" title="'.dol_escape_htmltag($langs->trans('Reset')).'"></span>';
 	}
