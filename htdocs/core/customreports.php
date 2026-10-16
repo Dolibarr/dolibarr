@@ -304,7 +304,7 @@ forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	
 if ($errorstr) {
 	$value = $search_component_params_input;
 
-	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	$value = preg_replace('/([a-z0-9_\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
 	//var_dump($value);
 
@@ -762,14 +762,22 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 		//var_dump($arrayofxaxis);
-		print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
+		} else {
+			print customReportsSelectXAxis('search_xaxis', $arrayofxaxis, $sanitized_search_xaxis, $langs->transnoentitiesnoconv("XAxis"));
+		}
 		print '</div>';
 
 		// Group by
 		$count = 0;
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-		print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		} else {
+			print customReportsSelectGroupBy('search_groupby', $arrayofgroupby, $sanitized_search_groupby, $langs->transnoentitiesnoconv("GroupBy"));
+		}
 		print '</div>';
 	}
 

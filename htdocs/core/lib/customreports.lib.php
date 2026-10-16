@@ -683,7 +683,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
  */
 function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $placeholder = '')
 {
-	global $langs;
+	global $conf, $langs;
 
 	$variantlabels = array(
 		'sum' => $langs->trans("Sum"),
@@ -770,8 +770,143 @@ function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $pla
 
 	$out .= '</div>';
 
-	$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+	if (empty($conf->cache['customreportsjsloaded'])) {
+		$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+		$conf->cache['customreportsjsloaded'] = 1;
+	}
 	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsMeasures(\''.dol_escape_js($htmlname).'_component\'); });</script>';
 
 	return $out;
+}
+
+
+/**
+ * Return HTML of a combo to select one field (X axis, group by...). Same look and principle than the combo of fields of the filter
+ * component: the main element is open with its fields, the sub-elements are listed after its fields and are collapsed.
+ * Behaviour is managed by core/js/customreports.js. Selection is posted with a hidden input.
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayoffields		Array of fields (from fillArrayOfXAxis() or fillArrayOfGroupBy())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @param	int<0,1>	$allowclear			1 to show a button to clear the selection
+ * @return	string							HTML string of component
+ */
+function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $placeholder = '', $allowclear = 0)
+{
+	global $conf, $langs;
+
+	$selectedkey = (is_array($selected) && count($selected)) ? (string) reset($selected) : '';
+	$selectedlabel = '';
+
+	// Group fields by element. The element is the part of the key before the last dot ('t.ref' -> 't'), extrafields 'te...' are mapped onto 't...'.
+	$elements = array();
+	foreach ($arrayoffields as $key => $val) {
+		$elementkey = preg_replace('/^te(__|$)/', 't$1', preg_replace('/\.[^.]*$/', '', $key));
+		// The labelnohtml is 'LabelOfElement: LabelOfField' and the label is 'picto LabelOfElement: LabelOfField <span>(variant)</span>'
+		$elementlabel = $elementkey;
+		$reg = array();
+		if (preg_match('/^(.+?): /', $val['labelnohtml'], $reg)) {
+			$elementlabel = $reg[1];
+		}
+		$picto = '';
+		$fieldlabel = $val['labelnohtml'];
+		$pos = strpos($val['label'], $val['labelnohtml']);
+		if ($pos !== false) {
+			$picto = trim(substr($val['label'], 0, $pos));
+			$fieldlabel = trim(dol_string_nohtmltag(substr($val['label'], $pos + ($elementlabel != $elementkey ? strlen($elementlabel) + 2 : 0))));
+		}
+		if (!isset($elements[$elementkey])) {
+			$elements[$elementkey] = array('picto' => $picto, 'label' => $elementlabel, 'fields' => array());
+		}
+		$elements[$elementkey]['fields'][$key] = $fieldlabel;
+		if ($key === $selectedkey) {
+			$selectedlabel = $picto.' '.dol_escape_htmltag($elementlabel.': '.$fieldlabel);
+		}
+	}
+
+	$out = '<div class="customreportscombo" id="'.dol_escape_htmltag($htmlname).'_component">';
+	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
+	$out .= '<button type="button" class="customreportscombo-toggle">';
+	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'" data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
+	if ($allowclear) {
+		$out .= '<span class="fas fa-times customreportscombo-clear'.($selectedlabel ? '' : ' hideobject').'" title="'.dol_escape_htmltag($langs->trans('Reset')).'"></span>';
+	}
+	$out .= '<span class="fas fa-caret-down customreportscombo-caret"></span>';
+	$out .= '</button>';
+	$out .= '<div class="customreportscombo-panel" style="display:none">';
+	$out .= '<div class="liinputsearch"><input type="text" class="customreportscombo-search noborderfocus" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'" autocomplete="off"></div>';
+	$out .= '<div class="customreportscombo-list">';
+
+	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
+	$renderElement = function ($elementkey) use ($elements, $selectedkey, &$renderElement) {
+		$element = $elements[$elementkey];
+		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
+		$out .= '<div class="customreportscombo-elementheader" tabindex="0"><span class="customreportscombo-elementlabel">'.$element['picto'].' '.dol_escape_htmltag($element['label']).'</span><span class="fas fa-caret-right customreportscombo-elementcaret"></span></div>';
+		$out .= '<div class="customreportscombo-fields" style="display:none">';
+		foreach ($element['fields'] as $fieldkey => $fieldlabel) {
+			$out .= '<div class="customreportscombo-field'.($fieldkey === $selectedkey ? ' selected' : '').'" tabindex="0" data-field="'.dol_escape_htmltag($fieldkey).'">'.dol_escape_htmltag($fieldlabel).'</div>';
+		}
+		$out .= '</div>';
+		$children = '';
+		foreach (array_keys($elements) as $childkey) {
+			if (strpos($childkey, $elementkey.'__') === 0 && strpos(substr($childkey, strlen($elementkey) + 2), '__') === false) {
+				$children .= $renderElement($childkey);
+			}
+		}
+		if ($children) {
+			$out .= '<div class="customreportscombo-children" style="display:none">'.$children.'</div>';
+		}
+		$out .= '</div>';
+		return $out;
+	};
+	// At root level, we render only the elements without parent element (or with a parent not found)
+	foreach (array_keys($elements) as $elementkey) {
+		$parentkey = (strpos($elementkey, '__') !== false) ? substr($elementkey, 0, strrpos($elementkey, '__')) : '';
+		if ($parentkey == '' || !isset($elements[$parentkey])) {
+			$out .= $renderElement($elementkey);
+		}
+	}
+
+	$out .= '</div>';
+	$out .= '</div>';
+	$out .= '</div>';
+
+	if (empty($conf->cache['customreportsjsloaded'])) {
+		$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+		$conf->cache['customreportsjsloaded'] = 1;
+	}
+	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsCombo(\''.dol_escape_js($htmlname).'_component\'); });</script>';
+
+	return $out;
+}
+
+
+/**
+ * Return HTML of the combo to select the X axis (see customReportsSelectFieldCombo())
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofxaxis		Array of X axis (from fillArrayOfXAxis())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectXAxis($htmlname, $arrayofxaxis, $selected, $placeholder = '')
+{
+	return customReportsSelectFieldCombo($htmlname, $arrayofxaxis, $selected, $placeholder, 0);
+}
+
+
+/**
+ * Return HTML of the combo to select the group by field (see customReportsSelectFieldCombo()). Selection can be cleared.
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofgroupby		Array of group by (from fillArrayOfGroupBy())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectGroupBy($htmlname, $arrayofgroupby, $selected, $placeholder = '')
+{
+	return customReportsSelectFieldCombo($htmlname, $arrayofgroupby, $selected, $placeholder, 1);
 }

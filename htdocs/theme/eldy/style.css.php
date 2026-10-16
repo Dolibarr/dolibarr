@@ -1893,6 +1893,9 @@ div.divsearchfield {
 	line-height: 25px;
 	border-radius: 3px;
 }
+.customreportsmeasures-control.search_component_params {
+	padding-<?php echo $right; ?>: 20px;
+}
 input#search_component_params_input {
 	padding-left: 8px;
 }
@@ -6147,13 +6150,13 @@ img.boxhandle, img.boxclose {
 	margin: 0 !important;
 }
 
-/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
-.fieldcombo {
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field (also used by the X axis and group by combos of custom reports) */
+.fieldcombo, .customreportscombo {
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
 }
-.fieldcombo-toggle {
+.fieldcombo-toggle, .customreportscombo-toggle {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -6166,13 +6169,19 @@ img.boxhandle, img.boxclose {
 	cursor: pointer;
 	height: 28px;
 }
-.fieldcombo-label {
+.fieldcombo-label, .customreportscombo-label {
 	flex: 1 1 auto;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.fieldcombo-panel {
+.customreportscombo-clear {
+	opacity: 0.5;
+}
+.customreportscombo-clear:hover {
+	opacity: 1;
+}
+.fieldcombo-panel, .customreportscombo-panel {
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -6184,19 +6193,19 @@ img.boxhandle, img.boxclose {
 	border-radius: 6px;
 	z-index: 1001;
 }
-.fieldcombo-search, .customreportsmeasures-search {
+.fieldcombo-search, .customreportscombo-search, .customreportsmeasures-search {
 	width: 100%;
 	margin: 0;
 	padding: 4px 8px;
 	border: 0;
 	border-bottom: 1px solid var(--inputbordercolor);
 }
-.fieldcombo-list {
+.fieldcombo-list, .customreportscombo-list {
 	max-height: 300px;
 	overflow-y: auto;
 	padding-bottom: 10px
 }
-.fieldcombo-elementheader {
+.fieldcombo-elementheader, .customreportscombo-elementheader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -6204,31 +6213,31 @@ img.boxhandle, img.boxclose {
 	cursor: pointer;
 	font-weight: bold;
 }
-.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+.fieldcombo-elementheader:hover, .customreportscombo-elementheader:hover, .fieldcombo-elementheader:focus, .customreportscombo-elementheader:focus {
 	background: var(--colorbacklinepairhover);
 }
-.fieldcombo-elementcaret {
+.fieldcombo-elementcaret, .customreportscombo-elementcaret {
 	flex: 0 0 auto;
 }
-.fieldcombo-element.open .fieldcombo-elementcaret {
+.fieldcombo-element.open .fieldcombo-elementcaret, .customreportscombo-element.open > .customreportscombo-elementheader .customreportscombo-elementcaret {
 	transform: rotate(90deg);
 }
-.fieldcombo-children {
+.fieldcombo-children, .customreportscombo-children {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-fields {
+.fieldcombo-fields, .customreportscombo-fields {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-field {
+.fieldcombo-field, .customreportscombo-field {
 	padding: 4px 8px;
 	cursor: pointer;
 }
-.fieldcombo-field:hover, .fieldcombo-field:focus {
+.fieldcombo-field:hover, .customreportscombo-field:hover, .fieldcombo-field:focus, .customreportscombo-field:focus {
 	background: var(--colorbacklinepairhover);
 }
-.fieldcombo-field.selected {
+.fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
 }
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
