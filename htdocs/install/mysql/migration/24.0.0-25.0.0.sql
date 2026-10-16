@@ -506,3 +506,27 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- Passkeys (WebAuthn credentials) used by the authentication mode 'passkey' (see llx_user_passkey.sql)
+CREATE TABLE llx_user_passkey(
+	rowid				integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity				integer NOT NULL DEFAULT 1,
+	fk_user				integer NOT NULL,
+	label				varchar(255) NULL,
+	credential_id		varchar(255) NOT NULL,
+	user_handle			varchar(128) NOT NULL,
+	public_key			text NOT NULL,
+	sign_count			integer NOT NULL DEFAULT 0,
+	aaguid				varchar(36) NULL,
+	backup_eligible		smallint NOT NULL DEFAULT 0,
+	backup_state		smallint NOT NULL DEFAULT 0,
+	date_creation		datetime NOT NULL,
+	date_last_use		datetime NULL,
+	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	ip_last_use			varchar(250) NULL
+) ENGINE=innodb;
+ALTER TABLE llx_user_passkey ADD UNIQUE INDEX uk_user_passkey_credential_id (credential_id);
+ALTER TABLE llx_user_passkey ADD INDEX idx_user_passkey_fk_user (fk_user);
+ALTER TABLE llx_user_passkey ADD CONSTRAINT fk_user_passkey_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+-- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
+ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;

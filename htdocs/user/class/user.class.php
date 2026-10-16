@@ -221,6 +221,11 @@ class User extends CommonObject
 	public $force_pass_change = 0;
 
 	/**
+	 * @var ?int 	1 if user must log in with a passkey, 0 if not, null to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
+	 */
+	public $passkey_required = null;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -554,7 +559,7 @@ class User extends CommonObject
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
-		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.force_pass_change, u.api_key,";
+		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.force_pass_change, u.passkey_required, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
@@ -674,6 +679,7 @@ class User extends CommonObject
 				$this->pass_temp = $obj->pass_temp;
 
 				$this->force_pass_change = $obj->force_pass_change;
+				$this->passkey_required = ($obj->passkey_required === null ? null : (int) $obj->passkey_required);
 				$this->datelastpassvalidation = $this->db->jdate($obj->datelastpassvalidation);
 
 				$this->api_key = dolDecrypt($obj->api_key);
@@ -1768,6 +1774,55 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Set if the user must log in with a passkey
+	 *
+	 *	@param	User		$user		User making the change
+	 *	@param	?int		$value		1 to require a passkey, 0 to not require it, null to use the global setup
+	 *  @return int     				Return integer <0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	public function setPasskeyRequired($user, $value)
+	{
+		$error = 0;
+
+		$value = ($value === null ? null : ((int) $value ? 1 : 0));
+
+		// Check parameters : no change short line
+		if ($this->passkey_required === $value) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		// Save in database
+		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql .= " SET passkey_required = ".($value === null ? "NULL" : ((int) $value));
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$result = $this->db->query($sql);
+
+		dol_syslog(get_class($this)."::setPasskeyRequired", LOG_DEBUG);
+		if ($result) {
+			$this->passkey_required = $value;
+			// Call trigger
+			$result = $this->call_trigger('USER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -$error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -1849,6 +1904,13 @@ class User extends CommonObject
 
 		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
 		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."user_passkey WHERE fk_user = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
