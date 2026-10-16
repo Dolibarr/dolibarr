@@ -174,7 +174,8 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -352,7 +353,8 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -526,7 +528,8 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -655,9 +658,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 					$tmpobject = new $newobject($db);
 					$count++;
 					if (!empty($val['nodepth'])) {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tmptablepath);
 					} else {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tmptablepath);
 					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
@@ -841,6 +846,10 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 	$out .= '<div class="customreportscombo-list">';
 
 	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
+	/**
+	 * @param	int|string	$elementkey		Key of the element to render
+	 * @return	string						HTML of the element and of its sub-elements
+	 */
 	$renderElement = function ($elementkey) use ($elements, $selectedkey, &$renderElement) {
 		$element = $elements[$elementkey];
 		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
