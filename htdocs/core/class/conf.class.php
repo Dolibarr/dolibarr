@@ -1289,11 +1289,11 @@ class Conf extends stdClass
 
 			if (isset($this->expensereport)) {
 				$this->warning_delays['expensereport_approve'] = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
-				$this->warning_delays['expense_report_payment'] = getDolGlobalInt('MIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
+				$this->warning_delays['expense_report_payment'] = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
 				$this->expensereport->approve = new stdClass();
 				$this->expensereport->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
 				$this->expensereport->payment = new stdClass();
-				$this->expensereport->payment->warning_delay = getDolGlobalInt('MIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
+				$this->expensereport->payment->warning_delay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
 			}
 			if (isset($this->holiday)) {
 				$this->warning_delays['holiday_approve'] = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
