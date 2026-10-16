@@ -3293,7 +3293,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'salaries') && !empty($conf->salaries->dir_output)) {
 		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
-		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('salaries', $read) || ($mode == 'read' && $fuser->hasRight('salaries', 'readall')) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// The 'read' permission is labelled "yours only" and the two screens leading to this
 			// download, salaries/card.php and salaries/document.php, do enforce it on fk_user.
