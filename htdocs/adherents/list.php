@@ -387,6 +387,7 @@ if (empty($reshook)) {
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
 			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"));
 		}
+		$error_array = array();
 		$db->begin();
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
@@ -406,6 +407,7 @@ if (empty($reshook)) {
 				$result = $tmpmember->subscription($now, (float) $amount, 0, '', '', '', '', '', $datesubendthismember);
 				if ($result < 0) {
 					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
 				}
@@ -418,7 +420,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), $error_array, 'errors');
 			$db->rollback();
 		}
 	}
