@@ -850,7 +850,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 	 * @param	int|string	$elementkey		Key of the element to render
 	 * @return	string						HTML of the element and of its sub-elements
 	 */
-	$renderElement = function ($elementkey) use ($elements, $selectedkey, &$renderElement) {
+	$renderElement = function (string $elementkey) use ($elements, $selectedkey, &$renderElement): string {
 		$element = $elements[$elementkey];
 		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
 		$out .= '<div class="customreportscombo-elementheader" tabindex="0"><span class="customreportscombo-elementlabel">'.$element['picto'].' '.dol_escape_htmltag($element['label']).'</span><span class="fas fa-caret-right customreportscombo-elementcaret"></span></div>';
