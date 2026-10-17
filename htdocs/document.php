@@ -291,6 +291,7 @@ if (empty($modulepart)) {
 }
 
 // Check security and set return info with full path of file
+$hookmanager->initHooks(array('document'));
 $check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
@@ -376,7 +377,6 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-$hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
