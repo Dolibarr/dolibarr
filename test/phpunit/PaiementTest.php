@@ -314,6 +314,17 @@ class PaiementTest extends CommonClassTest
 		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
 		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
 
+		// The test needs the multicurrency module and a currency USD declared
+		require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+		$savmodmulticurrency = $conf->modules['multicurrency'] ?? null;
+		$conf->modules['multicurrency'] = 'multicurrency';
+		if (!MultiCurrency::getIdFromCode($db, 'USD')) {
+			$currency = new MultiCurrency($db);
+			$currency->code = 'USD';
+			$currency->name = 'US Dollar';
+			$this->assertGreaterThan(0, $currency->create($user), 'MultiCurrency::create failed: '.implode(',', $currency->errors));
+		}
+
 		$rate = 1.0862009;
 		$unitpriceininvoicecurrency = 100.10;
 
@@ -345,5 +356,11 @@ class PaiementTest extends CommonClassTest
 		$invoice->fetch($invoice->id);
 		$this->assertEquals((float) price2num($invoice->total_ttc, 'MT'), (float) price2num($payment->amount, 'MT'), 'Payment amount in company currency differs from the invoice total');
 		$this->assertEquals(Facture::STATUS_CLOSED, $invoice->status, 'Invoice fully paid in its currency is not closed');
+
+		if ($savmodmulticurrency === null) {
+			unset($conf->modules['multicurrency']);
+		} else {
+			$conf->modules['multicurrency'] = $savmodmulticurrency;
+		}
 	}
 }
