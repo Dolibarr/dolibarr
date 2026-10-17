@@ -401,11 +401,7 @@ if (empty($reshook)) {
 	}
 
 	// Update the operation label on all transaction lines.
-	if ($action == 'confirm_setalllabels') {
-		if (!$permissiontoadd) {
-			accessforbidden();
-		}
-
+	if ($action == 'confirm_setalllabels' && $confirm == 'yes' && $permissiontoadd) {
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			accessforbidden();
 		}
