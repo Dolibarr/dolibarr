@@ -111,8 +111,9 @@ function dolPayRefGetSetupWarning($country_code, $mode = '')
 		$alreadycomplete = ($mode == 'company'
 			&& dolCreditorRefIsValid(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')));
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
 		$diascode = preg_replace('/[^0-9]/', '', getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE'));
-		if (!$alreadycomplete && dol_strlen($diascode) != 5) {
+		if (!$alreadycomplete && !dolGRIsValidDiasCode($diascode)) {
 			// References already written on a third party keep working without the
 			// code, only a third party that has none yet needs one generated.
 			if ($mode == 'thirdparty') {
@@ -124,6 +125,15 @@ function dolPayRefGetSetupWarning($country_code, $mode = '')
 
 	if ($mode == 'company' && !getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')) {
 		return 'WarningPaymentRefPaymentIdMissing';
+	}
+
+	// The company reference is printed on every invoice, so it must not ask the bank
+	// to check one fixed amount.
+	if ($mode == 'company' && dolPayRefGetSchemeForCountry($country_code) == 'GR') {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+		if (dolGRIsAmountCheckedReference(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID'))) {
+			return 'ErrorDIASReferenceAmountChecked';
+		}
 	}
 
 	return '';
@@ -152,6 +162,15 @@ function dolPayRefBuild($payment_id, $statut, $country_code, $invoice_type = 0)
 	// one its customers already pay against.
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
 	if (dolCreditorRefIsValid((string) $payment_id) || strpos((string) $payment_id, '+++') === 0) {
+		// A greek reference that checks one fixed amount would be refused by the bank
+		// for any other amount, so it is never reused on several invoices.
+		if (dolPayRefGetSchemeForCountry($country_code) == 'GR') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+			if (dolGRIsAmountCheckedReference((string) $payment_id)) {
+				dol_syslog('dolPayRefBuild: greek reference '.$payment_id.' checks a fixed amount, not used', LOG_WARNING);
+				return '';
+			}
+		}
 		return dolPayRefStrip((string) $payment_id);
 	}
 
