@@ -21,6 +21,7 @@
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3356,6 +3357,24 @@ if ($action == 'create') {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
+
+		// Structured payment reference, see core/lib/paymentref.lib.php.
+		// Only shown for the modes whose value is settled before invoicing. In the per
+		// invoice mode the reference comes from the invoice number, which does not exist
+		// yet, so anything shown here would never match the invoice the customer receives.
+		if (in_array(getDolGlobalString('INVOICE_PAYMENT_REF_MODE'), array('company', 'thirdparty'))) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+			$tmpobjectforpayref = clone $object;
+			$tmpobjectforpayref->status = 1;
+			$paymentrefpreview = dolPayRefGenerateForInvoice($tmpobjectforpayref, $user, 0);
+			if ($paymentrefpreview != '') {
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('PaymentReferenceBeforeInvoiceHelp'));
+				print '</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($paymentrefpreview));
+				print '</td></tr>';
+			}
+		}
 
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
