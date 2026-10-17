@@ -506,3 +506,15 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- Passkeys (WebAuthn credentials) used by the authentication mode 'passkey', saved into llx_oauth_token with service 'passkey'
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_label varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_credential_id varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_user_handle varchar(128) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_sign_count integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+-- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
+ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
