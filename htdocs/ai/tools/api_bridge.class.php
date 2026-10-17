@@ -3014,7 +3014,7 @@ class ToolApiBridge extends McpTool
 		foreach ($lines as $line) {
 			// A received line is valued at its cost price, a sold one at its selling price.
 			$unitprice = $line['subprice'] ?? ($line['cost_price'] ?? '');
-			if ($unitprice === '' || $unitprice === null) {
+			if ($unitprice === '' || is_null($unitprice)) {
 				continue;
 			}
 			$priced = true;
