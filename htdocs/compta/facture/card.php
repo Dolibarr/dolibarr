@@ -1302,6 +1302,12 @@ if (empty($reshook)) {
 			$discount->socid = $object->socid;
 			$discount->fk_facture_source = $object->id;
 
+			// Copy multicurrency fields of source invoice (only if the source invoice was in a foreign currency)
+			if (isModEnabled('multicurrency') && $object->multicurrency_code && $object->multicurrency_code != getDolCurrency()) {
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+			}
+
 			$error = 0;
 
 
@@ -2154,8 +2160,18 @@ if (empty($reshook)) {
 
 							if ($diff != 0) {
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								// Apply rounding diff to the first real line, ignoring special lines
+								$targetLine = null;
+								foreach ($object->lines as $line) {
+									if (empty($line->special_code)) {
+										$targetLine = $line;
+										break;
+									}
+								}
+								if ($targetLine !== null) {
+									$subprice_diff = $targetLine->subprice - $diff / (1 + $targetLine->tva_tx / 100);
+									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $targetLine->tva_tx, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
+								}
 							}
 						}
 
@@ -2207,6 +2223,20 @@ if (empty($reshook)) {
 									}
 									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString('CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE')))) {
 										continue;
+									}
+
+									// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && $lines[$i]->fk_product > 0) {
+										$tmpprod = new Product($db);
+										if ($tmpprod->fetch($lines[$i]->fk_product) > 0) {
+											$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $object->thirdparty);
+											$lines[$i]->subprice = $datapriceofproduct['pu_ht'];
+											$lines[$i]->tva_tx = $datapriceofproduct['tva_tx'];
+											$lines[$i]->product_type = $tmpprod->type;
+										}
+									}
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && empty($lines[$i]->desc)) {
+										$lines[$i]->desc = $lines[$i]->description;
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');

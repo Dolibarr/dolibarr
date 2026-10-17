@@ -4613,6 +4613,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			}
 		}
 	}
+	if (empty($label) && !empty($userRight) && $userRight > 0 && in_array($actionType, array('email', 'clone', 'delete', 'danger', 'cancel'))) {
+		$label = $text;	// These buttons are shown as a picto only, so we need the text as tooltip
+	}
 	$attr = array(
 		'class' => $class,
 		'href' => empty($url) ? '' : $url,

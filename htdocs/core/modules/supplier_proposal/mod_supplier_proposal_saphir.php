@@ -54,6 +54,11 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	public $nom = 'Saphir';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+	/**
 	 * @var string model name
 	 */
 	public $name = 'Saphir';

@@ -143,7 +143,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'partnership', 'ref', '', '', $date);
 
