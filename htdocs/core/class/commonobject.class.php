@@ -164,7 +164,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * notnull?: int<-1, 1>,
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
+	 * uieditable?: int<0, 1>,
 	 * default?: string|int,
 	 * description?: string,
 	 * index?: int<0, 1>,
@@ -223,6 +224,7 @@ abstract class CommonObject
 	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 * 'noteditable' says if field is not editable (1 or 0)
 	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'uieditable' says if field can be modified from the user interface with generic tools like ajax edition (1 or 0, default 0). See isFieldEditableFromUi()
 	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 * 'index' if we want an index in database.
 	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
@@ -2509,6 +2511,51 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Update a field from the user interface (ajax edition of cards...) and save it into database.
+	 * The field must be allowed by isFieldEditableFromUi(), the value is checked and set by setFieldValue(),
+	 * then only this field is saved by persistFieldValue().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @param mixed  $value New value
+	 * @return int          Return integer <0 if KO (error into $this->error and $this->errors), >0 if OK
+	 */
+	public function updateFieldFromUi(User $user, $field, $value)
+	{
+		global $langs;
+
+		if (!$this->isFieldEditableFromUi($user, $field)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorFieldIsNotEditable');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$property = $this->getFieldPropertyName($field);
+		$oldvalue = $this->getFieldUiValue($field);
+
+		if (!$this->setFieldValue($user, $field, $value)) {
+			if (empty($this->error)) {
+				$this->error = $this->getFieldError($field);
+			}
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		$result = $this->persistFieldValue($user, $field);
+		if ($result <= 0) {
+			// Keep the object consistent with the database
+			$this->$property = $oldvalue;
+			if (empty($this->error) && !empty($this->errors)) {
+				$this->error = implode(', ', $this->errors);
+			}
+			return -3;
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Return the name of the property of the object holding the value of a field of $fields.
 	 * Some classes keep a field in a property with another name than the field (ex: the field fk_opp_status
 	 * of a project is in the property opp_status).
@@ -2534,6 +2581,120 @@ abstract class CommonObject
 		$property = $this->getFieldPropertyName($field);
 
 		return property_exists($this, $property) ? $this->$property : null;
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * By default, notes are saved with update_note() and other fields with setValueFrom(), with the trigger XXX_MODIFY.
+	 * Override in child classes to use a dedicated method holding business rules (ex: set_ref_client()).
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'note_public' || $field == 'note_private') {
+			return $this->update_note((string) $this->$field, $field == 'note_public' ? '_public' : '_private');
+		}
+
+		$type = $this->fields[$field]['type'];
+		if (preg_match('/^(int|integer)\b/', $type)) {
+			$format = 'int';
+		} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			$format = 'date';
+		} else {
+			$format = 'text';
+		}
+		$trigkey = (property_exists($this, 'TRIGGER_PREFIX') && !empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)).'_MODIFY';
+
+		return $this->setValueFrom($field, $this->getFieldUiValue($field), '', null, $format, '', $user, $trigkey);
+	}
+
+	/**
+	 * Return the value of a field posted by the user interface (core/ajax/objectfield.php).
+	 * Inputs are named with the prefix 'ajaxfield_' followed by the field name, like the names generated by
+	 * showInputField() with this key prefix (ex: ajaxfield_note_public, or ajaxfield_date_livraisonday... for a date).
+	 * Override in child classes when the input of a field is not the default one (several inputs, other names...)
+	 * or to check the range of a value.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if the input is not posted (a missing input must never empty a field)
+	 *                          or if the type of field is not supported
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		$key = 'ajaxfield_'.$field;
+		$type = $this->fields[$field]['type'];
+
+		if (!GETPOSTISSET($key) && !GETPOSTISSET($key.'year')) {
+			return null;
+		}
+
+		if ($type == 'html') {
+			return dol_html_entity_decode(GETPOST($key, 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1);
+		} elseif (preg_match('/^(varchar|text)\b/', $type)) {
+			return GETPOST($key, 'alphanohtml');
+		} elseif (preg_match('/^(int|integer)\b/', $type)) {
+			return GETPOSTINT($key);
+		} elseif ($type == 'date') {
+			// At noon like the cards, so the day does not change with the time zone
+			return GETPOSTDATE($key, '12:00:00');
+		} elseif (in_array($type, array('datetime', 'timestamp'))) {
+			return GETPOSTDATE($key, 'getpost');
+		}
+
+		// Other types (lists, amounts...) are not supported yet
+		return null;
+	}
+
+	/**
+	 * Return the output html of a field for the user interface (core/ajax/objectfield.php).
+	 * By default, it is the output of showOutputField().
+	 * Override in child classes only for fields the card does not show with showOutputField(),
+	 * so a refreshed value always looks like the displayed one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
+		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showOutputField($fielddef, $field, $this->getFieldUiValue($field));
+	}
+
+	/**
+	 * Return the input html of a field for the user interface (core/ajax/objectfield.php).
+	 * Inputs are named with the prefix 'ajaxfield_', so they are read back by getFieldValueFromAjaxPost().
+	 * By default, it is the input of showInputField(), and the notes use the same editor as the notes of the card.
+	 * Override in child classes together with getFieldValueFromAjaxPost() when the input of a field is not the default one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	string			Input html
+	 */
+	public function ajaxInputField($field)
+	{
+		$value = $this->getFieldUiValue($field);
+		$htmlname = 'ajaxfield_'.$field;
+
+		// Same editor as the notes of the card (core/tpl/notes.tpl.php)
+		if ($field == 'note_public' || $field == 'note_private') {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$withckeditor = isModEnabled('fckeditor') && getDolGlobalString($field == 'note_public' ? 'FCKEDITOR_ENABLE_NOTE_PUBLIC' : 'FCKEDITOR_ENABLE_NOTE_PRIVATE');
+			$doleditor = new DolEditor($htmlname, (string) $value, '100%', 200, 'dolibarr_notes', 'In', true, false, $withckeditor, 12, '95%');
+
+			return (string) $doleditor->Create(1);
+		}
+
+		// Fields like notes are hidden from generic forms (visible = 0), the field is already allowed by isFieldEditableFromUi()
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showInputField($fielddef, $field, $value, '', '', 'ajaxfield_');
 	}
 
 	/**
@@ -10421,6 +10582,73 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check whether a field can be edited from the user interface with generic tools (ajax edition of cards...),
+	 * where the user chooses the field to modify.
+	 *
+	 * isFieldEditAllowed() is a generic rule for PHP code and allows any field not marked as "noteditable",
+	 * including computed or technical fields (ref, status, totals...). Exposing it to the user interface
+	 * would let a user change them, so the user interface requires an explicit opt-in on each field
+	 * with the "uieditable" attribute, in addition to all rules of isFieldEditAllowed().
+	 * The private note is always hidden to external users, so it is never editable by them.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the field can be edited from the user interface, false otherwise
+	 */
+	public function isFieldEditableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || empty($this->fields[$field]['uieditable'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		return $this->isFieldEditAllowed($user, $field);
+	}
+
+	/**
+	 * Check whether the value of a field can be read from the user interface with generic tools
+	 * (ajax refresh of the values displayed on a card...), by a user allowed to read the object.
+	 *
+	 * The field must be enabled and visible on the card (visible 1, 3, 4 or 5, or an expression giving one of these values),
+	 * or editable from the user interface (fields like notes are hidden from generic forms but shown by their own block of the card).
+	 * Password fields are never readable, and the private note is always hidden to external users.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the value of the field can be read from the user interface, false otherwise
+	 */
+	public function isFieldReadableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || !$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		if (preg_match('/^password/', (string) $this->fields[$field]['type'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		if (!empty($this->fields[$field]['uieditable'])) {
+			return true;
+		}
+
+		$visible = isset($this->fields[$field]['visible']) ? $this->fields[$field]['visible'] : 0;
+		if (!is_numeric($visible)) {
+			$visible = dol_eval((string) $visible);
+		}
+
+		return in_array(abs((int) $visible), array(1, 3, 4, 5));
 	}
 
 
