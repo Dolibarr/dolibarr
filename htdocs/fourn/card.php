@@ -576,7 +576,7 @@ if ($object->id > 0) {
 
 		// Box outstanding bill
 		$text = $langs->trans("CurrentOutstandingBill");
-		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&filter=unpaid';
 		$icon = 'bill';
 		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
@@ -592,7 +592,7 @@ if ($object->id > 0) {
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
-			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&filter=late';
 			$icon = 'bill';
 			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
