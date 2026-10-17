@@ -38,8 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
 
 /**
  * @var Conf $conf

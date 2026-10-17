@@ -341,8 +341,6 @@ AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans l
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Attention, cette page ne contient que les éléments transférés en comptabilité.
 BookkeepingNumRefModelDesc = Renvoie le numéro de référence au format aammjjnnnnn où aa est l'année, mm est le mois et jj le code du journal, nnnnn est un numéro séquentiel auto-incrémenté en fonction de l'année, du mois et le code du journal.
 BookkeepingNumberingModules = Modèles de numérotation comptable
-UpdateAllOperationLabels=Modifier le libellé de toutes les lignes
-ConfirmUpdateAllOperationLabels=Le libellé saisi remplacera celui de toutes les lignes de cette écriture.
 ## Admin
 BindingOptions=Options pour le transfert en comptabilité
 ApplyMassCategories=Application en masse des catégories
