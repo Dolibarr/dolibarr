@@ -688,9 +688,14 @@ class SMTPs
 					$_retVal = true;
 					break;
 				case 'PLAIN':
-					$this->socket_send_str('AUTH PLAIN', '334');
-					// The error here just means the ID/password combo doesn't work.
-					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					$_retVal = $this->socket_send_str('AUTH PLAIN', '334');
+					if (!$_retVal) {
+						// The login and password must not be sent if the server does not wait for them
+						$this->_setErr(130, 'Error when asking for AUTH PLAIN');
+					} else {
+						// The error here just means the ID/password combo doesn't work.
+						$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					}
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
@@ -807,15 +812,11 @@ class SMTPs
 					 */
 
 					/*
-					 * TODO
-					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
-					 * if not, the whole message will fail
-					 * If any email address fails, we will need to RESET the connection,
-					 * mark the last address as "bad" and start the address loop over again.
-					 * If any address fails, the entire message fails.
+					 * If any address fails, the entire message fails: the sending is reported as failed, so sending
+					 * the message to the other recipients would make duplicates when it is sent again.
+					 * Closing the connection before the end of the data cancels the message.
 					 */
 					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
-						// Stop here, sending DATA would desynchronize the SMTP responses
 						fclose($this->socket);
 						return false;
 					}
@@ -825,6 +826,7 @@ class SMTPs
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
 				if (!$this->socket_send_str('DATA', '354')) {
+					// The data must not be sent, the server would read it as SMTP commands
 					fclose($this->socket);
 					return false;
 				}
@@ -838,7 +840,7 @@ class SMTPs
 				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
-				fwrite($this->socket, 'QUIT');
+				$this->socket_send_str('QUIT');
 			} else {
 				// We got error code into $this->lastretval
 			}
@@ -1574,8 +1576,6 @@ class SMTPs
 	 */
 	public function getHeader()
 	{
-		global $conf;
-
 		$_header = 'From: '.$this->getFrom('org')."\r\n"
 		. 'To: '.$this->getTo()."\r\n";
 
@@ -1610,7 +1610,8 @@ class SMTPs
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
 		}
 		if ($this->getMoreInHeader()) {
-			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
+			// Value must include the "\r\n". With MAIN_FIX_FOR_BUGGED_MTA, CMailFile gives "\n", but SMTP needs "\r\n"
+			$_header .= preg_replace('/(?<!\r)\n/', "\r\n", $this->getMoreInHeader());
 		}
 
 		if ($this->getSensitivity()) {
@@ -1634,7 +1635,7 @@ class SMTPs
 		}
 
 		$_header .= 'X-Mailer: Dolibarr version '.DOL_VERSION.' (using SMTPs Mailer)'."\r\n";
-		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
+		$_header .= 'X-Dolibarr-Option: '.(getDolGlobalString('MAIN_MAIL_USE_MULTI_PART') ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
 		// Add also $this->references and In-Reply-To
@@ -2105,7 +2106,8 @@ class SMTPs
 		$limit = 0;
 
 		while (substr($server_response, 3, 1) != ' ' && $limit < 100) {
-			if (!($server_response = fgets($socket, 256))) {
+			// Read the whole line (a reply line longer than the read size would be read as 2 replies)
+			if (!($server_response = fgets($socket))) {
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 				break;
