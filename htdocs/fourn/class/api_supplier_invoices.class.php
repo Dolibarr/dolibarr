@@ -462,8 +462,8 @@ class SupplierInvoices extends DolibarrApi
 	 * @url     GET {id}/payments
 	 *
 	 * @return array
-	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
-	 * @phpstan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
+	 * @phan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
+	 * @phpstan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
 	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404

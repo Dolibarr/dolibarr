@@ -140,6 +140,16 @@ span.butAction, span.butActionDelete {
 	color: #444;
 	min-width: 40px;
 }
+/* A button with class butAction must look like a link or span with class butAction, so we reset the default style of a button */
+button.butAction {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	border: none;
+	box-sizing: content-box;
+	-webkit-appearance: none;
+	appearance: none;
+}
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
 	text-transform: uppercase;
