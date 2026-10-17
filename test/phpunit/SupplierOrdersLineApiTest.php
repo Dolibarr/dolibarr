@@ -18,8 +18,23 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/api_supplier_orders.class.php';
+// Restler unregisters existing loaders; keep PHPUnit's Composer loader available.
+call_user_func(
+	/** @return void */
+	static function () {
+		$autoloaders = spl_autoload_functions();
+		try {
+			require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/api_supplier_orders.class.php';
+		} finally {
+			foreach (array_reverse($autoloaders) as $autoloader) {
+				if (!in_array($autoloader, spl_autoload_functions(), true)) {
+					spl_autoload_register($autoloader, true, true);
+				}
+			}
+		}
+	}
+);
 
 /**
  * Exercise the REST boundary using an order whose persistence is mocked.
