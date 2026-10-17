@@ -959,6 +959,7 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
 		return false;
 	}
 
+	$element_type = quickMemoInterfaceResolveElementType($element_type);
 	$object = fetchObjectByElement($moduleLevelOnly ? 0 : (int) $element_id, $element_type, '', $moduleLevelOnly ? 0 : 1);
 	if (!is_object($object) || empty($object->element)) {
 		return false;
@@ -983,6 +984,45 @@ function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleL
 }
 
 /**
+ * Element type usable by fetchObjectByElement() for the element type stored on memos ($object->element).
+ * For an object of an external module (or some core objects like hrm evaluation), the element alone does
+ * not lead to its class: the module is then searched among the enabled modules having the class file
+ * <module>/class/<element>.class.php, and 'element@module' is returned. The stored element type is not
+ * changed, so existing memos keep matching their object.
+ *
+ * @param string $element_type Element type stored on the memo (ex: 'propal', 'emailaccount')
+ * @return string              Ex: 'propal', 'emailaccount@crmclientconnector'
+ */
+function quickMemoInterfaceResolveElementType($element_type)
+{
+	global $conf;
+	static $cache = array();
+
+	$element_type = (string) $element_type;
+	if ($element_type === '' || strpos($element_type, '@') !== false || !preg_match('/^[a-z0-9_]+$/i', $element_type)) {
+		return $element_type;
+	}
+	if (isset($cache[$element_type])) {
+		return $cache[$element_type];
+	}
+
+	$cache[$element_type] = $element_type;
+	$properties = getElementProperties($element_type);
+	if (file_exists(dol_buildpath('/'.$properties['classpath'].'/'.$properties['classfile'].'.class.php', 0))) {
+		return $element_type;
+	}
+	foreach (array_keys($conf->modules) as $module) {
+		$module = strtolower((string) $module);
+		if (preg_match('/^[a-z0-9_]+$/', $module) && file_exists(dol_buildpath('/'.$module.'/class/'.strtolower($element_type).'.class.php', 0))) {
+			$cache[$element_type] = $element_type.'@'.$module;
+			break;
+		}
+	}
+
+	return $cache[$element_type];
+}
+
+/**
  * Get the entity of a memo: entity of the linked object, or current entity for global memos
  * and memos shared on all objects of a type.
  *
@@ -1000,7 +1040,7 @@ function quickMemoInterfaceGetMemoEntity($element_type, $element_id, $shared_on_
 	}
 
 	// Object already loaded in cache by quickMemoInterfaceCanAccessElement()
-	$object = fetchObjectByElement($element_id, $element_type, '', 1);
+	$object = fetchObjectByElement($element_id, quickMemoInterfaceResolveElementType($element_type), '', 1);
 
 	return is_object($object) ? (int) setEntity($object) : (int) $conf->entity;
 }

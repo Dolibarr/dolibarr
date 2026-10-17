@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Carlos Herrera			<cehojac@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +98,22 @@ class ToolApiBridge extends McpTool
 		'expensereports' => array('billing'),
 		'tickets' => array('thirdparty', 'project'),
 		'shipments' => array('stock', 'commercial', 'thirdparty'),
-		'receptions' => array('stock', 'thirdparty')
+		'receptions' => array('stock', 'thirdparty'),
+		'contacts' => array('thirdparty', 'commercial'),
+		'bankaccounts' => array('billing', 'reporting'),
+		'variouspayments' => array('billing', 'reporting'),
+		'socialcontributions' => array('billing', 'reporting'),
+		'vatpayments' => array('billing', 'reporting'),
+		'donations' => array('billing', 'thirdparty'),
+		'holidays' => array('project', 'reporting'),
+		'boms' => array('stock'),
+		'mos' => array('stock'),
+		'productlots' => array('stock'),
+		'workstations' => array('stock'),
+		'knowledgemanagement' => array('thirdparty', 'project'),
+		'memberstypes' => array('thirdparty', 'billing'),
+		'partnerships' => array('thirdparty', 'commercial'),
+		'multicurrencies' => array('billing', 'reporting')
 	);
 
 	/**
@@ -573,8 +589,120 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['tickets'] = [
 			'label' => 'support tickets',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a support ticket. The user confirms before anything is written. subject and message are mandatory; socid is optional (a ticket may belong to no third party).",
+					'write' => [
+						'preview' => 'AIPreviewCreateTicket',
+						'required' => ['subject', 'message'],
+						'object' => 'Ticket',
+						'thirdparty' => 'socid',
+						'right' => ['ticket', 'write'],
+						'args' => ['subject', 'message'],
+						// The ticket API validates 'socid' but the object persists
+						// 'fk_soc'; the status column reads 'status'.
+						'copy' => ['socid' => 'fk_soc'],
+						'rename' => ['fk_statut' => 'status'],
+						// Silent by default: the assistant must not turn a
+						// creation the human approved into an emailed
+						// notification nobody saw coming.
+						'defaults' => ['notify_tiers_at_create' => 0],
+					],
+					'params' => [
+						'subject' => "Ticket subject (required).",
+						'message' => "First message describing the request (required).",
+						'socid' => "Rowid of the customer the ticket belongs to, or its name as said (resolved here). Omit or 0 for a ticket not linked to a third party.",
+						'fk_user_assign' => "Rowid of the user to assign the ticket to.",
+						'type_code' => "Nature of the request, e.g. COM=commercial question, ISSUE=incident, HELP=request, OTHER.",
+						'category_code' => "Ticket group/category code.",
+						'severity_code' => "Severity: LOW, NORMAL, HIGH or BLOCKING.",
+						'fk_project' => "Rowid of a project the ticket relates to.",
+						'notify_tiers_at_create' => "1 to notify the third party by email on creation, 0 (default) silent."
+					]
+				],
+				'postNewMessage' => [
+					'suffix' => 'reply',
+					'description' => "Post a message on an existing support ticket. Needs the ticket public tracking id (track_id): when only the rowid or ref is known, read the ticket first with api_tickets_get or api_tickets_get_by_ref to get it. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewReplyTicket',
+						'required' => ['track_id', 'message'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['track_id', 'message'],
+					],
+					'params' => [
+						'track_id' => "Public tracking id of the ticket (the hash the customer received by email). Required.",
+						'message' => "Message text to post on the ticket (required).",
+						'private' => "1 for an internal note the customer never sees, 0 (default) for a public message."
+					]
+				],
+				'put' => [
+					'suffix' => 'update',
+					'description' => "Update fields of an existing support ticket: assign a user (fk_user_assign), change status (fk_statut), severity, type... Only the fields given are changed. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUpdateTicket',
+						'required' => ['id'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['id'],
+						// Same name mismatch as the create: the API validates
+						// 'socid' while Ticket::update persists 'fk_soc', and
+						// the status column reads 'status' (fk_statut is a
+						// read-only backward-compatible alias).
+						'copy' => ['socid' => 'fk_soc'],
+						'rename' => ['fk_statut' => 'status'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket to update (required). When only the ref is known, look it up with api_tickets_get_by_ref.",
+						'subject' => "New subject.",
+						'socid' => "Rowid of the customer to link the ticket to, or its name as said.",
+						'fk_user_assign' => "Rowid of the user to assign the ticket to.",
+						'fk_statut' => "New status: 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled.",
+						'severity_code' => "New severity: LOW, NORMAL, HIGH or BLOCKING.",
+						'type_code' => "New nature: COM, ISSUE, HELP or OTHER.",
+						'category_code' => "New group/category code.",
+						'fk_project' => "Rowid of a project to relate the ticket to."
+					]
+				],
+				'postContact' => [
+					'suffix' => 'add_contact',
+					'description' => "Link a contact to a support ticket. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTicketContact',
+						'required' => ['id', 'contactid', 'type'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['contactid', 'id'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket (required).",
+						'contactid' => "Rowid of the contact to link (required).",
+						'type' => "Contact role on the ticket, e.g. 'contributor', 'observer', 'assignee' (required).",
+						'source' => "'external' (default) for a third-party contact, 'internal' for a Dolibarr user."
+					]
+				],
+				'deleteContact' => [
+					'suffix' => 'remove_contact',
+					'description' => "Unlink a contact from a support ticket. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewRemoveTicketContact',
+						'required' => ['id', 'contactid', 'type'],
+						'object' => 'Ticket',
+						'right' => ['ticket', 'write'],
+						'args' => ['contactid', 'id'],
+					],
+					'params' => [
+						'id' => "Rowid of the ticket (required).",
+						'contactid' => "Rowid of the contact to unlink (required).",
+						'type' => "Contact role to remove (required).",
+						'source' => "'external' (default) or 'internal'."
+					]
+				],
 				'index' => [
-					'default_properties' => 'id,ref,track_id,subject,fk_soc,fk_statut,severity_code,type_code,datec',
+					// track_id stays out of list results on purpose: it is the
+					// bearer credential of the public ticket interface, and api_tickets_get
+					// still returns it when the reply flow needs it.
+					'default_properties' => 'id,ref,subject,fk_soc,fk_statut,severity_code,type_code,datec',
 					'description' => "Statuses (t.fk_statut): 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled. Open tickets = fk_statut < 8. Severity in severity_code (LOW, NORMAL, HIGH, BLOCKING), nature in type_code (COM=commercial, ISSUE=incident, ...). Useful sqlfilters fields: t.subject, t.fk_statut, t.severity_code, t.type_code, t.datec (creation), t.fk_user_assign (assigned user rowid).",
 					'params' => [
 						'socid' => "Third-party rowid to restrict tickets to one customer (0 = all).",
@@ -598,7 +726,7 @@ class ToolApiBridge extends McpTool
 			]
 		];
 
-		$this->enrichments['project'] = [
+		$this->enrichments['projects'] = [
 			'label' => 'projects (including opportunities/leads)',
 			'methods' => [
 				'index' => [
@@ -932,6 +1060,449 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		];
+
+		$this->addReadEndpoints();
+	}
+
+	/**
+	 * Read-only tools the whitelist did not reach yet: new endpoints (bank,
+	 * donations, leave, manufacturing, lots, knowledge base, member types,
+	 * partnerships, workstations, taxes, currencies, contacts) and the read
+	 * methods of endpoints already exposed (stock per warehouse, prices,
+	 * time spent, contacts of a document, discounts, tags...). Each REST class
+	 * checks its own read right. Salaries, recruitment candidates and event
+	 * attendees stay out: they are personal data about people.
+	 *
+	 * @return void
+	 */
+	private function addReadEndpoints()
+	{
+		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
+
+		$this->enrichments['bankaccounts'] = array(
+			'label' => 'bank and cash accounts',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,ref,label,bank,currency_code,clos,courant',
+					'description' => "Bank and cash accounts: ref, label, bank, currency. clos: 0 open, 1 closed. courant: 0 savings, 1 current, 2 cash. The balance is in api_bankaccounts_balance, the transactions in api_bankaccounts_lines."
+				),
+				'get' => array('description' => "One bank account with its bank details and currency."),
+				'getLines' => array(
+					'suffix' => 'lines',
+					'description' => "Transactions of one bank account: date (dateo), value date (datev), amount (signed: positive is money in), label, payment type, reconciliation (rappro 1 when reconciled). Only the most recent 50 are returned: restrict the period with sqlfilters. Here the field names have NO 't.' prefix, e.g. \"(dateo:>=:'2026-01-01')\" or \"(label:like:'%rent%')\".",
+					'params' => array('id' => "Rowid of the bank account."),
+					// The REST method has no limit: a real account would send its whole history.
+					// Oldest first there, so the end is the most recent.
+					'max_items' => 50,
+					'keep' => 'last'
+				),
+				'getBalance' => array(
+					'suffix' => 'balance',
+					'description' => "Current balance of one bank account.",
+					'params' => array('id' => "Rowid of the bank account.")
+				)
+			)
+		);
+
+		$this->enrichments['variouspayments'] = array(
+			'label' => 'miscellaneous bank payments',
+			'methods' => array(
+				'index' => array(
+					'description' => "Payments recorded directly on a bank account, outside invoices: date (datep), amount, sens (0 money out, 1 money in), label, accounting account.",
+					'params' => array('pagination_data' => $pagination)
+				),
+				'get' => array('description' => "One miscellaneous payment.")
+			)
+		);
+
+		$this->enrichments['socialcontributions'] = array(
+			'label' => 'social and fiscal contributions (taxes, charges)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Social and fiscal charges to pay: label, type, period, amount, paye (1 paid). Unpaid ones: sqlfilters \"(t.paye:=:0)\".",
+					'params' => array('pagination_data' => $pagination)
+				),
+				'get' => array('description' => "One social or fiscal charge."),
+				'getPayments' => array(
+					'suffix' => 'payments_list',
+					'description' => "Payments made on one social or fiscal charge.",
+					'params' => array('id' => "Rowid of the charge.")
+				)
+			)
+		);
+
+		$this->enrichments['vatpayments'] = array(
+			'label' => 'VAT declarations and payments',
+			'methods' => array(
+				'index' => array(
+					'description' => "VAT to pay or refund per period: label, period end (datev), amount, paye (1 paid).",
+					'params' => array('pagination_data' => $pagination)
+				),
+				'get' => array('description' => "One VAT declaration."),
+				'getPayments' => array(
+					'suffix' => 'payments_list',
+					'description' => "Payments made on one VAT declaration.",
+					'params' => array('id' => "Rowid of the VAT declaration.")
+				)
+			)
+		);
+
+		$this->enrichments['donations'] = array(
+			'label' => 'donations',
+			'methods' => array(
+				'index' => array(
+					'description' => "Donations received: donor, amount, date, project. Statuses (t.fk_statut): 0 draft, 1 validated (promised), 2 paid, -1 canceled.",
+					'params' => array(
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
+						'pagination_data' => $pagination
+					)
+				),
+				'get' => array('description' => "One donation with its donor, amount and status.")
+			)
+		);
+
+		$this->enrichments['holidays'] = array(
+			'label' => 'leave requests (holidays, days off)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Leave requests of employees: fk_user (the employee, a USER rowid), date_debut / date_fin (start / end), leave type (fk_type). Statuses (t.statut): 1 draft, 2 waiting for approval, 3 approved, 4 canceled, 5 refused. Who is off on a day: approved ones with sqlfilters \"(t.date_debut:<=:'YYYY-MM-DD') AND (t.date_fin:>=:'YYYY-MM-DD')\".",
+					'params' => array(
+						'user_ids' => "Comma-separated user rowids to restrict to the requests of these employees.",
+						'pagination_data' => $pagination
+					),
+					// The reason of a leave is free text, sometimes medical: it stays here.
+					'drop_fields' => array('description', 'note_private', 'note_public')
+				),
+				'get' => array(
+					'description' => "One leave request with its employee, dates, type and status.",
+					'drop_fields' => array('description', 'note_private', 'note_public')
+				)
+			)
+		);
+
+		$this->enrichments['boms'] = array(
+			'label' => 'bills of materials (BOM)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines."
+				),
+				'get' => array('description' => "One bill of materials."),
+				'getLines' => array(
+					'suffix' => 'lines',
+					'description' => "Components of one bill of materials: product, quantity, efficiency.",
+					'params' => array('id' => "Rowid of the bill of materials.")
+				)
+			)
+		);
+
+		$this->enrichments['mos'] = array(
+			'label' => 'manufacturing orders (MO)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Manufacturing orders: ref, product to make (fk_product), quantity, bill of materials (fk_bom), planned dates. Statuses (t.status): 0 draft, 1 validated (to produce), 2 in progress, 3 produced, 9 canceled."
+				),
+				'get' => array('description' => "One manufacturing order with what it consumes and produces.")
+			)
+		);
+
+		$this->enrichments['productlots'] = array(
+			'label' => 'product lots and serial numbers',
+			'methods' => array(
+				'index' => array(
+					'description' => "Lots and serial numbers of products: batch (the number), fk_product, eat-by date (eatby), sell-by date (sellby). Lots of one product: sqlfilters \"(t.fk_product:=:ID)\".",
+					'params' => array('pagination_data' => $pagination)
+				),
+				'get' => array('description' => "One lot or serial number with its dates.")
+			)
+		);
+
+		$this->enrichments['workstations'] = array(
+			'label' => 'workstations (manufacturing)',
+			'methods' => array(
+				'index' => array('description' => "Workstations used in manufacturing: ref, label, type, hourly costs."),
+				'get' => array('description' => "One workstation."),
+				'getByRef' => array(
+					'suffix' => 'get_by_ref',
+					'description' => "One workstation by its exact reference.",
+					'params' => array('ref' => "Exact workstation reference.")
+				)
+			)
+		);
+
+		$this->enrichments['knowledgemanagement'] = array(
+			'label' => 'knowledge base articles',
+			'methods' => array(
+				'index' => array(
+					'description' => "Knowledge base articles: ref, question, answer, language. Statuses (t.status): 0 draft, 1 validated, 9 canceled. Search the question with sqlfilters \"(t.question:like:'%word%')\".",
+					'params' => array(
+						'category' => "Rowid of a knowledge category to restrict the list to.",
+						'pagination_data' => $pagination
+					)
+				),
+				'get' => array('description' => "One knowledge base article with its question and answer.")
+			)
+		);
+
+		$this->enrichments['memberstypes'] = array(
+			'label' => 'member types',
+			'methods' => array(
+				'index' => array('description' => "Types of members: label, whether a subscription is due, its amount and duration."),
+				'get' => array('description' => "One member type.")
+			)
+		);
+
+		$this->enrichments['partnerships'] = array(
+			'label' => 'partnerships',
+			'methods' => array(
+				'index' => array('description' => "Partnerships with third parties or members: type, dates. Statuses (t.status): 0 draft, 1 validated, 2 approved, 3 refused, 9 canceled."),
+				'get' => array('description' => "One partnership.")
+			)
+		);
+
+		$this->enrichments['multicurrencies'] = array(
+			'label' => 'currencies and exchange rates',
+			'methods' => array(
+				'index' => array('description' => "Currencies in use, with their code and current rate."),
+				'get' => array('description' => "One currency."),
+				'getByCode' => array(
+					'suffix' => 'get_by_code',
+					'description' => "One currency by its ISO code (e.g. 'USD').",
+					'params' => array('code' => "ISO code of the currency.")
+				),
+				'getRates' => array(
+					'suffix' => 'rates',
+					'description' => "Exchange rates of one currency, the most recent 30.",
+					'params' => array('id' => "Rowid of the currency."),
+					'max_items' => 30,
+					'keep' => 'first'
+				)
+			)
+		);
+
+		// Contacts (people of third parties), read side.
+		$this->enrichments['contacts'] = array(
+			'label' => 'contacts (people of third parties)',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,firstname,lastname,poste,email,phone_pro,phone_mobile,socid,statut',
+					'description' => "Contacts are the people of a third party. Contacts of one third party: thirdparty_ids. Search by name with sqlfilters on t.lastname or t.firstname. statut: 1 active, 0 inactive.",
+					'params' => array(
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
+						'pagination_data' => $pagination
+					)
+				),
+				'get' => array('description' => "One contact with name, job title, phones, email and third party."),
+				'getByEmail' => array(
+					'suffix' => 'get_by_email',
+					'description' => "One contact by its exact email address.",
+					'params' => array('email' => "Exact email address of the contact."),
+					// The REST method returns an empty contact when several share the address.
+					'needs_id' => "No single contact has this email (none, or several): search with api_contacts_list and sqlfilters on t.email."
+				),
+				'getCategories' => array(
+					'suffix' => 'categories_list',
+					'description' => "Tags (categories) of one contact.",
+					'params' => array('id' => "Rowid of the contact.")
+				)
+			)
+		);
+
+		// Read methods of endpoints already exposed.
+		$more = array(
+			'warehouses' => array(
+				'listProducts' => array(
+					'suffix' => 'products_list',
+					'description' => "Products stored in one warehouse, with their stock there when includestockdata=1. Answers \"what is in warehouse X\".",
+					'params' => array('id' => "Rowid of the warehouse.", 'includestockdata' => "1 to add the stock of each product.", 'pagination_data' => $pagination)
+				)
+			),
+			'products' => array(
+				'getStock' => array(
+					'suffix' => 'stock',
+					// Needs the Stock module on top of Products: without it the tool does not exist.
+					'module' => 'stock',
+					'description' => "Stock of one product per warehouse (real stock, and the warehouse it is in).",
+					'params' => array('id' => "Rowid of the product.", 'selected_warehouse_id' => "Rowid of one warehouse to restrict to.")
+				),
+				'getSubproducts' => array(
+					'suffix' => 'subproducts',
+					'description' => "Components of a kit (virtual product): each sub-product with its quantity.",
+					'params' => array('id' => "Rowid of the kit product.")
+				),
+				'getCustomerPricesPerSegment' => array(
+					'suffix' => 'prices_per_segment',
+					// Only in that price mode: elsewhere the REST method refuses.
+					'setup' => array('PRODUIT_MULTIPRICES', 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'),
+					'description' => "Selling prices of one product per price level (segment), when several price levels are used.",
+					'params' => array('id' => "Rowid of the product.")
+				),
+				'getCustomerPricesPerCustomer' => array(
+					'suffix' => 'prices_per_customer',
+					'setup' => array('PRODUIT_CUSTOMER_PRICES', 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'),
+					'description' => "Selling prices of one product negotiated per customer, when customer prices are used.",
+					'params' => array('id' => "Rowid of the product.", 'thirdparty_id' => "Rowid of one customer to restrict to.")
+				),
+				'getCustomerPricesPerQuantity' => array(
+					'suffix' => 'prices_per_quantity',
+					'setup' => array('PRODUIT_CUSTOMER_PRICES_BY_QTY'),
+					'description' => "Selling prices of one product by quantity, when prices by quantity are used.",
+					'params' => array('id' => "Rowid of the product.")
+				),
+				'getSupplierProducts' => array(
+					'suffix' => 'supplier_products_list',
+					'description' => "Products with their supplier prices: for each, the suppliers that sell it, their reference and price. Restrict to one supplier with 'supplier'.",
+					'params' => array('supplier' => "Rowid of one supplier to restrict to.", 'mode' => "0 all, 1 products only, 2 services only.", 'category' => "Rowid of a product category.")
+				),
+				'getCategories' => array(
+					'suffix' => 'categories_list',
+					'description' => "Tags (categories) of one product.",
+					'params' => array('id' => "Rowid of the product.")
+				)
+			),
+			'projects' => array(
+				'getContacts' => array(
+					'suffix' => 'contacts_list',
+					'description' => "People of one project: internal users and external contacts, with their role (project leader, contributor...).",
+					'params' => array('id' => "Rowid of the project.", 'type' => "'internal' or 'external' to restrict, empty for both.")
+				),
+				'getTimespent' => array(
+					'suffix' => 'timespent_list',
+					'description' => "Summary of the time spent on each task of one project (first 100 tasks): total duration in seconds and the users who recorded it. The time records themselves are in api_projects_timespent_all or api_tasks_timespent_list.",
+					'params' => array('id' => "Rowid of the project."),
+					'max_items' => 100,
+					'keep' => 'first'
+				),
+				'listTimespent' => array(
+					'suffix' => 'timespent_all',
+					'description' => "Time recorded across projects, with project, task, user, date and duration in seconds. Restrict with thirdparty_ids or sqlfilters (e.g. a period on t.element_date).",
+					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'pagination_data' => $pagination)
+				)
+			),
+			'orders' => array(
+				'getOrderShipments' => array(
+					'suffix' => 'shipments_list',
+					'description' => "Shipments made for one sale order, with what each shipped.",
+					'params' => array('id' => "Rowid of the sale order.")
+				),
+				'getContacts' => array(
+					'suffix' => 'contacts_list',
+					'description' => "Contacts of one sale order with their role (billing, shipping, follow-up...).",
+					'params' => array('id' => "Rowid of the sale order.", 'type' => "Role code to restrict to, e.g. BILLING, SHIPPING, CUSTOMER.")
+				)
+			),
+			'proposals' => array(
+				'getContacts' => array(
+					'suffix' => 'contacts_list',
+					'description' => "Contacts of one commercial proposal with their role.",
+					'params' => array('id' => "Rowid of the proposal.", 'type' => "Role code to restrict to.")
+				)
+			),
+			'invoices' => array(
+				'getContacts' => array(
+					'suffix' => 'contacts_list',
+					'description' => "Contacts of one customer invoice with their role.",
+					'params' => array('id' => "Rowid of the invoice.", 'type' => "Role code to restrict to.")
+				),
+				'indexTemplateInvoices' => array(
+					'suffix' => 'templates_list',
+					'description' => "Recurring invoice templates: customer, frequency, next generation date, amounts. Set withLines=false for lists.",
+					'params' => array('thirdparty_ids' => "Comma-separated third-party rowids.", 'withLines' => "false to omit the lines.", 'pagination_data' => $pagination)
+				),
+				'getTemplateInvoice' => array(
+					'suffix' => 'template_get',
+					'description' => "One recurring invoice template with its lines and frequency.",
+					'params' => array('id' => "Rowid of the template.")
+				)
+			),
+			'supplier_invoices' => array(
+				'getPayments' => array(
+					'suffix' => 'payments_list',
+					'description' => "Payments already made on one supplier invoice: amount, date, payment mode, bank account.",
+					'params' => array('id' => "Rowid of the supplier invoice.")
+				)
+			),
+			'expensereports' => array(
+				'getLines' => array(
+					'suffix' => 'lines',
+					'description' => "Lines of one expense report: date, expense type, amounts, VAT.",
+					'params' => array('id' => "Rowid of the expense report.")
+				),
+				'getAllPayments' => array(
+					'suffix' => 'payments_list',
+					'description' => "Payments of expense reports: amount, date, payment mode."
+				)
+			),
+			'interventions' => array(
+				'getContacts' => array(
+					'suffix' => 'contacts_list',
+					'description' => "Contacts of one intervention with their role.",
+					'params' => array('id' => "Rowid of the intervention.", 'type' => "Role code to restrict to.")
+				)
+			),
+			'thirdparties' => array(
+				'getByBarcode' => array(
+					'suffix' => 'get_by_barcode',
+					'description' => "One third party by its barcode.",
+					'params' => array('barcode' => "Barcode value.")
+				),
+				'getFixedAmountDiscounts' => array(
+					'suffix' => 'discounts_list',
+					'description' => "Fixed-amount discounts and credits of one third party: available, or already used on an invoice.",
+					'params' => array('id' => "Rowid of the third party.", 'mode' => "'customer' (default) or 'supplier'.", 'filter' => "'none' (all), 'available' or 'used'.")
+				),
+				'getSalesRepresentatives' => array(
+					'suffix' => 'sales_representatives_list',
+					'description' => "Sales representatives (users) following one third party.",
+					'params' => array('id' => "Rowid of the third party.", 'mode' => "0 full records, 1 rowids only.")
+				),
+				'getCategories' => array(
+					'suffix' => 'categories_list',
+					'description' => "Customer tags (categories) of one third party.",
+					'params' => array('id' => "Rowid of the third party.")
+				),
+				'getSupplierCategories' => array(
+					'suffix' => 'supplier_categories_list',
+					'description' => "Supplier tags (categories) of one third party.",
+					'params' => array('id' => "Rowid of the third party.")
+				)
+			),
+			'categories' => array(
+				'getListForObject' => array(
+					'suffix' => 'of_object_list',
+					'description' => "Tags (categories) of any object: give its rowid and type.",
+					'params' => array('id' => "Rowid of the object.", 'type' => "Its type: 'product', 'customer', 'supplier', 'contact', 'member', 'project', 'user', 'warehouse', 'actioncomm', 'ticket'.")
+				)
+			),
+			'members' => array(
+				'getByThirdparty' => array(
+					'suffix' => 'get_by_thirdparty',
+					'description' => "The member linked to one third party.",
+					'params' => array('thirdparty' => "Rowid of the third party.")
+				),
+				'getNbByYear' => array(
+					'suffix' => 'count_by_year',
+					'description' => "Number of new members per year."
+				),
+				'getNbByMonth' => array(
+					'suffix' => 'count_by_month',
+					'description' => "Number of new members per month of one year.",
+					'params' => array('year' => "Year, e.g. 2026.")
+				),
+				'getAmountByMonth' => array(
+					'suffix' => 'subscriptions_amount_by_month',
+					'description' => "Amount of subscriptions per month of one year.",
+					'params' => array('year' => "Year, e.g. 2026.")
+				)
+			)
+		);
+		foreach ($more as $key => $methods) {
+			if (!isset($this->enrichments[$key])) {
+				continue;
+			}
+			foreach ($methods as $method => $meta) {
+				$this->enrichments[$key]['methods'][$method] = $meta;
+			}
+		}
 	}
 
 	/**
@@ -1234,6 +1805,11 @@ class ToolApiBridge extends McpTool
 				if (!empty($meta['module']) && !isModEnabled($meta['module'])) {
 					continue;
 				}
+				// A method that only works in a mode of the setup (a price mode)
+				// does not exist when that mode is off.
+				if (!empty($meta['setup']) && !$this->setupAllows((array) $meta['setup'])) {
+					continue;
+				}
 				if (!method_exists($ep['class'], $method)) {
 					continue;	// whitelisted method absent in this Dolibarr version
 				}
@@ -1253,6 +1829,23 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $this->defs;
+	}
+
+	/**
+	 * Whether one of these setup constants is on.
+	 *
+	 * @param  string[] $consts Constant names.
+	 * @return bool
+	 */
+	private function setupAllows(array $consts)
+	{
+		foreach ($consts as $const) {
+			if (getDolGlobalString($const)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1291,6 +1884,14 @@ class ToolApiBridge extends McpTool
 		// them would silently keep serving the wider cached toolset for up to
 		// a full TTL (review sonikf on the initial version).
 		$signature .= '|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+		// The setup modes some methods depend on: turning one on shows its tools at once.
+		foreach ($this->enrichments as $meta) {
+			foreach (($meta['methods'] ?? array()) as $mmeta) {
+				foreach ((array) ($mmeta['setup'] ?? array()) as $const) {
+					$signature .= '|'.$const.'='.getDolGlobalString($const);
+				}
+			}
+		}
 
 		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
 	}
@@ -1675,7 +2276,8 @@ class ToolApiBridge extends McpTool
 			'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 			'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 			'Societe' => '/societe/class/societe.class.php',
-			'Product' => '/product/class/product.class.php'
+			'Product' => '/product/class/product.class.php',
+			'Ticket' => '/ticket/class/ticket.class.php'
 		);
 		if (empty($paths[$class]) || (int) $id <= 0) {
 			return null;
@@ -2008,13 +2610,24 @@ class ToolApiBridge extends McpTool
 			return $langs->trans($write['preview'], (string) $qty, dol_trunc($what, 60), ($parent ? $parent->ref : ''), price(price2num($total, 'MT')));
 		}
 
-		// A single record (third party, product, category) has no lines: it
-		// names the arguments that make up its sentence instead.
+		// A single record (third party, product, category, ticket) has no lines:
+		// it names the arguments that make up its sentence, then every other
+		// argument actually provided, so the human approves nothing they did
+		// not get to see. Language keys opt in to that extra list with a
+		// trailing %s; keys without it simply ignore the appended value.
 		if (!empty($write['args'])) {
 			$values = array();
 			foreach ($write['args'] as $argname) {
 				$values[] = dol_trunc((string) ($args[$argname] ?? ''), 60);
 			}
+			$extra = array();
+			foreach ($args as $argname => $argvalue) {
+				if (in_array($argname, $write['args'], true) || $argname === 'requestState' || is_array($argvalue)) {
+					continue;
+				}
+				$extra[] = $argname.'='.dol_trunc((string) $argvalue, 40);
+			}
+			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
 			return $langs->trans($write['preview'], ...$values);
 		}
 
@@ -2073,7 +2686,15 @@ class ToolApiBridge extends McpTool
 
 		if (!empty($write['thirdparty'])) {
 			$field = (string) $write['thirdparty'];
-			if (empty($args[$field]) || !is_numeric($args[$field]) || (int) $args[$field] <= 0) {
+			// A third party field the write does not require may be left empty
+			// (a ticket can legally have no customer): it is checked only when a
+			// value was actually provided. When it is required, any missing,
+			// non-numeric or non-positive value stays refused as before.
+			$missing = empty($args[$field]) || (is_numeric($args[$field]) && (int) $args[$field] <= 0);
+			$namedNotResolved = !empty($args[$field]) && !is_numeric($args[$field]);
+			$checkThirdparty = $namedNotResolved
+				|| ($missing && in_array($field, (array) ($write['required'] ?? array()), true));
+			if ($checkThirdparty) {
 				$langs->load('other');
 				$named = '';
 				foreach (array($field, 'thirdparty', 'company', 'customer', 'supplier') as $key) {
@@ -2196,7 +2817,19 @@ class ToolApiBridge extends McpTool
 			'agendaevents' => 'actioncomm',
 			'warehouses' => 'stock',
 			'categories' => 'categorie',
-			'bankaccounts' => 'bank_account'
+			'bankaccounts' => 'bank_account',
+			'donations' => 'don',
+			'holidays' => 'holiday',
+			'boms' => 'bom_bom',
+			'mos' => 'mrp_mo',
+			'productlots' => 'product_lot',
+			'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
+			'memberstypes' => 'adherent_type',
+			'partnerships' => 'partnership',
+			'workstations' => 'workstation_workstation',
+			'socialcontributions' => 'chargesociales',
+			'variouspayments' => 'payment_various',
+			'vatpayments' => 'tva'
 		);
 
 		return $map[$key] ?? '';
@@ -2246,6 +2879,52 @@ class ToolApiBridge extends McpTool
 	{
 		$object = fetchObjectByElement((int) ($args['id'] ?? 0), (string) ($args['modulepart'] ?? ''), (string) ($args['ref'] ?? ''));
 		return is_object($object) && $object->id > 0;
+	}
+
+	/**
+	 * Shape a read result as its enrichment asks: drop the fields that must not
+	 * leave the server, and cap a list the REST method returns unbounded.
+	 *
+	 * @param  array<mixed>        $output Result of the REST method.
+	 * @param  array<string,mixed> $meta   Enrichment of the method.
+	 * @return array<mixed>                Shaped result.
+	 */
+	private function shapeReadOutput(array $output, array $meta)
+	{
+		$paginated = isset($output['data']) && is_array($output['data']);
+		$isList = $paginated || array_key_exists(0, $output);
+		$records = $paginated ? $output['data'] : ($isList ? $output : array($output));
+
+		$drop = array_flip((array) ($meta['drop_fields'] ?? array()));
+		if (!empty($drop)) {
+			foreach ($records as $i => $record) {
+				if (is_array($record)) {
+					$records[$i] = array_diff_key($record, $drop);
+				}
+			}
+		}
+		if (!$isList) {
+			return $records[0];
+		}
+
+		$max = (int) ($meta['max_items'] ?? 0);
+		$total = count($records);
+		if ($max > 0 && $total > $max) {
+			$records = (($meta['keep'] ?? 'first') === 'last') ? array_slice($records, -$max) : array_slice($records, 0, $max);
+
+			return array(
+				'data' => array_values($records),
+				'pagination' => array('total' => $total, 'shown' => $max),
+				'note' => 'Only '.$max.' of '.$total.' are shown: narrow the request (a period, a filter) to see the others.'
+			);
+		}
+		if ($paginated) {
+			$output['data'] = $records;
+
+			return $output;
+		}
+
+		return $records;
 	}
 
 	/**
@@ -2317,6 +2996,14 @@ class ToolApiBridge extends McpTool
 			if ($pname === 'request_data') {
 				$body = $args;
 				unset($body['requestState']);
+				// Only the fields the tool advertised may be written: the human
+				// approved a preview of those, not of arbitrary object properties
+				// (a ticket update must not rewrite track_id, fk_user_create,
+				// origin_email, dates...). 'parent' writes keep the flat line
+				// fields, which are not individually declared in 'params'.
+				if (!empty($writemeta) && empty($writemeta['parent']) && !empty($methodmeta['params'])) {
+					$body = array_intersect_key($body, $methodmeta['params']);
+				}
 				foreach (($writemeta['defaults'] ?? array()) as $field => $default) {
 					if (!isset($body[$field])) {
 						$body[$field] = ($default === 'now') ? dol_now() : $default;
@@ -2330,10 +3017,22 @@ class ToolApiBridge extends McpTool
 						unset($body[$from]);
 					}
 				}
+				// Fields the object persists under another name while the API
+				// still validates the documented one (the ticket API checks
+				// access on 'socid' but Ticket::create/update write 'fk_soc').
+				foreach (($writemeta['copy'] ?? array()) as $from => $to) {
+					if (isset($body[$from])) {
+						$body[$to] = $body[$from];
+					}
+				}
 				$callArgs[] = $body;
 				continue;
 			}
-			if (array_key_exists($pname, $args)) {
+			// A write tool advertises a flat schema: only the declared arguments
+			// may reach a positional parameter (a caller must not fill
+			// 'notrigger' or any other option the schema never showed).
+			if (array_key_exists($pname, $args)
+				&& (empty($writemeta) || empty($methodmeta['params']) || array_key_exists($pname, $methodmeta['params']))) {
 				// Cap an explicit 'limit': one call must not pull thousands of full objects.
 				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
 			} elseif ($p->isOptional()) {
@@ -2405,6 +3104,16 @@ class ToolApiBridge extends McpTool
 			if ($printed !== '' && $printed !== false) {
 				dol_syslog(get_class($this).'::execute '.$name.' printed output: '.dol_trunc(strip_tags($printed), 200), LOG_WARNING);
 			}
+		}
+
+		// A record read that came back empty is no record.
+		if (!empty($methodmeta['needs_id']) && is_array($output) && !isset($output['error']) && empty($output['id'])) {
+			$output = array('error' => (string) $methodmeta['needs_id'], 'http_status' => 404);
+		}
+
+		// A list the REST method does not bound, and fields that stay on the server.
+		if (is_array($output) && !isset($output['error']) && (!empty($methodmeta['max_items']) || !empty($methodmeta['drop_fields']))) {
+			$output = $this->shapeReadOutput($output, $methodmeta);
 		}
 
 		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
