@@ -138,6 +138,30 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
+		// Scan directories
+		$nbofiles = count($listoffiles);
+		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
+			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte .= $nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte .= '</b><br>';
+		}
+
+		if ($nbofiles) {
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			// Show list of found files
+			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
+			}
+			$texte .= '</div>';
+		}
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
@@ -157,29 +181,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= '<br>';
 			$texte .= '<input type="hidden" name="value1" value="COMPANY_ADDON_PDF_ODT_PATH">';
 		}
+		$texte .= '</div>';
 
-		// Scan directories
-		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
-			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
-			$texte .= $nbofiles;
-			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
-		}
-
-		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
-			// Show list of found files
-			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
-				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
-				$texte .= '<br>';
-			}
-			$texte .= '</div>';
-		}
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {

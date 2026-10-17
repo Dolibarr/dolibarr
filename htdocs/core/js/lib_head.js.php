@@ -1146,7 +1146,12 @@ function document_preview(file, type, title)
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
-		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+		/* The content of the object tag is displayed by the browser when it cannot render the
+		   document itself. Chrome on Android does not render a PDF inside an object, so without
+		   this the preview area stays empty and the file cannot be reached at all. */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam">';
+		newElem += '<a href="'+file+'" target="_blank" rel="noopener noreferrer">'+<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Download"))."'"; ?>+'</a>';
+		newElem += '</object>';
 
 		optionsbuttons = {}
 		if (mode == 'image') {
@@ -1247,31 +1252,41 @@ function dolSubmitConfirmForm(urljump, page, options, maxurllength)
 function getOperatorsForFieldType(type, maybenull = 0) {
 	console.log('Get list of operators for type='+type);
 
-	// Define the list of operators for each general field category
+	// Define the list of operators for each general field category (keys starting with 'separator' are shown as a non selectable separator)
 	const operatorList = {
 		selectlink: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
 		},
 		text: {
-			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
-			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
+			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
+			separator2: '--------',
 			StartsWith: <?php print "'".dol_escape_js($langs->trans('StartsWith'))."'"; ?>,
-			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>
+			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>,
+			separator3: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		number: {
 			'=': <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			'!=': <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			'<': <?php print "'".dol_escape_js($langs->trans('IsLowerThan'))."'"; ?>,
 			'>': <?php print "'".dol_escape_js($langs->trans('IsHigherThan'))."'"; ?>,
 			'<=': <?php print "'".dol_escape_js($langs->trans('IsLowerThanOrEqual'))."'"; ?>,
 			'>=': <?php print "'".dol_escape_js($langs->trans('IsHigherThanOrEqual'))."'"; ?>,
+			separator2: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>,
 		},
 		date: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			IsBefore: <?php print "'".dol_escape_js($langs->trans('IsBefore'))."'"; ?>,
 			IsAfter: <?php print "'".dol_escape_js($langs->trans('IsAfter'))."'"; ?>,
 			IsOnOrBefore: <?php print "'".dol_escape_js($langs->trans('IsOnOrBefore'))."'"; ?>,
@@ -1305,6 +1320,7 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 
 	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
 	if (maybenull === 1) {
+		operatorList[generalType]["separatordefined"] = '--------';
 		operatorList[generalType]["IsDefined"] = <?php print "'".dol_escape_js($langs->trans('IsDefined'))."'"; ?>;
 		operatorList[generalType]["IsNotDefined"] = <?php print "'".dol_escape_js($langs->trans('IsNotDefined'))."'"; ?>;
 	}
@@ -1340,6 +1356,19 @@ function generateFilterString(column, operator, context, fieldType) {
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
 			break;
+		case "IsInList":
+		case "IsNotInList": {
+			// The value is a list of values separated with spaces or commas. We forge directly the universal filter syntax.
+			// Values are quoted, except for numeric fields (quotes and parenthesis are not allowed into values).
+			const isnumericfield = /^(int|integer|float|double|decimal|numeric|tinyint|smallint)/i.test(fieldType);
+			const listofvalues = String(context).replace(/['()]/g, "").split(/[\s,]+/).filter(function(v) { return v !== ""; }).map(function(v) {
+				return ((isnumericfield && /^-?[0-9]+(\.[0-9]+)?$/.test(v)) ? v : "\'" + v + "\'");
+			});
+			if (listofvalues.length > 0) {
+				filter = "(" + column + (operator === "IsNotInList" ? ":notin:" : ":in:") + listofvalues.join(",") + ")";
+			}
+			break;
+		}
 		case "IsDefined":
 			filter = column + ":isnot:null";
 			break;
@@ -1603,13 +1632,20 @@ jQuery(document).ready(function() {
 	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
 	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
 	// this the browser silently truncates the paste and the user records an id short of a few digits.
-	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+	// Same for the dots of a field marked with data-profidnodot (SIREN "849.943.618").
+	jQuery(document).on("paste", "input[data-profidnospace], input[data-profidnodot]", function(event) {
 		var clipboardData = (event.originalEvent || event).clipboardData;
 		if (!clipboardData) {
 			return;
 		}
 		var pastedText = clipboardData.getData("text");
-		var cleanedText = pastedText.replace(/\s+/g, "");
+		var cleanedText = pastedText;
+		if (this.hasAttribute("data-profidnospace")) {
+			cleanedText = cleanedText.replace(/\s+/g, "");
+		}
+		if (this.hasAttribute("data-profidnodot")) {
+			cleanedText = cleanedText.replace(/\.+/g, "");
+		}
 		if (cleanedText == pastedText) {
 			return;		// Nothing to remove, leave the paste to the browser
 		}

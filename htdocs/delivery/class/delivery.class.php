@@ -892,6 +892,7 @@ class Delivery extends CommonObject
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
 				$line->description	= $obj->description;
+				$line->desc = $obj->description;
 				$line->fk_product 	= $obj->fk_product;
 				$line->qty_asked 	= $obj->qty_asked;
 				$line->qty_shipped	= $obj->qty_shipped;
