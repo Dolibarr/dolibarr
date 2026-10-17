@@ -1870,11 +1870,12 @@ export function initAiAssistant(container) {
             return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.
