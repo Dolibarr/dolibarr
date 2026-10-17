@@ -5780,9 +5780,27 @@ class Product extends CommonObject
 		 }*/
 
 		// les prix de fournisseurs.
+		// All the columns describing the price must be copied, not only the five historical ones:
+		// unitprice defaults to 0 in the table and find_min_price_product_fournisseur() reads it
+		// directly, so a partial copy makes the best buying price of the new product evaluate to 0.
+		// entity defaults to 1 as well, which would move the rows out of their company.
+		// ref_fourn and barcode are deliberately left empty: the unique keys
+		// uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity) and
+		// uk_product_barcode (barcode, fk_barcode_type, entity) do not contain fk_product, so
+		// copying either value would collide with the row of the source product.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
+		$sql .= " datec, fk_product, entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
