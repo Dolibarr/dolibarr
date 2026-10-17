@@ -284,7 +284,8 @@ class FileUpload
 		$new_file_path = $options['upload_dir'].$file_name;
 
 		if (dol_mkdir($options['upload_dir']) >= 0) {
-			list($img_width, $img_height) = @getimagesize($file_path);
+			$imagesize = @getimagesize($file_path);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+			list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 			if (!$img_width || !$img_height) {
 				return false;
 			}
@@ -353,7 +354,8 @@ class FileUpload
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
-		list($img_width, $img_height) = @getimagesize($uploaded_file);
+		$imagesize = @getimagesize($uploaded_file);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+		list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {

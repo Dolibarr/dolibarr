@@ -293,7 +293,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;
@@ -319,7 +319,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receivercc as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val) {	// Id du contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
