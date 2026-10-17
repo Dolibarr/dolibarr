@@ -117,6 +117,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 $permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$caneditalllabels = 0;
 $numRefModel = getDolGlobalString('BOOKKEEPING_ADDON', 'mod_bookkeeping_neon');
 
 /*
