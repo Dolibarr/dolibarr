@@ -205,6 +205,13 @@ class PaiementFourn extends Paiement
 				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
+			if ($way != 'dolibarr') {
+				$invoice = new FactureFournisseur($this->db);
+				$invoice->fetch($key);
+				if ((float) price2num($value, 'MT') == (float) $invoice->getRemainToPay(1)) {
+					$value_converted = (float) $invoice->getRemainToPay(0);
+				}
+			}
 			// Fallback: read invoice multicurrency code/tx if caller did not fill the arrays
 			$invoice_multicurrency_code = $this->multicurrency_code[$key] ?? '';
 			$invoice_multicurrency_tx = $this->multicurrency_tx[$key] ?? '';
