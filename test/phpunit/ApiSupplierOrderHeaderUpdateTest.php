@@ -41,6 +41,7 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 		$langs = new ApiSupplierOrderHeaderLanguageFixture();
 		$this->bridge = new ApiSupplierOrderHeaderBridgeFixture(null, new ApiSupplierOrderHeaderUserFixture());
 		ApiSupplierOrderHeaderEndpointFixture::$received = [];
+		ApiSupplierOrderHeaderEndpointFixture::$fail = false;
 	}
 
 	/** @return void */
@@ -49,6 +50,25 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 		global $langs, $user;
 		$langs = $this->previousLangs;
 		$user = $this->previousUser;
+		ApiSupplierOrderHeaderEndpointFixture::$fail = false;
+	}
+
+	/** @return void */
+	public function testExecutionRestoresAutoloadersAfterSuccessAndFailure()
+	{
+		$autoloaders = spl_autoload_functions();
+		$includePath = get_include_path();
+		foreach ([false, true, false] as $fail) {
+			ApiSupplierOrderHeaderEndpointFixture::$fail = $fail;
+			$result = $this->bridge->execute('api_supplier_orders_update', ['id' => 42, 'note_private' => 'new']);
+			$this->assertSame($autoloaders, spl_autoload_functions());
+			$this->assertSame($includePath, get_include_path());
+			if ($fail) {
+				$this->assertSame('Endpoint fixture failed', $result['error']);
+			} else {
+				$this->assertSame(['id' => 42], $result);
+			}
+		}
 	}
 
 	/** @return void */
@@ -98,7 +118,9 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	public function testCreationDefaultsAndRenamesCannotAlterAnUpdateBody()
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$metadata->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$metadata->setAccessible(true);
+		}
 		$enrichments = $metadata->getValue($this->bridge);
 		$enrichments['supplier_orders']['methods']['put']['write']['defaults'] = ['qty' => 1, 'note_public' => 'default'];
 		$enrichments['supplier_orders']['methods']['put']['write']['rename'] = ['note_private' => 'note_public'];
@@ -190,10 +212,14 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	public function testSchemaAndRightsComeFromTheWriteMetadata()
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$metadata->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$metadata->setAccessible(true);
+		}
 		$write = $metadata->getValue($this->bridge)['supplier_orders']['methods']['put']['write'];
 		$schemaMethod = new ReflectionMethod(ToolApiBridge::class, 'updateInputSchema');
-		$schemaMethod->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$schemaMethod->setAccessible(true);
+		}
 		$schema = $schemaMethod->invoke($this->bridge, $write);
 		$this->assertFalse($schema['additionalProperties']);
 		$this->assertArrayHasKey('id', $schema['properties']);
@@ -251,9 +277,33 @@ class ApiSupplierOrderHeaderLanguageFixture
 	}
 }
 
-/** Bridge fixture that replaces only database reads and endpoint discovery. */
+/** Bridge fixture replacing database reads and endpoint discovery, with isolated loaders. */
 class ApiSupplierOrderHeaderBridgeFixture extends ToolApiBridge
 {
+	/**
+	 * Keep the real dispatch while isolating Restler's process-wide loader changes.
+	 *
+	 * @param string $name Tool name
+	 * @param array<string,mixed> $args Tool arguments
+	 * @return mixed Tool result
+	 */
+	public function execute(string $name, array $args)
+	{
+		$autoloaders = spl_autoload_functions();
+		$includePath = get_include_path();
+		try {
+			return parent::execute($name, $args);
+		} finally {
+			foreach (spl_autoload_functions() as $autoloader) {
+				spl_autoload_unregister($autoloader);
+			}
+			foreach ($autoloaders as $autoloader) {
+				spl_autoload_register($autoloader);
+			}
+			set_include_path($includePath);
+		}
+	}
+
 	/** @var bool Parent visibility */
 	public $allowAccess = true;
 	/** @var bool Project visibility */
@@ -296,10 +346,14 @@ class ApiSupplierOrderHeaderBridgeFixture extends ToolApiBridge
 	public function getDefinitions(): array
 	{
 		$routes = new ReflectionProperty(ToolApiBridge::class, 'routes');
-		$routes->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$routes->setAccessible(true);
+		}
 		$routes->setValue($this, ['api_supplier_orders_update' => ['supplier_orders', 'put']]);
 		$endpoints = new ReflectionProperty(ToolApiBridge::class, 'endpoints');
-		$endpoints->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$endpoints->setAccessible(true);
+		}
 		$endpoints->setValue($this, ['supplier_orders' => ['path' => __FILE__, 'class' => ApiSupplierOrderHeaderEndpointFixture::class]]);
 		return [];
 	}
@@ -310,12 +364,17 @@ class ApiSupplierOrderHeaderEndpointFixture
 {
 	/** @var array<string,mixed> Last request received */
 	public static $received = [];
+	/** @var bool Simulate an endpoint failure */
+	public static $fail = false;
 	/** @param int $id Parent ID
 	 * @param array<string,mixed> $request_data Changes
 	 * @return array<string,int> Updated record identity
 	 */
 	public function put($id, $request_data = null)
 	{
+		if (self::$fail) {
+			throw new RuntimeException('Endpoint fixture failed');
+		}
 		self::$received = ['id' => $id, 'body' => $request_data];
 		return ['id' => $id];
 	}
