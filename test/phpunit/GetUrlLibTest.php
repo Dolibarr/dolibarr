@@ -432,6 +432,8 @@ class GetUrlLibTest extends CommonClassTest
 			'api-key: secret',
 			'DOLAPIKEY: secret',
 			'x-goog-api-key: secret',
+			'Client-Secret: secret',
+			'Client-Id: kept',
 			'X-Custom: kept',
 			'Content-Type: application/json',
 			'malformed header without colon',
@@ -439,7 +441,7 @@ class GetUrlLibTest extends CommonClassTest
 
 		$result = removeCredentialHeaders($headers);
 
-		$this->assertSame(['Accept: application/json', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+		$this->assertSame(['Accept: application/json', 'Client-Id: kept', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
 
 		$this->assertSame([], removeCredentialHeaders([]));
 		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
