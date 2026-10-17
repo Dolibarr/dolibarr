@@ -117,6 +117,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 $permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$caneditalllabels = 0;
 $numRefModel = getDolGlobalString('BOOKKEEPING_ADDON', 'mod_bookkeeping_neon');
 
 /*
@@ -397,6 +398,69 @@ if (empty($reshook)) {
 				exit;
 			}
 		}
+	}
+
+	// Update the operation label on all transaction lines.
+	if ($action == 'confirm_setalllabels' && $confirm == 'yes' && $permissiontoadd) {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			accessforbidden();
+		}
+
+		$newlabeloperation = trim(GETPOST('labeloperationforalllines', 'alphanohtml'));
+
+		if ($newlabeloperation === '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('LabelOperation')), null, 'errors');
+		} else {
+			$db->begin();
+
+			$bookkeepinglabels = new BookKeeping($db);
+			$result = $bookkeepinglabels->fetchAllPerMvt($piece_num, $mode);
+
+			if ($result < 0) {
+				$error++;
+				setEventMessages($bookkeepinglabels->error, $bookkeepinglabels->errors, 'errors');
+			} elseif (empty($bookkeepinglabels->linesmvt)) {
+				$error++;
+				setEventMessages($langs->trans('NoRecordFound'), null, 'errors');
+			} else {
+				// Refuse the whole operation if any line is locked.
+				foreach ($bookkeepinglabels->linesmvt as $bookkeepingline) {
+					if (!empty($bookkeepingline->date_validation)) {
+						$error++;
+						setEventMessages($langs->trans('ForbiddenTransactionAlreadyValidated'), null, 'errors');
+						break;
+					}
+
+					if (!empty($bookkeepingline->date_export)) {
+						$error++;
+						setEventMessages($langs->trans('ForbiddenTransactionAlreadyExported'), null, 'errors');
+						break;
+					}
+				}
+			}
+
+			if (!$error) {
+				$result = $bookkeepinglabels->updateByMvt($piece_num, 'label_operation', $newlabeloperation, $mode);
+
+				if ($result < 0) {
+					$error++;
+					setEventMessages($bookkeepinglabels->error, $bookkeepinglabels->errors, 'errors');
+				}
+			}
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+
+				header('Location: '.$_SERVER['PHP_SELF'].'?piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage));
+				exit;
+			}
+		}
+
+		$action = '';
 	}
 
 	if ($action == 'setdate' && $permissiontoadd) {
@@ -1141,6 +1205,31 @@ if ($action == 'create') {
 				}
 
 				print '</div>';
+
+				$caneditalllabels = $permissiontoadd && !$atleastonevalidated && !$atleastoneexported;
+
+				// Display the bulk label editing dialog.
+				if ($action == 'editalllabels' && $caneditalllabels) {
+					$currentlabeloperation = '';
+
+					foreach ($object->linesmvt as $bookkeepingline) {
+						$currentlabeloperation = $bookkeepingline->label_operation;
+						break;
+					}
+
+					$formquestion = array(
+						array(
+							'type' => 'text',
+							'name' => 'labeloperationforalllines',
+							'label' => $langs->trans('LabelOperation'),
+							'value' => GETPOSTISSET('labeloperationforalllines') ? GETPOST('labeloperationforalllines', 'alphanohtml') : $currentlabeloperation,
+						),
+					);
+
+					$confirm_url = $_SERVER['PHP_SELF'] .'?piece_num='.(int) $piece_num .'&mode='.urlencode($mode) .'&type='.urlencode($type) .'&backtopage='.urlencode($backtopage);
+
+					print $form->formconfirm($confirm_url, $langs->trans('UpdateAllOperationLabels'), $langs->trans('ConfirmUpdateAllOperationLabels'), 'confirm_setalllabels', $formquestion, '', 0);
+				}
 			}
 
 			// List of movements
@@ -1175,7 +1264,16 @@ if ($action == 'create') {
 
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("LabelOperation");
+				//print_liste_field_titre("LabelOperation");
+				print '<th>';
+				print $langs->trans('LabelOperation');
+				if ($caneditalllabels) {
+					$editalllabelsurl = $_SERVER['PHP_SELF'] .'?action=editalllabels&piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage).'&token='.urlencode(newToken());
+					print ' <a class="editfielda reposition" href="'.dol_escape_htmltag($editalllabelsurl).'">';
+					print img_edit($langs->trans('UpdateAllOperationLabels'));
+					print '</a>';
+				}
+				print '</th>';
 				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
