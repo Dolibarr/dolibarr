@@ -839,7 +839,7 @@ if ($object->id > 0) {
 		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id.'&filter=unpaid', '', '');
 		} else {
 			$boxstat .= $boxstattmp;
 		}
@@ -860,7 +860,7 @@ if ($object->id > 0) {
 			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id.'&filter=late', '', '');
 			} else {
 				$boxstat .= $boxstattmp;
 			}

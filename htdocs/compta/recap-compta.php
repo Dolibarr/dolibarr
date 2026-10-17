@@ -43,6 +43,12 @@ $langs->loadLangs(array("companies", "bills"));
 
 $action = GETPOST('action');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+$filter = GETPOST('filter', 'aZ09');
+if (!in_array($filter, array('', 'unpaid', 'late'), true)) {
+	$filter = '';
+}
+$filterlate = ($filter === 'late') ? 1 : 0;
+$filteroutstanding = ($filter === 'unpaid' || $filter === 'late') ? 1 : 0;
 
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
@@ -126,6 +132,9 @@ if ($id > 0) {
 	if ($dol_openinpopup) {
 		$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
 	}
+	if ($filter !== '') {
+		$param .= '&filter='.urlencode($filter);
+	}
 
 	if (empty($dol_openinpopup)) {
 		$head = societe_prepare_head($object);
@@ -137,7 +146,13 @@ if ($id > 0) {
 
 	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
-		print load_fiche_titre($langs->trans("CustomerPreview"));
+		$titrelist = $langs->trans("CustomerPreview");
+		if ($filter === 'unpaid') {
+			$titrelist = $langs->trans("CurrentOutstandingBill");
+		} elseif ($filter === 'late') {
+			$titrelist = $langs->trans("CurrentOutstandingBillLate");
+		}
+		print load_fiche_titre($titrelist);
 
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
@@ -184,6 +199,10 @@ if ($id > 0) {
 				$alreadypaid = $fac->getSommePaiement();
 				$alreadypaid += $fac->getSumDepositsUsed();
 				$alreadypaid += $fac->getSumCreditNotesUsed();
+
+				if ($filteroutstanding && $object->getInvoiceRemainToPayInOutstanding($fac, 'customer', $filterlate) <= 0) {
+					continue;
+				}
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;

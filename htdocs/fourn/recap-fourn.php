@@ -42,6 +42,13 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies'));
 
+$filter = GETPOST('filter', 'aZ09');
+if (!in_array($filter, array('', 'unpaid', 'late'), true)) {
+	$filter = '';
+}
+$filterlate = ($filter === 'late') ? 1 : 0;
+$filteroutstanding = ($filter === 'unpaid' || $filter === 'late') ? 1 : 0;
+
 // Security check
 $socid = GETPOSTINT("socid");
 if ($user->isExternalUser()) {
@@ -94,13 +101,21 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 
 	if ((isModEnabled("fournisseur") && $user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "lire"))) {
-		// Invoice list
-		print load_fiche_titre($langs->trans("SupplierPreview"));
+		$titrelist = $langs->trans("SupplierPreview");
+		if ($filter === 'unpaid') {
+			$titrelist = $langs->trans("CurrentOutstandingBill");
+		} elseif ($filter === 'late') {
+			$titrelist = $langs->trans("CurrentOutstandingBillLate");
+		}
+		print load_fiche_titre($titrelist);
 
 		// Add parameter for sorting
 		$param = '';
 		if ($socid > 0) {
 			$param .= '&socid=' . $socid;
+		}
+		if ($filter !== '') {
+			$param .= '&filter='.urlencode($filter);
 		}
 
 		print '<table class="noborder tagtable liste centpercent">';
@@ -141,6 +156,10 @@ if ($socid > 0) {
 					continue;
 				}
 				$totalpaid = $fac->getSommePaiement();
+
+				if ($filteroutstanding && $societe->getInvoiceRemainToPayInOutstanding($fac, 'supplier', $filterlate) <= 0) {
+					continue;
+				}
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;

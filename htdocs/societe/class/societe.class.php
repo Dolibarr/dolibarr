@@ -5427,11 +5427,57 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 * Remain to pay for one invoice if it counts in getOutstandingBills() "opened" (same rules as tiles).
+	 *
+	 * @param	Facture|FactureFournisseur	$invoice	Invoice with id set (and fetched fields)
+	 * @param	'customer'|'supplier'		$mode		'customer' or 'supplier'
+	 * @param	int<0,1>					$late		0 all outstanding, 1 only past due date
+	 * @return	float						Remain to pay in scope, 0 if invoice is out of scope
+	 */
+	public function getInvoiceRemainToPayInOutstanding($invoice, $mode = 'customer', $late = 0)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if ($invoice->paye != 0
+			|| $invoice->statut == $invoice::STATUS_DRAFT
+			|| $invoice->statut == $invoice::STATUS_ABANDONED
+			|| $invoice->statut == $invoice::STATUS_CLOSED) {
+			return 0;
+		}
+
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes = $invoice->getSumCreditNotesUsed();
+		$deposits = $invoice->getSumDepositsUsed();
+
+		$remaintopay = (float) price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+
+		if ($mode == 'supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE && $invoice->isCreditNoteUsed()) {
+				$remaintopay -= (float) $invoice->getSumFromThisCreditNotesNotUsed();
+			}
+		}
+
+		if ($remaintopay <= 0) {
+			return 0;
+		}
+
+		if (!empty($late)) {
+			$today = dol_get_first_hour(dol_now('tzuser'));
+			if (empty($invoice->date_lim_reglement) || $invoice->date_lim_reglement >= $today) {
+				return 0;
+			}
+		}
+
+		return $remaintopay;
+	}
+
+	/**
 	 *  Return amount of bill not yet paid and total of all invoices
 	 *
 	 *  @param     'customer'|'supplier'|''	$mode	'customer' or 'supplier'
 	 *  @param     int<0,1>					$late    	0 => all invoice, 1=> only late
-	 *  @return    array{opened:float,total_ht:float,total_ttc:float}|array{}	array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
+	 * @return    array{opened:float,total_ht:float,total_ttc:float}|array{}	array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
@@ -5451,7 +5497,7 @@ class Societe extends CommonObject
 		 */
 		$today = dol_get_first_hour(dol_now('tzuser')); // Returns today at 00:00 in the user's time zone
 
-		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code, date_lim_reglement FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
 			$sql .= " AND date_lim_reglement < '".$this->db->idate($today)."'";
@@ -5488,28 +5534,14 @@ class Societe extends CommonObject
 					$outstandingTotalIncTax += $obj->total_ttc;
 				}
 
-				$remaintopay = 0;
+				$tmpobject->statut = (int) $obj->status;
+				$tmpobject->paye = (int) $obj->paye;
+				$tmpobject->total_ttc = $obj->total_ttc;
+				$tmpobject->type = (int) $obj->type;
+				$tmpobject->date_lim_reglement = $obj->date_lim_reglement ? $this->db->jdate($obj->date_lim_reglement) : '';
 
-				if ($obj->paye == 0
-					&& $obj->status != $tmpobject::STATUS_DRAFT    		// Not a draft
-					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandoned
-					&& $obj->status != $tmpobject::STATUS_CLOSED) {		// Not classified as paid
-					//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandoned for undefined reason
-					$paiement = $tmpobject->getSommePaiement();
-					$creditnotes = $tmpobject->getSumCreditNotesUsed();
-					$deposits = $tmpobject->getSumDepositsUsed();
-
-					$remaintopay = ($obj->total_ttc - $paiement - $creditnotes - $deposits);
-					$outstandingOpened += $remaintopay;
-				}
-
-				//if credit note is converted but not used
-				// TODO Do this also for customer ?
-				if ($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $tmpobject->isCreditNoteUsed()) {
-					$remainingcreditnote = $tmpobject->getSumFromThisCreditNotesNotUsed();
-					$remaintopay -= $remainingcreditnote;
-					$outstandingOpened -= $remainingcreditnote;
-				}
+				$remaintopay = $this->getInvoiceRemainToPayInOutstanding($tmpobject, $mode, $late);
+				$outstandingOpened += $remaintopay;
 
 				if ($remaintopay) {
 					$arrayofrefopened[$obj->rowid] = $obj->ref;

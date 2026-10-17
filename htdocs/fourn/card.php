@@ -572,7 +572,7 @@ if ($object->id > 0) {
 
 		// Box outstanding bill
 		$text = $langs->trans("CurrentOutstandingBill");
-		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&filter=unpaid';
 		$icon = 'bill';
 		if ($link) {
 			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
@@ -589,7 +589,7 @@ if ($object->id > 0) {
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
-			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&filter=late';
 			$icon = 'bill';
 			if ($link) {
 				$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
