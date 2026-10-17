@@ -5676,7 +5676,7 @@ function migrate_apiresttokens()
 
 	if (!$error) {
 		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS tokenstring, u.rowid AS fk_user, u.entity";
-		$sql .= " FROM llx_user AS u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user AS u";
 		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
 		$result = $db->query($sql);
@@ -5691,7 +5691,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";
