@@ -389,6 +389,8 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analyzed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		// Old loose-typed vendor lib (pre PHP 7 style)
+		.'|htdocs/includes/fpdm/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
