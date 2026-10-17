@@ -395,7 +395,25 @@ class ToolApiBridge extends McpTool
 					'params' => ['sqlfilters' => "Universal filter, e.g. (t.fk_soc:=:2)", 'limit' => "Rows to return."]
 				],
 				'get' => ['description' => "Get one record by rowid, with its lines."],
-				'postLine' => $this->addLineMethod('supplier order', 'api_supplier_orders_list', 'CommandeFournisseur', ['fournisseur', 'commande', 'creer'], true)
+				'postLine' => $this->addLineMethod('supplier order', 'api_supplier_orders_list', 'CommandeFournisseur', ['fournisseur', 'commande', 'creer'], true),
+				'put' => [
+					'suffix' => 'update',
+					'description' => 'Update selected supplier order header fields after confirmation. Identify the order by id or exact ref. Omitted fields are preserved. Status, totals, supplier and lines cannot be changed.',
+					'write' => [
+						'parent' => 'id', 'ref' => 'ref', 'object' => 'CommandeFournisseur',
+						'right' => ['fournisseur', 'commande', 'creer'], 'read_right' => ['fournisseur', 'commande', 'lire'],
+						'access' => ['fournisseur', 'commande_fournisseur', 'commande'],
+						'preview' => 'AIPreviewUpdateRecord',
+						'update' => [
+							'ref_supplier' => ['type' => 'string'], 'note_private' => ['type' => 'string'], 'note_public' => ['type' => 'string'],
+							'delivery_date' => ['type' => ['integer', 'null'], 'minimum' => 0],
+							'fk_project' => ['type' => ['integer', 'null'], 'minimum' => 1], 'array_options' => ['type' => 'object']
+						],
+						'preview_labels' => ['ref_supplier' => 'RefSupplier', 'note_private' => 'NotePrivate', 'note_public' => 'NotePublic', 'delivery_date' => 'DeliveryDate', 'fk_project' => 'Project'],
+						'preview_dates' => ['delivery_date'],
+						'references' => ['fk_project' => ['projet', 'projet', '']]
+					]
+				]
 			]
 		];
 
@@ -2117,6 +2135,9 @@ class ToolApiBridge extends McpTool
 		if ($required) {
 			$schema['required'] = $required;
 		}
+		if (!empty($meta['write']['update'])) {
+			$schema = $this->updateInputSchema($meta['write']);
+		}
 
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
 		// When an explicit description is given, it has priority on auto-generated description
@@ -2269,7 +2290,7 @@ class ToolApiBridge extends McpTool
 		// preview for a write the user could never perform.
 		$write = $this->writeMetaFor($toolName);
 		if (!empty($write['right'])) {
-			return array($write['right']);
+			return empty($write['read_right']) ? array($write['right']) : array($write['right'], $write['read_right']);
 		}
 
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
@@ -2321,9 +2342,10 @@ class ToolApiBridge extends McpTool
 	 *
 	 * @param  string $class Business class declared by the write.
 	 * @param  int    $id    Rowid of the record.
+	 * @param  string $ref   Exact reference when no rowid was supplied.
 	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|null Record, or null when it cannot be read.
 	 */
-	private function fetchBusinessObject($class, $id)
+	protected function fetchBusinessObject($class, $id, $ref = '')
 	{
 		$paths = array(
 			'Facture' => '/compta/facture/class/facture.class.php',
@@ -2338,13 +2360,14 @@ class ToolApiBridge extends McpTool
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php'
 		);
-		if (empty($paths[$class]) || (int) $id <= 0) {
+		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
 		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition $obj';
-		if ($obj->fetch((int) $id) > 0) {
+		$result = $ref === '' ? $obj->fetch((int) $id) : $obj->fetch((int) $id, $ref);
+		if ($result > 0) {
 			return $obj;
 		}
 
@@ -2374,11 +2397,122 @@ class ToolApiBridge extends McpTool
 	 */
 	private function fetchWriteParent(array $write, array $args)
 	{
+		if (!empty($write['ref']) && !empty($write['object'])) {
+			return $this->fetchBusinessObject($write['object'], (int) ($args[$write['parent']] ?? 0), (string) ($args[$write['ref']] ?? ''));
+		}
 		if (empty($write['parent']) || empty($write['object']) || !is_numeric($args[$write['parent']] ?? '')) {
 			return null;
 		}
 
 		return $this->fetchBusinessObject($write['object'], (int) $args[$write['parent']]);
+	}
+
+	/**
+	 * Schema of a partial update declared by an endpoint's write metadata.
+	 *
+	 * @param array<string,mixed> $write Write metadata
+	 * @return array<string,mixed> JSON Schema
+	 */
+	private function updateInputSchema(array $write)
+	{
+		$properties = $write['update'];
+		$properties[$write['parent']] = ['type' => 'integer', 'minimum' => 1];
+		$properties[$write['ref']] = ['type' => 'string', 'minLength' => 1];
+		$properties['request_data'] = ['oneOf' => [
+			['type' => 'object', 'additionalProperties' => false, 'properties' => $write['update'], 'minProperties' => 1],
+			['type' => 'string', 'description' => 'A JSON object containing only the permitted update fields: '.implode(', ', array_keys($write['update'])).'.']
+		]];
+		$changes = [['required' => ['request_data']]];
+		foreach (array_keys($write['update']) as $field) {
+			$changes[] = ['required' => [$field]];
+		}
+		return ['type' => 'object', 'additionalProperties' => false, 'properties' => $properties,
+			'oneOf' => [['required' => [$write['parent']]], ['required' => [$write['ref']]]], 'anyOf' => $changes];
+	}
+
+	/**
+	 * Check object visibility with the same resource arguments as REST.
+	 *
+	 * @param array<int,string> $access Resource, table and subfeature
+	 * @param int $id Object ID
+	 * @return bool Whether the acting user can access the object
+	 */
+	protected function canAccessWriteObject(array $access, $id)
+	{
+		return checkUserAccessToObject($this->user, [$access[0]], $id, $access[1], $access[2] === '' ? '' : [$access[2]], 'fk_soc');
+	}
+
+	/**
+	 * Normalise and validate partial updates without creation defaults.
+	 *
+	 * @param array<string,mixed> $args Incoming arguments
+	 * @param array<string,mixed> $write Write metadata
+	 * @return array<string,mixed> Flat arguments, with a resolved parent ID
+	 * @throws InvalidArgumentException When the update cannot be applied
+	 */
+	private function normaliseUpdateArgs(array $args, array $write)
+	{
+		if (array_key_exists('request_data', $args)) {
+			$body = $args['request_data'];
+			if (is_string($body)) {
+				$decoded = json_decode($body);
+				$body = $decoded instanceof stdClass ? json_decode($body, true) : null;
+			}
+			if (!is_array($body) || !$body || array_filter(array_keys($body), 'is_int')) {
+				throw new InvalidArgumentException('request_data must be a non-empty object');
+			}
+			if (array_diff_key($body, $write['update'])) {
+				throw new InvalidArgumentException('request_data must contain only the permitted update fields');
+			}
+			unset($args['request_data']);
+			foreach ($body as $key => $value) {
+				if (array_key_exists($key, $args) && $args[$key] !== $value) {
+					throw new InvalidArgumentException('Conflicting value for '.$key);
+				}
+			}
+			$args = array_merge($body, $args);
+		}
+		$idkey = $write['parent'];
+		$refkey = $write['ref'];
+		$hasid = array_key_exists($idkey, $args);
+		$hasref = array_key_exists($refkey, $args);
+		if ($hasid === $hasref || ($hasid && (!is_int($args[$idkey]) || $args[$idkey] <= 0)) || ($hasref && (!is_string($args[$refkey]) || trim($args[$refkey]) === ''))) {
+			throw new InvalidArgumentException('Supply one positive integer id or one exact ref');
+		}
+		$changes = array_diff_key($args, array_flip([$idkey, $refkey, 'requestState']));
+		if (!$changes || array_diff_key($changes, $write['update'])) {
+			throw new InvalidArgumentException('Supply only the permitted update fields, with at least one change');
+		}
+		foreach ($changes as $field => $value) {
+			$types = (array) $write['update'][$field]['type'];
+			$valid = ($value === null && in_array('null', $types, true))
+				|| (is_string($value) && in_array('string', $types, true))
+				|| (is_int($value) && in_array('integer', $types, true) && $value >= ($write['update'][$field]['minimum'] ?? 0))
+				|| (is_array($value) && in_array('object', $types, true) && !array_filter(array_keys($value), 'is_int'));
+			if (!$valid) {
+				throw new InvalidArgumentException('Invalid value for '.$field);
+			}
+		}
+		foreach ([$write['right'], $write['read_right']] as $right) {
+			if (!$this->user || !call_user_func_array([$this->user, 'hasRight'], $right)) {
+				throw new InvalidArgumentException('Not enough permissions');
+			}
+		}
+		$parent = $this->fetchWriteParent($write, $args);
+		if (!$parent) {
+			throw new InvalidArgumentException('Record not found');
+		}
+		if (!$this->canAccessWriteObject($write['access'], (int) $parent->id)) {
+			throw new InvalidArgumentException('Access denied to record');
+		}
+		foreach (($write['references'] ?? []) as $field => $access) {
+			if (!empty($changes[$field]) && !$this->canAccessWriteObject($access, (int) $changes[$field])) {
+				throw new InvalidArgumentException('Access denied to '.$field);
+			}
+		}
+		unset($args[$refkey]);
+		$args[$idkey] = (int) $parent->id;
+		return $args;
 	}
 
 	/**
@@ -2439,6 +2573,9 @@ class ToolApiBridge extends McpTool
 	private function normaliseWriteArgs(array $args, array $write = array())
 	{
 		$this->unresolvedProducts = array();
+		if (!empty($write['update'])) {
+			return $this->normaliseUpdateArgs($args, $write);
+		}
 
 		if (isset($args['request_data'])) {
 			$body = $args['request_data'];
@@ -2791,6 +2928,37 @@ class ToolApiBridge extends McpTool
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
 		}
+		if (!empty($write['update'])) {
+			try {
+				$args = $this->normaliseWriteArgs($args, $write);
+			} catch (InvalidArgumentException $e) {
+				return $e->getMessage();
+			}
+			$parent = $this->fetchWriteParent($write, $args);
+			if (!$parent) {
+				return 'Record not found';
+			}
+			$supplier = $this->fetchBusinessObject('Societe', (int) $parent->socid);
+			$langs->load('sendings');
+			$changes = [];
+			foreach ($write['update'] as $field => $definition) {
+				if (array_key_exists($field, $args)) {
+					$old = $parent->$field ?? null;
+					$label = isset($write['preview_labels'][$field]) ? $langs->trans($write['preview_labels'][$field]) : $field;
+					if (is_array($args[$field])) {
+						foreach ($args[$field] as $key => $value) {
+							$changes[] = $label.'.'.$key.': '.json_encode($old[$key] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).' → '.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						}
+					} else {
+						$isdate = in_array($field, $write['preview_dates'] ?? [], true);
+						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, 'standard', 'gmt').' UTC' : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], 'standard', 'gmt').' UTC' : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$changes[] = $label.': '.$oldvalue.' → '.$newvalue;
+					}
+				}
+			}
+			return $langs->trans($write['preview'], $parent->ref, $supplier ? $supplier->name : '', implode('; ', $changes));
+		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
 
@@ -2883,7 +3051,14 @@ class ToolApiBridge extends McpTool
 			return '';
 		}
 
-		$args = $this->normaliseWriteArgs($args, $write);
+		try {
+			$args = $this->normaliseWriteArgs($args, $write);
+		} catch (InvalidArgumentException $e) {
+			return $e->getMessage();
+		}
+		if (!empty($write['update'])) {
+			return '';
+		}
 
 		if (!empty($write['thirdparty'])) {
 			$field = (string) $write['thirdparty'];
@@ -3174,7 +3349,11 @@ class ToolApiBridge extends McpTool
 		// preview described.
 		$writemeta = $this->writeMetaFor($name);
 		if ($writemeta) {
-			$args = $this->normaliseWriteArgs($args, $writemeta);
+			try {
+				$args = $this->normaliseWriteArgs($args, $writemeta);
+			} catch (InvalidArgumentException $e) {
+				return ['error' => $e->getMessage()];
+			}
 		}
 
 		$this->getDefinitions();	// ensure routes are built
@@ -3226,6 +3405,10 @@ class ToolApiBridge extends McpTool
 			// advertises the fields flat, because that is what a model fills
 			// in, so the body is rebuilt here from everything it sent.
 			if ($pname === 'request_data') {
+				if (!empty($writemeta['update'])) {
+					$callArgs[] = array_intersect_key($args, $writemeta['update']);
+					continue;
+				}
 				$body = $args;
 				unset($body['requestState']);
 				// Only the fields the tool advertised may be written: the human
