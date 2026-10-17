@@ -3,6 +3,7 @@
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,8 +474,8 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 }
 if ($action == 'seteditinline') {	// Test on permission not required here
 	if (!getDolGlobalString('WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT')) {
-		// Show warning for feature not yet ready
-		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
+		// Saving of sections edited with CKEditor is not yet ready, only the elements with only text inside are saved
+		setEventMessages($langs->trans("EditInLineOnlyTextAreas"), null, 'warnings');
 	}
 
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
@@ -3785,6 +3786,10 @@ if (!GETPOST('hide_websitemenu')) {
 
 									jQuery(\'section[contenteditable="true"],div[contenteditable="true"],header[contenteditable="true"],main[contenteditable="true"],footer[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
+										if ($(this).children().not("br").length == 0) {
+											// Element with only text inside, it is edited as plain text (see code for text areas below)
+											return;
+										}
 										console.log("Enable inline edit for "+idtouse);
 										if (idtouse !== undefined) {
 											var inlineditor = CKEDITOR.inline(idtouse, {
@@ -3919,6 +3924,90 @@ if (!GETPOST('hide_websitemenu')) {
 				print $langs->trans("EditInLine");
 				print '</span>';
 
+				// Enable edit of the elements with contenteditable="true", an id and only text inside (no html tags except <br>).
+				// They are edited as plain text, so this works without CKEditor and the saved content can not break the html
+				// or php code of the page.
+				if (getDolGlobalString('WEBSITE_EDITINLINE') && empty($filetplversion) && $usercanedit) {
+					print '<!-- Code to enable edit inline of elements with contenteditable="true" and only text inside -->'."\n";
+					print '<style>
+						.bodywebsite .dol-edit-text { outline: 1px dashed #888; outline-offset: 2px; cursor: text; }
+						.bodywebsite .dol-edit-text:focus { outline: 2px solid #4a90d9; }
+					</style>'."\n";
+					print '<script>
+						$(document).ready(function() {
+							$("#websitecontentundertopmenu [contenteditable=\"true\"]").each(function() {
+								if ($(this).children().not("br").length > 0) {
+									if (!$(this).is("section,div,header,main,footer")) {
+										console.warn("Element "+this.id+" with contenteditable=\"true\" contains html tags, so it can not be edited inline");
+										this.contentEditable = "false";
+									}
+									return;	// Element with html inside, it is managed by the CKEditor code
+								}
+								var idtouse = $(this).attr("id");
+								if (idtouse === undefined || idtouse === "") {
+									console.warn("An element with contenteditable=\"true\" and only text inside has no id attribute, so it can not be edited inline");
+									this.contentEditable = "false";
+									return;
+								}
+								if ($(this).parent().closest("[contenteditable=\"true\"]").length > 0) {
+									console.warn("Element "+idtouse+" is inside another element with contenteditable=\"true\", so it can not be edited inline");
+									return;
+								}
+								// Replace the content with the text as it is rendered, because the line feeds and spaces of the
+								// source are no more collapsed once the element is editable as plain text
+								this.innerText = this.innerText;
+								try {
+									this.contentEditable = "plaintext-only";
+								} catch (e) {
+									// Browser without support of plaintext-only: keep "true", paste is converted into text below
+								}
+								$(this).addClass("dol-edit-text").data("dolEditText", this.innerText);
+							});
+
+							$("#websitecontentundertopmenu").on("paste", ".dol-edit-text", function(e) {
+								e.preventDefault();
+								document.execCommand("insertText", false, e.originalEvent.clipboardData.getData("text/plain"));
+							});
+
+							$("#websitecontentundertopmenu").on("keydown", ".dol-edit-text", function(e) {
+								if (e.key === "Escape") {	// Cancel the changes
+									this.innerText = $(this).data("dolEditText");
+									this.blur();
+								}
+							});
+
+							$("#websitecontentundertopmenu").on("blur", ".dol-edit-text", function() {
+								var element = this;
+								var text = element.innerText;
+								if (text === $(element).data("dolEditText")) {
+									return;
+								}
+								console.log("Element "+element.id+" was modified, we send new content for update with ajax");
+								$.ajax({
+									type: "POST",
+									url: \''.dol_escape_js(DOL_URL_ROOT.'/core/ajax/editinline.php').'\',
+									dataType: "json",
+									data: {
+										action: "updateElementText",
+										page_id: '.((int) $websitepage->id).',
+										element_id: element.id,
+										text: text,
+										token: \''.dol_escape_js(newToken()).'\'
+									}
+								}).done(function(response) {
+									$(element).data("dolEditText", response.text);
+									if (response.text !== text && document.activeElement !== element) {
+										element.innerText = response.text;
+									}
+									$.jnotify(response.message, "ok");
+								}).fail(function(xhr) {
+									$.jnotify((xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : \''.dol_escape_js($langs->trans("Error")).' \'+xhr.status, "error", true);
+								});
+							});
+						});
+					</script>'."\n";
+				}
+
 				//$disableeditinline = $websitepage->grabbed_from;
 				$disableeditinline = 0;
 				if ($disableeditinline) {
@@ -4039,6 +4128,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource4", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource5", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
 			$htmltext .= '</small>';
@@ -5146,6 +5236,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource4", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource5", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 	$htmltext .= '<br>';
 	$htmltext .= '</small>';
@@ -6070,7 +6161,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// editing the current page from an old version.
 		if (!getDolGlobalString('WEBSITE_EDITINLINE') || !empty($filetplversion)) {
 			// Remove the contenteditable="true"
-			$newcontent = preg_replace('/(div|section|header|main|footer)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
+			$newcontent = preg_replace('/(<[a-z][a-z0-9]*\s[^>]*)contenteditable="true"/i', '\1', $newcontent);
 		} else {
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
