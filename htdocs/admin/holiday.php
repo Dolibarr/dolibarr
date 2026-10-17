@@ -67,7 +67,18 @@ $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask') {
+if ($action == 'set_balance_update_mode') {
+	$balanceUpdateMode = GETPOST('balance_update_mode', 'alphanohtml', 2);
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !in_array($balanceUpdateMode, array('0', '1', '2'), true)) {
+		accessforbidden();
+	}
+	if (dolibarr_set_const($db, 'HOLIDAY_BALANCE_UPDATE_BY_CRON', $balanceUpdateMode, 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header('Location: '.$_SERVER['PHP_SELF']);
+		exit;
+	}
+	setEventMessages($langs->trans('SetupNotSaved'), null, 'errors');
+} elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstholiday', 'aZ09');
 	$maskvalue = GETPOST('maskholiday', 'alpha');
 	$res = 0;
@@ -237,6 +248,54 @@ print img_picto('', 'url', 'class="pictofixedwidth"').' <a href="'.DOL_URL_ROOT.
 print '</div>';
 
 print '<br><br>';
+
+
+/*
+ * Monthly leave balance updates
+ */
+
+print load_fiche_titre($langs->trans('HolidayBalanceUpdateMode'), '', '');
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_balance_update_mode">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+// Select when automatic monthly leave balance updates run.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('HolidayBalanceUpdateMode');
+print '<br><span class="opacitymedium">'.$langs->trans('HolidayBalanceUpdateModeHelp').'</span>';
+if (in_array(getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON'), array(Holiday::BALANCE_UPDATE_BY_CRON, Holiday::BALANCE_UPDATE_ON_ACCESS_OR_CRON), true)) {
+	if (!isModEnabled('cron')) {
+		$langs->load('cron');
+		print '<br><span class="warning">'.$langs->trans('WarningModuleNotActive', $langs->trans('Module2300Name')).'</span>';
+	} else {
+		// Check the task in this entity, not a shared task belonging to another entity.
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."cronjob";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND jobtype = 'method' AND objectname = 'Holiday' AND methodename = 'updateBalance' AND status = 1";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			setEventMessages($db->lasterror(), null, 'errors');
+		} elseif ($db->num_rows($resql) == 0) {
+			print '<br><span class="warning">'.$langs->trans('HolidayBalanceUpdateCronUnavailable').'</span>';
+		}
+		if ($resql) {
+			$db->free($resql);
+		}
+	}
+}
+print '</td><td class="center">';
+$balanceUpdateModes = array(
+	Holiday::BALANCE_UPDATE_ON_ACCESS => $langs->trans('HolidayBalanceUpdateOnAccess'),
+	Holiday::BALANCE_UPDATE_ON_ACCESS_OR_CRON => $langs->trans('HolidayBalanceUpdateOnAccessOrCron'),
+	Holiday::BALANCE_UPDATE_BY_CRON => $langs->trans('HolidayBalanceUpdateCronOnly'),
+);
+print Form::selectarray('balance_update_mode', $balanceUpdateModes, getDolGlobalInt('HOLIDAY_BALANCE_UPDATE_BY_CRON'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
+print '</td></tr>';
+
+print '</table></div>';
+print $form->buttonsSaveCancel('Save', '');
+print '</form><br>';
 
 
 /*
