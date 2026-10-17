@@ -532,6 +532,74 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * testStandaloneShipmentRestoresStockOnReopen
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentRestoresStockOnReopen()
+	{
+		global $user;
+
+		$this->configureStandaloneShipmentStock(false, true);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(4, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(6, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		$result = $shipment->reOpen();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(10, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		// Closing again must remove the stock only once
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(6, $this->getWarehouseRealStock($productId, $warehouseId));
+	}
+
+	/**
+	 * testStandaloneShipmentDeliveryReceiptHasLines
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentDeliveryReceiptHasLines()
+	{
+		global $conf, $db, $user;
+
+		require_once dirname(__FILE__).'/../../htdocs/delivery/class/delivery.class.php';
+
+		$this->configureStandaloneShipmentStock(false, false);
+		$conf->global->MAIN_SUBMODULE_DELIVERY = 1;
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->addlinefree(2, 'shipping', $productId, 0, 1, 'Standalone product', 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		$deliveryId = $shipment->create_delivery($user);
+		$this->assertGreaterThan(0, $deliveryId, $shipment->errorsToString());
+
+		$delivery = new Delivery($db);
+		$result = $delivery->fetch($deliveryId);
+		$this->assertGreaterThan(0, $result, $delivery->errorsToString());
+		$this->assertCount(1, $delivery->lines);
+		$this->assertEquals($productId, $delivery->lines[0]->fk_product);
+		$this->assertEquals(2, $delivery->lines[0]->qty_shipped);
+	}
+
+	/**
 	 * testStandaloneShipmentAcceptsMissingWarehouse
 	 *
 	 * @return	void

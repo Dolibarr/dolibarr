@@ -157,20 +157,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
-			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-			$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
-			$texte .= '</textarea>';
-			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
-			$texte .= '<br></div></div>';
-		} else {
-			$texte .= '<br>';
-			$texte .= '<input type="hidden" name="value1" value="ASSET_ASSET_ADDON_PDF_ODT_PATH">';
-		}
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH')) {
@@ -178,7 +164,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -192,8 +178,27 @@ class doc_generic_asset_odt extends ModelePDFAsset
 			$texte .= '</div>';
 		}
 
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+			$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="ASSET_ASSET_ADDON_PDF_ODT_PATH">';
+		}
+		$texte .= '</div>';
+
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {

@@ -585,7 +585,7 @@ select.vmenusearchselectcombo {
 textarea:focus:not(.ia-input, .cke_source) {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom):not(.value-input):not(#dateone),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
  .select2-container--focus span.selection span.select2-selection:not(.noborderfocus):not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
@@ -924,7 +924,7 @@ select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
-select.flat, form.flat select, .divadvancedsearchfieldcompinput {
+select.flat, form.flat select {
 	height: 2em;
 }
 input.pageplusone {
@@ -1049,6 +1049,10 @@ select.placeholder { color: #ccc; }
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+#search_component_params_input::placeholder {
+	color: var(--colortext);
+	opacity: 0.5;
+}
 select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
 	color: var(--colortext);
 }
@@ -1727,6 +1731,15 @@ div.divsearchfield {
 	background: #fff;
 	border: solid 1px var(--inputbordercolor);
 	border-radius: 5px;
+	line-height: 36px;
+	/* height: 36px; Must use line-height or there is trouble when component is on several lines */
+}
+/* Show the focus on the whole zone of filters, measures, X axis and group by */
+.divadvancedsearchfieldusf .divadvancedsearchfieldcompinput:focus-within, .customreportsmeasures:focus-within, .customreportscombo:focus-within {
+	border-color: #666;
+}
+.customreportsmeasures-control:focus {
+	outline: none;	/* The focus is shown on the whole zone of measures */
 }
 
 .search_component_params {
@@ -1739,7 +1752,15 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	line-height: 24px;
+	line-height: 25px;
+}
+.customreportsmeasures-control.search_component_params {
+	padding-<?php echo $right; ?>: 20px;
+}
+input#search_component_params_input {
+	padding-left: 8px;
+	margin-right: 1px;
+	margin-left: 1px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1757,6 +1778,8 @@ div.divsearchfield {
 	background: #ddd;
 	border-radius: 4px;
 	display: inline-block;
+	height: 26px !important;
+	margin-right: 4px !important;
 }
 .tagsearchdelete {
 	color: #999;
@@ -1776,6 +1799,92 @@ div.divsearchfield {
 	margin-left: -12px;
 	margin-top: 0;
 	position: absolute;
+}
+
+/* Component to select measures of custom reports */
+.customreportsmeasures {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	text-align: start;
+}
+.customreportsmeasures .hidden {
+	display: none !important;
+}
+span.customreportsmeasures-placeholder {
+	padding-left: 8px;
+	opacity: 0.5;
+}
+
+.customreportsmeasures-caret {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0.5;
+}
+.customreportsmeasures-tags {
+	display: contents;
+}
+.customreportsmeasures-dropdown {
+	position: absolute;
+	z-index: 1000;
+	left: 0;
+	min-width: max(100%, 340px);
+	width: max-content;
+	max-width: 500px;
+	background-color: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
+	padding: 0;
+	line-height: 1.4;
+}
+.customreportsmeasures-list, .customreportsmeasures-variants {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.customreportsmeasures-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px;
+}
+.customreportsmeasures-variants {
+	padding-left: 26px;
+}
+.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.customreportsmeasures-fieldlabel {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-variants .customreportsmeasures-item {
+	padding: 4px 15px 4px 8px;
+}
+.customreportsmeasures-fieldlabel:focus, .customreportsmeasures-variants .customreportsmeasures-item:focus {
+	outline: none;	/* The focused row is shown with the background, like a hovered row */
+}
+.customreportsmeasures-fieldlabel:hover, .customreportsmeasures-variants .customreportsmeasures-item:hover,
+.customreportsmeasures-fieldlabel:focus, .customreportsmeasures-variants .customreportsmeasures-item:focus {
+	background-color: var(--colorbacklinepairhover);
+}
+.customreportsmeasures-expand, .customreportsmeasures-check {
+	width: 14px;
+	margin-left: auto;
+	padding-left: 8px;
+	text-align: center;
+}
+.customreportsmeasures-check {
+	visibility: hidden;
+}
+.customreportsmeasures-selected > .customreportsmeasures-check {
+	visibility: visible;
+}
+.customreportsmeasures-count {
+	margin-left: 6px;
 }
 
 <?php
@@ -5653,12 +5762,9 @@ img.boxhandle, img.boxclose {
 	display: none;
 	position: absolute;
 	background: var(--colorbackbody);
-	border-width: 1px 1px 2px;
-	border-style: solid;
-	border-color: rgb(204, 204, 204);
-	border-image: none; padding: 9px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
-	border-radius: 2px;
+	border: none;
+	padding: 9px;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
@@ -5679,17 +5785,26 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	font-size: 12px;
 	color: #333;
-	margin: 5px 0px 5px 0px
+	margin: 20px 0px 30px 0px;
 }
 .search-component-assistance .assistance-errors {
-	margin-bottom: 0px;
 	text-align: center;
+}
+.customreportsrefresh {
+	font-family: inherit;	/* A button does not inherit the font of the page, so we force it to look like the a.butAction */
+	font-size: inherit;
+}
+.customreportsrefresh:focus-visible {
+	outline: auto 1px #101010;	/* Same focus than the a.butAction (the theme removes the outline of buttons) */
+	outline-offset: 1px;
 }
 .add-filter-btn {
 	margin: 0 !important;
+	font-family: inherit;	/* A button does not inherit the font of the page, so we force it to look like the a.butAction */
+	font-size: inherit;
 }
-/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
-.fieldcombo {
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field (also used by the X axis and group by combos of custom reports) */
+.fieldcombo, .customreportscombo {
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
@@ -5705,39 +5820,103 @@ img.boxhandle, img.boxclose {
 	border-radius: 3px;
 	text-align: left;
 	cursor: pointer;
-	height: 28px;
+	font-family: inherit;	/* A button does not inherit the font of the page */
+	font-size: inherit;
+	height: 36px;
 }
-.fieldcombo-label {
+/* Same focus than the zones of the page (the theme removes the outline of buttons) */
+.fieldcombo-toggle:focus {
+	border-color: #666;
+}
+.fieldcombo-label, .customreportscombo-label {
 	flex: 1 1 auto;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.fieldcombo-panel {
+/* The toggle of combos of custom reports uses the classes 'search_component_params' and 'noborderbottom' to look like the measures component */
+.customreportscombo-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 250px;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-<?php echo $right; ?>: 6px;
+	border: none;
+	text-align: start;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: 36px;	/* Same height than the line of 'divadvancedsearchfieldcompinput' */
+	color: inherit;
+}
+.customreportscombo-toggle.search_component_params {
+	flex-wrap: nowrap;	/* The caret must stay on the right of the label, the label is truncated if too long */
+}
+.customreportscombo-toggle .customreportscombo-label {
+	padding-<?php echo $left; ?>: 8px;
+	min-width: 0;	/* Allow the label to shrink so the ellipsis can be used */
+}
+.customreportscombo-caret, .customreportscombo-clear {
+	flex-shrink: 0;
+}
+.customreportscombo-caret {
+	opacity: 0.5;
+}
+.customreportscombo-panel {
+	line-height: 1.4;	/* Do not inherit the line-height of 'divadvancedsearchfieldcompinput' */
+}
+.customreportscombo-clear {
+	opacity: 0.5;
+}
+.customreportscombo-clear:hover {
+	opacity: 1;
+}
+/* The select2 of the object type of custom reports looks like the toggle of the group by combo */
+.select2-container .select2-selection--single.customreportsobjecttype,
+.select2-container--focus span.select2-selection.select2-selection--single.customreportsobjecttype {
+	height: 36px;
+	border: none !important;
+	border-radius: 3px !important;
+	background: #fff;
+}
+.select2-container .select2-selection--single.customreportsobjecttype .select2-selection__rendered {
+	line-height: 36px;
+	padding-<?php echo $left; ?>: 8px;
+}
+.select2-container .select2-selection--single.customreportsobjecttype .select2-selection__arrow {
+	height: 34px;
+	opacity: 0.5;
+}
+.select2-container--focus span.select2-selection--single.customreportsobjecttype, .select2-container--open span.select2-selection--single.customreportsobjecttype {
+	box-shadow: inset 0 0 0 1px #666 !important;	/* Override the box-shadow: none !important of the select2 of the theme */
+}
+.fieldcombo-panel, .customreportscombo-panel {
 	position: absolute;
 	top: 100%;
 	left: 0;
 	width: 450px;
 	margin-top: 2px;
-	background: var(--colorbackbody);
-	border: 1px solid var(--inputbordercolor);
-	border-radius: 3px;
-	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	background: var(--inputbackgroundcolor);
+	border: none;
+	box-shadow: 1px 1px 10px #aaa;
 	z-index: 1001;
 }
-.fieldcombo-search {
+.fieldcombo-search, .customreportscombo-search, .customreportsmeasures-search {
 	width: 95%;
 	margin: 0;
 	padding: 4px 8px;
 	border: 0;
 	border-bottom: 1px solid var(--inputbordercolor);
 }
-.fieldcombo-list {
+.fieldcombo-list, .customreportscombo-list {
 	max-height: 300px;
 	overflow-y: auto;
 	padding-bottom: 10px
 }
-.fieldcombo-elementheader {
+.fieldcombo-elementheader, .customreportscombo-elementheader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -5745,32 +5924,88 @@ img.boxhandle, img.boxclose {
 	cursor: pointer;
 	font-weight: bold;
 }
-.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+/* The background of a hovered row is drawn by a pseudo element that goes to the left border of the list, so it covers the
+   full line even if the row is indented (the overflow of the list clips the part on the left) */
+.fieldcombo-elementheader, .customreportscombo-elementheader, .fieldcombo-field, .customreportscombo-field {
+	position: relative;
+	z-index: 0;
+}
+.fieldcombo-elementheader:focus, .customreportscombo-elementheader:focus, .fieldcombo-field:focus, .customreportscombo-field:focus {
+	outline: none;	/* The focused row is shown with the background, like a hovered row */
+}
+.fieldcombo-elementheader:hover::before, .customreportscombo-elementheader:hover::before, .fieldcombo-elementheader:focus::before, .customreportscombo-elementheader:focus::before,
+.fieldcombo-field:hover::before, .customreportscombo-field:hover::before, .fieldcombo-field:focus::before, .customreportscombo-field:focus::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -1000px;
+	right: 0;
+	z-index: -1;
 	background: var(--colorbacklinepairhover);
 }
-.fieldcombo-elementcaret {
+.fieldcombo-elementcaret, .customreportscombo-elementcaret {
 	flex: 0 0 auto;
 }
-.fieldcombo-element.open .fieldcombo-elementcaret {
+.fieldcombo-element.open .fieldcombo-elementcaret, .customreportscombo-element.open > .customreportscombo-elementheader .customreportscombo-elementcaret {
 	transform: rotate(90deg);
 }
-.fieldcombo-children {
+.fieldcombo-children, .customreportscombo-children {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-fields {
+.fieldcombo-fields, .customreportscombo-fields {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
 	padding-left: 26px;
 }
-.fieldcombo-field {
+.fieldcombo-field, .customreportscombo-field {
 	padding: 4px 8px;
 	cursor: pointer;
 }
-.fieldcombo-field:hover, .fieldcombo-field:focus {
-	background: var(--colorbacklinepairhover);
-}
-.fieldcombo-field.selected {
+.fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
+}
+/* The operator and value (text, date or select) of the filter editor have the same height and border than the combo of fields (.fieldcombo-toggle) */
+.search-component-assistance .operator .select2-container--default .select2-selection--single,
+.search-component-assistance .value .select2-container--default .select2-selection--single,
+.search-component-assistance .value input.value-input,
+.search-component-assistance .value .date-one input[type="text"] {
+	box-sizing: border-box;
+	height: 36px;
+	border: 1px solid var(--inputbordercolor);
+	border-color: var(--inputbordercolor) !important;	/* The filter editor is into a .liste_titre that forces another border color on input and select2 */
+	border-radius: 3px;
+}
+/* Darker border for the focused operator or value, like the combo of fields. The selectors of select2 must be more specific than
+   the generic focus rule of the theme, and the inputs .value-input and #dateone are excluded from the generic input:focus rule. */
+.search-component-assistance .operator .select2-container--focus span.selection span.select2-selection.select2-selection--single,
+.search-component-assistance .operator .select2-container--open span.selection span.select2-selection.select2-selection--single,
+.search-component-assistance .value .select2-container--focus span.selection span.select2-selection.select2-selection--single,
+.search-component-assistance .value .select2-container--open span.selection span.select2-selection.select2-selection--single,
+.search-component-assistance .value input.value-input:focus,
+.search-component-assistance .value .date-one input[type="text"]:focus {
+	border-color: #666 !important;
+}
+.search-component-assistance .value input.value-input,
+.search-component-assistance .value .date-one input[type="text"] {
+	padding: 0 8px;
+}
+.search-component-assistance .operator .select2-container--default .select2-selection--single .select2-selection__rendered,
+.search-component-assistance .value .select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 34px;
+}
+.search-component-assistance .operator .select2-container--default .select2-selection--single .select2-selection__arrow,
+.search-component-assistance .value .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 34px;
+}
+.operator-selector-dropdown .select2-results__option {
+	padding: 4px 8px;	/* Same height than the lines of the combo of fields of the filter editor */
+}
+.operator-selector-dropdown .select2-results__option[aria-disabled=true] {
+	/* Separators of the list of operators (the only disabled options) */
+	padding: 2px 8px;
+	line-height: 12px;
+	opacity: 0.4;
 }
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: inline-block;
@@ -5786,6 +6021,34 @@ img.boxhandle, img.boxclose {
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
 		margin: 0px
+	}
+}
+/* On smartphones, the dropdown of measures, X axis and group by of custom reports must not be wider than the screen */
+@media only screen and (max-width: 570px) {
+	.customreportsmeasures-dropdown {
+		min-width: 0;
+		width: 260px;
+		max-width: 260px;
+	}
+	.customreportsmeasures-fieldlabel, .customreportsmeasures-variants .customreportsmeasures-item {
+		white-space: normal;	/* Long labels are wrapped instead of adding a horizontal scrollbar */
+	}
+	.fieldcombo-panel, .customreportscombo-panel {
+		width: 260px;
+		max-width: 260px;
+	}
+	/* The zone of measures has the same width than the X axis and group by combos (the class minwidth300 is disabled on small screens) */
+	.customreportsmeasures {
+		min-width: 250px;
+	}
+	.customreportsmeasures-control {
+		min-width: 100%;
+		box-sizing: border-box;
+	}
+	/* The input of filters must not be wider than its zone, otherwise it goes on a new line under an empty line */
+	.divadvancedsearchfieldusf .search_component_input {
+		max-width: calc(100% - 8px);	/* Keep room for the space after the zone of criteria */
+		box-sizing: border-box;
 	}
 }
 
@@ -8164,7 +8427,7 @@ dl.dropdown {
 	position:absolute;
 	top:2px;
 	list-style:none;
-	max-height: 264px;
+	max-height: 267px;
 	overflow: auto;
 	z-index: 1;
 }
