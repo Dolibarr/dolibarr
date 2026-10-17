@@ -449,14 +449,14 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'eventorganization';
+	$modulepart = 'conferenceorbooth@eventorganization';
 	$param = '&id='.$object->id;
 	//$param = '';
 	if ($withproject) {
 		$param .= '&withproject=1';
 	}
 	//$relativepathwithnofile='conferenceorbooth/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile = 'conferenceorbooth/'.dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

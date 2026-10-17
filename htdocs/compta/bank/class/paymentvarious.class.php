@@ -141,6 +141,11 @@ class PaymentVarious extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int|string	Third party ID
+	 */
+	public $socid;
+
+	/**
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
@@ -607,12 +612,14 @@ class PaymentVarious extends CommonObject
 					}
 				}
 
-				// Call trigger
-				$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
-				if ($result < 0) {
-					$error++;
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
-				// End call triggers
 			} else {
 				$error++;
 			}
@@ -664,7 +671,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

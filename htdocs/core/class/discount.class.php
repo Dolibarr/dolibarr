@@ -387,7 +387,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
 		$sql .= " ".($this->total_localtax1 ? price2num($this->total_localtax1) : 0).", ".($this->total_localtax2 ? price2num($this->total_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
-		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
+		$sql .= " ".($this->localtax1_tx ? price2num($this->localtax1_tx) : 0).", ".($this->localtax1_type ? price2num($this->localtax1_type) : 0).", ";
 		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
 		$sql .= " ".price2num($this->multicurrency_amount_ttc).", ";
@@ -401,6 +401,14 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id($this->db->prefix()."societe_remise_except");
+
+			// Call trigger
+			$result = $this->call_trigger('DISCOUNTABSOLUTE_CREATE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+
 			return $this->id;
 		} else {
 			$this->error = $this->db->lasterror().' - sql='.$sql;
@@ -412,10 +420,11 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
 	 *
-	 *  @param	User	$user		Object of user asking to delete
-	 *  @return	int<-2,1>			Return integer <0 if KO, >0 if OK
+	 *  @param	User	$user				Object of user asking to delete
+	 *  @param	bool	$noresetinvoice		true = skip the UPDATE that resets the source deposit/credit-note invoice status to unpaid
+	 *  @return	int<-2,1>	    			Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $noresetinvoice = false)
 	{
 		// Check if we can remove the discount
 		if ($this->fk_facture_source) {
@@ -485,7 +494,7 @@ class DiscountAbsolute extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			// If source of discount was a credit note or deposit, we change source statut.
-			if ($this->fk_facture_source) {
+			if (!$noresetinvoice && $this->fk_facture_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
@@ -500,7 +509,7 @@ class DiscountAbsolute extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-			} elseif ($this->fk_invoice_supplier_source) {
+			} elseif (!$noresetinvoice && $this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
@@ -965,9 +974,14 @@ class DiscountAbsolute extends CommonObject
 			$ttc = (float) $this->total_ttc;
 
 			// Calculate lt1 and/or lt2 = taxes added after VAT
-			$lt1 = 0; $lt2 = 0;
-			$tx_before_vat = 0; $tx_before_vat_without1 = 0; $tx_before_vat_without2 = 0;
-			$tx_after_vat = 0; $tx_after_vat_without1 = 0; $tx_after_vat_without2 = 0;
+			$lt1 = 0;
+			$lt2 = 0;
+			$tx_before_vat = 0;
+			$tx_before_vat_without1 = 0;
+			$tx_before_vat_without2 = 0;
+			$tx_after_vat = 0;
+			$tx_after_vat_without1 = 0;
+			$tx_after_vat_without2 = 0;
 			if ($localtax1_type2 && $localtax1_tx_pct > 0) {
 				$tx_after_vat += $localtax1_tx_pct;
 				$tx_after_vat_without2 += $localtax1_tx_pct;
@@ -1005,9 +1019,9 @@ class DiscountAbsolute extends CommonObject
 			}
 
 			// lt1 and lt2 are now local taxes (whatever they are calculated before of after vat)
-			//var_dump("lt1 or lt2 wheteer is calculation mode: lt1=$lt1 lt2=$lt2");
+			//var_dump("lt1 or lt2 whatever is calculation mode: lt1=$lt1 lt2=$lt2");
 
-			$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
+			$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / (1 + $tva_tx_pct);
 			$this->total_tva = (float) price2num($tva, 'MT');
 			$this->total_localtax1 = $lt1;
 			$this->total_localtax2 = $lt2;

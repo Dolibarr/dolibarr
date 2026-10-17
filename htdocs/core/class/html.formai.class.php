@@ -143,7 +143,7 @@ class FormAI extends Form
 			$out .= '</div>';
 		}
 
-		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephrase'))) {
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephraser'))) {
 			$stylearray = getListForAIRephraseStyle();
 			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
@@ -396,7 +396,6 @@ class FormAI extends Form
 					}
 				});
 			} else {
-
 				// set editor in readonly
 				if (CKEDITOR.instances[htmlname]) {
 					CKEDITOR.instances[htmlname].setReadOnly(1);

@@ -135,7 +135,11 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	} else {
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
+		$paramscancel = array('urlfile' => $urlfile, 'section' => $section);
+		if ($module) {
+			$paramscancel['module'] = $module;
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], $paramscancel));
 		exit;
 	}
 }
@@ -168,7 +172,13 @@ if ($action == 'update' && $permissiontoadd) {
 	// Now we update index of file
 	$db->begin();
 	//print $oldfile.' - '.$newfile;
-	if ($newlabel != $oldlabel) {
+	if ($newlabel != $oldlabel && dol_is_file($newfileformove)) {
+		// Do not overwrite another file of the directory
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorDestinationAlreadyExists', $newlabel), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newlabel != $oldlabel) {
 		$result = dol_move($oldfile, $newfileformove); // This include update of database
 		if (!$result) {
 			$langs->load('errors');
@@ -186,8 +196,11 @@ if ($action == 'update' && $permissiontoadd) {
 
 	if (!$error) {
 		if ($shareenabled) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$object->share = getRandomPassword(true);
+			// Keep the current key: a new one would break the links already sent
+			if (empty($object->share)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$object->share = getRandomPassword(true);
+			}
 		} else {
 			$object->share = '';
 		}
@@ -236,7 +249,7 @@ if ($action == 'update' && $permissiontoadd) {
 			$urlfile .= '.noexe';
 		}
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], array('urlfile' => $urlfile, 'section' => $section)));
 		exit;
 	} else {
 		$db->rollback();
@@ -343,11 +356,12 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
 print '</td><td>';
 $modulepart = 'ecm';
-$rellink = '/document.php?modulepart=' . $modulepart . '&attachment=1';
+$paramsrellink = array('modulepart' => $modulepart, 'attachment' => 1);
 if (!empty($object->entity)) {
-	$rellink .= '&entity='.$object->entity;
+	$paramsrellink['entity'] = $object->entity;
 }
-$rellink .= '&file='.urlencode($filepath);
+$paramsrellink['file'] = $filepath;
+$rellink = dolBuildUrl('/document.php', $paramsrellink);
 $fulllink = $urlwithroot.$rellink;
 print img_picto('', 'globe').' ';
 if ($action != 'edit') {
@@ -413,7 +427,7 @@ if ($action == 'edit') {
 
 // Confirm deletion of a file
 if ($action == 'deletefile') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
 if ($action != 'edit') {
@@ -421,7 +435,7 @@ if ($action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('ecm', 'setup')) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'section' => $section, 'urlfile' => $urlfile)).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	print '</div>';

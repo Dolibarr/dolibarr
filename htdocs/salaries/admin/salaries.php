@@ -26,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-// Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +33,11 @@ if (isModEnabled('accounting')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'salaries'));
@@ -147,6 +144,8 @@ print "</table>\n";
 print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form><br>';
+
+print '<br>';
 
 echo '<div>';
 echo '<table class="noborder centpercent">';

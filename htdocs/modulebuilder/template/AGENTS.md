@@ -1,8 +1,8 @@
-AGENTS.md# AGENTS.md (English Version)
+# AGENTS.md (English Version)
 
 ## Objective
 
-This project contains the sources of external modules designed for the Dolibarr ERP and CRM application.
+This project contains the sources of a module of the Dolibarr ERP and CRM application.
 Every modification must respect:
 - Dolibarr's modular architecture
 - Compatibility with upstream updates
@@ -119,6 +119,47 @@ Before writing any code, the agent **must**:
 - Reuse existing components (buttons, forms, tables) from `htdocs/core/tpl/`
 - No overly complex inline JS
 - Place JavaScript in separate files under `mymodule/js/`
+
+---
+
+## Security
+
+- Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
+- Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
+- Prevent XSS injection by escaping HTML output (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`)
+- Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
+
+---
+
+## Performance
+
+- Avoid SQL queries inside loops (N+1 problem)
+- Use JOINs or batch queries instead of multiple sequential queries
+- Apply `LIMIT` and proper indexes on list queries
+- Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
+
+---
+
+## Logs & Debug
+
+- Use `dol_syslog()` for all logging (with appropriate log level: `LOG_DEBUG`, `LOG_WARNING`, `LOG_ERR`)
+- Do not leave `var_dump()`, `print_r()`, or `die()` in committed code
+- Use Dolibarr's `setEventMessages()` to display user-facing messages
+
+---
+
+## Git Workflow
+
+- Branch strategy:
+    - One branch per major version (bug fixes only)
+    - `develop` branch for both fixes and new features
+- Never commit directly to `main` or `develop` or any branch name matching regex `^\d+\.\d+$` but use a Pull Request.
+- Commit message format: `TYPE: #issueNumber Short description`
+    - Types: `NEW`, `FIX` or `CLOSE`
+    - Example: `FIX: #1234 Correct VAT calculation on credit notes`
+- Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
+- Do not introduce new syntax or features unavailable in the branch's minimum PHP version
+- When committing, mention the AI agent name in the commit message (e.g. "Co-authored-by: AI Agent <ai-agent@dolibarr.org>")
 
 ---
 

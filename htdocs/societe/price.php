@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -784,9 +784,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		}
 		if ($search_label) {
 			$param .= '&search_label='.urlencode($search_label);
-		}
-		if ($search_price) {
-			$param .= '&search_price='.urlencode($search_price);
 		}
 		if ($search_price) {
 			$param .= '&search_price='.urlencode($search_price);

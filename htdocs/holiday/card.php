@@ -9,7 +9,7 @@
  * Copyright (C) 2020-2021	Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Julien Marchand				<julien.marchand@iouston.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,6 +92,9 @@ $permissiontoapprove = $user->hasRight('holiday', 'approve');
 $canread = 0;
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$fuserid = $object->fk_user;	// On an existing leave request, permissions are checked on its owner, never on the fuserid parameter
+	}
 
 	// Check current user can read this leave request
 	if ($user->hasRight('holiday', 'readall')) {
@@ -460,7 +463,13 @@ if (empty($reshook)) {
 
 		// If this is a rough draft, approved, canceled or refused
 		if ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
 		} else {
 			$error++;
 			setEventMessages($langs->trans('BadStatusOfObject'), null, 'errors');
@@ -681,53 +690,10 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				// To
-				$destinataire = new User($db);
-				$destinataire->fetch($object->fk_user);
-				$emailTo = $destinataire->email;
-
-				if (!$emailTo) {
-					dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-				} else {
-					// From
-					$expediteur = new User($db);
-					$expediteur->fetch($object->fk_validator);
-					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-					// Subject
-					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-					}
-
-					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-					// Content
-					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";
-
-					$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."</p>\n";
-
-					$link = dol_buildpath('/holiday/card.php', 3).'?id='.$object->id;
-
-					$message .= "<ul>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-					$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
-					$message .= "</ul>\n";
-
-					$trackid = 'leav'.$object->id;
-
-					$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
-
-					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
-
-					// Sending email
-					$result = $mail->sendfile();
-
-					if (!$result) {
-						setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-						$action = '';
-					}
+				$result = $object->sendApprovalEmail();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+					$action = '';
 				}
 			}
 
@@ -840,14 +806,25 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$oldstatus = $object->status;
-		$object->statut = Holiday::STATUS_DRAFT;
-		$object->status = Holiday::STATUS_DRAFT;
-
-		$result = $object->update($user);
-		if ($result < 0) {
+		// Same rules as the SetToDraft button: user allowed to edit the leave request of its owner, and canceled leave request only
+		if (!$user->hasRight('holiday', 'writeall') && !($user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids))) {
+			accessforbidden();
+		}
+		if ($object->status != Holiday::STATUS_CANCELED) {
 			$error++;
-			setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('Canceled')), null, 'errors');
+		}
+
+		if (!$error) {
+			$oldstatus = $object->status;
+			$object->statut = Holiday::STATUS_DRAFT;
+			$object->status = Holiday::STATUS_DRAFT;
+
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -858,6 +835,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+	}
+
+	// An approved leave request that is already over can be canceled only by an approver (same rule as the Cancel button)
+	if ($action == 'confirm_cancel' && $object->status == Holiday::STATUS_APPROVED && $object->date_fin <= dol_now() && empty($user->admin) && $user->id != $object->fk_user_approve && !$user->hasRight('holiday', 'approve')) {
+		setEventMessages($langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed"), null, 'errors');
+		$action = '';
 	}
 
 	// If confirmation of cancellation
@@ -890,6 +873,7 @@ if (empty($reshook)) {
 
 				$startDate = $object->date_debut_gmt;
 				$endDate = $object->date_fin_gmt;
+				$alreadydebited = true;
 
 				if (!empty($decrease)) {
 					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
@@ -898,7 +882,7 @@ if (empty($reshook)) {
 					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
 						$endDate = $endOfMonthBeforeLastUpdate;
 					} elseif ($object->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
-						$endDate = $startDate;
+						$alreadydebited = false;	// Leave after the last month processed by updateSoldeCP(), so nothing was debited yet
 					}
 				}
 
@@ -908,6 +892,9 @@ if (empty($reshook)) {
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id, $object->fk_user);
 
+				if (!$alreadydebited) {
+					$nbopenedday = 0;
+				}
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
 
@@ -1076,19 +1063,19 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		                 return true;
 		               }
 		               else {
-		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+		                 alert(\''.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'\');
 		                 return false;
 		               }
 		            }
 		            else
 		            {
-		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+		              alert(\''.dol_escape_js($langs->transnoentities('NoDateFin')).'\');
 		              return false;
 		            }
 		        }
 		        else
 		        {
-		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+		           alert(\''.dol_escape_js($langs->transnoentities('NoDateDebut')).'\');
 		           return false;
 		        }
 			});
@@ -1334,7 +1321,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
-				if (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
+				$editmode = (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'));
+
+				if ($editmode) {
 					if ($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) {
 						$edit = true;
 					}
@@ -1345,7 +1334,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				// No drop area in edit mode: these tabs are printed inside the edit form, and dropping a file
+				// reloads the page, which would discard what the user is typing.
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday', 0, '', '', 0, '', ($editmode ? 0 : 1));
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1669,7 +1660,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 
 					if (($permissiontoadd || $permissiontoaddall) && $object->status == Holiday::STATUS_CANCELED) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft&token='.newToken().'" class="butAction">'.$langs->trans("SetToDraft").'</a>';
 					}
 					if ($candelete) {	// If draft or canceled or refused
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
@@ -1721,9 +1712,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 			$MAXEVENT = 10;
 
-			// TODO Add the page holiday_agenda.php
-			//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
-			$morehtmlcenter = '';
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

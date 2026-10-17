@@ -320,7 +320,7 @@ if ($action == 'download' && $user->hasRight('ftp', 'read')) {
 				header('Content-Disposition: inline; filename="'.$file.'"');
 			}
 
-			// Ajout directives pour resoudre bug IE
+			// Add directives to fix IE bug
 			header('Cache-Control: Public, must-revalidate');
 			header('Pragma: public');
 

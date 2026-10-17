@@ -348,7 +348,6 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 }
 
 $objectclass = null;
-$search_code_client = '';
 
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -667,7 +666,7 @@ if ($search_refproject) {
 if ($search_project) {
 	$sql .= natural_search('pr.title', $search_project);
 }
-if ($search_availability) {
+if ($search_availability && $search_availability != '-1') {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
 $societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
@@ -688,10 +687,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
-}
-// Search in 'code_client' when SOCIETE_ADD_REF_IN_LIST is set to 1
-if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
-	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -811,9 +806,9 @@ foreach ($searchCategoryPropalList as $searchCategoryPropal) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryPropalList is an array of ID)
@@ -1068,11 +1063,20 @@ if ($search_refcustomer) {
 if ($search_refproject) {
 	$param .= '&search_refproject='.urlencode($search_refproject);
 }
+if ($search_project) {
+	$param .= '&search_project='.urlencode($search_project);
+}
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
 if ($search_societe_alias) {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
+if ($search_warehouse) {
+	$param .= '&search_warehouse='.urlencode($search_warehouse);
+}
+if ($search_note_public) {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
@@ -1082,6 +1086,12 @@ if ($search_sale > 0) {
 }
 if ($search_montant_ht) {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+}
+if ($search_montant_vat) {
+	$param .= '&search_montant_vat='.urlencode($search_montant_vat);
+}
+if ($search_montant_ttc) {
+	$param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
 }
 if ($search_multicurrency_code != '') {
 	$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
@@ -1897,6 +1907,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($TInvoiceData)) {
 			foreach ($TInvoiceData as $invoiceData) {
+				'@phan-var-force stdClass $invoiceData';
 				$invoice = new Facture($db);
 				$invoice->fetch($invoiceData->facid);
 
@@ -2031,8 +2042,10 @@ while ($i < $imaxinloop) {
 
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
-			print $obj->alias;
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2187,7 +2200,7 @@ while ($i < $imaxinloop) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right">'.showTotalAmount(price($obj->total_ht))."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

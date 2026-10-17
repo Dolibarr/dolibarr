@@ -74,7 +74,7 @@ class Memo extends CommonObject
 	 * @var int<0,1>|string		Does this object support multicompany module ?
 	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 
 
@@ -132,6 +132,7 @@ class Memo extends CommonObject
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, 'noteditable' => 1, 'index' => 1, "css" => "left", "comment" => "Id"),
+		"entity" => array("type" => "integer", "label" => "Entity", 'enabled' => 1, 'position' => 2, 'notnull' => 1, "visible" => 0, 'default' => '1', 'index' => 1),
 		"quick_note" => array("type" => "text", "label" => "Note", 'enabled' => 1, 'position' => 61, 'notnull' => 0, "visible" => -1, "cssview" => "wordbreak", "validate" => 1,),
 		"date_creation" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
@@ -579,6 +580,12 @@ class Memo extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		// fetch() does not filter on entity, so an id of a memo of another entity may be provided (mass delete...)
+		if (!$this->isInCurrentEntity()) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -955,7 +962,7 @@ class Memo extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -1493,7 +1500,8 @@ class Memo extends CommonObject
 
 		$sql = 'SELECT COUNT(m.rowid) nb
 			FROM '.MAIN_DB_PREFIX.$this->table_element.' m
-			WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+			WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+			  AND m.element_type = \''.$this->db->escape($element_type).'\'
 			  AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
 			  AND m.context_tab = \''.$this->db->escape($context).'\'
 			  AND m.status = '.Memo::STATUS_ARCHIVED.'
@@ -1532,7 +1540,8 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+        WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+          AND m.element_type = \''.$this->db->escape($element_type).'\'
           AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
           AND m.context_tab = \''.$this->db->escape($context).'\'
           AND m.status = '.self::STATUS_VALIDATED.'
@@ -1568,7 +1577,8 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
+        WHERE m.entity IN ('.getEntity($this->element).')
+          AND m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
           AND m.status = '.self::STATUS_TPL.'
           AND (COALESCE(m.private_tpl, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
@@ -1744,6 +1754,36 @@ class Memo extends CommonObject
 		}
 
 		return $memo;
+	}
+
+	/**
+	 * Check that the memo (loaded with fetch(), which does not filter on entity) belongs to an entity visible from current entity
+	 *
+	 * @return bool
+	 */
+	public function isInCurrentEntity()
+	{
+		// Without multicompany, field entity is removed by constructor and all memos are in entity 1
+		if (!isModEnabled('multicompany')) {
+			return true;
+		}
+
+		$entityKey = ($this->status == self::STATUS_TPL ? $this->element : self::getEntityElementKey((string) $this->element_type));
+
+		return in_array((int) $this->entity, array_map('intval', explode(',', getEntity($entityKey))), true);
+	}
+
+	/**
+	 * Element key to use with getEntity() for memos of an element type.
+	 * Memos linked to an object follow the multicompany sharing of this type of object,
+	 * global memos (home page...) and templates use the sharing of memos.
+	 *
+	 * @param string $element_type Element type of the linked object ('' for global memos)
+	 * @return string
+	 */
+	public static function getEntityElementKey($element_type)
+	{
+		return empty($element_type) ? 'memo' : $element_type;
 	}
 
 	/**

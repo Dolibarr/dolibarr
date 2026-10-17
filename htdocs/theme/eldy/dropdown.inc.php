@@ -454,7 +454,7 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
@@ -576,7 +576,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #333 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

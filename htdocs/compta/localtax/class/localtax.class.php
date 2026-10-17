@@ -534,7 +534,7 @@ class Localtax extends CommonObject
 			$this->entity = $conf->entity;
 		}
 
-		// Insertion dans table des paiement localtax
+		// Insert into localtax payment table
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
@@ -562,7 +562,7 @@ class Localtax extends CommonObject
 			if ($this->id > 0) {
 				$ok = 1;
 				if (isModEnabled("bank")) {
-					// Insertion dans llx_bank
+					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
@@ -658,6 +658,17 @@ class Localtax extends CommonObject
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
 		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -669,7 +680,7 @@ class Localtax extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

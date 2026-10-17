@@ -138,6 +138,16 @@ class ExtraFields
 	}
 
 	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
+
+	/**
 	 *  Add a new extra field parameter
 	 *
 	 *  @param	string			$attrname           Code of attribute
@@ -801,7 +811,12 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data);
+				$parameters = array(
+					'field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length,
+					'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone,
+					'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity,
+					'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data
+				);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -1186,9 +1201,10 @@ class ExtraFields
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         		$mode                  	1=Used for search filters
+	 * @param  int	         		$filteronparentvalue	1=Filter the values of a dependent list on the value currently saved for its parent list. Used when the field is edited alone (the parent list is not on the form, so the javascript that filters the list can't work).
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
 		global $conf, $langs, $form, $hookmanager;
 
@@ -1350,6 +1366,8 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'phone' && $mode != 1) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, (is_object($object) && !empty($object->country_id)) ? $object->country_id : 0);
 		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
@@ -1470,6 +1488,19 @@ class ExtraFields
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
+					}
+					// When the field is edited alone (not into the whole form), the parent list is not on the page, so the
+					// javascript that filters a dependent list can't do its job. In this case, we filter the values here, on
+					// the value currently saved for the parent list. Note that the selected value is always kept, whatever the
+					// parent value is, so editing the field does not silently clear it.
+					if ($filteronparentvalue && !empty($parent) && (string) $value != (string) $key2) {
+						$tmpparent = explode(':', $parent, 2);
+						if (!empty($tmpparent[1]) && is_object($object)) {
+							$parentvalue = isset($object->array_options['options_'.$tmpparent[0]]) ? $object->array_options['options_'.$tmpparent[0]] : '';
+							if ((string) $parentvalue !== '' && (string) $parentvalue !== (string) $tmpparent[1]) {
+								continue;
+							}
+						}
 					}
 					$out .= '<option value="'.$key2.'"';
 					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
@@ -1827,7 +1858,7 @@ class ExtraFields
 				$out .= "
 				<script>
 				$(document).ready(function () {
-					$('#".$keyprefix.$key.$keysuffix."').select2({
+					$('#".dol_escape_js($keyprefix.$key.$keysuffix)."').select2({
 						ajax: {
 							url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
 							dataType: 'json',
@@ -2463,7 +2494,7 @@ class ExtraFields
 				} else {
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->rowid) {
+					if ($obj && $obj->rowid) {	// fetch_object() returns null when the query returned no row, for example when the field has no value
 						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
@@ -3056,16 +3087,13 @@ class ExtraFields
 						$value_key = '';
 					}
 				} elseif (in_array($key_type, array('text'))) {
-					$label_security_check = 'alphanohtml';
-					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-					if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-						$label_security_check = 'nohtml';
-					} else {
-						$label_security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+					$security_check = 'nohtml';	// Default for text
+					if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+						$security_check = 'alphanohtml';
 					}
-					$value_key = GETPOST("options_".$key, $label_security_check);
+					$value_key = GETPOST("options_".$key, $security_check);
 				} else {
-					$value_key = GETPOST("options_".$key);
+					$value_key = GETPOST("options_".$key);	// Default: 'alphanohtml'
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
 						$value_key = '';
 					}

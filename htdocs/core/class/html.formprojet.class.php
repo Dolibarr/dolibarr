@@ -740,6 +740,7 @@ class FormProjets extends Form
 					} else {
 						$finallabel = ($langs->transnoentitiesnoconv("OppStatus" . $obj->code) != "OppStatus" . $obj->code ? $langs->transnoentitiesnoconv("OppStatus" . $obj->code) : $obj->label);
 						if ($showpercent) {
+							//$finallabel .= ' <span class="opacitymedium">(' . $obj->percent . '%)</span>';
 							$finallabel .= ' (' . $obj->percent . '%)';
 						}
 					}
@@ -952,14 +953,14 @@ class FormProjets extends Form
 	public function formOpportunityStatus($page, $selected = '', $percent_value = 0, $htmlname_status = 'none', $htmlname_percent = 'none', $filter = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$out = '';
 		if ($htmlname_status != "none" && $htmlname_percent != 'none') {
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="set_opp_status">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			$out .= $this-> selectOpportunityStatus($htmlname_status, $selected, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
+			$out .= $this->selectOpportunityStatus($htmlname_status, $selected, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 			$out .= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
 			$out .= '<input class="width50 right" type="text" id="'.$htmlname_percent.'" name="'.$htmlname_percent.'" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.$percent_value.'"> %';
 			$out .= '</span>';
@@ -968,10 +969,11 @@ class FormProjets extends Form
 		} else {
 			if ($selected > 0) {
 				$code = dol_getIdFromCode($this->db, $selected, 'c_lead_status', 'rowid', 'code');
-				$out .= $langs->trans("OppStatus".$code);
+
+				$out .= '<span class="badge badge-oppstatus valignmiddle">'.$langs->trans("OppStatus".$code).'</span>';
 
 				// Opportunity percent
-				$out .= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
+				$out .= ' &nbsp; <span class="badge badge-oppstatus-percent valignmiddle" title="'.$langs->trans("OpportunityProbability").'"> ';
 				$out .= price($percent_value, 0, $langs, 1, 0).' %';
 				$out .= '</span>';
 			} else {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -191,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>'] = {
-		closeText: '<?php echo dol_escape_js($langs->trans("Close2")) ?>',
-		prevText: '<?php echo dol_escape_js($langs->trans("Previous")) ?>',
-		nextText: '<?php echo dol_escape_js($langs->trans("Next")) ?>',
-		currentText: '<?php echo dol_escape_js($langs->trans("Now")) ?>',
+	$.datepicker.regional[<?php echo "'".dol_escape_js($langs->defaultlang)."'"; ?>] = {
+		closeText: <?php echo "'".dol_escape_js($langs->trans("Close2"))."'"; ?>,
+		prevText: <?php echo "'".dol_escape_js($langs->trans("Previous"))."'"; ?>,
+		nextText: <?php echo "'".dol_escape_js($langs->trans("Next"))."'"; ?>,
+		currentText: <?php echo "'".dol_escape_js($langs->trans("Now"))."'"; ?>,
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo dol_escape_js($langs->trans("Week")); ?>',
-		dateFormat: '<?php echo dol_escape_js($langs->trans("FormatDateShortJQuery")); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		weekHeader: <?php echo "'".dol_escape_js($langs->trans("Week"))."'"; ?>,
+		dateFormat: <?php echo "'".dol_escape_js($langs->trans("FormatDateShortJQuery"))."'"; ?>,	/* Note dd/mm/yy means year on 4 digit in jquery format */
 		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>']);
+	$.datepicker.setDefaults($.datepicker.regional[<?php echo "'".dol_escape_js($langs->defaultlang)."'"; ?>]);
 });
 
 
@@ -218,16 +218,16 @@ jQuery(function($){
  */
 
 var select2arrayoflanguage = {
-	matches: function (matches) { return matches + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows")); ?>"; },
-	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
+	matches: function (matches) { return matches + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows"))."'"; ?>; },
+	noResults: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound"))."'"; ?>; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
 		/*console.log(input); console.log(input.minimum);*/
-		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
-			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
+		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
+			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
 		},
-	loadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults")); ?>"; },
-	searching: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress")); ?>"; }
+	loadMore: function (pageNumber) { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults"))."'"; ?>; },
+	searching: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress"))."'"; ?>; }
 };
 
 
@@ -584,7 +584,7 @@ function cleanSerialize(expr) {
  */
 function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
+	let title = <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Note"))."'"; ?>;
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {
 		return true;
@@ -594,11 +594,11 @@ function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCa
 
 	let buttons = {};
 	if (disableCancelButton === 0) {
-		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
+		buttons[<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Cancel"))."'"; ?>] = function () {
 		   $(this).dialog("close");
 		};
 	}
-	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
+	buttons[<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Confirm"))."'"; ?>] = function () {
 		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
 	};
 
@@ -1146,19 +1146,24 @@ function document_preview(file, type, title)
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
-		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+		/* The content of the object tag is displayed by the browser when it cannot render the
+		   document itself. Chrome on Android does not render a PDF inside an object, so without
+		   this the preview area stays empty and the file cannot be reached at all. */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam">';
+		newElem += '<a href="'+file+'" target="_blank" rel="noopener noreferrer">'+<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Download"))."'"; ?>+'</a>';
+		newElem += '</object>';
 
 		optionsbuttons = {}
 		if (mode == 'image') {
 			var curRot = 0;
 			var savMaxHeight = 0;
 			optionsbuttons = {
-				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort")); ?>': function() { $( this ).dialog( "close" ); }
+				<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("RotateImage"))."'"; ?>: function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
+				<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort"))."'"; ?>: function() { $( this ).dialog( "close" ); }
 				};
 			if (showOriginalSizeButton) {
 				optionsbuttons = {
-					'<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>': function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
+					<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("OriginalSize"))."'"; ?>: function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
 					  ...optionsbuttons
 				};
 			}
@@ -1198,41 +1203,94 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/*
+ * Submit the form of a confirm box. Jump to the target url with a GET, but submit a POST form
+ * instead when this url is too long to be accepted by the web server ("Request-URI Too Long").
+ *
+ * @param	urljump				Target url with all its parameters, for the GET
+ * @param	page				Target page, used as action of the POST form
+ * @param	options				Parameters of the form, as a query string (token included)
+ * @param	maxurllength		Max length of an url we accept to use with a GET
+ * @return	void
+ */
+function dolSubmitConfirmForm(urljump, page, options, maxurllength)
+{
+	// A double quote in a GET parameter is always refused by the WAF (waf.inc.php, type 1),
+	// while a POST body is checked with type 0 which does not apply that rule. So a value
+	// containing a double quote must be posted, whatever the url length is.
+	var hasquote = urljump.indexOf('%22') >= 0 || urljump.indexOf('"') >= 0;
+
+	if (urljump.length <= maxurllength && !hasquote) {
+		location.href = urljump;
+		return;
+	}
+
+	console.log("dolSubmitConfirmForm: url is "+urljump.length+" chars long"+(hasquote ? " or contains a double quote" : "")+", we submit a POST form instead of a GET");
+
+	var form = document.createElement("form");
+	form.method = "POST";
+	form.action = page;
+	form.style.display = "none";
+
+	options.split("&").forEach(function(param) {
+		if (param === "") return;
+		var pos = param.indexOf("=");
+		var input = document.createElement("input");
+		input.type = "hidden";
+		input.name = (pos < 0 ? param : param.substring(0, pos));
+		input.value = (pos < 0 ? "" : decodeURIComponent(param.substring(pos + 1)));
+		form.appendChild(input);
+	});
+
+	document.body.appendChild(form);
+	form.submit();
+}
+
 /**
  * Get the list of possible operators for a given field type that we can use in the generic filter.
  */
 function getOperatorsForFieldType(type, maybenull = 0) {
 	console.log('Get list of operators for type='+type);
 
-	// Define the list of operators for each general field category
+	// Define the list of operators for each general field category (keys starting with 'separator' are shown as a non selectable separator)
 	const operatorList = {
 		selectlink: {
-			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
 		},
 		text: {
-			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
-			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
-			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
-			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
+			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
+			separator2: '--------',
+			StartsWith: <?php print "'".dol_escape_js($langs->trans('StartsWith'))."'"; ?>,
+			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>,
+			separator3: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		number: {
-			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
-			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
-			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
-			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
+			'=': <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			'!=': <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			'<': <?php print "'".dol_escape_js($langs->trans('IsLowerThan'))."'"; ?>,
+			'>': <?php print "'".dol_escape_js($langs->trans('IsHigherThan'))."'"; ?>,
+			'<=': <?php print "'".dol_escape_js($langs->trans('IsLowerThanOrEqual'))."'"; ?>,
+			'>=': <?php print "'".dol_escape_js($langs->trans('IsHigherThanOrEqual'))."'"; ?>,
+			separator2: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>,
 		},
 		date: {
-			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
-			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
-			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
-			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
-			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
-			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
+			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
+			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			IsBefore: <?php print "'".dol_escape_js($langs->trans('IsBefore'))."'"; ?>,
+			IsAfter: <?php print "'".dol_escape_js($langs->trans('IsAfter'))."'"; ?>,
+			IsOnOrBefore: <?php print "'".dol_escape_js($langs->trans('IsOnOrBefore'))."'"; ?>,
+			IsOnOrAfter: <?php print "'".dol_escape_js($langs->trans('IsOnOrAfter'))."'"; ?>
 		},
 		html: {
 			Contains: '<?php print $langs->trans('Contains'); ?>'
@@ -1262,8 +1320,9 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 
 	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
 	if (maybenull === 1) {
-		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
-		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
+		operatorList[generalType]["separatordefined"] = '--------';
+		operatorList[generalType]["IsDefined"] = <?php print "'".dol_escape_js($langs->trans('IsDefined'))."'"; ?>;
+		operatorList[generalType]["IsNotDefined"] = <?php print "'".dol_escape_js($langs->trans('IsNotDefined'))."'"; ?>;
 	}
 
 	// Return the operators for the general type, or an empty array if not found
@@ -1297,6 +1356,19 @@ function generateFilterString(column, operator, context, fieldType) {
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
 			break;
+		case "IsInList":
+		case "IsNotInList": {
+			// The value is a list of values separated with spaces or commas. We forge directly the universal filter syntax.
+			// Values are quoted, except for numeric fields (quotes and parenthesis are not allowed into values).
+			const isnumericfield = /^(int|integer|float|double|decimal|numeric|tinyint|smallint)/i.test(fieldType);
+			const listofvalues = String(context).replace(/['()]/g, "").split(/[\s,]+/).filter(function(v) { return v !== ""; }).map(function(v) {
+				return ((isnumericfield && /^-?[0-9]+(\.[0-9]+)?$/.test(v)) ? v : "\'" + v + "\'");
+			});
+			if (listofvalues.length > 0) {
+				filter = "(" + column + (operator === "IsNotInList" ? ":notin:" : ":in:") + listofvalues.join(",") + ")";
+			}
+			break;
+		}
 		case "IsDefined":
 			filter = column + ":isnot:null";
 			break;
@@ -1560,13 +1632,20 @@ jQuery(document).ready(function() {
 	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
 	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
 	// this the browser silently truncates the paste and the user records an id short of a few digits.
-	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+	// Same for the dots of a field marked with data-profidnodot (SIREN "849.943.618").
+	jQuery(document).on("paste", "input[data-profidnospace], input[data-profidnodot]", function(event) {
 		var clipboardData = (event.originalEvent || event).clipboardData;
 		if (!clipboardData) {
 			return;
 		}
 		var pastedText = clipboardData.getData("text");
-		var cleanedText = pastedText.replace(/\s+/g, "");
+		var cleanedText = pastedText;
+		if (this.hasAttribute("data-profidnospace")) {
+			cleanedText = cleanedText.replace(/\s+/g, "");
+		}
+		if (this.hasAttribute("data-profidnodot")) {
+			cleanedText = cleanedText.replace(/\.+/g, "");
+		}
 		if (cleanedText == pastedText) {
 			return;		// Nothing to remove, leave the paste to the browser
 		}
@@ -1587,7 +1666,7 @@ jQuery(document).ready(function() {
 
 
 	// Code to set tooltip on search field
-	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', <?php echo "'".dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum"))."'"; ?>);
 
 
 	// Code to toggle dropdown components
@@ -1703,6 +1782,8 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 
+if (typeof jQuery.fn.on === 'function') {
+
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
@@ -1714,6 +1795,8 @@ $(document).on('select2:open', (e) => {
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
+
+}
 	<?php
 }
 ?>
@@ -1758,7 +1841,7 @@ function onKanbanColumnChange(item, newColumn) {
 	var originalColumn = item.data('original-column');
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/savekanbanfield.php',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php',
 		data: {
 			field: 'editval_'+newColumn.data('groupbyfield'),
 			element: item.data('element'),
@@ -1816,6 +1899,11 @@ if (typeof jQuery.fn.on === 'function') {
  * Intuitive table selection (with keyboard selection)
  */
 $(function() {
+
+	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
+	// a .row-with-select row (not on a link/button/field) also toggles its
+	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
+	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
 
 	/**
 	 * @param {jQuery}  el
@@ -1899,6 +1987,13 @@ $(function() {
 				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+
+		if (!e.ctrlKey && !e.metaKey && !e.shiftKey && rowSingleClickToSelect) {
+			if (!$(e.target).closest('a, button, input, select, textarea, label').length) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
 				setLastClickedRowStatus($(this), 1);
 			}
 		}

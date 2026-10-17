@@ -121,7 +121,7 @@ function salaries_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'salary'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSalaries");
 	$nbExtrafields = $extrafields->attributes['salary']['count'];
 	if ($nbExtrafields > 0) {

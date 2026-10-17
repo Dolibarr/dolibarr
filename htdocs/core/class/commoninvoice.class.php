@@ -2,7 +2,7 @@
 /* Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2023-2026  Nick Fragoulis
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -620,8 +620,8 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@param		string	$filtertype			1 to filter on type of payment == 'PRE' for the payment lines
 	 *  @param      int     $multicurrency  	Return multicurrency_amount instead of amount
-	 *  @param		int		$mode				0=payments + discount, 1=payments only
-	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
+	 *  @param		int		$mode				0=payments + discount, 1=payments only, 2=discounts only
+	 *  @return     array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>		 Array with list of payments (date is the raw date returned by the database)
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0, $mode = 0)
 	{
@@ -1838,6 +1838,7 @@ abstract class CommonInvoice extends CommonObject
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
 								$foundalternativestripeaccount = '';
+								$stripearrayofkeys = array();
 
 								// Force stripe to another value (by default this value is empty)
 								if (! empty($forcestripe)) {
@@ -2279,11 +2280,24 @@ abstract class CommonInvoice extends CommonObject
 			$lines[] = ""; //IBAN (required)
 		}
 
+		$structuredCommunication = '';
+		$remittanceInformation = $this->ref;
+		if (!empty($this->payment_reference)) {
+			// Structured payment reference stored on the invoice, see core/lib/paymentref.lib.php.
+			// Spaces are only a reading aid, the code must carry the compact form.
+			$structuredCommunication = str_replace(' ', '', $this->payment_reference);
+			$remittanceInformation = '';
+		} elseif (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+			$structuredCommunication = dolBECalculateStructuredCommunication((string) $this->ref, $this->type);
+			$remittanceInformation = '';
+		}
+
 		// Add the amount and reference
 		$lines[] = 'EUR' . $amount_to_pay; // Amount (optional)
 		$lines[] = ''; // Purpose (optional)
-		$lines[] = ''; // Payment reference (optional)
-		$lines[] = $this->ref; // Remittance Information (optional)
+		$lines[] = $structuredCommunication; // Payment reference (optional)
+		$lines[] = $remittanceInformation; // Remittance Information (optional)
 
 		// Join the lines with newline characters and return the result
 		return implode("\n", $lines);
@@ -2408,18 +2422,18 @@ abstract class CommonInvoice extends CommonObject
 			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
 			$s .= "S\n";
 			$s .= dol_trunc($bankaccount->owner_name, 70, 'right', 'UTF-8', 1)."\n";
-			$addresslinearray = explode("\n", $bankaccount->owner_address);
-			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
-			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			$addresslinearray = explode("\n", (string) $bankaccount->owner_address);
+			$s .= dol_trunc(empty($addresslinearray[0]) ? '' : $addresslinearray[0], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
 			/*$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
 		} else {
 			$s .= "S\n";
 			$s .= dol_trunc((string) $mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
-			$addresslinearray = explode("\n", $mysoc->address);
-			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
-			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			$addresslinearray = explode("\n", (string) $mysoc->address);
+			$s .= dol_trunc(empty($addresslinearray[0]) ? '' : $addresslinearray[0], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
 			$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
@@ -2438,21 +2452,30 @@ abstract class CommonInvoice extends CommonObject
 		// Buyer
 		$s .= "S\n";
 		$s .= dol_trunc((string) $this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
-		$addresslinearray = explode("\n", $this->thirdparty->address);
-		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
-		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+		$addresslinearray = explode("\n", (string) $this->thirdparty->address);
+		$s .= dol_trunc(empty($addresslinearray[0]) ? '' : $addresslinearray[0], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
 		$s .= dol_trunc($this->thirdparty->zip, 16, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($this->thirdparty->town, 35, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		// ID of payment
-		$s .= "NON\n";			// NON or QRR
-		$s .= "\n";				// QR Code reference if previous field is QRR
-		// Free text
-		if ($complementaryinfo) {
-			$s .= $complementaryinfo."\n";
+		// A swiss QR bill accepts SCOR with an ISO 11649 reference on an ordinary IBAN,
+		// QRR with a QR-IBAN, or NON. QRR is not built here because a QR reference and
+		// its QR-IBAN are assigned by the bank, so only SCOR and NON are produced.
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$paymentref = empty($this->payment_reference) ? '' : (string) $this->payment_reference;
+
+		if ($paymentref !== '' && dolPayRefDetectScheme($paymentref) == 'SCOR') {
+			$s .= "SCOR\n";									// NON, QRR or SCOR
+			$s .= dolPayRefStrip($paymentref)."\n";			// ISO 11649 creditor reference
 		} else {
-			$s .= "\n";
+			$s .= "NON\n";									// NON or QRR
+			$s .= "\n";									// QR Code reference if previous field is QRR
 		}
+		// Unstructured message. The structured billing information below carries the
+		// same details, so this stays empty to avoid printing them twice.
+		$s .= "\n";
 		$s .= "EPD\n";
 		// More text, complementary info
 		if ($complementaryinfo) {
@@ -2587,11 +2610,10 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
-	 * Fixed discount
-	 * @var float
-	 * @deprecated
+	 * Id of source discount in table llx_societe_remise_except
+	 * @var ?int
 	 */
-	public $remise;
+	public $fk_remise_except;
 
 	/**
 	 * Total amount before taxes
@@ -2701,6 +2723,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent = 100;
+
 
 	/**
 	 * Check if a line is a deposit line

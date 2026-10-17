@@ -123,7 +123,7 @@ print '</tr>';
 // GLOBAL DISCOUNT MANAGEMENT
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
-print '<td class="minwidth150">';
+print '<td class="nowraponall">';
 print ' <input type="radio" name="MARGIN_TYPE" id="MARGIN_TYPE1" value="1" ';
 if (getDolGlobalString('MARGIN_TYPE') == '1') {
 	print 'checked ';
@@ -217,6 +217,11 @@ print '<td><span class="small opacitymedium">'.$langs->trans('MARGIN_METHODE_FOR
 print '</tr>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
+/* Feature hidden. Enabling it does not match what the report say. So to avoid confusion, we hide it.
+ * Restore it is possible by adding the filter on page agentsMargin.php (page says report is by user).
+ * if combo is in this page, text explanation must also be modified so user can understand.
+ */
+/*
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td class="left">';
@@ -226,6 +231,7 @@ print $formcompany->selectTypeContact($facture, getDolGlobalString('AGENT_CONTAC
 print '</td>';
 print '<td><span class="small opacitymedium">'.$langs->trans('AgentContactTypeDetails').'</span></td>';
 print '</tr>';
+*/
 
 print '</table>';
 print '</div>';

@@ -38,5 +38,6 @@ create table llx_payment_salary
   fk_bank         integer,
   fk_user_author  integer,                    -- user creating
   fk_user_modif   integer,                     -- user making last change
-  fk_salary       integer
+  fk_salary       integer,
+  import_key      varchar(14)                  -- import key
 )ENGINE=innodb;

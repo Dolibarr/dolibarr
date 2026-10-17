@@ -815,7 +815,7 @@ if ($num > 0) {
 
 		// Duration
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
-		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
+		if (!empty($datelastresult) && !empty($datelastrun) && ($datelastresult >= $datelastrun)) {
 			$nbseconds = max($datelastresult - $datelastrun, 1);
 			print $nbseconds.' '.$langs->trans("SecondShort");
 		}

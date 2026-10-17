@@ -208,7 +208,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= "<!DOCTYPE html>\n";
 		}
 		// If a language was forced on page, we use it, else we use the lang of visitor else the lang of web site
-		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.substr($objectpage->lang, 0, 2).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
+		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.preg_replace('/[^a-z]/i', '', substr($objectpage->lang, 0, 2)).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
 		$tplcontent .= '<head>'."\n";
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
@@ -443,8 +443,20 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= '$tmp = preg_replace("/__SEO_CANONICAL_LANG__/", (defined("__SEO_PAGE_LANG__") ? preg_replace(\'/\[_-\].*$/\', "", constant("__SEO_PAGE_LANG__")) : (empty($weblangs->shortlang) ? "'.$tmpshortlangcode.'" : $weblangs->shortlang)), $tmp);'."\n";
 		}
 
+		// Let modules rewrite the final page content (e.g. canonical/hreflang links, when a module
+		// implements its own URL rewriting scheme that core has no knowledge of). Runs on every
+		// request (not only at page compile time), so it applies no matter which code path last
+		// recompiled this page (website editor, inline AJAX edit, a module's own template reset...).
+		$tplcontent .= "// Let modules rewrite the final page content (hook)\n";
+		$tplcontent .= 'global $hookmanager;'."\n";
+		$tplcontent .= 'if (is_object($hookmanager)) {'."\n";
+		$tplcontent .= '	$hookmanager->initHooks(array(\'websitepagecontent\'));'."\n";
+		$tplcontent .= '	$parameters = array(\'tmp\' => &$tmp);'."\n";
+		$tplcontent .= '	$hookmanager->executeHooks(\'printWebsitePageContent\', $parameters, $websitepage);'."\n";
+		$tplcontent .= '}'."\n";
+
 		$tplcontent .= "// Now output the generated page content\n";
-		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.((int) $objectpage->id).'); dolWebsiteIncrementCounter('.((int) $object->id).', "'.$objectpage->type_container.'", '.((int) $objectpage->id).');'."\n";
+		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.((int) $objectpage->id).'); dolWebsiteIncrementCounter('.((int) $object->id).', "'.preg_replace('/[^\w\-]/', '', (string) $objectpage->type_container).'", '.((int) $objectpage->id).');'."\n";
 		$tplcontent .= "// END PHP ?>\n";
 	} else {
 		$tplcontent .= "<?php // BEGIN PHP\n";
@@ -972,7 +984,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
  * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
  * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
  * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
- * Called by website->importWebSite() via dolKeepOnlyPhpCode() or when editing a page.
+ * Called by website->importWebSite() via dolKeepOnlyPhpCode() or when editing a page (full page) or when editing part of page (editinline)
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"

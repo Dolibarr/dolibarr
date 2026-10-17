@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2023  Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry	        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -250,6 +250,15 @@ class Delivery extends CommonObject
 							$error++;
 						}
 					}
+				}
+
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('DELIVERY_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
 
 				if (!$error) {
@@ -883,6 +892,7 @@ class Delivery extends CommonObject
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
 				$line->description	= $obj->description;
+				$line->desc = $obj->description;
 				$line->fk_product 	= $obj->fk_product;
 				$line->qty_asked 	= $obj->qty_asked;
 				$line->qty_shipped	= $obj->qty_shipped;
@@ -1143,7 +1153,7 @@ class Delivery extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'typhon';
+			$modele = 'storm';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
@@ -1282,6 +1292,11 @@ class DeliveryLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_origin_line;
+
+	/**
+	 * @var int	Never set: a delivery line has no parent line, but the generic PDF functions read it
+	 */
+	public $fk_parent_line;
 	/**
 	 * @var int
 	 */
