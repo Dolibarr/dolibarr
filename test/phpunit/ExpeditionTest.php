@@ -759,6 +759,63 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * Get the REST API class for shipments, called as the current user.
+	 *
+	 * @return	Shipments	API object
+	 */
+	private function getShipmentsApi()
+	{
+		global $user;
+
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/api_shipments.class.php';
+
+		DolibarrApiAccess::$user = $user;
+
+		return new Shipments();
+	}
+
+	/**
+	 * The REST API must store the warehouse of the lines of a standalone shipment,
+	 * otherwise the shipment moves no stock.
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentApiStoresLineWarehouse()
+	{
+		global $db, $user;
+
+		$this->configureStandaloneShipmentStock(false, false);
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$soc = new Societe($db);
+		$soc->name = 'Expedition standalone api phpunit';
+		$socId = $soc->create($user);
+		$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+		$api = $this->getShipmentsApi();
+		$shipmentId = $api->post(array('socid' => $socId, 'lines' => array(array('fk_product' => $productId, 'qty' => 2, 'entrepot_id' => $warehouseId))));
+		$this->assertGreaterThan(0, $shipmentId);
+
+		$shipment = new Expedition($db);
+		$this->assertGreaterThan(0, $shipment->fetch($shipmentId), $shipment->errorsToString());
+		$this->assertCount(1, $shipment->lines);
+		$this->assertEquals($warehouseId, $shipment->lines[0]->fk_entrepot);
+
+		// The warehouse is checked like on the shipment card: not enough stock is a bad request.
+		// Each REST request gets a new API object.
+		try {
+			$this->getShipmentsApi()->post(array('socid' => $socId, 'lines' => array(array('fk_product' => $productId, 'qty' => 20, 'entrepot_id' => $warehouseId))));
+			$this->fail('A line with more than the stock of the warehouse must be refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertSame(400, $e->getCode(), $e->getMessage().' '.json_encode($e->getDetails()));
+		}
+	}
+
+	/**
 	 * testExpeditionDelete
 	 *
 	 * Check that an Expedition object can be deleted.
