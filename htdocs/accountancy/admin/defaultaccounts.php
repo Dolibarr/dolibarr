@@ -92,6 +92,7 @@ $list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
 $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_VAT_BUY_ASSET_ACCOUNT';
 
 /*if ($mysoc->useRevenueStamp()) {
 	$list_account[] = 'ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT';
