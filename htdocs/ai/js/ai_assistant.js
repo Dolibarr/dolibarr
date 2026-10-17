@@ -1855,7 +1855,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1867,7 +1869,7 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
     // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
