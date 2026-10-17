@@ -189,12 +189,12 @@ class Reception extends CommonObject
 	public $date_valid;
 
 	/**
-	 * @var int ID of user author
+	 * @var ?int ID of user author
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID of user who validated
+	 * @var ?int ID of user who validated
 	 */
 	public $fk_user_valid;
 
@@ -1099,7 +1099,7 @@ class Reception extends CommonObject
 			$this->db->begin();
 
 			// Rank to use
-			$ranktouse = $this->rang;
+			$ranktouse = $rang;
 			if ($ranktouse == -1) {
 				$rangmax = $this->line_max($this->fk_reception);
 				$ranktouse = $rangmax + 1;
