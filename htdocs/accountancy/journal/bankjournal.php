@@ -407,7 +407,11 @@ if ($result) {
 						if ($is_sc) {
 							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
 						} else {
-							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							if (empty($tabtp[$obj->rowid][$compta_user])) {
+								$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+							} else {
+								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							}
 						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
