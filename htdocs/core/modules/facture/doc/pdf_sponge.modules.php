@@ -1731,6 +1731,18 @@ class pdf_sponge extends ModelePDFFactures
 
 					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
 
+					// The payment reference belongs with the account it is paid to, so it
+					// is shown right after the IBAN and the BIC. Grouped for reading, the
+					// stored value stays compact for the QR code and the SEPA file.
+					if (!empty($object->payment_reference)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+						// Same weight and size as the IBAN and BIC lines above
+						$pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('', 'B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+						$posy = $pdf->GetY();
+					}
+
 					$posy += 2;
 
 					// SHOW EPC QR CODE at bottom, but only if unpaid amount exists
@@ -1753,18 +1765,9 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
 						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
-						$posy = $pdf->GetY() + 2;
-					}
-
-					// The payment reference belongs with the account it is paid to, so it
-					// is shown right after the IBAN and the BIC. Grouped for reading, the
-					// stored value stays compact for the QR code and the SEPA file.
-					if (!empty($object->payment_reference)) {
-						include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
-						// Same weight and size as the IBAN and BIC lines above
-						$pdf->SetFont('', 'B', $default_font_size - 3);
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
-						$posy = $pdf->GetY();
+						// Continue below the QR code, which is taller than the text beside it
+						$posy = max($pdf->GetY(), $qrPosY + 20) + 2;
+						$pdf->SetXY($this->marge_gauche, $posy);
 					}
 
 					// Show structured communication of invoices validated before the
