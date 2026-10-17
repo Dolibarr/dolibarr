@@ -30,6 +30,11 @@ if (!defined('NOLOGIN')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal, so the token of the login form stays valid
 }
+// Called before login, when the session may have no CSRF token yet. A forged request is useless here:
+// the challenge can't be read cross-site, and the answer must be signed with the private key of the passkey.
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }

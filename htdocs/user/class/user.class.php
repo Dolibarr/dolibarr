@@ -1910,7 +1910,7 @@ class User extends CommonObject
 		}
 
 		// Remove the passkeys of the user
-		$sql = "DELETE FROM ".$this->db->prefix()."user_passkey WHERE fk_user = ".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();

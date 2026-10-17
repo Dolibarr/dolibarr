@@ -14,9 +14,5 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
--- A credential ID is globally unique: it is the key used to find the passkey at login
-ALTER TABLE llx_user_passkey ADD UNIQUE INDEX uk_user_passkey_credential_id (credential_id);
-
-ALTER TABLE llx_user_passkey ADD INDEX idx_user_passkey_fk_user (fk_user);
-
-ALTER TABLE llx_user_passkey ADD CONSTRAINT fk_user_passkey_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+-- A passkey credential ID is globally unique: it is the key used to find the passkey at login (NULL for other services)
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);

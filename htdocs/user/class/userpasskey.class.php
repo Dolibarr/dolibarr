@@ -26,10 +26,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * 	Class to manage the passkeys (WebAuthn credentials) of users.
+ *  They are saved into llx_oauth_token with service 'passkey'. The public key (PEM) is saved into tokenstring.
  *  Only the public key is stored, the private key never leaves the authenticator.
  */
 class UserPasskey extends CommonObject
 {
+	/**
+	 * Value of field service into llx_oauth_token
+	 */
+	const SERVICE = 'passkey';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -38,7 +44,7 @@ class UserPasskey extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'user_passkey';
+	public $table_element = 'oauth_token';
 
 	/**
 	 * @var int Id of the user owning the passkey
@@ -90,11 +96,6 @@ class UserPasskey extends CommonObject
 	 */
 	public $date_last_use;
 
-	/**
-	 * @var string IP of last use for a login
-	 */
-	public $ip_last_use;
-
 
 	/**
 	 *  Constructor
@@ -119,19 +120,21 @@ class UserPasskey extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (entity, fk_user, label, credential_id, user_handle, public_key, sign_count, aaguid, backup_eligible, backup_state, date_creation)";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (service, entity, fk_user, tokenstring, datec,";
+		$sql .= " passkey_label, passkey_credential_id, passkey_user_handle, passkey_sign_count, passkey_aaguid, passkey_backup_eligible, passkey_backup_state)";
 		$sql .= " VALUES (";
-		$sql .= ((int) $conf->entity);
+		$sql .= "'".$this->db->escape(self::SERVICE)."'";
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_user);
+		$sql .= ", '".$this->db->escape($this->public_key)."'";
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->label !== '' && $this->label !== null ? "'".$this->db->escape($this->label)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->credential_id)."'";
 		$sql .= ", '".$this->db->escape($this->user_handle)."'";
-		$sql .= ", '".$this->db->escape($this->public_key)."'";
 		$sql .= ", ".((int) $this->sign_count);
 		$sql .= ", ".($this->aaguid ? "'".$this->db->escape($this->aaguid)."'" : "NULL");
 		$sql .= ", ".((int) $this->backup_eligible);
 		$sql .= ", ".((int) $this->backup_state);
-		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -150,21 +153,31 @@ class UserPasskey extends CommonObject
 	}
 
 	/**
+	 * Return the list of fields to select
+	 *
+	 * @return	string
+	 */
+	private function getSqlFields()
+	{
+		return "rowid, service, entity, fk_user, tokenstring, datec, lastaccess, tms, passkey_label, passkey_credential_id, passkey_user_handle, passkey_sign_count, passkey_aaguid, passkey_backup_eligible, passkey_backup_state";
+	}
+
+	/**
 	 * Load a passkey from database, by its id or by its credential ID
 	 *
 	 * @param	int		$id					Id of passkey
 	 * @param	string	$credential_id		Credential ID (lower case hex) to search if $id is 0
-	 * @return	int							Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return	int							Return integer <0 if KO, 0 if not found or not a passkey, >0 if OK
 	 */
 	public function fetch($id, $credential_id = '')
 	{
-		$sql = "SELECT rowid, entity, fk_user, label, credential_id, user_handle, public_key, sign_count, aaguid, backup_eligible, backup_state,";
-		$sql .= " date_creation, date_last_use, ip_last_use, tms";
+		$sql = "SELECT ".$this->getSqlFields();
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		if ($id > 0) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE credential_id = '".$this->db->escape($credential_id)."'";
+			$sql .= " WHERE passkey_credential_id = '".$this->db->escape($credential_id)."'";
+			$sql .= " AND service = '".$this->db->escape(self::SERVICE)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -177,7 +190,7 @@ class UserPasskey extends CommonObject
 
 		$obj = $this->db->fetch_object($resql);
 		$this->db->free($resql);
-		if (!$obj) {
+		if (!$obj || $obj->service !== self::SERVICE) {	// The table also contains other kinds of tokens
 			return 0;
 		}
 
@@ -196,11 +209,11 @@ class UserPasskey extends CommonObject
 	{
 		$list = array();
 
-		$sql = "SELECT rowid, entity, fk_user, label, credential_id, user_handle, public_key, sign_count, aaguid, backup_eligible, backup_state,";
-		$sql .= " date_creation, date_last_use, ip_last_use, tms";
+		$sql = "SELECT ".$this->getSqlFields();
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_user = ".((int) $fk_user);
-		$sql .= " ORDER BY date_creation ASC, rowid ASC";
+		$sql .= " AND service = '".$this->db->escape(self::SERVICE)."'";
+		$sql .= " ORDER BY datec ASC, rowid ASC";
 
 		dol_syslog(get_class($this)."::fetchAllForUser", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -230,6 +243,7 @@ class UserPasskey extends CommonObject
 	{
 		$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_user = ".((int) $fk_user);
+		$sql .= " AND service = '".$this->db->escape(self::SERVICE)."'";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -251,8 +265,9 @@ class UserPasskey extends CommonObject
 	 */
 	public function getUserHandleOfUser($fk_user)
 	{
-		$sql = "SELECT user_handle FROM ".$this->db->prefix().$this->table_element;
+		$sql = "SELECT passkey_user_handle FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_user = ".((int) $fk_user);
+		$sql .= " AND service = '".$this->db->escape(self::SERVICE)."'";
 		$sql .= " ORDER BY rowid ASC";
 		$sql .= $this->db->plimit(1);
 
@@ -261,7 +276,7 @@ class UserPasskey extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
 			if ($obj) {
-				return (string) $obj->user_handle;
+				return (string) $obj->passkey_user_handle;
 			}
 		}
 
@@ -283,13 +298,11 @@ class UserPasskey extends CommonObject
 		$this->sign_count = max((int) $this->sign_count, (int) $sign_count);
 		$this->backup_state = ($backup_state ? 1 : 0);
 		$this->date_last_use = $now;
-		$this->ip_last_use = getUserRemoteIP();
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " sign_count = ".((int) $this->sign_count);
-		$sql .= ", backup_state = ".((int) $this->backup_state);
-		$sql .= ", date_last_use = '".$this->db->idate($now)."'";
-		$sql .= ", ip_last_use = '".$this->db->escape($this->ip_last_use)."'";
+		$sql .= " passkey_sign_count = ".((int) $this->sign_count);
+		$sql .= ", passkey_backup_state = ".((int) $this->backup_state);
+		$sql .= ", lastaccess = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::updateAfterLogin", LOG_DEBUG);
@@ -311,7 +324,7 @@ class UserPasskey extends CommonObject
 	public function setLabel($label)
 	{
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " label = ".($label !== '' ? "'".$this->db->escape($label)."'" : "NULL");
+		$sql .= " passkey_label = ".($label !== '' ? "'".$this->db->escape($label)."'" : "NULL");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setLabel", LOG_DEBUG);
@@ -349,7 +362,7 @@ class UserPasskey extends CommonObject
 	/**
 	 * Set the properties of the object from a database record
 	 *
-	 * @param	stdClass	$obj	Record of table llx_user_passkey
+	 * @param	stdClass	$obj	Record of table llx_oauth_token with service 'passkey'
 	 * @return	void
 	 */
 	public function setVarsFromFetchObj(&$obj)
@@ -357,17 +370,16 @@ class UserPasskey extends CommonObject
 		$this->id = (int) $obj->rowid;
 		$this->entity = (int) $obj->entity;
 		$this->fk_user = (int) $obj->fk_user;
-		$this->label = (string) $obj->label;
-		$this->credential_id = (string) $obj->credential_id;
-		$this->user_handle = (string) $obj->user_handle;
-		$this->public_key = (string) $obj->public_key;
-		$this->sign_count = (int) $obj->sign_count;
-		$this->aaguid = (string) $obj->aaguid;
-		$this->backup_eligible = ($obj->backup_eligible ? 1 : 0);
-		$this->backup_state = ($obj->backup_state ? 1 : 0);
-		$this->date_creation = $this->db->jdate($obj->date_creation);
-		$this->date_last_use = $this->db->jdate($obj->date_last_use);
-		$this->ip_last_use = (string) $obj->ip_last_use;
+		$this->public_key = (string) $obj->tokenstring;
+		$this->label = (string) $obj->passkey_label;
+		$this->credential_id = (string) $obj->passkey_credential_id;
+		$this->user_handle = (string) $obj->passkey_user_handle;
+		$this->sign_count = (int) $obj->passkey_sign_count;
+		$this->aaguid = (string) $obj->passkey_aaguid;
+		$this->backup_eligible = ($obj->passkey_backup_eligible ? 1 : 0);
+		$this->backup_state = ($obj->passkey_backup_state ? 1 : 0);
+		$this->date_creation = $this->db->jdate($obj->datec);
+		$this->date_last_use = $this->db->jdate($obj->lastaccess);
 		$this->date_modification = $this->db->jdate($obj->tms);
 	}
 }

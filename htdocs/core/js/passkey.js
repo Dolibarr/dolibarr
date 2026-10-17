@@ -89,6 +89,14 @@
 			headers: {'Accept': 'application/json'},
 			body: params
 		}).then(function (response) {
+			// An error page (for example a refused access) is not JSON: report the HTTP status instead of a JSON parse error
+			var contenttype = response.headers.get('Content-Type') || '';
+			if (!response.ok || contenttype.indexOf('application/json') === -1) {
+				return response.text().then(function (text) {
+					console.log('passkey: unexpected answer from ' + url + ': ' + text);
+					throw new Error('HTTP ' + response.status + ' ' + text.split('\n')[0].substring(0, 200));
+				});
+			}
 			return response.json();
 		});
 	}
