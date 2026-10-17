@@ -595,7 +595,10 @@ class MultiCurrency extends CommonObject
 			$multicurrency_tx = $invoice_rate;
 		} else {
 			$tmparray = self::getInvoiceRate($fk_facture, $table);
-			$multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
+			// getInvoiceRate() returns false when the invoice cannot be read. Reading the rate
+			// from that boolean emits a PHP warning and gives null, which this method then
+			// reports as a failed conversion anyway.
+			$multicurrency_tx = ($tmparray === false ? 0 : $tmparray['invoice_multicurrency_tx']);
 		}
 
 		if ($multicurrency_tx) {

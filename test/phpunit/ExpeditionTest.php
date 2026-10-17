@@ -532,6 +532,42 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * testStandaloneShipmentRestoresStockOnReopen
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentRestoresStockOnReopen()
+	{
+		global $user;
+
+		$this->configureStandaloneShipmentStock(false, true);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(4, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(6, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		$result = $shipment->reOpen();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(10, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		// Closing again must remove the stock only once
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(6, $this->getWarehouseRealStock($productId, $warehouseId));
+	}
+
+	/**
 	 * testStandaloneShipmentAcceptsMissingWarehouse
 	 *
 	 * @return	void

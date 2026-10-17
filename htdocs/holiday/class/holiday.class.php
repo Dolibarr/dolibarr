@@ -133,6 +133,11 @@ class Holiday extends CommonObject
 	public $fk_user_approve;
 
 	/**
+	 * @var int 	ID of user that has approved, as read by dol_print_object_info()
+	 */
+	public $user_approve_id;
+
+	/**
 	 * @var int 	Date for refuse
 	 */
 	public $date_refuse = 0;
@@ -2530,6 +2535,7 @@ class Holiday extends CommonObject
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
 						$this->fk_user_approve = $obj->fk_user_approval_done;
+						$this->user_approve_id = $obj->fk_user_approval_done;
 					}
 				}
 			}

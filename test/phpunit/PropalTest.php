@@ -266,7 +266,7 @@ class PropalTest extends CommonClassTest
 				'date', 'datec', 'datev', 'datep', 'date_creation', 'date_validation', 'date_lim_reglement', 'fin_validite', 'datem', 'date_modification',
 				'ref', 'statut', 'status', 'socid', 'billed', 'fk_incoterms', 'actiontypecode', 'actionmsg2', 'actionmsg',
 				'mode_reglement', 'cond_reglement', 'mode_reglement_code', 'cond_reglement_code', 'availability', 'availability_code', 'demand_reason', 'demand_reason_code',
-				'cond_reglement_doc', 'modelpdf', 'total',
+				'cond_reglement_doc', 'cond_reglement_label', 'modelpdf', 'total',
 				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
 				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
