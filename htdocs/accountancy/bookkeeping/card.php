@@ -1271,7 +1271,7 @@ if ($action == 'create') {
 				print '<th>';
 				print $langs->trans('LabelOperation');
 				if ($caneditalllabels) {
-					$editalllabelsurl = $_SERVER['PHP_SELF'] .'?action=editalllabels'.'&piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage).'&token='.urlencode(newToken());
+					$editalllabelsurl = $_SERVER['PHP_SELF'] .'?action=editalllabels&piece_num='.(int) $piece_num.'&mode='.urlencode($mode).'&type='.urlencode($type).'&backtopage='.urlencode($backtopage).'&token='.urlencode(newToken());
 					print ' <a class="editfielda reposition" href="'.dol_escape_htmltag($editalllabelsurl).'">';
 					print img_edit($langs->trans('UpdateAllOperationLabels'));
 					print '</a>';
