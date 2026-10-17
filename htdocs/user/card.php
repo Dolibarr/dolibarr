@@ -2157,15 +2157,24 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Token for 2FA
-			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
+			// Shown also when MAIN_SECURITY_ALLOW_TOTP has been turned off, so an enrollment made before can still be removed
+			$totpenrollment = dolTotpGetEnrollment($db, $object->id);
+			if ((getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || $totpenrollment !== null) && $permissiontoeditpasswordandsee) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("2FA").'</td>';
 				print '<td>';
 				print '<div class="centpercent display-flex">';
-				print '<span class="badge badge-info">999</span>';
+				if ($totpenrollment !== null) {
+					print '<span class="badge badge-status4 badge-status">'.$langs->trans("Enabled").'</span>';
+					if (!is_array($totpenrollment)) {
+						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
+					}
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+				}
 				print '<div class="left inline-block">';
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
-				print '</span></span>';
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				print '</div></div>';
 				print '</td></tr>';
 			}
 
