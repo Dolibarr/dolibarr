@@ -578,7 +578,7 @@ function accountingSplitAmountPerYear(float $amount, string $datestart, string $
 }
 
 /**
- * Return the accounting lines of an invoice line whose service period overlaps several years, one per year with the year, days, percentage and line description as label.
+ * Return the accounting lines of an invoice line whose service period overlaps several years, one per year with the year, days and percentage as label.
  * The share of the document year stays on the account of the line, the shares of other years go to the given accounts with the account of the line as subledger account.
  *
  * @param	float	$amount					Amount of the invoice line
@@ -588,23 +588,18 @@ function accountingSplitAmountPerYear(float $amount, string $datestart, string $
  * @param	string	$account				Account of the invoice line
  * @param	string	$previousyearsaccount	Account of the shares of previous years
  * @param	string	$nextyearsaccount		Account of the shares of next years
- * @param	string	$description			Description of the invoice line
  * @return	list<array{account:string,subledger:string,label:string,amount:float}>	Empty when the whole period is within the document year
  */
-function accountingSplitLinesPerYear(float $amount, string $datestart, string $dateend, int $docyear, string $account, string $previousyearsaccount, string $nextyearsaccount, string $description): array
+function accountingSplitLinesPerYear(float $amount, string $datestart, string $dateend, int $docyear, string $account, string $previousyearsaccount, string $nextyearsaccount): array
 {
 	global $langs;
 
-	$description = dol_trunc(dol_string_nohtmltag($description, 1), 64, 'right', 'UTF-8', 1);
 	$lines = array();
 	foreach (accountingSplitAmountPerYear($amount, $datestart, $dateend, $docyear) as $year => $share) {
 		if ($share['amount'] == 0) {
 			continue;
 		}
 		$label = $langs->transnoentities('AccrualShare', (string) $year, (string) $share['days'], (string) $share['percent']);
-		if ($description !== '') {
-			$label = $description.' - '.$label;
-		}
 		if ($year == $docyear) {
 			$lines[] = array('account' => $account, 'subledger' => '', 'label' => $label, 'amount' => $share['amount']);
 		} else {
