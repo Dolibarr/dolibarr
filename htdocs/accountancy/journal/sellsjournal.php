@@ -424,7 +424,7 @@ if ($result) {
 		$amountht = $total_ht;
 		$splitlines = array();
 		if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS') && !empty($obj->date_start) && !empty($obj->date_end) && !accountingAccountIsExcludedFromSplit($compta_prod)) {
-			$splitlines = accountingSplitLinesPerYear((float) $amountht, $obj->date_start, $obj->date_end, (int) substr($obj->df, 0, 4), $compta_prod, getDolGlobalString('ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME', 'NotDefined'), getDolGlobalString('ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined'), (string) $obj->description);
+			$splitlines = accountingSplitLinesPerYear((float) $amountht, $obj->date_start, $obj->date_end, (int) substr($obj->df, 0, 4), $compta_prod, getDolGlobalString('ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME', 'NotDefined'), getDolGlobalString('ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined'));
 		}
 		if (empty($splitlines)) {
 			if (!isset($tabht[$obj->rowid][$compta_prod])) {
@@ -850,7 +850,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->subledger_label = $subledgeraccount->label;
 				$bookkeeping->numero_compte = $splitline['account'];
 				$bookkeeping->label_compte = $accountingaccount->label;
-				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $splitline['label']);
+				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label']);
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 				$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -1381,7 +1381,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($splitline['subledger'])).'"'.$sep;
 			print '"'.csvClean(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $splitline['label'])).'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'])).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -1796,6 +1796,8 @@ if (empty($action) || $action == 'view') {
 		// Split across years
 		foreach ($tabsplit[$key] ?? array() as $splitline) {
 			$mt = $splitline['amount'];
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(0, $splitline['account'], true);
 			print '<tr class="oddeven">';
 			print "<!-- Split across years -->";
 			print "<td>".$date."</td>";
@@ -1811,7 +1813,7 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			// Subledger account
 			print "<td>".length_accountg($splitline['subledger'])."</td>";
-			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $splitline['label'], 1)."</td>";
+			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'], 1)."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
