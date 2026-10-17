@@ -500,7 +500,11 @@ if ($result) {
 						if (empty($obj->typeop_user)) {	// Add test to avoid to add amount twice if a link already exists also on user.
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								if (empty($tabtp[$obj->rowid][$compta_user])) {
+									$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+								} else {
+									$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								}
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
