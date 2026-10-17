@@ -133,6 +133,14 @@ if (isModEnabled('loan')) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
+if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS')) {
+	$list_account[] = '---Accruals---';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_EXPENSE';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_DEFERRED_INCOME';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_PREPAID_EXPENSE';
+	$list_account[] = 'ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS';
+}
 if (isModEnabled('invoice') || isModEnabled('supplier_invoice')) {
 	$list_account[] = '---Discounts---';
 	$list_account[] = 'ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED';
@@ -164,7 +172,11 @@ if ($action == 'update') {
 			continue;
 		}
 
-		$constvalue = GETPOST($constname, 'alpha');
+		if ($constname == 'ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS') {
+			$constvalue = implode(',', GETPOST($constname, 'array:alphanohtml'));
+		} else {
+			$constvalue = GETPOST($constname, 'alpha');
+		}
 
 		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error++;
@@ -232,6 +244,18 @@ if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
 
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
+
+$chartaccounts = array();
+if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS')) {
+	$sql = "SELECT aa.account_number, aa.label FROM ".MAIN_DB_PREFIX."accounting_account as aa";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND asy.rowid = ".getDolGlobalInt('CHARTOFACCOUNTS');
+	$sql .= " WHERE aa.active = 1 AND aa.entity = ".((int) $conf->entity);
+	$sql .= " ORDER BY aa.account_number";
+	$resql = $db->query($sql);
+	while ($resql && ($obj = $db->fetch_object($resql))) {
+		$chartaccounts[$obj->account_number] = length_accountg($obj->account_number).' - '.$obj->label;
+	}
+}
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
@@ -327,7 +351,11 @@ foreach ($list_account as $key) {
 		print '</td>';
 		// Value
 		print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+		if ($key == 'ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS') {
+			print $form->multiselectarray($key, $chartaccounts, explode(',', getDolGlobalString($key)), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone');
+		} else {
+			print $formaccounting->select_account(getDolGlobalString($key), $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+		}
 		print '</td>';
 		print '</tr>';
 	}
