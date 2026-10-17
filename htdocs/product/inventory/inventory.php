@@ -2,7 +2,7 @@
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026	Jose MARTINEZ							<jose.martinez@pichinov.com>
+ * Copyright (C) 2026	Jose Martinez							<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
+$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
+$startmode = GETPOST('startmode', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
@@ -532,15 +534,33 @@ if ($action == 'confirm_cancel') {
 	$action = 'view';
 }
 
+// Same confirmation as on card.php, so both validate buttons ask for the start mode
 if ($action == 'validate') {
 	$form = new Form($db);
-	$formquestion = '';
-	if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
-		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+	$startmodes = array(
+		Inventory::START_MODE_CURRENT => $langs->trans("InventoryStartModeCurrent"),
+		Inventory::START_MODE_NONE => $langs->trans("InventoryStartModeNone"),
+		Inventory::START_MODE_ZERO => $langs->trans("InventoryStartModeZero"),
+	);
+	$defaultstartmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', Inventory::START_MODE_CURRENT);
+	if (!array_key_exists($defaultstartmode, $startmodes)) {
+		$defaultstartmode = Inventory::START_MODE_CURRENT;
 	}
+	$formquestion = array(
+		array('type' => 'select', 'name' => 'startmode', 'label' => $form->textwithpicto($langs->trans("InventoryStartMode"), $langs->trans("InventoryStartModeHelp")), 'values' => $startmodes, 'default' => $defaultstartmode),
+	);
+	$text = $langs->trans('ConfirmStartInventory');
+	if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+		$formquestion[] = array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10');
+		$text .= '<br>'.$langs->trans('IncludeSubWarehouseExplanation');
+	}
+	// Lines present on a draft were added by hand: the prefilling modes replace them, the
+	// "no line" mode keeps them. Tell the user before they lose a counting session.
+	$nblines = $object->countLines();
+	if ($nblines > 0) {
+		$text .= '<br><br><span class="warning">'.img_warning().' '.$langs->trans('WarningInventoryLinesReplacedOnStart', $nblines).'</span>';
+	}
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $text, 'confirm_validate', $formquestion, '', 1, 280);
 }
 
 // Call Hook formConfirm
@@ -653,11 +673,8 @@ if ($action != 'record') {
 	if (empty($reshook)) {
 		if ($object->status == Inventory::STATUS_DRAFT) {
 			if ($permissiontoupdatestock) {
-				if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
-				} else {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
-				}
+				// Always go through the confirmation: it holds the start mode choice
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
 			}

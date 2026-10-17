@@ -295,7 +295,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of action xxxx
 	if ($action == 'setdraft') {
 		$text = $langs->trans('ConfirmSetToDraftInventory', $object->ref);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', '', 0, 1, 220);
+		// Going back to draft deletes every line, including the ones entered or scanned by hand:
+		// say how many will be lost instead of letting the user discover it afterwards
+		$nblines = $object->countLines();
+		if ($nblines > 0) {
+			$text .= '<br><br><span class="warning">'.img_warning().' '.$langs->trans('WarningInventoryLinesWillBeErased', $nblines).'</span>';
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', '', 0, 1, 250);
 	}
 	// Confirmation to delete
 	if ($action == 'delete') {
@@ -328,7 +334,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$formquestion[] = array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10');
 			$text .= '<br>'.$langs->trans('IncludeSubWarehouseExplanation');
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $text, 'confirm_validate', $formquestion, '', 1);
+		// Lines present on a draft were added by hand: the prefilling modes replace them, the
+		// "no line" mode keeps them. Tell the user before they lose a counting session.
+		$nblines = $object->countLines();
+		if ($nblines > 0) {
+			$text .= '<br><br><span class="warning">'.img_warning().' '.$langs->trans('WarningInventoryLinesReplacedOnStart', $nblines).'</span>';
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $text, 'confirm_validate', $formquestion, '', 1, 280);
 	}
 
 	// Call Hook formConfirm
