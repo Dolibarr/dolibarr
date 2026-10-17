@@ -2335,7 +2335,7 @@ class ToolApiBridge extends McpTool
 			'Societe' => '/societe/class/societe.class.php',
 			'Product' => '/product/class/product.class.php',
 			'Reception' => '/reception/class/reception.class.php',
-			'Expedition' => '/expedition/class/expedition.class.php'
+			'Expedition' => '/expedition/class/expedition.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php'
 		);
 		if (empty($paths[$class]) || (int) $id <= 0) {
