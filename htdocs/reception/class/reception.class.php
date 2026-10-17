@@ -1098,7 +1098,7 @@ class Reception extends CommonObject
 			$this->db->begin();
 
 			// Rank to use
-			$ranktouse = $this->rang;
+			$ranktouse = $rang;
 			if ($ranktouse == -1) {
 				$rangmax = $this->line_max($this->fk_reception);
 				$ranktouse = $rangmax + 1;
