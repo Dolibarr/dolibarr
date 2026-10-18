@@ -761,7 +761,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}
