@@ -511,7 +511,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 					$sql .= " AND f.fk_user_author = 0";
 				}
 			}
-			if ($key == 'logini') {
+			if ($key == 'logint') {
 				$logini = $value;
 				$condition = '=';
 				if (preg_match('/^!/', $logini)) {
@@ -520,9 +520,12 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logini);
-				$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+				if ($result == 0 && $condition == '<>') {
+					continue;	// Not assigned to an unknown user: no filter, as for logina
+				}
+				$sql .= " AND ".($condition == '<>' ? "NOT " : "")."EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 				$sql .= " WHERE ec.element_id = f.rowid";
-				$sql .= " AND ec.fk_c_type_contact = 26";	// FIXME do not use hardcoded ID
+				$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element = 'fichinter' AND tc.source = 'internal' AND tc.code = 'INTERVENING'";
 				if ($result > 0) {
 					$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
 				} elseif ($result < 0 || $condition == '=') {
