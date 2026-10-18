@@ -2100,7 +2100,8 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? (($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+				$this->country = $obj->country_id ? ((is_object($langs) && $langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -2108,7 +2109,7 @@ class Societe extends CommonObject
 				$this->region_code  = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcomm) : 'StatusProspect'.$obj->fk_stcomm);
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
