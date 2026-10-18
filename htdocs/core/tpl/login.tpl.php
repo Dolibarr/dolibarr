@@ -155,7 +155,8 @@ $arrayofjs = array(
 
 // Javascript code for the login with a passkey
 require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
-$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax));
+// The button is not shown if the setup is wrong: the reason is shown only to administrators on the setup page, not to visitors.
+$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && passkeyCheckSetup() === '');
 if ($passkeyenabled) {
 	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION));
 }

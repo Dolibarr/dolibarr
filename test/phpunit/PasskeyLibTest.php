@@ -143,6 +143,42 @@ class PasskeyLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testPasskeyCheckSetup
+	 *
+	 * @return  void
+	 */
+	public function testPasskeyCheckSetup()
+	{
+		global $conf, $langs;
+
+		$langs->load("users");
+		$conf->file->main_force_https = '';
+		$conf->global->MAIN_AUTHENTICATION_PASSKEY_RPID = '';
+
+		$conf->file->dol_main_url_root = 'https://erp.example.com';
+		$this->assertEquals('', passkeyCheckSetup());
+
+		$conf->file->dol_main_url_root = 'http://localhost:8080';
+		$this->assertEquals('', passkeyCheckSetup(), 'http://localhost must be accepted for tests');
+
+		$conf->file->dol_main_url_root = 'http://erp.example.com';
+		$this->assertEquals($langs->trans("PasskeyErrorHttpsRequired"), passkeyCheckSetup());
+
+		$conf->file->dol_main_url_root = 'https://192.168.88.218:8043';
+		$this->assertEquals($langs->trans("PasskeyErrorIpAddress", '192.168.88.218'), passkeyCheckSetup(), 'An IPv4 address must be refused');
+
+		$conf->file->dol_main_url_root = 'https://[2001:db8::1]';
+		$this->assertEquals($langs->trans("PasskeyErrorIpAddress", '[2001:db8::1]'), passkeyCheckSetup(), 'An IPv6 address must be refused');
+
+		$conf->file->dol_main_url_root = 'https://erp.example.com';
+		$conf->global->MAIN_AUTHENTICATION_PASSKEY_RPID = 'example.com';
+		$this->assertEquals('', passkeyCheckSetup(), 'A parent domain must be accepted');
+
+		$conf->global->MAIN_AUTHENTICATION_PASSKEY_RPID = 'other.com';
+		$this->assertEquals($langs->trans("PasskeyErrorBadRpId", 'other.com', 'erp.example.com'), passkeyCheckSetup());
+	}
+
+	/**
 	 * testPasskeyBase64UrlDecode
 	 *
 	 * @return  void

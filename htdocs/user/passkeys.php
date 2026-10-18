@@ -179,6 +179,7 @@ if ($permissiontoadd) {
 	print ' data-msg-error="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyCreationFailed")).'"';
 	print ' data-msg-alreadyregistered="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorAlreadyRegistered")).'"';
 	print ' data-msg-notsupported="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyNotSupportedByBrowser")).'"';
+	print ' data-msg-baddomain="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorBadOrigin", passkeyGetOrigin())).'"';
 	print '>';
 	print img_picto('', 'fa-plus-circle', 'class="pictofixedwidth"').$langs->trans("AddPasskey");
 	print '</button>';

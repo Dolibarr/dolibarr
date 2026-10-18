@@ -81,6 +81,17 @@ top_httphead('application/json');
 
 $result = array('success' => false);
 
+// Only these messages can be shown to a visitor of the login page (same kind of messages than for a bad password).
+// The other errors (wrong setup, details of the WebAuthn library) would give information to an attacker:
+// they are only logged, the administrator sees the setup errors on the setup page of passkeys.
+$publicerrors = array(
+	$langs->transnoentitiesnoconv("PasskeyErrorExpired"),
+	$langs->transnoentitiesnoconv("ErrorTooManyAttempts"),
+	$langs->transnoentitiesnoconv("PasskeyErrorUnknown"),
+	$langs->transnoentitiesnoconv("ErrorLoginDisabled"),
+	$langs->transnoentitiesnoconv("ErrorBadParameters"),
+);
+
 try {
 	if ($action == 'getoptions') {
 		$setuperror = passkeyCheckSetup();
@@ -176,12 +187,13 @@ try {
 	}
 } catch (Exception $e) {
 	dol_syslog("passkeylogin action=".$action." error: ".$e->getMessage(), LOG_WARNING);
+	$publicerror = (in_array($e->getMessage(), $publicerrors, true) ? $e->getMessage() : '');
 	if ($action == 'verify') {
 		// The reason of the failure is shown by the login page after the form is submitted, and the failed login
 		// is recorded the same way than for the other authentication modes (event USER_LOGIN_FAILED).
-		$_SESSION['passkey_loginerror'] = $e->getMessage();
+		$_SESSION['passkey_loginerror'] = $publicerror;
 	}
-	$result = array('success' => false, 'error' => $e->getMessage());
+	$result = array('success' => false, 'error' => $publicerror);
 }
 
 print json_encode($result);

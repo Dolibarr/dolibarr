@@ -50,7 +50,7 @@ $action = GETPOST('action', 'aZ09');
 
 if ($action == 'set') {
 	$rpid = strtolower(trim(GETPOST('MAIN_AUTHENTICATION_PASSKEY_RPID', 'alphanohtml')));
-	if ($rpid !== '' && !preg_match('/^[a-z0-9]([a-z0-9\-\.]*[a-z0-9])?$/', $rpid)) {
+	if ($rpid !== '' && (!preg_match('/^[a-z0-9]([a-z0-9\-\.]*[a-z0-9])?$/', $rpid) || filter_var($rpid, FILTER_VALIDATE_IP) !== false)) {
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $rpid, $langs->transnoentitiesnoconv("PasskeyRpId")), null, 'errors');
 	} else {
 		if ($rpid === '') {

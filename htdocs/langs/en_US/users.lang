@@ -226,6 +226,7 @@ PasskeyModeNotEnabled=The authentication mode '%s' is not enabled in the paramet
 PasskeyErrorPHPRequirements=Passkeys require PHP %s or higher with the extension %s
 PasskeyErrorBadUrlRoot=To use passkeys, the parameter $dolibarr_main_url_root of the conf.php file must contain the full URL of the application (for example https://erp.example.com)
 PasskeyErrorHttpsRequired=Passkeys can only be used with an HTTPS URL (or http://localhost for tests)
+PasskeyErrorIpAddress=Passkeys can't be used with an IP address (%s). The URL of the application must use a domain name (for example erp.example.com, or localhost for tests).
 PasskeyErrorBadRpId=The domain %s defined for passkeys must be the domain of the application (%s) or one of its parent domains
 PasskeyErrorExpired=The passkey request has expired. Please try again.
 PasskeyErrorBadOrigin=The passkey was not used from the expected address %s

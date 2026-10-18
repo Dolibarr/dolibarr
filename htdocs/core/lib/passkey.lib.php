@@ -179,6 +179,12 @@ function passkeyCheckSetup()
 	}
 
 	$host = (string) parse_url($origin, PHP_URL_HOST);
+	// WebAuthn refuses an IP address as relying party ID: browsers fail with "This is an invalid domain"
+	foreach (array($host, $rpid) as $domain) {
+		if (filter_var(trim($domain, '[]'), FILTER_VALIDATE_IP) !== false) {
+			return $langs->trans("PasskeyErrorIpAddress", $domain);
+		}
+	}
 	if (strpos($origin, 'https://') !== 0 && $host !== 'localhost') {
 		return $langs->trans("PasskeyErrorHttpsRequired");
 	}

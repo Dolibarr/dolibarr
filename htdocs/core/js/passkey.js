@@ -151,7 +151,9 @@
 
 		post(url, {action: 'getoptions'}).then(function (answer) {
 			if (!answer.success) {
-				throw new Error(answer.error);
+				var servererror = new Error(answer.error);
+				servererror.name = 'PasskeyServerError';
+				throw servererror;
 			}
 			var publicKey = answer.options.publicKey;
 			publicKey.challenge = base64UrlToBuffer(publicKey.challenge);
@@ -199,7 +201,13 @@
 				console.log('passkey login stopped: ' + error.name);
 				return;
 			}
-			showError(element.getAttribute('data-msg-error') + ' ' + (error && error.message ? error.message : ''));
+			console.log('passkey login error: ' + (error ? error.name + ' ' + error.message : ''));
+			// The autofill of the login field is started without any action of the visitor: nothing is shown.
+			// Otherwise only the message of the server is shown, the errors of the browser (for example
+			// SecurityError on a wrong domain) are details of the setup that a visitor doesn't have to see.
+			if (!conditional) {
+				showError(element.getAttribute('data-msg-error') + (error && error.name === 'PasskeyServerError' && error.message ? ' ' + error.message : ''));
+			}
 		});
 	}
 
@@ -294,6 +302,11 @@
 				if (error && error.name === 'InvalidStateError') {
 					// The authenticator already contains a passkey listed into excludeCredentials
 					showError(element.getAttribute('data-msg-alreadyregistered'));
+					return;
+				}
+				if (error && error.name === 'SecurityError') {
+					// The page is not opened with the URL of the application, so the browser refuses the domain of the passkey
+					showError(element.getAttribute('data-msg-error') + ' ' + element.getAttribute('data-msg-baddomain'));
 					return;
 				}
 				showError(element.getAttribute('data-msg-error') + ' ' + (error && error.message ? error.message : ''));
