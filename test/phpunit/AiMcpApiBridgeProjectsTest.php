@@ -35,7 +35,7 @@ class AiMcpApiBridgeProjectsTest extends PHPUnit\Framework\TestCase
 
 		$this->assertArrayHasKey('projects', $endpoints);
 		$this->assertArrayNotHasKey('project', $endpoints);
-		$this->assertSame(array('index', 'get', 'getByRef', 'getContacts', 'getTimespent', 'listTimespent'), array_keys($endpoints['projects']['methods']));
+		$this->assertSame(array('index', 'get', 'getByRef', 'getContacts', 'getTimespent', 'listTimespent', 'post'), array_keys($endpoints['projects']['methods']));
 		$this->assertSame(array('project'), ToolApiBridge::ENDPOINT_CATEGORIES['projects']);
 	}
 
