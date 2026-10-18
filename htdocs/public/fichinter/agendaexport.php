@@ -287,7 +287,7 @@ if ($format == 'ical' || $format == 'vcal') {
 		header("X-Frame-Options: SAMEORIGIN");
 
 		// Clean parameters
-		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
+		$outputfile = $conf->ficheinter->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
 			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
@@ -343,7 +343,7 @@ if ($format == 'rss') {
 		header("X-Frame-Options: SAMEORIGIN");
 
 		// Clean parameters
-		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
+		$outputfile = $conf->ficheinter->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
 			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
@@ -416,8 +416,8 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 	}
 
 	// Create dir and define output file (definitive and temporary)
-	$result = dol_mkdir($conf->agenda->dir_temp);
-	$outputfile = $conf->agenda->dir_temp.'/'.$filename;
+	$result = dol_mkdir($conf->ficheinter->dir_temp);
+	$outputfile = $conf->ficheinter->dir_temp.'/'.$filename;
 
 	$result = 0;
 
@@ -704,7 +704,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 
 		// Create temp file
 		// Temporary file (allow call of function by different threads
-		$outputfiletmp = tempnam($conf->fichinter->dir_temp, 'tmp');
+		$outputfiletmp = tempnam($conf->ficheinter->dir_temp, 'tmp');
 		dolChmod($outputfiletmp);
 
 		// Write file
