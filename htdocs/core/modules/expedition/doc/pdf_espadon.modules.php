@@ -1470,7 +1470,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30.0, // in mm
-			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
+			// A shipment without source object (SHIPMENT_STANDALONE) has no ordered quantity
+			'status' => (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') && !empty($object->origin_id)) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
 			),
