@@ -468,16 +468,19 @@ class Account extends CommonObject
 
 		$this->balance = 0;
 
-		$this->type_lib = array(
-			self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
-			self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
-			self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
-		);
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$this->type_lib = array(
+				self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
+				self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
+				self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
+			);
 
-		$this->labelStatus = array(
-			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
-			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
-		);
+			$this->labelStatus = array(
+				self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+				self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+			);
+		}
 	}
 
 	/**
@@ -1182,7 +1185,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url,";
+		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url, ba.entity,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
 		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.sepa_category_purpose, ba.sepa_local_instrument, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
@@ -1194,7 +1197,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=ba.fk_accountancy_journal';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal';
 		$sql .= " WHERE ba.entity IN (".getEntity($this->element).")";
 		if ($id) {
 			$sql .= " AND ba.rowid = ".((int) $id);
@@ -1211,6 +1214,7 @@ class Account extends CommonObject
 
 				$this->id            = $obj->rowid;
 				$this->rowid         = $obj->rowid;
+				$this->entity        = $obj->entity;
 				$this->ref           = $obj->ref;
 				$this->label         = $obj->label;
 				$this->type          = $obj->type;
