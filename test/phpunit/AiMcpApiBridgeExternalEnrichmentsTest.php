@@ -52,6 +52,7 @@ class AiMcpExternalHookStub
 class AiMcpApiBridgeExternalEnrichmentsTest extends PHPUnit\Framework\TestCase
 {
 	/**
+	 * @param  ToolApiBridge $bridge Bridge instance under test.
 	 * @return array<string, array{label?:string, methods?:array<string, mixed>}> Core enrichments plus the hook ones
 	 */
 	private function enrichmentsOf(ToolApiBridge $bridge)
