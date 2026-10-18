@@ -55,6 +55,11 @@ $search_rate		= GETPOST('search_rate', 'alpha');
 $search_code		= GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 $dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('dateinputday', 'int'), GETPOST('dateinputyear', 'int'));
+$reg = array();
+if (empty($dateinput) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', GETPOST('dateinput', 'alpha'), $reg)) {
+	// The form to edit a rate sends the date in one field of type date (YYYY-MM-DD)
+	$dateinput = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+}
 $rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
