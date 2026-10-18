@@ -235,16 +235,6 @@ if ($cpttvaasset !== '') {
 	$assetaccountprefixlist = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_ASSET_ACCOUNT_PREFIXES', '2'))));
 }
 
-// A bound fixed-asset account sends this line's deductible VAT to the dedicated account, ahead of the dictionary.
-if (!empty($assetaccountprefixlist)) {
-	foreach ($assetaccountprefixlist as $assetaccountprefix) {
-		if (strpos((string) $compta_prod, $assetaccountprefix) === 0) {
-			$compta_tva = $cpttvaasset;
-			break;
-		}
-	}
-}
-
 $rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
 $rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $cptlocaltax1 = getDolGlobalString('ACCOUNTING_LT1_BUY_ACCOUNT', 'NotDefined');
@@ -286,12 +276,10 @@ if ($result) {
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		// A bound fixed-asset account sends this line's deductible VAT to the dedicated account, ahead of the dictionary.
-		if (!empty($assetaccountprefixlist)) {
-			foreach ($assetaccountprefixlist as $assetaccountprefix) {
-				if (dol_substr((string) $compta_prod, 0, dol_strlen($assetaccountprefix)) === $assetaccountprefix) {
-					$compta_tva = $cpttvaasset;
-					break;
-				}
+		foreach ($assetaccountprefixlist as $assetaccountprefix) {
+			if (strpos((string) $compta_prod, $assetaccountprefix) === 0) {
+				$compta_tva = $cpttvaasset;
+				break;
 			}
 		}
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax1);
