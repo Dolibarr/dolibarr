@@ -919,6 +919,31 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['shipments'] = [
 			'label' => 'customer shipments (expéditions, goods sent)',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT customer shipment (delivery note) WITHOUT a source order, as the shipment card allows when standalone shipments are enabled. Nothing is validated: stock does not move until the user validates the shipment in Dolibarr. The customer is mandatory: give socid, or simply the customer name. Each line names a catalogue product (product_ref or fk_product) or carries a free desc, with a qty and an optional unit. To ship an existing order, do not use this tool: tell the user to create the shipment from the order card.",
+					'write' => [
+						'preview' => 'AIPreviewCreateShipment',
+						'required' => ['socid'],
+						'object' => 'Expedition',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['expedition', 'creer'],
+						'kind' => 'shipment',
+						'line_fields' => [
+							'product_ref' => ['type' => 'string', 'description' => 'Ref or label of a catalogue product.'],
+							'desc' => ['type' => 'string', 'description' => 'Free text, for a line with no product.'],
+							'qty' => ['type' => 'number'],
+							'unit' => ['type' => 'string', 'description' => 'Unit as said, e.g. pieces, kg. Omit to use the product unit.']
+						]
+					],
+					'params' => [
+						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'ref_customer' => "Customer's own reference for this delivery (optional).",
+						'date_delivery' => "Planned delivery date, YYYY-MM-DD (optional).",
+						'lines' => "Array of lines: product_ref (or fk_product) or desc for a free line, qty, unit (optional)."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
@@ -941,6 +966,35 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['receptions'] = [
 			'label' => 'supplier receptions (réceptions, goods received)',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT supplier reception (goods received, typically from a supplier delivery note) WITHOUT a supplier order, as the reception card allows when standalone receptions are enabled. Nothing is validated: stock does not move until the user validates the reception in Dolibarr. The supplier is mandatory: give socid, or simply the supplier name. Each line names a catalogue product (product_ref or fk_product) and a qty; optional: warehouse (name or rowid, else the default warehouse), cost_price (unit purchase price excl. tax, else the supplier price of the product), batch with eatby/sellby for a lot-tracked product. To receive an existing supplier order, do not use this tool: tell the user to create the reception from the order card.",
+					'write' => [
+						'preview' => 'AIPreviewCreateReception',
+						'required' => ['socid'],
+						'object' => 'Reception',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['reception', 'creer'],
+						'buy' => true,
+						'kind' => 'reception',
+						'line_fields' => [
+							'product_ref' => ['type' => 'string', 'description' => 'Ref or label of a catalogue product. Mandatory: a reception line moves the stock of a product.'],
+							'qty' => ['type' => 'number'],
+							'warehouse' => ['type' => 'string', 'description' => 'Warehouse receiving the goods, by name or rowid. Omit to use the default warehouse.'],
+							'cost_price' => ['type' => 'number', 'description' => 'Unit purchase price excl. tax. Omit to use the supplier price of the product.'],
+							'batch' => ['type' => 'string', 'description' => 'Lot or serial number, for a lot-tracked product.'],
+							'eatby' => ['type' => 'string', 'description' => 'Eat-by date YYYY-MM-DD (lot-tracked product).'],
+							'sellby' => ['type' => 'string', 'description' => 'Sell-by date YYYY-MM-DD (lot-tracked product).']
+						]
+					],
+					'params' => [
+						'socid' => "Rowid of the supplier, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'ref_supplier' => "Supplier's reference printed on the delivery note (optional).",
+						'date_delivery' => "Delivery date, YYYY-MM-DD (optional).",
+						'lines' => "Array of lines: product_ref (or fk_product), qty, warehouse (optional), cost_price (optional), batch/eatby/sellby (optional)."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
@@ -2041,19 +2095,22 @@ class ToolApiBridge extends McpTool
 			$required = [];
 			foreach ($meta['params'] as $pname => $pdesc) {
 				if ($pname === 'lines') {
+					// Lines of a commercial document, unless the write declares its own
+					// line fields (a reception names a warehouse and a cost price, not a VAT rate).
+					$lineFields = !empty($meta['write']['line_fields']) ? $meta['write']['line_fields'] : [
+						'product_ref' => ['type' => 'string', 'description' => 'Ref or label of a catalogue product.'],
+						'desc' => ['type' => 'string', 'description' => 'Free text, for a line with no product.'],
+						'qty' => ['type' => 'number'],
+						'unit' => ['type' => 'string', 'description' => 'Unit as said, e.g. pieces, kg, hour. Omit to use the product unit.'],
+						'subprice' => ['type' => 'number', 'description' => 'Unit price excl. tax. Omit to use the catalogue price.'],
+						'tva_tx' => ['type' => 'number', 'description' => 'VAT rate. Omit to use the default rate.']
+					];
 					$properties[$pname] = [
 						'type' => 'array',
 						'description' => $pdesc,
 						'items' => [
 							'type' => 'object',
-							'properties' => [
-								'product_ref' => ['type' => 'string', 'description' => 'Ref or label of a catalogue product.'],
-								'desc' => ['type' => 'string', 'description' => 'Free text, for a line with no product.'],
-								'qty' => ['type' => 'number'],
-								'unit' => ['type' => 'string', 'description' => 'Unit as said, e.g. pieces, kg, hour. Omit to use the product unit.'],
-								'subprice' => ['type' => 'number', 'description' => 'Unit price excl. tax. Omit to use the catalogue price.'],
-								'tva_tx' => ['type' => 'number', 'description' => 'VAT rate. Omit to use the default rate.']
-							]
+							'properties' => $lineFields
 						]
 					];
 					continue;
@@ -2286,7 +2343,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string $class Business class declared by the write.
 	 * @param  int    $id    Rowid of the record.
 	 * @param  string $ref   Exact reference when no rowid was supplied.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|null Record, or null when it cannot be read.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|null Record, or null when it cannot be read.
 	 */
 	protected function fetchBusinessObject($class, $id, $ref = '')
 	{
@@ -2299,6 +2356,8 @@ class ToolApiBridge extends McpTool
 			'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 			'Societe' => '/societe/class/societe.class.php',
 			'Product' => '/product/class/product.class.php',
+			'Reception' => '/reception/class/reception.class.php',
+			'Expedition' => '/expedition/class/expedition.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php'
 		);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
@@ -2306,7 +2365,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition $obj';
 		$result = $ref === '' ? $obj->fetch((int) $id) : $obj->fetch((int) $id, $ref);
 		if ($result > 0) {
 			return $obj;
@@ -2608,10 +2667,41 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		// A logistic document (reception, shipment): the header names a model is
+		// likely to use, dates as text, and a warehouse given once for every line.
+		$kind = (string) ($write['kind'] ?? '');
+		$headerWarehouse = 0;
+		if ($kind !== '') {
+			$logisticAliases = array('supplier_ref' => 'ref_supplier', 'ref_fournisseur' => 'ref_supplier', 'delivery_note' => 'ref_supplier', 'customer_ref' => 'ref_customer', 'ref_client' => 'ref_customer', 'delivery_date' => 'date_delivery', 'date' => 'date_delivery');
+			foreach ($logisticAliases as $from => $to) {
+				if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+					$args[$to] = $args[$from];
+					unset($args[$from]);
+				}
+			}
+			// The business classes want timestamps, a model writes dates as text.
+			foreach (array('date_delivery', 'date_reception') as $datefield) {
+				if (isset($args[$datefield]) && !is_numeric($args[$datefield])) {
+					$ts = dol_stringtotime((string) $args[$datefield], 1);
+					if ($ts > 0) {
+						$args[$datefield] = $ts;
+					} else {
+						unset($args[$datefield]);
+					}
+				}
+			}
+			foreach (array('warehouse', 'warehouse_id', 'fk_warehouse', 'entrepot') as $key) {
+				if (!empty($args[$key]) && !is_array($args[$key])) {
+					$headerWarehouse = $this->warehouseIdFromName((string) $args[$key]);
+				}
+				unset($args[$key]);	// the API reads the warehouse on each line, never on the header
+			}
+		}
+
 		if (!empty($args['lines']) && is_array($args['lines'])) {
 			foreach ($args['lines'] as $i => $line) {
 				if (is_array($line)) {
-					$args['lines'][$i] = $this->normaliseWriteLine($line, is_numeric($args['socid'] ?? '') ? (int) $args['socid'] : 0, !empty($write['buy']));
+					$args['lines'][$i] = $this->normaliseWriteLine($line, is_numeric($args['socid'] ?? '') ? (int) $args['socid'] : 0, !empty($write['buy']), $kind, $headerWarehouse);
 				}
 			}
 		}
@@ -2623,17 +2713,32 @@ class ToolApiBridge extends McpTool
 	 * Normalise one document line: field names, product given by ref or label,
 	 * default VAT rate.
 	 *
-	 * @param  array<string,mixed> $line  Line as received.
-	 * @param  int                 $socid Third party of the document, 0 if unknown.
-	 * @param  bool                $buy   True for a supplier document: purchase price and VAT.
-	 * @return array<string,mixed>        Line with REST field names.
+	 * @param  array<string,mixed> $line             Line as received.
+	 * @param  int                 $socid            Third party of the document, 0 if unknown.
+	 * @param  bool                $buy              True for a supplier document: purchase price and VAT.
+	 * @param  string              $kind             '' for a commercial document, 'reception' or 'shipment' for a logistic one (warehouse, batch, cost price; no VAT).
+	 * @param  int                 $defaultWarehouse Warehouse given on the header, for the lines that name none.
+	 * @return array<string,mixed>                   Line with REST field names.
 	 */
-	private function normaliseWriteLine(array $line, $socid, $buy = false)
+	private function normaliseWriteLine(array $line, $socid, $buy = false, $kind = '', $defaultWarehouse = 0)
 	{
 		$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'description' => 'desc', 'vat_rate' => 'tva_tx', 'product_id' => 'fk_product');
+		if ($kind !== '') {
+			$aliases += array('warehouse' => 'fk_entrepot', 'warehouse_id' => 'fk_entrepot', 'fk_warehouse' => 'fk_entrepot', 'entrepot' => 'fk_entrepot', 'entrepot_id' => 'fk_entrepot', 'lot' => 'batch', 'serial' => 'batch', 'lot_number' => 'batch');
+		}
 		foreach ($aliases as $from => $to) {
 			if (isset($line[$from]) && !isset($line[$to])) {
 				$line[$to] = $line[$from];
+				unset($line[$from]);
+			}
+		}
+		if ($kind === 'reception') {
+			// The price of a received line is what it cost: whatever the model
+			// called it, the API reads cost_price.
+			foreach (array('subprice', 'buy_price', 'purchase_price', 'cost') as $from) {
+				if (isset($line[$from]) && !isset($line['cost_price'])) {
+					$line['cost_price'] = $line[$from];
+				}
 				unset($line[$from]);
 			}
 		}
@@ -2697,6 +2802,46 @@ class ToolApiBridge extends McpTool
 				$line['fk_unit'] = (int) $unitprod->fk_unit;
 			}
 		}
+		if ($kind !== '') {
+			// A logistic line moves stock: it needs a warehouse, by name or rowid,
+			// else the one given on the header, else the default one. No VAT, no
+			// selling price on such a line.
+			if (isset($line['fk_entrepot']) && !is_numeric($line['fk_entrepot'])) {
+				$line['fk_entrepot'] = $this->warehouseIdFromName((string) $line['fk_entrepot']);
+			}
+			if (empty($line['fk_entrepot'])) {
+				$line['fk_entrepot'] = $defaultWarehouse > 0 ? $defaultWarehouse : $this->defaultWarehouseId();
+			}
+			if (empty($line['fk_entrepot'])) {
+				unset($line['fk_entrepot']);
+			}
+			// No VAT and no selling price on a logistic line: a shipment line carries
+			// no amount at all, a received line is valued by its cost price.
+			unset($line['tva_tx'], $line['subprice']);
+			if ($kind === 'reception') {
+				// A received line without a price is valued at the supplier price of
+				// the product, as the card would propose.
+				if (!isset($line['cost_price']) && !empty($line['fk_product'])) {
+					$costprod = $this->fetchBusinessObject('Product', (int) $line['fk_product']);
+					if ($costprod instanceof Product) {
+						$line['cost_price'] = $this->defaultBuyPrice($costprod, $socid, (float) ($line['qty'] ?? 1));
+					}
+				}
+				// Lot dates arrive as text: the line class wants timestamps.
+				foreach (array('eatby', 'sellby') as $datefield) {
+					if (isset($line[$datefield]) && !is_numeric($line[$datefield])) {
+						$ts = dol_stringtotime((string) $line[$datefield], 1);
+						if ($ts > 0) {
+							$line[$datefield] = $ts;
+						} else {
+							unset($line[$datefield]);
+						}
+					}
+				}
+			}
+
+			return $line;
+		}
 		// A line with no rate is written at 0 %: ask core for the rate that
 		// applies between the two companies for this product, which is what
 		// the card would have filled in.
@@ -2705,6 +2850,60 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $line;
+	}
+
+	/**
+	 * Warehouse rowid from the way a user names it: its ref or its label, or the
+	 * rowid itself.
+	 *
+	 * @param  string $name Warehouse as written.
+	 * @return int          Rowid, 0 when none or several match.
+	 */
+	private function warehouseIdFromName($name)
+	{
+		$want = trim((string) $name);
+		if ($want === '') {
+			return 0;
+		}
+		if (is_numeric($want)) {
+			return (int) $want;
+		}
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."entrepot";
+		$sql .= " WHERE entity IN (".getEntity('stock').") AND statut = 1";
+		$sql .= " AND (ref = '".$this->db->escape($want)."' OR lieu = '".$this->db->escape($want)."')";
+		$sql .= " LIMIT 2";
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->num_rows($resql) === 1) {
+			$obj = $this->db->fetch_object($resql);
+
+			return (int) $obj->rowid;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Warehouse a logistic line goes to when none is named: the user's default
+	 * warehouse, else the one set up for the company, else the only active one.
+	 *
+	 * @return int Rowid, 0 when there is no obvious default.
+	 */
+	private function defaultWarehouseId()
+	{
+		if (!empty($this->user->fk_warehouse)) {
+			return (int) $this->user->fk_warehouse;
+		}
+		if (getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE') > 0) {
+			return getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE');
+		}
+		$resql = $this->db->query("SELECT rowid FROM ".$this->db->prefix()."entrepot WHERE entity IN (".getEntity('stock').") AND statut = 1 LIMIT 2");
+		if ($resql && $this->db->num_rows($resql) === 1) {
+			$obj = $this->db->fetch_object($resql);
+
+			return (int) $obj->rowid;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -2813,17 +3012,19 @@ class ToolApiBridge extends McpTool
 		$total = 0.0;
 		$priced = false;
 		foreach ($lines as $line) {
-			if (!isset($line['subprice']) || $line['subprice'] === '') {
+			// A received line is valued at its cost price, a sold one at its selling price.
+			$unitprice = $line['subprice'] ?? ($line['cost_price'] ?? '');
+			if ($unitprice === '' || is_null($unitprice)) {
 				continue;
 			}
 			$priced = true;
-			$total += ((float) ($line['qty'] ?? 1)) * ((float) $line['subprice']);
+			$total += ((float) ($line['qty'] ?? 1)) * ((float) $unitprice);
 		}
 		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
 		if ($priced) {
 			$what .= ', '.price($total);
-		} else {
-			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");
+		} elseif (($write['kind'] ?? '') !== 'shipment') {
+			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");	// a shipment line carries no price at all
 		}
 
 		return $langs->trans($write['preview'], $who, $what);
@@ -2901,6 +3102,37 @@ class ToolApiBridge extends McpTool
 
 				return $langs->transnoentitiesnoconv('AIWriteThirdpartyNotFound', $named);
 			}
+		}
+
+		// A logistic document: nothing is asked of the user when the write would
+		// fail anyway - standalone documents switched off, no line, a line with
+		// no product to move, or no warehouse to receive into.
+		$kind = (string) ($write['kind'] ?? '');
+		if ($kind !== '') {
+			$langs->load('other');
+			$standaloneConst = ($kind === 'reception') ? 'RECEPTION_STANDALONE' : 'SHIPMENT_STANDALONE';
+			if (!getDolGlobalString($standaloneConst) && empty($args['origin_id'])) {
+				return $langs->transnoentitiesnoconv('AIWriteStandaloneOff', $kind, $standaloneConst);
+			}
+			$lines = isset($args[$write['lines']]) && is_array($args[$write['lines']]) ? $args[$write['lines']] : array();
+			if (empty($lines)) {
+				return $langs->transnoentitiesnoconv('AIWriteNoLines');
+			}
+			if (!empty($this->unresolvedProducts)) {
+				return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product, or create it with api_products_create first.";
+			}
+			if ($kind === 'reception') {
+				foreach ($lines as $line) {
+					if (!is_array($line) || empty($line['fk_product'])) {
+						return $langs->transnoentitiesnoconv('AIWriteReceptionLineNeedsProduct', (string) (is_array($line) ? ($line['desc'] ?? '') : ''));
+					}
+					if (empty($line['fk_entrepot']) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS')) {
+						return $langs->transnoentitiesnoconv('AIWriteNoWarehouse');
+					}
+				}
+			}
+
+			return '';
 		}
 
 		if (empty($write['parent'])) {
