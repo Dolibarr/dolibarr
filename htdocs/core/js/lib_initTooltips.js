@@ -28,6 +28,18 @@ function initTooltips(root) {
 				return $el.prop("title");
 			}
 		});
+
+		// Close the tooltip on click to cancel the pending show timer, so the tooltip does not appear
+		// behind a modal dialog opened by the click. Also re-close it once on the next focusin, because
+		// a jQuery UI modal dialog restores the focus to the triggering element on close, which reopens
+		// the tooltip (jQuery UI close() clears the fx queue and cancels the pending show).
+		$el.off("click.closetooltip focusin.closetooltip").on("click.closetooltip", function () {
+			$el.tooltip("close");
+			console.log("close tooltip");
+			$el.off("focusin.closetooltip").one("focusin.closetooltip", function () {
+				$el.tooltip("close");
+			});
+		});
 	});
 }
 
@@ -181,7 +193,11 @@ function initTooltipDialogs(root, dialogWidth) {
 			maxHeight: window.innerHeight - 60,
 			width: dialogWidth,
 			modal: true,
-			autoOpen: false
+			autoOpen: false,
+			open: function () {
+				// Give focus to the dialog box itself instead of the first link of content (avoid focus outline on the link)
+				jQuery(this).closest(".ui-dialog").trigger("focus");
+			}
 		}).css("z-index", 5000);
 	});
 
