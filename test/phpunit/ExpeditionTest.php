@@ -600,6 +600,55 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * The lines of a standalone shipment must have the same properties as the lines of a shipment
+	 * created from an order: the PDF models and getTotalWeightVolume() read qty_shipped, the product
+	 * data, the weight and the volume.
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentLinesHaveShippedQtyAndProductData()
+	{
+		global $db, $user;
+
+		$this->configureStandaloneShipmentStock(false, false);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$product = new Product($db);
+		$this->assertGreaterThan(0, $product->fetch($productId), $product->errorsToString());
+		$product->weight = 2;
+		$product->weight_units = 0;	// kg
+		$product->volume = 0.5;
+		$product->volume_units = 0;	// m3
+		$this->assertGreaterThan(0, $product->update($productId, $user), $product->errorsToString());
+
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->addlinefree(3, 'shipping', $productId, 0, 1, 'Standalone product', 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$result = $shipment->addlinefree(1, 'shipping', 0, 0, 2, 'Free text', 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		$result = $shipment->fetch($shipment->id);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertCount(2, $shipment->lines);
+
+		$line = $shipment->lines[0];
+		$this->assertEquals(3, $line->qty_shipped);
+		$this->assertSame(Product::TYPE_PRODUCT, $line->product_type);
+		$this->assertSame($product->ref, $line->product_ref);
+		$this->assertSame($product->label, $line->product_label);
+		$this->assertEquals(2, $line->weight);
+		$this->assertEquals(0.5, $line->volume);
+
+		$this->assertEquals(1, $shipment->lines[1]->qty_shipped);
+		$this->assertEmpty($shipment->lines[1]->product_ref);
+
+		$totals = $shipment->getTotalWeightVolume();
+		$this->assertEquals(4, $totals['toship']);
+		$this->assertEquals(6, $totals['weight']);
+		$this->assertEquals(1.5, $totals['volume']);
+	}
+
+	/**
 	 * testStandaloneShipmentAcceptsMissingWarehouse
 	 *
 	 * @return	void
