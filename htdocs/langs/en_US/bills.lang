@@ -9,6 +9,7 @@ BillsCustomersUnpaidForCompany=Unpaid customer invoices for %s
 BillsSuppliersUnpaid=Unpaid vendor invoices
 BillsSuppliersUnpaidForCompany=Unpaid vendors invoices for %s
 BillsLate=Late payments
+NotLate=Not late
 BillsStatistics=Customers invoices statistics
 BillsStatisticsSuppliers=Vendors invoices statistics
 DisabledBecauseDispatchedInBookkeeping=Disabled because invoice was dispatched into bookkeeping

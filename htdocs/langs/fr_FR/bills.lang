@@ -9,6 +9,7 @@ BillsCustomersUnpaidForCompany=Factures client impayées pour %s
 BillsSuppliersUnpaid=Factures fournisseurs impayées
 BillsSuppliersUnpaidForCompany=Factures fournisseur impayées pour %s
 BillsLate=Retards de paiement
+NotLate=Pas en retard
 BillsStatistics=Statistiques factures clients
 BillsStatisticsSuppliers=Statistiques factures fournisseurs
 DisabledBecauseDispatchedInBookkeeping=Action désactivée car facture comptabilisée dans le grand livre

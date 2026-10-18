@@ -50,17 +50,20 @@ $action = GETPOST('action', 'aZ09');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $search_date_start = GETPOSTDATE('search_date_start', 'getpost'); // Use tzserver because invoice date is a date without hour
 $search_date_end = GETPOSTDATE('search_date_end', 'getpostend');
+$search_status = GETPOST('search_status', 'aZ09');
+if (!in_array($search_status, array('unpaid', 'paid'), true)) {
+	$search_status = '';
+}
+$search_late = GETPOST('search_late', 'aZ09');
+if (!in_array($search_late, array('late', 'notlate'), true)) {
+	$search_late = '';
+}
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_status = '';
+	$search_late = '';
 }
-
-$filter = GETPOST('filter', 'aZ09');
-if (!in_array($filter, array('', 'unpaid', 'late'), true)) {
-	$filter = '';
-}
-$filterlate = ($filter === 'late') ? 1 : 0;
-$filteroutstanding = ($filter === 'unpaid' || $filter === 'late') ? 1 : 0;
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -101,7 +104,13 @@ foreach (array('search_date_start' => $search_date_start, 'search_date_end' => $
 		$dateparam .= '&' . $dateprefix . 'day=' . dol_print_date($datets, '%d') . '&' . $dateprefix . 'month=' . dol_print_date($datets, '%m') . '&' . $dateprefix . 'year=' . dol_print_date($datets, '%Y');
 	}
 }
-$filterparam = ($filter !== '') ? '&filter=' . urlencode($filter) : '';
+$filterparam = '';
+if ($search_status !== '') {
+	$filterparam .= '&search_status=' . urlencode($search_status);
+}
+if ($search_late !== '') {
+	$filterparam .= '&search_late=' . urlencode($search_late);
+}
 
 
 /**
@@ -114,11 +123,11 @@ $filterparam = ($filter !== '') ? '&filter=' . urlencode($filter) : '';
  * @param	int|''		$datestart		Start date filter (timestamp), '' for none
  * @param	int|''		$dateend		End date filter (timestamp), '' for none
  * @param	float		$opening		Balance before $datestart (output)
- * @param	int<0,1>	$filteroutstanding	1 to keep only invoices in outstanding tile scope
- * @param	int<0,1>	$filterlate			1 when $filteroutstanding and late tile scope
+ * @param	string		$search_status		'' all, 'unpaid' or 'paid'
+ * @param	string		$search_late		'' all, 'late' or 'notlate'
  * @return	array<int,array<string,mixed>>	Lines sorted on $sortorder, with an opening balance line when $datestart is set
  */
-function recapFournGetData($db, $societe, $sortfield, $sortorder, $datestart, $dateend, &$opening, $filteroutstanding = 0, $filterlate = 0)
+function recapFournGetData($db, $societe, $sortfield, $sortorder, $datestart, $dateend, &$opening, $search_status = '', $search_late = '')
 {
 	global $langs;
 
@@ -152,8 +161,20 @@ function recapFournGetData($db, $societe, $sortfield, $sortorder, $datestart, $d
 			}
 			$totalpaid = $fac->getSommePaiement();
 
-			if ($filteroutstanding && $societe->getInvoiceRemainToPayInOutstanding($fac, 'supplier', $filterlate) <= 0) {
-				continue;
+			if ($search_status !== '') {
+				$remaintopay = $societe->getInvoiceRemainToPayInOutstanding($fac, 'supplier', 0);
+				if ($search_status === 'unpaid' && $remaintopay <= 0) {
+					continue;
+				}
+				if ($search_status === 'paid' && ($remaintopay > 0 || $fac->status == FactureFournisseur::STATUS_DRAFT || $fac->status == FactureFournisseur::STATUS_ABANDONED)) {
+					continue;
+				}
+			}
+			if ($search_late !== '') {
+				$remaintopaylate = $societe->getInvoiceRemainToPayInOutstanding($fac, 'supplier', 1);
+				if (($search_late === 'late' && $remaintopaylate <= 0) || ($search_late === 'notlate' && $remaintopaylate > 0)) {
+					continue;
+				}
 			}
 
 			$userstatic->id = $objf->userid;
@@ -305,7 +326,7 @@ if ($action == 'exportpdf' && $socid > 0 && $permissiontoreadinvoice) {
 	$societe = new Societe($db);
 	$societe->fetch($socid);
 	$opening = 0.0;
-	$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $filteroutstanding, $filterlate);
+	$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 
 	$outputlangs = $langs;
 	$pdfinit = reportPdfInit($outputlangs, (string) $societe->name, $outputlangs->transnoentities("SupplierPreview"));
@@ -405,7 +426,7 @@ if ($action == 'exportxlsx' && $socid > 0 && $permissiontoreadinvoice) {
 	$societe = new Societe($db);
 	$societe->fetch($socid);
 	$opening = 0.0;
-	$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $filteroutstanding, $filterlate);
+	$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 
 	$spreadsheet = reportXlsxInit($langs, $langs->transnoentitiesnoconv("SupplierPreview") . ' - ' . $societe->name, (string) $societe->name);
 	$sheet = $spreadsheet->getActiveSheet();
@@ -524,10 +545,10 @@ if ($socid > 0) {
 		// Invoice list
 		$morehtmlright = reportExportButtons('&socid=' . ((int) $socid) . '&sortfield=' . urlencode($sortfield) . '&sortorder=' . urlencode($sortorder) . $dateparam . $filterparam, 'recapfourn');
 		$titrelist = $langs->trans("SupplierPreview");
-		if ($filter === 'unpaid') {
-			$titrelist = $langs->trans("CurrentOutstandingBill");
-		} elseif ($filter === 'late') {
+		if ($search_status === 'unpaid' && $search_late === 'late') {
 			$titrelist = $langs->trans("CurrentOutstandingBillLate");
+		} elseif ($search_status === 'unpaid' && $search_late === '') {
+			$titrelist = $langs->trans("CurrentOutstandingBill");
 		}
 		print load_fiche_titre($titrelist, $morehtmlright);
 
@@ -547,9 +568,6 @@ if ($socid > 0) {
 		if ($dol_openinpopup) {
 			print '<input type="hidden" name="dol_openinpopup" value="' . dol_escape_htmltag($dol_openinpopup) . '">';
 		}
-		if ($filter !== '') {
-			print '<input type="hidden" name="filter" value="' . dol_escape_htmltag($filter) . '">';
-		}
 		print '<input type="hidden" name="sortfield" value="' . dol_escape_htmltag($sortfield) . '">';
 		print '<input type="hidden" name="sortorder" value="' . dol_escape_htmltag($sortorder) . '">';
 		print '<div class="div-table-responsive-no-min">';
@@ -558,6 +576,12 @@ if ($socid > 0) {
 		print '</div> ';
 		print '<div class="inline-block valignmiddle nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div> ';
+		print '<div class="inline-block valignmiddle marginleftonlyshort">' . $langs->trans('Status') . ' ';
+		print $form->selectarray('search_status', array('unpaid' => $langs->trans('Unpaid'), 'paid' => $langs->trans('Paid')), $search_status, $langs->trans('All'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 0);
+		print '</div> ';
+		print '<div class="inline-block valignmiddle marginleftonlyshort">' . $langs->trans('Late') . ' ';
+		print $form->selectarray('search_late', array('late' => $langs->trans('Late'), 'notlate' => $langs->trans('NotLate')), $search_late, $langs->trans('All'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 0);
 		print '</div> ';
 		print '<div class="inline-block valignmiddle">' . $form->showFilterButtons() . '</div>';
 		print '</div>';
@@ -575,7 +599,7 @@ if ($socid > 0) {
 		print '</tr>';
 
 		$opening = 0.0;
-		$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $filteroutstanding, $filterlate);
+		$TData = recapFournGetData($db, $societe, $sortfield, $sortorder, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 
 		if (empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">' . $langs->trans("NoInvoice") . '</span></td></tr>';
