@@ -490,7 +490,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				$sql .= " AND f.rowid <= ".((int) $value);
 			}
 			if ($key == 'project') {
-				$sql .= " AND f.fk_project = ".((int) $value);
+				$sql .= " AND f.fk_projet = ".((int) $value);
 			}
 			if ($key == 'contract') {
 				$sql .= " AND f.fk_contract = ".((int) $value);
