@@ -493,9 +493,6 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 			if ($key == 'project') {
 				$sql .= " AND f.fk_project = ".((int) $value);
 			}
-			if ($key == 'contract') {
-				$sql .= " AND f.fk_contract = ".((int) $value);
-			}
 
 			if ($key == 'logina') {
 				$logina = $value;
