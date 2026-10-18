@@ -222,6 +222,13 @@ class McpHandler
 				$toolInstance = new $className($this->db, $this->user, $this->conf);
 
 				if ($toolInstance instanceof McpTool) {
+					// When the API bridge is on, it replaces the other native tools (they would
+					// duplicate what the API endpoints already offer). System tools are kept
+					// because parse_intent.php needs them to drive the conversation.
+					if (!in_array($basename, ['api_bridge', 'coffeemaker', 'conversation', 'email_cleaner', 'navigation', 'reports'])
+						&& !$this->isSystemTool($toolInstance)) {
+						continue;
+					}
 					$this->registerTool($basename, $toolInstance);
 				} else {
 					dol_syslog("[McpHandler] Tool class '{$className}' does not extend McpTool.", LOG_ERR);
@@ -526,6 +533,14 @@ class McpHandler
 		$preview = (string) $tool->writeConfirmationPreview($toolName, $args);
 		if ($preview === McpTool::NO_WRITE) {
 			return null;	// read tool
+		}
+
+		// A write bound to fail is refused before the user is asked to approve it.
+		if (method_exists($tool, 'writePrecheck')) {
+			$refused = (string) $tool->writePrecheck($toolName, $args);
+			if ($refused !== '') {
+				return array('error' => $refused);
+			}
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';

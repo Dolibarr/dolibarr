@@ -1122,6 +1122,44 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *    Return the ids of all the events of the recurring series the current event belongs to.
+	 *    A recurring event is not a master event with occurrences: it is N independent records of
+	 *    llx_actioncomm sharing the same recurid. So an action that must apply to the whole series
+	 *    has to load the ids of the other events first.
+	 *
+	 *    @return   int[]|int<-1,-1>			Ids of the events sorted by date, empty array if the
+	 *    									event is not part of a series, -1 if KO
+	 */
+	public function getIdsOfRecurringSerie()
+	{
+		if (empty($this->recurid)) {
+			return array();
+		}
+
+		$sql = "SELECT a.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.recurid = '".$this->db->escape($this->recurid)."'";
+		$sql .= " AND a.entity IN (".getEntity('agenda').")";
+		$sql .= " ORDER BY a.datep ASC, a.id ASC";
+
+		dol_syslog(get_class($this)."::getIdsOfRecurringSerie", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$ids = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$ids[] = (int) $obj->id;
+		}
+		$this->db->free($resql);
+
+		return $ids;
+	}
+
+	/**
 	 *    Delete event from database
 	 *
 	 *    @param	User		$user			User making the delete
@@ -2812,7 +2850,7 @@ class ActionComm extends CommonObject
 	 */
 	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . " WHERE elementtype = 'product' AND fk_element = ".((int) $origin_id);
 		// using $dbs, not $this->db because function is static
 		if (!$dbs->query($sql)) {
 			//$this->errors = $dbs->lasterror();

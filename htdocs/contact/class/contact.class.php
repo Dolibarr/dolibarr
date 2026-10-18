@@ -126,7 +126,7 @@ class Contact extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => 3, 'position' => 40),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 45, 'showoncombobox' => 1, 'searchall' => 1),
-		'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
+		//'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 50, 'showoncombobox' => 1, 'searchall' => 1),
 		'poste' => array('type' => 'varchar(80)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => -1, 'position' => 52),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
@@ -505,8 +505,6 @@ class Contact extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 		$now = dol_now();
 
@@ -1047,7 +1045,10 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->loadLangs(array("dict", "companies"));
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$langs->loadLangs(array("dict", "companies"));
+		}
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut as status, c.zip, c.town,";
@@ -1060,7 +1061,7 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, GREATEST(c.tms, cef.tms) as date_modification, c.fk_user_creat, c.fk_user_modif,";
+		$sql .= " c.datec as date_creation, GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
@@ -1135,7 +1136,7 @@ class Contact extends CommonObject
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcommcontact) : 'StatusProspect'.$obj->fk_stcommcontact);
 				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
 				$this->statut_commercial = $label_sale_status; // libelle statut commercial
@@ -1512,7 +1513,7 @@ class Contact extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
-		$sql .= " GREATEST(c.tms, cef.tms) as tms, c.fk_user_modif";
+		$sql .= " GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);

@@ -504,6 +504,8 @@ if (empty($reshook)) {
 				$res = $objecttmp->create($user);
 
 				if ($res > 0) {
+					$objecttmp->user_creation_id = $user->id;
+
 					$nb_bills_created++;
 					$lastref = $objecttmp->ref;
 					$lastid = $objecttmp->id;
@@ -2579,8 +2581,10 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
 			print dolPrintLabel($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

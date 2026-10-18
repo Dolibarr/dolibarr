@@ -67,7 +67,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
 
 
 	/**
@@ -424,9 +424,12 @@ class Ai
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
 				if (is_scalar($decodedResponse['error'])) {
-					$generatedContent = $decodedResponse['error'];
+					// Casts needed because is_scalar() also accepts bool, int and float, and
+					// var_export() is typed as returning null when its second argument is not
+					// true, while the method is declared to return a string or the error array.
+					$generatedContent = (string) $decodedResponse['error'];
 				} else {
-					$generatedContent = var_export($decodedResponse['error'], true);
+					$generatedContent = (string) var_export($decodedResponse['error'], true);
 				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
@@ -435,14 +438,29 @@ class Ai
 				$generatedContent = '';
 				if (!empty($decodedResponse['candidates'][0]['content']['parts'])) {
 					foreach ($decodedResponse['candidates'][0]['content']['parts'] as $part) {
-						if (isset($part['text'])) {
-							$generatedContent .= $part['text'];
+						if (isset($part['text']) && is_scalar($part['text'])) {
+							$generatedContent .= (string) $part['text'];
 						}
 					}
 				}
 			} else {
+				// A provider answering 200 with a body that does not carry
+				// choices[0].message.content must not reach the code below: reading the missing
+				// keys emits PHP warnings, and a 'choices' entry that is a string instead of an
+				// array raises a TypeError, which the catch below does not take (TypeError
+				// implements Throwable but does not extend Exception) and so ends as a fatal
+				// error on the ajax endpoints calling this method.
+				if (!isset($decodedResponse['choices'][0]['message']['content'])
+					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
+					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
+				}
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
+			// All the branches above assign a string, but the inference of the analyser does not
+			// follow them through the enclosing try block, so the type is pinned here before the
+			// value is passed to functions declared to take a string.
+			$generatedContent = (string) $generatedContent;
+
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
 
 			$this->tokenUsage = $decodedResponse['usage'] ?? null;

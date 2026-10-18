@@ -576,7 +576,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #333 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

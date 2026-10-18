@@ -109,8 +109,8 @@ class FichinterTest extends CommonClassTest
 	 *
 	 * Check that a intervention object can be updated.
 	 *
-	 * @param 	Object	$localobject 	An existing intervention object to update.
-	 * @return 							Intervention object with data fetched and description changed
+	 * @param 	Object		$localobject 	An existing intervention object to update.
+	 * @return 	Fichinter					Intervention object with data fetched and description changed
 	 *
 	 * @depends testFichinterFetch
 	 */

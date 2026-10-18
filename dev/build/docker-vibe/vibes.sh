@@ -33,6 +33,8 @@ if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$
 fi
 
 echo IS_DOLIBARR_CORE="$IS_DOLIBARR_CORE"
+echo DOL_CTI_ADMIN_LOGIN="$DOL_CTI_ADMIN_LOGIN"
+echo DOL_CTI_ADMIN_PASSWORD="${DOL_CTI_ADMIN_PASSWORD:0:3}..."
 
 GH_TOKEN=$(gh auth token)
 if [ -z "$GH_TOKEN" ]; then
@@ -78,12 +80,68 @@ if [ "$IS_DOLIBARR_CORE" -eq 0 ]; then
     done
 fi
 
+# Pass the host graphical session to the container so that Vibe can copy to
+# the clipboard of the host (pyperclip/xclip on the X server or XWayland) and
+# open links in the browser of the host (open-on-host through the D-Bus
+# session bus and the xdg-desktop-portal, see README.md). Nothing is added
+# when vibes.sh is started outside a graphical session: Vibe then falls back
+# to its own mechanisms (OSC 52, host terminal selection with Shift).
+GRAPHIC_ARGS=()
+for VAR in DISPLAY WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_RUNTIME_DIR XAUTHORITY; do
+    VAR_VALUE=$(printenv "$VAR" || true)
+    if [ -n "$VAR_VALUE" ]; then
+        GRAPHIC_ARGS+=(-e "$VAR=$VAR_VALUE")
+    fi
+done
+if [ -d /tmp/.X11-unix ]; then
+    GRAPHIC_ARGS+=(--mount "type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix")
+fi
+if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -d "${XDG_RUNTIME_DIR}" ]; then
+    # Contains the Wayland socket, the D-Bus session bus socket and the
+    # XWayland authorization cookie of the host session.
+    GRAPHIC_ARGS+=(--mount "type=bind,src=${XDG_RUNTIME_DIR},dst=${XDG_RUNTIME_DIR}")
+fi
+if [ -z "${XAUTHORITY:-}" ] && [ -f "$HOME/.Xauthority" ]; then
+    # X11 session without XAUTHORITY exported: the cookie is in ~/.Xauthority.
+    GRAPHIC_ARGS+=(-e "XAUTHORITY=$HOME/.Xauthority" --mount "type=bind,src=$HOME/.Xauthority,dst=$HOME/.Xauthority")
+fi
+
+# Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
+# (test/phpunit/AbstractRestAPITest.php) and SecurityLoginTest.php use them to
+# log in with a dedicated account instead of the admin/admin default.
+# Nothing is added when the variables are not set on the host.
+TEST_ARGS=()
+for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
+    VAR_VALUE=$(printenv "$VAR" || true)
+    if [ -n "$VAR_VALUE" ]; then
+        TEST_ARGS+=(-e "$VAR=$VAR_VALUE")
+    fi
+done
+
+# Make the Apache logs of the host readable into the container (read-only mount).
+# The GID owning the directory (adm on Debian/Ubuntu) is passed so the entrypoint
+# can add the user to this group, as the directory is not readable by others.
+LOG_ARGS=()
+if [ -d /var/log/apache2 ]; then
+    LOG_ARGS+=(-e "HOST_APACHE_LOG_GID=$(stat -c %g /var/log/apache2)" --mount "type=bind,src=/var/log/apache2,dst=/var/log/apache2,readonly")
+fi
+
+# Share the Transifex credentials of the host with the tx client of the container (read-only mount).
+TX_ARGS=()
+if [ -f "$HOME/.transifexrc" ]; then
+    TX_ARGS+=(--mount "type=bind,src=$HOME/.transifexrc,dst=$HOME/.transifexrc,readonly")
+fi
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
   -e HOST_USER="$(id -un)" \
   -e HOST_GROUP="$(id -un)" \
   -e GH_TOKEN="$GH_TOKEN" \
+  "${GRAPHIC_ARGS[@]}" \
+  "${TEST_ARGS[@]}" \
+  "${LOG_ARGS[@]}" \
+  "${TX_ARGS[@]}" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \

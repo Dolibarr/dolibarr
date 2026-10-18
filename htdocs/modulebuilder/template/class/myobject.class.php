@@ -75,6 +75,8 @@ class MyObject extends CommonObject
 	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
+	// BEGIN MODULEBUILDER ACCESSPOLICY
+	// END MODULEBUILDER ACCESSPOLICY
 
 
 	const STATUS_DRAFT = 0;

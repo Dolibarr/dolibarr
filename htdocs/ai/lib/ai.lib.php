@@ -46,7 +46,7 @@ function getListOfAIFeatures()
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
 		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
-		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+		'textrephraser' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
 
@@ -611,6 +611,46 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Resolve the text model used by the AI Assistant when the picker is on "Auto"
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The model id, or '' if no service is configured
+ */
+function getAiAssistantDefaultModel()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+	$prefix = 'AI_API_'.strtoupper($serviceKey);
+	$model = getDolGlobalString($prefix.'_MODEL_TEXT')
+		?: getDolGlobalString($prefix.'_MODEL')
+		?: ($services[$serviceKey]['textgeneration']['default'] ?? '');
+
+	return is_string($model) ? $model : '';
+}
+
+/**
+ * Resolve the API URL used by the AI Assistant for the configured provider
+ * (same resolution order as assistant/parse_intent.php).
+ *
+ * @return string	The API base URL, or '' if no service is configured
+ */
+function getAiAssistantProviderUrl()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+
+	return (string) (getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: ($services[$serviceKey]['url'] ?? ''));
+}
+
+/**
  * Return the list of model ids offered by the configured AI provider, with a
  * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
  * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
@@ -818,12 +858,15 @@ function getAiChatAssistantConfig()
 		'ActionCancelled',
 		'ExecutingTool',
 		'FetchingData',
+		'AISearchDoneNowPreparingAction',
 		'GeneratingLink',
 		'Found',
 		'File',
 		'Preview',
 		'TypeResponse',
+		'AINoneOfThese',
 		'OpenVerb',
+		'AIPdfReport',
 
 		// Voice Confirmation
 		'VoiceYesNo',
@@ -884,6 +927,9 @@ function getAiChatAssistantConfig()
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
+		// model list by a name heuristic that is not reliable, so hidden by default.
+		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
@@ -946,9 +992,21 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="header-controls">';
 	// Model picker pill: 'Auto' (provider default) + presets + the dynamic model
 	// list fetched from ajax/list_models.php by the JS. Choice kept in localStorage.
-	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($langs->trans("AIModelToUse")).'">';
-	$out .= '<option value="">'.$langs->transnoentitiesnoconv("AIModelAuto").'</option>';
+	$modelSelectTitle = $langs->transnoentitiesnoconv("AIModelToUse");
+	$aiproviderurl = getAiAssistantProviderUrl();
+	if ($aiproviderurl !== '') {
+		$modelSelectTitle .= "\n".$langs->transnoentitiesnoconv("URL").': '.$aiproviderurl;
+	}
+	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($modelSelectTitle, 0, 1).'">';
+	$autoLabel = $langs->transnoentitiesnoconv("AIModelAuto");
+	$defaultModel = getAiAssistantDefaultModel();
+	if ($defaultModel !== '') {
+		$autoLabel .= ' ('.$defaultModel.')';
+	}
+	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
+	//$out .= ajax_combobox("model-select");
+
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
@@ -1155,4 +1213,402 @@ function aiStripPersonalExtrafields($db, $payload, $elementtype)
 	}
 
 	return $payload;
+}
+
+/**
+ * Words of a text as the third party matcher compares them: runs of letters or
+ * digits, lower-cased and without accents, with their byte offsets in the text.
+ * "Anthropic Ireland, Limited" and "anthropic ireland limited" give the same words.
+ *
+ * @param	string	$text	Text to split
+ * @return	array<int, array{0:string, 1:int, 2:int}>	Normalised word, start offset, end offset
+ */
+function aiNameWords($text)
+{
+	$out = array();
+	$m = array();
+	if (preg_match_all('/[\p{L}\p{N}]+/u', (string) $text, $m, PREG_OFFSET_CAPTURE)) {
+		foreach ($m[0] as $w) {
+			$norm = dol_strtolower(dol_string_unaccent((string) $w[0]));
+			if (class_exists('Normalizer')) {
+				// Accents dol_string_unaccent() does not know (Greek tonos, ...).
+				$norm = (string) preg_replace('/\p{Mn}+/u', '', (string) Normalizer::normalize($norm, Normalizer::FORM_D));
+			}
+			$out[] = array($norm, (int) $w[1], (int) $w[1] + strlen((string) $w[0]));
+		}
+	}
+
+	return $out;
+}
+
+/**
+ * Nature of third party a text points at, from its own words: "supplier" when it
+ * speaks of a supplier (or vendor), "customer" when it speaks of a customer, ''
+ * when it says neither or both. Used only to narrow a list of candidates, never
+ * to choose one.
+ *
+ * @param	string		$text	Text of the request
+ * @param	Translate	$langs	Language of the user
+ * @return	string				'supplier', 'customer' or ''
+ */
+function aiThirdpartyNatureHint($text, $langs)
+{
+	$langs->loadLangs(array('companies', 'bills'));
+	$stems = array(
+		'supplier' => array('supplier', 'vendor', $langs->transnoentitiesnoconv('Supplier')),
+		'customer' => array('customer', $langs->transnoentitiesnoconv('Customer'))
+	);
+	$words = array_column(aiNameWords($text), 0);
+	$found = array();
+	foreach ($stems as $nature => $list) {
+		foreach ($list as $kw) {
+			$kww = aiNameWords((string) $kw);
+			$kw = isset($kww[0]) ? $kww[0][0] : '';
+			// Inflected forms ("προμηθευτή", "suppliers") share the start of the word.
+			$stem = dol_substr($kw, 0, max(5, dol_strlen($kw) - 2));
+			foreach ($words as $w) {
+				if (dol_strlen($stem) >= 5 && strpos($w, $stem) === 0) {
+					$found[$nature] = true;
+					break 2;
+				}
+			}
+		}
+	}
+
+	return count($found) === 1 ? (string) key($found) : '';
+}
+
+/**
+ * Whether two words of a name are the same word: equal, or the same word with
+ * a different ending ("solution" / "solutions")
+ * one starts with the other, both have at least 4 letters, and they differ by
+ * at most 2 letters.
+ *
+ * @param	string	$a	Normalised word (see aiNameWords())
+ * @param	string	$b	Normalised word
+ * @return	bool
+ */
+function aiNameWordsEqual($a, $b)
+{
+	if ($a === $b) {
+		return true;
+	}
+	$la = dol_strlen($a);
+	$lb = dol_strlen($b);
+	if (min($la, $lb) < 4 || abs($la - $lb) > 2) {
+		return false;
+	}
+
+	return ($la < $lb) ? (strpos($b, $a) === 0) : (strpos($a, $b) === 0);
+}
+
+/**
+ * Whether the words of a phrase appear in a name one after the other, in the
+ * same order each word compared with aiNameWordsEqual().
+ *
+ * @param	string[]	$phrase	Normalised words of the phrase
+ * @param	string[]	$name	Normalised words of the name
+ * @return	bool
+ */
+function aiNameWordsInSequence($phrase, $name)
+{
+	$lp = count($phrase);
+	$ln = count($name);
+	for ($j = 0; $j + $lp <= $ln; $j++) {
+		$all = true;
+		for ($k = 0; $k < $lp; $k++) {
+			if (!aiNameWordsEqual($phrase[$k], $name[$j + $k])) {
+				$all = false;
+				break;
+			}
+		}
+		if ($all) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Third parties named in a text, by the words of their name or trade name
+ * (name_alias), in any order and not necessarily all of them: "Anthropic" names
+ * "Anthropic Ireland, Limited", "Jensen LLC" and "Jensen Jon" name "Jon Jensen
+ * LLC". Words may differ by their ending ("solution" / "solutions").
+ *
+ * Nothing is guessed here: a phrase is reported only when every word of it is
+ * a word of the name, and every third party it fits is returned so the caller
+ * can ask when there are several. A phrase that is a whole name keeps only the
+ * third parties carrying that whole name. Keywords and legal forms (LLC, ΑΕ...)
+ * never identify a third party on their own.
+ *
+ * @param	DoliDB			$db			Database handler
+ * @param	User			$user		User the text comes from (visibility of candidates)
+ * @param	string			$text		Text to scan
+ * @param	string			$nature		'supplier' or 'customer' to narrow candidates when that leaves at least one, '' for all
+ * @param	array<string>	$stopwords	Words never accepted alone as a partial name (translated keywords)
+ * @param	int				$maxwords	Distinct words looked up, in order of appearance
+ * @return	array<int, array{phrase:string, raw:string, start:int, end:int, exact:bool, first:bool, words:int, candidates:array<int, array{id:int, name:string, name_alias:string, client:int, fournisseur:int, town:string, visible:bool}>}>
+ */
+function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = array(), $maxwords = 80)
+{
+	$words = aiNameWords($text);
+	if (empty($words)) {
+		return array();
+	}
+
+	$stop = array();
+	foreach ($stopwords as $sw) {
+		foreach (aiNameWords((string) $sw) as $sww) {
+			$stop[$sww[0]] = true;
+		}
+	}
+	// Legal forms say nothing about which company is meant: never a match alone.
+	$legal = array_flip(array('llc', 'ltd', 'limited', 'inc', 'corp', 'co', 'plc', 'gmbh', 'ag', 'sa', 'sas', 'sarl', 'srl', 'spa', 'bv', 'nv', 'pc', 'αε', 'ικε', 'επε', 'οε', 'εε', 'μον'));
+
+	// Distinct words to look up: at least 3 letters, not a number. Keywords and
+	// legal forms are looked up too, for a name made only of them ("Test Corp"),
+	// which matches only when written in full.
+	$lookup = array();
+	foreach ($words as $w) {
+		if (dol_strlen($w[0]) >= 3 && !ctype_digit($w[0])) {
+			$lookup[$w[0]] = substr((string) $text, $w[1], $w[2] - $w[1]);
+			if (count($lookup) >= $maxwords) {
+				break;
+			}
+		}
+	}
+	if (empty($lookup)) {
+		return array();
+	}
+
+	// A word anywhere in the name or the trade name: names are written in any
+	// order ("Jon Jensen LLC", "Jensen Jon LLC") and said in any order too.
+	$sql = "SELECT s.rowid, s.nom, s.name_alias, s.client, s.fournisseur, s.town";
+	$sql .= " FROM ".$db->prefix()."societe as s";
+	$sql .= " WHERE s.entity IN (".getEntity('societe').")";
+	$sql .= " AND (1 = 0";
+	foreach ($lookup as $norm => $raw) {
+		// The word as written and normalised, and without its last two letters
+		// for a long word, so "solutions" also finds "Solution ...".
+		$forms = array($raw, $norm);
+		if (dol_strlen($norm) >= 6) {
+			$forms[] = dol_substr($norm, 0, dol_strlen($norm) - 2);
+		}
+		foreach (array_unique($forms) as $w) {
+			$sql .= " OR s.nom LIKE '%".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($w))."%'";
+		}
+	}
+	$sql .= ")";
+	$sql .= " LIMIT 2000";
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+		return array();
+	}
+
+	$companies = array();
+	$wordlists = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$id = (int) $obj->rowid;
+		$companies[$id] = array('id' => $id, 'name' => (string) $obj->nom, 'name_alias' => (string) $obj->name_alias, 'client' => (int) $obj->client, 'fournisseur' => (int) $obj->fournisseur, 'town' => (string) $obj->town, 'visible' => false);
+		foreach (array((string) $obj->nom, (string) $obj->name_alias) as $source) {
+			$ws = array_column(aiNameWords($source), 0);
+			if (!empty($ws)) {
+				$wordlists[] = array($id, $ws);
+			}
+		}
+	}
+	$db->free($resql);
+	if (empty($wordlists)) {
+		return array();
+	}
+
+	// At each position, the longest run of words (at most ten) whose words all
+	// belong to one name, in any order. A run without a word that identifies
+	// (4 letters or more, not a keyword, not a legal form) must be a whole name.
+	$matches = array();
+	$count = count($words);
+	$i = 0;
+	while ($i < $count) {
+		$hit = null;
+		for ($len = min(10, $count - $i); $len >= 1; $len--) {
+			$phrase = array_column(array_slice($words, $i, $len), 0);
+			$key = implode(' ', $phrase);
+			// A weak word (3 letters or less - "for", "the", "jon" - a keyword, a
+			// legal form, a number) says little on its own: it may join a phrase
+			// only in the order and place it has in the name, or in a whole name.
+			// Otherwise "for SOLUTION" would pick the one name holding both
+			// "solution" and "for" and hide every other company with "solution".
+			$distinctive = false;
+			$hasWeak = false;
+			foreach ($phrase as $pw) {
+				if (dol_strlen($pw) >= 4 && empty($stop[$pw]) && !isset($legal[$pw]) && !ctype_digit($pw)) {
+					$distinctive = true;
+				} else {
+					$hasWeak = true;
+				}
+			}
+			if (dol_strlen($phrase[0]) < 2 || dol_strlen($phrase[$len - 1]) < 2) {
+				continue;
+			}
+			if ($len === 1 && dol_strlen($key) < 4) {
+				continue;	// one short word alone would match half the names
+			}
+			$ids = array();
+			$exactIds = array();
+			$firstIds = array();
+			foreach ($wordlists as $wl) {
+				list($id, $ws) = $wl;
+				if (count($ws) < $len) {
+					continue;
+				}
+				// Each word of the phrase takes a different word of the name.
+				$free = $ws;
+				$strict = true;
+				$same = true;
+				foreach ($phrase as $pw) {
+					$found = false;
+					foreach ($free as $fk => $nw) {
+						if (aiNameWordsEqual($pw, $nw)) {
+							$strict = $strict && ($pw === $nw);
+							unset($free[$fk]);
+							$found = true;
+							break;
+						}
+					}
+					if (!$found) {
+						$same = false;
+						break;
+					}
+				}
+				if (!$same) {
+					continue;
+				}
+				$whole = ($strict && empty($free));
+				if ($hasWeak && $len > 1 && !$whole && !aiNameWordsInSequence($phrase, $ws)) {
+					continue;
+				}
+				$ids[$id] = true;
+				if ($whole) {
+					$exactIds[$id] = true;	// the whole name, as written (any order)
+				}
+				if (aiNameWordsEqual($phrase[0], $ws[0])) {
+					$firstIds[$id] = true;	// starts like the name
+				}
+			}
+			if (!$distinctive) {
+				$ids = $exactIds;	// only keywords or legal forms: the whole name, or nothing
+			}
+			if (empty($ids)) {
+				continue;
+			}
+			$hit = array($len, !empty($exactIds) ? array_keys($exactIds) : array_keys($ids), $key, !empty($exactIds), count($firstIds) === count($ids));
+			break;
+		}
+		if ($hit === null) {
+			$i++;
+			continue;
+		}
+		list($len, $ids, $key, $exact, $first) = $hit;
+		$start = $words[$i][1];
+		$end = $words[$i + $len - 1][2];
+		$cands = array();
+		foreach ($ids as $id) {
+			$cands[$id] = $companies[$id];
+		}
+		if ($nature === 'supplier' || $nature === 'customer') {
+			$narrow = array_filter($cands,
+				/**
+				 * @param array{id:int, name:string, name_alias:string, client:int, fournisseur:int, town:string, visible:bool} $c Candidate
+				 * @return bool
+				 */
+				function ($c) use ($nature) {
+					return $nature === 'supplier' ? ($c['fournisseur'] == 1) : in_array($c['client'], array(1, 2, 3));
+				}
+			);
+			if (!empty($narrow)) {
+				$cands = $narrow;
+			}
+		}
+		$matches[] = array('phrase' => $key, 'raw' => substr((string) $text, $start, $end - $start), 'start' => $start, 'end' => $end, 'exact' => $exact, 'first' => $first, 'words' => $len, 'candidates' => $cands);
+		$i += $len;
+	}
+
+	// Visibility: a user without the right to read third parties sees none, a
+	// user restricted to his own customers sees only those.
+	if (!empty($matches) && $user->hasRight('societe', 'lire')) {
+		$allIds = array();
+		foreach ($matches as $mt) {
+			$allIds = array_merge($allIds, array_keys($mt['candidates']));
+		}
+		$seen = array();
+		if ($user->hasRight('societe', 'client', 'voir')) {
+			$seen = array_flip($allIds);
+		} elseif (!empty($allIds)) {
+			$sql = "SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc";
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id)." AND sc.fk_soc IN (".$db->sanitize(implode(',', array_map('intval', $allIds))).")";
+			$resql = $db->query($sql);
+			while ($resql && ($obj = $db->fetch_object($resql))) {
+				$seen[(int) $obj->fk_soc] = true;
+			}
+		}
+		foreach ($matches as $mi => $mt) {
+			foreach ($mt['candidates'] as $id => $c) {
+				$matches[$mi]['candidates'][$id]['visible'] = isset($seen[$id]);
+			}
+		}
+	}
+
+	return $matches;
+}
+
+/**
+ * Every form of the third party names found in a text or carried by a tool
+ * result, to mask with PrivacyGuard::maskNames(): the words as written, the
+ * names and trade names of the matching third parties, and the values of the
+ * name keys of a result ("name", "nom", "name_alias", "socname", ...).
+ *
+ * @param	DoliDB			$db			Database handler
+ * @param	User			$user		User
+ * @param	string			$text		Text that will be sent
+ * @param	array<string>	$stopwords	Translated keywords never accepted alone
+ * @param	mixed			$data		Decoded tool result the text was built from, or null
+ * @return	array<string>				Names to mask
+ */
+function aiThirdpartyNamesToMask($db, $user, $text, $stopwords = array(), $data = null)
+{
+	$names = array();
+	foreach (aiFindThirdpartiesInText($db, $user, $text, '', $stopwords) as $mt) {
+		$names[] = $mt['raw'];
+		foreach ($mt['candidates'] as $c) {
+			$names[] = $c['name'];
+			$names[] = $c['name_alias'];
+		}
+	}
+	if (is_array($data)) {
+		$keys = array('name' => true, 'nom' => true, 'name_alias' => true, 'socname' => true, 'thirdparty_name' => true, 'company' => true);
+		array_walk_recursive($data,
+			/**
+			 * @param mixed      $value Value
+			 * @param int|string $key   Key
+			 * @return void
+			 */
+			function ($value, $key) use (&$names, $keys) {
+				if (is_string($key) && isset($keys[$key]) && is_string($value)) {
+					$names[] = $value;
+				}
+			}
+		);
+	}
+
+	return array_values(array_unique(array_filter($names,
+		/**
+		 * @param string $n Name
+		 * @return bool
+		 */
+		function ($n) {
+			return $n !== '';
+		}
+	)));
 }

@@ -177,6 +177,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		}
 
 		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
@@ -187,7 +190,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$texte .= '<br></div></div>';
 
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div>';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -196,6 +199,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="COMMANDE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
