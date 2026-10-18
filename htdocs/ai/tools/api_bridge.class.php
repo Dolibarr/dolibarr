@@ -3459,7 +3459,7 @@ class ToolApiBridge extends McpTool
 					}
 				}
 			}
-			return $langs->trans($write['preview'], $parent->ref, $context, implode('; ', $changes));
+			return $langs->trans($write['preview'], $parent->ref, (string) $context, implode('; ', $changes));
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
