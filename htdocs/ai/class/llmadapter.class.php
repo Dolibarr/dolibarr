@@ -486,7 +486,9 @@ class UniversalLLMAdapter
 		// Extraction Logic
 		$answer = null;
 		if ($isClaude) {
-			$answer = $json['content'][0]['text'] ?? null;
+			// The list of blocks, not only the first one: with thinking (on by default
+			// on recent models), a 'thinking' block comes before the 'text' one.
+			$answer = $json['content'] ?? null;
 		} elseif ($isGemini) {
 			$answer = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
 		}
@@ -496,7 +498,7 @@ class UniversalLLMAdapter
 			$answer = $json['choices'][0]['message']['content'] ?? null;
 		}
 
-		// A reasoning model (e.g. through GLM) may send the content as a list
+		// A reasoning model (e.g. Claude, or through GLM) may send the content as a list
 		// of chunks, a 'thinking' one before the 'text' one: keep only the text.
 		if (is_array($answer)) {
 			$text = '';
