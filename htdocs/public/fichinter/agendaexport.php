@@ -506,9 +506,9 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logina);
 				if ($result > 0) {
-					$sql .= " AND a.fk_user_author ".$condition." ".((int) $userforfilter->id);
+					$sql .= " AND f.fk_user_author ".$condition." ".((int) $userforfilter->id);
 				} elseif ($result < 0 || $condition == '=') {
-					$sql .= " AND a.fk_user_author = 0";
+					$sql .= " AND f.fk_user_author = 0";
 				}
 			}
 			if ($key == 'logini') {
