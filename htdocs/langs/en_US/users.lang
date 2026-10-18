@@ -232,6 +232,7 @@ PasskeyErrorExpired=The passkey request has expired. Please try again.
 PasskeyErrorBadOrigin=The passkey was not used from the expected address %s
 PasskeyErrorCredentialIdTooLong=This authenticator returns a credential ID that is too long to be saved
 PasskeyErrorAlreadyRegistered=This passkey is already registered
+PasskeyErrorNotAllowed=The passkey was not created: the request was canceled or refused by the browser. A browser can refuse it when the HTTPS certificate of the page is not valid (for example a self-signed certificate).
 PasskeyErrorUnknown=This passkey is unknown or no longer valid
 PasskeySetupDesc=Passkeys let users log in without password, using the fingerprint, face recognition or PIN of their device, or a security key. Each user adds his passkeys from his user card.
 PasskeyModeHowToEnable=To enable it, edit the conf.php file and set for example: %s

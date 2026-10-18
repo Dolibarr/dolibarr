@@ -196,9 +196,10 @@
 				form.submit();
 			});
 		}).catch(function (error) {
-			// AbortError: a new request replaced this one. NotAllowedError: the user canceled the dialog of the browser.
+			// AbortError: a new request replaced this one. NotAllowedError: the user canceled the dialog of the browser,
+			// or the browser refused the request (for example on a page with a TLS certificate error).
 			if (error && (error.name === 'AbortError' || error.name === 'NotAllowedError')) {
-				console.log('passkey login stopped: ' + error.name);
+				console.log('passkey login stopped: ' + error.name + ' ' + error.message);
 				return;
 			}
 			console.log('passkey login error: ' + (error ? error.name + ' ' + error.message : ''));
@@ -296,7 +297,10 @@
 			}).catch(function (error) {
 				element.disabled = false;
 				if (error && error.name === 'NotAllowedError') {
-					console.log('passkey creation canceled');
+					// Canceled by the user, but also refused by the browser (for example Chromium refuses passkeys
+					// on a page with a TLS certificate error): the message of the browser gives the reason
+					console.log('passkey creation canceled or refused: ' + error.message);
+					showError(element.getAttribute('data-msg-notallowed'));
 					return;
 				}
 				if (error && error.name === 'InvalidStateError') {
