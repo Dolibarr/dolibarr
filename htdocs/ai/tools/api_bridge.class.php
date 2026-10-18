@@ -1157,6 +1157,9 @@ class ToolApiBridge extends McpTool
 			]
 		];
 
+		$this->addReadEndpoints();
+		$this->addWritesOnExistingRecords();
+		// Modules answer last so their enrichment keys can never shadow a core one.
 		$this->loadExternalEnrichments();
 	}
 
@@ -1218,8 +1221,7 @@ class ToolApiBridge extends McpTool
 			}
 		} catch (\Throwable $e) {
 			dol_syslog("[ToolApiBridge] Error during 'addMcpApiBridgeEnrichments' hook execution: ".$e->getMessage(), LOG_ERR);
-		$this->addReadEndpoints();
-		$this->addWritesOnExistingRecords();
+		}
 	}
 
 	/**
