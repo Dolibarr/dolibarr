@@ -388,7 +388,6 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 	// some filters possible in the $filters array
 	// logina : user login who creates intervention (author)
 	// logini : user login who performs the intervention
-	// loginr : user login who is responsible for intervention
 
 	global $hookmanager;
 	global $db;
@@ -426,7 +425,6 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 	$login = '';
 	$logina = '';
 	$logini = '';
-	$loginr = '';
 
 	$eventorganization = '';
 
@@ -528,25 +526,6 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 					$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
 				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND ec.fk_socpeople = 0";
-				}
-				$sql .= ")";
-			}
-			if ($key == 'loginr') {
-				$loginr = $value;
-				$sanitizedcondition = '=';
-				if (preg_match('/^!/', $loginr)) {
-					$loginr = preg_replace('/^!/', '', $loginr);
-					$sanitizedcondition = '<>';
-				}
-				$userforfilter = new User($db);
-				$result = $userforfilter->fetch(0, $loginr);
-				$sql .= " AND EXISTS (SELECT ecr.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecr";
-				$sql .= " WHERE ecr.element_id = f.rowid";
-				$sql .= " WHERE AND ecr.fk_c_type_contact = 27";	// FIXME do not use hardcoded ID
-				if ($result > 0) {
-					$sql .= " AND ecr.fk_socpeople = ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $sanitizedcondition == '=') {
-					$sql .= " AND ecr.fk_socpeople = 0";
 				}
 				$sql .= ")";
 			}
