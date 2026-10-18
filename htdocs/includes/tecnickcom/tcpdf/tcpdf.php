@@ -7181,6 +7181,45 @@ class TCPDF {
 			} elseif ($type == 'jpg') {
 				$type = 'jpeg';
 			}
+			// @CHANGE DOL Preserve WebP alpha via the existing PNG mask path.
+			if (($type === 'webp') AND ($ismask === false) AND ($imgmask === false)
+				AND function_exists('imagecreatefromwebp') AND function_exists('imagepng')) {
+				$webp = @imagecreatefromwebp($file);
+				if ($webp !== false) {
+					$tmpwebp = TCPDF_STATIC::getObjFilename('img', $this->file_id).'.png';
+					try {
+						imagealphablending($webp, false);
+						imagesavealpha($webp, true);
+						if ($resize) {
+							$scaled = imagecreatetruecolor(max(1, $neww), max(1, $newh));
+							imagealphablending($scaled, false);
+							imagesavealpha($scaled, true);
+							imagefill($scaled, 0, 0, imagecolorallocatealpha($scaled, 0, 0, 0, 127));
+							imagecopyresampled($scaled, $webp, 0, 0, 0, 0,
+								imagesx($scaled), imagesy($scaled), $pixw, $pixh);
+							if (PHP_VERSION_ID < 80000) {
+								imagedestroy($webp);
+							}
+							$webp = $scaled;
+							unset($scaled);
+						}
+						if (@imagepng($webp, $tmpwebp)) {
+							// Keep the original file hash for repeated-image caching.
+							// Resize before splitting alpha; do not resample the mask palette.
+							return $this->ImagePngAlpha(
+								$tmpwebp, $x, $y, imagesx($webp), imagesy($webp), $w, $h,
+								'PNG', $link, $align, false, $dpi, $palign, $filehash
+							);
+						}
+					} finally {
+						if (PHP_VERSION_ID < 80000) {
+							imagedestroy($webp);
+						}
+						unset($webp);
+						$this->_unlink($tmpwebp);
+					}
+				}
+			}
 			// Specific image handlers (defined on TCPDF_IMAGES CLASS)
 			$mtd = '_parse'.$type;
 			// GD image handler function
