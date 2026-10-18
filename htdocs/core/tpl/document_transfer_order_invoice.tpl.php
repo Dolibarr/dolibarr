@@ -29,12 +29,13 @@
  * @var string $documentTransferOrderType
  */
 
+$documentTransferOrderType = (string) ($documentTransferOrderType ?? '');
 $canTransfer = $documentTransferOrderType === 'customer'
 	? ($user->hasRight('commande', 'creer') && $user->hasRight('facture', 'lire') && $user->hasRight('facture', 'creer'))
-	: ($user->hasRight('fournisseur', 'commande', 'creer')
+	: ($documentTransferOrderType === 'supplier' && $user->hasRight('fournisseur', 'commande', 'creer')
 		&& $user->hasRight('fournisseur', 'facture', 'lire') && $user->hasRight('fournisseur', 'facture', 'creer'));
 $transferableFiles = array();
-foreach ($filearray as $file) {
+foreach ((array) ($filearray ?? array()) as $file) {
 	if (!empty($file['name']) && $file['name'] !== dol_sanitizeFileName($object->ref).'.pdf') {
 		$transferableFiles[] = $file['name'];
 	}

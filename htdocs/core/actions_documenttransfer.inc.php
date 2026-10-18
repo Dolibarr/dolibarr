@@ -31,7 +31,11 @@
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/documenttransfer.class.php';
 
+$documentTransferOrderType = (string) ($documentTransferOrderType ?? '');
 $documentTransferPreview = array();
+if (!in_array($documentTransferOrderType, array('customer', 'supplier'), true)) {
+	return;
+}
 if ($action === 'previewtransfer' || $action === 'confirmtransfer') {
 	$langs->load('ecm');
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

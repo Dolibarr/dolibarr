@@ -138,10 +138,10 @@ class DocumentTransfer
 		}
 
 		$sql = 'SELECT rowid FROM '.$this->db->prefix().'element_element';
-		$sql .= ' WHERE (fk_source = '.$orderId." AND sourcetype = '".$this->db->escape($order->element)."'"
-			.' AND fk_target = '.$invoiceId." AND targettype = '".$this->db->escape($invoice->element)."')"
-			.' OR (fk_target = '.$orderId." AND targettype = '".$this->db->escape($order->element)."'"
-			.' AND fk_source = '.$invoiceId." AND sourcetype = '".$this->db->escape($invoice->element)."') LIMIT 1";
+		$sql .= ' WHERE (fk_source = '.((int) $orderId)." AND sourcetype = '".$this->db->escape($order->element)."'"
+			.' AND fk_target = '.((int) $invoiceId)." AND targettype = '".$this->db->escape($invoice->element)."')"
+			.' OR (fk_target = '.((int) $orderId)." AND targettype = '".$this->db->escape($order->element)."'"
+			.' AND fk_source = '.((int) $invoiceId)." AND sourcetype = '".$this->db->escape($invoice->element)."') LIMIT 1";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			return $this->fail(500, 'ECMTransferFailed', 'link_check_failed');
@@ -286,8 +286,8 @@ class DocumentTransfer
 			}
 		}
 		$oldPath = $ecm->filepath;
-		$oldType = $ecm->src_object_type;
-		$oldId = $ecm->src_object_id;
+		$oldType = (string) $ecm->src_object_type;
+		$oldId = (int) $ecm->src_object_id;
 		$ecm->filepath = dirname($checked['target_ecm_path']);
 		$ecm->src_object_type = $checked['target_type'];
 		$ecm->src_object_id = $invoiceId;
