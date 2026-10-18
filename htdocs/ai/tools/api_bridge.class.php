@@ -1198,7 +1198,8 @@ class ToolApiBridge extends McpTool
 		$hookmanager->initHooks(array('aimcp'));
 
 		try {
-			$hookmanager->executeHooks('addMcpApiBridgeEnrichments', array('db' => $this->db, 'user' => $this->user, 'conf' => isset($this->conf) ? $this->conf : null), $this, '');
+			$action = '';
+			$hookmanager->executeHooks('addMcpApiBridgeEnrichments', array('db' => $this->db, 'user' => $this->user, 'conf' => isset($this->conf) ? $this->conf : null), $this, $action);
 
 			if (!is_array($hookmanager->resArray)) {
 				return;
