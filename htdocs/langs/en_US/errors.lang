@@ -35,6 +35,7 @@ ErrorProdIdIsMandatory=The %s is mandatory
 ErrorProdIdIsMandatoryForEuThirdparties=The %s is mandatory for customers in EEC
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
+ErrorNoFreeAccountancyCodeInRange=No free accounting code left in range %s - %s. Change the range in the setup of the accounting code model.
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. Maybe you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required

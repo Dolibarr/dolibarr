@@ -4258,6 +4258,10 @@ class Societe extends CommonObject
 
 				// Set code count in $mod->code
 				$result = $mod->get_code($this->db, $this, $type);
+				if ($result < 0) {
+					$this->error = $mod->error;
+					$this->errors = $mod->errors;
+				}
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
