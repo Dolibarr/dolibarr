@@ -1309,7 +1309,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Prepare VAT rate with code if provided
-		$vatrate = "";
+		$vatrate = (string) $tva_tx;
 		if (isset($request_data['vat_src_code']) && !empty($request_data['vat_src_code'])) {
 			$vatrate = $tva_tx . ' (' . $request_data['vat_src_code'] . ')';
 		}
