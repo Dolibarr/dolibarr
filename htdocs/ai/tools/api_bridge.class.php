@@ -912,6 +912,22 @@ class ToolApiBridge extends McpTool
 					'module' => 'variants',
 					'description' => "Variants of one parent product.",
 					'params' => ['id' => 'Rowid of the PARENT product.', 'includestock' => "1 to add stock data on each variant."]
+				],
+				'getStock' => [
+					'suffix' => 'stock',
+					// Needs the Stock module on top of Products: when it is off
+					// the tool does not exist, instead of the bare 403 the API
+					// method throws.
+					'module' => 'stock',
+					// Declared so a caller without stock/lire neither sees the
+					// tool in tools/list nor hits the API's bare 403; the
+					// endpoint's own produit/lire check stays downstream.
+					'right' => [['produit', 'lire'], ['stock', 'lire']],
+					'description' => "Physical stock of one product: per-warehouse quantities in stock_warehouses (keyed by warehouse rowid, signed qty, with batch detail when lot tracking is on) plus the stock_reel and stock_theorique totals. Answers \"how much of product X do we have\" and \"where is it stored\". Identify the product by rowid — look it up first with api_products_list when only the ref is known.",
+					'params' => [
+						'id' => "Rowid of the product.",
+						'selected_warehouse_id' => "Rowid of a warehouse to return its stock only; omitted for every warehouse."
+					]
 				]
 			]
 		];
@@ -1609,9 +1625,36 @@ class ToolApiBridge extends McpTool
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
-		$write = $this->writeMetaFor($toolName);
+		$meta = $this->methodMetaFor($toolName);
+		$write = isset($meta['write']) ? $meta['write'] : array();
 		if (!empty($write['right'])) {
 			return array($write['right']);
+		}
+
+		// A read method may declare the rights it needs on top of the
+		// endpoint's own base checks (products.getStock also needs
+		// stock/lire). Declaring them keeps the tool out of tools/list for a
+		// caller who lacks them, and refuses the call with a named right
+		// instead of the bare 403 the API class would throw. Both shapes are
+		// accepted: a single triple ['module','perm'] or a list of triples.
+		if (!empty($meta['right'])) {
+			$declared = (isset($meta['right'][0]) && is_array($meta['right'][0])) ? $meta['right'] : array($meta['right']);
+			$rights = array();
+			foreach ($declared as $triple) {
+				if (!is_array($triple)) {
+					continue;
+				}
+				$strings = array();
+				foreach (array_values($triple) as $v) {
+					$strings[] = (string) $v;
+				}
+				if ($strings) {
+					$rights[] = $strings;
+				}
+			}
+			if ($rights) {
+				return $rights;
+			}
 		}
 
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
@@ -2134,14 +2177,24 @@ class ToolApiBridge extends McpTool
 	 */
 	private function writeMetaFor($toolName)
 	{
+		$meta = $this->methodMetaFor($toolName);
+
+		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * Find the enrichment of the method a tool name maps to.
+	 *
+	 * @param  string $toolName Tool name (api_<endpoint>_<suffix>).
+	 * @return array<string,mixed>              Method enrichment, or array() when unknown.
+	 */
+	private function methodMetaFor($toolName)
+	{
 		foreach ($this->enrichments as $key => $meta) {
 			foreach (($meta['methods'] ?? array()) as $method => $mmeta) {
-				if (empty($mmeta['write'])) {
-					continue;
-				}
 				$suffix = $mmeta['suffix'] ?? ($method === 'index' ? 'list' : strtolower($method));
 				if ($toolName === 'api_'.$key.'_'.$suffix) {
-					return $mmeta['write'];
+					return $mmeta;
 				}
 			}
 		}
