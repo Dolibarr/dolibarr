@@ -1159,6 +1159,70 @@ class ToolApiBridge extends McpTool
 
 		$this->addReadEndpoints();
 		$this->addWritesOnExistingRecords();
+		// Modules answer last so their enrichment keys can never shadow a core one.
+		$this->loadExternalEnrichments();
+	}
+
+	/**
+	 * Merge endpoint enrichments declared by external modules through the
+	 * 'addMcpApiBridgeEnrichments' hook (aimcp context).
+	 *
+	 * An external module declares the part of the whitelist that core cannot
+	 * know: which methods of its own api_*.class.php files are exposed, with
+	 * the parameter docs and 'write' blocks they carry. The declaration is
+	 * what makes an external endpoint exposed at all — the scan only decides
+	 * what is reachable — and a module can never shadow a core entry: keys
+	 * already populated here are kept, the module's own are appended.
+	 *
+	 * Every other layer stays in place for module endpoints: the endpoint is
+	 * discovered only while its module is enabled, the tools pass the
+	 * per-context allow-lists, their 'right' blocks are checked per call, and
+	 * every 'write' goes through the confirmation gate.
+	 *
+	 * Expected module return (in $this->results of its actions class):
+	 *   array('endpointkey' => array('label' => ..., 'methods' => array(...)))
+	 *
+	 * @return void
+	 */
+	private function loadExternalEnrichments()
+	{
+		global $hookmanager;
+		if (!is_object($hookmanager)) {
+			if (!defined('DOL_DOCUMENT_ROOT')) {
+				return;	// No Dolibarr bootstrap (unit tests): no module can answer anyway
+			}
+			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+
+		$hookmanager->initHooks(array('aimcp'));
+
+		try {
+			$action = '';
+			$hookmanager->executeHooks('addMcpApiBridgeEnrichments', array('db' => $this->db, 'user' => $this->user, 'conf' => isset($this->conf) ? $this->conf : null), $this, $action);
+
+			if (!is_array($hookmanager->resArray)) {
+				return;
+			}
+
+			foreach ($hookmanager->resArray as $moduleEnrichments) {
+				if (!is_array($moduleEnrichments)) {
+					continue;
+				}
+				foreach ($moduleEnrichments as $key => $entry) {
+					$key = strtolower((string) $key);
+					if (isset($this->enrichments[$key]) || !is_array($entry)) {
+						continue;	// core entries win; non-array garbage ignored
+					}
+					if (empty($entry['methods']) || !is_array($entry['methods'])) {
+						$entry['methods'] = $this->defaultMethods();
+					}
+					$this->enrichments[$key] = $entry;
+				}
+			}
+		} catch (\Throwable $e) {
+			dol_syslog("[ToolApiBridge] Error during 'addMcpApiBridgeEnrichments' hook execution: ".$e->getMessage(), LOG_ERR);
+		}
 	}
 
 	/**
