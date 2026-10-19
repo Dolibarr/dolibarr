@@ -200,8 +200,7 @@ class QuickMemo {
 			this.setArchivesNb(json.data.nbArchives);
 
 		} catch (err) {
-			Dolibarr.tools.setEventMessage(Dolibarr.tools.langs.trans('QuickMemoLoadMemosError') + ' : ' + err, 'errors');
-			console.error('QuickMemo load error', err);
+			console.error(Dolibarr.tools.langs.trans('QuickMemoLoadMemosError'), err);
 		}
 	}
 
