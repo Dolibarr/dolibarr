@@ -16403,9 +16403,16 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Add fields that are ALWAYS forbidden when using USF search criteria
 	$newforbiddenfields[] = 'pass';
 	$newforbiddenfields[] = 'pass_crypted';
+	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	// An operand with more than one level of prefix (example: dbprefix.table.field) is not valid into a USF criteria,
+	// we neutralize it like a forbidden field to avoid any leak or SQL error based on db prefix existence
+	if (substr_count($operand, '.') > 1) {
+		return '1=1';
+	}
 
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {
