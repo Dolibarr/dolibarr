@@ -477,6 +477,7 @@ AIPreviewCreateSupplierOrder=Create a draft supplier order%s with %s.
 AIPreviewUpdateRecord=Update %s for %s: %s. Omitted fields will be preserved.
 AIPreviewUpdateTask=Update task %s - %s: %s. Omitted fields will be preserved.
 AIPlannedWorkloadSeconds=Planned workload (seconds)
+AIPreviewUpdateProject=Update project %s - %s: %s. Omitted fields will be preserved.
 AIPreviewCreateSupplierProposal=Create a draft supplier proposal%s with %s.
 AIPreviewCreateDocument=Create a draft %s%s with %s.
 AIPreviewAddDocumentLine=Add %s x %s to %s (%s excl. tax).

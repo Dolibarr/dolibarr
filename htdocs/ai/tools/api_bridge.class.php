@@ -176,9 +176,9 @@ class ToolApiBridge extends McpTool
 
 	/**
 	 * Product names given by the last normaliseWriteArgs() call that matched no
-	 * product, or several.
+	 * product, or several: name => close references found for it (may be empty).
 	 *
-	 * @var string[]
+	 * @var array<string,string[]>
 	 */
 	private $unresolvedProducts = [];
 
@@ -783,6 +783,7 @@ class ToolApiBridge extends McpTool
 				'get' => [
 					'description' => "One project with its dates, status, budget, opportunity data and linked third party."
 				],
+				'put' => $this->projectUpdateMethod(),
 				'getByRef' => [
 					'suffix' => 'get_by_ref',
 					'description' => "One project by its exact reference (e.g. 'PJ2401-0001').",
@@ -1137,6 +1138,22 @@ class ToolApiBridge extends McpTool
 					'module' => 'variants',
 					'description' => "Variants of one parent product.",
 					'params' => ['id' => 'Rowid of the PARENT product.', 'includestock' => "1 to add stock data on each variant."]
+				],
+				'getStock' => [
+					'suffix' => 'stock',
+					// Needs the Stock module on top of Products: when it is off
+					// the tool does not exist, instead of the bare 403 the API
+					// method throws.
+					'module' => 'stock',
+					// Declared so a caller without stock/lire neither sees the
+					// tool in tools/list nor hits the API's bare 403; the
+					// endpoint's own produit/lire check stays downstream.
+					'right' => [['produit', 'lire'], ['stock', 'lire']],
+					'description' => "Physical stock of one product: per-warehouse quantities in stock_warehouses (keyed by warehouse rowid, signed qty, with batch detail when lot tracking is on) plus the stock_reel and stock_theorique totals. Answers \"how much of product X do we have\" and \"where is it stored\". Identify the product by rowid — look it up first with api_products_list when only the ref is known.",
+					'params' => [
+						'id' => "Rowid of the product.",
+						'selected_warehouse_id' => "Rowid of a warehouse to return its stock only; omitted for every warehouse."
+					]
 				]
 			]
 		];
@@ -1160,6 +1177,70 @@ class ToolApiBridge extends McpTool
 
 		$this->addReadEndpoints();
 		$this->addWritesOnExistingRecords();
+		// Modules answer last so their enrichment keys can never shadow a core one.
+		$this->loadExternalEnrichments();
+	}
+
+	/**
+	 * Merge endpoint enrichments declared by external modules through the
+	 * 'addMcpApiBridgeEnrichments' hook (aimcp context).
+	 *
+	 * An external module declares the part of the whitelist that core cannot
+	 * know: which methods of its own api_*.class.php files are exposed, with
+	 * the parameter docs and 'write' blocks they carry. The declaration is
+	 * what makes an external endpoint exposed at all — the scan only decides
+	 * what is reachable — and a module can never shadow a core entry: keys
+	 * already populated here are kept, the module's own are appended.
+	 *
+	 * Every other layer stays in place for module endpoints: the endpoint is
+	 * discovered only while its module is enabled, the tools pass the
+	 * per-context allow-lists, their 'right' blocks are checked per call, and
+	 * every 'write' goes through the confirmation gate.
+	 *
+	 * Expected module return (in $this->results of its actions class):
+	 *   array('endpointkey' => array('label' => ..., 'methods' => array(...)))
+	 *
+	 * @return void
+	 */
+	private function loadExternalEnrichments()
+	{
+		global $hookmanager;
+		if (!is_object($hookmanager)) {
+			if (!defined('DOL_DOCUMENT_ROOT')) {
+				return;	// No Dolibarr bootstrap (unit tests): no module can answer anyway
+			}
+			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+
+		$hookmanager->initHooks(array('aimcp'));
+
+		try {
+			$action = '';
+			$hookmanager->executeHooks('addMcpApiBridgeEnrichments', array('db' => $this->db, 'user' => $this->user, 'conf' => isset($this->conf) ? $this->conf : null), $this, $action);
+
+			if (!is_array($hookmanager->resArray)) {
+				return;
+			}
+
+			foreach ($hookmanager->resArray as $moduleEnrichments) {
+				if (!is_array($moduleEnrichments)) {
+					continue;
+				}
+				foreach ($moduleEnrichments as $key => $entry) {
+					$key = strtolower((string) $key);
+					if (isset($this->enrichments[$key]) || !is_array($entry)) {
+						continue;	// core entries win; non-array garbage ignored
+					}
+					if (empty($entry['methods']) || !is_array($entry['methods'])) {
+						$entry['methods'] = $this->defaultMethods();
+					}
+					$this->enrichments[$key] = $entry;
+				}
+			}
+		} catch (\Throwable $e) {
+			dol_syslog("[ToolApiBridge] Error during 'addMcpApiBridgeEnrichments' hook execution: ".$e->getMessage(), LOG_ERR);
+		}
 	}
 
 	/**
@@ -1997,6 +2078,36 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Describe bounded edits of an existing project.
+	 *
+	 * @return array<string,mixed> Method enrichment
+	 */
+	private function projectUpdateMethod()
+	{
+		return [
+			'suffix' => 'update',
+			'description' => 'Partially update a draft or open project by exactly one positive id or exact ref. Omitted fields stay unchanged; empty text clears it, null clears a date. Project dates have day precision in the server timezone. The user confirms old-to-new values. No status, sharing, ownership, contacts, tasks or extrafield changes.',
+			'write' => [
+				'preview' => 'AIPreviewUpdateProject',
+				'right' => ['projet', 'creer'], 'read_right' => ['projet', 'lire'],
+				'parent' => 'id', 'ref' => 'ref', 'object' => 'Project',
+				'access' => ['project', '', ''], 'project_update' => true,
+				'trim_fields' => ['title', 'description', 'note_public', 'note_private'],
+				'sanitize_fields' => ['title' => 'alphanohtml', 'description' => 'restricthtml', 'note_public' => 'restricthtml', 'note_private' => 'restricthtml'],
+				'preview_labels' => ['title' => 'Label', 'description' => 'Description', 'note_public' => 'NotePublic', 'note_private' => 'NotePrivate', 'date_start' => 'DateStart', 'date_end' => 'DateEnd'],
+				'preview_dates' => ['date_start', 'date_end'], 'preview_dateonly' => true,
+				'compact_result' => true,
+				'update' => [
+					'title' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
+					'description' => ['type' => 'string'], 'note_public' => ['type' => 'string'], 'note_private' => ['type' => 'string'],
+					'date_start' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Day precision in the server timezone.'],
+					'date_end' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Must not precede the resulting start date.']
+				]
+			]
+		];
+	}
+
+	/**
 	 * Describe bounded planning edits of an existing task.
 	 *
 	 * @return array<string,mixed> Method enrichment
@@ -2695,9 +2806,36 @@ class ToolApiBridge extends McpTool
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
-		$write = $this->writeMetaFor($toolName);
+		$meta = $this->methodMetaFor($toolName);
+		$write = isset($meta['write']) ? $meta['write'] : array();
 		if (!empty($write['right'])) {
 			return empty($write['read_right']) ? array($write['right']) : array($write['right'], $write['read_right']);
+		}
+
+		// A read method may declare the rights it needs on top of the
+		// endpoint's own base checks (products.getStock also needs
+		// stock/lire). Declaring them keeps the tool out of tools/list for a
+		// caller who lacks them, and refuses the call with a named right
+		// instead of the bare 403 the API class would throw. Both shapes are
+		// accepted: a single triple ['module','perm'] or a list of triples.
+		if (!empty($meta['right'])) {
+			$declared = (isset($meta['right'][0]) && is_array($meta['right'][0])) ? $meta['right'] : array($meta['right']);
+			$rights = array();
+			foreach ($declared as $triple) {
+				if (!is_array($triple)) {
+					continue;
+				}
+				$strings = array();
+				foreach (array_values($triple) as $v) {
+					$strings[] = (string) $v;
+				}
+				if ($strings) {
+					$rights[] = $strings;
+				}
+			}
+			if ($rights) {
+				return $rights;
+			}
 		}
 
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
@@ -2866,6 +3004,30 @@ class ToolApiBridge extends McpTool
 	 * Check resulting dates, project write access and native update side effects.
 	 *
 	 * @param array<string,mixed> $args Normalized update arguments
+	 * @param Project $parent Existing record
+	 * @return void
+	 * @throws InvalidArgumentException When the edit is not safe
+	 */
+	private function validateProjectUpdate(array $args, $parent)
+	{
+		$project = $parent;
+		if (!$project || !$this->canAccessWriteObject(['project', '', ''], (int) $project->id) || !$this->canWriteProject($project)) {
+			throw new InvalidArgumentException('Access denied to project');
+		}
+		if (!in_array($project->status ?? null, [0, 1, '0', '1'], true)) {
+			throw new InvalidArgumentException('Only draft or open projects can be edited by this tool');
+		}
+		$start = array_key_exists('date_start', $args) ? $args['date_start'] : $parent->date_start;
+		$end = array_key_exists('date_end', $args) ? $args['date_end'] : $parent->date_end;
+		if ($start && $end && $end < $start) {
+			throw new InvalidArgumentException('End date must not precede start date');
+		}
+	}
+
+	/**
+	 * Check task dates, parent project write access and automatic closure settings.
+	 *
+	 * @param array<string,mixed> $args Normalized update arguments
 	 * @param Task $parent Existing task
 	 * @return void
 	 * @throws InvalidArgumentException When the edit is not safe
@@ -2962,6 +3124,9 @@ class ToolApiBridge extends McpTool
 		}
 		if (!$this->canAccessWriteObject($write['access'], (int) $parent->id)) {
 			throw new InvalidArgumentException('Access denied to record');
+		}
+		if (!empty($write['project_update'])) {
+			$this->validateProjectUpdate($args, $parent);
 		}
 		if (!empty($write['task_update'])) {
 			$this->validateTaskUpdate($args, $parent);
@@ -3257,6 +3422,21 @@ class ToolApiBridge extends McpTool
 					$found = ($prod->fetch((int) $obj->rowid) > 0);
 				}
 			}
+			if (!$found && $buy && $socid > 0) {
+				// A supplier document carries the SUPPLIER's references - a delivery
+				// note almost never shows ours. Look the ref up in that supplier's
+				// catalogue, and only there, so another supplier's "33303" never fits.
+				$sql = "SELECT DISTINCT pfp.fk_product FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
+				$sql .= " AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn = '".$this->db->escape($wanted)."'";
+				$sql .= " LIMIT 2";
+				$resql = $this->db->query($sql);
+				if ($resql && $this->db->num_rows($resql) === 1) {
+					$obj = $this->db->fetch_object($resql);
+					$found = ($prod->fetch((int) $obj->fk_product) > 0);
+				}
+			}
 			if ($found) {
 				$line['fk_product'] = $prod->id;
 				if (empty($line['fk_unit']) && !isset($line['unit']) && !empty($prod->fk_unit)) {
@@ -3275,7 +3455,7 @@ class ToolApiBridge extends McpTool
 				$line['desc'] = $wanted;
 			}
 			if (!$found) {
-				$this->unresolvedProducts[] = $wanted;
+				$this->unresolvedProducts[$wanted] = $this->closeProductRefs($wanted, $buy ? $socid : 0);
 			}
 			unset($line['product_ref']);
 		}
@@ -3431,7 +3611,9 @@ class ToolApiBridge extends McpTool
 			if (!$parent) {
 				return 'Record not found';
 			}
-			if (!empty($write['task_update'])) {
+			if (!empty($write['project_update'])) {
+				$context = (string) $parent->title;
+			} elseif (!empty($write['task_update'])) {
 				$project = $this->fetchBusinessObject('Project', (int) $parent->fk_project);
 				if (!$project) {
 					return 'Record not found';
@@ -3453,8 +3635,12 @@ class ToolApiBridge extends McpTool
 						}
 					} else {
 						$isdate = in_array($field, $write['preview_dates'] ?? [], true);
-						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, 'standard', 'gmt').' UTC' : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], 'standard', 'gmt').' UTC' : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$dateonly = !empty($write['preview_dateonly']);
+						$format = $dateonly ? 'dayrfc' : 'standard';
+						$tz = $dateonly ? 'tzserver' : 'gmt';
+						$suffix = $dateonly ? '' : ' UTC';
+						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, $format, $tz).$suffix : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], $format, $tz).$suffix : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 						$changes[] = $label.': '.$oldvalue.' → '.$newvalue;
 					}
 				}
@@ -3648,7 +3834,7 @@ class ToolApiBridge extends McpTool
 				return $langs->transnoentitiesnoconv('AIWriteNoLines');
 			}
 			if (!empty($this->unresolvedProducts)) {
-				return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product, or create it with api_products_create first.";
+				return $this->unresolvedProductsMessage();
 			}
 			if ($kind === 'reception') {
 				foreach ($lines as $line) {
@@ -3677,10 +3863,80 @@ class ToolApiBridge extends McpTool
 			return "Record ".$parent->ref." is not a draft (status ".((int) $parent->status)."): lines can only be added to a draft. Nothing was written.";
 		}
 		if (!empty($this->unresolvedProducts)) {
-			return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product.";
+			return $this->unresolvedProductsMessage();
 		}
 
 		return '';
+	}
+
+	/**
+	 * References close to one that matched no product, for the user to pick from:
+	 * the supplier's references when the document is a supplier one (the note
+	 * says "33303", the catalogue has "33303-6"), else our own references.
+	 *
+	 * @param  string   $wanted Reference as written on the document.
+	 * @param  int      $socid  Supplier whose catalogue is searched, 0 for a customer document.
+	 * @return string[]         Up to five "ref = our ref (label)" strings, closest first.
+	 */
+	private function closeProductRefs($wanted, $socid)
+	{
+		$wanted = trim((string) $wanted);
+		if (dol_strlen($wanted) < 3) {
+			return array();
+		}
+		// "5553-987" on the note, "5553-12" and "5553-14" in the catalogue (a size
+		// the note omits): try the stem before the last separator too. Then the
+		// stem before a trailing number ("SEAFXR20" -> the SEAFXR family), so a
+		// missing size still shows its siblings.
+		$stems = array($wanted);
+		if (preg_match('/^(.{3,})[-\/ .][^-\/ .]+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		if (preg_match('/^(.{3,}?)\d+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		$found = array();
+		foreach ($stems as $stem) {
+			if ($socid > 0) {
+				$sql = "SELECT DISTINCT pfp.ref_fourn, p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = pfp.fk_product";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').") AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY pfp.ref_fourn LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref_fourn] = $obj->ref_fourn.' = '.$obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (empty($found)) {
+				$sql = "SELECT ref, label FROM ".$this->db->prefix()."product";
+				$sql .= " WHERE entity IN (".getEntity('product').") AND ref LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY ref LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref] = $obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (!empty($found)) {
+				break;
+			}
+		}
+
+		return array_slice(array_values($found), 0, 5);
+	}
+
+	/**
+	 * Message refusing a write whose products could not be resolved, with the
+	 * close references found for each, so the user (or the model) can pick one.
+	 *
+	 * @return string Message for the caller.
+	 */
+	private function unresolvedProductsMessage()
+	{
+		$parts = array();
+		foreach ($this->unresolvedProducts as $wanted => $close) {
+			$parts[] = "'".((string) $wanted)."'".(empty($close) ? '' : ' (close refs: '.implode(', ', $close).')');
+		}
+
+		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first.";
 	}
 
 	/**
@@ -4280,14 +4536,24 @@ class ToolApiBridge extends McpTool
 	 */
 	private function writeMetaFor($toolName)
 	{
+		$meta = $this->methodMetaFor($toolName);
+
+		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * Find the enrichment of the method a tool name maps to.
+	 *
+	 * @param  string $toolName Tool name (api_<endpoint>_<suffix>).
+	 * @return array<string,mixed>              Method enrichment, or array() when unknown.
+	 */
+	private function methodMetaFor($toolName)
+	{
 		foreach ($this->enrichments as $key => $meta) {
 			foreach (($meta['methods'] ?? array()) as $method => $mmeta) {
-				if (empty($mmeta['write'])) {
-					continue;
-				}
 				$suffix = $mmeta['suffix'] ?? ($method === 'index' ? 'list' : strtolower($method));
 				if ($toolName === 'api_'.$key.'_'.$suffix) {
-					return $mmeta['write'];
+					return $mmeta;
 				}
 			}
 		}

@@ -183,6 +183,8 @@ class AllTests
 		$suite->addTestSuite('ApiSupplierOrderHeaderUpdateTest');
 		require_once dirname(__FILE__).'/AiTaskUpdateTest.php';
 		$suite->addTestSuite('AiTaskUpdateTest');
+		require_once dirname(__FILE__).'/AiProjectUpdateTest.php';
+		$suite->addTestSuite('AiProjectUpdateTest');
 		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		//$suite->addTestSuite('AiMcpWireTest');
 		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
