@@ -460,7 +460,11 @@ if ($result) {
 						if ($is_sc) {
 							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
 						} else {
-							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							if (empty($tabtp[$obj->rowid][$compta_user])) {
+								$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+							} else {
+								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							}
 						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
@@ -561,7 +565,11 @@ if ($result) {
 							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								if (empty($tabtp[$obj->rowid][$compta_user])) {
+									$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+								} else {
+									$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								}
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
