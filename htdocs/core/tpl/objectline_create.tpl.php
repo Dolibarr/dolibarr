@@ -365,9 +365,11 @@ if ($nolinesbefore) {
 
 			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
 			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
-			// After creation, product card replaces __ID__ with the new product id so it is preselected in the line form
+			// After creation, product card replaces __ID__ with the new product id so it is preselected in the line form.
+			// The supplier combo uses 'idprod_ID' for a product without supplier price.
 			$urlbacktoobject = $_SERVER["PHP_SELF"].'?id='.$object->id;
-			$paramsbacktoobject = '&backtopage='.urlencode($urlbacktoobject.'&prod_entry_mode=predef&idprod=__ID__').'&backtopageforcancel='.urlencode($urlbacktoobject);
+			$paramforselectedproduct = (empty($senderissupplier) ? 'idprod=__ID__' : 'idprodfournprice=idprod___ID__');
+			$paramsbacktoobject = '&backtopage='.urlencode($urlbacktoobject.'&prod_entry_mode=predef&'.$paramforselectedproduct).'&backtopageforcancel='.urlencode($urlbacktoobject);
 			if ($addproducton || $addserviceon) {
 				if ($addproducton && $addserviceon) {
 					echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
