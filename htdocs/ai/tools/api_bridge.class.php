@@ -3631,12 +3631,11 @@ class ToolApiBridge extends McpTool
 		}
 		$found = array();
 		foreach ($stems as $stem) {
-			$like = $this->db->escape($this->db->escapeforlike($stem)).'%';
 			if ($socid > 0) {
 				$sql = "SELECT DISTINCT pfp.ref_fourn, p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
 				$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = pfp.fk_product";
 				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').") AND pfp.fk_soc = ".((int) $socid);
-				$sql .= " AND pfp.ref_fourn LIKE '".$like."' ORDER BY pfp.ref_fourn LIMIT 6";
+				$sql .= " AND pfp.ref_fourn LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY pfp.ref_fourn LIMIT 6";
 				$resql = $this->db->query($sql);
 				while ($resql && ($obj = $this->db->fetch_object($resql))) {
 					$found[$obj->ref_fourn] = $obj->ref_fourn.' = '.$obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
@@ -3644,7 +3643,7 @@ class ToolApiBridge extends McpTool
 			}
 			if (empty($found)) {
 				$sql = "SELECT ref, label FROM ".$this->db->prefix()."product";
-				$sql .= " WHERE entity IN (".getEntity('product').") AND ref LIKE '".$like."' ORDER BY ref LIMIT 6";
+				$sql .= " WHERE entity IN (".getEntity('product').") AND ref LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY ref LIMIT 6";
 				$resql = $this->db->query($sql);
 				while ($resql && ($obj = $this->db->fetch_object($resql))) {
 					$found[$obj->ref] = $obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
