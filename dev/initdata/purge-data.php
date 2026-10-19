@@ -45,7 +45,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version=DOL_VERSION;

@@ -111,7 +111,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = inventoryPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("Inventory"), -1, 'stock');
+	print dol_get_fiche_head($head, 'document', $langs->trans("Inventory"), -1, 'stock', 0, '', '', 0, '', 1);
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

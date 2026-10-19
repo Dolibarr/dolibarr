@@ -27,7 +27,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -64,17 +64,17 @@ class SocieteTest extends CommonClassTest
 
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') != 'mod_codeclient_monkey') {
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '" . getDolGlobalString('SOCIETE_CODECLIENT_ADDON')."'.\n";
-			die(1);
+			exit(1);
 		}
 
 		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
-			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n";
-			die(1);
+			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable the module).\n";
+			exit(1);
 		}
 
 		if ($langs->defaultlang != 'en_US') {
 			print "\n".__METHOD__." default language of company must be set to autodetect.\n";
-			die(1);
+			exit(1);
 		}
 
 		$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.

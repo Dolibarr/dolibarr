@@ -223,7 +223,6 @@ Module62000Name=Incotérminos
 Permission23001=Leer tarea programada
 Permission23002=Crear/actualizar tarea programada
 Permission23003=Eliminar tarea programada
-Permission23004=Ejecutar tarea programada
 DictionaryExpenseTaxRange=Informe de gastos - Rango categoría de transporte
 BackToModuleList=Volver a la lista de módulos
 BackToDictionaryList=Volver a la lista de diccionarios

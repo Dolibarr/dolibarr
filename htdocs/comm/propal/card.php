@@ -99,6 +99,7 @@ $originid = GETPOSTINT('originid');
 $renewal = GETPOST('renewal');	// for contract renewal
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha'); // if not set, $backtopage will be used
 $lineid = GETPOSTINT('lineid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
@@ -298,6 +299,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete proposal
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header('Location: ' . dolBuildUrl(DOL_URL_ROOT . '/comm/propal/list.php', ['restore_lastsearch_values' => 1]));
@@ -730,6 +732,14 @@ if (empty($reshook)) {
 									$lineid = 0;
 									$error++;
 									break;
+								}
+
+								// Keep the extra parameters of the source line (for example the options of subtotal lines)
+								if ($result > 0 && !empty($lines[$i]->extraparams)) {
+									$newline = new PropaleLigne($db);
+									$newline->id = $result;
+									$newline->extraparams = $lines[$i]->extraparams;
+									$newline->setExtraParameters();
 								}
 
 								// Defined the new fk_parent_line
@@ -1556,7 +1566,23 @@ if (empty($reshook)) {
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 					// If price per quantity and customer
-					if ($prod->prices_by_qty[$object->thirdparty->price_level]) { // yes, this product has some prices per quantity
+					if (!empty($object->thirdparty->price_level)) {
+						// The price of the level of the customer is the price to use when no price per quantity is selected
+						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
+						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
+							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
+								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+							}
+							if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) {
+								$tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+							}
+						}
+					}
+					if (!empty($object->thirdparty->price_level) && !empty($prod->prices_by_qty[$object->thirdparty->price_level])) { // yes, this product has some prices per quantity
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 						$pqp = GETPOSTINT('pbq');
 
@@ -1712,8 +1738,8 @@ if (empty($reshook)) {
 			}
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax1_tx = get_localtax((string) $tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax2_tx = get_localtax((string) $tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// Margin
 			$fournprice = (int) (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');	// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
@@ -2501,6 +2527,9 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+	}
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
@@ -3542,28 +3571,28 @@ if ($action == 'create') {
 
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right" data-dol-field="total_ht">' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_ht">' . price($object->multicurrency_total_ht, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		print '<tr>';
 		print '<td>' . $langs->trans('AmountVAT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right" data-dol-field="total_tva">' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_tva">' . price($object->multicurrency_total_tva, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="total_localtax1">' . price($object->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 				$object->multicurrency_total_localtax1 = price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
 
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_localtax1, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_localtax1">' . price($object->multicurrency_total_localtax1, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
@@ -3571,20 +3600,20 @@ if ($action == 'create') {
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
 			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="total_localtax2">' . price($object->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 				$object->multicurrency_total_localtax2 = price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
 
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_localtax2, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_localtax2">' . price($object->multicurrency_total_localtax2, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
 
 		print '<tr>';
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right" data-dol-field="total_ttc">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_ttc">' . price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
@@ -3823,7 +3852,7 @@ if ($action == 'create') {
 						'enabled' => ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")),
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
-						'url' => '/fourn/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+						'url' => '/fourn/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id)
 					);
 					/*if ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
 						if ($usercancreatepurchaseorder) {
@@ -3925,11 +3954,11 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction butActionClone" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element . '">' . $langs->trans("ToClone") . '</a>';
+					print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element, '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

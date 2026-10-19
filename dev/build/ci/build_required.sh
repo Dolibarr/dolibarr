@@ -9,16 +9,17 @@
 #         git diff --name-only A B | build_required.sh
 # Exit code: 0 = the build is required, 1 = it can be skipped.
 #
-# The phpunit suite scans the whole tree (CodingPhpTest reads every .php file
-# below htdocs/, CodingSqlTest reads htdocs/install/*/*.sql and dev/initdemo/,
-# LangTest reads htdocs/langs/*/main.lang), so we can not use a short allow list
-# of "core" directories: almost any php or sql file may change the result. We
-# list instead the files that can never change it.
+# The phpunit suite scans the whole tree:
+# CodingPhpTest reads every .php file below htdocs/
+# CodingSqlTest reads htdocs/install/*/*.sql and dev/initdemo/,
+# LangTest reads htdocs/langs/*/main.lang)
+# So we can not use a short allow list of "core" directories: almost any php or sql file may change
+# the result. We list instead the files that can never change it.
 
 set -euo pipefail
 
 # Files that always require the build, even when the ignore list below matches
-BUILD_FORCE_REGEX='^(\.travis\.yml|\.github/workflows/(gh-travis|ci-on-push|ci-on-pull_request)\.yml|\.github/scripts/get_changed_php\.sh|dev/build/ci/build_required\.sh|composer\.json|htdocs/langs/[a-zA-Z_]+/main\.lang|dev/initdemo/)'
+BUILD_FORCE_REGEX='^(\.travis\.yml|\.github/workflows/(gh-travis|travis-emulated|ci-on-push|ci-on-pull_request)\.yml|\.github/scripts/get_changed_php\.sh|dev/build/ci/build_required\.sh|composer\.json|htdocs/langs/[a-zA-Z_]+/main\.lang|dev/initdemo/)'
 # Files that can never change the result of the build
 BUILD_IGNORE_REGEX='^(doc|dev|\.tx|\.phan|\.github|htdocs/langs)/|\.(md|txt|css|less|scss|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot)$|^(ChangeLog|COPYING|COPYRIGHT|DCO|\.editorconfig|\.gitignore|\.gitattributes|\.mailmap|\.pre-commit-config\.yaml|\.codeclimate\.yml|phpstan\.neon\.dist|pyproject\.toml)$'
 

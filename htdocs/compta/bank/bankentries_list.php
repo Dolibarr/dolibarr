@@ -713,15 +713,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
 }
 
-if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by default
-	// We force on last page.
-	$page = ($nbtotalofpages - 1);
-	$offset = $limit * $page;
-	if ($page < 0) {
-		$page = 0;
-	}
-}
 if ($page >= $nbtotalofpages) {
 	// If we made a search and result has low page than the page number we were on
 	$page = ($nbtotalofpages - 1);
@@ -791,7 +782,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form" spellcheck="false">'."\n";
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -1481,14 +1472,18 @@ if ($resql) {
 
 		$banklinestatic->id = $objp->rowid;
 		$banklinestatic->ref = (string) $objp->rowid;
+		$banklinestatic->amount = $objp->amount;
 
-		print '<tr class="oddeven" '.$backgroundcolor.'>';
+		// Lines that can be reconciled use the intuitive row selection (Ctrl/Shift+click, and single click if MAIN_ROW_SINGLECLICK_TOSELECT)
+		$lineselectable = (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile'));
+
+		print '<tr class="oddeven'.($lineselectable ? ' row-with-select' : '').'" '.$backgroundcolor.'>';
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+			if ($lineselectable) {
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1697,9 +1692,11 @@ if ($resql) {
 
 		// Cheque
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
 			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
+			if ($objp->fk_bordereau > 0) {
+				$bordereaustatic->fetch($objp->fk_bordereau);
+				print $bordereaustatic->getNomUrl();
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1883,9 +1880,11 @@ if ($resql) {
 		}
 
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
 			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
+			if ($objp->fk_bordereau > 0) {
+				$bordereaustatic->fetch($objp->fk_bordereau);
+				print $bordereaustatic->getNomUrl();
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1939,8 +1938,8 @@ if ($resql) {
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+			if ($lineselectable) {
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2013,6 +2012,41 @@ if ($resql) {
 
 	print "</table>";
 	print "</div>";
+
+	// Remember the lines ticked for reconciliation in the browser tab (per bank account), so that
+	// adding or deleting a line, changing page or reloading the page does not lose them.
+	if (($action == 'reconcile' || $action == 'confirm_deleteonreconcile') && !empty($conf->use_javascript_ajax)) {
+		print '<script nonce="'.getNonce().'">
+		$(document).ready(function() {
+			var key = "dol_bankreconcile_checked_'.((int) $object->id).'";
+			var checked = {};
+			try { checked = JSON.parse(sessionStorage.getItem(key) || "{}") || {}; } catch (e) { checked = {}; }
+			function saveChecked() { try { sessionStorage.setItem(key, JSON.stringify(checked)); } catch (e) {} }
+			$("input.checkforselect").each(function() {
+				if (this.checked) {
+					checked[this.value] = 1;	// Line already ticked by the server (kept after an error)
+				} else if (checked[this.value]) {
+					console.log("Restore tick of bank line "+this.value);
+					$(this).prop("checked", true).trigger("change");
+				}
+			});
+			saveChecked();
+			$(document).on("change", "input.checkforselect", function() {
+				if (this.checked) {
+					checked[this.value] = 1;
+				} else {
+					delete checked[this.value];
+				}
+				saveChecked();
+			});
+			$("input[name=confirm_reconcile]").on("click", function() {
+				// Lines being reconciled will no longer be listed, so forget them
+				$("input.checkforselect:checked").each(function() { delete checked[this.value]; });
+				saveChecked();
+			});
+		});
+		</script>';
+	}
 
 	print '</form>';
 	$db->free($resql);

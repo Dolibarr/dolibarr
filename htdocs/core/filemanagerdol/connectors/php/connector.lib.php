@@ -299,9 +299,6 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	global $user;
 
-	if (!isset($_FILES)) {
-		global $_FILES;	// @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sErrorNumber = '0';
 	$sFileName = '';
 
@@ -391,7 +388,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 				if (file_exists($sFilePath)) {
 					//previous checks failed, try once again
-					if (isset($isImageValid) && $imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+					if ($imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
@@ -640,9 +637,6 @@ function CreateServerFolder($folderPath, $lastFolder = null)
  */
 function GetRootPath()
 {
-	if (!isset($_SERVER)) {
-		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
 	$sRealPath = rtrim($sRealPath, "\\/");

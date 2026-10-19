@@ -24,7 +24,7 @@
  * \brief   PHPUnit test for the BlockedLog and LNE class.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -39,6 +39,8 @@ if (empty($user->id)) {
 	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+$mysoc->country_code = 'BE';
 
 $langs->load("main");
 
@@ -59,6 +61,8 @@ class BlockedLogAndLNETest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
+		global $mysoc;
+
 		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
 		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
@@ -66,7 +70,40 @@ class BlockedLogAndLNETest extends CommonClassTest
 		// We disable module blocked log to avoid interference with tests
 		global $db;
 		$blockedlogmodule = new modBlockedLog($db);
-		$blockedlogmodule->init();
+
+		$moduleiniterror = 0;
+
+		print 'BlockedLogAndLNETest mysoc country_code = '.$mysoc->country_code."\n";
+
+		//$result = $blockedlogmodule->remove();
+		$result = $blockedlogmodule->init();
+		if ($result <= 0) {
+			$moduleiniterror++;
+		}
+
+		// Check that entry BLOCKEDLOG_HMAC_KEY exists in llx_const
+		$key = 'BLOCKEDLOG_HMAC_KEY';
+		$sql = "SELECT rowid, value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($key)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num == 0) {
+				print "Failed to find entry BLOCKEDLOG_HMAC_KEY in llx_const. We can't start test.\n";
+				if ($moduleiniterror) {
+					print "May be because of failure to init/load module BlockedLog: ".$blockedlogmodule->error.". We can't start test.\n";
+					exit -1;
+				}
+				exit -1;
+			} else {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					print 'The entry key BLOCKEDLOG_HMAC_KEY exists in llx_const with value '.$obj->value.". We can start test.\n";
+				}
+			}
+		} else {
+			print "Failed to check if entry BLOCKEDLOG_HMAC_KEY exists in llx_const: ".$db->lasterror().". We can't start test.\n";
+			exit -1;
+		}
 	}
 
 	/**

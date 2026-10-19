@@ -32,7 +32,6 @@ EvalMath               1.0           BSD                         Yes            
 Escpos-php             3.0           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
 GeoPHP                 1.2           Modified BSD License        Yes             Lib to make geo convert
-MathPHP                2.8.1         MIT License                 Yes             Modern math library for PHP (only few files)
 Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.16        LGPL 2.1+                   Yes             Library to develop SOAP Web services. From https://github.com/f00b4r/nusoap/tree/v0.9.16
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
@@ -51,20 +50,20 @@ Sabre                  4.6.0         BSD                         Yes            
 Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
 Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
 Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
-TCPDF                  6.7.5         LGPL-3+                     Yes             PDF generation
+TCPDF                  6.11.4        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.1.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator
 
 JS libraries:
-Ace                    1.43.12       BSD                         Yes             JS library to get code syntaxique coloration in a textarea (Must take src dir into https://github.com/ajaxorg/ace-builds/).
+Ace                    1.44.0        BSD                         Yes             JS library to get code syntaxique coloration in a textarea (Must take src-min dir of https://github.com/ajaxorg/ace-builds/ into src).
 ChartJS                3.7.1         MIT License                 Yes             JS library for graph
 CKEditor               4.22.1        LGPL-2.1+                   Yes             Editor WYSIWYG
 jQuery                 3.6.4         MIT License                 Yes             JS library
 jQuery UI              1.13.2        GPL and MIT License         Yes             JS library plugin UI
 jQuery select2         4.0.13        GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
-jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
+jQuery JCrop           0.9.15        GPL and MIT License         Yes             JS library plugin Crop (to crop images)
 jQuery jNotify         1.1.00        Apache License 2.0          Yes             JS library plugin jNotify (to use ajax popups)
 jQuery jPicker         1.1.6         GPL and MIT License         Yes             JS library for color picker with not defined list of colors
 jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes             JS library for filetree

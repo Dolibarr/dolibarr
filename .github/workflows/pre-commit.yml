@@ -1,7 +1,9 @@
 ---
+# This is a basic workflow to check pre-commit tool
 name: pre-commit
 
 
+# Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -81,7 +83,7 @@ jobs:
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
       # Install python and pre-commit tool
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           cache: pip
           python-version: "3.11"

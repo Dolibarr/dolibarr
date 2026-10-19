@@ -33,6 +33,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 /**
  * @var Conf $conf
@@ -58,18 +59,8 @@ $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHO
  * Actions
  */
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 
 /*
@@ -101,97 +92,40 @@ print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
  * Statistics
  */
 
-if (isModEnabled('mrp') && $conf->use_javascript_ajax) {
+if (isModEnabled('mrp')) {
 	$sql = "SELECT COUNT(t.rowid) as nb, status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as t";
+	$sql .= " WHERE t.entity IN (".getEntity('mo').")";
 	$sql .= " GROUP BY t.status";
 	$sql .= " ORDER BY t.status ASC";
 	$resql = $db->query($sql);
 
 	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		$totalnb = 0;
-		$dataseries = array();
-		$colorseries = array();
 		$vals = array();
-
-		/**
-		 * @var string $badgeStatus0
-		 * @var string $badgeStatus1
-		 * @var string $badgeStatus4
-		 * @var string $badgeStatus5
-		 * @var string $badgeStatus6
-		 * @var string $badgeStatus8
-		 * @var string $badgeStatus9
-		 */
-		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
-		if ($theme_vars_file) {
-			include $theme_vars_file;
-		}
-
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$vals[$obj->status] = $obj->nb;
-
-				$totalnb += $obj->nb;
-			}
-			$i++;
+		while ($obj = $db->fetch_object($resql)) {
+			$vals[$obj->status] = $obj->nb;
 		}
 		$db->free($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("ManufacturingOrder").'</th>';
-		print '</tr>'."\n";
-		$listofstatus = array(0, 1, 2, 3, 9);
-		foreach ($listofstatus as $status) {
-			$dataseries[] = array($staticmo->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-			if ($status == Mo::STATUS_DRAFT) {
-				$colorseries[$status] = '-'.$badgeStatus0;
-			}
-			if ($status == Mo::STATUS_VALIDATED) {
-				$colorseries[$status] = $badgeStatus1;
-			}
-			if ($status == Mo::STATUS_INPROGRESS) {
-				$colorseries[$status] = $badgeStatus4;
-			}
-			if ($status == Mo::STATUS_PRODUCED) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == Mo::STATUS_CANCELED) {
-				$colorseries[$status] = $badgeStatus9;
-			}
-
-			if (empty($conf->use_javascript_ajax)) {
-				print '<tr class="oddeven">';
-				print '<td>'.$staticmo->LibStatut($status, 0).'</td>';
-				print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-				print "</tr>\n";
-			}
+		$colors = getThemeBadgeStatusColors();
+		$colorofstatus = array(
+			Mo::STATUS_DRAFT => '-'.$colors[0],
+			Mo::STATUS_VALIDATED => $colors[1],
+			Mo::STATUS_INPROGRESS => $colors[4],
+			Mo::STATUS_PRODUCED => $colors[6],
+			Mo::STATUS_CANCELED => $colors[9],
+		);
+		$series = array();
+		foreach (array(0, 1, 2, 3, 9) as $status) {
+			$series[] = array(
+				'label' => $staticmo->LibStatut($status, 1),
+				'labelnojs' => $staticmo->LibStatut($status, 0),
+				'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+				'color' => $colorofstatus[$status],
+				'url' => 'mo_list.php?search_status='.$status,
+			);
 		}
-		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center" colspan="2">';
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->SetHeight('200');
-			$dolgraph->draw('idgraphstatus');
-			print $dolgraph->show($totalnb ? 0 : 1);
-
-			print '</td></tr>';
-		}
-		print "</table>";
-		print "</div>";
-
-		print "<br>";
+		print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("ManufacturingOrder"), $series, array('total' => false));
 	} else {
 		dol_print_error($db);
 	}

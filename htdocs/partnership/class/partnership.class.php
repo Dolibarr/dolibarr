@@ -104,7 +104,7 @@ class Partnership extends CommonObject
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => -2, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'csslist' => 'tdoverflowmax150'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 'isModEnabled("multicompany")', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
 		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'csslist' => 'tdoverflowmax100', 'help' => 'YouCanChangeValuesForThisListFromDictionarySetup'),
@@ -351,15 +351,6 @@ class Partnership extends CommonObject
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
@@ -1420,9 +1411,6 @@ class Partnership extends CommonObject
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';

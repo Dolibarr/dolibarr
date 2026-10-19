@@ -123,6 +123,16 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'setusesearchtoselectuser') {
+	// Set the "search to select" mode of the user combo (0=no, 1/2/3=nb of chars to type before search, 'infinite'=infinite list)
+	$usersearch = GETPOST('activate_usesearchtoselectuser', 'aZ09');
+
+	if (dolibarr_set_const($db, "USER_USE_SEARCH_TO_SELECT", $usersearch, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -191,6 +201,31 @@ if ($conf->use_javascript_ajax) {
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
+}
+print '</td></tr>';
+
+// Use Ajax "search to select" form to select a user
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectUser"), $langs->trans("UseSearchToSelectUserTooltip"), 1).'</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center nowraponall" width="100">';
+if (empty($conf->use_javascript_ajax)) {
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+} else {
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setusesearchtoselectuser">';
+	$arrval = array(
+		'0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'infinite' => $langs->trans("UseSearchToSelectUserInfinite"),
+	);
+	print $form->selectarray("activate_usesearchtoselectuser", $arrval, getDolGlobalString('USER_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth200');
+	print ' <input type="submit" class="button small reposition" value="'.$langs->trans("Modify").'">';
+	print '</form>';
 }
 print '</td></tr>';
 

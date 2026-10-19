@@ -152,11 +152,11 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 					$disabled = 1;
 				}
 				print '>';
-				print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+				print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
 				print '</textarea>';
 			} else {
 				print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
-				print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+				print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1).'"';
 				if ($line_type == 'subtotal') {
 					print ' readonly="readonly"';
 					$disabled = 1;
@@ -197,7 +197,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<td colspan="' . $colspan . '" class="right"></td>';
 	} else {
 		print '<input type="text" readonly name="line_desc" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1);
 		print '"></td>';
 	}
 	?>

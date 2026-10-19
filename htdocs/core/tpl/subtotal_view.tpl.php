@@ -55,7 +55,7 @@ $line_options = $line->extraparams["subtotal"] ?? array();
 
 $line_color = $this->getSubtotalColors($line->qty);
 
-echo '<tr data-level="' . $line->qty . '" data-desc="' . $line->desc . '" data-rang="' . $line->rang . '" id="row-' . $line->id . '" class="drag drop" style="background:#' . $line_color . '">';
+echo '<tr data-level="' . $line->qty . '" data-desc="' . dol_escape_htmltag($line->desc) . '" data-rang="' . $line->rang . '" id="row-' . $line->id . '" class="drag drop" style="background:#' . $line_color . '">';
 
 // Showing line number if conf is enabled
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
@@ -65,7 +65,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 if ($line->qty > 0) { ?>
 	<td class="linecollabel" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
 		<?php
-		echo $line->desc;
+		echo dol_escape_htmltag($line->desc);
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
 		}
@@ -154,10 +154,10 @@ if ($line->qty > 0) { ?>
 	// Handling if situation invoices conf is enabled
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		print '<td class="linecolcycleref nowrap right"></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			print '<td  class="nowrap right"></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
+			print '<td></td>';
 		}
-		print '<td class="linecolcycleref2 right nowrap"></td>';
+		print '<td class="linecolcycleref2"></td>';
 	}
 
 	// Handling colspan if margin module is enabled
@@ -223,7 +223,7 @@ if ($line->qty > 0) { ?>
 	?>
 	<td class="linecollabel nowrap right" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?> colspan="<?php echo $colspan + 2 ?>">
 		<?php
-		echo $line->desc;
+		echo dol_escape_htmltag($line->desc);
 		if (array_key_exists('subtotalshowtotalexludingvatonpdf', $line_options)) {
 			echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
 		}
@@ -293,7 +293,7 @@ if ($line->qty > 0) { ?>
 		$extra_cols = 4;
 	}
 	?>
-	<td class="linecollabel" colspan="<?php echo $colspan + $extra_cols ?>"><?php echo nl2br($line->desc); ?></td>
+	<td class="linecollabel" colspan="<?php echo $colspan + $extra_cols ?>"><?php echo dolPrintHTML($line->desc); ?></td>
 <?php }
 
 if ($this->status == 0) {

@@ -279,7 +279,7 @@ class PaiementFourn extends Paiement
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql .= " VALUES ('".$this->db->escape($ref)."', ".((int) $conf->entity).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."', ".((float) $total).", ".((float) $mtotal).", ".((int) $this->paiementid).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".((int) $user->id).", 0)";
+			$sql .= " '".$this->db->idate($this->datepaye)."', ".((float) $total).", ".((float) $mtotal).", ".((int) $this->paiementid).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape((string) $this->note_private)."', ".((int) $user->id).", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -386,7 +386,8 @@ class PaiementFourn extends Paiement
 										}
 
 										if ($error) {
-											setEventMessages($discount->error, $discount->errors, 'errors');
+											$this->error = $discount->error;
+											$this->errors = $discount->errors;
 											$error++;
 										}
 									}
@@ -419,7 +420,7 @@ class PaiementFourn extends Paiement
 							if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS')) {
 									$invoice->fetch_thirdparty();
 									$newlang = $invoice->thirdparty->default_lang;
 								}
@@ -430,7 +431,8 @@ class PaiementFourn extends Paiement
 								$ret = $invoice->fetch($facid); // Reload to get new records
 								$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 								if ($result < 0) {
-									setEventMessages($invoice->error, $invoice->errors, 'errors');
+									$this->error = $invoice->error;
+									$this->errors = $invoice->errors;
 									$error++;
 								}
 							}

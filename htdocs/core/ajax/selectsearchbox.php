@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/ajax/selectsearchbox.php
  *      \ingroup    core
- *      \brief      This script returns json array of possible searches or just set the array if called by an include
+ *      \brief      This script returns json array of possible searches from the Search widget or just set the array if called by an include
  */
 
 // This script is called with a POST method or as an include.

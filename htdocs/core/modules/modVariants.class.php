@@ -123,6 +123,348 @@ class modVariants extends DolibarrModules
 		$this->rights[$r][1] = 'Delete attributes of variants'; // Permission label
 		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
+
+		// Imports
+		//--------
+		// A variant spans 4 tables and the import engine handles one line of file as one record
+		// of one table, so the import is split into single table datasets. The upsert is the
+		// native import_updatekeys_array. Note that 'entity' is never declared: the engine adds
+		// it by itself for every table that has the column. import_permission is not declared
+		// either, it is dead code replaced by the global 'import run' permission.
+		$r = 0;
+
+		// Import of variant attributes
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_attribute';
+		$this->import_label[$r] = "VariantAttributes";	// Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('pa' => MAIN_DB_PREFIX.'product_attribute', 'extra' => MAIN_DB_PREFIX.'product_attribute_extrafields');
+		$this->import_fields_array[$r] = array(
+			'pa.ref' => "VariantAttributeRef*",
+			'pa.label' => "VariantAttributeLabel*",
+			'pa.ref_ext' => "VariantAttributeRefExt",
+			'pa.position' => "VariantAttributeRank"
+		);
+		// Add extra fields of the attribute
+		$keyforselect = 'product_attribute';
+		$keyforelement = 'productattribute';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_attribute');
+		$this->import_examplevalues_array[$r] = array(
+			'pa.ref' => "COL",
+			'pa.label' => "Color",
+			'pa.ref_ext' => "",
+			'pa.position' => "10"
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'pa.position' => array('rule' => 'zeroifnull')
+		);
+		$this->import_updatekeys_array[$r] = array('pa.ref' => 'VariantAttributeRef');
+
+		// Import of variant attribute values
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_value';
+		$this->import_label[$r] = "VariantAttributeValues";	// Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('pav' => MAIN_DB_PREFIX.'product_attribute_value', 'extra' => MAIN_DB_PREFIX.'product_attribute_value_extrafields');
+		$this->import_fields_array[$r] = array(
+			'pav.fk_product_attribute' => "VariantAttributeRef*",
+			'pav.ref' => "VariantValueRef*",
+			'pav.value' => "VariantValueLabel*",
+			'pav.position' => "VariantValueRank"
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'pav.fk_product_attribute' => array('rule' => 'fetchidfromref', 'classfile' => '/variants/class/ProductAttribute.class.php', 'class' => 'ProductAttribute', 'method' => 'fetch', 'element' => 'ProductAttribute'),
+			'pav.position' => array('rule' => 'zeroifnull')
+		);
+		// Add extra fields of the attribute value
+		$keyforselect = 'product_attribute_value';
+		$keyforelement = 'productattributevalue';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_attribute_value');
+		$this->import_examplevalues_array[$r] = array(
+			'pav.fk_product_attribute' => "ref:COL",
+			'pav.ref' => "BLUE",
+			'pav.value' => "Blue",
+			'pav.position' => "10"
+		);
+		$this->import_updatekeys_array[$r] = array('pav.fk_product_attribute' => 'VariantAttributeRef', 'pav.ref' => 'VariantValueRef');
+
+		// Import of variants (combinations). Both the parent and the child products must exist:
+		// this import creates the variant links, not the products themselves.
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_combination';
+		$this->import_label[$r] = "ProductCombinations";	// Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('pac' => MAIN_DB_PREFIX.'product_attribute_combination');
+		$this->import_fields_array[$r] = array(
+			'pac.fk_product_parent' => "ParentProductOfVariant*",
+			'pac.fk_product_child' => "VariantProductRef*",
+			'pac.variation_price' => "VariantPriceImpact",
+			'pac.variation_price_percentage' => "VariantPriceImpactIsPercent",
+			'pac.variation_weight' => "VariantWeightImpact",
+			'pac.variation_ref_ext' => "VariantRefExt"
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'pac.fk_product_parent' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product'),
+			'pac.fk_product_child' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product'),
+			'pac.variation_price' => array('rule' => 'zeroifnull'),
+			'pac.variation_price_percentage' => array('rule' => 'zeroifnull'),
+			'pac.variation_weight' => array('rule' => 'zeroifnull')
+		);
+		// No 'rowid@table' regex on the foreign keys: the rule loads the whole target table into
+		// memory for every imported file, and the existence of the record is already enforced by
+		// the convertvalue rule for a ref, by the import trigger for an id, and by the foreign keys.
+		$this->import_regex_array[$r] = array(
+			'pac.variation_price_percentage' => '^[0-1]$'
+		);
+		// The engine reads a numeric value as an id, so a product whose ref is a number has to be
+		// prefixed with 'ref:'. The examples show the prefix on purpose.
+		$this->import_examplevalues_array[$r] = array(
+			'pac.fk_product_parent' => "ref:SHIRT (or the id of the parent product)",
+			'pac.fk_product_child' => "ref:SHIRT_BLUE_L (or the id of an existing product)",
+			'pac.variation_price' => "5.00",
+			'pac.variation_price_percentage' => "0",
+			'pac.variation_weight' => "0",
+			'pac.variation_ref_ext' => ""
+		);
+		$this->import_updatekeys_array[$r] = array('pac.fk_product_parent' => 'ParentProductOfVariant', 'pac.fk_product_child' => 'VariantProductRef');
+		// Preselected: a second row for the same (parent, child) is refused by the import trigger,
+		// so a plain insert would only ever fail. Note that imports/import.php cannot tell "no
+		// update key chosen" from "no choice made", so a preselection cannot be cancelled by the
+		// user: it is reserved to the tables where an insert has no meaning.
+		$this->import_preselected_updatekeys_array[$r] = array('pac.fk_product_parent', 'pac.fk_product_child');
+
+		// Import of the attribute values of each variant, one line per variant and attribute
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_combination2val';
+		$this->import_label[$r] = "VariantFeatures";	// Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('pac2v' => MAIN_DB_PREFIX.'product_attribute_combination2val');
+		$this->import_fields_array[$r] = array(
+			'pac2v.fk_prod_combination' => "VariantProductRef*",
+			'pac2v.fk_prod_attr' => "VariantAttributeRef*",
+			'pac2v.fk_prod_attr_val' => "VariantValueRef*"
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'pac2v.fk_prod_combination' => array('rule' => 'fetchidfromref', 'classfile' => '/variants/class/ProductCombination.class.php', 'class' => 'ProductCombination', 'method' => 'fetch', 'element' => 'ProductCombination'),
+			'pac2v.fk_prod_attr' => array('rule' => 'fetchidfromref', 'classfile' => '/variants/class/ProductAttribute.class.php', 'class' => 'ProductAttribute', 'method' => 'fetch', 'element' => 'ProductAttribute'),
+			// A value ref is only unique for a given attribute, and fetchidfromref resolves every
+			// column without any context, so the value is resolved by a computed field that reads
+			// the attribute ref of the same line.
+			'pac2v.fk_prod_attr_val' => array('rule' => 'compute', 'type' => 'int', 'classfile' => '/variants/class/ProductCombination.class.php', 'class' => 'ProductCombination', 'method' => 'resolveAttributeValueId', 'element' => 'ProductCombination')
+		);
+		$this->import_examplevalues_array[$r] = array(
+			'pac2v.fk_prod_combination' => "ref:SHIRT_BLUE_L (ref of the variant product)",
+			'pac2v.fk_prod_attr' => "ref:COL",
+			'pac2v.fk_prod_attr_val' => "ref:BLUE"
+		);
+		$this->import_updatekeys_array[$r] = array('pac2v.fk_prod_combination' => 'VariantProductRef', 'pac2v.fk_prod_attr' => 'VariantAttributeRef');
+		// Preselected: the unique index of the table forbids a second value for the same attribute
+		$this->import_preselected_updatekeys_array[$r] = array('pac2v.fk_prod_combination', 'pac2v.fk_prod_attr');
+
+		// Import of the price impact of each price level
+		// PRODUIT_MULTIPRICES only: the whole propagation chain of the price levels
+		// (ProductCombination::create(), update(), fetch(), updateProperties()) tests this
+		// constant alone, so exposing the dataset under another one would write rows that
+		// never reach llx_product_price.
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_pricelevel';
+			$this->import_label[$r] = "VariantPriceLevels";	// Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array();
+			$this->import_tables_array[$r] = array('pacpl' => MAIN_DB_PREFIX.'product_attribute_combination_price_level');
+			$this->import_fields_array[$r] = array(
+				'pacpl.fk_product_attribute_combination' => "VariantProductRef*",
+				'pacpl.fk_price_level' => "VariantPriceLevel*",
+				'pacpl.variation_price' => "VariantPriceImpact",
+				'pacpl.variation_price_percentage' => "VariantPriceImpactIsPercent"
+			);
+			$this->import_convertvalue_array[$r] = array(
+				'pacpl.fk_product_attribute_combination' => array('rule' => 'fetchidfromref', 'classfile' => '/variants/class/ProductCombination.class.php', 'class' => 'ProductCombination', 'method' => 'fetch', 'element' => 'ProductCombination'),
+				'pacpl.variation_price' => array('rule' => 'zeroifnull'),
+				'pacpl.variation_price_percentage' => array('rule' => 'zeroifnull')
+			);
+			$this->import_regex_array[$r] = array(
+				'pacpl.fk_price_level' => '^[1-9][0-9]*$',
+				'pacpl.variation_price_percentage' => '^[0-1]$'
+			);
+			$this->import_examplevalues_array[$r] = array(
+				'pacpl.fk_product_attribute_combination' => "ref:SHIRT_BLUE_L (ref of the variant product)",
+				'pacpl.fk_price_level' => "1",
+				'pacpl.variation_price' => "5.00",
+				'pacpl.variation_price_percentage' => "0"
+			);
+			$this->import_updatekeys_array[$r] = array('pacpl.fk_product_attribute_combination' => 'VariantProductRef', 'pacpl.fk_price_level' => 'VariantPriceLevel');
+			// Preselected: the reconciliation of a variant already creates one row per price level,
+			// so a plain insert would always hit the unique index of the table.
+			$this->import_preselected_updatekeys_array[$r] = array('pacpl.fk_product_attribute_combination', 'pacpl.fk_price_level');
+		}
+
+		// Exports
+		//--------
+		$r = 0;
+
+		// Export of the attributes and their values
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_attribute';
+		$this->export_label[$r] = "VariantAttributes";	// Translation key
+		$this->export_icon[$r] = $this->picto;
+		$this->export_permission[$r] = array(array("variants", "read"), array("produit", "export"));
+		$this->export_fields_array[$r] = array(
+			'pa.rowid' => "Id",
+			'pa.ref' => "VariantAttributeRef",
+			'pa.label' => "VariantAttributeLabel",
+			'pa.ref_ext' => "VariantAttributeRefExt",
+			'pa.position' => "VariantAttributeRank",
+			'pav.ref' => "VariantValueRef",
+			'pav.value' => "VariantValueLabel",
+			'pav.position' => "VariantValueRank"
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'pa.ref' => "Text",
+			'pa.label' => "Text",
+			'pa.ref_ext' => "Text",
+			'pa.position' => "Numeric",
+			'pav.ref' => "Text",
+			'pav.value' => "Text",
+			'pav.position' => "Numeric"
+		);
+		$this->export_entities_array[$r] = array(
+			'pa.rowid' => "productattribute",
+			'pa.ref' => "productattribute",
+			'pa.label' => "productattribute",
+			'pa.ref_ext' => "productattribute",
+			'pa.position' => "productattribute",
+			'pav.ref' => "productattributevalue",
+			'pav.value' => "productattributevalue",
+			'pav.position' => "productattributevalue"
+		);
+		$this->export_dependencies_array[$r] = array('productattributevalue' => 'pa.rowid');
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r] = ' FROM '.MAIN_DB_PREFIX.'product_attribute as pa';
+		// An entity condition on a LEFT JOIN belongs to the ON, otherwise the attributes carrying
+		// no value at all disappear from the export.
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute_value as pav ON pav.fk_product_attribute = pa.rowid AND pav.entity IN ('.getEntity('product').')';
+		$this->export_sql_end[$r] .= ' WHERE pa.entity IN ('.getEntity('product').')';
+		$this->export_sql_order[$r] = ' ORDER BY pa.position, pa.ref, pav.position, pav.ref';
+
+		// Export of the variants, one line per variant and feature
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_combination';
+		$this->export_label[$r] = "ProductCombinations";	// Translation key
+		$this->export_icon[$r] = $this->picto;
+		$this->export_permission[$r] = array(array("variants", "read"), array("produit", "export"));
+		$this->export_fields_array[$r] = array(
+			'p.ref' => "ParentProductOfVariant",
+			'p.label' => "ParentProductLabel",
+			'p2.ref' => "VariantProductRef",
+			'p2.label' => "VariantProductLabel",
+			'pac.variation_price' => "VariantPriceImpact",
+			'pac.variation_price_percentage' => "VariantPriceImpactIsPercent",
+			'pac.variation_weight' => "VariantWeightImpact",
+			'pac.variation_ref_ext' => "VariantRefExt",
+			'pa.ref' => "VariantAttributeRef",
+			'pa.label' => "VariantAttributeLabel",
+			'pav.ref' => "VariantValueRef",
+			'pav.value' => "VariantValueLabel"
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'p.ref' => "Text",
+			'p.label' => "Text",
+			'p2.ref' => "Text",
+			'p2.label' => "Text",
+			'pac.variation_price' => "Numeric",
+			'pac.variation_price_percentage' => "Boolean",
+			'pac.variation_weight' => "Numeric",
+			'pac.variation_ref_ext' => "Text",
+			'pa.ref' => "Text",
+			'pa.label' => "Text",
+			'pav.ref' => "Text",
+			'pav.value' => "Text"
+		);
+		$this->export_entities_array[$r] = array(
+			'p.ref' => "product",
+			'p.label' => "product",
+			'p2.ref' => "productcombination",
+			'p2.label' => "productcombination",
+			'pac.variation_price' => "productcombination",
+			'pac.variation_price_percentage' => "productcombination",
+			'pac.variation_weight' => "productcombination",
+			'pac.variation_ref_ext' => "productcombination",
+			'pa.ref' => "productattribute",
+			'pa.label' => "productattribute",
+			'pav.ref' => "productattributevalue",
+			'pav.value' => "productattributevalue"
+		);
+		// p2.ref, not pac.rowid: export.php uses the dependency as a key of export_fields_array
+		// and only an exportable field can be auto selected. A product ref identifies a variant.
+		$this->export_dependencies_array[$r] = array('productattribute' => 'p2.ref', 'productattributevalue' => 'p2.ref');
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r] = ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination as pac';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = pac.fk_product_parent';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p2 ON p2.rowid = pac.fk_product_child';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val as pac2v ON pac2v.fk_prod_combination = pac.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute as pa ON pa.rowid = pac2v.fk_prod_attr AND pa.entity IN ('.getEntity('product').')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute_value as pav ON pav.rowid = pac2v.fk_prod_attr_val AND pav.entity IN ('.getEntity('product').')';
+		$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')';
+		$this->export_sql_end[$r] .= ' AND p2.entity IN ('.getEntity('product').')';
+		// The combination carries its own entity, which may differ from the one of its products as
+		// soon as product sharing is enabled: it has to be filtered on its own. The link table
+		// pac2v holds no entity column, it is scoped through its combination.
+		$this->export_sql_end[$r] .= ' AND pac.entity IN ('.getEntity('product').')';
+		$this->export_sql_order[$r] = ' ORDER BY p.ref, p2.ref, pa.position, pa.ref';
+
+		// Export of the price impact per price level
+		// PRODUIT_MULTIPRICES only: the whole propagation chain of the price levels
+		// (ProductCombination::create(), update(), fetch(), updateProperties()) tests this
+		// constant alone, so exposing the dataset under another one would write rows that
+		// never reach llx_product_price.
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$r++;
+			$this->export_code[$r] = $this->rights_class.'_pricelevel';
+			$this->export_label[$r] = "VariantPriceLevels";	// Translation key
+			$this->export_icon[$r] = $this->picto;
+			$this->export_permission[$r] = array(array("variants", "read"), array("produit", "export"));
+			$this->export_fields_array[$r] = array(
+				'p.ref' => "ParentProductOfVariant",
+				'p2.ref' => "VariantProductRef",
+				'pacpl.fk_price_level' => "VariantPriceLevel",
+				'pacpl.variation_price' => "VariantPriceImpact",
+				'pacpl.variation_price_percentage' => "VariantPriceImpactIsPercent"
+			);
+			$this->export_TypeFields_array[$r] = array(
+				'p.ref' => "Text",
+				'p2.ref' => "Text",
+				'pacpl.fk_price_level' => "Numeric",
+				'pacpl.variation_price' => "Numeric",
+				'pacpl.variation_price_percentage' => "Boolean"
+			);
+			$this->export_entities_array[$r] = array(
+				'p.ref' => "product",
+				'p2.ref' => "productcombination",
+				'pacpl.fk_price_level' => "productcombination",
+				'pacpl.variation_price' => "productcombination",
+				'pacpl.variation_price_percentage' => "productcombination"
+			);
+			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+			$this->export_sql_end[$r] = ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination_price_level as pacpl';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination as pac ON pac.rowid = pacpl.fk_product_attribute_combination';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = pac.fk_product_parent';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p2 ON p2.rowid = pac.fk_product_child';
+			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')';
+			$this->export_sql_end[$r] .= ' AND p2.entity IN ('.getEntity('product').')';
+			// The price level table holds no entity column, it is scoped through its combination
+			$this->export_sql_end[$r] .= ' AND pac.entity IN ('.getEntity('product').')';
+			$this->export_sql_order[$r] = ' ORDER BY p.ref, p2.ref, pacpl.fk_price_level';
+		}
 	}
 
 	/**

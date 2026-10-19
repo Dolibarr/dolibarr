@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,7 +331,7 @@ $formfile = new FormFile($db);
 if ($action == 'create2') {
 	$head = array();
 	$h = 0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new&token='.newToken();
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = (string) $h;
 	$h++;
@@ -339,8 +340,7 @@ if ($action == 'create2') {
 } else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$h = 0;
@@ -827,7 +827,7 @@ if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->h
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->hasRight('banque', 'cheque')) {
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 }
 print '</div>';
 

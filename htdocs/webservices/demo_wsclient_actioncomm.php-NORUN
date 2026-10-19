@@ -59,7 +59,7 @@ $authentication=array(
 
 
 // Test URL
-if ($action=='get')
+if ($action=='get')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_GET;
     $parameters = array('authentication'=>$authentication,'id'=>1);
@@ -78,7 +78,7 @@ if ($action=='get')
 
 
 // Test URL
-if ($action=='getlist')
+if ($action=='getlist')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_GET_C_LIST;
 	$parameters = array('authentication'=>$authentication);
@@ -96,7 +96,7 @@ if ($action=='getlist')
 }
 
 // Test URL
-if ($action=='create')
+if ($action=='create')		// Test on pemrission not required
 {
 	$WS_METHOD=$WS_METHOD_CREATE;
 	$new=array(
