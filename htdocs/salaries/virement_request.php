@@ -268,7 +268,7 @@ if (isModEnabled('project')) {
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
@@ -683,7 +683,7 @@ if ($resql) {
 
 $sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 $sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 $sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -759,7 +759,7 @@ if ($resql) {
 				// Show the bank account
 				$fk_bank_account = $withdrawreceipt->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT');	// A salary is only paid by credit transfer
 				}
 				if ($fk_bank_account > 0) {
 					$bankaccount = new Account($db);

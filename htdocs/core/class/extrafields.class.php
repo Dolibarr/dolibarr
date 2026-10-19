@@ -2463,7 +2463,7 @@ class ExtraFields
 				} else {
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->rowid) {
+					if ($obj && $obj->rowid) {	// fetch_object() returns null when the query returned no row, for example when the field has no value
 						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
@@ -3056,16 +3056,13 @@ class ExtraFields
 						$value_key = '';
 					}
 				} elseif (in_array($key_type, array('text'))) {
-					$label_security_check = 'alphanohtml';
-					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-					if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-						$label_security_check = 'nohtml';
-					} else {
-						$label_security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+					$security_check = 'nohtml';	// Default for text
+					if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+						$security_check = 'alphanohtml';
 					}
-					$value_key = GETPOST("options_".$key, $label_security_check);
+					$value_key = GETPOST("options_".$key, $security_check);
 				} else {
-					$value_key = GETPOST("options_".$key);
+					$value_key = GETPOST("options_".$key);	// Default: 'alphanohtml'
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
 						$value_key = '';
 					}

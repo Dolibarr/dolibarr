@@ -786,6 +786,12 @@ class Facture extends CommonInvoice
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
+			// Keep author on object so a later call to update() does not reset fk_user_author
+			if ($origin_user_author_id > 0) {
+				$this->user_creation_id = $origin_user_author_id;
+				$this->fk_user_author = $origin_user_author_id;
+			}
+
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
@@ -955,8 +961,12 @@ class Facture extends CommonInvoice
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
-				foreach ($this->lines as $i => $val) {
-					$line = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$line = $linestoadd[$i];
 					'@phan-var-force FactureLigne $line';
 
 					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
@@ -2375,6 +2385,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -2960,8 +2971,22 @@ class Facture extends CommonInvoice
 				$srcinvoice->fetch($remise->fk_facture_source);
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
+				// A deposit or credit note is converted into one discount per VAT rate, and a discount can be split,
+				// so keep only the cost of the source lines with the same VAT rate, prorated to the amount of the discount.
+				$srclinesofvat = array();
+				foreach ($srcinvoice->lines as $srcline) {
+					if (price2num($srcline->tva_tx) == price2num($remise->tva_tx)) {
+						$srclinesofvat[] = $srcline;
+					}
+				}
+				if (count($srclinesofvat) > 0) {
+					$srcinvoice->lines = $srclinesofvat;
+				}
 				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
 				$facligne->pa_ht = $arraytmp['pa_total'];
+				if ((float) $arraytmp['pv_total'] != 0 && price2num($arraytmp['pv_total'], 'MT') != price2num(abs((float) $remise->total_ht), 'MT')) {
+					$facligne->pa_ht = (float) price2num($arraytmp['pa_total'] * abs((float) $remise->total_ht / (float) $arraytmp['pv_total']), 'MU');
+				}
 			}
 
 			$facligne->total_ht  = -(float) $remise->total_ht;
@@ -6300,8 +6325,25 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						if (is_numeric($template)) {
+							// The cron was started with a template id and that id cannot be
+							// resolved at all. This is almost certainly a global setup error
+							// (template deleted or wrong id passed to the cron), and every
+							// remaining invoice in this batch would fail the same way. Stop
+							// here so the operator can fix the setup before retrying, instead
+							// of flooding the cron output with one identical error per
+							// invoice (per @eldy's review of PR #38547).
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+						// The cron was started with a template label and getEMailTemplate
+						// also filters by the recipient's language (see html.formmail.class.php
+						// line 1786). Only the invoices for thirdparties whose default_lang
+						// has no matching template fail; the rest of the batch is fine.
+						// Log the error and continue so a single missing translation does
+						// not stop reminders for everyone else (see issue #34656).
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL

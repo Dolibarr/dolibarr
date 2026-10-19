@@ -1325,7 +1325,7 @@ class ProductFournisseur extends Product
 			foreach ($productFournLogList as $productFournLog) {
 				$out .= '<tr><td>'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
 				$out .= '<td class="right">'.price($productFournLog['price'], 0, $langs, 1, -1, -1, $conf->currency);
-				if ($productFournLog['multicurrency_code'] != $conf->currency) {
+				if (isModEnabled('multicurrency') && !empty($productFournLog['multicurrency_code']) && $productFournLog['multicurrency_code'] != $conf->currency) {
 					$out .= ' ('.price($productFournLog['multicurrency_price'], 0, $langs, 1, -1, -1, $productFournLog['multicurrency_code']).')';
 				}
 				$out .= '</td>';

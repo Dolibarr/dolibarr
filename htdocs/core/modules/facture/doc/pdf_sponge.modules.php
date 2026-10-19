@@ -2341,6 +2341,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".dol_trunc($object->project->title, 50), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
