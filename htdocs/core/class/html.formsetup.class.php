@@ -729,6 +729,7 @@ class FormSetupItem
 		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
 			$this->form = $form;
 		} else {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$this->form = new Form($this->db);
 		}
 
@@ -749,6 +750,10 @@ class FormSetupItem
 		global $conf;
 		if (isset($conf->global->{$this->confKey})) {
 			$this->fieldValue = getDolGlobalString($this->confKey);
+			if (($this->type == 'password' || $this->type == 'genericpassword') && !empty($this->fieldValue)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+				$this->fieldValue = dolDecrypt($this->fieldValue);
+			}
 			return true;
 		} else {
 			$this->fieldValue = null;
@@ -794,10 +799,22 @@ class FormSetupItem
 
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
-			$result = dolibarr_set_const($this->db, $this->confKey, $this->fieldValue, 'chaine', 0, '', $this->entity);
+			global $conf;
+
+			$valueToSave = $this->fieldValue;
+			if (($this->type == 'password' || $this->type == 'genericpassword') && !empty($valueToSave)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+				$valueToSave = dolEncrypt($valueToSave);
+			}
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			$result = dolibarr_set_const($this->db, $this->confKey, $valueToSave, 'chaine', 0, '', $this->entity);
 			if ($result < 0) {
 				return -1;
 			} else {
+				if ($this->type == 'password' || $this->type == 'genericpassword') {
+					$conf->global->{$this->confKey} = $this->fieldValue;
+				}
 				return 1;
 			}
 		}
@@ -859,6 +876,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			} elseif ($this->type == 'number') {
 				$val_const = GETPOSTINT($this->confKey);
+			} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
+				$val_const = GETPOST($this->confKey, 'none');
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -1209,7 +1228,7 @@ class FormSetupItem
 				$max = $genhandler->length2;
 			}
 		}
-		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.dol_escape_htmltag(GETPOST($this->confKey, 'none') ? GETPOST($this->confKey, 'none') : $this->fieldValue).'"';
 		if ($min) {
 			$out .= ' minlength="' . $min . '"';
 		}
@@ -1441,7 +1460,7 @@ class FormSetupItem
 				$this->setErrors($bankaccount->errors);
 			}
 		} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
-			$out .= str_repeat('*', strlen($this->fieldValue));
+			$out .= str_repeat('*', strlen((string) $this->fieldValue));
 		} else {
 			$out .= dolPrintHTML($this->fieldValue);
 		}
@@ -1812,6 +1831,10 @@ class FormSetupItem
 	public function setAsPassword()
 	{
 		$this->type = 'password';
+		if (!empty($this->fieldValue)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$this->fieldValue = dolDecrypt($this->fieldValue);
+		}
 		return $this;
 	}
 
@@ -1825,6 +1848,10 @@ class FormSetupItem
 	public function setAsGenericPassword()
 	{
 		$this->type = 'genericpassword';
+		if (!empty($this->fieldValue)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$this->fieldValue = dolDecrypt($this->fieldValue);
+		}
 		return $this;
 	}
 }
