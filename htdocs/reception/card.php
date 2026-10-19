@@ -190,6 +190,7 @@ if (isModEnabled("reception")) {
 } else {
 	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
 	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoedit = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_lineupdown.inc.php
 	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
 	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
 	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
@@ -254,6 +255,8 @@ if (empty($reshook)) {
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here

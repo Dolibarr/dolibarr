@@ -528,7 +528,7 @@ function maskSecretsForLog($string)
 	$string = (string) preg_replace('/([?&](?:[a-z0-9_.-]*(?:key|token|secret|password|passwd|pwd|signature)|pass)=[^&#\s]{0,3})[^&#\s]*/i', '$1...', $string);
 
 	// Header lines carrying a credential
-	$headernames = implode('|', array_map(function ($name) {
+	$headernames = implode('|', array_map(function (string $name): string {
 		return preg_quote($name, '/');
 	}, getCredentialHeaderNames()));
 	$string = (string) preg_replace('/^((?:'.$headernames.')[ \t]*:[ \t]*[^\r\n]{0,3})[^\r\n]*/im', '$1...', $string);
