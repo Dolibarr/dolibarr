@@ -468,16 +468,19 @@ class Account extends CommonObject
 
 		$this->balance = 0;
 
-		$this->type_lib = array(
-			self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
-			self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
-			self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
-		);
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$this->type_lib = array(
+				self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
+				self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
+				self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
+			);
 
-		$this->labelStatus = array(
-			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
-			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
-		);
+			$this->labelStatus = array(
+				self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+				self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+			);
+		}
 	}
 
 	/**

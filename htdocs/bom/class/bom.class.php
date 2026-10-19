@@ -1535,6 +1535,7 @@ class BOM extends CommonObject
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
+			'bom_bom',
 			'bom_bomline'
 		);
 

@@ -368,14 +368,16 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Create external user
+	// create subscription
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'cotisation', 'creer')) {	// Same permission as the subscription form of a member
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$label = GETPOST("label");
+		$note = GETPOST('note', 'restricthtml');
+
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
+		$error_array = array();
 		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
 		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
 		// single subscription form (adherents/subscription.php), otherwise
@@ -403,9 +405,10 @@ if (empty($reshook)) {
 						$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($now, $delay, $delayunit), -1, 'd');
 					}
 				}
-				$result = $tmpmember->subscription($now, (float) $amount, 0, '', '', '', '', '', $datesubendthismember);
+				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $note, '', '', '', $datesubendthismember);
 				if ($result < 0) {
 					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
 				}
@@ -418,7 +421,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), $error_array, 'errors');
 			$db->rollback();
 		}
 	}
@@ -903,7 +906,7 @@ if ($massaction == 'createsubscription') {
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
-		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
+		array('label' => $langs->trans("Note"), 'type' => 'text', 'value' => '', 'name' => 'note'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);
