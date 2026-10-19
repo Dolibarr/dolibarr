@@ -138,6 +138,16 @@ class ExtraFields
 	}
 
 	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
+
+	/**
 	 *  Add a new extra field parameter
 	 *
 	 *  @param	string			$attrname           Code of attribute
@@ -1662,11 +1672,15 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $any$' by "1=1"
-								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
-								// Replace '$any$ = column' by "1:=:1"
-								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								// Replace '$ID$ = column' by an always true test
+								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
@@ -2480,7 +2494,7 @@ class ExtraFields
 				} else {
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->rowid) {
+					if ($obj && $obj->rowid) {	// fetch_object() returns null when the query returned no row, for example when the field has no value
 						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
@@ -3073,16 +3087,13 @@ class ExtraFields
 						$value_key = '';
 					}
 				} elseif (in_array($key_type, array('text'))) {
-					$label_security_check = 'alphanohtml';
-					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-					if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-						$label_security_check = 'nohtml';
-					} else {
-						$label_security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+					$security_check = 'nohtml';	// Default for text
+					if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+						$security_check = 'alphanohtml';
 					}
-					$value_key = GETPOST("options_".$key, $label_security_check);
+					$value_key = GETPOST("options_".$key, $security_check);
 				} else {
-					$value_key = GETPOST("options_".$key);
+					$value_key = GETPOST("options_".$key);	// Default: 'alphanohtml'
 					if (in_array($key_type, array('link')) && $value_key == '-1') {
 						$value_key = '';
 					}

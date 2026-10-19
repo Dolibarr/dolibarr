@@ -104,7 +104,7 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".substr($userlogin, 0, 3)."... - ".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 
 // Show TZ of the serveur when ran from command line.
 $ini_path = php_ini_loaded_file();
@@ -309,6 +309,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		if (!verifCond($line->test)) {
+			echo " - not qualified (testok=0)\n";
 			continue;
 		}
 

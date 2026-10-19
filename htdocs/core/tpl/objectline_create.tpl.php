@@ -14,7 +14,7 @@
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
- * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,6 +125,8 @@ if (!empty($extrafields)) {
 		$objectline = new FactureLigneRec($this->db);
 	} elseif ($this->table_element_line == 'facture_fourn_det_rec') {
 		$objectline = new FactureFournisseurLigneRec($this->db);
+	} elseif ($this->table_element_line == 'expeditiondet') {
+		$objectline = new ExpeditionLigne($this->db);
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
@@ -165,7 +167,16 @@ if ($nolinesbefore) {
 			print $langs->trans('Unit');
 			print '</span></td>';
 		} ?>
-		<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
+		<?php
+		if ($object->element == 'reception') {	// Same columns as on the line, see below: warehouse and batch instead of discount
+			print '<td class="linecolwarehouse right"><span id="title_warehouse">'.$langs->trans('Warehouse').'</span></td>';
+			if (isModEnabled('productbatch')) {
+				print '<td class="linecolbatch"><span id="title_batch">'.$langs->trans('Batch').'</span></td>';
+			}
+		} else {
+			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
+		}
+		?>
 		<?php
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
@@ -666,8 +677,8 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -834,7 +845,6 @@ if (!empty($object->thirdparty)) {
 	/** @type {JsConf} */
 	const jsConf = <?php print json_encode($jsConf); ?>;
 	if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
-
 		/* Some js test when we click on button "Add" */
 		$(function() {
 			if (jsConf.conf.DISPLAY_MARGIN_RATES) {
@@ -898,7 +908,7 @@ if (!empty($object->thirdparty)) {
 				}
 			}
 
-			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+			$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 			return true;
 		}
@@ -970,6 +980,40 @@ if (!empty($object->thirdparty)) {
 
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
+		function getSelectedProductCombinationsData() {
+			var data = {};
+			jQuery('#attributes_box select[name^="combinations["]').each(function() {
+				data[jQuery(this).attr('name')] = jQuery(this).val();
+			});
+			return data;
+		}
+
+		function refreshProductPriceFromSelectedCombinations() {
+			var productId = jQuery('#idprod').val();
+			if (!productId) {
+				return;
+			}
+
+			var postData = jQuery.extend({
+				'id': productId,
+				'socid': jsConf.docObject.socid,
+				'token': jsConf.conf.token,
+				'addalsovatforthirdpartyid': 1
+			}, getSelectedProductCombinationsData());
+
+			jQuery.post(jsConf.url.fetchProductUrl, postData, function(data) {
+				if (jsConf.conf.inputalsopricewithtax == 1 && data.pricebasetype == 'TTC' && !jsConf.conf.MAIN_NO_INPUT_PRICE_WITH_TAX) {
+					jQuery('#price_ttc').val(data.price_ttc);
+				} else {
+					jQuery('#price_ht').val(data.price_ht);
+				}
+			}, 'json');
+		}
+
+		jQuery(document).on('change', '#attributes_box select[name^="combinations["]', function() {
+			refreshProductPriceFromSelectedCombinations();
+		});
+
 		jQuery("#price_ht").keyup(function(event) {
 			// console.log(event.which);		// discard event tag and arrows
 			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
@@ -1100,7 +1144,7 @@ if (!empty($object->thirdparty)) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
-						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.token, 'addalsovatforthirdpartyid': 1, 'multicurrency_code': (typeof jsConf.docObject.multicurrency_code !== 'undefined' ? jsConf.docObject.multicurrency_code : '') },
+						jQuery.extend({ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.token, 'addalsovatforthirdpartyid': 1, 'multicurrency_code': (typeof jsConf.docObject.multicurrency_code !== 'undefined' ? jsConf.docObject.multicurrency_code : '') }, getSelectedProductCombinationsData()),
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
@@ -1240,7 +1284,7 @@ if (!empty($object->thirdparty)) {
 										}
 									}
 								} else {
-									jQuery('#dp_desc').text(proddesc);
+									jQuery('#dp_desc').val(proddesc);
 								}
 							}
 
@@ -1325,7 +1369,7 @@ if (!empty($object->thirdparty)) {
 							}
 							options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 						});
-						options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
+						options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dolPrintHTML($langs->trans("InputPrice").'...'); ?></option>';
 
 						console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
 
@@ -1340,7 +1384,7 @@ if (!empty($object->thirdparty)) {
 
 						/* Define default price at loading */
 						var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-						$("#buying_price").val(defaultprice);
+						$("#buying_price").val((defaultprice === undefined || defaultprice === '') ? '' : pricejs(defaultprice, 'MU'));	/* an empty buying price must stay empty, not become 0 */
 
 						$("#fournprice_predef").change(function() {
 							console.log("change on fournprice_predef");
@@ -1348,13 +1392,13 @@ if (!empty($object->thirdparty)) {
 							var linevalue=$(this).find('option:selected').val();
 							var pricevalue = $(this).find('option:selected').attr("price");
 							if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
-								$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+								$("#buying_price").val(pricejs(pricevalue, 'MU')).hide();	/* We set value then hide field */
 							}
 							if (linevalue == 'inputprice') {
 								$('#buying_price').show();
 							}
 							if (linevalue == 'pmpprice') {
-								$("#buying_price").val(pricevalue);
+								$("#buying_price").val(pricejs(pricevalue, 'MU'));
 								$('#buying_price').hide();
 							}
 						});
@@ -1385,6 +1429,28 @@ if (!empty($object->thirdparty)) {
 				'json');
 			}
 
+			<?php if (getDolGlobalString('PRODUCT_USE_UNITS') && !empty($senderissupplier)) { ?>
+			// The unit synchronisation above lives in the margin block, whose ajax call is only
+			// made when the margin module is enabled and the user may edit it. A supplier order is
+			// normally created with that module off, so the unit stayed on the first one of the
+			// list. The same information is fetched here, outside of the margin condition.
+			if (!(jsConf.conf.usemargins && jsConf.userRight.margins.creer)) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': jsConf.conf.token }, function(data) {
+					if (data && data.length > 0) {
+						var fkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && fkUnit === null) {
+								fkUnit = this.fk_unit;
+							}
+						});
+						if (fkUnit !== null && $("#units").length) {
+							$("#units").val(fkUnit).trigger('change');
+						}
+					}
+				},
+				'json');
+			}
+			<?php } ?>
 
 			if (jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY || jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) {
 				/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
@@ -1536,7 +1602,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text(description);
+						jQuery('#dp_desc').val(description);
 					}
 				}
 			} else if (jQuery('#idprodfournprice').length > 0) {
@@ -1579,7 +1645,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text('');
+						jQuery('#dp_desc').val('');
 					}
 				}
 			}

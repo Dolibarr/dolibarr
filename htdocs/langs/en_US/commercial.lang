@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Commerce
 CommercialArea=Commerce area
-Customer=Customer
 Customers=Customers
-Prospect=Prospect
 Prospects=Prospects
 DeleteAction=Delete an event
 NewAction=New event
@@ -16,7 +14,6 @@ ActionOnCompany=Related company
 ActionOnContact=Related contact
 ActionOnUser=Related user
 TaskRDVWith=Meeting with %s
-ShowTask=Show task
 ShowAction=Show event
 ActionsReport=Events report
 ThirdPartiesOfSaleRepresentative=Third parties with sales representative

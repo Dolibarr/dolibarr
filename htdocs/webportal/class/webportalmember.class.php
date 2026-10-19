@@ -339,7 +339,7 @@ class WebPortalMember extends Adherent
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$result .= '<span class="nopadding valignmiddle' . ((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled') .
+				$result .= '<span class="nopadding valignmiddle' . ((!isset($this->status) || $this->status) ? '' : ' strikefordisabled') .
 					($morecss ? ' usertext' . $morecss : '') . '">';
 			}
 			if ($mode == 'login') {

@@ -3,6 +3,7 @@
  * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +134,22 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 				$prod->price_formated = price(price2num(empty($prod->multiprices[$pricelevel]) ? $prod->price : $prod->multiprices[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
 				$prod->price_ttc_formated = price(price2num(empty($prod->multiprices_ttc[$pricelevel]) ? $prod->price_ttc : $prod->multiprices_ttc[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
+
+				// Add entries to product from hooks, like the 'search' action below does for its rows.
+				// Browsing a category returns product objects, so the values returned by hooks are set as
+				// properties. Existing properties are never overwritten.
+				// The search action hands hooks an object carrying rowid: expose it here too, so a module
+				// written for that action also works when a category is browsed.
+				$prod->rowid = $prod->id;
+				$parameters = array();
+				$parameters['row'] = array('rowid' => $prod->id, 'object' => 'product');
+				$parameters['obj'] = $prod;
+				$hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
+				foreach ($hookmanager->resArray as $key => $val) {
+					if (!isset($prod->$key)) {
+						$prod->$key = $val;
+					}
+				}
 
 				$res[] = $prod;
 			}
@@ -392,7 +409,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			$parameters = array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			$reshook = $hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
 			if ($reshook > 0) {
 				// replace
 				if (count($hookmanager->resArray)) {
@@ -434,7 +451,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
 		}
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
 	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
@@ -484,6 +501,11 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if ($id > 0) {
 		$object->fetch($id);
 	}
+
+	// Remove sensitive internal properties before serialization to avoid
+	// leaking the database connection parameters and the schema metadata.
+	unset($object->db);
+	unset($object->fields);
 
 	echo json_encode($object);
 } elseif ($action == 'thecheck' && $user->hasRight('takepos', 'run')) {

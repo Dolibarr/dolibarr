@@ -99,7 +99,7 @@ final class PermissionsBlock
 	 * Read a descriptor and locate its permissions block.
 	 *
 	 * @param string $file Path to the mod<Module>.class.php descriptor
-	 * @return self
+	 * @return self New PermissionsBlock instance
 	 * @throws \RuntimeException When the file is unreadable or the markers are missing or inverted
 	 */
 	public static function fromFile(string $file): self
@@ -130,7 +130,7 @@ final class PermissionsBlock
 	/**
 	 * Raw content between the markers, markers excluded.
 	 *
-	 * @return string
+	 * @return string Permissions block content without markers
 	 */
 	public function getInnerBlock(): string
 	{
@@ -311,7 +311,7 @@ final class PermissionsBlock
 			/**
 			 * @param 	array{offset:int,right:array<int,string>} $a First entry to compare
 			 * @param 	array{offset:int,right:array<int,string>} $b Second entry to compare
-			 * @return 	int
+			 * @return 	int Comparison result (-1, 0, or 1)
 			 */
 			static function (array $a, array $b): int {
 				return $a['offset'] <=> $b['offset'];

@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/core/ajax/ajaxuploadpage.php
- *       \brief      Page that decrypt a file saved into a temporary directory
+ *       \brief      Page that analyze a file saved into a temporary directory and suggest final import
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -249,7 +249,10 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 			$answer = preg_replace('/```$/', '', $answer);
 		}
 	} else {
-		$errors[] = 'Failed to convert document into TXT';
+		$langs->load("errors");
+		$error++;
+		$errors[] = $langs->trans("ErrorFailedToConvertFileInText");
+		$errors[] = $result['message'];
 	}
 }
 

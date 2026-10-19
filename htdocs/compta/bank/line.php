@@ -237,6 +237,13 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		}
 
 		if (!$error) {
+			$result = $object->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
@@ -278,6 +285,18 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		dol_syslog("line.php update bank line to set the new bank receipt number", LOG_DEBUG);
 
 		$result = $db->query($sql);
+
+		if ($result) {
+			$object->num_releve = $num_rel;
+			$object->rappro = (empty($num_rel) ? 0 : $rappro);
+
+			// Call trigger
+			$triggerres = $object->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($triggerres < 0) {
+				$result = false;
+			}
+			// End call triggers
+		}
 
 		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
 		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.

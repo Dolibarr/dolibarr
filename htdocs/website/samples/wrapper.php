@@ -22,7 +22,7 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
-	require_once './master.inc.php';
+	require_once './master.inc.php'; // @phpstan-ignore requireOnce.fileNotFound (exists only in the deployed website directory)
 } // Load master if not already loaded
 /**
  * @var Conf $conf
@@ -43,6 +43,11 @@ $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
 if ($limit <= 0 || $limit > 100) {
 	$limit = 20;
+}
+
+// Security check
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
 }
 
 // Parameters for RSS
@@ -275,7 +280,8 @@ if ($rss) {
 	$outputfile = $dir_temp.'/'.$filename;
 	$result = readfile($outputfile);
 	if (!$result) {
-		print 'File '.$outputfile.' was empty.';
+		dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+		print 'File '.dol_escape_htmltag($filename).' was empty.';
 	}
 
 	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -290,7 +296,7 @@ if ($rss) {
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
-	if ($hashp) {
+	if (!empty($hashp) && $hashp != 'shared') {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}

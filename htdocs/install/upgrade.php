@@ -90,7 +90,7 @@ $versionto = GETPOST("versionto", 'alpha', 3) ? GETPOST("versionto", 'alpha', 3)
 $dirmodule = ((GETPOST("dirmodule", 'alpha', 3) && GETPOST("dirmodule", 'alpha', 3) != 'ignoredbversion')) ? GETPOST("dirmodule", 'alpha', 3) : ((empty($argv[3]) || $argv[3] == 'ignoredbversion') ? '' : $argv[3]);
 $ignoredbversion = (GETPOST('ignoredbversion', 'alpha', 3) == 'ignoredbversion') ? GETPOST('ignoredbversion', 'alpha', 3) : ((empty($argv[3]) || $argv[3] != 'ignoredbversion') ? '' : $argv[3]);
 
-$langs->loadLangs(array("admin", "install", "other", "errors"));
+$langs->loadLangs(array("admin", "install", "other"));
 
 
 dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
@@ -437,6 +437,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 
 if (empty($actiondone)) {
+	$langs->load('errors');
 	print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 

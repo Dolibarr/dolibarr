@@ -54,6 +54,12 @@ class Ai
 	 */
 	private $apiEndpoint;
 
+	/**
+	 * @var array<string,string>|null $tokenUsage
+	 */
+	public $tokenUsage;
+
+
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
@@ -61,7 +67,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
 
 
 	/**
@@ -418,9 +424,12 @@ class Ai
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
 				if (is_scalar($decodedResponse['error'])) {
-					$generatedContent = $decodedResponse['error'];
+					// Casts needed because is_scalar() also accepts bool, int and float, and
+					// var_export() is typed as returning null when its second argument is not
+					// true, while the method is declared to return a string or the error array.
+					$generatedContent = (string) $decodedResponse['error'];
 				} else {
-					$generatedContent = var_export($decodedResponse['error'], true);
+					$generatedContent = (string) var_export($decodedResponse['error'], true);
 				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
@@ -429,15 +438,32 @@ class Ai
 				$generatedContent = '';
 				if (!empty($decodedResponse['candidates'][0]['content']['parts'])) {
 					foreach ($decodedResponse['candidates'][0]['content']['parts'] as $part) {
-						if (isset($part['text'])) {
-							$generatedContent .= $part['text'];
+						if (isset($part['text']) && is_scalar($part['text'])) {
+							$generatedContent .= (string) $part['text'];
 						}
 					}
 				}
 			} else {
+				// A provider answering 200 with a body that does not carry
+				// choices[0].message.content must not reach the code below: reading the missing
+				// keys emits PHP warnings, and a 'choices' entry that is a string instead of an
+				// array raises a TypeError, which the catch below does not take (TypeError
+				// implements Throwable but does not extend Exception) and so ends as a fatal
+				// error on the ajax endpoints calling this method.
+				if (!isset($decodedResponse['choices'][0]['message']['content'])
+					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
+					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
+				}
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
+			// All the branches above assign a string, but the inference of the analyser does not
+			// follow them through the enclosing try block, so the type is pinned here before the
+			// value is passed to functions declared to take a string.
+			$generatedContent = (string) $generatedContent;
+
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
+
+			$this->tokenUsage = $decodedResponse['usage'] ?? null;
 
 			// If content is not HTML, we convert it into HTML
 			if ($format == 'html') {
@@ -498,8 +524,8 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param array{document_info?:array{reference?:string,invoice_number?:string,title?:string,issue_date?:string,due_date?:string,vendor?:array{name?:string,siren?:string,siret?:string,email?:string,professional_id?:array{siren?:string},vat_number?:string}}|null,summary?:array{currency?:string,subtotal_excluding_tax?:float,tax?:array{rate?:float,amount?:float}},items?:array<int|string,array{description?:string,service?:string,quantity?:float,tax?:array{vat_rate?:float,rate?:float,amount?:float},unit_price?:float,total_excluding_tax?:float,total_including_tax?:float,period_start?:string,period_end?:string,period?:array{start_date?:string,end_date?:string}}>}	$json JSON
-	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
 	 * @return array<string,string|float>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
@@ -519,41 +545,87 @@ class Ai
 				$tmparray['title'] = $json['document_info']['title'];
 			}
 
-			if (!empty($json['document_info']['issue_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['issue_date'])) {
+			// Issue date
+			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['date'], 'tzuserrel');
 			}
+
+			// Due date
 			if (!empty($json['document_info']['due_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['due_date'])) {
 				$tmparray['due_date'] = dol_stringtotime($json['document_info']['due_date'], 'tzuserrel');
 			}
+
 			// Currency
 			if ($json['summary']['currency'] == '€') {
 				$tmparray['currency_code'] = 'EUR';
 			} elseif (strlen($json['summary']['currency']) == 3) {
 				$tmparray['currency_code'] = $json['summary']['currency'];
+			} elseif (strlen($json['document_info']['currency_code']) == 3) {
+				$tmparray['currency_code'] = $json['document_info']['currency_code'];
+			}
+
+			// Note
+			if (!empty($json['notes'])) {
+				if (is_scalar($json['notes'])) {
+					$tmparray['note_public'] = $json['notes'];
+				} elseif (is_array($json['notes'])) {
+					// Loop on each note
+					$tmparray['note_public'] = '';
+					foreach ($json['notes'] as $val) {
+						if (is_scalar($val)) {
+							$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val);
+						} elseif (is_array($val)) {
+							foreach ($val as $val2) {
+								if (is_scalar($val2)) {
+									$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val2);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			// Vendor
 			if (!empty($json['document_info']['vendor'])) {
-				if (!empty($json['document_info']['vendor']['name'])) {
-					$tmparray['vendor_name'] = $json['document_info']['vendor']['name'];
+				$arrayforthirdparty = $json['document_info']['vendor'];
+			} elseif (!empty($json['vendor'])) {
+				$arrayforthirdparty = $json['vendor'];
+			} elseif (!empty($json['issuer'])) {
+				$arrayforthirdparty = $json['issuer'];
+			}
+			if (!empty($arrayforthirdparty)) {
+				if (!empty($arrayforthirdparty['name'])) {
+					$tmparray['vendor_name'] = $arrayforthirdparty['name'];
 				}
-				if (!empty($json['document_info']['vendor']['siren'])) {
-					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['siren'];
+				if (!empty($arrayforthirdparty['siren'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['siren'];
 				}
-				if (!empty($json['document_info']['vendor']['siret'])) {
-					$tmparray['vendor_profid2'] = $json['document_info']['vendor']['siret'];
+				if (!empty($arrayforthirdparty['siret'])) {
+					$tmparray['vendor_profid2'] = $arrayforthirdparty['siret'];
 				}
-				if (!empty($json['document_info']['vendor']['email'])) {
-					$tmparray['vendor_email'] = $json['document_info']['vendor']['email'];
+				if (!empty($arrayforthirdparty['email'])) {
+					$tmparray['vendor_email'] = $arrayforthirdparty['email'];
 				}
-				if (!empty($json['document_info']['vendor']['professional_id'])) {
-					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['professional_id']['siren'];
+				if (!empty($arrayforthirdparty['professional_id'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['professional_id']['siren'];
 				}
-				if (!empty($json['document_info']['vendor']['vat_number'])) {
-					$tmparray['vendor_vat_number'] = $json['document_info']['vendor']['vat_number'];
+				if (!empty($arrayforthirdparty['vat_number'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['tva_num'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
 				}
 			}
 
+			// Invoice
+			if (!empty($json['recipient']['description'])) {
+				$tmparray['invoice_label'] = $json['recipient']['description'];
+			}
+
+			// Items
 			if (empty($json['items'])) {
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
 					$tmparray['description'] = 'Undefined';
@@ -572,29 +644,23 @@ class Ai
 						$tmparray['lines'][$i]['desc'] = $item['service'];
 					}
 
-					if (!empty($item['service'])) {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'];
-						//$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					} else {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['rate'];
-						$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					}
+					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
+					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
+					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
+					$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'] ?? null;
+
 					if (!empty($item['period_start'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period_start'], 'tzuserrel');
 					}
 					if (!empty($item['period_end'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period_end'], 'tzuserrel');
 					}
-					if (!empty($item['period'])) {
+					if (!empty($item['period']) && !empty($item['period']['start_date'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period']['start_date'], 'tzuserrel');
+					}
+					if (!empty($item['period']) && !empty($item['period']['end_date'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
 					}
 				}

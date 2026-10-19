@@ -598,6 +598,7 @@ if ($action == "set") {
 			}
 		}
 		if (empty($createlock)) {
+			print '<br>';
 			print '<div class="warning warningbackground">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
@@ -605,9 +606,10 @@ if ($action == "set") {
 		$unlockupgradefile = DOL_DATA_ROOT.'/upgrade.unlock';
 		dol_delete_file($unlockupgradefile, 0, 0, 0, null, false, 0);
 
-		print "<br>";
+		print "<br><br>";
 
 		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+		$morehtml .= img_picto('', 'url', 'class="pictofixedidth"');
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		$morehtml .= '</a></div><br>';
 	} else {
@@ -619,6 +621,7 @@ if ($action == "set") {
 		print "<br><br>";
 
 		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
+		$morehtml .= img_picto('', 'url', 'class="pictofixedidth"');
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		$morehtml .= '</a></div>';
 	}

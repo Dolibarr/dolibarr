@@ -92,6 +92,17 @@ class ToolCoffeeMaker extends McpTool
 	}
 
 	/**
+	 * No business data.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Empty: no right required.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return array();
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories

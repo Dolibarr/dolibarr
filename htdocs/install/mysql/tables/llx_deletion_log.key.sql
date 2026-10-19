@@ -14,8 +14,17 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
--- Lookup "which objects of this type were deleted since date X".
-ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+-- Lookup "which agenda events were deleted since date X".
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
+
+-- Lookup "was this uid deleted" (e.g. from an external calendar sync). A plain
+-- index, not unique: uid uniqueness is enforced on llx_actioncomm.uid, this
+-- table is only an append-only log of past deletions.
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
+
+-- Lookup "my owned deletions" for the access-right filter (assigned_users is a
+-- comma list, not indexable, and filtered in PHP after the row is fetched).
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_fk_user_action (fk_user_action);
 
 -- Used by the retention purge.
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);

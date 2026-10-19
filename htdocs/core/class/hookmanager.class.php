@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +122,13 @@ class HookManager
 		// For backward compatibility
 		if (!is_array($arraycontext)) {
 			$arraycontext = array($arraycontext);
+		}
+
+		// Contexts already initialized on this instance: their actions classes were loaded at that time (the loop below would find
+		// them all "already loaded" and do nothing). This method is called on every getNomUrl(), showOutputField()... so on a
+		// list page the same contexts come back hundreds of times.
+		if (!array_diff($arraycontext, $this->contextarray)) {
+			return 1;
 		}
 
 		$this->contextarray = array_unique(array_merge($arraycontext, $this->contextarray)); // All contexts are concatenated but kept unique

@@ -16,6 +16,7 @@
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailsignature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -271,7 +273,7 @@ if (empty($reshook)) {
 				$result = $object->delete($user);
 				if ($result < 0) {
 					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), $object->errors, 'errors');
 				} else {
 					setEventMessages($langs->trans("RecordDeleted"), null);
 					header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
@@ -388,9 +390,14 @@ if (empty($reshook)) {
 			}
 
 			// Set entity property
-			$entity = GETPOSTINT('entity');
+			// The entity selector and the superadmin checkbox are only rendered for a user that is
+			// admin and has no entity of its own (see the display code below), so the posted values
+			// must not be trusted on their own: a non admin user holding user->user->write also
+			// reaches this code.
+			$cansetentity = (!empty($user->admin) && empty($user->entity));
+			$entity = $cansetentity ? GETPOSTINT('entity') : $user->entity;
 			if (isModEnabled('multicompany')) {
-				if (GETPOSTINT('superadmin')) {
+				if ($cansetentity && GETPOSTINT('superadmin')) {
 					$object->entity = 0;
 				} else {
 					if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -427,7 +434,12 @@ if (empty($reshook)) {
 					}
 					$db->commit();
 
-					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+					if (!empty($backtopage)) {
+						$url = str_replace('__ID__', (string) $id, $backtopage);
+					} else {
+						$url = $_SERVER['PHP_SELF'].'?id='.$id;
+					}
+					header("Location: ".$url);
 					exit;
 				}
 			} else {
@@ -449,10 +461,10 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			if ($action == 'addgroup') {	// Test on permission already done
-				$result = $object->SetInGroup($group, $editgroup->entity);
+				$result = $object->setInGroup($group, $editgroup->entity);
 			}
 			if ($action == 'removegroup') {	// Test on permission already done
-				$result = $object->RemoveFromGroup($group, $editgroup->entity);
+				$result = $object->removeFromGroup($group, $editgroup->entity);
 			}
 
 			if ($result > 0) {
@@ -1064,6 +1076,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if (!empty($backtopage)) {
+		print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
+	}
+	if (!empty($backtopageforcancel)) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+	}
 	if (!empty($ldap_sid)) {
 		print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	}
@@ -1613,8 +1631,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($id > 0) {
 		$res = $object->fetch($id, '', '', 1);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 
@@ -1723,7 +1740,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
-			$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid valignmiddle" rel="noopener">';
+			$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
@@ -2037,6 +2054,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
+			if (!empty($object->signature)) {
+				print dolGetSignatureQualityBadge($object->signature, $langs);
+			}
 			print "</td></tr>\n";
 
 			print "</table>\n";
@@ -2137,15 +2157,24 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Token for 2FA
-			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
+			// Shown also when MAIN_SECURITY_ALLOW_TOTP has been turned off, so an enrollment made before can still be removed
+			$totpenrollment = dolTotpGetEnrollment($db, $object->id);
+			if ((getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') || $totpenrollment !== null) && $permissiontoeditpasswordandsee) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("2FA").'</td>';
 				print '<td>';
 				print '<div class="centpercent display-flex">';
-				print '<span class="badge badge-info">999</span>';
+				if ($totpenrollment !== null) {
+					print '<span class="badge badge-status4 badge-status">'.$langs->trans("Enabled").'</span>';
+					if (!is_array($totpenrollment)) {
+						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
+					}
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+				}
 				print '<div class="left inline-block">';
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
-				print '</span></span>';
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				print '</div></div>';
 				print '</td></tr>';
 			}
 
@@ -2300,13 +2329,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// a simple user can not clone an admin or superadmin and a simple admin can not clone a superadmin
 				if ((empty($object->entity) && $permissiontoclonesuperadmin) || (!empty($object->admin) && !empty($object->entity) && $permissiontocloneadmin) || ($permissiontocloneuser && empty($object->admin) && !empty($object->entity))) {
 					$cloneButtonId = '';
-					$cloneUserUrl = '';
+					$cloneUserUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&token='.newToken();
 
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						$cloneUserUrl = '';
 						$cloneButtonId = 'action-clone';
 					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'), array('attr' => array('class' => 'reposition')));
 				}
 
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
@@ -2355,10 +2383,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', true, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')));
 					} else {
 						$params['attr']['title'] = $langs->trans('MustBeAdminToDeleteOtherAdmin');
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', false, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', false, array('attr' => array('class' => 'reposition')));
 					}
 				}
 			}
@@ -3157,6 +3185,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);
+				if (!empty($object->signature)) {
+					print dolGetSignatureQualityBadge($object->signature, $langs);
+				}
 			}
 			print '</td></tr>';
 
