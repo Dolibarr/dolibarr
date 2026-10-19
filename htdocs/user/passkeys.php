@@ -179,6 +179,7 @@ if ($permissiontoadd) {
 	print ' data-msg-error="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyCreationFailed")).'"';
 	print ' data-msg-alreadyregistered="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorAlreadyRegistered")).'"';
 	print ' data-msg-notallowed="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorNotAllowed")).'"';
+	print ' data-msg-insecure="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorInsecure")).'"';
 	print ' data-msg-notsupported="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyNotSupportedByBrowser")).'"';
 	print ' data-msg-baddomain="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyErrorBadOrigin", passkeyGetOrigin())).'"';
 	print '>';

@@ -151,6 +151,7 @@ print '<td>';
 print 'PHP '.PHP_VERSION.' '.(PHP_VERSION_ID >= 80000 ? img_picto('', 'tick') : img_warning());
 print ' &nbsp; openssl '.(extension_loaded('openssl') ? img_picto('', 'tick') : img_warning());
 print ' &nbsp; sodium '.(function_exists('sodium_crypto_sign_verify_detached') ? img_picto('', 'tick') : '<span class="opacitymedium">('.$langs->trans("Optional").')</span>');
+print '<br><span class="opacitymedium">'.$langs->trans("PasskeyRequirementCertificate").'</span>';
 print '</td>';
 print '</tr>';
 

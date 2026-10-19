@@ -267,6 +267,7 @@
 			event.preventDefault();
 			var url = element.getAttribute('data-url');
 			var labelinput = document.getElementById('passkeylabel');
+			var rpid = '';
 			element.disabled = true;
 
 			post(url, {action: 'getoptions'}).then(function (answer) {
@@ -274,6 +275,7 @@
 					throw new Error(answer.error);
 				}
 				var publicKey = answer.options.publicKey;
+				rpid = publicKey.rp && publicKey.rp.id ? publicKey.rp.id : '';
 				publicKey.challenge = base64UrlToBuffer(publicKey.challenge);
 				publicKey.user.id = base64UrlToBuffer(publicKey.user.id);
 				if (publicKey.excludeCredentials) {
@@ -309,8 +311,15 @@
 					return;
 				}
 				if (error && error.name === 'SecurityError') {
-					// The page is not opened with the URL of the application, so the browser refuses the domain of the passkey
-					showError(element.getAttribute('data-msg-error') + ' ' + element.getAttribute('data-msg-baddomain'));
+					console.log('passkey creation refused: ' + error.message);
+					var host = window.location.hostname;
+					if (rpid !== '' && host !== rpid && host.slice(-(rpid.length + 1)) !== '.' + rpid) {
+						// The page is not opened with the URL of the application, so the browser refuses the domain of the passkey
+						showError(element.getAttribute('data-msg-error') + ' ' + element.getAttribute('data-msg-baddomain'));
+					} else {
+						// The domain is right: Firefox (since version 140) refuses passkeys on a page with a TLS certificate error
+						showError(element.getAttribute('data-msg-insecure'));
+					}
 					return;
 				}
 				showError(element.getAttribute('data-msg-error') + ' ' + (error && error.message ? error.message : ''));
