@@ -399,8 +399,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createsupplierbills') {
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
