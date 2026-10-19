@@ -1903,7 +1903,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<tr><td colspan="'.$colspan.'"><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
 			$nbactive = '...';
-			print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+			print '<span class="badge badge-secondary marginleftonly">'.$nbactive.'</span></a>';
 			print '</td>';
 			print '</tr>';
 
@@ -2023,7 +2023,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Add logo
-			print '<tr class="hideonsmartphone morefields"">';
+			print '<tr class="hideonsmartphone morefields">';
 			print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 			print '<td colspan="3">';
 			print '<input class="flat" type="file" name="photo" id="photoinput" />';
@@ -2033,7 +2033,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</table>'."\n";
 
 			print '<script nonce="'.getNonce().'" type="text/javascript">
-					$("document").ready(function() { toogleMoreFields(false); });
+					$(document).ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
 						console.log("Click on link .morefieldslnk (create)");
@@ -2043,17 +2043,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
-						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+						const items = $(".morefields, .morefieldsbis, .trextrafields:not(.trextrafieldsgroup)");
+						var cookieState;
 
-						if (!chgCookieState) cookieState = !cookieState ;
+						if (chgCookieState) {
+							cookieState = !items.is(":visible");
+							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
+						} else {
+							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+						}
 
 						if (cookieState) {
-							items.hide();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
-						} else {
 							items.show();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+							lnk.attr("aria-expanded", "true");
+						} else {
+							items.hide();
+							lnk.attr("aria-expanded", "false");
 						}
 					}
 				</script>
@@ -2794,7 +2799,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
 				$nbactive = '...';
-				print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+				print '<span class="badge badge-secondary marginleftonly">'.$nbactive.'</span></a>';
 				print '</td>';
 				print '</tr>';
 
@@ -2872,11 +2877,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$parameters = array('socid' => $socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-				print '<tr class="morefieldsbis tdsmallheight"><td colspan="4"></td></tr>';
+				print '<tr class="morefields morefieldsbis tdsmallheight"><td colspan="4"></td></tr>';
 
 				// Parent company
 				if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
-					print '<tr class="morefieldsbis">';
+					print '<tr class="morefields morefieldsbis">';
 					print '<td>'.$langs->trans('ParentCompany').'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -2885,7 +2890,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Assign sale representative
-				print '<tr class="morefieldsbis">';
+				print '<tr class="morefields morefieldsbis">';
 				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				$arrayselected = GETPOST('commercial', 'array');
@@ -2896,7 +2901,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Logo
-				print '<tr class="hideonsmartphone morefieldsbis">';
+				print '<tr class="hideonsmartphone morefields morefieldsbis">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				if ($object->logo) {
@@ -2928,7 +2933,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</table>'."\n";
 
 				print '<script nonce="'.getNonce().'" type="text/javascript">
-					$("document").ready(function() { toogleMoreFields(false); });
+					$(document).ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
 						console.log("Click on link .morefieldslnk (edit)");
@@ -2938,17 +2943,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
-						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+						const items = $(".morefields, .morefieldsbis, .trextrafields:not(.trextrafieldsgroup)");
+						var cookieState;
 
-						if (!chgCookieState) cookieState = !cookieState ;
+						if (chgCookieState) {
+							cookieState = !items.is(":visible");
+							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
+						} else {
+							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+						}
 
 						if (cookieState) {
-							items.hide();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
-						} else {
 							items.show();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+							lnk.attr("aria-expanded", "true");
+						} else {
+							items.hide();
+							lnk.attr("aria-expanded", "false");
 						}
 					}
 				</script>
