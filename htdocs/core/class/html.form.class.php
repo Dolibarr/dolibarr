@@ -3868,14 +3868,12 @@ class Form
 			$sql .= " GROUP BY " . $this->db->sanitize($selectFields, 0, 0, 1);	// To have the SUM on ps.reel working in the select.
 		}
 
-		// Put the preselected product first so it is not cut by the limit (for example a product just created with the + button of the line form)
-		$sortselectedfirst = ((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "");
-
 		// Sort by category
+		// The preselected product is put first so it is not cut by the limit (for example a product just created with the + button of the line form)
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY".$sortselectedfirst." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
-		} elseif ($sortselectedfirst) {
-			$sql .= " ORDER BY".$sortselectedfirst." p.ref ASC";
+			$sql .= " ORDER BY".((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "")." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ((int) $selected > 0) {
+			$sql .= " ORDER BY CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END, p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
