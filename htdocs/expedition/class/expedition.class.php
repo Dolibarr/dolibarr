@@ -782,7 +782,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}
@@ -3234,15 +3235,15 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				// Lines are selected like in manageStockMvtOnEvt(), so reopening restores exactly what closing removed,
+				// including lines with no source order line (standalone shipment, SHIPMENT_STANDALONE)
+				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);

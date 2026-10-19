@@ -4449,7 +4449,7 @@ class EmailCollector extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$destdir = dol_sanitizePathName($destdir);
+		$destdir = dol_sanitizePathName($destdir, '_', 0);	// The directory is not built from the email, so we keep its accents
 		$filename = dol_sanitizeFileName($filename);
 		// Same rules as for an uploaded file: no control character, no dot or space at the end (removed by some OS, so the
 		// extension tested would not be the real one), no dot at the beginning (hidden or setup file like .htaccess)

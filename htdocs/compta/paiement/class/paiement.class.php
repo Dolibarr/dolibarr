@@ -346,6 +346,10 @@ class Paiement extends CommonObject
 				if ($way == 'dolibarr') {
 					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
 				} else {
+					// A payment that settles the whole remaining amount in the foreign currency must
+					// clear the invoice: dividing by the rate and rounding can leave or take one cent,
+					// which keeps the invoice partially paid, so take the remaining amount directly.
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 					$invoice = new Facture($this->db);
 					$invoice->fetch($key);
 					if ((float) price2num($value, 'MT') == (float) $invoice->getRemainToPay(1)) {
