@@ -45,6 +45,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -69,6 +70,7 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $search_name = GETPOST('search_name', 'alpha');
+$search_alias = GETPOST('search_alias', 'alpha');
 $search_phone = GETPOST('search_phone', 'alpha');
 $search_phone_mobile = GETPOST('search_phone_mobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -197,6 +199,7 @@ $arrayfields = array(
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
 	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
+	's.name_alias' => array('label' => $langs->trans("AliasNameShort"), 'checked' => '0', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 33),
@@ -260,6 +263,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_dfyear = '';
 	$search_op2df = '';
 	$search_name = "";
+	$search_alias = "";
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
@@ -392,14 +396,17 @@ if ($search_date_end) {
 if ($search_name) {
 	$sql .= natural_search('s.nom', $search_name);
 }
+if ($search_alias) {
+	$sql .= natural_search('s.name_alias', $search_alias);
+}
 if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
 }
 if ($search_phone) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone);
 }
 if ($search_phone_mobile) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -418,6 +425,9 @@ if ($search_zip) {
 }
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
+}
+if ($search_state) {
+	$sql .= natural_search(array('state.nom'), $search_state);
 }
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
@@ -596,7 +606,9 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country on (country.rowid = s.fk_pays)', '', $sqlforcount);
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
-		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		if (!$search_state) {	// The join is required by the filter on the state name
+			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		}
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
 		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
@@ -677,6 +689,9 @@ if ($search_contract != '') {
 }
 if ($search_name != '') {
 	$param .= '&search_name='.urlencode($search_name);
+}
+if ($search_alias != '') {
+	$param .= '&search_alias='.urlencode($search_alias);
 }
 if ($search_phone != '') {
 	$param .= '&search_phone='.urlencode($search_phone);
@@ -789,6 +804,15 @@ if ($search_user > 0) {
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
+if ($search_town != '') {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_zip != '') {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state != '') {
+	$param .= '&search_state='.urlencode($search_state);
+}
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
 }
@@ -806,6 +830,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -960,6 +988,12 @@ if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
+	print '</td>';
+}
+// Alias name
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth75" name="search_alias" value="'.dolPrintHTMLForAttribute($search_alias).'">';
 	print '</td>';
 }
 // Town
@@ -1122,6 +1156,10 @@ if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
 	print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1338,6 +1376,12 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 		}
+		// Alias name
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->name_alias).'">';
+			print '<span class="spantitle">'.dolPrintHTML($obj->name_alias).'</span>';
+			print '</td>';
+		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -1382,7 +1426,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
 
 		// Type ent

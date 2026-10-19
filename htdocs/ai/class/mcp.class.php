@@ -54,13 +54,13 @@ class McpHandler
 	/**
 	 * @var McpTool[] Array of loaded tool instances, keyed by their base filename or class name.
 	 */
-	private $loadedTools = [];
+	public $loadedTools = [];
 
 	/**
 	 * @var McpTool[] Associative array mapping tool *names* (from schema) to their instances.
 	 * This provides O(1) lookup for execution.
 	 */
-	private $toolsByName = [];
+	public $toolsByName = [];
 
 
 	/**
@@ -90,8 +90,6 @@ class McpHandler
 		$this->conf = $conf_obj;
 
 		$this->toolcontext = (!empty($toolcontext)) ? $toolcontext : self::CTX_ASSISTANT;
-
-		$this->loadTools();
 	}
 
 	/**
@@ -131,7 +129,7 @@ class McpHandler
 			$constName = 'AI_ASSISTANT_ALLOWED_TOOLS';
 		}
 
-		$raw = getDolGlobalString($constName);
+		$raw = getDolGlobalString($constName);		// Return the list (separated by coma) of all enabled tools
 
 		if ($raw === '') {
 			// Constant not yet configured — allow everything
@@ -173,13 +171,14 @@ class McpHandler
 	 *
 	 * This method scans the ai/tools directory for native tools and executes the
 	 * 'addMcpTools' hook to allow external modules to register their own tools.
+	 * This fill array ->loadedTools and ->toolsByName
 	 *
 	 * @return void
 	 */
-	private function loadTools()
+	public function loadTools()
 	{
-		$this->loadNativeTools();
-		$this->loadExternalTools();
+		$this->loadNativeTools();		// Tools found into directory ai/tools/
+		$this->loadExternalTools();		// Tools provided by external module and hook addMcpTools
 	}
 
 	/**
@@ -223,6 +222,13 @@ class McpHandler
 				$toolInstance = new $className($this->db, $this->user, $this->conf);
 
 				if ($toolInstance instanceof McpTool) {
+					// When the API bridge is on, it replaces the other native tools (they would
+					// duplicate what the API endpoints already offer). System tools are kept
+					// because parse_intent.php needs them to drive the conversation.
+					if (!in_array($basename, ['api_bridge', 'coffeemaker', 'conversation', 'email_cleaner', 'navigation', 'reports'])
+						&& !$this->isSystemTool($toolInstance)) {
+						continue;
+					}
 					$this->registerTool($basename, $toolInstance);
 				} else {
 					dol_syslog("[McpHandler] Tool class '{$className}' does not extend McpTool.", LOG_ERR);
@@ -262,6 +268,14 @@ class McpHandler
 			}
 
 			foreach ($hookmanager->resArray as $moduleTools) {
+				if ($moduleTools instanceof McpTool) {
+					// Tolerance: a module that set results = array($tool)
+					// instead of array(array($tool)) still works - the
+					// HookManager flattens results into resArray, so bare
+					// instances are the natural mistake to make.
+					$this->registerTool(get_class($moduleTools), $moduleTools);
+					continue;
+				}
 				if (!is_array($moduleTools)) {
 					continue;
 				}
@@ -349,7 +363,7 @@ class McpHandler
 	 */
 	public function getToolsSchema(): array
 	{
-		$allowed = $this->getAllowedToolsList();
+		$allowed = $this->getAllowedToolsList();	// Return list of "allowed" tools for the current context $this->toolcontext (Chat or MCP)
 		$schema  = [];
 
 		foreach ($this->loadedTools as $tool) {
@@ -372,6 +386,12 @@ class McpHandler
 				}
 
 				$def['is_system'] = false;
+
+				// Same rule as getToolsSchemaForLLM(): this is what tools/list on the
+				// MCP server returns, so a caller must not be offered what it cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
 
 				if (empty($allowed)) {
 					// No restriction configured — include everything
@@ -432,6 +452,11 @@ class McpHandler
 					continue;
 				}
 
+				// Do not advertise what this user cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
 				if (empty($allowed)) {
 					// No restriction configured — include everything
 					if (empty($def['categories'])) {
@@ -454,6 +479,100 @@ class McpHandler
 	}
 
 	/**
+	 * Check the rights a tool declared for the acting user.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being checked.
+	 * @return string '' when allowed, otherwise the missing right as "module/perm".
+	 */
+	private function checkToolRights($tool, $toolName)
+	{
+		if ($this->isSystemTool($tool)) {
+			return '';
+		}
+
+		$declared = method_exists($tool, 'getRequiredRights') ? $tool->getRequiredRights($toolName) : McpTool::RIGHTS_UNDECLARED;
+
+		if ($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM) {
+			return '';	// REST API classes check DolibarrApiAccess::$user themselves
+		}
+		if ($declared === McpTool::RIGHTS_UNDECLARED) {
+			dol_syslog("[McpHandler] Tool '".$toolName."' declares no rights: denied.", LOG_WARNING);
+
+			return 'undeclared';
+		}
+		foreach ((array) $declared as $right) {
+			$right = (array) $right;
+			$module = isset($right[0]) ? $right[0] : '';
+			$perm = isset($right[1]) ? $right[1] : '';
+			$subperm = isset($right[2]) ? $right[2] : '';
+			if ($module === '' || !$this->user->hasRight($module, $perm, $subperm)) {
+				return $module.'/'.$perm.($subperm !== '' ? '/'.$subperm : '');
+			}
+		}
+
+		return '';
+	}
+	/**
+	 * Stop a write until it is confirmed, on the MCP multi-round-trip pattern.
+	 *
+	 * Returns null when the call may proceed: the tool writes nothing, or the
+	 * caller presented a valid confirmation. Otherwise returns what the caller
+	 * gets instead of the write.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being executed.
+	 * @param array<string,mixed> $args Arguments, carrying requestState on the second leg.
+	 * @return array<string,mixed>|null Response to return, or null to proceed.
+	 */
+	private function checkWriteConfirmation($tool, $toolName, array $args)
+	{
+		if (!method_exists($tool, 'writeConfirmationPreview')) {
+			return null;
+		}
+		$preview = (string) $tool->writeConfirmationPreview($toolName, $args);
+		if ($preview === McpTool::NO_WRITE) {
+			return null;	// read tool
+		}
+
+		// A write bound to fail is refused before the user is asked to approve it.
+		if (method_exists($tool, 'writePrecheck')) {
+			$refused = (string) $tool->writePrecheck($toolName, $args);
+			if ($refused !== '') {
+				return array('error' => $refused);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';
+		$gate = new AiWriteConfirmation($this->db);
+
+		$state = isset($args['requestState']) ? (string) $args['requestState'] : '';
+		if ($state !== '') {
+			if ($gate->consume($this->user, $toolName, $args, $state)) {
+				return null;	// confirmed: the write runs
+			}
+
+			return array('error' => $gate->error);
+		}
+
+		$issued = $gate->issue($this->user, $toolName, $args, $preview);
+		if ($issued === '') {
+			return array('error' => $gate->error);
+		}
+
+		return array(
+			'resultType' => 'input_required',
+			'inputRequests' => array(
+				array(
+					'type' => 'confirmation',
+					'prompt' => $preview
+				)
+			),
+			'requestState' => $issued
+		);
+	}
+
+	/**
 	 * Execute a specific tool by its name.
 	 *
 	 * Enforces the tool context allow-list as a second gate so that even a crafted
@@ -467,7 +586,30 @@ class McpHandler
 	public function executeTool(string $toolName, array $args): array
 	{
 		if (!isset($this->toolsByName[$toolName])) {
-			return ["error" => "Tool '{$toolName}' not found."];
+			// LLMs routinely emit near-miss tool names (create_invoice for
+			// create_customer_invoice). Recover when the real name is
+			// UNAMBIGUOUS: same action verb (segment before the first '_')
+			// and every underscore token of the requested name appears in the
+			// candidate. Exactly one match executes (logged); zero or several
+			// keep the clean error - never guess between candidates.
+			$reqTokens = explode('_', dol_strtolower($toolName));
+			$verb = $reqTokens[0];
+			$candidates = array();
+			foreach (array_keys($this->toolsByName) as $realName) {
+				if (strpos($realName, $verb.'_') !== 0 || $this->isSystemTool($this->toolsByName[$realName])) {
+					continue;
+				}
+				$realTokens = explode('_', $realName);
+				if (!array_diff($reqTokens, $realTokens)) {
+					$candidates[] = $realName;
+				}
+			}
+			if (count($candidates) === 1) {
+				dol_syslog("[McpHandler] Tool name '".$toolName."' recovered to '".$candidates[0]."'.", LOG_INFO);
+				$toolName = $candidates[0];
+			} else {
+				return ["error" => "Tool '{$toolName}' not found."];
+			}
 		}
 
 		$toolInstance = $this->toolsByName[$toolName];
@@ -488,6 +630,20 @@ class McpHandler
 		// execute
 		try {
 			dol_syslog('[McpHandler] Executing tool \'' . $toolName . '\' with args: ' . json_encode($args), LOG_INFO);
+			$missingRight = $this->checkToolRights($toolInstance, $toolName);
+			if ($missingRight !== '') {
+				return array('error' => ($missingRight === 'undeclared')
+					? "Tool '".$toolName."' cannot run: it declares no required rights."
+					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
+			// Writes do not execute on the first call: the caller gets a preview and
+			// a confirmation state, and comes back with it. Reads are unaffected.
+			$pending = $this->checkWriteConfirmation($toolInstance, $toolName, $args);
+			if ($pending !== null) {
+				return $pending;
+			}
+
 			$result = $toolInstance->execute($toolName, $args);
 			dol_syslog('[McpHandler] Tool \'' . $toolName . '\' executed successfully.', LOG_INFO);
 			return $result;

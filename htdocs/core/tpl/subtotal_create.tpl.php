@@ -55,13 +55,15 @@ if ($type == 'title') {
 
 	$predefinedtitles = $object->getPredefinedTitles();
 	if (!empty($predefinedtitles)) {
+		// The visible option label is exactly the title to insert, so read it from the selected
+		// option (already escaped by selectarray, decoded by the browser) instead of shipping a map.
 		$formquestion[] = array(
 			'type' => 'select',
 			'name' => 'subtotalpredefinedtitle',
 			'label' => $langs->trans("PredefinedTitle"),
 			'values' => $predefinedtitles,
 			'select_show_empty' => 1,
-			'moreattr' => 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#subtotallinedesc\').val(v); }"',
+			'moreattr' => 'onchange="var o = this.options[this.selectedIndex]; if (o.value && o.value != \'-1\') { jQuery(\'#subtotallinedesc\').val(o.text); }"',
 		);
 	}
 

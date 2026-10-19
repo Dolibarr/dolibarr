@@ -27,32 +27,19 @@ use Luracast\Restler\Scope;
 class ApiContactsUseThirdpartyAddressTest extends CommonClassTest
 {
 	/**
-	 * @var Conf
-	 */
-	protected $savconf;
-
-	/**
 	 * @var Contacts
 	 */
 	private $api;
 
 	/**
-	 * @var DoliDB
-	 */
-	protected $savdb;
-
-	/**
-	 * Build API fixture.
+	 * Restore globals.
 	 *
-	 * @param string $name Test name
+	 * @return void
 	 */
-	public function __construct($name = '')
+	protected function setUp(): void
 	{
-		parent::__construct($name);
+		parent::setUp();
 
-		global $conf, $db;
-		$this->savconf = $conf;
-		$this->savdb = $db;
 		$this->api = new Contacts();
 		Scope::set('Restler', new class {
 			/**
@@ -63,16 +50,6 @@ class ApiContactsUseThirdpartyAddressTest extends CommonClassTest
 				return array('setup');
 			}
 		});
-	}
-
-	/**
-	 * Restore globals.
-	 *
-	 * @return void
-	 */
-	protected function setUp(): void
-	{
-		parent::setUp();
 
 		global $conf;
 

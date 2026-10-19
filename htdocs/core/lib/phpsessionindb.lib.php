@@ -68,7 +68,10 @@ function dolSessionOpen($save_path, $session_name)
 		$dolibarr_session_db_port = $dolibarr_main_db_port;
 	}
 
-	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
+	// Force a genuinely new connection: the parameters above fall back to the ones of the main
+	// database, so without this flag pg_connect() returns the handle already opened for $db, and
+	// the close() done by dolSessionClose() would close the connection still in use by the request.
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port, true);
 
 	return true;
 }
@@ -150,7 +153,7 @@ function dolSessionWrite($sess_id, $val)
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, date_creation, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255))."')";
 
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
@@ -173,7 +176,7 @@ function dolSessionWrite($sess_id, $val)
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)."')";
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
 				dol_print_error($dbsession);
@@ -187,7 +190,7 @@ function dolSessionWrite($sess_id, $val)
 			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
 			$update_query .= " fk_user = ".(int) (!empty($user->id) ? $user->id : 0).",";
 			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
-			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
+			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'] ?? '')."'";
 			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
 
 			$result = $dbsession->query($update_query);
@@ -274,6 +277,74 @@ function dolSessionGC($max_lifetime)
 		dol_syslog("dolSessionGC failed to purge expired sessions: ".$dbsession->lasterror(), LOG_WARNING);
 		return false;
 	}
+}
+
+/**
+ * Enforce a maximum number of concurrent database sessions for a given user.
+ *
+ * Called when a new authenticated session is being established. The existing rows
+ * of that user in llx_session are kept only for the ($keepcount - 1) most recently
+ * accessed ones, so that adding the session being established brings the total back
+ * to $keepcount. The other (older) sessions are deleted, which logs those browsers
+ * out on their next request (dolSessionRead() then finds no row).
+ *
+ * @param	int		$fk_user			Id of the user that just logged in
+ * @param	int		$keepcount			Max number of concurrent sessions for this user (<= 0 disables the feature)
+ * @param	string	$currentsessionid	Id of the session being established (never deleted)
+ * @return	int							Number of sessions that were evicted
+ */
+function dolSessionsLimitForUser($fk_user, $keepcount, $currentsessionid)
+{
+	global $dbsession;
+
+	$fk_user = (int) $fk_user;
+	$keepcount = (int) $keepcount;
+	if ($fk_user <= 0 || $keepcount <= 0) {
+		return 0;
+	}
+
+	// List the other sessions of this user, most recently accessed first.
+	$sql = "SELECT session_id FROM ".MAIN_DB_PREFIX."session";
+	$sql .= " WHERE fk_user = ".((int) $fk_user);
+	$sql .= " AND session_id <> '".$dbsession->escape($currentsessionid)."'";
+	$sql .= " ORDER BY last_accessed DESC, session_id DESC";
+
+	$resql = $dbsession->query($sql);
+	if (!$resql) {
+		dol_syslog("dolSessionsLimitForUser failed to list sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	$idstodelete = array();
+	$rank = 0;
+	while ($obj = $dbsession->fetch_object($resql)) {
+		$rank++;
+		if ($rank >= $keepcount) {	// Keep the ($keepcount - 1) most recent ones, evict the rest
+			$idstodelete[] = $obj->session_id;
+		}
+	}
+
+	if (empty($idstodelete)) {
+		return 0;
+	}
+
+	$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."session WHERE session_id IN (";
+	$i = 0;
+	foreach ($idstodelete as $idtodelete) {
+		$sqldel .= ($i > 0 ? ", " : "")."'".$dbsession->escape($idtodelete)."'";
+		$i++;
+	}
+	$sqldel .= ")";
+
+	$resqldel = $dbsession->query($sqldel);
+	if (!$resqldel) {
+		dol_syslog("dolSessionsLimitForUser failed to purge sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	dol_syslog("dolSessionsLimitForUser evicted ".count($idstodelete)." session(s) for fk_user=".$fk_user." to enforce a limit of ".$keepcount, LOG_NOTICE);
+
+	return count($idstodelete);
 }
 
 // Call to register user call back functions.

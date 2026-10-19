@@ -191,7 +191,15 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	$params = array('prompt' => 'consent');
+	// Default prompt is 'select_account': it avoids the admin-consent infinite loop on Entra tenants
+	// where user consent is disabled, while offline_access (already requested) still returns a refresh
+	// token. Set OAUTH_MICROSOFT3_FORCE_PROMPT to 'consent' to force the consent screen, or to '' to
+	// omit the prompt parameter entirely.
+	$params = array();
+	$promptforauth = getDolGlobalString('OAUTH_MICROSOFT3_FORCE_PROMPT', 'select_account');
+	if ($promptforauth) {
+		$params['prompt'] = $promptforauth;
+	}
 	if ($state) {
 		$params['state'] = $state;
 	}

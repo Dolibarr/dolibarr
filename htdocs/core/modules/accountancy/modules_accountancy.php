@@ -184,7 +184,9 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 		$curentCellPaddinds = $pdf->getCellPaddings();
 		// set cell padding with column content definition
 		$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-		$pdf->writeHTMLCell($this->page_largeur - $this->marge_droite, 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
+		// The second argument is a width, not an x coordinate: passing the right edge of the page made
+		// the cell start at the column x and overflow the margin, truncating long labels (#40790).
+		$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
 		$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 		// restore cell padding
@@ -203,7 +205,7 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
 	{
-		global $hookmanager, $conf;
+		global $hookmanager;
 
 		foreach ($this->cols as $colKey => $colDef) {
 			$parameters = array(
@@ -251,6 +253,9 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 					// Add space for lines (more if we need to show a second alternative language)
 					global $outputlangsbis;
+					/** @var Translate $outputlangsbis */
+					'@phan-var-force Translate $outputlangsbis';
+
 					if (is_object($outputlangsbis)) {
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);

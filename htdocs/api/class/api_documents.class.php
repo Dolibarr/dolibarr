@@ -8,6 +8,7 @@
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
- * API class for receive files
+ * API class to receive files
  *
  * @since	6.0.0	Initial implementation
  *
@@ -109,6 +110,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'read')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -212,6 +217,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -472,15 +481,23 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
+		if ($modulepart == 'facture_fournisseur') {
+			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
+		}
 
 		// Define $object
-		$object = fetchObjectByElement($id, $modulepart, $ref);
+		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
-			throw new RestException(404, 'Object with (id, ref) = ('.$id.', '.$ref.') not found or not allowed for modulepart = '.$modulepart);
+			throw new RestException(404, 'Module for modulepart = '.$modulepart." is not enabled (or not yet supported by API");
 		}
 
 		// Define $upload_dir to scan
-		$upload_dir = getMultidirOutput($object, '', 1);
+		if ($object->element == 'invoice_supplier' && $object->id > 0) {
+			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
+			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} else {
+			$upload_dir = (string) getMultidirOutput($object, '', 1);
+		}
 
 		// Check object-level permissions
 		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
@@ -521,6 +538,10 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
+			}
+		} elseif ($modulepart == 'reception') {
+			if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
@@ -617,7 +638,7 @@ class Documents extends DolibarrApi
 		$countarray = is_array($filearray) ? count($filearray) : 0;
 
 		if (empty($filearray)) {
-			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
+			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$id.(!empty($ref) ? ' or Ref '.$ref : '').' does not return any document.');
 		} else {
 			$filearray = array_slice($filearray, $limit * $page, $limit);
 			if (($object->id) > 0 && !empty($modulepart)) {
@@ -672,6 +693,12 @@ class Documents extends DolibarrApi
 					}
 				}
 			}
+		}
+
+		// Clean result from fullname
+		foreach ($filearray as $tmpkey => $tmpval) {
+			unset($filearray[$tmpkey]['path']);
+			unset($filearray[$tmpkey]['fullname']);
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -743,7 +770,9 @@ class Documents extends DolibarrApi
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
-		global $conf;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
+		global $conf, $langs;
+
 
 		$modulepartorig = $modulepart;
 
@@ -891,7 +920,7 @@ class Documents extends DolibarrApi
 			if ($result == 0) {
 				throw new RestException(404, "Object with ref '".$ref."' was not found.");
 			} elseif ($result < 0) {
-				throw new RestException(500, 'Error while fetching object: '.$object->error);
+				throw new RestException(500, 'Error while fetching object: '.$object->errorsToString());
 			}
 
 			if (!($object->id > 0)) {
@@ -914,6 +943,10 @@ class Documents extends DolibarrApi
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
 			if (empty($tmp['accessallowed'])) {
 				throw new RestException(403, 'Access not allowed to upload file into this directory');
+			}
+			// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+			if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+				throw new RestException(403, 'Access not allowed to the object of this document');
 			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
@@ -940,6 +973,10 @@ class Documents extends DolibarrApi
 				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
 				if (empty($tmp['accessallowed'])) {
 					throw new RestException(403, 'Access not allowed to upload file into this directory');
+				}
+				// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+				if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+					throw new RestException(403, 'Access not allowed to the object of this document');
 				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
@@ -1004,7 +1041,15 @@ class Documents extends DolibarrApi
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
+				// Differentiate based on the error key in the array
+				$errorkey = array_keys($checkvirusarray)[0];
+				$langs->load('errors');
+				if (in_array($errorkey, array('ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable', 'ErrorFileIsInfectedWithAVirus'))) {
+					$restmsg = $langs->trans($errorkey);
+				} else {
+					$restmsg = $langs->trans('ErrorFileIsInfectedWithAVirus'); // fallback
+				}
+				throw new RestException(500, $restmsg . ': ' . implode(',', $checkvirusarray));
 			}
 		}
 
@@ -1134,6 +1179,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {

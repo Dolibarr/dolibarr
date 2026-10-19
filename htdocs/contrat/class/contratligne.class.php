@@ -91,6 +91,11 @@ class ContratLigne extends CommonObjectLine
 	public $fk_product;
 
 	/**
+	 * @var int|null ID of parent line
+	 */
+	public $fk_parent_line;
+
+	/**
 	 * @var int 0 inactive, 4 active, 5 closed
 	 */
 	public $statut;
@@ -304,7 +309,14 @@ class ContratLigne extends CommonObjectLine
 		'fk_user_ouverture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserStartingService', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
 		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosingService', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'position' => 500, 'arrayofkeyval' => array(0 => 'Draft', 4 => 'Open', 5 => 'Closed')),
-		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'position' => 500, 'default' => '0')
+		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'position' => 500, 'default' => '0'),
+		'fk_multicurrency' => array('type' => 'integer:MultiCurrency:multicurrency/class/multicurrency.class.php', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'multicurrency_code' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'multicurrency_subprice' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 200),
+		'multicurrency_subprice_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPriceTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 205),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 210),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 215),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 220)
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -450,6 +462,17 @@ class ContratLigne extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= $link.($this->product_ref ? $this->product_ref.' ' : '').($this->label ? $this->label : $this->description).$linkend;
 		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -509,7 +532,8 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.commentaire,";
 		$sql .= " t.fk_unit,";
 		$sql .= " t.extraparams,";
-		$sql .= " t.rang";
+		$sql .= " t.rang,";
+		$sql .= " t.fk_multicurrency, t.multicurrency_code, t.multicurrency_subprice, t.multicurrency_subprice_ttc, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
@@ -574,6 +598,14 @@ class ContratLigne extends CommonObjectLine
 
 				$this->rang = $obj->rang;
 
+				$this->fk_multicurrency = $obj->fk_multicurrency;
+				$this->multicurrency_code = $obj->multicurrency_code;
+				$this->multicurrency_subprice = $obj->multicurrency_subprice;
+				$this->multicurrency_subprice_ttc = $obj->multicurrency_subprice_ttc;
+				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
+
 				$this->fetch_optionals();
 			}
 
@@ -604,12 +636,12 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_contrat = (int) $this->fk_contrat;
 		$this->fk_product = (int) $this->fk_product;
 		$this->statut = (int) $this->statut;
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->vat_src_code = trim($this->vat_src_code);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->vat_src_code = trim((string) $this->vat_src_code);
 		$this->tva_tx = trim((string) $this->tva_tx);
-		$this->localtax1_tx = trim($this->localtax1_tx);
-		$this->localtax2_tx = trim($this->localtax2_tx);
+		$this->localtax1_tx = trim((string) $this->localtax1_tx);
+		$this->localtax2_tx = trim((string) $this->localtax2_tx);
 		$this->qty = (float) $this->qty;
 		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
@@ -618,7 +650,7 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
 		$this->fk_user_cloture = (int) $this->fk_user_cloture;
-		$this->commentaire = trim($this->commentaire);
+		$this->commentaire = trim((string) $this->commentaire);
 		$this->rang = (int) $this->rang;
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
@@ -651,12 +683,34 @@ class ContratLigne extends CommonObjectLine
 		$line_price_base_type = $this->getPriceBaseType();
 		$pu_for_calc = $this->wasEnteredIncludingTax() ? (float) $this->subprice_ttc : (float) $this->subprice;
 
-		$tabprice = calcul_price_total($this->qty, $pu_for_calc, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, $line_price_base_type, 0, 1, $mysoc, $localtaxes_type);
+		// Currency of the line follows its parent contract. The rate is not duplicated on the line,
+		// so it must be read from the contract each time (mirrors how the line has no multicurrency_tx property).
+		$multicurrency_tx = 1;
+		if (isModEnabled('multicurrency') && $this->fk_contrat > 0) {
+			$sql_contract_currency = "SELECT fk_multicurrency, multicurrency_code, multicurrency_tx FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = ".((int) $this->fk_contrat);
+			$resql_contract_currency = $this->db->query($sql_contract_currency);
+			if ($resql_contract_currency) {
+				$obj_contract_currency = $this->db->fetch_object($resql_contract_currency);
+				if ($obj_contract_currency) {
+					$this->fk_multicurrency = $obj_contract_currency->fk_multicurrency;
+					$this->multicurrency_code = $obj_contract_currency->multicurrency_code;
+					$multicurrency_tx = $obj_contract_currency->multicurrency_tx ? $obj_contract_currency->multicurrency_tx : 1;
+				}
+			}
+		}
+
+		$tabprice = calcul_price_total($this->qty, $pu_for_calc, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, $line_price_base_type, 0, 1, $mysoc, $localtaxes_type, 100, $multicurrency_tx, (float) $this->multicurrency_subprice);
 		$this->total_ht  = (float) $tabprice[0];
 		$this->total_tva = (float) $tabprice[1];
 		$this->total_ttc = (float) $tabprice[2];
 		$this->total_localtax1 = (float) $tabprice[9];
 		$this->total_localtax2 = (float) $tabprice[10];
+
+		// Multicurrency
+		$this->multicurrency_total_ht  = (float) $tabprice[16];
+		$this->multicurrency_total_tva = (float) $tabprice[17];
+		$this->multicurrency_total_ttc = (float) $tabprice[18];
+		$this->multicurrency_subprice  = (float) $tabprice[19];
 
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;
@@ -664,7 +718,7 @@ class ContratLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return -1;
 			} else {
@@ -714,6 +768,12 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? ((int) $this->fk_user_cloture) : "NULL").",";
 		$sql .= " commentaire = '".$this->db->escape($this->commentaire)."',";
 		$sql .= " fk_unit = ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit)).",";
+		$sql .= " fk_multicurrency = ".(!empty($this->fk_multicurrency) ? ((int) $this->fk_multicurrency) : "NULL").",";
+		$sql .= " multicurrency_code = ".(!empty($this->multicurrency_code) ? "'".$this->db->escape($this->multicurrency_code)."'" : "NULL").",";
+		$sql .= " multicurrency_subprice = ".((float) $this->multicurrency_subprice).",";
+		$sql .= " multicurrency_total_ht = ".((float) $this->multicurrency_total_ht).",";
+		$sql .= " multicurrency_total_tva = ".((float) $this->multicurrency_total_tva).",";
+		$sql .= " multicurrency_total_ttc = ".((float) $this->multicurrency_total_ttc).",";
 		$sql .= " rang = ".(empty($this->rang) ? '0' : ((int) $this->rang));
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -936,6 +996,7 @@ class ContratLigne extends CommonObjectLine
 		}
 		$sql .= " fk_user_ouverture = ".((int) $this->fk_user_ouverture).",";
 		$sql .= " date_cloture = null,";
+		$sql .= " fk_user_cloture = null,";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
 

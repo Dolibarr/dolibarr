@@ -22,36 +22,6 @@ require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 class PdfBuildAddressContactSelectionTest extends CommonClassTest
 {
 	/**
-	 * @var Conf
-	 */
-	protected $savconf;
-
-	/**
-	 * @var DoliDB
-	 */
-	protected $savdb;
-
-	/**
-	 * @var Translate
-	 */
-	protected $savlangs;
-
-	/**
-	 * Save globals.
-	 *
-	 * @param string $name Test name
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		global $conf, $db, $langs;
-		$this->savconf = $conf;
-		$this->savdb = $db;
-		$this->savlangs = $langs;
-	}
-
-	/**
 	 * Restore globals.
 	 *
 	 * @return void

@@ -604,7 +604,10 @@ if (empty($reshook)) {
 
 			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				}
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -920,6 +923,10 @@ if ($search_status != '' && $search_status != '-1') {
 }
 if ($search_option == 'late') {
 	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
+}
+if ($search_option == 'recv_late') {
+	// Same rule as FournisseurCommande::hasDelay() for the ordered and partially received status
+	$sql .= " AND cf.date_livraison < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
@@ -1953,7 +1960,7 @@ if ($resql) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->alias).'">';
-				print dol_escape_htmltag($obj->alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->alias).'</span>';
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;

@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,6 +205,7 @@ displayPositionCard($object);
 function displayPositionCard(&$object)
 {
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
+	'@phan-var-force int<0,1> $permissiontodelete';
 
 	$id = $object->id;
 	$ref = $object->ref;
@@ -345,7 +346,7 @@ function displayPositionCard(&$object)
 		print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 
 		// Delete (need delete permission, or if draft, just need create/modify permission)
-		print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+		print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 	}
 }
 

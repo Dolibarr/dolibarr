@@ -337,7 +337,16 @@ class Paiement extends CommonObject
 				continue;
 			}
 			$value_converted = false;
+			// getInvoiceRate() returns false when the invoice cannot be read, so the result must
+			// be tested before being indexed, as PaiementFourn::create() already does. Without
+			// this the rate is read from a boolean, which emits a PHP warning and leaves it null,
+			// so no conversion is made and the payment is refused later on with
+			// 'Payment in same currency than company but this->amount != this->multicurrency_amount'.
 			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
+			if ($tmparray === false) {
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+				return -1;
+			}
 			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
 
@@ -906,6 +915,11 @@ class Paiement extends CommonObject
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
+						// Skip the invoices that were listed but not paid, the same way create() does. Without this,
+						// a 'company' link is added to the bank line for a third party that received no payment.
+						if (!is_numeric($value) || $value == 0) {
+							continue;
+						}
 						if ($mode == 'payment') {
 							$fac = new Facture($this->db);
 							$fac->fetch($key);
@@ -1095,6 +1109,17 @@ class Paiement extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->num_payment = $this->db->escape($num_payment);
+
+				// Update Num in bank
+				$type = $this->element;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+				$sql .= " SET num_chq = '".$this->db->escape($num_payment)."'";
+				$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
+				$sql .= " AND rappro = 0";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = 'Error -1 '.$this->db->error();
+				}
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();

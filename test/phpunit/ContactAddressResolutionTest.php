@@ -21,42 +21,6 @@ require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 class ContactAddressResolutionTest extends CommonClassTest
 {
 	/**
-	 * @var Conf
-	 */
-	protected $savconf;
-
-	/**
-	 * @var DoliDB
-	 */
-	protected $savdb;
-
-	/**
-	 * @var Translate
-	 */
-	protected $savlangs;
-
-	/**
-	 * @var User
-	 */
-	protected $savuser;
-
-	/**
-	 * Save globals.
-	 *
-	 * @param string $name Test name
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		global $conf, $db, $langs, $user;
-		$this->savconf = $conf;
-		$this->savdb = $db;
-		$this->savlangs = $langs;
-		$this->savuser = $user;
-	}
-
-	/**
 	 * Restore globals.
 	 *
 	 * @return void

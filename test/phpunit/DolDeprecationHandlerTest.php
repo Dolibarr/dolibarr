@@ -38,19 +38,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	private $dynHandler;
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		print __METHOD__."\n";
-	}
-
-	/**
 	 * Global test setup
 	 *
 	 * @return void
@@ -68,6 +55,7 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		parent::setUp();
+
 		print __METHOD__."\n";
 		$this->handler = new class () {
 			use DolDeprecationHandler;

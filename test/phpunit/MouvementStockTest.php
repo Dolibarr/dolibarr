@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -62,6 +62,8 @@ class MouvementStockTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
 		$user = $this->savuser;

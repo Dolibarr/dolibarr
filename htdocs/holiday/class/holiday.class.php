@@ -133,6 +133,11 @@ class Holiday extends CommonObject
 	public $fk_user_approve;
 
 	/**
+	 * @var int 	ID of user that has approved, as read by dol_print_object_info()
+	 */
+	public $user_approve_id;
+
+	/**
 	 * @var int 	Date for refuse
 	 */
 	public $date_refuse = 0;
@@ -172,6 +177,9 @@ class Holiday extends CommonObject
 	 */
 	public $holiday = array();
 
+	/**
+	 * @var array<mixed>	Not filled by core
+	 */
 	public $events = array();
 
 	/**
@@ -456,10 +464,12 @@ class Holiday extends CommonObject
 				$this->fk_user = (int) $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
 				$this->description = $obj->description;
+
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
+
 				$this->halfday = (int) $obj->halfday;
 				$this->status = (int) $obj->status;
 				$this->statut = (int) $obj->status;	// deprecated
@@ -535,6 +545,7 @@ class Holiday extends CommonObject
 		$sql .= " uu.login as user_login,";
 		$sql .= " uu.statut as user_status,";
 		$sql .= " uu.photo as user_photo,";
+		$sql .= " uu.fk_country as country_id,";
 
 		$sql .= " ua.lastname as validator_lastname,";
 		$sql .= " ua.firstname as validator_firstname,";
@@ -615,6 +626,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
+
+				$tab_result[$i]['country_id'] = (int) $obj->country_id; // id of country of user
 
 				$i++;
 			}
@@ -777,9 +790,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -901,9 +920,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1015,6 +1040,61 @@ class Holiday extends CommonObject
 	}
 
 	/**
+	 *	Send the approval email to the user who requested the leave
+	 *
+	 *  @return int			1 if sent, 0 if the requester has no email, <0 if KO
+	 */
+	public function sendApprovalEmail()
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$langs->load('holiday');
+
+		$recipient = new User($this->db);
+		$recipient->fetch($this->fk_user);
+		if (empty($recipient->email)) {
+			dol_syslog(get_class($this)."::sendApprovalEmail user that requested the leave has no email, so no email is sent");
+			return 0;
+		}
+
+		$validator = new User($this->db);
+		$validator->fetch($this->fk_validator);
+
+		// Not the validator's own address: it may belong to another company and be refused by the mail server.
+		$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+		$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+			$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		}
+		$subject = '['.$societeName.'] '.$langs->transnoentitiesnoconv("HolidaysValidated");
+
+		$link = dol_buildpath('/holiday/card.php', 3).'?id='.$this->id;
+
+		$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".dol_escape_htmltag($recipient->firstname).",</p>\n";
+		$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($this->date_debut, 'day'), dol_print_date($this->date_fin, 'day'))."</p>\n";
+		$message .= "<ul>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dol_escape_htmltag(dolGetFirstLastname($validator->firstname, $validator->lastname))."</li>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
+		$message .= "</ul>\n";
+
+		$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+		$trackid = 'leav'.$this->id;
+
+		$mail = new CMailFile($subject, $recipient->email, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
+		if (!$mail->sendfile()) {
+			$this->error = $mail->error;
+			$this->errors = $mail->errors;
+			dol_syslog(get_class($this)."::sendApprovalEmail id=".$this->id." ".$this->error, LOG_WARNING);
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
 	 *	Update database
 	 *
 	 *  @param	?User		$user			User that modify
@@ -1026,12 +1106,21 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
+		if ($this->status == self::STATUS_REFUSED || $this->status == self::STATUS_APPROVED) {
+			$checkBalance = 0;	// No balance check to refuse a request, nor on an approved request (its days are already debited)
+		}
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1175,11 +1264,19 @@ class Holiday extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		// Delete extrafields before the leave request
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		if (!$error) {
@@ -1696,10 +1793,20 @@ class Holiday extends CommonObject
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
 			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
-			// the first time. Treat an empty value as "start from now" (like define_holiday.php does) instead of a very
-			// old date, otherwise the catch-up loop below would credit every user with years of monthly accrual at once.
+			// the first time. Treat an empty value as "start from now" instead of a very old date, otherwise the catch-up
+			// loop below would credit every user with years of monthly accrual at once. Store it, because the loop is the
+			// only other place that writes it: an empty value would stay empty and no month would ever be credited.
 			if (empty($stringInDBForLastUpdate)) {
 				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+				$sql .= " value = '".$this->db->escape($stringInDBForLastUpdate)."'";
+				$sql .= " WHERE name = 'lastUpdate'";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
 			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
@@ -1777,7 +1884,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
+						$nbDaysToDeduct = (float) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -1857,42 +1964,6 @@ class Holiday extends CommonObject
 				return 1;
 			} else {
 				return -1;
-			}
-		}
-	}
-
-	/**
-	 *  Create entries for each user at setup step
-	 *
-	 *  @param	boolean		$single		Single
-	 *  @param	int			$userid		Id user
-	 *  @return void
-	 */
-	public function createCPusers($single = false, $userid = 0)
-	{
-		// do we have to add balance for all users ?
-		if (!$single) {
-			dol_syslog(get_class($this).'::createCPusers');
-			$arrayofusers = $this->fetchUsers(false, true);
-
-			foreach ($arrayofusers as $users) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dol_print_error($this->db);
-				}
-			}
-		} else {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES (".((int) $userid)."', '0')";
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
 			}
 		}
 	}
@@ -2464,6 +2535,7 @@ class Holiday extends CommonObject
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
 						$this->fk_user_approve = $obj->fk_user_approval_done;
+						$this->user_approve_id = $obj->fk_user_approval_done;
 					}
 				}
 			}
@@ -2555,7 +2627,11 @@ class Holiday extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT h.rowid, h.date_debut";
+		// The count and the number of late requests are computed by the database instead of reading every request. A request is
+		// late when its start date is before now minus the warning delay (a request without start date was counted as late,
+		// this is kept).
+		$sql = "SELECT COUNT(h.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN h.date_debut IS NULL OR h.date_debut < '".$this->db->idate($now - $conf->holiday->approve->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
@@ -2576,12 +2652,10 @@ class Holiday extends CommonObject
 			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($this->db->jdate($obj->date_debut) < ($now - $conf->holiday->approve->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -2685,7 +2759,7 @@ class Holiday extends CommonObject
 		$datenow = dol_getdate(dol_now());
 		$prev_month = dol_get_prev_month($datenow["mon"], $datenow["year"]);
 		$year_month = sprintf("%04d", $prev_month["year"]).'-'.sprintf("%02d", $prev_month["month"]);
-		$arrayleaves = array();
+		$arrayleaves = array(); // Array of leaves of previous month, grouped by user id
 
 		$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
@@ -2747,7 +2821,7 @@ class Holiday extends CommonObject
 						$halfdayinmonth = 0;
 					}
 				}
-				$arrayleaves[] = array(
+				$arrayleaves[$obj->fk_user][] = array(
 					"user" => $tmpuser->getNomUrl(0, 'nolink', 0, 0, 24, 1),
 					"type" => $arraytypeleaves[$obj->fk_type],
 					"date_start" => dol_print_date($date_start_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
@@ -2756,6 +2830,36 @@ class Holiday extends CommonObject
 				);
 			}
 		}
+
+		// Get list of active employees, so all of them appear even if they did not take any leave
+		$arrayemployees = $this->fetchUsers(false, true);
+		if (!is_array($arrayemployees)) {
+			return 1; // $this->errors was already filled by fetchUsers
+		}
+
+		// Reorder the array of leaves to show all active employees, and add a line with type = "None" for those without leave
+		$arrayleavesfinal = array();
+		$usertmp = new User($this->db);
+		foreach ($arrayemployees as $employee) {
+			if (!empty($arrayleaves[$employee['rowid']])) {
+				$arrayleavesfinal = array_merge($arrayleavesfinal, $arrayleaves[$employee['rowid']]);
+				unset($arrayleaves[$employee['rowid']]);
+			} else {
+				$usertmp->fetch($employee['rowid']);
+				$arrayleavesfinal[] = array(
+					"user" => $usertmp->getNomUrl(0, 'nolink', 0, 0, 24, 1),
+					"type" => $outputlangs->trans("None"),
+					"date_start" => '',
+					"date_end" => '',
+					"used_days" => 0
+				);
+			}
+		}
+		// Add leaves of users that are no longer active employees
+		foreach ($arrayleaves as $leavesofuser) {
+			$arrayleavesfinal = array_merge($arrayleavesfinal, $leavesofuser);
+		}
+		$arrayleaves = $arrayleavesfinal;
 
 		$outputarrayleaves = '<br><table style="width: 100%;border-collapse: separate !important;border-spacing: 0px;border-top: 1px solid #b6b6b6;border-left: 1px solid #b6b6b6;border-right: 1px solid #b6b6b6;margin: 0px 0px 20px 0px;">';
 		$outputarrayleaves .= '<tr>';

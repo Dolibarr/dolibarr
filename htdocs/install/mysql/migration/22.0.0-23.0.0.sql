@@ -420,6 +420,13 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT nul
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
 
+-- The declared amounts were stored in cash, card and cheque before this version, and the cash fence
+-- card now reads the _declared columns to show the final balance. Without this, every record closed
+-- before the upgrade shows 0. Rows already carrying a declared value are left untouched.
+UPDATE llx_pos_cash_fence SET cash_declared = cash WHERE cash_declared IS NULL;
+UPDATE llx_pos_cash_fence SET card_declared = card WHERE card_declared IS NULL;
+UPDATE llx_pos_cash_fence SET cheque_declared = cheque WHERE cheque_declared IS NULL;
+
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;

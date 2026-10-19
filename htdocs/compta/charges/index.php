@@ -55,11 +55,8 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOSTINT("year");
@@ -67,7 +64,6 @@ $filtre = GETPOST("filtre", 'alpha');
 if (!$year) {
 	$year = (int) dol_print_date(dol_now(), "%Y");
 }
-$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -85,6 +81,12 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 
 /*
@@ -138,7 +140,7 @@ if ($year) {
 	$param .= '&year='.$year;
 }
 
-print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
+print '<div class="info">'.$langs->trans("DescTaxAndDividendsArea").'</div>';
 print "<br>";
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {

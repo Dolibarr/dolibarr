@@ -503,8 +503,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$butactionbg = '';
 	$textbutaction = '';
 	// Set the variables with the default value
-	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
 	}
 
 	// Dark mode

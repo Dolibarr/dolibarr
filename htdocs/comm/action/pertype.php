@@ -386,7 +386,7 @@ $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 
 $head = calendars_prepare_head($paramnoaction);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 
 $showextcals = $listofextcals;
 // Legend
@@ -795,8 +795,8 @@ $cacheusers = array();
 $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
-if (is_readable($color_file)) {
+$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($color_file && is_readable($color_file)) {
 	include $color_file;
 	global $theme_datacolor;
 }
@@ -1149,7 +1149,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases1[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
@@ -1192,7 +1192,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases2[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;

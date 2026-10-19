@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
@@ -815,7 +816,7 @@ if ($resql) {
 			case 'payment_loan':
 				// Payment loan
 				//------------------------------------------
-				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label,";
+				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label, l.charge_type,";
 				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
@@ -895,7 +896,7 @@ if ($resql) {
 						$tabobject[$object_key]['operations'][$accountancy_account_insurance] = array(
 							// virtual total = loan_capital * amount_insurance / payment_amount
 							'total_ht' => -($obj->loan_capital * $obj->amount_insurance / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('Insurance'),
+							'label' => $obj->label.' '.loanChargeLabel($obj->charge_type, $langs),
 						);
 					}
 				} else {

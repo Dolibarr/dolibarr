@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'members', 'errors', 'other'));
+$langs->loadLangs(array('admin', 'members', 'other'));
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -306,7 +306,7 @@ print '<br>';
 // Example 1 : Adding jquery code
 print '<script type="text/javascript">
 function confirm_erase() {
-	return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
+	return confirm(\''.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'\');
 }
 </script>';
 

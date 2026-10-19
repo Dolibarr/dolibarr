@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
+$langs->loadLangs(array("stocks", "other", "productbatch", "companies", "products"));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -108,10 +108,7 @@ $permissiondellink = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
 $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+restrictedArea($user, 'stocktransfer', $object->id, 'stocktransfer_stocktransfer', 'stocktransfer', 'fk_soc', 'rowid');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -170,7 +167,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'addline' && $permissiontoadd) {
+	if ($action == 'addline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
@@ -209,6 +206,17 @@ if (empty($reshook)) {
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
 
+		// A serial number can be only once in a transfer (a line with the same product, warehouses and serial number would be merged into a qty of 2)
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					break;
+				}
+			}
+		}
+
 		if (empty($error)) {
 			$line = new StockTransferLine($db);
 			$records = $line->fetchAll('', '', 0, 0, '(fk_stocktransfer:=:'.((int) $id).') AND (fk_product:=:'.((int) $fk_product).') AND (fk_warehouse_source:=:'.((int) $fk_warehouse_source).') AND (fk_warehouse_destination:=:'.((int) $fk_warehouse_destination).') AND ('.(empty($batch) ? "(batch:=:'') OR (batch:IS:NULL)" : "batch:=:'".$db->escape($batch)."'").')');
@@ -224,14 +232,24 @@ if (empty($reshook)) {
 
 			$line->pmp = $prod->pmp;
 			if ($line->id > 0) {
-				$line->update($user);
+				$result = $line->update($user);
 			} else {
 				$line->rang = (is_array($object->lines) || $object->lines instanceof Countable) ? count($object->lines) + 1 : 1;
-				$line->create($user);
+				$result = $line->create($user);
+			}
+			if ($result < 0) {
+				setEventMessages($line->error, $line->errors, 'errors');
 			}
 			$object->fetchLines();
 		}
-	} elseif ($action === 'updateline' && $permissiontoadd) {
+	} elseif ($action === 'updateline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
+		$line = new StockTransferLine($db);
+		if ($line->fetch($lineid) <= 0 || $line->fk_stocktransfer != $object->id) {
+			$error++;
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
+		}
+
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
@@ -273,6 +291,18 @@ if (empty($reshook)) {
 			$action = 'editline';
 		}
 
+		// A serial number can be only once in a transfer
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->id != $lineid && $tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					$action = 'editline';
+					break;
+				}
+			}
+		}
+
 		if (empty($error)) {
 			$line = new StockTransferLine($db);
 			$line->fetch($lineid);
@@ -308,8 +338,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_depart = dol_now();
-			$object->update($user);
-			setEventMessage('StockStransferDecremented');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferDecremented');
+			}
 		}
 	}
 
@@ -335,8 +369,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_VALIDATED, $id);
 			$object->status = $object::STATUS_VALIDATED;
 			$object->date_reelle_depart = null;
-			$object->update($user);
-			setEventMessage('StockStransferDecrementedCancel', 'warnings');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferDecrementedCancel', 'warnings');
+			}
 		}
 	}
 
@@ -362,13 +400,21 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_CLOSED, $id);
 			$object->status = $object::STATUS_CLOSED;
 			$object->date_reelle_arrivee = dol_now();
-			$object->update($user);
-			$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+			$result = $object->update($user);
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			setEventMessage('StockStransferIncrementedShort');
+			if (!$error) {
+				$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+			if (!$error) {
+				setEventMessage('StockStransferIncrementedShort');
+			}
 		}
 	}
 
@@ -394,8 +440,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_arrivee = null;
-			$object->update($user);
-			setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
+			}
 		}
 	}
 
@@ -428,7 +478,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-s
 
 
 // Example: Adding jQuery code
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {';
 
 // Show alert for planned departure date if the transfer is related
@@ -636,7 +686,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -1043,18 +1093,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
 				}
-			} elseif ($object->status == $object::STATUS_VALIDATED && $permissiontoadd) {
+			}
+
+			// Cancel transfer
+			if ($object->status == $object::STATUS_VALIDATED && $permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock&token='.newToken().'">'.$langs->trans("StockTransferDecrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel&token='.newToken().'">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock&token='.newToken().'">'.$langs->trans("StockTransferIncrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_CLOSED && $permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel&token='.newToken().'">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel&token='.newToken().'" title="Only stock increase of destination warehouse will be canceled. You will be able to cancel the decrease of source warehouse just after.">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
 			}
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], array_merge(['id' => $object->id], (!empty($object->socid) ? ['socid' => $object->socid] : []), ['action' => 'clone']), true), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], array_merge(['id' => $object->id], (!empty($object->socid) ? ['socid' => $object->socid] : []), ['action' => 'clone']), true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			/*
@@ -1079,11 +1132,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$deleteUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true);
 			$buttonId = 'action-delete-no-ajax';
 			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can use preloaded confirm if not jmobile
-				$deleteUrl = '';
 				$buttonId = 'action-delete';
 			}
 			$params = array();
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

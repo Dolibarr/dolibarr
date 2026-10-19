@@ -20,48 +20,6 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/modSociete.class.php'
 class SocieteImportExportAddressModeContractTest extends CommonClassTest
 {
 	/**
-	 * @var Conf
-	 */
-	protected $savconf;
-
-	/**
-	 * @var DoliDB
-	 */
-	protected $savdb;
-
-	/**
-	 * @var Translate
-	 */
-	protected $savlangs;
-
-	/**
-	 * @var User
-	 */
-	protected $savuser;
-
-	/**
-	 * @var Societe
-	 */
-	private $savmysoc;
-
-	/**
-	 * Save globals.
-	 *
-	 * @param string $name Test name
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		global $conf, $db, $langs, $user, $mysoc;
-		$this->savconf = $conf;
-		$this->savdb = $db;
-		$this->savlangs = $langs;
-		$this->savuser = $user;
-		$this->savmysoc = $mysoc;
-	}
-
-	/**
 	 * Restore globals.
 	 *
 	 * @return void
