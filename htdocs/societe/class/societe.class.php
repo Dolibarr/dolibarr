@@ -5482,6 +5482,52 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 * Remain to pay for one invoice if it counts in getOutstandingBills() "opened" (same rules as tiles).
+	 *
+	 * @param	Facture|FactureFournisseur	$invoice	Invoice with id set (and fetched fields)
+	 * @param	'customer'|'supplier'		$mode		'customer' or 'supplier'
+	 * @param	int<0,1>					$late		0 all outstanding, 1 only past due date
+	 * @return	float						Remain to pay in scope, 0 if invoice is out of scope
+	 */
+	public function getInvoiceRemainToPayInOutstanding($invoice, $mode = 'customer', $late = 0)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if ($invoice->paye != 0
+			|| $invoice->statut == $invoice::STATUS_DRAFT
+			|| $invoice->statut == $invoice::STATUS_ABANDONED
+			|| $invoice->statut == $invoice::STATUS_CLOSED) {
+			return 0;
+		}
+
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes = $invoice->getSumCreditNotesUsed();
+		$deposits = $invoice->getSumDepositsUsed();
+
+		$remaintopay = (float) price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+
+		if ($mode == 'supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE && $invoice->isCreditNoteUsed()) {
+				$remaintopay -= (float) $invoice->getSumFromThisCreditNotesNotUsed();
+			}
+		}
+
+		if ($remaintopay <= 0) {
+			return 0;
+		}
+
+		if (!empty($late)) {
+			$today = dol_get_first_hour(dol_now('tzuser'));
+			if (empty($invoice->date_lim_reglement) || $invoice->date_lim_reglement >= $today) {
+				return 0;
+			}
+		}
+
+		return $remaintopay;
+	}
+
+	/**
 	 *  Return amount of bill not yet paid and total of all invoices
 	 *
 	 *  @param     'customer'|'supplier'|''	$mode	'customer' or 'supplier'
