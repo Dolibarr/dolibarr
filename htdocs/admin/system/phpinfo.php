@@ -38,7 +38,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->loadLangs(array("admin", "install", "errors"));
+$langs->loadLangs(array("admin", "install"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -134,6 +134,7 @@ print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode")) {
+	$langs->load('errors');
 	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
 	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
@@ -396,6 +397,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		} else {
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
+		$langs->load('errors');
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
 		if ($optional) {
 			$html .= ' <span class="opacitymedium">'.$optional.'</span>';

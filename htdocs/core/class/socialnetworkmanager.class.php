@@ -115,7 +115,16 @@ class SocialNetworkManager
 	 */
 	public function getPosts()
 	{
-		return $this->handler ? $this->handler->getPosts() : [];
+		$posts = $this->handler ? $this->handler->getPosts() : [];
+		if (is_array($posts)) {
+			// The links come from the social network API and are used as href: keep only http(s) links (a "javascript:" link would run in Dolibarr)
+			foreach ($posts as $key => $post) {
+				if (!empty($post['url']) && !preg_match('/^https?:\/\//i', $post['url'])) {
+					$posts[$key]['url'] = '';
+				}
+			}
+		}
+		return $posts;
 	}
 
 	/**

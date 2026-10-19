@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -201,7 +201,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks", "other"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -383,49 +383,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 				}
 
-				// Public note and Tracking code
-				if (!empty($object->note_public) || !empty($object->tracking_number)) {
+				// Public note
+				if (!empty($object->note_public)) {
 					$tab_top_alt = $tab_top;
 
 					//$tab_top_alt += 1;
 
-					// Tracking number
-					if (!empty($object->tracking_number)) {
-						$height_trackingnumber = 4;
-
-						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
-						$tab_top_alt = $pdf->GetY();
-
-						$object->getUrlTrackingStatus($object->tracking_number);
-						if (!empty($object->tracking_url)) {
-							if ($object->shipping_method_id > 0) {
-								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-								$label = '';
-								if ($object->tracking_url != $object->tracking_number) {
-									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								}
-								$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
-								//var_dump($object->tracking_url != $object->tracking_number);exit;
-								if ($object->tracking_url != $object->tracking_number) {
-									$label .= " : ";
-									$label .= $object->tracking_url;
-								}
-
-								$height_trackingnumber += 4;
-								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
-							}
-						}
-						$tab_top = $pdf->GetY();
-					}
-
-					// Notes
-					if (!empty($object->note_public)) {
-						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
-					}
+					$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
@@ -611,10 +576,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
+					// Bottom of the highest cell of the line (batch and warehouses may be written on several lines)
+					$posYAfterCells = $nexY;
+
 					// Batch / serial number
 					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
+						$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 					}
 
 					// weight
@@ -650,6 +619,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousesource, $curY);
 					$pdf->MultiCell(($this->posxwarehousedestination - $this->posxwarehousesource), 3, $wh_source->ref.(!empty($wh_source->lieu) ? ' - '.$wh_source->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					// Warehouse destination
 					$wh_destination = new Entrepot($this->db);
@@ -661,6 +631,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousedestination, $curY);
 					$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination), 3, $wh_destination->ref.(!empty($wh_destination->lieu) ? ' - '.$wh_destination->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 						$pdf->SetXY($this->posxpuht, $curY);
@@ -670,6 +641,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs), '', 'R');
 					}
 
+					$nexY = max($nexY, $posYAfterCells);
 					$nexY += 3;
 					if ($weighttxt && $voltxt) {
 						$nexY += 2;
@@ -826,23 +798,11 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$totalQty += $line->qty;
 			}
 		}
-		// Set trueVolume and volume_units not currently stored into database
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
-			$object->volume_units = $object->size_units * 3;
-		}
-
-		if ($totalWeight != '') {
+		if (!empty($totalWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		}
-		if ($totalVolume != '') {
+		if (!empty($totalVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		}
-		if (!empty($object->trueWeight)) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		}
-		if (!empty($object->trueVolume)) {
-			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 		}
 
 		$pdf->SetFillColor(255, 255, 255);
@@ -1030,7 +990,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
+		if ($object->status == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
 
@@ -1225,7 +1185,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

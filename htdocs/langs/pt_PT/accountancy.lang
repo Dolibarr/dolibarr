@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=conta (do gráfico de conta) a ser usado para registrar doações (Doação módulo)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=conta (do gráfico de conta) a ser usado para registrar assinaturas de membros (Associação módulo  - se a associação for registrada sem fatura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=conta (do gráfico de conta) a ser usado como o padrão conta para registrar o depósito cliente
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Armazene cliente conta como conta individual no razão subsidiário para linhas de adiantamentos (se Desativado, conta individual para linhas de adiantamento permanecerá vazio)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Armazene o fornecedor conta como conta individual no razão subsidiário para linhas de adiantamentos (se Desativado, conta individual para linhas de adiantamento permanecerá vazio)

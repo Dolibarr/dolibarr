@@ -194,6 +194,9 @@ foreach ($object->fields as $key => $val) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Complete arrayfields with special fields
 $arrayfields = array_merge($arrayfields, array(
@@ -711,7 +714,7 @@ $tabactive = 'cardlist';
 
 $head = calendars_prepare_head($param);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

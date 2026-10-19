@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=זהו מידע על התערבות �
 ThisIsInformationOnDocumentToSignSociete_rib=זהו מידע על מנדט SEPA לחתום
 ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=חתימה של הצעת מחיר/הצעה מסחרית %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=חתימת החוזה %s
 SignatureFichinterRef=חתימת התערבות %s
 SignatureSociete_ribRef=חתימה של מנדט SEPA %s

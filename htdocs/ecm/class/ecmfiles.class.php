@@ -1044,8 +1044,8 @@ class EcmFiles extends CommonObject
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
 			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
 				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
-			} elseif ($option == 'remisecheque') {	// Remove part "tax/vat/"
-				$tmppath = preg_replace('/^bank\/checkdeposits\//', '', $this->filepath);
+			} elseif ($option == 'remisecheque') {	// Remove part "[entityid/]bank/checkdeposits/"
+				$tmppath = preg_replace('/^(\d+\/)?bank\/checkdeposits\//', '', $this->filepath);
 			} else {
 				if ((int) $this->entity > 1) {
 					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref
@@ -1078,12 +1078,14 @@ class EcmFiles extends CommonObject
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
+		// The picto link is a duplicate of the filename link, so we exclude it from keyboard navigation
+		$linkstartpicto = preg_replace('/^<a /', '<a tabindex="-1" ', $linkstart);
 
 		if ($withpicto) {
 			if (empty($this->filename)) {
-				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
+				$result .= ($linkstartpicto.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
-				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
+				$result .= ($linkstartpicto.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
 			}
 		}
 		$result .= $linkstart.$this->filename.$linkend;

@@ -534,7 +534,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = conferenceorboothPrepareHead($object, $withproject);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBooth"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -615,10 +615,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}
@@ -643,7 +643,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->hasRight('project', 'read'); // If you can read, you can build the PDF to read content
 			$delallowed = $user->hasRight('project', 'write'); // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('eventorganization:ConferenceOrBooth', $object->element.'/'.$objref, $filedir, $urlsource, 0, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+
+			print $formfile->showdocuments($object->element.'@'.$object->module, $objref, $filedir, $urlsource, 0, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
 		// Show links to link elements

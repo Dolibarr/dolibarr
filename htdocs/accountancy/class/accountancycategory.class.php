@@ -215,8 +215,8 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->code) ? "NULL" : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->range_account) ? 'NULL' : "'".$this->db->escape($this->range_account)."'").",";
-		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape((string) $this->sens)."'").",";
-		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape((string) $this->category_type)."'").",";
+		$sql .= " ".(!isset($this->sens) ? "NULL" : ((int) $this->sens)).",";
+		$sql .= " ".(!isset($this->category_type) ? "NULL" : ((int) $this->category_type)).",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
 		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";

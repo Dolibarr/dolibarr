@@ -239,11 +239,13 @@ class ProjectStats extends Stats
 			if ($this->opp_status == 'all') {
 				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1)";
 			}
+			// Both filters use the same partition helper, so a LOST opportunity is reported by
+			// 'notopenedopp' instead of being missing from both filters.
 			if ($this->opp_status == 'openedopp') {
-				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1 AND t.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST')))";
+				$sqlwhere[] = $object->getViewFilterSQL('openedopp', 't');
 			}
 			if ($this->opp_status == 'notopenedopp') {
-				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1 OR t.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
+				$sqlwhere[] = $object->getViewFilterSQL('notopenedopp', 't');
 			}
 			if ($this->opp_status == 'none') {
 				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1)";
@@ -251,8 +253,10 @@ class ProjectStats extends Stats
 		}
 
 		// Restrict to one side of the opportunity/project partition (issue #23821)
-		if ($this->mode == 'lead' || $this->mode == 'project') {
-			$sqlwhere[] = Project::getViewFilterSQL($this->mode, 't');  // @phan-suppress-current-line SqlInjection  (alias whitelisted and ids cast to int)
+		if ($this->mode == 'lead') {
+			$sqlwhere[] = $object->getViewFilterSQL('openedopp', 't');
+		} elseif ($this->mode == 'project') {
+			$sqlwhere[] = $object->getViewFilterSQL('notopenedopp', 't');
 		}
 
 		if (!$user->hasRight('projet', 'all', 'lire')) {

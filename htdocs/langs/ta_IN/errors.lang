@@ -155,9 +155,6 @@ ErrNoZipEngine=இந்த PHPயில் %s கோப்பை ஜிப்/�
 ErrorFileMustBeADolibarrPackage=%s கோப்பு கண்டிப்பாக Dolibarr zip தொகுப்பாக இருக்க வேண்டும்
 ErrorModuleFileRequired=நீங்கள் ஒரு Dolibarr தொகுதி தொகுப்பு கோப்பை தேர்ந்தெடுக்க வேண்டும்
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL நிறுவப்படவில்லை, Paypal உடன் பேச இது அவசியம்
 ErrorFailedToAddToMailmanList=%s என்ற பதிவை Mailman பட்டியலில் %s அல்லது SPIP பேஸில் சேர்ப்பதில் தோல்வி
 ErrorFailedToRemoveToMailmanList=%s என்ற பதிவை Mailman பட்டியலில் இருந்து %s அல்லது SPIP தளத்திற்கு அகற்ற முடியவில்லை
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)

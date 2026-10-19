@@ -93,7 +93,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	$code = '';
 	$srctemplatepath = '';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Set the model to the name of the model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
 			$code = getDolGlobalString('ADHERENT_ETIQUETTE_TYPE');
@@ -172,7 +172,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 				header('Content-Disposition: inline; filename="'.$filename.'"');
 			}
 
-			// Ajout directives pour resoudre bug IE
+			// Add directives to fix IE bug
 			header('Cache-Control: Public, must-revalidate');
 			header('Pragma: public');
 

@@ -93,7 +93,11 @@ class ProjectLeadSeparationTest extends CommonClassTest
 	 */
 	public function testGetViewFilterSQLInvalidViewReturnsEmpty()
 	{
-		$this->assertSame('', Project::getViewFilterSQL('bogus'));
+		global $db;
+
+		$project = new Project($db);
+		$this->assertSame('', $project->getViewFilterSQL('bogus'));
+		$this->assertSame('', $project->getViewFilterSQL('openedopp', 'x'));
 	}
 
 	/**
@@ -101,7 +105,10 @@ class ProjectLeadSeparationTest extends CommonClassTest
 	 */
 	public function testGetViewFilterSQLLeadFragment()
 	{
-		$sql = Project::getViewFilterSQL('lead', 'p');
+		global $db;
+
+		$project = new Project($db);
+		$sql = $project->getViewFilterSQL('openedopp', 'p');
 		$this->assertStringContainsString('p.usage_opportunity = 1', $sql);
 		$this->assertStringContainsString('p.fk_opp_status IS NULL', $sql);
 	}
@@ -119,9 +126,11 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		$idLost = $this->makeProject(1, $ids['lost']);	// lost opportunity -> must fall into PROJECT view
 		$idPure = $this->makeProject(0, null);			// plain project
 
-		$inView = function (int $id, string $view) use ($db) {
+		$project = new Project($db);
+		$inView = function (int $id, string $view) use ($db, $project) {
 			$sql = "SELECT rowid FROM ".$db->prefix()."projet as p WHERE p.rowid = ".((int) $id);
-			$sql .= " AND ".Project::getViewFilterSQL($view, 'p');
+			$sql .= " AND ";
+			$sql .= $project->getViewFilterSQL($view, 'p');
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			$db->free($resql);
@@ -129,14 +138,14 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		};
 
 		// Open opportunity: lead view only
-		$this->assertTrue($inView($idOpen, 'lead'), 'open opp in lead');
-		$this->assertFalse($inView($idOpen, 'project'), 'open opp not in project');
+		$this->assertTrue($inView($idOpen, 'openedopp'), 'open opp in lead');
+		$this->assertFalse($inView($idOpen, 'notopenedopp'), 'open opp not in project');
 		// Lost opportunity: project view only (fixes the LOST gap)
-		$this->assertFalse($inView($idLost, 'lead'), 'lost opp not in lead');
-		$this->assertTrue($inView($idLost, 'project'), 'lost opp in project');
+		$this->assertFalse($inView($idLost, 'openedopp'), 'lost opp not in lead');
+		$this->assertTrue($inView($idLost, 'notopenedopp'), 'lost opp in project');
 		// Plain project: project view only
-		$this->assertFalse($inView($idPure, 'lead'), 'plain project not in lead');
-		$this->assertTrue($inView($idPure, 'project'), 'plain project in project');
+		$this->assertFalse($inView($idPure, 'openedopp'), 'plain project not in lead');
+		$this->assertTrue($inView($idPure, 'notopenedopp'), 'plain project in project');
 	}
 
 	/**

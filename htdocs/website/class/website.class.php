@@ -169,7 +169,7 @@ class Website extends CommonObject
 			$this->date_modification = $now;
 		}
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
@@ -510,7 +510,7 @@ class Website extends CommonObject
 		}
 
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
@@ -834,19 +834,23 @@ class Website extends CommonObject
 					// Save page alias
 					$result = dolSavePageAlias($filealias, $object, $objectpagenew);
 					if (!$result) {
-						setEventMessages('Failed to write file '.$filealias, null, 'errors');
+						$this->error = 'Failed to write file '.$filealias;
+						$this->errors[] = $this->error;
+						$error++;
 					}
 
 					$result = dolSavePageContent($filetplnew, $object, $objectpagenew);
 					if (!$result) {
-						setEventMessages('Failed to write file '.$filetplnew, null, 'errors');
+						$this->error = 'Failed to write file '.$filetplnew;
+						$this->errors[] = $this->error;
+						$error++;
 					}
 
 					if ($pageid == $oldidforhome) {
 						$newidforhome = $objectpagenew->id;
 					}
 				} else {
-					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
+					$this->setErrorsFromObject($objectpageold);
 					$error++;
 				}
 			}
@@ -858,7 +862,7 @@ class Website extends CommonObject
 			$res = $object->update($user);
 			if (!($res > 0)) {
 				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 			}
 
 			if (!$error) {
@@ -1014,14 +1018,16 @@ class Website extends CommonObject
 		$website = $this;
 
 		if (empty($website->id) || empty($website->ref)) {
-			setEventMessages("Website id or ref is not defined", null, 'errors');
+			$this->error = "Website id or ref is not defined";
+			$this->errors[] = $this->error;
 			return '';
 		}
 
 		dol_syslog("Create temp dir ".$conf->website->dir_temp);
 		dol_mkdir($conf->website->dir_temp);
 		if (!is_writable($conf->website->dir_temp)) {
-			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			$this->error = "Temporary dir ".$conf->website->dir_temp." is not writable";
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1031,7 +1037,8 @@ class Website extends CommonObject
 		$countreallydeleted = 0;
 		$counttodelete = dol_delete_dir_recursive($destdir, $count, 1, 0, $countreallydeleted);
 		if ($counttodelete != $countreallydeleted) {
-			setEventMessages("Failed to clean temp directory ".$destdir, null, 'errors');
+			$this->error = "Failed to clean temp directory ".$destdir;
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1104,7 +1111,8 @@ class Website extends CommonObject
 		$filesql_path = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
 		$fp = fopen($filesql_path, "w");
 		if (empty($fp)) {
-			setEventMessages("Failed to create file ".$filesql_path, null, 'errors');
+			$this->error = "Failed to create file ".$filesql_path;
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1320,16 +1328,13 @@ class Website extends CommonObject
 		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
 
-		// Copy containers directory
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
-
-		// Make replacement into css and htmlheader file
-		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
-		$result = dolReplaceInFile($cssindestdir, $arrayreplacement);
+		// Make replacement into css (replace dolSaveCssFile)
+		$cssinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php';
+		$result = dolReplaceInFile($cssinsrcdir, $arrayreplacement);
 
 		// Test if imported CSS page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
-			$newpathofsrcfile = dol_osencode($cssindestdir);
+			$newpathofsrcfile = dol_osencode($cssinsrcdir);
 			$csscontent = file_get_contents($newpathofsrcfile);
 
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
@@ -1341,9 +1346,79 @@ class Website extends CommonObject
 				return -1;
 			}
 		}
+		dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php', $conf->website->dir_output.'/'.$object->ref.'/styles.css.php', '0', 1);
 
-		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
-		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
+
+		// Make replacement in htmlheader.html (replace dolSaveHtmlHeader)
+		$htmldeaderinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
+
+		// Test if imported html page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($htmldeaderinsrcdir);
+			$htmlcontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($htmlcontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in htmlheader.html without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+		dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html', $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html', '0', 1);
+
+
+		//dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
+
+
+		// Copy special files (replace dolSaveLicense and dolSaveHtaccessFile)
+		foreach (array('robots.txt', '.dolibarr', '.htaccess', 'LICENSE', 'README.md') as $filename) {
+			// Test if imported file contains dynamic PHP content
+			$newpathofsrcfile = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/'.$filename);
+			$filecontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($filecontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/'.$filename, $conf->website->dir_output.'/'.$object->ref.'/'.$filename, '0', 1);
+		}
+
+		// Now generate the javascript.js.php
+		$filejs = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/javascript.js.php');
+		$jscontent = @file_get_contents($filejs);
+		// Clean the php js file to remove php code and get only js part
+		$jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $jscontent);
+		$phpcontent = dolKeepOnlyPhpCode($jscontent);
+		if ($phpcontent) {
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
+
+
+		// Now generate the manifest.json.php
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		$manifestjsoncontent = @file_get_contents($filemanifestjson);
+		// Clean the manifestjson file to remove php code and get only html part
+		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
+		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
+		if ($phpcontent) {
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+
 
 		// Now generate the master.inc.php page
 		$filemaster = $conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1353,11 +1428,12 @@ class Website extends CommonObject
 			$error++;
 		}
 
+
 		// Copy dir medias/image/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias images from '.$conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -5;
@@ -1368,7 +1444,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias js into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -6;
@@ -1431,6 +1507,22 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
+					// Reject imported values that are embedded into generated PHP code or used as file names
+					if (preg_match('/[^\w\-]/', (string) $objectpagestatic->type_container) || preg_match('/[^\w\-]/', (string) $objectpagestatic->lang)) {
+						$this->errors[] = 'Bad value for type_container or lang of page ID '.$newid;
+						$error++;
+						continue;
+					}
+					if (is_array($aliasesarray)) {
+						foreach ($aliasesarray as $aliasshortcuttocreate) {
+							if (preg_match('/[^\w\-]/', trim($aliasshortcuttocreate))) {
+								$this->errors[] = 'Bad value for alias of page ID '.$newid;
+								$error++;
+								continue 2;
+							}
+						}
+					}
+
 					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
@@ -1451,6 +1543,9 @@ class Website extends CommonObject
 							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
 							$this->errors[] = $this->error;
 							$error++;
+							// Do not keep on disk a file with unauthorized PHP content
+							dol_delete_file($filetpl, 0, 0, 0, null, false, 0);
+							continue;
 						}
 					}
 
@@ -1801,15 +1896,18 @@ class Website extends CommonObject
 
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
-			setEventMessages("Website id or ref is not defined", null, 'errors');
+			$this->error = "Website id or ref is not defined";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 		if (empty($website->name_template) && empty($exportPath)) {
-			setEventMessages("To export the website template into a directory of the server, the name of the directory/template must be provided.", null, 'errors');
+			$this->error = "To export the website template into a directory of the server, the name of the directory/template must be provided.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 		if (!is_writable($conf->website->dir_temp)) {
-			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			$this->error = "Temporary dir ".$conf->website->dir_temp." is not writable";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
@@ -1824,18 +1922,21 @@ class Website extends CommonObject
 			} else {
 				$exportPath = rtrim($exportPath, '/');
 				if (strpos($exportPath, '..') !== false) {
-					setEventMessages("Invalid path.", null, 'errors');
+					$this->error = "Invalid path.";
+					$this->errors[] = $this->error;
 					return -1;
 				}
 				// if path start with / (absolute path)
 				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
 					if (!is_dir($exportPath)) {
-						setEventMessages("The specified absolute path does not exist.", null, 'errors');
+						$this->error = "The specified absolute path does not exist.";
+						$this->errors[] = $this->error;
 						return -1;
 					}
 
 					if (!is_writable($exportPath)) {
-						setEventMessages("The specified absolute path is not writable.", null, 'errors');
+						$this->error = "The specified absolute path is not writable.";
+						$this->errors[] = $this->error;
 						return -1;
 					}
 					$destdirrel = $exportPath;
@@ -1849,14 +1950,16 @@ class Website extends CommonObject
 		}
 
 		if ($destdir === null) {
-			setEventMessages("The destination path is not determined.", null, 'errors');
+			$this->error = "The destination path is not determined.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
 		dol_mkdir($destdir);
 
 		if (!is_writable($destdir)) {
-			setEventMessages("The specified path ".$destdir." is not writable.", null, 'errors');
+			$this->error = "The specified path ".$destdir." is not writable.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
@@ -1885,10 +1988,12 @@ class Website extends CommonObject
 		// TODO
 
 		if (!empty($resultarray)) {
-			setEventMessages("Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray), null, 'errors');
-		} else {
-			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
+			$this->error = "Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray);
+			$this->errors[] = $this->error;
+			return -1;
 		}
+
+		setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 		exit();

@@ -430,7 +430,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = skillPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -517,10 +517,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')));
 			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>' . "\n";
 	}
@@ -664,7 +664,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->id;
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";

@@ -146,6 +146,17 @@ if ($action == 'add') {
 			$mesgs[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
 		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'create';
+			}
+		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
@@ -338,6 +349,17 @@ if ($action == 'update') {
 			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
 		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'edit';
+			}
+		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
 			// Construct array for parameter (value of select list)
 			$parameters = $param;
@@ -416,7 +438,7 @@ if ($action == 'update') {
 				}
 
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
-				$computedvalue = GETPOST('computed_value', 'nohtml');
+				$computedvalue = GETPOST('computed_value', 'alphanohtml');
 
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
@@ -436,7 +458,7 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'nohtml'),
+					GETPOST('enabled', 'alphanohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),

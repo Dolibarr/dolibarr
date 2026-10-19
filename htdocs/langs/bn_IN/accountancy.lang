@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) অনুদান নিবন্ধন করতে ব্যবহার করা হবে (দান মডিউল)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) সদস্যতা সদস্যতা নিবন্ধন করতে ব্যবহার করা হবে (সদস্য মডিউল - যদি সদস্যতা চালান ছাড়া রেকর্ড করা হয়)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=গ্রাহক আমানত নিবন্ধন করার জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=ডাউন পেমেন্টের লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে গ্রাহক অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=ডাউন পেমেন্ট লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে সরবরাহকারীর অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)

@@ -2,7 +2,7 @@
 /* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2023		Lionel Vessiller		<lvessiller@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ class Accountancy extends DolibarrApi
 			}
 			$doc_date_start = dol_mktime(0, 0, 0, 1, 1, $period_year); // first day of year
 			$doc_date_end = dol_mktime(23, 59, 59, 12, 31, $period_year); // last day of year
-		} elseif ($period == 'fiscalyear' || $period == 'lastfiscalyear' || $period == 'actualandlastfiscalyear') {
+		} elseif (in_array($period, array('fiscalyear', 'lastfiscalyear', 'actualandlastfiscalyear'))) {
 			// find actual fiscal year
 			$cur_fiscal_period = getCurrentPeriodOfFiscalYear($this->db, $conf);
 			$cur_fiscal_date_start = $cur_fiscal_period['date_start'];
@@ -284,8 +284,8 @@ class Accountancy extends DolibarrApi
 				}
 
 				return array(
-					'modulepart' => 'export_compta',
-					'relative_path' => substr($filedata['downloadFilePath'], strlen($outputdir)),
+					'modulepart' => 'accounting',
+					'relative_path' => dol_substr($filedata['downloadFilePath'], dol_strlen($outputdir)),
 					'filename' => basename($filedata['downloadFileFullName']),
 					'mimetype' => $filedata['downloadFileMimeType'],
 				);

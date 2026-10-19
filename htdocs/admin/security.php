@@ -57,7 +57,11 @@ $allow_disable_encryption = false;
  */
 
 if ($action == 'setgeneraterule') {
-	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', GETPOST("value", "alphanohtml"), 'chaine', 0, '', $conf->entity)) {
+	$value = GETPOST("value", "alphanohtml");
+	if (strtolower($value) === 'none' && isPasswordGenerationNoneForbidden()) {
+		// The 'none' model is forbidden on this installation (conf.php lock) — refuse the change.
+		setEventMessages($langs->trans("PasswordGenerationNoneDisabled"), null, 'errors');
+	} elseif (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $value, 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
 	}
 }
@@ -166,6 +170,14 @@ if ($action == 'updatepattern') {
 		$patternInError = true;
 	}
 
+	$minlengthallowed = getPasswordPatternMinLength();
+	if ((int) $explodePattern[0] < $minlengthallowed) {
+		// The 'none' model is forbidden on this installation, so the Perso model cannot be tuned
+		// down below the enforced floor either.
+		$patternInError = true;
+		setEventMessages($langs->trans("PasswordPatternMinLengthRestricted", $minlengthallowed), null, 'errors');
+	}
+
 	if (!$patternInError) {
 		dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -180,15 +192,12 @@ if ($action == 'updatepattern') {
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("GeneratedPasswordDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("GeneratedPasswordDesc")."</div>\n";
 
 
 $head = security_prepare_head();
@@ -198,7 +207,7 @@ print dol_get_fiche_head($head, 'passwords', '', -1);
 print '<br>';
 
 // Select manager to generate passwords
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
@@ -233,7 +242,7 @@ foreach ($dirmodels as $reldir) {
 		closedir($handle);
 	}
 }
-asort($arrayhandler);
+$arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -306,9 +315,14 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '</tr>';
 
 
+	$minlengthallowed = getPasswordPatternMinLength();
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="1"></td>';
+	print '<td>'.$langs->trans("MinLength");
+	if ($minlengthallowed > 1) {
+		print ' <span class="opacitymedium">('.$langs->trans("PasswordPatternMinLengthRestricted", $minlengthallowed).')</span>';
+	}
+	print "</td>";
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="'.$minlengthallowed.'"></td>';
 	print '</tr>';
 
 
@@ -407,7 +421,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 // Crypt passwords in database
 
 print '<br>';
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="encrypt">';
 
@@ -433,7 +447,6 @@ if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 } else {
 	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
-		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {

@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Račun (iz kontnog plana) koji će se koristiti za registraciju donacija (modul za donacije)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Račun (iz kontnog plana) koji će se koristiti za registraciju pretplata na članstvo (modul za članstvo - ako je članstvo evidentirano bez fakture)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Račun (iz plana računa) koji će se koristiti kao zadani račun za registraciju depozita klijenta
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Pohranite korisnički račun kao individualni račun u pomoćnoj knjizi za redove avansa (ako je onemogućen, individualni račun za redove kapare će ostati prazan)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Pohranite račun dobavljača kao individualni račun u pomoćnoj knjizi za redove avansa (ako je onemogućen, pojedinačni račun za redove kapara će ostati prazan)

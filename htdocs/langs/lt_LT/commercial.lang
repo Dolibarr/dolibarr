@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Tai informacija apie intervenciją, k
 ThisIsInformationOnDocumentToSignSociete_rib=Tai informacija apie SEPA įgaliojimą pasirašyti
 ThisIsInformationOnDocumentToSignExpedition= Tai yra informacija apie siuntą, kurią reikia pasirašyti
 SignatureProposalRef=Pasiūlymo / citatos parašas %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Sutarties parašas %s
 SignatureFichinterRef=Intervencijos parašas %s
 SignatureSociete_ribRef=SEPA įgaliojimo parašas %s

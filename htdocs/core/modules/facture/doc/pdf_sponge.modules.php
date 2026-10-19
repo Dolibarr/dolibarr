@@ -11,8 +11,8 @@
  * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Nick Fragoulis
  * Copyright (C) 2024       Franck Moreau
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,6 +79,12 @@ class pdf_sponge extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * @var int height for info total
 	 */
 	public $heightforinfotot;
@@ -110,7 +116,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|int|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}},content?:array{align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -339,7 +345,7 @@ class pdf_sponge extends ModelePDFFactures
 				$nbpayments = count($object->getListOfPayments());
 
 				// Create pdf instance
-				$pdf = pdf_getInstance($this->format);
+				$pdf = pdf_getInstance($this->format);		// Will also define if we use format 1.7, 1.4/A-1b or 1.7/A-3b (embedded fonts)
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->setAutoPageBreak(true, 0);
 
@@ -509,6 +515,33 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$extra_under_address_shift += 25;
+				}
+
+				// Finnish domestic payment barcode. Same data as the QR code but in the
+				// format finnish banks scan from a credit transfer form.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+					$fibarcodedata = dolFIGetInvoiceBarcodeData($object);
+					if ($fibarcodedata != '') {
+						$styleBc = array(
+							'position' => '',
+							'align' => 'L',
+							'stretch' => false,
+							'fitwidth' => true,
+							'cellfitalign' => '',
+							'border' => false,
+							'hpadding' => 'auto',
+							'vpadding' => 0,
+							'fgcolor' => array(0, 0, 0),
+							'bgcolor' => false,
+							'text' => false
+						);
+						$pdf->write1DBarcode($fibarcodedata, 'C128C', $this->marge_gauche, $this->tab_top + $extra_under_address_shift, 90, 13, 0.35, $styleBc, 'N');
+						$pdf->SetXY($this->marge_gauche, $pdf->GetY());
+						$pdf->SetFont('', '', $default_font_size - 4);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentitiesnoconv("FIVirtualBarcode").': '.dolFIFormatVirtualBarcode($fibarcodedata), 0, 'L', false);
+						$extra_under_address_shift += 22;
+					}
 				}
 
 				// Call hook printUnderHeaderPDFline
@@ -904,7 +937,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 
 						// Total with tax line (TTC)
-						if ($this->getColumnStatus('totalincltax')) {
+						if ($this->getColumnStatus('totalincltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						}
@@ -1584,7 +1617,7 @@ class pdf_sponge extends ModelePDFFactures
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$bac->fetch(0, '', $object->thirdparty->id);
 					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
+					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", pdf_truncate_text($pdf, $iban, 6, 'right', ''));
 				}
 
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
@@ -1670,6 +1703,19 @@ class pdf_sponge extends ModelePDFFactures
 				}
 			}
 
+			// A structured payment reference can be paid with on its own, so when no
+			// bank account is shown on the invoice it is printed by itself.
+			$showbankblock = ((empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+				&& ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')));
+			if (!empty($object->payment_reference) && !$showbankblock) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$pdf->SetXY($this->marge_gauche, $posy);
+				// Same weight and size as the IBAN and BIC lines drawn by pdf_bank()
+				$pdf->SetFont('', 'B', $default_font_size - 3);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+				$posy = $pdf->GetY() + 1;
+			}
+
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
@@ -1684,6 +1730,18 @@ class pdf_sponge extends ModelePDFFactures
 					$cury = $posy;
 
 					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
+
+					// The payment reference belongs with the account it is paid to, so it
+					// is shown right after the IBAN and the BIC. Grouped for reading, the
+					// stored value stays compact for the QR code and the SEPA file.
+					if (!empty($object->payment_reference)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+						// Same weight and size as the IBAN and BIC lines above
+						$pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('', 'B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+						$posy = $pdf->GetY();
+					}
 
 					$posy += 2;
 
@@ -1707,11 +1765,14 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
 						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
-						$posy = $pdf->GetY() + 2;
+						// Continue below the QR code, which is taller than the text beside it
+						$posy = max($pdf->GetY(), $qrPosY + 20) + 2;
+						$pdf->SetXY($this->marge_gauche, $posy);
 					}
 
-					// Show structured communication
-					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+					// Show structured communication of invoices validated before the
+					// payment reference was stored on them
+					if (empty($object->payment_reference) && getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
 						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
 
@@ -2231,31 +2292,11 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -2332,7 +2373,7 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -2341,7 +2382,8 @@ class pdf_sponge extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".$object->project->title, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
@@ -2568,10 +2610,13 @@ class pdf_sponge extends ModelePDFFactures
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'targetshipping', $object);
 				} else {
-					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+					// When no explicit shipping address is defined, it means it is same than the billing address. It must not be shown twice.
+					//$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					//$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+					$carac_client_name_shipping = '';
+					$carac_client_shipping = '';
 				}
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
@@ -2673,7 +2718,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = array(
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => getDolGlobalInt('PDF_SPONGE_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -2684,7 +2729,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'content' => array(
 				'align' => 'C',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -2702,7 +2747,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -2710,14 +2755,14 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -2731,7 +2776,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'title' => array(
 				'textkey' => 'VAT'
 			),
@@ -2745,7 +2790,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -2767,7 +2812,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -2778,7 +2823,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ProgressShort'
@@ -2793,7 +2838,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
-			'width' => 11, // in mm
+			'width' => 11.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -2807,7 +2852,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
-			'width' => 13, // in mm
+			'width' => 13.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ReductionShort'
@@ -2821,7 +2866,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => !getDolGlobalBool('PDF_INVOICE_HIDE_PRICE_EXCL_TAX') && !getDolGlobalBool('PDF_PURCHASE_INVOICE_HIDE_PRICE_EXCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalHTShort'
@@ -2832,7 +2877,7 @@ class pdf_sponge extends ModelePDFFactures
 		$rank += 1010; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => getDolGlobalBool('PDF_INVOICE_SHOW_PRICE_INCL_TAX') && !getDolGlobalBool('PDF_PURCHASE_INVOICE_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'

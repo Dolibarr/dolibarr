@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Сметка (од Сметковниот план) што ќе се користи за регистрирање донации (модул за донации)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Сметка (од Сметковниот план) што ќе се користи за регистрирање на претплати за членства (Модул за членство - ако членството е снимено без фактура)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Сметка (од Сметковниот план) да се користи како стандардна сметка за да се регистрира депозит на клиентите
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Чувајте ја клиентската сметка како индивидуална сметка во подружницата за линии за авансни плаќања (ако е оневозможена, индивидуалната сметка за линиите за авансно плаќање ќе остане празна)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Сметката на добавувачот за складирање како индивидуална сметка во подружницата за линии за авансни плаќања (ако е оневозможена, индивидуалната сметка за линиите за аванс ќе остане празна)

@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ if (isModEnabled('category')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -148,6 +147,10 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -238,7 +241,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $separatedPMP = false;
 if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
-	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
+	// COALESCE: a product may have no row yet in llx_product_perentity (rows are created on the
+	// first stock movement), so fall back on the global p.pmp like Product::fetch() does, instead
+	// of valuing such a product at 0.
+	$sql .= ", SUM(COALESCE(pa.pmp, p.pmp) * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
 	$sql .= ", SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 }
@@ -799,6 +805,8 @@ while ($i < $imaxinloop) {
 					print dol_print_phone($object->phone, '', 0, $object->id, 'AC_TEL');
 				} elseif ($key == 'fax') {
 					print dol_print_phone($object->fax, '', 0, $object->id, 'AC_FAX');
+				} elseif (in_array($key, array('lieu', 'description'))) {
+					print '<span class="spantitle">'.$warehouse->showOutputField($val, $key, (string) $object->$key, '').'</span>';
 				} else {
 					print $warehouse->showOutputField($val, $key, (string) $object->$key, '');
 				}
