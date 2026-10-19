@@ -296,4 +296,71 @@ class PaiementTest extends CommonClassTest
 		$sum = (float) price2num($invoice->getSommePaiement(), 'MT');
 		$this->assertEquals(0, $sum, 'Invoice still reports a paid amount after payment deletion');
 	}
+
+	/**
+	 * A payment in the invoice currency that settles its whole remaining amount closes the invoice,
+	 * even when converting that amount gives one cent less than the sum of the converted lines.
+	 *
+	 * @return	void
+	 */
+	public function testPaiementCreateInInvoiceCurrencyClosesInvoice()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+
+		// The test needs the multicurrency module and a currency USD declared
+		require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+		$savmodmulticurrency = $conf->modules['multicurrency'] ?? null;
+		$conf->modules['multicurrency'] = 'multicurrency';
+		if (!MultiCurrency::getIdFromCode($db, 'USD')) {
+			$currency = new MultiCurrency($db);
+			$currency->code = 'USD';
+			$currency->name = 'US Dollar';
+			$this->assertGreaterThan(0, $currency->create($user), 'MultiCurrency::create failed: '.implode(',', $currency->errors));
+		}
+
+		$rate = 1.0862009;
+		$unitpriceininvoicecurrency = 100.10;
+
+		$invoice = new Facture($db);
+		$invoice->initAsSpecimen('nolines');
+		$invoice->multicurrency_code = 'USD';
+		$invoice->multicurrency_tx = $rate;
+		$this->assertLessThan($invoice->create($user), 0, 'Facture::create failed: '.$invoice->error);
+		for ($i = 0; $i < 2; $i++) {
+			$result = $invoice->addline('Line in invoice currency', 0, 1, 0, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT', 0, Facture::TYPE_STANDARD, -1, 0, '', 0, 0, null, 0, '', array(), 100, 0, null, $unitpriceininvoicecurrency);
+			$this->assertLessThan($result, 0, 'Facture::addline failed: '.$invoice->error);
+		}
+		$this->assertLessThan($invoice->validate($user), 0, 'Facture::validate failed: '.$invoice->error);
+		$invoice->fetch($invoice->id);
+
+		$amountininvoicecurrency = (float) price2num($invoice->multicurrency_total_ttc, 'MT');
+		$this->assertNotEquals((float) price2num($amountininvoicecurrency / $rate, 'MT'), (float) price2num($invoice->total_ttc, 'MT'), 'Test needs lines whose converted sum differs from the converted total');
+
+		$payment = new Paiement($db);
+		$payment->datepaye = dol_now();
+		$payment->multicurrency_amounts = array($invoice->id => $amountininvoicecurrency);
+		$payment->multicurrency_code = array($invoice->id => 'USD');
+		$payment->multicurrency_tx = array($invoice->id => $rate);
+		$payment->paiementcode = 'LIQ';
+		$payment->paiementid = dol_getIdFromCode($db, $payment->paiementcode, 'c_paiement', 'code', 'id', 1);
+		$paymentid = $payment->create($user, 1);
+		$this->assertLessThan($paymentid, 0, 'Paiement::create failed: '.$payment->error);
+
+		$invoice->fetch($invoice->id);
+		$this->assertEquals((float) price2num($invoice->total_ttc, 'MT'), (float) price2num($payment->amount, 'MT'), 'Payment amount in company currency differs from the invoice total');
+		$this->assertEquals(Facture::STATUS_CLOSED, $invoice->status, 'Invoice fully paid in its currency is not closed');
+
+		if ($savmodmulticurrency === null) {
+			unset($conf->modules['multicurrency']);
+		} else {
+			$conf->modules['multicurrency'] = $savmodmulticurrency;
+		}
+	}
 }
