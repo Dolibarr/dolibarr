@@ -4265,6 +4265,29 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Resolve 'me' sent as an argument value on user-referencing fields.
+	 *
+	 * The model may answer "assign this task to me" with
+	 * fk_user_assign: 'me' — the same sentinel the write defaults already
+	 * expand to the acting user. Only fields whose name references a user
+	 * are touched: a literal 'me' in a text field (subject, label, note)
+	 * is left alone.
+	 *
+	 * @param  array<string,mixed> $args Tool arguments as sent.
+	 * @return array<string,mixed>      Arguments with 'me' resolved on user fields.
+	 */
+	private function resolveUserSentinels(array $args)
+	{
+		foreach ($args as $name => $value) {
+			if ($value === 'me' && stripos((string) $name, 'user') !== false) {
+				$args[$name] = (int) $this->user->id;
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
@@ -4442,6 +4465,8 @@ class ToolApiBridge extends McpTool
 				return ['error' => $e->getMessage()];
 			}
 		}
+
+		$args = $this->resolveUserSentinels($args);
 
 		$this->getDefinitions();	// ensure routes are built
 		if (empty($this->routes[$name])) {
