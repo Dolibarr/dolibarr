@@ -466,7 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$out = $doleditor->Create(1);
 	} else {
 		$out = '<div class="content">';
-		$out .= $object->answer;
+		$out .= dol_htmlentitiesbr($object->answer);
 		$out .= '</div>';
 	}
 	print $out;

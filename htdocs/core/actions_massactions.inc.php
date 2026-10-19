@@ -137,6 +137,19 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 	$error++;
 }
 
+// The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
+// request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
+// lists and the cards (entity, third parties of the sales representative, projects the user can see...).
+if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+	$objecttmpforaccesscheck = new $objectclass($db);
+	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
+	if (!empty($refusedids)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		$error++;
+	}
+}
+
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
@@ -293,7 +306,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;
@@ -319,7 +332,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receivercc as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val) {	// Id du contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -923,7 +936,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == $objecttmp::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -1002,7 +1015,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == $objecttmp::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -1890,7 +1903,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+// Changing the balance of users requires the same permission than the single user update (holiday/define_holiday.php)
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $user->hasRight('holiday', 'define_holiday') && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	/** @var Holiday $holiday */
 	$db->begin();

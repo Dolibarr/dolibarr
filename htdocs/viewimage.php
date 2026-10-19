@@ -297,6 +297,8 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
+$imagepublicfortakepos = (GETPOSTINT("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category')));
+
 if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
@@ -325,6 +327,13 @@ if (!empty($hashp) && $hashp != 'shared') {
 			}
 		}
 	}
+}
+
+// Check permission on per object basis
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:

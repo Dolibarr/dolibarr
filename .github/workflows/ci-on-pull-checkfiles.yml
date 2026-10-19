@@ -1,0 +1,88 @@
+---
+name: Check PR files
+
+on:
+  # Use pull_request_target (and not pull_request), so the GITHUB_TOKEN is read/write
+  # even for a PR coming from a fork, allowing the workflow to comment the PR and add a label on it.
+  # It is safe because no code of the PR is checked out and executed.
+  pull_request_target:
+    paths-ignore:
+      - '.agents/**'
+
+
+concurrency:
+  group: check-files-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write # to comment the PR
+  issues: write # to add a label on the PR
+
+jobs:
+  check-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check that no translation files outside htdocs/langs/en_US are modified
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (added or modified) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | select(.status == "added" or .status == "modified") | .filename' \
+            | grep -E '^htdocs/langs/' | grep -v '^htdocs/langs/en_US/' || true)
+
+          if [ -n "$CHANGED_FILES" ]; then
+            # Comment the PR to explain that a change on translation files other than en_US is useless.
+            # The comment is added only once, because this workflow is also triggered on each new push into the PR.
+            COMMENT_BODY="PR on files into langs/xx_XX where xx_XX is not en_US is useless because files are erased by Transifex translation of en_US. Change on translation files must be done with PR for en_US only. For other languages (en_NZ, es_ES, ...), fix of translation must be done directly on https://app.transifex.com/dolibarr-association/dolibarr/"
+            if ! gh api "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" --paginate --jq '.[].body' 2>/dev/null | grep -qF "erased by Transifex translation of en_US"; then
+              gh pr comment "${{ github.event.number }}" --repo "${{ github.repository }}" --body "$COMMENT_BODY" \
+                || echo "::warning::Failed to comment the PR."
+            fi
+
+            # Tag the PR as "PR not qualified"
+            #gh pr edit "${{ github.event.number }}" --repo "${{ github.repository }}" --add-label "PR not qualified" \
+            #  || echo "::warning::Failed to add the label \"PR not qualified\" on the PR."
+
+            echo "::error::Translation files outside htdocs/langs/en_US must not be modified in a pull request. Translations are generated from en_US. The following files were modified:"
+            echo "$CHANGED_FILES" | awk '{ print " - " $0 }'
+            echo ""
+            echo "Please revert your changes on these files and keep only modifications in htdocs/langs/en_US/."
+            exit 1
+          fi
+
+          echo "No translation files outside htdocs/langs/en_US were modified. OK."
+
+          # If a previous run of this check has tagged the PR as "PR not qualified",
+          # remove the label now that the forbidden files have been reverted.
+          #if gh api "repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" 2>/dev/null | grep -qF '"name": "PR not qualified"'; then
+          #  gh pr edit "${{ github.event.number }}" --repo "${{ github.repository }}" --remove-label "PR not qualified" \
+          #    || echo "::warning::Failed to remove the label \"PR not qualified\" on the PR."
+          #fi
+
+      - name: Check the number of modified files is not higher than 10, except for QUAL PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # A PR of type QUAL can modify more than 10 files, other types can not.
+          if printf '%s' "$PR_TITLE" | grep -Eiq '^Qual[ #:]'; then
+            echo "The PR is of type QUAL, so the number of modified files is not limited to 10."
+            exit 0
+          fi
+
+          # Count the files modified by the PR, using the GitHub API so no git history is needed (no checkout).
+          NB_CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" --jq '.[].filename' | sed '/^$/d' | wc -l)
+          echo "Number of files modified by the PR: ${NB_CHANGED_FILES}"
+
+          if [ "${NB_CHANGED_FILES}" -gt 10 ]; then
+            PR_TYPE=$(printf '%s' "$PR_TITLE" | grep -Eio '^(Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)[ #:]' | sed -E 's/[ #:]+$//' || true)
+            if [ -z "${PR_TYPE}" ]; then
+              PR_TYPE="unknown"
+            fi
+            echo "::error::This PR of type '${PR_TYPE}' modifies ${NB_CHANGED_FILES} files, and this is higher than the limit of 10 for a PR that is not of type QUAL. PR that need to modify more than 10 files are rarely following the CONTRIBUTING guideline to push atomic PR (see the CONTRIBUTING.md file). Maybe the branch of the PR still includes commits of other PR and was not correctly merged before being pushed. You must split it into several parts to have it merged. Don't forget that too large PR generates a lot of pain for all contributors, increasing exponentially their risk of conflict and time of analysis to make impact analysis. This will also increase seriously the probability to have your PR merged, and in a shorter time."
+            exit 1
+          fi
+
+          echo "The number of files modified by the PR is not higher than 10. OK."
