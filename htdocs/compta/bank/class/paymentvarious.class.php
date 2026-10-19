@@ -410,6 +410,13 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
+		// Delete attached documents directory
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$dir = $conf->bank->dir_output.'/various_payment/'.((int) $this->id);
+		if (file_exists($dir)) {
+			dol_delete_dir_recursive($dir);
+		}
+
 		return 1;
 	}
 
