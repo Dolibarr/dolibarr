@@ -156,6 +156,16 @@ class Mailing extends CommonObject
 	public $date_envoi;
 
 	/**
+	 * @var int|'' Date the recipient list was validated
+	 */
+	public $date_appro;
+
+	/**
+	 * @var int User who validated the recipient list
+	 */
+	public $fk_user_appro;
+
+	/**
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
@@ -455,8 +465,8 @@ class Mailing extends CommonObject
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;
 				$this->fk_user_modif = $obj->fk_user_modif;
-				$this->fk_user_appro = $obj->fk_user_appro;
-				$this->date_appro = $obj->date_appro;
+				$this->fk_user_appro = (int) $obj->fk_user_appro;
+				$this->date_appro = $this->db->jdate($obj->date_appro);
 				$this->cible = $obj->cible;
 				$this->joined_file1 = $obj->joined_file1;
 				$this->joined_file2 = $obj->joined_file2;
@@ -693,9 +703,10 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *  Validate emailing
+	 *  Validate both the message and the recipient list, and mark the mailing ready to send.
+	 *  Used by the API and by the reset action. The screen validates each part on its own page.
 	 *
-	 *  @param	User	$user      	Object user qui valide
+	 *  @param	User	$user      	User who validates
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user)
@@ -703,16 +714,188 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
+		$sql .= " SET statut = ".((int) self::STATUS_VALIDATED);
+		$sql .= ", date_valid = '".$this->db->idate($now)."', fk_user_valid = ".((int) $user->id);
+		$sql .= ", date_appro = '".$this->db->idate($now)."', fk_user_appro = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			$this->status = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;
+			$this->date_validation = $now;
+			$this->user_validation_id = $user->id;
+			$this->date_appro = $now;
+			$this->fk_user_appro = $user->id;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+	}
+
+	/**
+	 * Validate the message. The mailing stays a draft until the recipient list is validated too.
+	 *
+	 * @param	User	$user	User who validates the message
+	 * @return	int				Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function validMessage(User $user)
+	{
+		if ((int) $this->status === self::STATUS_SENTPARTIALY || (int) $this->status === self::STATUS_SENTCOMPLETELY) {
+			return 0;
+		}
+
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+		$sql .= " SET date_valid = '".$this->db->idate($now)."', fk_user_valid = ".((int) $user->id);
+		$sql .= ", tms = '".$this->db->idate($now)."', fk_user_modif = ".((int) $user->id);
+		if (!empty($this->date_appro)) {
+			$sql .= ", statut = ".((int) self::STATUS_VALIDATED);
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::validMessage", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->date_validation = $now;
+			$this->user_validation_id = $user->id;
+			if (!empty($this->date_appro)) {
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;
+			}
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
+	/**
+	 * Validate the recipient list. The mailing stays a draft until the message is validated too.
+	 *
+	 * @param	User	$user	User who validates the recipient list
+	 * @return	int				Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function validRecipients(User $user)
+	{
+		if ((int) $this->status === self::STATUS_SENTPARTIALY || (int) $this->status === self::STATUS_SENTCOMPLETELY) {
+			return 0;
+		}
+		if ((int) $this->nbemail <= 0) {
+			global $langs;
+			$langs->load('mails');
+			$this->error = $langs->trans('NoTargetYet');
+			return -1;
+		}
+
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+		$sql .= " SET date_appro = '".$this->db->idate($now)."', fk_user_appro = ".((int) $user->id);
+		$sql .= ", tms = '".$this->db->idate($now)."', fk_user_modif = ".((int) $user->id);
+		if (!empty($this->date_validation)) {
+			$sql .= ", statut = ".((int) self::STATUS_VALIDATED);
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::validRecipients", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->date_appro = $now;
+			$this->fk_user_appro = $user->id;
+			if (!empty($this->date_validation)) {
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;
+			}
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
+	/**
+	 * Drop the message validation. A mailing that was ready to send goes back to draft.
+	 * A mailing already sent keeps its validation.
+	 *
+	 * @param	User	$user	User who edits the message
+	 * @return	int				Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function clearMessageValidation(User $user)
+	{
+		if ((int) $this->status === self::STATUS_SENTPARTIALY || (int) $this->status === self::STATUS_SENTCOMPLETELY) {
+			return 0;
+		}
+		if (empty($this->date_validation)) {
+			return 0;
+		}
+
+		$now = dol_now();
+		$wasvalidated = ((int) $this->status === self::STATUS_VALIDATED);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+		$sql .= " SET date_valid = NULL, fk_user_valid = NULL";
+		$sql .= ", tms = '".$this->db->idate($now)."', fk_user_modif = ".((int) $user->id);
+		if ($wasvalidated) {
+			$sql .= ", statut = ".((int) self::STATUS_DRAFT);
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::clearMessageValidation", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->date_validation = '';
+			$this->user_validation_id = 0;
+			if ($wasvalidated) {
+				$this->status = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT;
+			}
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
+	/**
+	 * Drop the recipient-list validation. A mailing that was ready to send goes back to draft.
+	 * A mailing already sent keeps its validation.
+	 *
+	 * @param	User	$user	User who changes the recipient list
+	 * @return	int				Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function clearRecipientsValidation(User $user)
+	{
+		if ((int) $this->status === self::STATUS_SENTPARTIALY || (int) $this->status === self::STATUS_SENTCOMPLETELY) {
+			return 0;
+		}
+		if (empty($this->date_appro)) {
+			return 0;
+		}
+
+		$now = dol_now();
+		$wasvalidated = ((int) $this->status === self::STATUS_VALIDATED);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+		$sql .= " SET date_appro = NULL, fk_user_appro = NULL";
+		$sql .= ", tms = '".$this->db->idate($now)."', fk_user_modif = ".((int) $user->id);
+		if ($wasvalidated) {
+			$sql .= ", statut = ".((int) self::STATUS_DRAFT);
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::clearRecipientsValidation", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->date_appro = '';
+			$this->fk_user_appro = 0;
+			if ($wasvalidated) {
+				$this->status = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT;
+			}
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		return -1;
 	}
 
 	/**
@@ -726,11 +909,18 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".((int) $user->id);
+		$sql .= " SET statut = ".((int) self::STATUS_DRAFT).", tms = '".$this->db->idate($now)."', fk_user_modif = ".((int) $user->id);
+		$sql .= ", date_valid = NULL, fk_user_valid = NULL, date_appro = NULL, fk_user_appro = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog("Mailing::valid", LOG_DEBUG);
+		dol_syslog("Mailing::setDraft", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			$this->status = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;
+			$this->date_validation = '';
+			$this->user_validation_id = 0;
+			$this->date_appro = '';
+			$this->fk_user_appro = 0;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
