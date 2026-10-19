@@ -571,6 +571,44 @@ class DateLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check previous weeks across month and year boundaries.
+	 *
+	 * @return void
+	 */
+	public function testDolGetPrevWeek()
+	{
+		global $conf;
+
+		$oldstartweek = isset($conf->global->MAIN_START_WEEK) ? getDolGlobalInt('MAIN_START_WEEK') : null;
+		$oldtimezone = date_default_timezone_get();
+		try {
+			date_default_timezone_set('UTC');
+			$cases = array(
+				array(1, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 19)),
+				array(1, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 23)),
+				array(1, 1, 3, 2023, array('year' => 2023, 'month' => 2, 'day' => 20)),
+				array(1, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 4)),
+				array(1, 1, 6, 2026, array('year' => 2026, 'month' => 5, 'day' => 25)),
+				array(1, 1, 1, 2024, array('year' => 2023, 'month' => 12, 'day' => 25)),
+				array(0, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 18)),
+				array(0, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 22)),
+				array(0, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 3))
+			);
+			foreach ($cases as $case) {
+				$conf->global->MAIN_START_WEEK = $case[0];
+				$this->assertSame($case[4], dol_get_prev_week($case[1], 0, $case[2], $case[3]));
+			}
+		} finally {
+			date_default_timezone_set($oldtimezone);
+			if ($oldstartweek === null) {
+				unset($conf->global->MAIN_START_WEEK);
+			} else {
+				$conf->global->MAIN_START_WEEK = $oldstartweek;
+			}
+		}
+	}
+
+	/**
 	 * testGetFirstDayOfEachWeek
 	 *
 	 * @return int

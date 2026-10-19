@@ -1087,13 +1087,9 @@ if ($search_amount_no_tax) {
 if ($search_amount_all_tax) {
 	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 }
-if ($search_status != '') {
-	if (is_array($search_status)) {
-		foreach ($search_status as $key => $val) {
-			$param .= '&search_status[]='.urlencode($val);
-		}
-	} else {
-		$param .= '&search_status='.urlencode($search_status);
+if (is_array($search_status)) {
+	foreach ($search_status as $key => $val) {
+		$param .= '&search_status[]='.urlencode($val);
 	}
 }
 if ($search_paymentmode) {
