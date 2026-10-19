@@ -783,6 +783,7 @@ class ToolApiBridge extends McpTool
 				'get' => [
 					'description' => "One project with its dates, status, budget, opportunity data and linked third party."
 				],
+				'put' => $this->projectUpdateMethod(),
 				'getByRef' => [
 					'suffix' => 'get_by_ref',
 					'description' => "One project by its exact reference (e.g. 'PJ2401-0001').",
@@ -1136,6 +1137,22 @@ class ToolApiBridge extends McpTool
 					'module' => 'variants',
 					'description' => "Variants of one parent product.",
 					'params' => ['id' => 'Rowid of the PARENT product.', 'includestock' => "1 to add stock data on each variant."]
+				],
+				'getStock' => [
+					'suffix' => 'stock',
+					// Needs the Stock module on top of Products: when it is off
+					// the tool does not exist, instead of the bare 403 the API
+					// method throws.
+					'module' => 'stock',
+					// Declared so a caller without stock/lire neither sees the
+					// tool in tools/list nor hits the API's bare 403; the
+					// endpoint's own produit/lire check stays downstream.
+					'right' => [['produit', 'lire'], ['stock', 'lire']],
+					'description' => "Physical stock of one product: per-warehouse quantities in stock_warehouses (keyed by warehouse rowid, signed qty, with batch detail when lot tracking is on) plus the stock_reel and stock_theorique totals. Answers \"how much of product X do we have\" and \"where is it stored\". Identify the product by rowid — look it up first with api_products_list when only the ref is known.",
+					'params' => [
+						'id' => "Rowid of the product.",
+						'selected_warehouse_id' => "Rowid of a warehouse to return its stock only; omitted for every warehouse."
+					]
 				]
 			]
 		];
@@ -2060,6 +2077,36 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Describe bounded edits of an existing project.
+	 *
+	 * @return array<string,mixed> Method enrichment
+	 */
+	private function projectUpdateMethod()
+	{
+		return [
+			'suffix' => 'update',
+			'description' => 'Partially update a draft or open project by exactly one positive id or exact ref. Omitted fields stay unchanged; empty text clears it, null clears a date. Project dates have day precision in the server timezone. The user confirms old-to-new values. No status, sharing, ownership, contacts, tasks or extrafield changes.',
+			'write' => [
+				'preview' => 'AIPreviewUpdateProject',
+				'right' => ['projet', 'creer'], 'read_right' => ['projet', 'lire'],
+				'parent' => 'id', 'ref' => 'ref', 'object' => 'Project',
+				'access' => ['project', '', ''], 'project_update' => true,
+				'trim_fields' => ['title', 'description', 'note_public', 'note_private'],
+				'sanitize_fields' => ['title' => 'alphanohtml', 'description' => 'restricthtml', 'note_public' => 'restricthtml', 'note_private' => 'restricthtml'],
+				'preview_labels' => ['title' => 'Label', 'description' => 'Description', 'note_public' => 'NotePublic', 'note_private' => 'NotePrivate', 'date_start' => 'DateStart', 'date_end' => 'DateEnd'],
+				'preview_dates' => ['date_start', 'date_end'], 'preview_dateonly' => true,
+				'compact_result' => true,
+				'update' => [
+					'title' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
+					'description' => ['type' => 'string'], 'note_public' => ['type' => 'string'], 'note_private' => ['type' => 'string'],
+					'date_start' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Day precision in the server timezone.'],
+					'date_end' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Must not precede the resulting start date.']
+				]
+			]
+		];
+	}
+
+	/**
 	 * Load the REST API runtime (Restler autoloader + DolibarrApi base classes),
 	 * mirroring the bootstrap sequence of htdocs/api/index.php, so that the
 	 * endpoint classes (which extend DolibarrApi and throw RestException) can be
@@ -2727,9 +2774,36 @@ class ToolApiBridge extends McpTool
 		// A write declares its right here as well as relying on the REST class,
 		// so the call is refused before the gate issues a confirmation: no
 		// preview for a write the user could never perform.
-		$write = $this->writeMetaFor($toolName);
+		$meta = $this->methodMetaFor($toolName);
+		$write = isset($meta['write']) ? $meta['write'] : array();
 		if (!empty($write['right'])) {
 			return empty($write['read_right']) ? array($write['right']) : array($write['right'], $write['read_right']);
+		}
+
+		// A read method may declare the rights it needs on top of the
+		// endpoint's own base checks (products.getStock also needs
+		// stock/lire). Declaring them keeps the tool out of tools/list for a
+		// caller who lacks them, and refuses the call with a named right
+		// instead of the bare 403 the API class would throw. Both shapes are
+		// accepted: a single triple ['module','perm'] or a list of triples.
+		if (!empty($meta['right'])) {
+			$declared = (isset($meta['right'][0]) && is_array($meta['right'][0])) ? $meta['right'] : array($meta['right']);
+			$rights = array();
+			foreach ($declared as $triple) {
+				if (!is_array($triple)) {
+					continue;
+				}
+				$strings = array();
+				foreach (array_values($triple) as $v) {
+					$strings[] = (string) $v;
+				}
+				if ($strings) {
+					$rights[] = $strings;
+				}
+			}
+			if ($rights) {
+				return $rights;
+			}
 		}
 
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
@@ -2782,7 +2856,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string $class Business class declared by the write.
 	 * @param  int    $id    Rowid of the record.
 	 * @param  string $ref   Exact reference when no rowid was supplied.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|null Record, or null when it cannot be read.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|null Record, or null when it cannot be read.
 	 */
 	protected function fetchBusinessObject($class, $id, $ref = '')
 	{
@@ -2797,14 +2871,15 @@ class ToolApiBridge extends McpTool
 			'Product' => '/product/class/product.class.php',
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
-			'Ticket' => '/ticket/class/ticket.class.php'
+			'Ticket' => '/ticket/class/ticket.class.php',
+			'Project' => '/projet/class/project.class.php'
 		);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project $obj';
 		$result = $ref === '' ? $obj->fetch((int) $id) : $obj->fetch((int) $id, $ref);
 		if ($result > 0) {
 			return $obj;
@@ -2832,7 +2907,7 @@ class ToolApiBridge extends McpTool
 	 *
 	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
 	 * @param  array<string,mixed> $args  Arguments of the call.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|null Record, or null when not found.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Project|null Record, or null when not found.
 	 */
 	private function fetchWriteParent(array $write, array $args)
 	{
@@ -2882,6 +2957,41 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Apply native project write authorization, not merely read-all visibility.
+	 *
+	 * @param Project $project Project already checked for visibility and entity
+	 * @return bool Whether the acting user can edit the project
+	 */
+	protected function canWriteProject($project)
+	{
+		return $project->restrictedProjectArea($this->user, 'write') > 0;
+	}
+
+	/**
+	 * Check resulting dates, project write access and native update side effects.
+	 *
+	 * @param array<string,mixed> $args Normalized update arguments
+	 * @param Project $parent Existing record
+	 * @return void
+	 * @throws InvalidArgumentException When the edit is not safe
+	 */
+	private function validateProjectUpdate(array $args, $parent)
+	{
+		$project = $parent;
+		if (!$project || !$this->canAccessWriteObject(['project', '', ''], (int) $project->id) || !$this->canWriteProject($project)) {
+			throw new InvalidArgumentException('Access denied to project');
+		}
+		if (!in_array($project->status ?? null, [0, 1, '0', '1'], true)) {
+			throw new InvalidArgumentException('Only draft or open projects can be edited by this tool');
+		}
+		$start = array_key_exists('date_start', $args) ? $args['date_start'] : $parent->date_start;
+		$end = array_key_exists('date_end', $args) ? $args['date_end'] : $parent->date_end;
+		if ($start && $end && $end < $start) {
+			throw new InvalidArgumentException('End date must not precede start date');
+		}
+	}
+
+	/**
 	 * Normalise and validate partial updates without creation defaults.
 	 *
 	 * @param array<string,mixed> $args Incoming arguments
@@ -2923,11 +3033,22 @@ class ToolApiBridge extends McpTool
 			throw new InvalidArgumentException('Supply only the permitted update fields, with at least one change');
 		}
 		foreach ($changes as $field => $value) {
+			if (is_string($value) && in_array($field, $write['trim_fields'] ?? [], true)) {
+				$value = trim($value);
+				$changes[$field] = $args[$field] = $value;
+			}
+			if (is_string($value) && !empty($write['sanitize_fields'][$field]) && sanitizeVal($value, $write['sanitize_fields'][$field]) !== $value) {
+				throw new InvalidArgumentException('Text would be changed by API sanitization: '.$field);
+			}
 			$types = (array) $write['update'][$field]['type'];
 			$valid = ($value === null && in_array('null', $types, true))
 				|| (is_string($value) && in_array('string', $types, true))
 				|| (is_int($value) && in_array('integer', $types, true) && $value >= ($write['update'][$field]['minimum'] ?? 0))
 				|| (is_array($value) && in_array('object', $types, true) && !array_filter(array_keys($value), 'is_int'));
+			$definition = $write['update'][$field];
+			if (is_string($value)) {
+				$valid = $valid && dol_strlen($value) >= ($definition['minLength'] ?? 0) && dol_strlen($value) <= ($definition['maxLength'] ?? PHP_INT_MAX);
+			}
 			if (!$valid) {
 				throw new InvalidArgumentException('Invalid value for '.$field);
 			}
@@ -2943,6 +3064,9 @@ class ToolApiBridge extends McpTool
 		}
 		if (!$this->canAccessWriteObject($write['access'], (int) $parent->id)) {
 			throw new InvalidArgumentException('Access denied to record');
+		}
+		if (!empty($write['project_update'])) {
+			$this->validateProjectUpdate($args, $parent);
 		}
 		foreach (($write['references'] ?? []) as $field => $access) {
 			if (!empty($changes[$field]) && !$this->canAccessWriteObject($access, (int) $changes[$field])) {
@@ -3409,7 +3533,12 @@ class ToolApiBridge extends McpTool
 			if (!$parent) {
 				return 'Record not found';
 			}
-			$supplier = $this->fetchBusinessObject('Societe', (int) $parent->socid);
+			if (!empty($write['project_update'])) {
+				$context = (string) $parent->title;
+			} else {
+				$supplier = $this->fetchBusinessObject('Societe', (int) $parent->socid);
+				$context = $supplier ? $supplier->name : '';
+			}
 			$langs->load('sendings');
 			$changes = [];
 			foreach ($write['update'] as $field => $definition) {
@@ -3422,13 +3551,17 @@ class ToolApiBridge extends McpTool
 						}
 					} else {
 						$isdate = in_array($field, $write['preview_dates'] ?? [], true);
-						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, 'standard', 'gmt').' UTC' : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], 'standard', 'gmt').' UTC' : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$dateonly = !empty($write['preview_dateonly']);
+						$format = $dateonly ? 'dayrfc' : 'standard';
+						$tz = $dateonly ? 'tzserver' : 'gmt';
+						$suffix = $dateonly ? '' : ' UTC';
+						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, $format, $tz).$suffix : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], $format, $tz).$suffix : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 						$changes[] = $label.': '.$oldvalue.' → '.$newvalue;
 					}
 				}
 			}
-			return $langs->trans($write['preview'], $parent->ref, $supplier ? $supplier->name : '', implode('; ', $changes));
+			return $langs->trans($write['preview'], $parent->ref, (string) $context, implode('; ', $changes));
 		}
 
 		$args = $this->normaliseWriteArgs($args, $write);
@@ -4249,14 +4382,24 @@ class ToolApiBridge extends McpTool
 	 */
 	private function writeMetaFor($toolName)
 	{
+		$meta = $this->methodMetaFor($toolName);
+
+		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * Find the enrichment of the method a tool name maps to.
+	 *
+	 * @param  string $toolName Tool name (api_<endpoint>_<suffix>).
+	 * @return array<string,mixed>              Method enrichment, or array() when unknown.
+	 */
+	private function methodMetaFor($toolName)
+	{
 		foreach ($this->enrichments as $key => $meta) {
 			foreach (($meta['methods'] ?? array()) as $method => $mmeta) {
-				if (empty($mmeta['write'])) {
-					continue;
-				}
 				$suffix = $mmeta['suffix'] ?? ($method === 'index' ? 'list' : strtolower($method));
 				if ($toolName === 'api_'.$key.'_'.$suffix) {
-					return $mmeta['write'];
+					return $mmeta;
 				}
 			}
 		}
@@ -4604,6 +4747,11 @@ class ToolApiBridge extends McpTool
 						$done['ref'] = $ref;
 					}
 					$output = $done;
+				} elseif (!empty($writemeta['compact_result'])) {
+					if (!is_array($output) || (int) ($output['id'] ?? 0) !== (int) $args[$writemeta['parent']] || !is_string($output['ref'] ?? null) || $output['ref'] === '') {
+						throw new RuntimeException('The API did not return the updated record');
+					}
+					$output = ['success' => true, 'id' => (int) $output['id'], 'ref' => $output['ref']];
 				} elseif (!is_array($output)) {
 					// A create returns the new rowid as a scalar: name it, so the
 					// caller gets the same shape as any other tool result.
@@ -4670,7 +4818,7 @@ class ToolApiBridge extends McpTool
 
 		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
 		$elementForExtrafields = $this->extrafieldsElementForEndpoint($key);
-		if ($elementForExtrafields !== '') {
+		if ($elementForExtrafields !== '' && empty($writemeta['compact_result'])) {
 			require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
 			$output = aiStripPersonalExtrafields($this->db, $output, $elementForExtrafields);
 		}
