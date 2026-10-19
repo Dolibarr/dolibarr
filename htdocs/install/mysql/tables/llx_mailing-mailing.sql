@@ -37,20 +37,20 @@ create table llx_mailing
   email_errorsto	varchar(160),                        -- Email addresse for errors
   tag				varchar(128) NULL,
   date_creat		datetime,                            -- creation date
-  date_valid		datetime,                            --
-  date_appro		datetime,                            --
+  date_valid		datetime,                            -- date the message was validated
+  date_appro		datetime,                            -- date the recipient list was validated
   date_envoi		datetime,                            -- date d'envoi
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat		integer,                             -- user creator
   fk_user_modif		integer,                             -- user of last modification
-  fk_user_valid		integer,                             -- user validator
-  fk_user_appro		integer,                             -- not used
+  fk_user_valid		integer,                             -- user who validated the message
+  fk_user_appro		integer,                             -- user who validated the recipient list
   extraparams		varchar(255),						 -- to stock other parameters with json format
   joined_file1		varchar(255),
   joined_file2		varchar(255),
   joined_file3		varchar(255),
   joined_file4		varchar(255),
-  statut			smallint       DEFAULT 0,            -- status (draft:0, valid: 1, approved: 2, sent: 3)
+  statut			smallint       DEFAULT 0,            -- status (draft:0, valid: 1, sent partially: 2, sent completely: 3). Status 1 requires both the message and the recipient list to be validated.
   note_private    text,
   note_public     text,
   fk_project	integer DEFAULT NULL

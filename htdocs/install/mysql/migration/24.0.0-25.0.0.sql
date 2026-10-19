@@ -506,3 +506,8 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- A mass mailing already validated or sent had one stamp for the whole object.
+-- That stamp now means the message is validated. Copy it onto the recipient-list stamp
+-- so those mailings stay sendable.
+UPDATE llx_mailing SET date_appro = date_valid, fk_user_appro = fk_user_valid WHERE statut > 0 AND date_appro IS NULL AND date_valid IS NOT NULL;
