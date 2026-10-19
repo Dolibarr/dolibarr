@@ -1087,9 +1087,9 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 		print '<tr>';
 		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
-			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+			print $form->textwithpicto($langs->trans($bankaccount->getBankFieldLabel($val)), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
-			print $langs->trans($val);
+			print $langs->trans($bankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
