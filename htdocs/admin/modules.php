@@ -67,7 +67,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "modulebuilder"));
+$langs->loadLangs(array("admin", "modulebuilder"));
 
 $action = GETPOST('action', 'aZ09');
 $page = GETPOSTINT('page');
@@ -173,6 +173,9 @@ if ($mode == 'marketplace') {
 	// Make remote calls
 	if (GETPOSTINT('dol_resetcache')) {
 		dol_delete_file($remotestore->cache_file);
+		foreach ($remotestore->custom_sources as $customsource) {
+			dol_delete_file($customsource['cache_file']);
+		}
 	}
 	$remotestore->loadRemoteSources(false);
 }
@@ -246,7 +249,7 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$original_file) {
-		$langs->load("Error");
+		$langs->load("errors");
 		if ($isExternalDownload) {
 			setEventMessages($langs->trans("ErrorFailToDownloadModuleFromSource", $producttoinstall['name']), null, 'warnings');
 		} else {
@@ -297,6 +300,7 @@ if ($action == 'install' && $allowonlineinstall) {
 					$modulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename; // Example ./htdocs/mymodule
 					//var_dump($modulenamedir);
 					if (!dol_is_dir($modulenamedir)) {
+						$langs->load("errors");
 						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>'.$langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat2", $modulename, 'htdocs/'.$modulename), null, 'errors');
 						$error++;
 					}
@@ -406,6 +410,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile).' - code = '.$result, null, 'errors');
 			$error++;
 		}
@@ -1071,7 +1076,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external' && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && getDolGlobalString($const_name) && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+			// Check is done only for activated modules.
 			// Setting CHECKLASTVERSION_EXTERNALMODULE to on is a bad practice to activate a check on an external access during the building of the admin page.
 			// 1 external module can hang the application.
 			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
@@ -1079,11 +1085,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($checkRes > 0) {
 				setEventMessages($objMod->getName().' : '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $versiontrans).' -> '.preg_replace('/[^a-z0-9_\.\-\s]/i', '', $objMod->lastVersion), null, 'warnings');
 			} elseif ($checkRes < 0) {
+				$langs->load("errors");
 				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && getDolGlobalString($const_name) && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
 			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
 			if (!is_numeric($checkRes) && $checkRes != '') {
 				$langs->load("errors");
@@ -1440,6 +1447,38 @@ if ($mode == 'marketplace') {
 	print '</tr>';
 
 
+	// Sources additional github repositories (defined by MAIN_ADD_EXTERNAL_MODULES_SOURCE)
+	foreach ($remotestore->custom_sources as $customsource) {
+		$url = $customsource['url'];
+
+		print '<tr class="oddeven nohover" height="100">'."\n";
+		print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'fa-code-branch', 'class="size2x"').'</a></td>';
+		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("AdditionalModulesSourceDesc").'</span><br>';
+		print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.dol_escape_htmltag($url).'</a>';
+		if ($customsource['branch']) {
+			print '<!-- &nbsp; '.img_picto($langs->trans("Branch"), 'fa-code-branch', 'class="pictofixedwidth"').dol_escape_htmltag($customsource['branch']).' -->';
+		}
+		print '</td>';
+		print '<td>';
+		print ajax_constantonoff($customsource['const_enable'], array(), null, 0, 0, 1);
+		print '</td>';
+		print '<td class="center">';
+		if (getDolGlobalInt($customsource['const_enable'])) {
+			$messagetoadd = '';
+			if ($customsource['file_source_url']) {
+				$messagetoadd = '<br><br><span class="small">Content of the repository index file '.dol_escape_htmltag($customsource['file_source_url']).' should be in the local cache file '.$customsource['cache_file'];
+				$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($customsource['cache_file']), 'dayhour', 'tzuserrel').')</span>';
+			}
+			if ($customsource['error']) {
+				$messagetoadd .= '<br><span class="error small">'.dol_escape_htmltag($customsource['error']).'</span>';
+			}
+			print $remotestore->libStatus($customsource['status'], 2, $messagetoadd);
+		}
+		print '</td>';
+		print '</tr>';
+	}
+
+
 	// Source Marketplace DoliStore
 	$url = 'https://www.dolistore.com';
 
@@ -1682,6 +1721,7 @@ if ($mode == 'deploy') {
 			}
 
 			if ($maxmin > 0) {
+				$langs->load("errors");
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {

@@ -561,13 +561,13 @@ if ($projectid > 0) {
 	print '<tr><td class="">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount:6', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount:6', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="">';
@@ -582,7 +582,7 @@ if ($projectid > 0) {
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	if (empty($project->date_start_event) || empty($project->date_end_event)) {
 		print img_warning($langs->trans("EventStartOrEndDateNotDefined"), '', 'marginleftonlyshort');
@@ -606,7 +606,7 @@ if ($projectid > 0) {
 	print "</td></tr>";
 
 	// Link to the submit vote/register page
-	print '<tr><td class="">';
+	print '<tr><td>';
 	//print '<span class="opacitymedium">';
 	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 	//print '</span>';
@@ -616,14 +616,14 @@ if ($projectid > 0) {
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-	print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+	print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
 	print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
 
 	// Link to the subscribe
-	print '<tr><td class="">';
+	print '<tr><td>';
 	//print '<span class="opacitymedium">';
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
@@ -655,6 +655,9 @@ if (!empty($project->id)) {
 
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, '', 0, '', 'reposition');
 }
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -709,7 +712,12 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			if ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
+				// Label is shown into the ref column, so search on both
+				$sql .= natural_search(array('t.ref', 't.label'), $search[$key]);
+			} else {
+				$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			}
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -915,8 +923,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1104,7 +1110,7 @@ while ($i < $imaxinloop) {
 			if (in_array($val['type'], array('timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
+				$cssforfield .= ($cssforfield ? ' ' : '').(empty($arrayfields['t.label']['checked']) ? 'tdlineheightsmall' : 'nowraponall');
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
@@ -1121,7 +1127,19 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'ref') {
-					print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+					if (empty($arrayfields['t.label']['checked'])) {
+						// Show label under the ref when label column is not enabled
+						print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
+						print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+						if (!empty($object->label)) {
+							print '<br><span class="spantitle">'.dolPrintHTML($object->label).'</span>';
+						}
+						print '</div>';
+					} else {
+						print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+					}
+				} elseif ($key == 'label') {
+					print '<span class="spantitle">'.$object->showOutputField($val, $key, (string) $object->$key, '').'</span>';
 				} else {
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
 				}

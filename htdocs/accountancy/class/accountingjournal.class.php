@@ -1519,6 +1519,7 @@ class AccountingJournal extends CommonObject
 					$this->db->rollback();
 
 					if ($error >= $max_nb_errors) {
+						$langs->load('errors');
 						$this->errors[] = $langs->trans("ErrorTooManyErrorsProcessStopped");
 						break; // Break in the foreach
 					}

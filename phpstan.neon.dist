@@ -84,9 +84,14 @@ parameters:
 		- '#^Expression "''…" on a separate line does not do anything#'
 		- '#Empty array passed to foreach#'
 		- '#Unable to resolve the template type T#'
+		- '#Call to function .* will always evaluate to#'
 		- '#in empty\(\) always exists and is always falsy#'
 		- '#in empty\(\) always exists and is not falsy#'
+		- '#in empty\(\) is not falsy#'
 		- '#in isset\(\) is not nullable#'
+		- '#is always#'
+		- '#Function json_encode invoked with 2 parameters, 1 required#'
+		- '#Loose comparison using#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512

@@ -138,7 +138,7 @@ if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] 
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
-	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+	$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];
 }
 
 // Enable and test if module Api is enabled

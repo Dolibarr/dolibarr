@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
 AccountancyCodeDepreciationExpense=Accounting code (depreciation expense account)
 AssetsLines=Assets
 ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
-DeleteType=Delete
 DeleteAnAssetType=Delete an asset model
 ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
-ShowTypeCard=Show model '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Assets
 # Module description 'ModuleAssetsDesc'

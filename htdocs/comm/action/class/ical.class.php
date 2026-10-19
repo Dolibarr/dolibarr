@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -432,8 +433,8 @@ class ICal
 
 		$key = $temp[0];
 		$temp = explode("=", $temp[1]);
-		$return_value[$temp[0]] = $temp[1];
-		$return_value['unixtime'] = $value;
+		$return_value[$temp[0]] = trim($temp[1], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
+		$return_value['unixtime'] = $this->ical_date_to_unix($value);	// Local time as GMT timestamp; TZ correction is done by caller (AGENDA_EXT_BUGGEDFILEx)
 
 		return array($key, $return_value);
 	}

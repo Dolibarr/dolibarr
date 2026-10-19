@@ -472,7 +472,7 @@ class FactureLigne extends CommonInvoiceLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -723,7 +723,7 @@ class FactureLigne extends CommonInvoiceLine
 		// if buy price not provided, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
 			// We call defineBuyPrice only if data was not provided (if input was '0', we will not go here and value will remaine '0')
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {

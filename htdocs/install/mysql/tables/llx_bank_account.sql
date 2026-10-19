@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
 -- Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+-- Copyright (C) 2026       Sylvain Legrand         <contact@infras.fr>
+-- Copyright (C) 2026       Lucky Ranasolonirina    <technique@infras.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -44,6 +46,8 @@ create table llx_bank_account
   cle_iban					varchar(2),
   domiciliation				varchar(255),
   pti_in_ctti               smallint DEFAULT 0,
+  sepa_category_purpose		varchar(4) DEFAULT 'CORE',	-- SEPA file, PmtTpInf/CtgyPurp/Cd (ISO 20022 code, see Account::SEPA_CATEGORY_PURPOSES)
+  sepa_local_instrument		varchar(4) DEFAULT 'CORE',	-- SEPA file, PmtTpInf/LclInstrm/Cd (ISO 20022 code, see Account::SEPA_LOCAL_INSTRUMENTS)
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
   proprio					varchar(60),

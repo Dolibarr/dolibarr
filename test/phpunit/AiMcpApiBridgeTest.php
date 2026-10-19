@@ -24,7 +24,7 @@
  *                  removal from the parameter descriptions sent to the model.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/ai/class/mcptool.class.php';

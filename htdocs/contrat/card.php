@@ -311,6 +311,9 @@ if (empty($reshook)) {
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
 			$object->fk_contract_type = GETPOSTINT('contract_type');
+			if (isModEnabled('multicurrency')) {
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			}
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
@@ -539,6 +542,7 @@ if (empty($reshook)) {
 
 			$price_base_type = '';
 			$price_min = '';
+			$pu_ht_devise = 0;
 			// Ecrase $tva_tx par celui du produit. TODO Remove this once vat selection is open
 			// Get and check minimum price
 			if ($idprod > 0) {
@@ -682,7 +686,8 @@ if (empty($reshook)) {
 					(float) $pa_ht,
 					$array_options,
 					(int) $fk_unit,
-					$rang
+					$rang,
+					(float) $pu_ht_devise
 				);
 			}
 
@@ -921,6 +926,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -1212,6 +1218,9 @@ if ($action == 'create') {
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 	print '<input type="hidden" name="contract_type" value="'.GETPOSTINT('contract_type').'">';
 
 	print dol_get_fiche_head();
@@ -1291,6 +1300,17 @@ if ($action == 'create') {
 	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($datecontrat, '', 0, 0, 0, "contrat");
 	print "</td></tr>";
+
+	// Multicurrency
+	if (isModEnabled('multicurrency')) {
+		$currency_code = (is_object($objectsrc) && !empty($objectsrc->multicurrency_code)) ? $objectsrc->multicurrency_code : ($soc->multicurrency_code ? $soc->multicurrency_code : $conf->currency);
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
+		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+		print '</td></tr>';
+	}
 
 	// Project
 	if (isModEnabled('project')) {
@@ -1722,9 +1742,9 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 					print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 					print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-					//if (isModEnabled("multicurrency")) {
-					//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
-					//}
+					if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<td width="80" class="right">'.$langs->trans("PriceUHT").'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($object->multicurrency_code).')</span></td>';
+					}
 					print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
@@ -1816,9 +1836,9 @@ if ($action == 'create') {
 						// Price
 						print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						}*/
+						}
 						// Quantity
 						print '<td class="center">'.$objp->qty.'</td>';
 						// Unit
@@ -1902,8 +1922,12 @@ if ($action == 'create') {
 							print '</tr>';
 						}
 
+						$parameters = ['line' => $object->lines[$cursorline - 1], 'i' => $cursorline - 1, 'coldisplay' => &$coldisplay, 'colspan' => $colspan, 'moreparam' => $moreparam];
+						$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;
+
 						// Display lines extrafields
-						if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+						if (empty($reshook) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 							$line = new ContratLigne($db);
 							$line->id = $objp->rowid;
 							$line->fetch_optionals();
@@ -1966,9 +1990,9 @@ if ($action == 'create') {
 						print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice') ? GETPOST('elprice') : price($objp->subprice)).'"></td>';
 
 						// Price multicurrency
-						/*if (isModEnabled("multicurrency")) {
-						 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-						 }*/
+						if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+							print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
+						}
 
 						// Quantity
 						print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty') ? GETPOST('elqty') : $objp->qty).'"></td>';
@@ -2286,7 +2310,8 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				$forcetoshowtitlelines = 1;
 				if (empty($object->multicurrency_code)) {
-					$object->multicurrency_code = $conf->currency; // TODO Remove this when multicurrency supported on contracts
+					// Contracts created before multicurrency support existed on this object have no currency stored.
+					$object->multicurrency_code = $conf->currency;
 				}
 
 				// Add free products/services
@@ -2400,6 +2425,16 @@ if ($action == 'create') {
 						'enabled' => true,
 					);
 				}
+				if (isModEnabled('intervention') && $object->status > 0) {
+					$langs->load("interventions");
+					$arrayofcreatebutton[] = array(
+						'url' => '/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('AddIntervention'),
+						'lang' => 'interventions',
+						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
 				if (count($arrayofcreatebutton)) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
@@ -2446,12 +2481,12 @@ if ($action == 'create') {
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete
 				unset($params['attr']['title']);
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, $params);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print "</div>";
@@ -2547,7 +2582,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 				if (fournprice > 0) {
 					if (this.id == fournprice) {
 					  options += ' selected';
-					  $("#buying_price").val(this.price);
+					  $("#buying_price").val(pricejs(this.price, 'MU'));
 					  trouve = true;
 					}
 				}
@@ -2565,7 +2600,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 			  $("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-				  $("#buying_price").val(selval).hide();
+				  $("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 				  $('#buying_price').show();
 			  });
@@ -2583,5 +2618,5 @@ if (isModEnabled('margin') && $action == 'editline') {
 		}
 	});
 	<?php
-	print "\n".'<script type="text/javascript">'."\n";
+	print '</script>'."\n";
 }

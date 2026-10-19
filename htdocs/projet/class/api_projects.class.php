@@ -238,6 +238,11 @@ class Projects extends DolibarrApi
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (" . $this->db->sanitize($socids) . ")";
 		}
+		// If user has no permission to see all projects, we force the search on projects he is allowed to see only (public projects or projects he is a contact of), like the list.php page does
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'all', 'lire')) {
+			$projectsListId = $this->project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 1, 0);
+			$sql .= " AND t.rowid IN (" . $this->db->sanitize($projectsListId) . ")";
+		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
@@ -431,7 +436,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : ' . $this->project->error);
+			throw new RestException(500, 'Error : ' . $this->project->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->project);
@@ -750,7 +755,7 @@ class Projects extends DolibarrApi
 		if ($this->project->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->project->error);
+			throw new RestException(500, $this->project->errorsToString());
 		}
 	}
 
@@ -779,7 +784,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!$this->project->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete project : ' . $this->project->error);
+			throw new RestException(500, 'Error when delete project : ' . $this->project->errorsToString());
 		}
 
 		return array(
@@ -832,7 +837,7 @@ class Projects extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Project: ' . $this->project->error);
+			throw new RestException(500, 'Error when validating Project: ' . $this->project->errorsToString());
 		}
 
 		return array(
@@ -876,7 +881,13 @@ class Projects extends DolibarrApi
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
-		$sql = "SELECT et.rowid, et.element_duration, et.element_datehour, et.fk_user, et.note as time_note, et.thm,";
+		// The hourly rate thm is sensitive payroll data, so it is returned only if the caller has permission to read salaries (same rule as for the users API)
+		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+
+		$sql = "SELECT et.rowid, et.element_duration, et.element_datehour, et.fk_user, et.note as time_note,";
+		if ($canreadsalary) {
+			$sql .= " et.thm,";
+		}
 		$sql .= " u.login as user_login, u.firstname as user_firstname, u.lastname as user_lastname,";
 		$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 		$sql .= " t.rowid as task_id, t.ref as task_ref, t.label as task_label,";
@@ -888,7 +899,12 @@ class Projects extends DolibarrApi
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON (u.rowid = et.fk_user)";
 		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+			$sql .= " AND p.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		// If user has no permission to see all projects, we force the search on projects he is allowed to see only (public projects or projects he is a contact of), like the list.php page does
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'all', 'lire')) {
+			$projectsListId = $this->project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 1, 0);
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 
 		// Search on sale representative
@@ -1000,7 +1016,6 @@ class Projects extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 
-		unset($object->weekWorkLoad);
 		unset($object->weekWorkLoad);
 
 		//unset($object->lines);            // for task we use timespent_lines, but for project we use lines
@@ -1127,7 +1142,7 @@ class Projects extends DolibarrApi
 				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
 					$result = $task->add_contact($fk_socpeople, $taskContactType, $source, $notrigger);
 					if ($result < 0) {
-						throw new RestException(500, 'Error adding contact to task '.$task->id.': '.$task->error);
+						throw new RestException(500, 'Error adding contact to task '.$task->id.': '.$task->errorsToString());
 					}
 				}
 			}

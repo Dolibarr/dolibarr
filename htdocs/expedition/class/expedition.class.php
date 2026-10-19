@@ -15,7 +15,8 @@
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025-2026	Nick Fragoulis
+ * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var ?int ID of user that validates
+	 * @var ?int ID of user who validates
 	 * @deprecated use $user_validation_id
 	 */
 	public $fk_user_valid;
@@ -318,6 +319,15 @@ class Expedition extends CommonObject
 	const STATUS_VALIDATED = 1;
 
 	/**
+	 * Expedition in progress
+	 * -> package exit the warehouse and is now
+	 *    in the truck or into the hand of the deliverer
+	 * prev status : validated
+	 * next status : closed
+	 */
+	const STATUS_SHIPMENT_IN_PROGRESS = 3;
+
+	/**
 	 * Closed status
 	 * -> parcel was received by customer / end of process
 	 * prev status : validated or shipment_in_progress
@@ -328,15 +338,6 @@ class Expedition extends CommonObject
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
-
-	/**
-	 * Expedition in progress
-	 * -> package exit the warehouse and is now
-	 *    in the truck or into the hand of the deliverer
-	 * prev status : validated
-	 * next status : closed
-	 */
-	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
 	/**
 	 *	Constructor
@@ -782,7 +783,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}
@@ -856,7 +858,7 @@ class Expedition extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.signed_status, e.fk_projet as fk_project, e.billed";
-		$sql .= ", e.date_valid";
+		$sql .= ", e.date_valid, e.fk_user_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -899,6 +901,7 @@ class Expedition extends CommonObject
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->user_creation_id 	= $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid 			= $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
@@ -1063,18 +1066,20 @@ class Expedition extends CommonObject
 		}
 
 		// Change status of order to "shipment in process"
-		$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
-		if ($this->origin == 'commande') {
-			$triggerKey .= 'ORDER_SHIPMENTONPROCESS';
-		} else {
-			$triggerKey .= strtoupper($this->origin).'_SHIPMENTONPROCESS';
-		}
+		if (!$error && $this->origin_id > 0) {
+			$origintype = ($this->origin_type ? $this->origin_type : $this->origin);
+			if ($origintype == 'order') {
+				$origintype = 'commande';	// Like into add_object_linked()
+			}
+			if ($origintype == 'commande') {
+				// Because when the trigger is fired the object is a shipping and not the real target object, so we add a prefix like SHIPPING_ to avoid confusion
+				$triggerKey = 'SHIPPING_ORDER_SHIPMENTONPROCESS';
 
-		// TODO : load the origin object to trigger the right setStatus according to origin object
-		if (!$error) {
-			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
-			if (!$ret) {
-				$error++;
+				// TODO : load the origin object to trigger the right setStatus according to origin object
+				$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $origintype, $triggerKey);
+				if (!$ret) {
+					$error++;
+				}
 			}
 		}
 
@@ -1242,6 +1247,131 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 * Check stock constraints for a shipment line.
+	 *
+	 * @param	int			$fk_product				Id of product
+	 * @param	int|string	$fk_entrepot			Id of warehouse
+	 * @param	float		$qty					Quantity
+	 * @param	int|null	$product_type			Product type, null to fetch it from product
+	 * @param	bool		$forbid_batch_product	True to reject products managed by lot/serial
+	 * @param	bool		$allowEmptyWarehouse	True for a line with no origin order line, where an empty warehouse means no stock movement
+	 * @return	int									Return integer <0 if KO, >0 if OK
+	 */
+	private function checkLineStockRequirements($fk_product, $fk_entrepot, $qty, $product_type = null, $forbid_batch_product = false, $allowEmptyWarehouse = false)
+	{
+		global $langs;
+
+		if (!($fk_product > 0)) {
+			return 1;
+		}
+
+		$warehouseId = (int) $fk_entrepot;
+
+		if (!isModEnabled('stock') && !($forbid_batch_product && isModEnabled('productbatch'))) {
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		$product = new Product($this->db);
+		$result = $product->fetch($fk_product);
+		if ($result <= 0) {
+			$this->setErrorsFromObject($product);
+			return -1;
+		}
+
+		if ($product_type === null) {
+			$product_type = $product->type;
+		}
+
+		if ($forbid_batch_product && isModEnabled('productbatch') && $product->hasbatch()) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorTryToMakeMoveOnProductRequiringBatchData', $product->ref);
+			$this->errorhidden = 'ErrorTryToMakeMoveOnProductRequiringBatchData';
+			return -4;
+		}
+
+		if (!isModEnabled('stock')) {
+			return 1;
+		}
+
+		// An order-independent line may deliberately carry NO warehouse: a sample,
+		// goods sent out for servicing, or a delivery note issued for e-reporting
+		// with no stock effect. Empty warehouse = no stock movement, as merged for
+		// receptions in #39293. Order-based lines keep the requirement.
+		if (!$allowEmptyWarehouse && !empty($qty) && !($warehouseId > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
+			return -1;
+		}
+
+		// No warehouse, by intent: there is nothing to check stock against.
+		if ($allowEmptyWarehouse && !($warehouseId > 0)) {
+			return 1;
+		}
+
+		if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') && ($qty > 0 || !getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
+			$productChildrenNb = 0;
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$productChildrenNb = $product->hasFatherOrChild(1);
+			}
+			if ($productChildrenNb > 0) {
+				$product_stock = null;
+				$product->loadStockForVirtualProduct('warehouseopen', $qty);
+				if ($warehouseId > 0) {
+					if (isset($product->stock_warehouse[$warehouseId])) {
+						$product_stock = $product->stock_warehouse[$warehouseId]->real;
+					}
+				} else {
+					foreach ($product->stock_warehouse as $componentStockWarehouse) {
+						if ($product_stock === null) {
+							$product_stock = $componentStockWarehouse->real;
+						} else {
+							$product_stock = min($product_stock, $componentStockWarehouse->real);
+						}
+					}
+				}
+				if ($product_stock === null) {
+					$product_stock = 0;
+				}
+			} else {
+				// Check must be done for stock of product into warehouse if $fk_entrepot defined
+				if ($warehouseId > 0) {
+					$result = $product->load_stock('warehouseopen');
+					if ($result < 0) {
+						$this->setErrorsFromObject($product);
+						return -1;
+					}
+					$product_stock = empty($product->stock_warehouse[$warehouseId]) ? 0 : $product->stock_warehouse[$warehouseId]->real;
+				} else {
+					$product_stock = $product->stock_reel;
+				}
+			}
+
+			if ($product->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				$isavirtualproduct = ($productChildrenNb > 0);
+				// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
+				if (
+					!$isavirtualproduct
+					|| !getDolGlobalInt('PRODUIT_SOUSPRODUITS')
+					|| ($isavirtualproduct && !getDolGlobalInt('STOCK_EXCLUDE_VIRTUAL_PRODUCTS'))
+				) {
+					// If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
+					if ($product->stockable_product == Product::ENABLED_STOCK && $product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
+						$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
+
+						return -3;
+					}
+				}
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Add an expedition line.
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
@@ -1280,69 +1410,10 @@ class Expedition extends CommonObject
 			$line->fk_product = $orderline->fk_product;
 		}
 
-		if (isModEnabled('stock') && !empty($orderline->fk_product)) {
-			$product = new Product($this->db);
-			$product->fetch($orderline->fk_product);
-
-			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK && !empty($line->qty)) {
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
-				return -1;
-			}
-
-			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') && ($qty > 0 || !getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-				$productChildrenNb = 0;
-				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-					$productChildrenNb = $product->hasFatherOrChild(1);
-				}
-				if ($productChildrenNb > 0) {
-					$product_stock = null;
-					$product->loadStockForVirtualProduct('warehouseopen', $line->qty);
-					if ($entrepot_id > 0) {
-						if (isset($product->stock_warehouse[$entrepot_id])) {
-							$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-						}
-					} else {
-						foreach ($product->stock_warehouse as $componentStockWarehouse) {
-							if ($product_stock === null) {
-								$product_stock = $componentStockWarehouse->real;
-							} else {
-								$product_stock = min($product_stock, $componentStockWarehouse->real);
-							}
-						}
-					}
-					if ($product_stock === null) {
-						$product_stock = 0;
-					}
-				} else {
-					// Check must be done for stock of product into warehouse if $entrepot_id defined
-					if ($entrepot_id > 0) {
-						$product->load_stock('warehouseopen');
-						$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-					} else {
-						$product_stock = $product->stock_reel;
-					}
-				}
-
-				$product_type = $product->type;
-				if ($product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-					$isavirtualproduct = ($productChildrenNb > 0);
-					// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
-					if (
-						!$isavirtualproduct
-						|| !getDolGlobalInt('PRODUIT_SOUSPRODUITS')
-						|| ($isavirtualproduct && !getDolGlobalInt('STOCK_EXCLUDE_VIRTUAL_PRODUCTS'))
-					) {
-						// If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
-						if ($product->stockable_product == Product::ENABLED_STOCK && $product_stock < $qty) {
-							$langs->load("errors");
-							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
-							$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
-
-							return -3;
-						}
-					}
-				}
+		if (!empty($orderline->fk_product)) {
+			$result = $this->checkLineStockRequirements((int) $orderline->fk_product, $entrepot_id, (float) $line->qty, (int) $line->product_type);
+			if ($result < 0) {
+				return $result;
 			}
 		}
 
@@ -1374,9 +1445,10 @@ class Expedition extends CommonObject
 	 * @param 	string		$description					Description of line product
 	 * @param 	int			$fk_parent					    ID of parent line. For a hierarchy of lines.
 	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @param 	int|string	$fk_entrepot				Id of warehouse
 	 * @return	int											Return integer <0 if KO, >0 if OK
 	 */
-	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $array_options = [])
+	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $array_options = [], $fk_entrepot = 0)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1386,6 +1458,11 @@ class Expedition extends CommonObject
 			}
 
 			$qty = (float) price2num($qty);
+
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true, true);
+			if ($result < 0) {
+				return $result;
+			}
 
 			$this->db->begin();
 
@@ -1401,6 +1478,8 @@ class Expedition extends CommonObject
 			$this->line->fk_expedition = $this->id;
 			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
+			$this->line->entrepot_id = (int) $fk_entrepot;
+			$this->line->fk_entrepot = (int) $fk_entrepot;
 			$this->line->description = $description;
 			$this->line->desc = $description;
 			$this->line->fk_parent = $fk_parent;
@@ -1446,16 +1525,17 @@ class Expedition extends CommonObject
 	 * @param 	int		$rowid							ID of line
 	 * @param 	float	$qty							Quantity
 	 * @param 	string	$element_type					Element type
-	 * @param	int		$fk_product      				Id of product
+	 * @param	int		$fk_product      				Unused, product is preserved from the stored line
 	 * @param 	?int	$fk_unit 						Code of the unit to use.
 	 * @param   int		$rang             				Position of line
 	 * @param 	string	$description					Description of line product
 	 * @param 	int		$fk_parent					    ID of parent line. For a hierarchy of lines.
 	 * @param 	int		$notrigger					    disable line update trigger
 	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @param	int|string	$fk_entrepot		Id of warehouse, -1 to keep current value
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
-	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $notrigger, $array_options = array())
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $notrigger, $array_options = array(), $fk_entrepot = -1)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1475,13 +1555,29 @@ class Expedition extends CommonObject
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new ExpeditionLigne($this->db);
 
-			$line->fetch($rowid);
-			$line->fetch_optionals();
+			$result = $line->fetch($rowid);
+			if ($result < 0) {
+				$this->setErrorsFromObject($line);
+				$this->db->rollback();
+				return -1;
+			}
+			$result = $line->fetch_optionals();
+			if ($result < 0) {
+				$this->setErrorsFromObject($line);
+				$this->db->rollback();
+				return -1;
+			}
 
-			if (!empty($line->fk_product)) {
-				$product = new Product($this->db);
-				$result = $product->fetch($line->fk_product);
-				$product_type = $product->type;
+			// Updating a shipment line does not change its stored product.
+			$fk_product = (int) $line->fk_product;
+			if ($fk_entrepot < 0) {
+				$fk_entrepot = (int) $line->entrepot_id;
+			}
+
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true, true);
+			if ($result < 0) {
+				$this->db->rollback();
+				return $result;
 			}
 
 			$staticline = clone $line;
@@ -1493,6 +1589,8 @@ class Expedition extends CommonObject
 			$this->line->fk_expedition = $this->id;
 			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
+			$this->line->entrepot_id = (int) $fk_entrepot;
+			$this->line->fk_entrepot = (int) $fk_entrepot;
 			$this->line->qty = $qty;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->fk_parent = $fk_parent;
@@ -1791,9 +1889,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock));
+		$can_update_stock = isModEnabled('stock') && $also_update_stock &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1843,7 +1941,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (and sub-products)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->transnoentitiesnoconv("ShipmentCanceledInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1853,7 +1951,10 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+								if (empty($lot->qty)) {
+									continue;
+								}
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->transnoentitiesnoconv("ShipmentCanceledInDolibarr", $this->ref), '', '', (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed. Dates are not given: those of the lot are used (the copy on the line may be outdated)
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1985,9 +2086,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock));
+		$can_update_stock = isModEnabled('stock') && $also_update_stock &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $this->status == self::STATUS_CLOSED));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -2033,7 +2134,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (disable for sub-products : already in shipment lines)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->transnoentitiesnoconv("ShipmentDeletedInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -2046,7 +2147,7 @@ class Expedition extends CommonObject
 								if (empty($lot->qty)) {
 									continue;
 								}
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->transnoentitiesnoconv("ShipmentDeletedInDolibarr", $this->ref), '', '', (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed. Dates are not given: those of the lot are used (the copy on the line may be outdated)
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -2259,14 +2360,16 @@ class Expedition extends CommonObject
 				$line->ref = $obj->product_ref; // TODO deprecated
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
-				$line->libelle        	= $obj->product_label; // TODO deprecated
 				$line->product_barcode = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
 				$line->fk_fournprice = $obj->fk_fournprice;
 				$line->label = $obj->custom_label;
+
 				$line->description    	= $obj->description;
+				$line->desc		    	= $obj->description;
+
 				$line->qty_asked      	= $obj->qty_asked;
 				$line->rang = $obj->rang;
 				$line->weight         	= $obj->weight;
@@ -2416,7 +2519,9 @@ class Expedition extends CommonObject
 
 		$this->lines = array();
 
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_parent, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		$sql .= ', p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode';
+		$sql .= ', p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as ed';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = ed.fk_product)';
 		$sql .= ' WHERE ed.fk_expedition = '.((int) $this->id);
@@ -2437,14 +2542,27 @@ class Expedition extends CommonObject
 				$line->id				= $objp->rowid;
 				$line->fk_expedition	= $this->id;
 				$line->description      = $objp->description;
+				$line->desc				= $objp->description;
 				$line->qty              = $objp->qty;
+				$line->qty_shipped      = $objp->qty;	// Same properties as fetch_lines(): read by the PDF models and getTotalWeightVolume()
 				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->entrepot_id      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
+				$line->product_type     = (int) $objp->fk_product_type;
+				$line->fk_product_type  = $objp->fk_product_type;
+				$line->product_ref      = $objp->product_ref;
+				$line->product_label    = $objp->product_label;
+				$line->product_barcode  = $objp->product_barcode;
+				$line->weight           = $objp->weight;
+				$line->weight_units     = $objp->weight_units;
+				$line->volume           = $objp->volume;
+				$line->volume_units     = $objp->volume_units;
+				$line->fk_parent        = $objp->fk_parent;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
 				$line->fk_elementdet 	= $objp->fk_elementdet;
-				$line->fk_element_type 	= $objp->element_type;
+				$line->element_type     = $objp->element_type;
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
@@ -2489,6 +2607,12 @@ class Expedition extends CommonObject
 
 			// For triggers
 			$line->fetch($lineid);
+
+			if ($this->id > 0 && (int) $line->fk_expedition !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			if ($line->delete($user) > 0) {
 				//$this->update_price(1);
@@ -2984,7 +3108,7 @@ class Expedition extends CommonObject
 	 */
 	public function setClosed()
 	{
-		global $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -3005,8 +3129,16 @@ class Expedition extends CommonObject
 			$sql .= ", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
+		$sql .= " AND fk_statut <> ".self::STATUS_CLOSED;
 
 		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// The shipment is not validated (draft, canceled or already closed): nothing to close and no stock must be moved.
+			// Return 0 (nothing done) as when it is already closed, so the workflow closing the shipments of an invoice is not stopped by a draft one.
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::setClosed shipment ".$this->id." is not validated, nothing done", LOG_WARNING);
+			return 0;
+		}
 		if ($resql) {
 			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
 			if ($this->origin_type == 'commande' && $this->origin_id > 0) {
@@ -3029,7 +3161,7 @@ class Expedition extends CommonObject
 				if ($shipments_match_order) {
 					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
 					// We close the order
-					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
+					$order->cloture($user, 0, 0);		// 0 = do not check the close permission: this is an automatic action of the shipment closing. Note this may also create an invoice if module workflow ask it
 				}
 			}
 
@@ -3088,6 +3220,9 @@ class Expedition extends CommonObject
 
 		$langs->load("agenda");
 
+		// Label is stored into llx_stock_mouvement.label, so it must not be HTML encoded
+		$labelmvt = $langs->transnoentitiesnoconv($labelmovement, $this->ref);
+
 		// Loop on each product line to add a stock movement
 		$sql = "SELECT";
 		$sql .= " ed.rowid as edid, ed.fk_product, ed.qty, ed.fk_entrepot";
@@ -3131,7 +3266,7 @@ class Expedition extends CommonObject
 					// line without batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref));
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3141,7 +3276,8 @@ class Expedition extends CommonObject
 					// line with batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+					// When reversing, the stock is added back: the dates are not given so those of the lot are used (the copy on the line may be outdated)
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt, '', $reverse ? '' : $this->db->jdate($obj->eatby), $reverse ? '' : $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3232,6 +3368,14 @@ class Expedition extends CommonObject
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
+		// Only a validated shipment can go back to draft. A closed one must be reopened first, so that the stock
+		// decreased on closing (STOCK_CALCULATE_ON_SHIPMENT_CLOSE) is restored.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$langs->load("sendings");
+			$this->error = $langs->trans("StatusOfRefMustBe", $this->ref, $langs->transnoentitiesnoconv("StatusSendingValidatedShort"));
+			$this->errors[] = $this->error;
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -3288,9 +3432,17 @@ class Expedition extends CommonObject
 		$oldbilled = $this->billed;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut = 1';
-		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
+		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut = '.self::STATUS_CLOSED;
 
 		$resql = $this->db->query($sql);
+		if ($resql && $this->db->affected_rows($resql) <= 0) {
+			// The shipment is not closed (draft or canceled), so no stock must be moved
+			$this->db->rollback();
+			$langs->load("sendings");
+			$this->error = $langs->trans("StatusOfRefMustBe", $this->ref, $langs->transnoentitiesnoconv("StatusSendingProcessedShort"));
+			$this->errors[] = $this->error;
+			return -1;
+		}
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
@@ -3303,15 +3455,15 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibility to ship from a proposal or other origin
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				// Lines are selected like in manageStockMvtOnEvt(), so reopening restores exactly what closing removed,
+				// including lines with no source order line (standalone shipment, SHIPMENT_STANDALONE)
+				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -3338,7 +3490,7 @@ class Expedition extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3348,7 +3500,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', '', '', $obj->batch, $obj->fk_origin_stock); // Dates are not given: those of the lot are used (the copy on the line may be outdated)
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3402,7 +3554,7 @@ class Expedition extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'rouget';
+			$modele = 'espadon';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
@@ -3433,5 +3585,22 @@ class Expedition extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old product id
+	 * @param 	int 	$dest_id 	New product id
+	 * @return 	bool
+	 */
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'expeditiondet'
+		);
+
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 }

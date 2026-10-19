@@ -107,7 +107,7 @@ div.mainmenu.generic4::before {
 		echo "color: unset !important;";
 	}
 	?>;
-	line-height: 28px;
+	line-height: <?php echo getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE') ? '16' : '28' ?>px;
 	text-align: center;
 }
 
