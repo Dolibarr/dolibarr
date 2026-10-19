@@ -1824,6 +1824,11 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['invoices']['methods']['validate'] = $this->validateMethod('customer invoice', 'Facture', 'AIPreviewValidateInvoice', $advanced ? array('facture', 'invoice_advance', 'validate') : array('facture', 'creer'), array('force_number' => '', 'notrigger' => 0), 'STOCK_CALCULATE_ON_BILL');
 		$this->enrichments['orders']['methods']['validate'] = $this->validateMethod('sale order', 'Commande', 'AIPreviewValidateOrder', $advanced ? array('commande', 'order_advance', 'validate') : array('commande', 'creer'), array('notrigger' => 0), 'STOCK_CALCULATE_ON_VALIDATE_ORDER');
 		$this->enrichments['proposals']['methods']['validate'] = $this->validateMethod('commercial proposal', 'Propal', 'AIPreviewValidateProposal', $advanced ? array('propal', 'propal_advance', 'validate') : array('propal', 'creer'), array('notrigger' => 0), '');
+		// Logistic documents: validating a reception brings the goods into stock,
+		// validating a shipment takes them out. Each line carries its own warehouse,
+		// so no warehouse is asked here, and the stock always moves.
+		$this->enrichments['receptions']['methods']['validate'] = $this->validateMethod('supplier reception', 'Reception', 'AIPreviewValidateReception', $advanced ? array('reception', 'reception_advance', 'validate') : array('reception', 'creer'), array('notrigger' => 0), '');
+		$this->enrichments['shipments']['methods']['validate'] = $this->validateMethod('shipment', 'Expedition', 'AIPreviewValidateShipment', $advanced ? array('expedition', 'shipping_advance', 'validate') : array('expedition', 'creer'), array('notrigger' => 0), '');
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
@@ -3811,7 +3816,9 @@ class ToolApiBridge extends McpTool
 			'Task' => '/projet/class/task.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php',
 			'Fichinter' => '/fichinter/class/fichinter.class.php',
-			'Contrat' => '/contrat/class/contrat.class.php'
+			'Contrat' => '/contrat/class/contrat.class.php',
+			'Reception' => '/reception/class/reception.class.php',
+			'Expedition' => '/expedition/class/expedition.class.php'
 		);
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
@@ -3819,7 +3826,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
@@ -3903,7 +3910,9 @@ class ToolApiBridge extends McpTool
 			'Societe' => array('societe', '', ''),
 			'Product' => array('product', '', ''),
 			'Contact' => array('contact', 'socpeople&societe', ''),
-			'Project' => array('project', '', '')
+			'Project' => array('project', '', ''),
+			'Reception' => array('reception', '', ''),
+			'Expedition' => array('expedition', '', '')
 		);
 		if (!isset($map[$class])) {
 			return true;
