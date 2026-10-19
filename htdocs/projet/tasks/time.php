@@ -515,7 +515,7 @@ if ($massaction == 'exportlines' && !empty($toselect)) {
 			$array_fields['value'] = 'Value';
 		}
 		$array_fields['invoice_ref'] = 'Invoice';
-		$array_selected = array_fill_keys(array_keys($array_fields), 1);
+		$array_selected = array_fill_keys(array_keys($array_fields), '1');
 
 		$exportcsv = new ExportCsvUtf8($db);
 		$filename = 'timespent_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
