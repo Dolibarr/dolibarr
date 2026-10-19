@@ -796,6 +796,12 @@ class Facture extends CommonInvoice
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
+			// Keep author on object so a later call to update() does not reset fk_user_author
+			if ($origin_user_author_id > 0) {
+				$this->user_creation_id = $origin_user_author_id;
+				$this->fk_user_author = $origin_user_author_id;
+			}
+
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
@@ -967,8 +973,12 @@ class Facture extends CommonInvoice
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
-				foreach ($this->lines as $i => $val) {
-					$line = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$line = $linestoadd[$i];
 					'@phan-var-force FactureLigne $line';
 
 					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
@@ -2393,6 +2403,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -2979,8 +2990,22 @@ class Facture extends CommonInvoice
 				$srcinvoice->fetch($remise->fk_facture_source);
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
+				// A deposit or credit note is converted into one discount per VAT rate, and a discount can be split,
+				// so keep only the cost of the source lines with the same VAT rate, prorated to the amount of the discount.
+				$srclinesofvat = array();
+				foreach ($srcinvoice->lines as $srcline) {
+					if (price2num($srcline->tva_tx) == price2num($remise->tva_tx)) {
+						$srclinesofvat[] = $srcline;
+					}
+				}
+				if (count($srclinesofvat) > 0) {
+					$srcinvoice->lines = $srclinesofvat;
+				}
 				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
 				$facligne->pa_ht = $arraytmp['pa_total'];
+				if ((float) $arraytmp['pv_total'] != 0 && price2num($arraytmp['pv_total'], 'MT') != price2num(abs((float) $remise->total_ht), 'MT')) {
+					$facligne->pa_ht = (float) price2num($arraytmp['pa_total'] * abs((float) $remise->total_ht / (float) $arraytmp['pv_total']), 'MU');
+				}
 			}
 
 			$facligne->total_ht  = -(float) $remise->total_ht;
@@ -3176,6 +3201,16 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
+		// Block deletion of validated credit notes that have consumed deposit credits (draft can still be deleted: credits consumed only on validate)
+		if ($this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0 && $this->status != self::STATUS_DRAFT) {
+			$srcInvoice = new Facture($this->db);
+			if ($srcInvoice->fetch($this->fk_facture_source) > 0 && $srcInvoice->type == self::TYPE_DEPOSIT) {
+				$langs->load('bills');
+				$this->error = $langs->trans('CreditNoteOnDepositCantBeDeleted');
+				return -1;
+			}
+		}
+
 		$error = 0;
 
 		$this->db->begin();
@@ -3283,9 +3318,9 @@ class Facture extends CommonInvoice
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref));
 						} else {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
 						}
 					}
 				}
@@ -3727,6 +3762,23 @@ class Facture extends CommonInvoice
 			}
 		}
 
+		// Cap check: credit note on deposit must not exceed available deposit credit
+		if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+			$srcCheckInv = new Facture($this->db);
+			if ($srcCheckInv->fetch($this->fk_facture_source) > 0 && $srcCheckInv->type == self::TYPE_DEPOSIT) {
+				$sqlcap = 'SELECT COALESCE(SUM(amount_ttc),0) as avail FROM '.MAIN_DB_PREFIX.'societe_remise_except WHERE fk_facture_source='.((int) $this->fk_facture_source).' AND fk_facture IS NULL AND fk_facture_line IS NULL';
+				$rescap = $this->db->query($sqlcap);
+				if ($rescap) {
+					$available_ttc = (float) $this->db->fetch_object($rescap)->avail;
+					if (price2num(abs((float) $this->total_ttc), 'MT') > price2num($available_ttc, 'MT')) {
+						$langs->load('bills');
+						$this->error = $langs->trans('CreditNoteExceedsDepositCredit', price($available_ttc));
+						return -1;
+					}
+				}
+			}
+		}
+
 		$this->db->begin();
 
 		// Check parameters
@@ -3826,7 +3878,7 @@ class Facture extends CommonInvoice
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
 							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
 								$this->setErrorsFromObject($mouvP);
@@ -3878,7 +3930,7 @@ class Facture extends CommonInvoice
 												// not enough (take all in batch)
 												$product_batch_qty = $batch->qty;
 											}
-											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
 												$this->setErrorsFromObject($mouvP);
@@ -3902,7 +3954,7 @@ class Facture extends CommonInvoice
 											} else {
 												// take in the first batch
 												$batch = $batchList[0];
-												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
 													$this->setErrorsFromObject($mouvP);
@@ -3914,7 +3966,7 @@ class Facture extends CommonInvoice
 							}
 
 							if (!$is_batch_line) {	// If stock move not yet processed
-								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
 									$this->setErrorsFromObject($mouvP);
@@ -3941,6 +3993,17 @@ class Facture extends CommonInvoice
 					$this->error = $invoice_situation->error;
 					$this->errors = array_merge($this->errors, $invoice_situation->errors);
 					$error++;
+				}
+			}
+
+			// If credit note on a deposit invoice, consume unused deposit credit up to credit note TTC amount
+			if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+				$depositInvoice = new Facture($this->db);
+				if ($depositInvoice->fetch($this->fk_facture_source) > 0 && $depositInvoice->type == self::TYPE_DEPOSIT) {
+					if ($this->consumeDepositCredits($user, $depositInvoice, abs((float) $this->total_ttc)) < 0) {
+						$error++;
+					}
 				}
 			}
 
@@ -4069,6 +4132,117 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Consume unused deposit credit rows (llx_societe_remise_except) up to $amount_ttc.
+	 * Called during validate() when a credit note whose source is a deposit invoice is validated.
+	 *
+	 * DiscountAbsolute::delete() is called with $noresetinvoice=true and fk_facture_source=0
+	 * so that: (a) the deposit invoice status is NOT reset to unpaid, and (b) the series
+	 * pre-check is bypassed (other rows of the same deposit may already be linked to invoices).
+	 *
+	 * @param  User    $user            User performing the action
+	 * @param  Facture $depositInvoice  Deposit invoice whose unused credit rows are consumed
+	 * @param  float   $amount_ttc      TTC amount to consume (must be > 0)
+	 * @return int<-1,1>               1 if OK, -1 if KO (error set in $this->error)
+	 */
+	public function consumeDepositCredits(User $user, Facture $depositInvoice, float $amount_ttc)
+	{
+		global $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if ($amount_ttc <= 0) {
+			return 1;
+		}
+
+		$sql  = 'SELECT rowid, amount_ttc, tva_tx, multicurrency_amount_ttc, description, fk_user, fk_soc, discount_type, vat_src_code';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' WHERE fk_facture_source = '.((int) $depositInvoice->id);
+		$sql .= ' AND fk_facture IS NULL AND fk_facture_line IS NULL';
+		$sql .= ' ORDER BY amount_ttc ASC';
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$remaining = $amount_ttc;
+		while ($remaining > 0 && ($row = $this->db->fetch_object($resql))) {
+			$row_ttc = (float) $row->amount_ttc;
+			if ($row_ttc <= $remaining + 0.001) {
+				// Whole row consumed: delete by rowid (fk_facture_source=0 bypasses series pre-check, noresetinvoice=true keeps deposit paid)
+				$disc = new DiscountAbsolute($this->db);
+				$disc->id = (int) $row->rowid;
+				if ($disc->delete($user, true) < 0) {
+					$this->error = $disc->error;
+					$this->db->free($resql);
+					return -1;
+				}
+				$remaining = (float) price2num($remaining - $row_ttc, 'MT');
+			} else {
+				// Partial: delete original, recreate the part to keep
+				$keep_ttc  = (float) price2num($row_ttc - $remaining, 'MT');
+				$tva_tx    = (float) $row->tva_tx;
+				$mc_ratio  = ($row_ttc > 0) ? ((float) $row->multicurrency_amount_ttc / $row_ttc) : 1;
+
+				$disc = new DiscountAbsolute($this->db);
+				$disc->id = (int) $row->rowid;
+				if ($disc->delete($user, true) < 0) {
+					$this->error = $disc->error;
+					$this->db->free($resql);
+					return -1;
+				}
+
+				$d = new DiscountAbsolute($this->db);
+				$d->fk_facture_source        = (int) $depositInvoice->id;
+				$d->description              = $row->description;
+				$d->fk_user                  = (int) $row->fk_user;
+				$d->fk_soc                   = (int) $row->fk_soc;
+				$d->socid                    = (int) $row->fk_soc;
+				$d->discount_type            = (int) $row->discount_type;
+				$d->tva_tx                   = $tva_tx;
+				$d->vat_src_code             = $row->vat_src_code;
+				$d->amount_ttc               = $keep_ttc;
+				$d->amount_ht                = (float) price2num($keep_ttc / (1 + $tva_tx / 100), 'MT');
+				$d->amount_tva               = (float) price2num($keep_ttc - $d->amount_ht);
+				$d->multicurrency_amount_ttc = (float) price2num($keep_ttc * $mc_ratio);
+				$d->multicurrency_amount_ht  = (float) price2num($d->multicurrency_amount_ttc / (1 + $tva_tx / 100), 'MT');
+				$d->multicurrency_amount_tva = (float) price2num($d->multicurrency_amount_ttc - $d->multicurrency_amount_ht);
+
+				if ($d->create($user) <= 0) {
+					$this->error = $d->error;
+					$this->db->free($resql);
+					return -1;
+				}
+				$remaining = 0;
+			}
+		}
+		$this->db->free($resql);
+
+		// Trace in agenda of both deposit and credit note (non-blocking)
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$langs->load('bills');
+		$label = $langs->trans('CreditNoteDepositCreditConsumed', (!empty($this->newref) ? $this->newref : $this->ref), price($amount_ttc));
+		foreach (array($depositInvoice->id, $this->id) as $facid) {
+			$actioncomm                = new ActionComm($this->db);
+			$actioncomm->type_code     = 'AC_OTH_AUTO';
+			$actioncomm->code          = 'AC_OTH_AUTO';
+			$actioncomm->label         = $label;
+			$actioncomm->socid         = $this->socid;
+			$actioncomm->datep         = dol_now();
+			$actioncomm->datef         = $actioncomm->datep;
+			$actioncomm->percentage    = -1;
+			$actioncomm->authorid      = $user->id;
+			$actioncomm->userownerid   = $user->id;
+			$actioncomm->elementtype   = 'invoice';
+			$actioncomm->elementid     = $facid;
+			$actioncomm->create($user);
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Update price of next invoice
 	 *
 	 * @param	Translate	$langs	Translate object
@@ -4143,6 +4317,16 @@ class Facture extends CommonInvoice
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		// Block draft revert for credit notes on deposit invoices: credits have been consumed and cannot be recreated
+		if ($this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+			$sourceInvoice = new Facture($this->db);
+			if ($sourceInvoice->fetch($this->fk_facture_source) > 0 && $sourceInvoice->type == self::TYPE_DEPOSIT) {
+				$langs->load('bills');
+				$this->error = $langs->trans('CreditNoteOnDepositCantBeSetToDraft');
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -6345,8 +6529,25 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						if (is_numeric($template)) {
+							// The cron was started with a template id and that id cannot be
+							// resolved at all. This is almost certainly a global setup error
+							// (template deleted or wrong id passed to the cron), and every
+							// remaining invoice in this batch would fail the same way. Stop
+							// here so the operator can fix the setup before retrying, instead
+							// of flooding the cron output with one identical error per
+							// invoice (per @eldy's review of PR #38547).
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+						// The cron was started with a template label and getEMailTemplate
+						// also filters by the recipient's language (see html.formmail.class.php
+						// line 1786). Only the invoices for thirdparties whose default_lang
+						// has no matching template fail; the rest of the batch is fine.
+						// Log the error and continue so a single missing translation does
+						// not stop reminders for everyone else (see issue #34656).
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL

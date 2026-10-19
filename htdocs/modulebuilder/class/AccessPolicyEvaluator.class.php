@@ -61,7 +61,7 @@ final class AccessPolicyEvaluator implements AccessRuleEvaluator
 	 * @param	AccessRuleExpression	$node	Node to evaluate
 	 * @param	User					$user	User asking for the access
 	 * @param	CommonObject			$obj	Object to access
-	 * @return	bool
+	 * @return	bool							True if the node grants the access
 	 * @throws	\LogicException			When the node or the predicate is unknown
 	 */
 	private function evaluateNode(AccessRuleExpression $node, User $user, CommonObject $obj): bool
@@ -92,7 +92,7 @@ final class AccessPolicyEvaluator implements AccessRuleEvaluator
 	 * @param	string			$name	Name of the predicate
 	 * @param	User			$user	User asking for the access
 	 * @param	CommonObject	$obj	Object to access
-	 * @return	bool
+	 * @return	bool					True if the predicate is satisfied
 	 * @throws	\LogicException			When the predicate is unknown
 	 */
 	private function evaluatePredicate(string $name, User $user, CommonObject $obj): bool

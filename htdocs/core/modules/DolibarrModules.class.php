@@ -50,6 +50,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $numero;
 
 	/**
+	 * @var int	Copy of $numero, set by modulehelp_prepare_head() for the substitution of tabs added by modules
+	 */
+	public $id;
+
+	/**
 	 * @var string 	Publisher name
 	 */
 	public $editor_name;
@@ -276,7 +281,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_enabled;
 	/**
-	 * @var array<array<array{string,string}>>
+	 * @var array<array<array{0:string,1?:string,2?:string}>>
 	 */
 	public $export_permission;
 	/**
@@ -2069,9 +2074,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0, $existingrightsdefids = null)
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$err = 0;
+		$skippedperms = array();	// Permission ids not inserted because already used
 		$entity = (!empty($force_entity) ? $force_entity : $conf->entity);
 
 		dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
@@ -2195,6 +2201,23 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						}
 
 						$this->db->free($resqlinsert);
+					} else {
+						// Id already used, possibly by another module: the permission is silently
+						// not inserted, which leaves the module half installed. Collected to warn once.
+						$sql = "SELECT module FROM ".MAIN_DB_PREFIX."rights_def";
+						$sql .= " WHERE entity = ".((int) $entity);
+						$sql .= " AND id = ".((int) $r_id);
+						$sql .= " AND module <> '".$this->db->escape($r_module)."'";
+
+						$resqlowner = $this->db->query($sql);
+						if ($resqlowner) {
+							$objowner = $this->db->fetch_object($resqlowner);
+							if ($objowner) {
+								$skippedperms[$r_id] = $r_perms.($r_subperms ? "->".$r_subperms : "");
+								dol_syslog(get_class($this)."::insert_permissions permission id ".$r_id." of module ".$r_module." already used by module ".$objowner->module.", permission not added", LOG_WARNING);
+							}
+							$this->db->free($resqlowner);
+						}
 					}
 
 					// If we want to init permissions on admin users
@@ -2232,6 +2255,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$user->loadRights();
 				}
 			}
+			if (!empty($skippedperms)) {
+				$langs->load("admin");
+				$listofperms = array();
+				foreach ($skippedperms as $tmpid => $tmpperm) {
+					$listofperms[] = $tmpid." (".$tmpperm.")";
+				}
+				setEventMessages($langs->trans("WarningPermissionIdsAlreadyUsed", $this->name, implode(", ", $listofperms)), null, "warnings");
+			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();

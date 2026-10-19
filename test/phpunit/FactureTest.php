@@ -294,7 +294,7 @@ class FactureTest extends CommonClassTest
 			array(
 				'newref', 'oldcopy', 'oldref', 'id', 'lines', 'line', 'client', 'thirdparty', 'brouillon', 'fk_user_author', 'fk_user_modif', 'user_modification_id', 'date_creation', 'date_validation', 'datem', 'date_modification',
 				'ref', 'statut', 'status', 'paye', 'ref', 'actiontypecode', 'actionmsg2', 'actionmsg', 'mode_reglement', 'cond_reglement',
-				'cond_reglement_doc', 'modelpdf',
+				'cond_reglement_doc', 'cond_reglement_label', 'modelpdf',
 				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
 				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
 				'total_ht', 'total_tva', 'total_ttc',

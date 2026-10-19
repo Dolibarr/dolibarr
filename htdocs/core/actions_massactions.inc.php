@@ -140,7 +140,9 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 // The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
 // request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
 // lists and the cards (entity, third parties of the sales representative, projects the user can see...).
-if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
 	$objecttmpforaccesscheck = new $objectclass($db);
 	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
 	if (!empty($refusedids)) {
@@ -1836,51 +1838,10 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				}
 
 				if (!$error) {
-					// To
-					$destinataire = new User($db);
-					$destinataire->fetch($objecttmp->fk_user);
-					$emailTo = $destinataire->email;
-
-					if (!$emailTo) {
-						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-					} else {
-						// From
-						$expediteur = new User($db);
-						$expediteur->fetch($objecttmp->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-						// Subject
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
-
-						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-						// Content
-						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
-						$message .= "\n";
-
-						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
-						$message .= "\n";
-
-						$trackid = 'leav'.$objecttmp->id;
-
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
-
-						// Sending email
-						$result = $mail->sendfile();
-
-						if (!$result) {
-							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-							$action = '';
-						}
+					$result = $objecttmp->sendApprovalEmail();
+					if ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+						$action = '';
 					}
 				}
 			} else {
@@ -1906,7 +1867,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+// Changing the balance of users requires the same permission than the single user update (holiday/define_holiday.php)
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $user->hasRight('holiday', 'define_holiday') && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	/** @var Holiday $holiday */
 	$db->begin();

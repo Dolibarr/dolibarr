@@ -75,6 +75,17 @@ fi
 # their files into it (rtk: ~/.config/rtk, git: ~/.config/git, ...).
 chown "$USER_NAME:$GROUP_NAME" "/home/$USER_NAME"
 
+# Add the user to the group owning the Apache logs of the host (mounted by vibes.sh),
+# so they can be read. The group is created when the GID does not exist into the image.
+if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
+    LOG_GROUP=$(getent group "$HOST_APACHE_LOG_GID" | cut -d: -f1)
+    if [ -z "$LOG_GROUP" ]; then
+        LOG_GROUP="hostapachelog"
+        groupadd --gid "$HOST_APACHE_LOG_GID" "$LOG_GROUP"
+    fi
+    usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+fi
+
 
 # Allow the user to become root inside the container with a passwordless sudo
 # (the account is created without a password, so a sudo asking for one would never work).
@@ -98,10 +109,10 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	echo "Create link $WORKDIR/.vibe"
 	ln -fs .agents .vibe 2>/dev/null
 fi
-#if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
-#	echo "Create link $WORKDIR/AGENTS.md"
-#	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
-#fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
+	echo "Create link $WORKDIR/AGENTS.md"
+	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
+fi
 
 
 # Create .cache directory

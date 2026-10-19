@@ -404,6 +404,39 @@ class CodingPhpTest extends CommonClassTest
 			}
 			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...'.implode(',', $lines));
 
+			// Check there is no missing comma between 2 fields of a SELECT forged on 2 lines (see #39572)
+			$ok = true;
+			$matches = array();
+			$lines = array();
+			preg_match_all('/(\$sql\s*\.?=\s*"([^"\n]*[a-z0-9_])";)[ \t]*\n[ \t]*\$sql\s*\.=\s*"\s+[a-z_]+\.[a-z_]+\s*(?:,|\s+as\s|")/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$lastfield = preg_replace('/^.*,/', '', $val[2]);
+				if (preg_match('/\b(SELECT|DISTINCT|FROM|WHERE|JOIN|ON|AND|OR|BY|SET|VALUES|INTO|LIMIT|HAVING|UPDATE|DELETE|INSERT|IN|NOT|NULL|IS|CASE|WHEN|THEN|ELSE|END)\b|[=<>(]/i', $lastfield)) {
+					continue;
+				}
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Missing comma at end of `{$val[1]}`, the next line adds another field");
+			}
+			$this->assertTrue($ok, 'Found a forged SQL string with a missing comma between 2 selected fields in file '.$file['relativename'].' Lines: '.implode(',', $lines));
+
+			// Check there is no double comma, nor comma just after SELECT or just before FROM, WHERE... in a forged SQL string
+			$ok = true;
+			$matches = array();
+			$lines = array();
+			$sqlkeywords = 'FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|UNION';
+			preg_match_all('/\$sql\s*\.?=\s*"([^"\n]*(?:,\s*,|,\s*(?:'.$sqlkeywords.')\b|\bSELECT\s*,)[^"\n]*)"/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[0], $filecontent, $report_filepath, "Misplaced comma in `{$val[1]}`");
+			}
+			// Same when the comma that ends a string is followed by the one that starts the next string, maybe in an if or foreach block (see #39609)
+			preg_match_all('/(\$sql\s*\.?=\s*"[^"\n]*,\s*";)[ \t]*(?:\/\/[^\n]*)?\n(?:[ \t]*(?:(?:if|foreach|for|while|elseif)\s*\(.*\)\s*\{|\}|\} else \{|\{|\/\/[^\n]*|)[ \t]*\n){0,6}[ \t]*\$sql\s*\.=\s*(?:\([^"\n]*\?\s*)?"\s*(?:,|(?:'.$sqlkeywords.')\b)/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Comma at end of `{$val[1]}`, the next string starts with a comma or a SQL keyword");
+			}
+			$this->assertTrue($ok, 'Found a forged SQL string with a misplaced comma in file '.$file['relativename'].' Lines: '.implode(',', $lines));
+
 			// Check bad casting on forge sql
 			// with $sql = "..." . $...
 			$ok = true;
@@ -855,7 +888,7 @@ class CodingPhpTest extends CommonClassTest
 					}
 				}
 
-				$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission already done", in file '.$file['relativename'].'.');
+				$this->assertTrue($ok, 'Found a test on $action, without check on permission on same line and without the comment "// Test on permission already done|not required|done later", in file '.$file['relativename'].'.');
 			}
 		}
 		print "\n";

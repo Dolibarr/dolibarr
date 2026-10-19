@@ -359,7 +359,6 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$action = $ifErrorAction;
@@ -1595,8 +1594,6 @@ if ($action == 'create' || $action == 'presend') {
 
 			$formticket->action = $action;
 			$formticket->track_id = $object->track_id;
-			$formticket->ref = $object->ref;
-			$formticket->id = $object->id;
 			$formticket->trackid = 'tic'.$object->id;
 
 			$formticket->withfile = 2;

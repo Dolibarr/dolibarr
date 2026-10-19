@@ -450,7 +450,7 @@ if (empty($reshook)) {
 
 							if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 								// we stock the batch id to test later if the same serial is shipped on another line for the same product
-								$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+								$product_batch_used[] = $sub_qty[$j]['id_batch'];
 							}
 
 							$j++;
@@ -1527,6 +1527,12 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</tr>'."\n";
 
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$projectid = GETPOSTINT('projectid');
@@ -1557,7 +1563,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 		print '<td colspan="3">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 		print "</td>\n";
 		print '</tr>';
@@ -2704,7 +2710,11 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+
+		$needquestiononstock = ((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $object->status == $object::STATUS_VALIDATED) ||
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) && $object->status == $object::STATUS_CLOSED));
+
+		if ($needquestiononstock) {
 			$formquestion = array(
 				array(
 					'type' => 'onecolumn',
@@ -2714,7 +2724,7 @@ if ($action == 'create' && $usercancreate) {
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0	/* Default must be "No stock change". Deletion is rarely used to cancel a shipment (not the correct business event for that). Re-open + Cancel is better for this. Deletion is usually used to clean db and should not impact the stock */
+					'value' => getDolGlobalInt('SHIPMENT_AUTO_CHECK_TO_INCREASE_STOCK_ON_SHIPMENT_DELETION')
 				),
 			);
 		}
@@ -3634,7 +3644,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-						} elseif (count($lines[$i]->detail_children ?? []) > 1) {
+						} elseif (is_array($lines[$i]->detail_children) && count($lines[$i]->detail_children) > 1) {
 							$detail = '';
 							foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 								foreach ($child_stock_list as $warehouse_id => $total_qty) {

@@ -656,6 +656,24 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if consumption or production has started on the MO (it has consumed or produced lines).
+	 * If yes, $this->error is set with the message to show.
+	 *
+	 * @return 	bool		True if the MO has consumed or produced lines
+	 */
+	public function hasConsumedOrProducedLines()
+	{
+		global $langs;
+
+		if (count($this->fetchLinesLinked('consumed')) || count($this->fetchLinesLinked('produced'))) {
+			$langs->load('mrp');
+			$this->error = $langs->trans('ErrorMoConsumptionOrProductionStarted');
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Count number of movement with origin of MO
@@ -735,6 +753,11 @@ class Mo extends CommonObject
 	{
 		$error = 0;
 		$role = "";
+
+		// The consumed and produced lines can't be deleted here, their stock movements would not be reversed
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		if ($this->status != self::STATUS_DRAFT) {
 			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
@@ -1011,6 +1034,14 @@ class Mo extends CommonObject
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
+		// A line to produce can't be deleted once something was produced from it (the production would stay in stock)
+		$arrayofproducedlines = $this->fetchLinesLinked('produced', $idline);
+		if (!empty($arrayofproducedlines)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordHasChildren');
+			return -1;
+		}
+
 		$result = 0;
 		$error = 0;
 
@@ -1033,16 +1064,16 @@ class Mo extends CommonObject
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);
 			$productstatic->fetch($movement->product_id);
-			$qtytoprocess = $movement->qty;
+			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-			$codemovementCancel = $langs->trans("StockIncrease");
+			$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
 			} else {
-				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
 				$this->setErrorsFromObject($stockmove);
@@ -1060,14 +1091,14 @@ class Mo extends CommonObject
 				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
+				$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 
 				if ($qtytoprocess >= 0) {
 					$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$error++;
@@ -1291,6 +1322,10 @@ class Mo extends CommonObject
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
+		// Once consumption or production has started, the lines can't be changed or reset any more
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
 		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
@@ -1425,15 +1460,15 @@ class Mo extends CommonObject
 					$qtytoprocess = $lineDetails['qty'];
 
 					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
+					$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1471,7 +1506,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1944,6 +1979,21 @@ class Mo extends CommonObject
 		$tables = array('mrp_mo');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old product id
+	 * @param int 		$dest_id 		New product id
+	 * @return bool
+	 */
+	public static function replaceProduct($db, $origin_id, $dest_id)
+	{
+		$tables = array('mrp_mo', 'mrp_production');
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 
 

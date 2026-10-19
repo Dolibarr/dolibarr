@@ -82,6 +82,9 @@ class Paiements extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Paiement not found');
 		}
+		if (!$this->_checkAccessToPaymentForExternalUser((int) $this->paiement->id)) {
+			throw new RestException(403, 'Access to this payment not allowed for this user');
+		}
 
 		return $this->_cleanObjectDatas($this->paiement);
 	}
@@ -120,6 +123,14 @@ class Paiements extends DolibarrApi
 		$sql .= " WHERE 1 = 1";
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
+		}
+		// Case of external user: restrict to payments linked only to invoices of the user's thirdparty
+		$socid = (int) DolibarrApiAccess::$user->socid;
+		if ($socid > 0) {
+			$sql .= " AND EXISTS (SELECT pf.rowid FROM ".$this->db->prefix()."paiement_facture as pf, ".$this->db->prefix()."facture as f";
+			$sql .= " WHERE pf.fk_paiement = t.rowid AND pf.fk_facture = f.rowid AND f.fk_soc = ".((int) $socid).")";
+			$sql .= " AND NOT EXISTS (SELECT pf2.rowid FROM ".$this->db->prefix()."paiement_facture as pf2, ".$this->db->prefix()."facture as f2";
+			$sql .= " WHERE pf2.fk_paiement = t.rowid AND pf2.fk_facture = f2.rowid AND f2.fk_soc <> ".((int) $socid).")";
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -186,6 +197,9 @@ class Paiements extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'paiement not found');
 		}
+		if (!$this->_checkAccessToPaymentForExternalUser((int) $this->paiement->id)) {
+			throw new RestException(403, 'Access to this payment not allowed for this user');
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -234,6 +248,9 @@ class Paiements extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Paiement not found');
 		}
+		if (!$this->_checkAccessToPaymentForExternalUser((int) $this->paiement->id)) {
+			throw new RestException(403, 'Access to this payment not allowed for this user');
+		}
 
 		if ($this->paiement->delete(DolibarrApiAccess::$user) == 0) {
 			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
@@ -251,6 +268,36 @@ class Paiements extends DolibarrApi
 
 
 	/* END MODULEBUILDER API PAIEMENT */
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check that an external user can access a payment: all invoices of the payment must belong to the user's thirdparty
+	 *
+	 * @param	int		$paymentid		ID of payment
+	 * @return	bool					True if access is allowed (always true for internal users)
+	 */
+	protected function _checkAccessToPaymentForExternalUser($paymentid)
+	{
+		// phpcs:enable
+		$socid = (int) DolibarrApiAccess::$user->socid;
+		if ($socid <= 0) {
+			return true;
+		}
+
+		$sql = "SELECT SUM(CASE WHEN f.fk_soc = ".((int) $socid)." THEN 1 ELSE 0 END) as nbok, SUM(CASE WHEN f.fk_soc = ".((int) $socid)." THEN 0 ELSE 1 END) as nbko";
+		$sql .= " FROM ".$this->db->prefix()."paiement_facture as pf, ".$this->db->prefix()."facture as f";
+		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = ".((int) $paymentid);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			throw new RestException(503, 'Error when checking access to payment: '.$this->db->lasterror());
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return ($obj && (int) $obj->nbok > 0 && (int) $obj->nbko == 0);
+	}
 
 
 

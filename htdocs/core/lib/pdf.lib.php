@@ -1680,10 +1680,12 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
 	$posy = 0;
 	// For customized footer
 	if (is_object($hookmanager)) {
-		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs);
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs, 'hidefreetext' => $hidefreetext, 'pdf' => $pdf, 'pagenb' => $pdf->PageNo());
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
+		// The footer returned by a hook replaces the default footer on the last page only (the one that shows the free text), unless
+		// the hook also returns $this->results['footeronallpages'] = 1 to replace it on all pages.
+		if (!empty($hookmanager->resPrint) && ($hidefreetext == 0 || !empty($hookmanager->resArray['footeronallpages']))) {
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 

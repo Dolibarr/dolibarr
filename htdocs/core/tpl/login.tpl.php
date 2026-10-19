@@ -296,8 +296,27 @@ if ($disablenofollow) {
 
 <div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 
+<?php
+// Second step of a two-factor authentication: only the code is asked for. The login is posted back for the form test, main.inc.php reads it from the session.
+$totppending = !empty($_SESSION['dol_totp_pending']);
+if ($totppending) {
+	$langs->load("users");
+	?>
+<!-- Two-factor authentication code -->
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		?><label for="totpcode" class="hidden"><?php echo $langs->trans("TOTPEnterCode"); ?></label><?php
+	} ?>
+<span class="fa fa-key"></span>
+<input type="text" id="totpcode" maxlength="8" placeholder="<?php echo $langs->trans("TOTPEnterCode"); ?>" name="totpcode" class="flat input-icon-password minwidth150 input-nobottom" value="" tabindex="1" autofocus="autofocus" autocomplete="one-time-code" inputmode="numeric" spellcheck="false" />
+<input type="hidden" name="username" value="<?php echo dolPrintHTMLForAttribute($_SESSION['dol_totp_pending']['login']); ?>">
+</div>
+</div>
+<?php } ?>
+
 <!-- Login -->
-<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
+<?php if (!$totppending && (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth')) { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {

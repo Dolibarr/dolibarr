@@ -2389,6 +2389,153 @@ abstract class CommonObject
 		return $result;
 	}
 
+
+	/**
+	 * @var array<string,bool> Fields currently being processed by setFieldValue(), keyed by field name.
+	 *                         Used to detect and break infinite recursion that could be caused by
+	 *                         onFieldValueChanged() side effects calling setFieldValue() back.
+	 */
+	protected $fieldValueBeingSet = array();
+
+	/**
+	 * Set a value for a dynamic field on the current object.
+	 *
+	 * This method performs multiple safety checks before assigning the value:
+	 * - verifies that the field is defined
+	 * - checks if the user is allowed to edit the field
+	 * - optionally validates the value if validation is required
+	 *
+	 * If all checks pass, the value is assigned dynamically to the property, and
+	 * onFieldValueChanged() is called so child classes can recompute dependent fields
+	 * (for example recalculating a TTC amount when the HT amount of a line changes).
+	 *
+	 * @param User 		$user					The user attempting to modify the field.
+	 * @param string 	$fieldKey 	 			The name of the field to modify.
+	 * @param mixed 	$value 					The value to assign to the field.
+	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value.
+	 *                                         	Only user rights are skipped, field and object state checks still apply.
+	 *                                         	When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
+	 *
+	 * @return bool Returns true if the value was successfully set, false otherwise.
+	 */
+	public function setFieldValue(User $user, $fieldKey, $value, $byPassUserPermission = false)
+	{
+		global $langs;
+
+		if (!empty($this->fieldValueBeingSet[$fieldKey])) {
+			// A side effect (onFieldValueChanged) is trying to set this same field again while it is
+			// still being processed higher up the call stack: this would cause infinite recursion.
+			dol_syslog(get_class($this)."::setFieldValue recursive call detected on field '".$fieldKey."', aborting to avoid infinite loop", LOG_WARNING);
+			return false;
+		}
+
+		if (!$this->isFieldDefined($fieldKey)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
+			return false;
+		}
+
+		if (!$this->isFieldEditAllowed($user, $fieldKey, $byPassUserPermission)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotAllowedForEdit'));
+			return false;
+		}
+
+		if ($this->isFieldValidationRequired($fieldKey) && !$this->validateField($this->fields, $fieldKey, $value)) {
+			return false;
+		}
+
+		if ($this->oldcopy === null || !is_object($this->oldcopy)) {
+			$this->oldcopy = clone $this;
+		}
+
+
+		// Property holding the value, ex: opp_status for the field fk_opp_status of a project
+		$property = $this->getFieldPropertyName($fieldKey);
+
+		if (is_object($this->oldcopy) && property_exists($this, $property) && property_exists($this->oldcopy, $property)) {
+			$this->oldcopy->$property = $this->$property;
+		}
+
+		$this->fieldValueBeingSet[$fieldKey] = true;
+
+		// Set new value
+		$this->$property = $value;
+
+		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
+		// both declared as real properties on the object for backward compatibility, so PHP never triggers
+		// DolDeprecationHandler magic methods for them (magic only fires for undefined/inaccessible properties).
+		// We must keep such pairs manually in sync, but only the pair that actually matches $fieldKey.
+		$deprecatedProperties = $this->deprecatedProperties();
+		if (!empty($deprecatedProperties) && is_array($deprecatedProperties)) {
+			foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+				if ($fieldKey === $oldProperty && property_exists($this, $newProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $newProperty) && property_exists($this->oldcopy, $oldProperty)) {
+						$this->oldcopy->$newProperty = $this->oldcopy->$oldProperty;
+					}
+					$this->$newProperty = $value;
+				} elseif ($fieldKey === $newProperty && property_exists($this, $oldProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $oldProperty) && property_exists($this->oldcopy, $newProperty)) {
+						$this->oldcopy->$oldProperty = $this->oldcopy->$newProperty;
+					}
+					$this->$oldProperty = $value;
+				}
+			}
+		}
+
+		// Let child classes recompute dependent fields (ex: TTC amount when HT amount changes on a line).
+		// Left as a no-op by default in CommonObject, which is shared by every kind of object.
+		$this->onFieldValueChanged($fieldKey, $value);
+
+		unset($this->fieldValueBeingSet[$fieldKey]);
+
+		return true;
+	}
+
+	/**
+	 * Hook called by setFieldValue() after a field has been successfully assigned.
+	 * Override in child classes to recompute fields that depend on the one that just changed
+	 * (for example recalculating total_ttc when subprice or tva_tx changes on a line).
+	 *
+	 * Warning: to avoid infinite recursion, dependent fields should be assigned directly
+	 * (ex: $this->total_ttc = ...) rather than through a recursive call to setFieldValue().
+	 * setFieldValue() also guards against re-entrant calls on the same field as a safety net.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		// Nothing to do by default.
+	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Some classes keep a field in a property with another name than the field (ex: the field fk_opp_status
+	 * of a project is in the property opp_status).
+	 * Override in child classes for their own fields, and return the result of the parent for the others.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		return $field;
+	}
+
+	/**
+	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
+	 * Use it instead of $object->$field when the field name comes from $fields (generic tools of the user interface...).
+	 *
+	 * @param	string	$field	Field name
+	 * @return	mixed			Value, null if the object has no property for this field
+	 */
+	public function getFieldUiValue($field)
+	{
+		$property = $this->getFieldPropertyName($field);
+
+		return property_exists($this, $property) ? $this->$property : null;
+	}
+
 	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
@@ -2425,6 +2572,7 @@ abstract class CommonObject
 		$propfield = $field;
 
 		// Special case
+		// TODO move special case to product class and/or create a propfield/field (table col name ) mapping key in object fields parameters ?
 		if ($table == 'product') {
 			if ($field == 'note_private') {
 				$field = 'note';
@@ -3191,7 +3339,6 @@ abstract class CommonObject
 								}
 								break;
 							case 'order_supplier':
-								/** @var CommandeFournisseur $this */
 								/** @var CommandeFournisseurLigne $line */
 								'@phan-var-force CommandeFournisseur $this';
 								'@phan-var-force CommandeFournisseurLigne $line';
@@ -3217,7 +3364,6 @@ abstract class CommonObject
 								);
 								break;
 							case 'invoice_supplier':
-								/** @var FactureFournisseur $this */
 								/** @var SupplierInvoiceLine $line */
 								'@phan-var-force FactureFournisseur $this';
 								'@phan-var-force SupplierInvoiceLIne $line';
@@ -8924,6 +9070,8 @@ abstract class CommonObject
 			$size = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			// @phan-suppress-next-line PhanTypeMismatchProperty
@@ -9517,6 +9665,8 @@ abstract class CommonObject
 			$maxSize = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
+		} elseif (preg_match('/^double\(/', $type)) {
+			$type = 'double'; // convert double(xx,yy) into double
 		}
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
@@ -10119,24 +10269,249 @@ abstract class CommonObject
 	 * Returns the rights used for this class
 	 *
 	 * @return null|int|stdClass		Object of permission for the module
+	 * @deprecated						Use instead hasUserPermission()
 	 */
 	public function getRights()
 	{
 		global $user;
+		return $this->getRightsForUser($user);
+	}
 
+	/**
+	 * Returns the rights used for this class for a specific user.
+	 * This is called by getRights() and hasUserPermission()
+	 *
+	 * @param User $user User to check rights
+	 * @return null|int|stdClass        Object of permission for the module
+	 */
+	public function getRightsForUser(User $user)
+	{
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
-		if ($element == 'facturerec') {
-			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec') {
-			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
-		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+		if ($module && $user->hasRight($module, $element)) {
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
+	}
+
+	/**
+	 * Check if user has a permission on this type of object.
+	 * Generic check based on getRightsForUser(), accepting core ("lire", "creer", "supprimer") and ModuleBuilder ("read", "write", "delete") names.
+	 * Child classes using other permissions must override it.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 *
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		$rights = $this->getRightsForUser($user);
+		if (is_int($rights)) {
+			// A single permission without sub levels grants every mode
+			return $rights === 1;
+		}
+		if (!is_object($rights)) {
+			return false;
+		}
+
+		if ($mode == 'read') {
+			return !empty($rights->lire) || !empty($rights->read);
+		}
+		if ($mode == 'create' || $mode == 'write') {
+			return !empty($rights->creer) || !empty($rights->write);
+		}
+		if ($mode == 'delete') {
+			return !empty($rights->supprimer) || !empty($rights->delete);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if user has write permission on a field of this object.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if current user have right to write for this field, false otherwise
+	 * @deprecated Use instead hasUserPermissionOnField($user, $field, 'write')
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		return $this->hasUserPermissionOnField($user, $field, 'write');
+	}
+
+	/**
+	 * Check if user has a permission on a field of this object.
+	 * Generic check based on hasUserPermission(). Child classes needing per field rules must override it.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @param string $mode  Permission to check: 'read', 'write' or 'delete'
+	 *
+	 * @return bool True if user has the permission on this field, false otherwise
+	 */
+	public function hasUserPermissionOnField(User $user, $field, $mode = 'write')
+	{
+		if (empty($field)) {
+			return false;
+		}
+
+		return $this->hasUserPermission($user, $mode);
+	}
+
+	/**
+	 * Check whether a given field is allowed to be edited on the current object.
+	 * This method combines:
+	 * - user rights check
+	 * - field configuration constraints
+	 * - object state constraints (status/statut)
+	 * Note: This method is defined in CommonObject, so it must remain generic.
+	 * Some child classes use `status`, others use `statut`, hence both are checked.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value.
+	 *                                     Only user rights are skipped, field and object state checks still apply.
+	 *                                     When passing true, label it at call site with an inline block comment holding the parameter name (see CommonObjectTest).
+	 *
+	 * @return bool True if the field is editable, false otherwise
+	 */
+	public function isFieldEditAllowed(User $user, $field, $byPassUserPermission = false)
+	{
+		// TODO : Implement error message ?
+
+		// Ensure user has write permission for field
+		if (!$byPassUserPermission && !$this->hasUserPermissionOnField($user, $field, 'write')) {
+			return false;
+		}
+
+		// Ensure field exists in object definition
+		if (!$this->isFieldDefined($field)) {
+			return false;
+		}
+
+		// Field explicitly disabled
+		if ($this->isFieldDisabled($field)) {
+			return false;
+		}
+
+		// Field must be enabled (default = enabled if not defined)
+		if (!$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		// Field explicitly marked as not editable
+		if ($this->isFieldMarkedNotEditable($field)) {
+			return false;
+		}
+
+		// Object state restriction
+		if ($this->isFieldBlockedByObjectState($field)) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Check if the field is defined in the object's field metadata.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field exists in the object definition, false otherwise
+	 */
+	protected function isFieldDefined($field)
+	{
+		return !empty($this->fields)
+			&& is_array($this->fields)
+			&& isset($this->fields[$field]);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as disabled.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is disabled, false otherwise
+	 */
+	protected function isFieldDisabled($field)
+	{
+		return !empty($this->fields[$field]['disabled']);
+	}
+
+	/**
+	 * Check if the field requires validation.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if validation is required, false otherwise
+	 */
+	protected function isFieldValidationRequired($field)
+	{
+		return !empty($this->fields[$field]['validate']);
+	}
+
+
+
+	/**
+	 * Check if the field is enabled.
+	 * A field is considered enabled by default if the "enabled" flag is not set.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is enabled, false otherwise
+	 */
+	protected function isFieldEnabled($field)
+	{
+		return !isset($this->fields[$field]['enabled']) || (bool) (int) dol_eval((string) $this->fields[$field]['enabled']);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as not editable.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is not editable, false otherwise
+	 */
+	protected function isFieldMarkedNotEditable($field)
+	{
+		return !empty($this->fields[$field]['noteditable']);
+	}
+
+	/**
+	 * Check if the field is blocked by the current object state.
+	 * For objects having a draft status (class constant STATUS_DRAFT), fields are locked
+	 * when the object is not in draft, unless "alwayseditable" is set.
+	 * Objects without STATUS_DRAFT (ex: Product, Societe) have no status meaning "draft",
+	 * so their fields are never blocked by state here. Override in child classes for specific rules.
+	 *
+	 * Note:
+	 * This method is kept generic for CommonObject compatibility.
+	 * Both `status` and `statut` are checked because child classes may use either.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is blocked by object state, false otherwise
+	 */
+	protected function isFieldBlockedByObjectState($field)
+	{
+		if (!empty($this->fields[$field]['alwayseditable'])) {
+			return false;
+		}
+
+		if (!defined(static::class.'::STATUS_DRAFT')) {
+			return false;
+		}
+
+		$draftStatus = (int) constant(static::class.'::STATUS_DRAFT');
+
+		return (isset($this->status) && (int) $this->status !== $draftStatus)
+			|| (isset($this->statut) && (int) $this->statut !== $draftStatus);
 	}
 
 	/**
@@ -12278,5 +12653,104 @@ abstract class CommonObject
 		$line = $trace[0]['line'] ?? 'line unknown';
 		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
 		dol_syslog($syslogMessage, $loglevel);
+	}
+
+	/**
+	 * Show preview link of the element (last generate or *<ref>*.pdf) if found and authorized to show the preview (file type)
+	 * @see dolIsAllowedForPreview()
+	 *
+	 * @param	string		$rootdir		Root directory of the file
+	 * @param	string		$relativepath	Relative directory of the file (from the root directory)
+	 * @return	string						Output string with HTML
+	 */
+	public function showLastFilePreview($rootdir = '', $relativepath = '')
+	{
+		global $conf, $formfile, $langs;
+
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+
+		// Clean and check root path
+		if (empty($rootdir)) {
+			$element = $this->element;
+			$rootdir = $conf->$element->multidir_output[$this->entity];
+		}
+		if (!empty($rootdir)) {
+			$rootdir = rtrim($rootdir, '/') . '/';
+		}
+		if (empty($rootdir) || !file_exists($rootdir) || !dol_is_dir($rootdir)) {
+			return '';
+		}
+
+		// Clean relative path
+		if (empty($relativepath)) {
+			$relativepath = dol_sanitizeFileName($this->ref);
+		}
+		if (!empty($relativepath)) {
+			$relativepath = rtrim($relativepath, '/') . '/';
+		}
+
+		// Set, clean and check file directory
+		$filedir = $rootdir . $relativepath;
+		if (!empty($filedir)) {
+			$filedir = rtrim($filedir, '/') . '/';
+		}
+		if (empty($filedir) || !file_exists($filedir) || !dol_is_dir($filedir)) {
+			return '';
+		}
+
+		$found = false;
+		$file = array();
+		$relativefilepath = '';
+
+		// Search with last_main_doc
+		if (!empty($this->last_main_doc) && dolIsAllowedForPreview($this->last_main_doc)) {
+			$filename = basename($this->last_main_doc);
+			$filepath = $filedir . $filename;
+			if (file_exists($filepath) && dol_is_file($filepath)) {
+				$relativefilepath = $relativepath . $filename;
+				$found = true;
+			}
+		}
+
+		// Search with *<ref>*.pdf
+		if (!$found) {
+			$filelist = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($this->ref) . '.*\.pdf$', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+			if (is_array($filelist) && !empty($filelist)) {
+				// Defined relative dir to DOL_DATA_ROOT
+				$relativedir = '';
+				if ($filedir) {
+					$relativedir = preg_replace('/^' . preg_quote(DOL_DATA_ROOT, '/') . '/', '', $filedir);
+					$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				}
+				// Get list of files stored into database for same relative directory
+				if ($relativedir) {
+					completeFileArrayWithDatabaseInfo($filelist, $relativedir);
+					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filelist';
+
+					//var_dump($sortfield.' - '.$sortorder);
+					if (!empty($sortfield) && !empty($sortorder)) {    // If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+						$filelist = dol_sort_array($filelist, $sortfield, $sortorder);
+					}
+				}
+				$filename = $filelist[0]['name'];
+				$filepath = $filedir . $filename;
+				if (file_exists($filepath) && dol_is_file($filepath) && dolIsAllowedForPreview($filename)) {
+					$file = $filelist[0];
+					$relativefilepath = $relativepath . $filename;
+					$found = true;
+				}
+			}
+		}
+
+		// Print preview link
+		if ($found) {
+			if (!is_object($formfile)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+				$formfile = new FormFile($this->db);
+			}
+			return $formfile->showPreview($file, $this->element, $relativefilepath, 0, 'entity=' . $this->entity);
+		}
+
+		return '';
 	}
 }
