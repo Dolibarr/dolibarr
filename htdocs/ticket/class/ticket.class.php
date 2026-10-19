@@ -641,7 +641,6 @@ class Ticket extends CommonObject
 				return $this->id;
 			}
 		} else {
-			$this->db->rollback();
 			dol_syslog(get_class($this)."::Create fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
