@@ -579,7 +579,7 @@ class DateLibTest extends CommonClassTest
 	{
 		global $conf;
 
-		$oldstartweek = isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : null;
+		$oldstartweek = isset($conf->global->MAIN_START_WEEK) ? getDolGlobalInt('MAIN_START_WEEK') : null;
 		$oldtimezone = date_default_timezone_get();
 		try {
 			date_default_timezone_set('UTC');
