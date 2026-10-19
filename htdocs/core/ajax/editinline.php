@@ -54,10 +54,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 $action = GETPOST('action', 'alpha');
 $page_id = GETPOSTINT('page_id');
 $element_id = GETPOST('element_id', 'aZ09');
-// For action 'updatedElementContent' (element with contenteditable="true" and html inside, edited with CKEditor)
-$content = GETPOST('content', 'restricthtml');
-$element_type = GETPOST('element_type', 'aZ09');
-// For action 'updateElementText' (element with contenteditable="true" and only text inside)
+// For action 'updateElementHtml' (element edited with CKEditor). Class attributes are kept, they are used by the templates.
+// The content is checked again with dolWebsiteCheckEditInlineHtml().
+$content = GETPOST('content', 'restricthtmlallowclass');
+// For action 'updateElementText' (element with only text inside, edited as plain text)
 $text = GETPOST('text', 'nohtml');
 
 global $dolibarr_main_data_root;
@@ -74,15 +74,15 @@ if (!$usercanmodify) {
  * View
  */
 
-if ($action === 'updateElementText') {
+if ($action === 'updateElementText' || $action === 'updateElementHtml') {
 	top_httphead('application/json');
 
 	$langs->loadLangs(array("website", "errors"));
 
 	$error = '';
 	$oldcontent = '';
-	$textpos = -1;	// Position and length of the current text of the element into the source of the page
-	$textlen = 0;
+	$newinner = '';
+	$element = null;
 	$objectpage = new WebsitePage($db);
 	$objectwebsite = new Website($db);
 
@@ -94,39 +94,54 @@ if ($action === 'updateElementText') {
 		http_response_code(404);
 		$error = $langs->trans("ErrorRecordNotFound");
 	} else {
-		// Find the element with contenteditable="true" and this id in the source of the page. Its content must be plain text
-		// (only <br> tags allowed), so the closing tag found by the regex is the one of the element and no html or php code
-		// can be lost.
-		$regex = '/(<([a-z][a-z0-9]*)(?=[^<>]*\sid="'.preg_quote($element_id, '/').'")(?=[^<>]*\scontenteditable="true")[^<>]*>)(.*?)(<\/\2\s*>)/is';
-		$nbfound = preg_match_all($regex, $objectpage->content, $reg, PREG_OFFSET_CAPTURE);
-		if ($nbfound == 0) {
+		// Find the element with contenteditable="true" and this id in the source of the page, with its position
+		$elements = dolWebsiteGetEditInlineElements($objectpage->content);
+		if (empty($elements[$element_id])) {
 			http_response_code(404);
 			$error = $langs->trans("ErrorEditInlineElementNotFound", $element_id);
-		} elseif ($nbfound > 1) {
-			http_response_code(409);
-			$error = $langs->trans("ErrorEditInlineElementNotUnique", $element_id);
-		} elseif (preg_match('/<(?!br\s*\/?>)/i', $reg[3][0][0])) {
-			http_response_code(409);
-			$error = $langs->trans("ErrorEditInlineElementNotPlainText", $element_id);
 		} else {
-			$textpos = $reg[3][0][1];
-			$textlen = strlen($reg[3][0][0]);
+			$element = $elements[$element_id];
+			if ($element['error']) {
+				http_response_code(409);
+				$error = $langs->trans($element['error'], $element_id);
+			} elseif ($action === 'updateElementText' && $element['mode'] != 'text') {
+				http_response_code(409);
+				$error = $langs->trans("ErrorEditInlineElementNotPlainText", $element_id);
+			}
 		}
 	}
 
 	if (!$error) {
-		$text = trim(str_replace("\r", '', $text));
-		$newtext = nl2br(htmlspecialchars($text, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8'), false);
+		$oldinner = substr($objectpage->content, $element['pos'], $element['len']);
 
+		if ($action === 'updateElementText') {
+			$text = trim(str_replace("\r", '', $text));
+			$newinner = nl2br(htmlspecialchars($text, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8'), false);
+		} else {
+			// The links of the preview are not the ones of the source, so we restore them
+			$newinner = dolWebsiteRestoreLinksOfEditInline($objectwebsite, trim(str_replace("\r", '', $content)), $oldinner);
+			if (!dolWebsiteCheckEditInlineHtml($newinner, $element['blocks'])) {
+				http_response_code(409);
+				$error = $langs->trans("ErrorEditInlineContentNotAllowed", $element_id);
+			} else {
+				// Keep the line feeds and indentation of the source around the content
+				preg_match('/^\s*/', $oldinner, $regspace);
+				preg_match('/\s*$/', $oldinner, $regspaceend);
+				$newinner = $regspace[0].$newinner.$regspaceend[0];
+			}
+		}
+	}
+
+	if (!$error) {
 		$oldcontent = $objectpage->content;
-		$objectpage->content = substr_replace($oldcontent, $newtext, $textpos, $textlen);
+		$objectpage->content = substr_replace($oldcontent, $newinner, $element['pos'], $element['len']);
 
-		// The text is escaped, so this should never happen, but if the area is inside a php string, the php code would change
+		// The element has no php code and the new content is checked, so this should never happen
 		$oldphp = dolKeepOnlyPhpCode($oldcontent);
 		$newphp = dolKeepOnlyPhpCode($objectpage->content);
 		if ($oldphp != $newphp) {
 			http_response_code(409);
-			$error = $langs->trans("ErrorEditInlineElementNotPlainText", $element_id);
+			$error = $langs->trans("ErrorEditInlineElementWithPhp", $element_id);
 		}
 	}
 
@@ -153,72 +168,16 @@ if ($action === 'updateElementText') {
 
 	if ($error) {
 		print json_encode(array('error' => $error));
-	} else {
+	} elseif ($action === 'updateElementText') {
 		// Return the saved text, it may differ from the posted one (tags are removed)
 		print json_encode(array('status' => 'ok', 'message' => $langs->trans("Saved"), 'text' => $text));
+	} else {
+		print json_encode(array('status' => 'ok', 'message' => $langs->trans("Saved")));
 	}
 
 	$db->close();
 	exit;
 }
 
-top_httphead();
-
-if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($page_id)) {
-	// Page object
-	$objectpage = new WebsitePage($db);
-	$res = $objectpage->fetch((int) $page_id);
-	if (!$res) {
-		print "Cannot find page with ID = " . $page_id . ".";
-		exit;
-	}
-
-	// Website object
-	$objectwebsite = new Website($db);
-	$res = $objectwebsite->fetch($objectpage->fk_website);
-	if (!$res) {
-		print "Cannot find website with REF " . $objectpage->fk_website . ".";
-		exit;
-	}
-
-	$db->begin();
-	$error = 0;
-
-	$oldContent = $objectpage->content;
-
-	// Replace element content into database and tpl file
-	// TODO Enhance this by a DOM scan/replacement
-	$objectpage->content = preg_replace('/<' . preg_quote($element_type, '/') . '[^>]*\bid="' . preg_quote($element_id, '/') . '"[^>]*>\K(.*?)(?=<\/' . preg_quote($element_type, '/') . '>)/s', $content, $objectpage->content, 1);
-
-	$oldPhp = dolKeepOnlyPhpCode($oldContent);
-	$newPhp = dolKeepOnlyPhpCode($objectpage->content);
-	if (checkPHPCode($oldPhp, $newPhp)) {
-		// Error php was modified when not allowed
-		$error++;
-		// A message was set by setEventMessages into checkPHPCode().
-	} else {
-		$res = $objectpage->update($user);
-		if ($res) {
-			$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$objectwebsite->ref;
-			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
-
-			$result = dolSavePageContent($filetpl, $objectwebsite, $objectpage, 1);
-			if (!$result) {
-				print "Failed to write file " . $filetpl . ".";
-				$error++;
-			}
-		} else {
-			print "Failed to save changes error " . $objectpage->error . ".";
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		$db->commit();
-		print "Changes are saved for " . $element_type . " with id " . $element_id;
-	} else {
-		$db->rollback();
-	}
-
-	$db->close();
-}
+http_response_code(400);
+print 'Bad value for parameter action';
