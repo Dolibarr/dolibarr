@@ -3868,9 +3868,14 @@ class Form
 			$sql .= " GROUP BY " . $this->db->sanitize($selectFields, 0, 0, 1);	// To have the SUM on ps.reel working in the select.
 		}
 
+		// Put the preselected product first so it is not cut by the limit (for example a product just created with the + button of the line form)
+		$sortselectedfirst = ((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "");
+
 		// Sort by category
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+			$sql .= " ORDER BY".$sortselectedfirst." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ($sortselectedfirst) {
+			$sql .= " ORDER BY".$sortselectedfirst." p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
