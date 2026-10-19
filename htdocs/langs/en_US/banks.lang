@@ -52,7 +52,6 @@ BankAccountCountry=Account country
 InstitutionNumber=Institution number
 TransitNumber=Branch (transit) number
 ABARoutingNumber=ABA routing number
-BankAccountCountryChangedRefresh=The account country changed. Review the bank fields displayed for the selected country, then save again.
 BankAccountOwner=Account owner name
 BankAccountOwnerAddress=Account owner address
 BankAccountOwnerZip=Account owner zip

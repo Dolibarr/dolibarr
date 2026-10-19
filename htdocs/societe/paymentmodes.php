@@ -149,15 +149,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (GETPOSTISSET('displayed_account_country_id') && GETPOSTINT('account_country_id') != GETPOSTINT('displayed_account_country_id')) {
-		setEventMessages($langs->trans('BankAccountCountryChangedRefresh'), null, 'warnings');
-		if ($action == 'add') {
-			$action = 'create';
-		} elseif ($action == 'update') {
-			$action = 'edit';
-		}
-	}
-
 	// Security: any action that references a bank account / payment mode by a posted id or ribid must
 	// only act on a record of the thirdparty of the page. Without this, the id of a societe_rib row of
 	// another company (or another entity) could be forged to read (IBAN...), update or delete it.
@@ -962,7 +953,18 @@ if (empty($companybankaccount->socid)) {
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
+	if ($action == 'edit' && $conf->use_javascript_ajax) {
+		// Reload the form when the account country changes, so the bank fields match the country rules
+		print "\n".'<script type="text/javascript">';
+		print 'jQuery(document).ready(function () {
+			jQuery("#selectaccount_country_id").change(function() {
+				document.formbank.action.value="edit";
+				document.formbank.submit();
+			});
+		})';
+		print '</script>'."\n";
+	}
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formbank" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') {		// Test on permission not required
@@ -972,7 +974,18 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 }
 if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
+	if ($action == 'create' && $conf->use_javascript_ajax) {
+		// Reload the form when the account country changes, so the bank fields match the country rules
+		print "\n".'<script type="text/javascript">';
+		print 'jQuery(document).ready(function () {
+			jQuery("#selectaccount_country_id").change(function() {
+				document.formbank.action.value="create";
+				document.formbank.submit();
+			});
+		})';
+		print '</script>'."\n";
+	}
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formbank" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') {		// Test on permission not required
@@ -2130,8 +2143,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country($country_codeid, 'account_country_id', 'onchange="this.form.submit()"');
-	print '<input type="hidden" name="displayed_account_country_id" value="'.$country_codeid.'">';
+	print $form->select_country($country_codeid, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -2362,8 +2374,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country($selected_country_id, 'account_country_id', 'onchange="this.form.submit()"');
-	print '<input type="hidden" name="displayed_account_country_id" value="'.$selected_country_id.'">';
+	print $form->select_country($selected_country_id, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
