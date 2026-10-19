@@ -2088,4 +2088,23 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 	}
+
+	/**
+	 * Check if user has a permission on template supplier invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
+
+		return (bool) $user->hasRight("fournisseur", "facture", $mode);
+	}
 }

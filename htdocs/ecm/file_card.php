@@ -172,7 +172,13 @@ if ($action == 'update' && $permissiontoadd) {
 	// Now we update index of file
 	$db->begin();
 	//print $oldfile.' - '.$newfile;
-	if ($newlabel != $oldlabel) {
+	if ($newlabel != $oldlabel && dol_is_file($newfileformove)) {
+		// Do not overwrite another file of the directory
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorDestinationAlreadyExists', $newlabel), null, 'errors');
+		$error++;
+	}
+	if (!$error && $newlabel != $oldlabel) {
 		$result = dol_move($oldfile, $newfileformove); // This include update of database
 		if (!$result) {
 			$langs->load('errors');
@@ -190,8 +196,11 @@ if ($action == 'update' && $permissiontoadd) {
 
 	if (!$error) {
 		if ($shareenabled) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$object->share = getRandomPassword(true);
+			// Keep the current key: a new one would break the links already sent
+			if (empty($object->share)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$object->share = getRandomPassword(true);
+			}
 		} else {
 			$object->share = '';
 		}

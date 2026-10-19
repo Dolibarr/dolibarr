@@ -337,7 +337,16 @@ class Paiement extends CommonObject
 				continue;
 			}
 			$value_converted = false;
+			// getInvoiceRate() returns false when the invoice cannot be read, so the result must
+			// be tested before being indexed, as PaiementFourn::create() already does. Without
+			// this the rate is read from a boolean, which emits a PHP warning and leaves it null,
+			// so no conversion is made and the payment is refused later on with
+			// 'Payment in same currency than company but this->amount != this->multicurrency_amount'.
 			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
+			if ($tmparray === false) {
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+				return -1;
+			}
 			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
 

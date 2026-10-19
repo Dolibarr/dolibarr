@@ -462,8 +462,8 @@ class SupplierInvoices extends DolibarrApi
 	 * @url     GET {id}/payments
 	 *
 	 * @return array
-	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
-	 * @phpstan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
+	 * @phan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
+	 * @phpstan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
 	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -694,6 +694,239 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
+	}
+
+	/**
+	 * Create a discount (credit available) from a supplier credit note, a supplier deposit or the excess paid on a supplier invoice
+	 *
+	 * @param   int		$id				Supplier invoice ID
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @url POST    {id}/markAsCreditAvailable
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
+	 */
+	public function markAsCreditAvailable($id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Check if there is already a discount (protection to avoid duplicate creation)
+		$discountcheck = new DiscountAbsolute($this->db);
+		$discountcheck->fetch(0, 0, $this->invoice->id);
+		if (!empty($discountcheck->id)) {
+			throw new RestException(409, 'A credit already exists for this supplier invoice');
+		}
+
+		// Same conditions as the button "Convert into credit" of the supplier invoice card
+		$remaintopay = (float) $this->invoice->getRemainToPay(0);
+		if ($this->invoice->status == FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(400, 'Supplier invoice must be validated');
+		}
+		if ($this->invoice->type == FactureFournisseur::TYPE_STANDARD) {
+			if (!empty($this->invoice->paid) || $remaintopay >= 0) {
+				throw new RestException(400, 'No excess paid on this supplier invoice');
+			}
+			$discountdesc = '(EXCESS PAID)';
+		} elseif ($this->invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+			if (!empty($this->invoice->paid)) {
+				throw new RestException(400, 'Supplier credit note is already refunded or converted');
+			}
+			if (!getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') && $this->invoice->getSommePaiement() != 0) {
+				throw new RestException(400, 'Supplier credit note is partially refunded');
+			}
+			$discountdesc = '(CREDIT_NOTE)';
+		} elseif ($this->invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
+			$discountdesc = '(DEPOSIT)';
+		} else {
+			throw new RestException(400, 'Cannot convert into credit a supplier invoice of this type');
+		}
+
+		$this->db->begin();
+
+		$discount = new DiscountAbsolute($this->db);
+		$discount->description = $discountdesc;
+		$discount->discount_type = 1; // Supplier discount
+		$discount->fk_soc = $this->invoice->socid;
+		$discount->socid = $this->invoice->socid;
+		$discount->fk_invoice_supplier_source = $this->invoice->id;
+		$discount->multicurrency_code = $this->invoice->multicurrency_code;
+		$discount->multicurrency_tx = $this->invoice->multicurrency_tx;
+
+		$error = 0;
+
+		if ($this->invoice->type == FactureFournisseur::TYPE_STANDARD) {
+			// Excess paid: one credit with tax included and no VAT
+			$discount->amount_ht = $discount->amount_ttc = -$remaintopay;
+			$discount->amount_tva = 0;
+			$discount->tva_tx = 0;
+			$discount->vat_src_code = '';
+			$discount->multicurrency_total_ht = $discount->multicurrency_total_ttc = (float) price2num((float) $discount->amount_ttc * (float) $this->invoice->multicurrency_tx, 'MT');
+			$discount->multicurrency_total_tva = 0;
+			$discount->multicurrency_amount_ht = $discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+			$discount->multicurrency_amount_tva = 0;
+
+			if ($discount->create(DolibarrApiAccess::$user) < 0) {
+				$error++;
+			}
+		} else {
+			// One credit per VAT rate
+			$amounts = array();
+			foreach ($this->invoice->lines as $line) {
+				if ($line->product_type < 9 && $line->total_ht != 0) {
+					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+					if (!array_key_exists($keyforvatrate, $amounts)) {
+						$amounts[$keyforvatrate] = array('ht' => 0.0, 'tva' => 0.0, 'ttc' => 0.0, 'mht' => 0.0, 'mtva' => 0.0, 'mttc' => 0.0);
+					}
+					$amounts[$keyforvatrate]['ht'] += (float) $line->total_ht;
+					$amounts[$keyforvatrate]['tva'] += (float) $line->total_tva;
+					$amounts[$keyforvatrate]['ttc'] += (float) $line->total_ttc;
+					$amounts[$keyforvatrate]['mht'] += (float) $line->multicurrency_total_ht;
+					$amounts[$keyforvatrate]['mtva'] += (float) $line->multicurrency_total_tva;
+					$amounts[$keyforvatrate]['mttc'] += (float) $line->multicurrency_total_ttc;
+				}
+			}
+
+			// If some payments were already done on the credit note, the credit is reduced with the same prorata
+			if (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') && $this->invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+				$alreadypaid = $this->invoice->getSommePaiement();
+				if ($alreadypaid && abs($alreadypaid) < abs($this->invoice->total_ttc)) {
+					$ratio = abs(($this->invoice->total_ttc - $alreadypaid) / $this->invoice->total_ttc);
+					foreach ($amounts as $keyforvatrate => $vals) {
+						foreach ($vals as $k => $val) {
+							$amounts[$keyforvatrate][$k] = (float) price2num($val * $ratio, 'MU');
+						}
+					}
+				}
+			}
+
+			foreach ($amounts as $keyforvatrate => $vals) {
+				$discount->amount_ht = abs($vals['ht']);
+				$discount->amount_tva = abs($vals['tva']);
+				$discount->amount_ttc = abs($vals['ttc']);
+				$discount->multicurrency_total_ht = $discount->multicurrency_amount_ht = abs($vals['mht']);
+				$discount->multicurrency_total_tva = $discount->multicurrency_amount_tva = abs($vals['mtva']);
+				$discount->multicurrency_total_ttc = $discount->multicurrency_amount_ttc = abs($vals['mttc']);
+
+				$reg = array();
+				$discount->vat_src_code = '';
+				if (preg_match('/\((.*)\)/', (string) $keyforvatrate, $reg)) {
+					$discount->vat_src_code = $reg[1];
+				}
+				$discount->tva_tx = abs((float) preg_replace('/\s*\(.*\)/', '', (string) $keyforvatrate));
+
+				if ($discount->create(DolibarrApiAccess::$user) < 0) {
+					$error++;
+					break;
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			throw new RestException(500, 'Discount creation error: '.$discount->errorsToString());
+		}
+
+		if ($this->invoice->type != FactureFournisseur::TYPE_DEPOSIT) {
+			if ($this->invoice->setPaid(DolibarrApiAccess::$user) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Could not set paid: '.$this->invoice->errorsToString());
+			}
+		}
+
+		$this->db->commit();
+
+		$this->invoice->fetch($id);
+
+		return $this->_cleanObjectDatas($this->invoice);
+	}
+
+	/**
+	 * Use an available supplier credit (coming from a credit note, a deposit or an excess paid) to pay a supplier invoice
+	 *
+	 * Note that this consumes the credit. The invoice is set to paid when nothing remains to pay.
+	 *
+	 * @param int   $id            Id of supplier invoice
+	 * @param int   $discountid    Id of the available supplier credit
+	 * @return	int
+	 *
+	 * @url     POST {id}/usecreditnote/{discountid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
+	 */
+	public function useCreditNote($id, $discountid)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$discount = new DiscountAbsolute($this->db);
+		$result = $discount->fetch($discountid);
+		if ($result <= 0 || empty($discount->discount_type)) {
+			throw new RestException(404, 'Supplier credit not found');
+		}
+		if ($discount->fk_soc != $this->invoice->socid) {
+			throw new RestException(400, 'Credit does not belong to the supplier of the invoice');
+		}
+		if (!empty($discount->fk_invoice_supplier) || !empty($discount->fk_invoice_supplier_line)) {
+			throw new RestException(409, 'Credit already used');
+		}
+		if ($this->invoice->status != FactureFournisseur::STATUS_VALIDATED) {
+			throw new RestException(400, 'Supplier invoice must be validated and unpaid');
+		}
+		if (price2num($discount->amount_ttc) > price2num($this->invoice->getRemainToPay(0))) {
+			throw new RestException(400, 'Credit is larger than remain to pay, split it before');
+		}
+
+		$this->db->begin();
+
+		$result = $discount->link_to_invoice(0, $this->invoice->id);
+		if ($result < 0) {
+			$this->db->rollback();
+			throw new RestException(500, $discount->errorsToString());
+		}
+
+		if (price2num($this->invoice->getRemainToPay(0)) == 0) {
+			if ($this->invoice->setPaid(DolibarrApiAccess::$user) < 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Could not set paid: '.$this->invoice->errorsToString());
+			}
+		}
+
+		$this->db->commit();
+
+		return $result;
 	}
 
 	/**
@@ -934,6 +1167,71 @@ class SupplierInvoices extends DolibarrApi
 		} else {
 			throw new RestException(405, $this->invoice->errorsToString());
 		}
+	}
+
+	/**
+	 * Add a discount line into a draft supplier invoice using an available supplier discount
+	 *
+	 * Note that this consumes the discount. A discount larger than the invoice must be split before, see POST thirdparties/{id}/splitdiscount/{discountid}.
+	 *
+	 * @param int   $id             Id of supplier invoice
+	 * @param int   $discountid     Id of the available supplier discount
+	 * @return int
+	 *
+	 * @url     POST {id}/usediscount/{discountid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
+	 */
+	public function useDiscount($id, $discountid)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same conditions as the discount selector of the supplier invoice card
+		if ($this->invoice->status != FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(400, 'Supplier invoice must be a draft');
+		}
+		if ($this->invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE || $this->invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
+			throw new RestException(400, 'A discount cannot be used on a supplier credit note or deposit');
+		}
+
+		$discount = new DiscountAbsolute($this->db);
+		$result = $discount->fetch($discountid);
+		if ($result <= 0 || empty($discount->discount_type)) {
+			throw new RestException(404, 'Supplier discount not found');
+		}
+		if ($discount->fk_soc != $this->invoice->socid) {
+			throw new RestException(400, 'Discount does not belong to the supplier of the invoice');
+		}
+		if (!empty($discount->fk_invoice_supplier) || !empty($discount->fk_invoice_supplier_line)) {
+			throw new RestException(409, 'Discount already used');
+		}
+		if (price2num($discount->amount_ttc) > price2num($this->invoice->total_ttc)) {
+			throw new RestException(400, 'Discount is larger than the invoice, split it before');
+		}
+
+		$result = $this->invoice->insert_discount($discount->id);
+		if ($result < 0) {
+			throw new RestException(500, $this->invoice->errorsToString());
+		}
+
+		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
