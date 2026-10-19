@@ -4281,6 +4281,8 @@ class ToolApiBridge extends McpTool
 		foreach ($args as $name => $value) {
 			if ($value === 'me' && stripos((string) $name, 'user') !== false) {
 				$args[$name] = (int) $this->user->id;
+			} elseif (is_array($value)) {
+				$args[$name] = $this->resolveUserSentinels($value);
 			}
 		}
 
