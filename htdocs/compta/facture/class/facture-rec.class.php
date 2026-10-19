@@ -802,7 +802,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, l.fk_contract_line, l.extraparams,';
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_source, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -877,6 +877,7 @@ class FactureRec extends CommonInvoice
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
@@ -985,9 +986,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int				$fk_parent_line		Id of parent line
 	 *  @param		array<string,mixed>	$array_options		Extrafields array
+	 *  @param		int				$multicurrency_subprice_source	1 if $pu_ht_devise comes from a fixed per-currency product price (issue #32379)
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $array_options = array())
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $array_options = array(), $multicurrency_subprice_source = 0)
 	{
 		global $mysoc;
 
@@ -1111,7 +1113,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", rang";
 		$sql .= ", special_code";
 		$sql .= ", fk_unit";
-		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_source, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $facid);
 		$sql .= ", ".($fk_parent_line > 0 ? ((int) $fk_parent_line) : "null");
@@ -1146,6 +1148,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($pu_ht_devise, 'CU');
+		$sql .= ", ".((int) $multicurrency_subprice_source);
 		$sql .= ", ".price2num($multicurrency_total_ht, 'CT');
 		$sql .= ", ".price2num($multicurrency_total_tva, 'CT');
 		$sql .= ", ".price2num($multicurrency_total_ttc, 'CT');
@@ -1203,9 +1206,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		?int			$fk_fournprice		Id of origin supplier price
 	 * 	@param		float|string	$pa_ht				Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int				$fk_parent_line		Id of parent line
+	 *  @param		int				$multicurrency_subprice_source	1 if $pu_ht_devise comes from a fixed per-currency product price (issue #32379)
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $multicurrency_subprice_source = null)
 	{
 		global $mysoc;
 
@@ -1342,6 +1346,10 @@ class FactureRec extends CommonInvoice
 		$sql .= ", special_code=".((int) $special_code);
 		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape((string) $fk_unit)."'" : "null");
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($multicurrency_subprice_source !== null) {
+			$sql .= ', multicurrency_subprice_source = '.((int) $multicurrency_subprice_source);
+		}
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
 		$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);
@@ -2635,6 +2643,11 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $skip_update_total;
 
 	/**
+	 * @var int 1 if the multicurrency unit price comes from a fixed per-currency product price (issue #32379)
+	 */
+	public $multicurrency_subprice_source = 0;
+
+	/**
 	 * 	Delete line in database
 	 *
 	 *  @param		User	$user		Object user
@@ -2700,7 +2713,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, l.fk_contract_line,';
 		$sql .= ' l.import_key, l.fk_multicurrency,';
-		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_source, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' l.buy_price_ht, l.fk_product_fournisseur_price,';
 		$sql .= ' l.fk_user_author, l.fk_user_modif, l.extraparams,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
@@ -2754,6 +2767,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->fk_multicurrency = $objp->fk_multicurrency;
 			$this->multicurrency_code = $objp->multicurrency_code;
 			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
