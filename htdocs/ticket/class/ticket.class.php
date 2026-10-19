@@ -759,15 +759,16 @@ class Ticket extends CommonObject
 				$this->timing = $obj->timing;
 
 				$this->type_code = $obj->type_code;
-				$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != "TicketTypeShort".$obj->type_code ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
+				// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+				$label_type = (is_object($langs) && $langs->trans("TicketTypeShort".$obj->type_code) != "TicketTypeShort".$obj->type_code ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 				$this->type_label = $label_type;
 
 				$this->category_code = $obj->category_code;
-				$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != "TicketCategoryShort".$obj->category_code ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
+				$label_category = (is_object($langs) && $langs->trans("TicketCategoryShort".$obj->category_code) != "TicketCategoryShort".$obj->category_code ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 				$this->category_label = $label_category;
 
 				$this->severity_code = $obj->severity_code;
-				$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != "TicketSeverityShort".$obj->severity_code ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
+				$label_severity = (is_object($langs) && $langs->trans("TicketSeverityShort".$obj->severity_code) != "TicketSeverityShort".$obj->severity_code ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 				$this->severity_label = $label_severity;
 
 				$this->datec = $this->db->jdate($obj->datec);

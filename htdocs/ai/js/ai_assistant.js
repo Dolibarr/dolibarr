@@ -1855,7 +1855,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1867,14 +1869,15 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.

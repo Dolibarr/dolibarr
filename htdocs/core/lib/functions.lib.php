@@ -4868,6 +4868,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 	if (empty($thirdparty_seller) || !is_object($thirdparty_seller)) {
 		$thirdparty_seller = $mysoc;
 	}
+	// $mysoc may be null when called from a page with NOREQUIRESOC (like viewimage.php). With no seller, there is no localtax.
+	if (!is_object($thirdparty_seller)) {
+		return 0;
+	}
 
 	dol_syslog(
 		"get_localtax tva=" . $vatrate . " local=" . $local

@@ -522,8 +522,11 @@ class FileUpload
 						}
 					}
 				} else {
-					// Non-multipart uploads (PUT method support)
-					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
+					// Non-multipart uploads (file sent as the body of the request) are refused: the file would be written
+					// without the checks done by dol_move_uploaded_file() on an uploaded file (antivirus, .noexe suffix on
+					// an executable file, file name). The drag and drop of a file sends a multipart upload.
+					$file->error = 'notmultipartupload';
+					return $file;
 				}
 				dolChmod($file_path);
 

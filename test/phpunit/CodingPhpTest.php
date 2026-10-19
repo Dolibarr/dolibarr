@@ -419,6 +419,24 @@ class CodingPhpTest extends CommonClassTest
 			}
 			$this->assertTrue($ok, 'Found a forged SQL string with a missing comma between 2 selected fields in file '.$file['relativename'].' Lines: '.implode(',', $lines));
 
+			// Check there is no double comma, nor comma just after SELECT or just before FROM, WHERE... in a forged SQL string
+			$ok = true;
+			$matches = array();
+			$lines = array();
+			$sqlkeywords = 'FROM|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING|LIMIT|UNION';
+			preg_match_all('/\$sql\s*\.?=\s*"([^"\n]*(?:,\s*,|,\s*(?:'.$sqlkeywords.')\b|\bSELECT\s*,)[^"\n]*)"/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[0], $filecontent, $report_filepath, "Misplaced comma in `{$val[1]}`");
+			}
+			// Same when the comma that ends a string is followed by the one that starts the next string, maybe in an if or foreach block (see #39609)
+			preg_match_all('/(\$sql\s*\.?=\s*"[^"\n]*,\s*";)[ \t]*(?:\/\/[^\n]*)?\n(?:[ \t]*(?:(?:if|foreach|for|while|elseif)\s*\(.*\)\s*\{|\}|\} else \{|\{|\/\/[^\n]*|)[ \t]*\n){0,6}[ \t]*\$sql\s*\.=\s*(?:\([^"\n]*\?\s*)?"\s*(?:,|(?:'.$sqlkeywords.')\b)/i', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok = false;
+				$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "Comma at end of `{$val[1]}`, the next string starts with a comma or a SQL keyword");
+			}
+			$this->assertTrue($ok, 'Found a forged SQL string with a misplaced comma in file '.$file['relativename'].' Lines: '.implode(',', $lines));
+
 			// Check bad casting on forge sql
 			// with $sql = "..." . $...
 			$ok = true;
