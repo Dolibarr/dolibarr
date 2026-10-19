@@ -142,7 +142,7 @@ $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
-	$search_status = '1';
+	$search_status = array('1');
 }
 $filter = GETPOST('filtre', 'alpha');
 
