@@ -36,8 +36,9 @@
  * Nothing here writes to the HTTP response. The endpoint (htdocs/ai/oauth.php)
  * decides what to answer, this class decides what is true.
  *
- * Token values are never stored: a row holds the sha256 of the value, so a
- * database dump grants nothing. Authorization codes are one-shot and revoked
+ * Registered clients, codes and tokens are rows of llx_oauth_token, told
+ * apart by their service (see serviceFor()). Token values are never stored:
+ * a row holds the sha256 of the value, so a database dump grants nothing. Authorization codes are one-shot and revoked
  * the moment they are presented, before the request can even fail.
  */
 class McpOauth
@@ -196,8 +197,6 @@ class McpOauth
 	 */
 	public function registerClient(array $metadata)
 	{
-		global $conf;
-
 		$uris = array();
 		if (!empty($metadata['redirect_uris']) && is_array($metadata['redirect_uris'])) {
 			foreach ($metadata['redirect_uris'] as $uri) {
@@ -222,19 +221,7 @@ class McpOauth
 		$secret = ($authmethod === 'none') ? '' : bin2hex(random_bytes(32));
 		$name = isset($metadata['client_name']) ? dol_trunc((string) $metadata['client_name'], 255, 'right', 'UTF-8', 1) : '';
 
-		$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
-		$sql .= " VALUES (".((int) $conf->entity);
-		$sql .= ", '".$this->db->escape($clientid)."'";
-		$sql .= ", ".($secret === '' ? "NULL" : "'".$this->db->escape(hash('sha256', $secret))."'");
-		$sql .= ", '".$this->db->escape($name)."'";
-		$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
-		$sql .= ", '".$this->db->escape($authmethod)."'";
-		$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(1), 64, 'right', 'UTF-8', 1))."'";
-		$sql .= ", '".$this->db->idate(dol_now())."')";
-
-		if (!$this->db->query($sql)) {
-			dol_syslog('[MCP OAuth] Client registration failed: '.$this->db->lasterror(), LOG_ERR);
+		if (!$this->insertClientRow($clientid, ($secret === '' ? null : hash('sha256', $secret)), $name, $uris, $authmethod)) {
 			$this->error = 'server_error';
 			return null;
 		}
@@ -321,8 +308,6 @@ class McpOauth
 	 */
 	private function resolveMetadataDocument($url)
 	{
-		global $conf;
-
 		$known = $this->fetchClientRow($url);
 
 		// A metadata document is self-registration by another name: it creates
@@ -373,25 +358,19 @@ class McpOauth
 		$name = isset($document['client_name']) ? dol_trunc((string) $document['client_name'], 255, 'right', 'UTF-8', 1) : '';
 
 		if ($known !== null) {
-			$sql = "UPDATE ".$this->db->prefix()."ai_oauth_client";
-			$sql .= " SET client_name = '".$this->db->escape($name)."'";
-			$sql .= ", redirect_uris = '".$this->db->escape(implode("\n", $uris))."'";
+			$details = $this->clientDetails($url, null, $name, 'none', $known->registered_from);
+			$sql = "UPDATE ".$this->db->prefix()."oauth_token";
+			$sql .= " SET tokenstring = '".$this->db->escape($details)."'";
+			$sql .= ", redirect_uri = '".$this->db->escape(implode("\n", $uris))."'";
 			$sql .= ", tms = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $known->rowid);
+			$sql .= " AND service = '".$this->db->escape(self::serviceFor('client'))."'";
+			$stored = (bool) $this->db->query($sql);
 		} else {
-			$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
-			$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
-			$sql .= " VALUES (".((int) $conf->entity);
-			$sql .= ", '".$this->db->escape($url)."'";
-			$sql .= ", NULL";
-			$sql .= ", '".$this->db->escape($name)."'";
-			$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
-			$sql .= ", 'none'";
-			$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(1), 64, 'right', 'UTF-8', 1))."'";
-			$sql .= ", '".$this->db->idate(dol_now())."')";
+			$stored = $this->insertClientRow($url, null, $name, $uris, 'none');
 		}
 
-		if (!$this->db->query($sql)) {
+		if (!$stored) {
 			dol_syslog('[MCP OAuth] Could not store the metadata document of '.$url.': '.$this->db->lasterror(), LOG_ERR);
 			$this->error = 'server_error';
 			return null;
@@ -451,17 +430,118 @@ class McpOauth
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, tms";
-		$sql .= " FROM ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " WHERE client_id = '".$this->db->escape($clientid)."'";
+		$sql = "SELECT rowid, tokenstring, redirect_uri, datec, tms";
+		$sql .= " FROM ".$this->db->prefix()."oauth_token";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('client'))."'";
+		$sql .= " AND token_hash = '".$this->db->escape($this->clientKey($clientid))."'";
 		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if (!$resql || $this->db->num_rows($resql) != 1) {
 			return null;
 		}
+		$row = $this->db->fetch_object($resql);
+		$details = json_decode((string) $row->tokenstring, true);
+		// The hash found the row; the identifier stored beside it must agree,
+		// or this is not the client that was asked for.
+		if (!is_array($details) || !isset($details['client_id']) || !hash_equals((string) $details['client_id'], (string) $clientid)) {
+			return null;
+		}
 
-		return $this->db->fetch_object($resql);
+		return (object) array(
+			'rowid' => (int) $row->rowid,
+			'client_id' => (string) $details['client_id'],
+			'client_secret_hash' => isset($details['client_secret_hash']) ? (string) $details['client_secret_hash'] : '',
+			'client_name' => isset($details['client_name']) ? (string) $details['client_name'] : '',
+			'token_endpoint_auth_method' => isset($details['token_endpoint_auth_method']) ? (string) $details['token_endpoint_auth_method'] : 'none',
+			'registered_from' => isset($details['registered_from']) ? (string) $details['registered_from'] : '',
+			'redirect_uris' => (string) $row->redirect_uri,
+			'datec' => $row->datec,
+			'tms' => $row->tms,
+		);
+	}
+
+	/**
+	 * Key a client row is found by: the hash of its identifier, in its entity.
+	 *
+	 * A client_id can be a metadata document URL, longer than token_hash and
+	 * the same in every entity, so the row carries this hash rather than the
+	 * identifier itself. The identifier is kept in tokenstring, and checked
+	 * against the request once the row is found.
+	 *
+	 * @param  string $clientid Client identifier
+	 * @return string           SHA-256, hexadecimal
+	 */
+	private function clientKey($clientid)
+	{
+		global $conf;
+
+		return hash('sha256', ((int) $conf->entity)."\n".$clientid);
+	}
+
+	/**
+	 * What a client row keeps in tokenstring, encoded.
+	 *
+	 * None of it is secret: a confidential client's secret is stored as a
+	 * hash, like every credential this server issues.
+	 *
+	 * @param  string      $clientid   Client identifier
+	 * @param  string|null $secrethash SHA-256 of the client secret, null for a public client
+	 * @param  string      $name       Name shown on the consent screen
+	 * @param  string      $authmethod none, client_secret_basic or client_secret_post
+	 * @param  string      $from       Address the registration came from
+	 * @return string                  JSON
+	 */
+	private function clientDetails($clientid, $secrethash, $name, $authmethod, $from)
+	{
+		$details = array(
+			'client_id' => $clientid,
+			'client_name' => $name,
+			'token_endpoint_auth_method' => $authmethod,
+			'registered_from' => $from,
+		);
+		if ($secrethash !== null) {
+			$details['client_secret_hash'] = $secrethash;
+		}
+
+		return (string) json_encode($details);
+	}
+
+	/**
+	 * Store a new client.
+	 *
+	 * It is a row of llx_oauth_token like the credentials issued to it, with
+	 * service 'mcp_client': the redirect URIs in redirect_uri, one per line,
+	 * the rest in tokenstring.
+	 *
+	 * @param  string      $clientid   Client identifier
+	 * @param  string|null $secrethash SHA-256 of the client secret, null for a public client
+	 * @param  string      $name       Name shown on the consent screen
+	 * @param  string[]    $uris       Accepted redirect URIs
+	 * @param  string      $authmethod none, client_secret_basic or client_secret_post
+	 * @return bool                    True on success
+	 */
+	private function insertClientRow($clientid, $secrethash, $name, array $uris, $authmethod)
+	{
+		global $conf;
+
+		$from = dol_trunc((string) getUserRemoteIP(1), 64, 'right', 'UTF-8', 1);
+
+		$sql = "INSERT INTO ".$this->db->prefix()."oauth_token";
+		$sql .= " (entity, service, token_hash, tokenstring, redirect_uri, datec)";
+		$sql .= " VALUES (".((int) $conf->entity);
+		$sql .= ", '".$this->db->escape(self::serviceFor('client'))."'";
+		$sql .= ", '".$this->db->escape($this->clientKey($clientid))."'";
+		$sql .= ", '".$this->db->escape($this->clientDetails($clientid, $secrethash, $name, $authmethod, $from))."'";
+		$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
+		$sql .= ", '".$this->db->idate(dol_now())."')";
+
+		if (!$this->db->query($sql)) {
+			dol_syslog('[MCP OAuth] Could not store client '.$clientid.': '.$this->db->lasterror(), LOG_ERR);
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -790,13 +870,13 @@ class McpOauth
 	}
 
 	/**
-	 * The llx_oauth_token service name for one kind of credential.
+	 * The llx_oauth_token service name for one kind of row.
 	 *
 	 * The table is shared with every other OAuth and API credential of the
 	 * instance; the service column is what keeps ours apart, and every query
 	 * here filters on it.
 	 *
-	 * @param  string $type code, access or refresh
+	 * @param  string $type client, code, access or refresh
 	 * @return string       Service name
 	 */
 	public static function serviceFor($type)
@@ -859,13 +939,33 @@ class McpOauth
 		// /register takes no credential, so without this the table only grows,
 		// one row per connection attempt. Anything that did obtain a token is
 		// left alone whatever its age.
-		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
-		// IS NOT NULL is not decoration: every other row of the shared table
-		// has no client, and NOT IN over a list holding a NULL is never true,
-		// so without it this would silently stop deleting anything.
-		$sql .= " AND rowid NOT IN (SELECT fk_oauth_client FROM ".$this->db->prefix()."oauth_token WHERE fk_oauth_client IS NOT NULL)";
+		// Selected first and deleted by rowid: MySQL refuses a DELETE whose
+		// subquery reads the table being deleted from, and clients and tokens
+		// now share one.
+		$sql = "SELECT c.rowid";
+		$sql .= " FROM ".$this->db->prefix()."oauth_token as c";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."oauth_token as t ON t.fk_oauth_client = c.rowid";
+		$sql .= " WHERE c.service = '".$this->db->escape(self::serviceFor('client'))."'";
+		$sql .= " AND c.entity = ".((int) $conf->entity);
+		$sql .= " AND c.datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
+		$sql .= " AND t.rowid IS NULL";
+		$sql .= $this->db->plimit(500);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return;
+		}
+		$unused = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$unused[] = (int) $obj->rowid;
+		}
+		if (empty($unused)) {
+			return;
+		}
+
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('client'))."'";
+		$sql .= " AND rowid IN (".$this->db->sanitize(implode(',', $unused)).")";
 
 		$this->db->query($sql);
 	}
@@ -884,11 +984,17 @@ class McpOauth
 			return 0;
 		}
 
+		// The address sits in the client's tokenstring, written by
+		// clientDetails() through json_encode(), so this is the exact text it
+		// produced for that address.
+		$needle = substr((string) json_encode(array('registered_from' => $ip)), 1, -1);
+
 		$sql = "SELECT COUNT(rowid) as nb";
-		$sql .= " FROM ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND registered_from = '".$this->db->escape($ip)."'";
+		$sql .= " FROM ".$this->db->prefix()."oauth_token";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('client'))."'";
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " AND datec > '".$this->db->idate(dol_now() - 3600)."'";
+		$sql .= " AND tokenstring LIKE '%".$this->db->escape($this->db->escapeforlike($needle))."%'";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {

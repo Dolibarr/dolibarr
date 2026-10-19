@@ -79,38 +79,11 @@ class AiMcpOauthTest extends CommonClassTest
 	{
 		global $db;
 
-		// Tokens live in the core llx_oauth_token, extended by #40762. A
-		// database installed before that has the table but not the columns,
-		// and nothing below can run on it.
+		// Clients and tokens live in the core llx_oauth_token, extended by
+		// #40762. A database installed before that has the table but not the
+		// columns, and nothing below can run on it.
 		if (!$db->query("SELECT token_hash, fk_oauth_client, revoked FROM ".$db->prefix()."oauth_token WHERE 1 = 0")) {
 			$this->markTestSkipped('Needs the llx_oauth_token columns added by PR #40762');
-		}
-
-		if ($db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
-			return;
-		}
-
-		// The client table is a module table: created on module enable, which
-		// the CI never does, so it is created here from the file the module
-		// installs.
-		foreach (array('llx_ai_oauth_client-ai.sql', 'llx_ai_oauth_client-ai.key.sql') as $file) {
-			$path = dirname(__FILE__).'/../../htdocs/install/mysql/tables/'.$file;
-			if (!file_exists($path)) {
-				$this->markTestSkipped('Needs the schema of PR #40762: missing '.$file);
-			}
-			// Comments first, then split: the licence header these files carry
-			// contains semicolons of its own.
-			$sql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($path));
-			foreach (explode(';', (string) $sql) as $statement) {
-				$statement = trim($statement);
-				if ($statement !== '') {
-					$db->query(str_replace('llx_', $db->prefix(), $statement));
-				}
-			}
-		}
-
-		if (!$db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
-			$this->markTestSkipped('Could not create the ai module client table on this database');
 		}
 	}
 
@@ -543,7 +516,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$server->exchangeAuthorizationCode($used, $code, 'https://example.org/callback', $this->verifier);
 
 		$old = $db->idate(dol_now() - (McpOauth::UNUSED_CLIENT_TTL * 2));
-		$db->query("UPDATE ".$db->prefix()."ai_oauth_client SET datec = '".$old."' WHERE rowid IN (".((int) $unused->rowid).", ".((int) $used->rowid).")");
+		$db->query("UPDATE ".$db->prefix()."oauth_token SET datec = '".$old."' WHERE service = 'mcp_client' AND rowid IN (".((int) $unused->rowid).", ".((int) $used->rowid).")");
 
 		$server->purgeExpired();
 
@@ -565,12 +538,14 @@ class AiMcpOauthTest extends CommonClassTest
 		$server = $this->getServer();
 		$before = $server->countRecentRegistrations('203.0.113.7');
 
-		$sql = "INSERT INTO ".$db->prefix()."ai_oauth_client";
-		$sql .= " (entity, client_id, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
-		$sql .= " VALUES (1, 'dolmcp_ctest".dol_now()."', '', 'https://example.org/cb', 'none', '203.0.113.7', '".$db->idate(dol_now())."')";
-		$db->query($sql);
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+		$this->makeClient();
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.8';
+		$this->makeClient();
+		unset($_SERVER['REMOTE_ADDR']);
 
-		$this->assertSame($before + 1, $server->countRecentRegistrations('203.0.113.7'));
+		$this->assertSame($before + 1, $server->countRecentRegistrations('203.0.113.7'), 'Only the registration from that address counts');
+		$this->assertSame(0, $server->countRecentRegistrations('203.0.113.'), 'An address is matched whole, not as a prefix');
 		$this->assertSame(0, $server->countRecentRegistrations(''), 'No address, nothing to count');
 	}
 	/**
