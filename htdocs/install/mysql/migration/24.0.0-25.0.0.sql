@@ -506,3 +506,16 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- MCP OAuth: Dolibarr as an OAuth server keeps its registered clients, authorization codes and
+-- tokens in the shared llx_oauth_token, extended. Only a hash of a credential is stored, bound to
+-- a client and an audience. The service column (mcp_client, mcp_code, mcp_access, mcp_refresh)
+-- keeps these rows apart from the ones the table already held.
+ALTER TABLE llx_oauth_token ADD COLUMN token_hash varchar(64) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN fk_oauth_client integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN resource varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN code_challenge varchar(128) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN redirect_uri text NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN revoked smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_service_hash (service, token_hash);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_oauth_client (fk_oauth_client);
