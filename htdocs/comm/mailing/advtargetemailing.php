@@ -270,6 +270,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 	}
 
 	if ($result > 0) {
+		$object->clearRecipientsValidation($user);
 		$get_param_template_id = '';
 		if (!empty($template_id)) {
 			$get_param_template_id = '&template_id='.$template_id;
@@ -289,6 +290,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 if ($action == 'clear' && $permissiontoadd) {
 	$mailingtargets = new MailingTargets($db);
 	$mailingtargets->clear_target($id);
+	$object->clearRecipientsValidation($user);
 
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit();
@@ -416,6 +418,7 @@ if ($action == 'delete' && $permissiontoadd) {
 		if (!empty($id)) {
 			$mailingtargets = new MailingTargets($db);
 			$mailingtargets->update_nb($id);
+			$object->clearRecipientsValidation($user);
 
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit();

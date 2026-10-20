@@ -764,6 +764,7 @@ class Mailings extends DolibarrApi
 		if (!$this->mailing_target->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->errorsToString());
 		}
+		$this->mailing->clearRecipientsValidation(DolibarrApiAccess::$user);
 
 		return array(
 			'success' => array(
@@ -811,6 +812,7 @@ class Mailings extends DolibarrApi
 		if (!$this->mailing->delete_targets()) {
 			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->errorsToString());
 		}
+		$this->mailing->clearRecipientsValidation(DolibarrApiAccess::$user);
 
 		return array(
 			'success' => array(
@@ -915,7 +917,7 @@ class Mailings extends DolibarrApi
 
 
 	/**
-	 * Validate a mass mailing
+	 * Validate a mass mailing (message and recipient list together)
 	 *
 	 * If you get a bad value for param notrigger check that ou provide this in body
 	 * {

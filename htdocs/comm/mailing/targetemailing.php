@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 $langs->loadLangs(array("mails", "admin"));
 
 $action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -163,11 +164,14 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 		}
 	}
 	if ($result > 0) {
+		// A new recipient drops the recipient validation. A mailing already sent keeps it.
+		$object->clearRecipientsValidation($user);
 		// If status of emailing is sent completely, change to to send partially
 		if ($object->status == $object::STATUS_SENTCOMPLETELY) {
 			$object->setStatut($object::STATUS_SENTPARTIALY);
 		}
 
+		$object->fetch($object->id);
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		$action = '';
 	}
@@ -183,6 +187,8 @@ if (GETPOSTINT('clearlist') && $permissiontocreate) {
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
+	$object->clearRecipientsValidation($user);
+	$object->fetch($object->id);
 	/* Avoid this to allow reposition
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
@@ -237,6 +243,8 @@ if ($action == 'delete' && $permissiontocreate) {
 		if (!empty($id)) {
 			$obj = new MailingTargets($db);
 			$obj->update_nb($id);
+			$object->clearRecipientsValidation($user);
+			$object->fetch($object->id);
 
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		} else {
@@ -272,6 +280,18 @@ if ($action == "confirm_reset_target" && $permissiontocreate) {
 		} else {
 			$db->rollback();
 		}
+	}
+}
+
+if ($action == 'confirm_validrecipients' && $confirm == 'yes' && $permissiontovalidatesend) {
+	if ($object->id > 0 && $object->nbemail > 0) {
+		$result = $object->validRecipients($user);
+		if ($result > 0) {
+			setEventMessages($langs->trans("MailingRecipientsSuccessfullyValidated"), null, 'mesgs');
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -339,6 +359,10 @@ $totalarray = [
 
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
+
+	if ($action == 'validrecipients') {
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailingRecipients"), $langs->trans("ConfirmValidMailingRecipients"), "confirm_validrecipients", '', '', 1);
+	}
 
 	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, $object->picto);
 
@@ -462,6 +486,26 @@ if ($object->fetch($id) >= 0) {
 			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 		} else {
 			print $nbemail;
+		}
+	}
+	print '</td></tr>';
+
+	print '<tr><td>';
+	print $langs->trans("RecipientsValidated");
+	print '</td><td>';
+	if (!empty($object->date_appro)) {
+		if ($object->fk_user_appro > 0) {
+			$userstatic = new User($db);
+			$userstatic->fetch($object->fk_user_appro);
+			print $userstatic->getNomUrl(1).' ';
+		}
+		print dol_print_date($object->date_appro, 'dayhour');
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+		if ($object->status == $object::STATUS_DRAFT && $permissiontovalidatesend && $object->nbemail > 0) {
+			print ' <a class="button smallpaddingimp reposition" href="'.$_SERVER["PHP_SELF"].'?action=validrecipients&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ValidateRecipients").'</a>';
+		} elseif ($object->status == $object::STATUS_DRAFT && $permissiontovalidatesend) {
+			print ' <a class="button smallpaddingimp classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidateRecipients").'</a>';
 		}
 	}
 	print '</td></tr>';
