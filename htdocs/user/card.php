@@ -2178,6 +2178,30 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
+			// Passkeys
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (passkeyIsEnabled() && $permissiontoeditpasswordandsee) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+				$passkeystatic = new UserPasskey($db);
+				$listofpasskeys = $passkeystatic->fetchAllForUser($object->id);
+
+				print '<tr class="nooddeven"><td>'.$langs->trans("Passkeys").'</td>';
+				print '<td>';
+				print '<div class="centpercent display-flex">';
+				print '<span class="badge badge-info marginleftonly marginrightonly">'.(is_array($listofpasskeys) ? count($listofpasskeys) : 0).'</span>';
+				if (passkeyIsRequiredForUser($object)) {
+					print '<span class="opacitymedium marginrightonly">'.$langs->trans("PasskeyRequiredShort").'</span>';
+				}
+				print '<div class="left inline-block">';
+				// Not opened into a dialog popup: some password manager extensions (e.g. Bitwarden) fail to create a passkey from an iframe
+				print '<a class="classlink button bordertransp" href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.$object->id.'" title="'.dolPrintHTMLForAttribute($langs->trans("Passkeys")).'">';
+				print '<span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+				print '</a>';
+				print '</div>';
+				print '</div>';
+				print '</td></tr>';
+			}
+
 			// Token for OAuth
 			$tmparrayofauthmode = explode(',', $dolibarr_main_authentication);
 			foreach ($tmparrayofauthmode as $tmpauthmode) {

@@ -1,0 +1,31 @@
+{
+    "name": "report-uri/passkeys-php",
+    "description": "A security-focused PHP WebAuthn (FIDO2 / Passkeys) server library, forked from lbuchs/WebAuthn",
+    "keywords": [
+        "webauthn", "fido2", "passkey", "passkeys", "authentication"
+    ],
+    "homepage": "https://github.com/report-uri/passkeys-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Report URI",
+            "homepage": "https://report-uri.com"
+        },
+        {
+            "name": "Lukas Buchs",
+            "role": "Original author of lbuchs/WebAuthn"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/report-uri/passkeys-php/issues",
+        "source": "https://github.com/report-uri/passkeys-php"
+    },
+    "require": {
+        "php": ">=8.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ReportUri\\Passkeys\\": "src"
+        }
+    }
+}

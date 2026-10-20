@@ -618,7 +618,8 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		// Not done for the return of a passkey login: only the mode 'passkey' is then tested (see later), with a login already validated by the passkey.
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && !(GETPOSTINT('afterpasskeyloginreturn') && in_array('passkey', $authmode)) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$ok = false;
 
 			// Use the captcha handler to validate
@@ -730,6 +731,9 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
+		if (GETPOSTINT('afterpasskeyloginreturn')) {	// For passkey login
+			$goontestloop = true;
+		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
@@ -783,6 +787,15 @@ if (!defined('NOLOGIN')) {
 							break;
 						}
 					}
+				}
+			}
+
+			// The mode 'passkey' is tested alone, and only when the login page submits a login validated by a passkey
+			if (in_array('passkey', $authmode)) {
+				if (GETPOSTINT('afterpasskeyloginreturn')) {
+					$authmode = array('passkey');
+				} else {
+					$authmode = array_values(array_diff($authmode, array('passkey')));
 				}
 			}
 
@@ -1207,6 +1220,33 @@ if (!defined('NOLOGIN')) {
 		if (!$isallowed) {
 			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
+		}
+	}
+
+	// Check if user must create a passkey: a user that must log in with a passkey and that logged in with his
+	// password because he has no passkey yet can only use the page to create one (pages only, not ajax components).
+	if (!empty($_SESSION['dol_authmode']) && empty($_SESSION['dol_passkeyrequiredchecked']) && !defined('NOREQUIREMENU') && !defined('NOREQUIREHTML')
+		&& in_array('passkey', explode(',', $dolibarr_main_authentication))) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+		if (in_array($_SESSION['dol_authmode'], passkeyGetPasswordAuthModes()) && passkeyIsRequiredForUser($user)) {
+			require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+			$passkeystatic = new UserPasskey($db);
+			if ($passkeystatic->countForUser($user->id) > 0) {
+				$_SESSION['dol_passkeyrequiredchecked'] = 1;	// No need to check again during this session
+			} else {
+				$allowedpages = array('/user/passkeys.php', '/user/logout.php');
+				$isallowed = false;
+				foreach ($allowedpages as $page) {
+					if (preg_match('/'.preg_quote($page, '/').'$/', $_SERVER['PHP_SELF'])) {
+						$isallowed = true;
+						break;
+					}
+				}
+				if (!$isallowed) {
+					header('Location: '.DOL_URL_ROOT.'/user/passkeys.php?id='.((int) $user->id));
+					exit;
+				}
+			}
 		}
 	}
 

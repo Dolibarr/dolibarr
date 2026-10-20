@@ -241,6 +241,7 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // $dolibarr_main_authentication='twofactor';      // To use Google Authenticator. This need the non official external module "Two Factor" available on www.dolistore.com
 // $dolibarr_main_authentication='openid_connect'; // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
 // $dolibarr_main_authentication='googleoauth';    // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
+// $dolibarr_main_authentication='dolibarr,passkey'; // Allow also to log in with a passkey (WebAuthn) without password. Users add their passkeys from their user card. Need HTTPS and the full URL into $dolibarr_main_url_root.
 //
 $dolibarr_main_authentication='dolibarr';
 

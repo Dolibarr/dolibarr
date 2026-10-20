@@ -98,6 +98,17 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
+					// A user that must log in with a passkey and that already has one can't use his password anymore
+					if ($login && $login != '--bad-login-validity--' && preg_match('/passkey/', (string) $conf->file->main_authentication.(defined('MAIN_AUTHENTICATION_MODE') ? ','.constant('MAIN_AUTHENTICATION_MODE') : ''))) {
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+						if (passkeyRefusePasswordLogin($login, (int) $entitytotest, $mode)) {
+							dol_syslog("Authentication KO - login ".$login." must use a passkey, the mode ".$mode." is refused", LOG_NOTICE);
+							$langs->loadLangs(array('main', 'errors', 'users'));
+							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("PasskeyRequiredForLogin");
+							$login = '';
+							$test = false; // No other method must be tried
+						}
+					}
 					if ($login && $login != '--bad-login-validity--') {
 						// Login is successful with this method
 						$test = false; // To stop once at first login success

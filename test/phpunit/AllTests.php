@@ -211,6 +211,8 @@ class AllTests
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
 		$suite->addTestSuite('JsonLibTest');
+		require_once dirname(__FILE__).'/PasskeyLibTest.php';
+		$suite->addTestSuite('PasskeyLibTest');
 		require_once dirname(__FILE__).'/LoadBoardTest.php';
 		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
