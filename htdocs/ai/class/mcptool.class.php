@@ -218,4 +218,3 @@ abstract class McpTool
 		return $schema;
 	}
 }
-
