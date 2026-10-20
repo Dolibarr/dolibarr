@@ -255,6 +255,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif ($object->fields[$key]['type'] === 'password') {
+			/*
+			 * GETPOST with check 'None' is unauthorized
+			 * Bypass: check 'Cutom' with filter FILTER_UNSAFE_RAW which does nothing
+			 */
+			$value = GETPOST($key, 'custom', 0, FILTER_UNSAFE_RAW, 0);
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');
