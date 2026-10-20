@@ -931,6 +931,76 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * Get the REST API class for shipments, called as the current user.
+	 *
+	 * @return	Shipments	API object
+	 */
+	private function getShipmentsApi()
+	{
+		global $user;
+
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/api_shipments.class.php';
+
+		DolibarrApiAccess::$user = $user;
+
+		return new Shipments();
+	}
+
+	/**
+	 * The REST API must allow to add free lines (product or text) to a standalone shipment.
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentApiAddsFreeLine()
+	{
+		global $conf, $db;
+
+		$this->configureStandaloneShipmentStock(false, false);
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+		$shipment = $this->createStandaloneShipment();
+
+		// Product line with warehouse (each REST request gets a new API object)
+		$lineId = $this->getShipmentsApi()->postLine($shipment->id, 0, 2, $warehouseId, $productId);
+		$this->assertGreaterThan(0, $lineId);
+		$line = new ExpeditionLigne($db);
+		$this->assertGreaterThan(0, $line->fetch($lineId), $line->errorsToString());
+		$this->assertEquals($shipment->id, $line->fk_expedition);
+		$this->assertEquals($productId, $line->fk_product);
+		$this->assertEquals($warehouseId, $line->entrepot_id);
+		$this->assertEquals(2, $line->qty);
+		$this->assertSame('shipping', $line->element_type);
+
+		// Free text line
+		$lineId = $this->getShipmentsApi()->postLine($shipment->id, 0, 1, 0, 0, 'Free text line');
+		$this->assertGreaterThan(0, $lineId);
+		$line = new ExpeditionLigne($db);
+		$this->assertGreaterThan(0, $line->fetch($lineId), $line->errorsToString());
+		$this->assertSame('Free text line', $line->description);
+
+		// Neither a product nor a description: bad request
+		try {
+			$this->getShipmentsApi()->postLine($shipment->id, 0, 1);
+			$this->fail('A free line without product and description must be refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertSame(400, $e->getCode(), $e->getMessage());
+		}
+
+		// Without SHIPMENT_STANDALONE, an order line stays mandatory
+		$conf->global->SHIPMENT_STANDALONE = 0;
+		try {
+			$this->getShipmentsApi()->postLine($shipment->id, 0, 1, $warehouseId, $productId);
+			$this->fail('Without SHIPMENT_STANDALONE, a line without order line must be refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertSame(400, $e->getCode());
+			$this->assertSame('Field fk_origin_line is mandatory', $e->getMessage());
+		}
+	}
+
+	/**
 	 * testExpeditionDelete
 	 *
 	 * Check that an Expedition object can be deleted.
