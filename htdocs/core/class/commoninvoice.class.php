@@ -305,6 +305,22 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
+	 *  Return the last second, in the server timezone, of the day of $now shifted by a number of calendar days.
+	 *
+	 *  @param	int		$now		Reference timestamp, 0 for now
+	 *  @param	int		$nbdays		Number of calendar days to add
+	 *  @return	int					Timestamp
+	 */
+	public static function getEndOfDayShifted(int $now, int $nbdays): int
+	{
+		$tmparray = dol_getdate($now > 0 ? $now : dol_now());
+
+		// Built on calendar days, not on 86400 s steps, so a DST change does not shift the hour. The check is
+		// disabled because the day may overflow the month.
+		return (int) dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'] + $nbdays, $tmparray['year'], 'tzserver', 0);
+	}
+
+	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
 	 *  This does not include open direct debit requests.
 	 *
