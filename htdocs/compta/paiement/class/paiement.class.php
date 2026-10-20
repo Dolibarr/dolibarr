@@ -337,7 +337,16 @@ class Paiement extends CommonObject
 				continue;
 			}
 			$value_converted = false;
+			// getInvoiceRate() returns false when the invoice cannot be read, so the result must
+			// be tested before being indexed, as PaiementFourn::create() already does. Without
+			// this the rate is read from a boolean, which emits a PHP warning and leaves it null,
+			// so no conversion is made and the payment is refused later on with
+			// 'Payment in same currency than company but this->amount != this->multicurrency_amount'.
 			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
+			if ($tmparray === false) {
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+				return -1;
+			}
 			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
 
@@ -346,7 +355,17 @@ class Paiement extends CommonObject
 				if ($way == 'dolibarr') {
 					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
 				} else {
-					$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					// A payment that settles the whole remaining amount in the foreign currency must
+					// clear the invoice: dividing by the rate and rounding can leave or take one cent,
+					// which keeps the invoice partially paid, so take the remaining amount directly.
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($key);
+					if ((float) price2num($value, 'MT') == (float) $invoice->getRemainToPay(1)) {
+						$value_converted = (float) $invoice->getRemainToPay(0);
+					} else {
+						$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					}
 				}
 			} else {
 				$invoice_multicurrency_tx = false;

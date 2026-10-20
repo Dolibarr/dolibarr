@@ -78,6 +78,11 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Third parties the user picked when a name fitted several: phrase -> id,
+    // 0 = none of them. They answer the request they were asked for only, the next
+    // question asks again.
+    let thirdpartyChoices = {};
+    let lastSent = null;          // { sentQuery, query } of the last request, resent once a choice is made
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
@@ -135,6 +140,10 @@ export function initAiAssistant(container) {
 
     // Initialize the model picker (presets + dynamic provider model list)
     initModelPicker();
+
+    // Apply the select2 look of the other Dolibarr combos on the model and mode lists
+    initSelect2Combo(modelSelect, true);
+    initSelect2Combo(engineSelect, false);
 
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
@@ -224,6 +233,7 @@ export function initAiAssistant(container) {
             }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
+            thirdpartyChoices = {};
             input.focus();
         }
     });
@@ -508,6 +518,7 @@ export function initAiAssistant(container) {
             if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
                 modelSelect.value = saved;
             }
+            refreshSelect2Combo(modelSelect);
         };
         applySaved();
 
@@ -542,6 +553,49 @@ export function initAiAssistant(container) {
         modelSelect.addEventListener('change', () => {
             try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
         });
+    }
+
+    /**
+     * Turn a native <select> into a select2 combo with the same options as ajax_combobox().
+     * Does nothing when select2 is not loaded (the native select keeps its own pill style).
+     *
+     * @param {HTMLSelectElement} sel        Select element
+     * @param {boolean}           withSearch Show the search field in the dropdown
+     */
+    function initSelect2Combo(sel, withSearch) {
+        if (!sel || !window.jQuery || !window.jQuery.fn.select2) return;
+        const $sel = window.jQuery(sel);
+        // Show the picto declared into the data-picto attribute of the option before its label
+        const withPicto = (data) => {
+            const picto = data.element ? data.element.getAttribute('data-picto') : '';
+            if (!picto) return data.text;
+            return window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+        };
+        $sel.select2({
+            dir: 'ltr',
+            width: 'resolve',
+            minimumResultsForSearch: withSearch ? 0 : Infinity,
+            language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+            theme: 'default',
+            dropdownCssClass: 'dol-dropdown-dialog dol-dropdown-dialogmono',
+            templateResult: withPicto,
+            templateSelection: withPicto,
+            // Keep the dropdown inside the chat, so a click into it is not seen as a click outside the popover
+            dropdownParent: window.jQuery(container)
+        });
+        // select2 fires a jQuery 'change' only, relay it to the native listeners of the select
+        $sel.on('select2:select', () => sel.dispatchEvent(new Event('change')));
+    }
+
+    /**
+     * Refresh the displayed value of a select2 combo after a programmatic change of the select.
+     *
+     * @param {HTMLSelectElement} sel Select element
+     */
+    function refreshSelect2Combo(sel) {
+        if (sel && window.jQuery && window.jQuery(sel).data('select2')) {
+            window.jQuery(sel).trigger('change.select2');
+        }
     }
 
     /**
@@ -966,6 +1020,7 @@ export function initAiAssistant(container) {
             } else {
                 alert(t('BrowserNotSupported'));
                 engineSelect.value = 'text';
+                refreshSelect2Combo(engineSelect);
                 updateInterfaceMode('text');
             }
         } else if (mode === 'whisper') {
@@ -1330,6 +1385,21 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
+    // Several third parties fit a name the user wrote, and the privacy guard
+    // keeps names away from the provider: the server asked before sending
+    // anything. The same request goes again with the choice.
+    function handleThirdpartyChoice(question, choice) {
+        const pick = (id) => {
+            const msg = chat.lastElementChild;
+            if (msg && msg.classList.contains('clarification')) msg.remove();
+            thirdpartyChoices[choice.phrase] = id;
+            if (lastSent) handleQuery(lastSent);
+        };
+        const actions = (choice.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-building', onclick: () => pick(o.id) }));
+        actions.push({ text: t('AINoneOfThese'), icon: 'fa-times', onclick: () => pick(0) });
+        appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(question)}</div>`, actions);
+    }
+
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
@@ -1631,10 +1701,13 @@ export function initAiAssistant(container) {
         }
     }
 
-    async function handleQuery() {
-        const query = input.value.trim();
-        const readyDocs = attachedDocs.filter((d) => !d.error);
-        if (!query && !readyDocs.length) return;
+    async function handleQuery(resend) {
+        // A resend (after the user picked a third party) posts the same request
+        // again, without a second bubble.
+        const isResend = !!(resend && typeof resend.sentQuery === 'string');
+        const query = isResend ? resend.query : input.value.trim();
+        const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
         // "/status" is answered locally (no AI call): statistics of the whole
@@ -1655,7 +1728,7 @@ export function initAiAssistant(container) {
         }
 
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
-        let sentQuery = query;
+        let sentQuery = isResend ? resend.sentQuery : query;
         let displayHtml = escapeHtml(query);
         if (readyDocs.length) {
             // One wrapped context block per document, so each keeps its own
@@ -1668,8 +1741,11 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
-        clearChip();
+        if (!isResend) {
+            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            clearChip();
+        }
+        lastSent = { sentQuery: sentQuery, query: query };
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
@@ -1682,6 +1758,8 @@ export function initAiAssistant(container) {
             // Result of the read flagged needs_followup, sent back on the second round.
             let followupSnippet = null;
             let followupResult = null;
+            // The third parties the user picked, for every round of this request.
+            const sentChoices = Object.assign({}, thirdpartyChoices);
             // Two rounds at most: the server never flags a followup round itself.
             for (let round = 0; round < 2; round++) {
                 if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
@@ -1692,6 +1770,7 @@ export function initAiAssistant(container) {
                     // ids against the user's rights before trusting them.
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
                             if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
@@ -1719,8 +1798,10 @@ export function initAiAssistant(container) {
                 });
                 const intent = await aiJson(intentRes);
                 loadingMsg.remove();
+                // Choices answer this request only: once it went through, the next question asks again.
+                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
-
+                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
                 if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
                     // Debug output of /tools, built and escaped server side: shown as is,
@@ -1823,7 +1904,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1835,14 +1918,15 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.

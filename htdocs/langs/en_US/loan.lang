@@ -43,6 +43,7 @@ LoanChargeOtherFee=Other fee
 LoanChargeTotal=Total over the loan
 LoanChargePerPayment=Per payment
 LoanAccountancyChargeCode=Accounting account %s
+LoanNextPaymentPrefilled=Pre-filled with payment %s of %s, worked out from the loan and the payments already made. Change the amounts if your lender's statement differs.
 LoanRecalculate=Recalculate the unpaid payments
 LoanRecalculateButton=Recalculate
 LoanRecalcFrom=From the first unpaid payment on or after

@@ -82,6 +82,13 @@ RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | 
     && rtk gain
 
 
+# Install tx - Transifex CLI, used to push/pull the language files (configuration is the file .tx/config at repository root)
+RUN ARCH="$(dpkg --print-architecture)" \
+    && curl -fsSL "https://github.com/transifex/cli/releases/latest/download/tx-linux-${ARCH}.tar.gz" | tar xz -C /usr/local/bin tx \
+    && chmod 755 /usr/local/bin/tx \
+    && tx --version
+
+
 
 RUN mkdir -p /opt/php-tools \
 	&& composer require \

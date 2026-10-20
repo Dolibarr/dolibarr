@@ -177,6 +177,14 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
+		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
+		$suite->addTestSuite('ApiListStatusFilterTest');
+		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
+		$suite->addTestSuite('ApiSupplierOrderHeaderUpdateTest');
+		require_once dirname(__FILE__).'/AiProjectUpdateTest.php';
+		$suite->addTestSuite('AiProjectUpdateTest');
 		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		//$suite->addTestSuite('AiMcpWireTest');
 		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
@@ -276,6 +284,8 @@ class AllTests
 		$suite->addTestSuite('ExpeditionLineFetchTest');
 		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
 		$suite->addTestSuite('ExpeditionDispatchTest');
+		require_once dirname(__FILE__).'/WorkflowManagerTest.php';
+		$suite->addTestSuite('WorkflowManagerTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
@@ -285,6 +295,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
+		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
+		$suite->addTestSuite('SupplierOrdersLineApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 

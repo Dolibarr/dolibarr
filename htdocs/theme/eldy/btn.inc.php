@@ -238,6 +238,18 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 
+/* Button Email */
+#action-email .textbutton, .butAction.butActionEmail .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-email .textbutton::before, .butAction.butActionEmail .textbutton::before {
+  content: "\f0e0";            /* fas fa-envelope */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
+}
+
 /* Button Delete */
 #action-delete .textbutton, .butAction.butActionDelete .textbutton {
   font-size: 0;

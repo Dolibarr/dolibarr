@@ -478,7 +478,6 @@ if ($resql) {
 		$socialNetworkUrl = $socialNetworkData['url'];
 		$socialNetworkId = $obj->rowid;
 
-		$fediverseparser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
 		//check if other params exist
@@ -489,6 +488,7 @@ if ($resql) {
 			}
 		}
 
+		$fediverseparser = new SocialNetworkManager($socialNetworkTitle, $authParams);
 		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
 
 		print "<br>";

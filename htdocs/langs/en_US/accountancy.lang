@@ -340,6 +340,8 @@ AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist i
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
 BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Bookkeeping numbering models
+UpdateAllOperationLabels=Update the label of all lines
+ConfirmUpdateAllOperationLabels=The entered label will replace the label of every line in this transaction.
 ## Admin
 BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
@@ -486,7 +488,7 @@ GrandTotals = Grand Totals
 ErrorAccountancyDirectoryNotDefined = Accountancy directory is not defined
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that do not have predefined accounting accounts.
+InitAccountancyDesc=This page can be used to initialize an accounting account on several products or services.
 DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Options

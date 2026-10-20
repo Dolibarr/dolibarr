@@ -1162,6 +1162,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 		$object->fetch_origin();
+		// A shipment without source object (SHIPMENT_STANDALONE) holds its own contacts
+		$contactobject = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
 
 		// TODO move to external function
 		if (isModEnabled($origin)) {     // commonly $origin='commande'
@@ -1202,10 +1204,7 @@ class pdf_espadon extends ModelePdfExpedition
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
-			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->origin_object)) {
-				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
-			}
+			$arrayidcontact = $contactobject->getIdContact('internal', 'SALESREPFOLL');
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
@@ -1259,7 +1258,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $contactobject->getIdContact('external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
@@ -1470,7 +1469,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30.0, // in mm
-			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
+			// A shipment without source object (SHIPMENT_STANDALONE) has no ordered quantity
+			'status' => (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') && !empty($object->origin_id)) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
 			),

@@ -151,7 +151,7 @@ class Ctyperesource extends CommonDict
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
-			$sql .= " WHERE t.id = ".((int) $id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
