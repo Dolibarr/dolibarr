@@ -40,6 +40,18 @@
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_rowid_seq RENAME TO llx_adherent_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplier_extrafields_rowid_seq RENAME TO llx_supplier_proposal_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplierdet_extrafields_rowid_seq RENAME TO llx_supplier_proposaldet_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_payment_salary_extrafields_rowid_seq RENAME TO llx_salary_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_advtargetemailing_rowid_seq RENAME TO llx_mailing_advtarget_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_rowid_seq RENAME TO llx_prelevement_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_demande_rowid_seq RENAME TO llx_prelevement_demande_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_bank_categ_rowid_seq RENAME TO llx_category_bank_rowid_seq;
+
 -- V13 forgotten: sequences of tables renamed from llx_livraison* to llx_delivery* were not renamed with pgsql
 
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_rowid_seq RENAME TO llx_delivery_rowid_seq;
