@@ -81,6 +81,14 @@ if ($user->socid) {
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
 
 $result = restrictedArea($user, 'banque', '', '', '');
+// PaymentVarious::fetch() returns a record regardless of entity (low-level primitive), so the entity
+// restriction is enforced here in the caller: the various payment must belong to the current entity.
+if ($id > 0) {
+	$resqlent = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."payment_various WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('payment_various').")");
+	if (!$resqlent || !$db->num_rows($resqlent)) {
+		accessforbidden();
+	}
+}
 
 $object = new PaymentVarious($db);
 
@@ -767,7 +775,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 	}
 
 	// Delete

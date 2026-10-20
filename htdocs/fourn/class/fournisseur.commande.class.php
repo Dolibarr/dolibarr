@@ -2410,6 +2410,10 @@ class CommandeFournisseur extends CommonOrder
 			if ($line->fetch($idline) <= 0) {
 				return 0;
 			}
+			if ($this->id > 0 && (int) $line->fk_commande !== (int) $this->id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			// check if not yet received
 			$dispatchedLines = $this->getDispachedLines();

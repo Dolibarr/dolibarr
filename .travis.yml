@@ -72,11 +72,18 @@ notifications:
 
 before_install:
 - |
-  echo "Remove awful phpenv and install packages"
+  echo "Remove awful phpenv and update apt"
   sudo rm -fr ~/.phpenv
   sudo rm -fr /root/.phpenv
-  sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt-get update
+  #sudo add-apt-repository -y ppa:ondrej/php
+  #sudo apt update
+  sudo add-apt-repository -y -n ppa:ondrej/php
+  mkdir -p /tmp/ppa-only
+  cp /etc/apt/sources.list.d/ondrej-ubuntu-php-* /tmp/ppa-only/
+  sudo apt-get update \
+    -o Dir::Etc::sourcelist=/dev/null \
+    -o Dir::Etc::sourceparts=/tmp/ppa-only \
+    -o APT::Get::List-Cleanup=0
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
 
 - |

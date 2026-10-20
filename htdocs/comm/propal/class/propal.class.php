@@ -237,6 +237,11 @@ class Propal extends CommonObject
 	public $cond_reglement_doc;
 
 	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
+
+	/**
 	 * @var string method of payment code
 	 */
 	public $mode_reglement_code;
@@ -1138,7 +1143,11 @@ class Propal extends CommonObject
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_propal != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_propal !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}
@@ -1600,6 +1609,17 @@ class Propal extends CommonObject
 								$line->subprice = $pu_ht;
 								$line->tva_tx = $tva_tx;
 								$line->remise_percent = $remise_percent;
+								// Refresh the buying price too: current supplier price if one was selected on the line, otherwise let PropaleLigne::insert() recompute it (defineBuyPrice(), according to MARGIN_TYPE)
+								$line->pa_ht = '';
+								if ($line->fk_fournprice > 0) {
+									require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+									$prodfourn = new ProductFournisseur($this->db);
+									if ($prodfourn->fetch_product_fournisseur_price($line->fk_fournprice) > 0) {
+										$line->pa_ht = price2num($prodfourn->fourn_unitprice * (1 - $prodfourn->fourn_remise_percent / 100), 'MU');
+									} else {
+										$line->fk_fournprice = 0;
+									}
+								}
 							}
 							if ($update_desc === true) {
 								$line->desc = $prod->description;
@@ -1803,6 +1823,7 @@ class Propal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent      = $obj->deposit_percent;
 

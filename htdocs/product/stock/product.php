@@ -423,13 +423,14 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
-					if ($result) {
-						$srcwarehouseid = $pdluo->warehouseid;
+					if ($result > 0 && $pdluo->id > 0 && $pdluo->fk_product == $object->id) {
+						// The lot row gives the lot and its dates, the source warehouse is the one selected in the form (checked against the target above)
+						$srcwarehouseid = GETPOSTINT('id_entrepot');
 						$batch = $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
 					} else {
-						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
+						setEventMessages($pdluo->error ? $pdluo->error : $langs->trans('ErrorRecordNotFound'), $pdluo->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -529,37 +530,6 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 		}
 	}
 }
-
-// Update batch information
-if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save") && $usercancreate) {
-	$pdluo = new Productbatch($db);
-	$result = $pdluo->fetch(GETPOSTINT('pdluoid'));
-
-	if ($result > 0) {
-		if ($pdluo->id) {
-			if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
-			} else {
-				$d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
-				$d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
-				$pdluo->batch = $batchnumber;
-				$pdluo->eatby = $d_eatby;
-				$pdluo->sellby = $d_sellby;
-				$result = $pdluo->update($user);
-				if ($result < 0) {
-					setEventMessages($pdluo->error, $pdluo->errors, 'errors');
-				}
-			}
-		} else {
-			setEventMessages($langs->trans('BatchInformationNotfound'), null, 'errors');
-		}
-	} else {
-		setEventMessages($pdluo->error, null, 'errors');
-	}
-	header("Location: product.php?id=".$id);
-	exit;
-}
-
 
 /*
  * View

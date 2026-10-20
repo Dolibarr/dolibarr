@@ -266,7 +266,7 @@ if (empty($reshook)) {
 				$result = $object->delete($user);
 				if ($result < 0) {
 					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), $object->errors, 'errors');
 				} else {
 					setEventMessages($langs->trans("RecordDeleted"), null);
 					header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
@@ -381,9 +381,14 @@ if (empty($reshook)) {
 			}
 
 			// Set entity property
-			$entity = GETPOSTINT('entity');
+			// The entity selector and the superadmin checkbox are only rendered for a user that is
+			// admin and has no entity of its own (see the display code below), so the posted values
+			// must not be trusted on their own: a non admin user holding user->user->write also
+			// reaches this code.
+			$cansetentity = (!empty($user->admin) && empty($user->entity));
+			$entity = $cansetentity ? GETPOSTINT('entity') : $user->entity;
 			if (isModEnabled('multicompany')) {
-				if (GETPOSTINT('superadmin')) {
+				if ($cansetentity && GETPOSTINT('superadmin')) {
 					$object->entity = 0;
 				} else {
 					if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -420,7 +425,12 @@ if (empty($reshook)) {
 					}
 					$db->commit();
 
-					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+					if (!empty($backtopage)) {
+						$url = str_replace('__ID__', (string) $id, $backtopage);
+					} else {
+						$url = $_SERVER['PHP_SELF'].'?id='.$id;
+					}
+					header("Location: ".$url);
 					exit;
 				}
 			} else {
@@ -1043,6 +1053,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if (!empty($backtopage)) {
+		print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
+	}
+	if (!empty($backtopageforcancel)) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+	}
 	if (!empty($ldap_sid)) {
 		print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	}

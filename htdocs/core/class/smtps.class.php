@@ -83,6 +83,11 @@ class SMTPs
 	private $_msgId = null;
 
 	/**
+	 * @var string Authentication method ('LOGIN', 'PLAIN', 'XOAUTH2', 'NONE'). If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 */
+	private $_smtpsAuthType = '';
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -546,8 +551,6 @@ class SMTPs
 	private function _server_authenticate()
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvement as provided by 'SirSir' to
@@ -668,21 +671,25 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (!getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE')) {
-				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
-			}
+			// Authentication method of the send context, else of the main setup
+			$authtype = $this->_smtpsAuthType ? $this->_smtpsAuthType : getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
+			switch ($authtype) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
 					break;
 				case 'PLAIN':
-					$this->socket_send_str('AUTH PLAIN', '334');
-					// The error here just means the ID/password combo doesn't work.
-					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					$_retVal = $this->socket_send_str('AUTH PLAIN', '334');
+					if (!$_retVal) {
+						// The login and password must not be sent if the server does not wait for them
+						$this->_setErr(130, 'Error when asking for AUTH PLAIN');
+					} else {
+						// The error here just means the ID/password combo doesn't work.
+						$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					}
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
@@ -803,20 +810,27 @@ class SMTPs
 					 * mark the last address as "bad" and start the address loop over again.
 					 * If any address fails, the entire message fails.
 					 */
-					$this->socket_send_str('RCPT TO: <'.$_address.'>', '250');
+					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
+						// Stop here, sending DATA would desynchronize the SMTP responses
+						fclose($this->socket);
+						return false;
+					}
 				}
 
 				// Tell the server we are ready to start sending data
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
-				$this->socket_send_str('DATA', '354');
+				if (!$this->socket_send_str('DATA', '354')) {
+					fclose($this->socket);
+					return false;
+				}
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$_retVal = $this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
-				fwrite($this->socket, 'QUIT');
+				$this->socket_send_str('QUIT');
 			} else {
 				// We got error code into $this->lastretval
 			}
@@ -1041,6 +1055,17 @@ class SMTPs
 	public function setToken($_strToken)
 	{
 		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Authentication method to use (the one of the send context)
+	 *
+	 * @param	string	$_strAuthType	'LOGIN', 'PLAIN', 'XOAUTH2' or 'NONE'. If empty, MAIN_MAIL_SMTPS_AUTH_TYPE is used.
+	 * @return	void
+	 */
+	public function setAuthType($_strAuthType)
+	{
+		$this->_smtpsAuthType = (string) $_strAuthType;
 	}
 
 	/**
@@ -1541,8 +1566,6 @@ class SMTPs
 	 */
 	public function getHeader()
 	{
-		global $conf;
-
 		$_header = 'From: '.$this->getFrom('org')."\r\n"
 		. 'To: '.$this->getTo()."\r\n";
 
@@ -1577,7 +1600,8 @@ class SMTPs
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
 		}
 		if ($this->getMoreInHeader()) {
-			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
+			// Value must include the "\r\n". With MAIN_FIX_FOR_BUGGED_MTA, CMailFile gives "\n", but SMTP needs "\r\n"
+			$_header .= preg_replace('/(?<!\r)\n/', "\r\n", $this->getMoreInHeader());
 		}
 
 		if ($this->getSensitivity()) {
@@ -1601,7 +1625,7 @@ class SMTPs
 		}
 
 		$_header .= 'X-Mailer: Dolibarr version '.DOL_VERSION.' (using SMTPs Mailer)'."\r\n";
-		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
+		$_header .= 'X-Dolibarr-Option: '.(getDolGlobalString('MAIN_MAIL_USE_MULTI_PART') ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
 		// Add also $this->references and In-Reply-To
@@ -1832,13 +1856,17 @@ class SMTPs
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
-			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
-			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
-			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
-			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
+			// The key is the file name and the hash of its content: the same file given twice is attached once, but 2 different
+			// files with the same name (from different directories) are both attached.
+			$attachmentkey = $strFileName.'-'.dol_hash($strContent, 'sha256');
+
+			$this->_msgContent['attachment'][$attachmentkey]['mimeType'] = $strMimeType;
+			$this->_msgContent['attachment'][$attachmentkey]['fileName'] = $strFileName;
+			$this->_msgContent['attachment'][$attachmentkey]['data']     = $strContent;
+			$this->_msgContent['attachment'][$attachmentkey]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, '3');
+				$this->_msgContent['attachment'][$attachmentkey]['md5'] = dol_hash($strContent, '3');
 			}
 		}
 	}
@@ -2048,7 +2076,8 @@ class SMTPs
 		$limit = 0;
 
 		while (substr($server_response, 3, 1) != ' ' && $limit < 100) {
-			if (!($server_response = fgets($socket, 256))) {
+			// Read the whole line (a reply line longer than the read size would be read as 2 replies)
+			if (!($server_response = fgets($socket))) {
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 				break;

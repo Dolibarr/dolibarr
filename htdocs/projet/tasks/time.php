@@ -551,6 +551,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -659,6 +661,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 								$error++;
 								$langs->load("errors");
 								setEventMessages(null, $tmpproduct->errors, 'errors');
+								// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+								continue;
 							}
 
 							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -737,6 +741,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -843,7 +849,7 @@ if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer'))
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinter->fk_project = $projectstatic->id;
-		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->label : '');
+		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->description : '');
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);
@@ -1617,7 +1623,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " pt.ref, pt.label, pt.fk_projet, pt.billable,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
-		$sql .= " p.fk_soc,s.name_alias,";
+		$sql .= " p.fk_soc,s.name_alias";
 		if (!empty($extrafields->attributes['projet_task']['label'])) {
 			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');

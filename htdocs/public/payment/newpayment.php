@@ -588,6 +588,9 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$error = 0;
 	$errormessage = '';
 	$stripeacc = null;
+	$customer = null;
+	$charge = null;
+	$paymentintent = null;
 
 	// When using the old Charge API architecture
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
@@ -1920,7 +1923,7 @@ if ($source == 'donation') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2"><b>';
-	if ($don->morphy == 'mor' && !empty($don->societe)) {
+	if (!empty($don->societe)) {
 		print $don->societe;
 	} else {
 		print $don->getFullName($langs);

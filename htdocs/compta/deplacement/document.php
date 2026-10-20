@@ -100,7 +100,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("TripCard"));
+llxHeader("", $langs->trans("TripCard"));
 
 
 if ($object->id) {

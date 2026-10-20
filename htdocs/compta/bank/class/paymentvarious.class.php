@@ -590,12 +590,14 @@ class PaymentVarious extends CommonObject
 					}
 				}
 
-				// Call trigger
-				$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
-				if ($result < 0) {
-					$error++;
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
-				// End call triggers
 			} else {
 				$error++;
 			}
@@ -628,6 +630,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Keep the in memory object in sync, so a trigger called right after create() reports
+			// the real bank line instead of 0 (#40673).
+			$this->fk_bank = (int) $id_bank;
 			return 1;
 		} else {
 			dol_print_error($this->db);
