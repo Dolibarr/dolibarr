@@ -28,6 +28,7 @@
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/html.lib.php';
 
 /**
  * Check if the object exceeded the number of posts for a specific ip in the same week
@@ -72,6 +73,7 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 		}
 	}
 	if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+		$langs->load("errors");
 		array_push($object->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		return -1;
 	}

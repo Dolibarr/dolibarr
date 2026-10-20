@@ -15,7 +15,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
@@ -42,6 +42,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
@@ -58,13 +66,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'categories'));
@@ -207,7 +208,6 @@ $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/mass
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Propal($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -279,6 +279,10 @@ $arrayfields = array(
 	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
+if ($user->socid) {
+	unset($arrayfields['p.note_private']);
+}
+
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
  foreach ($object->fields as $key => $val) {
@@ -311,6 +315,10 @@ if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 // Permissions
 $permissiontoread = $user->hasRight('propal', 'lire');
 $permissiontoadd = $user->hasRight('propal', 'creer');
@@ -340,7 +348,6 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 }
 
 $objectclass = null;
-$search_code_client = '';
 
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -659,7 +666,7 @@ if ($search_refproject) {
 if ($search_project) {
 	$sql .= natural_search('pr.title', $search_project);
 }
-if ($search_availability) {
+if ($search_availability && $search_availability != '-1') {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
 $societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
@@ -680,10 +687,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
-}
-// Search in 'code_client' when SOCIETE_ADD_REF_IN_LIST is set to 1
-if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
-	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -803,9 +806,9 @@ foreach ($searchCategoryPropalList as $searchCategoryPropal) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryPropalList is an array of ID)
@@ -1060,11 +1063,20 @@ if ($search_refcustomer) {
 if ($search_refproject) {
 	$param .= '&search_refproject='.urlencode($search_refproject);
 }
+if ($search_project) {
+	$param .= '&search_project='.urlencode($search_project);
+}
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
 if ($search_societe_alias) {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
+if ($search_warehouse) {
+	$param .= '&search_warehouse='.urlencode($search_warehouse);
+}
+if ($search_note_public) {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
@@ -1074,6 +1086,12 @@ if ($search_sale > 0) {
 }
 if ($search_montant_ht) {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+}
+if ($search_montant_vat) {
+	$param .= '&search_montant_vat='.urlencode($search_montant_vat);
+}
+if ($search_montant_ttc) {
+	$param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
 }
 if ($search_multicurrency_code != '') {
 	$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
@@ -1199,6 +1217,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
 
@@ -1263,7 +1282,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers((empty($search_user) ? -2 : 0), 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers(($search_user > 0 ? $search_user : -2), 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 // If the user can view products
@@ -1829,6 +1848,13 @@ if (isModEnabled('margin') && (
 	$with_margin_info = true;
 }
 
+$with_amount_invoiced_info = isModEnabled('invoice') && (
+	!empty($arrayfields['p.total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.total_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_invoiced']['checked'])
+);
+
 $total_ht = 0;
 $total_margin = 0;
 
@@ -1876,21 +1902,24 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalInvoicedHT = 0;
 	$multicurrency_totalInvoicedTTC = 0;
 
-	$TInvoiceData = $object->InvoiceArrayList($object->id);
+	if ($with_amount_invoiced_info) {
+		$TInvoiceData = $object->InvoiceArrayList($object->id);
 
-	if (!empty($TInvoiceData)) {
-		foreach ($TInvoiceData as $invoiceData) {
-			$invoice = new Facture($db);
-			$invoice->fetch($invoiceData->facid);
+		if (!empty($TInvoiceData)) {
+			foreach ($TInvoiceData as $invoiceData) {
+				'@phan-var-force stdClass $invoiceData';
+				$invoice = new Facture($db);
+				$invoice->fetch($invoiceData->facid);
 
-			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
-				continue;
+				if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
+					continue;
+				}
+
+				$totalInvoicedHT += $invoice->total_ht;
+				$totalInvoicedTTC += $invoice->total_ttc;
+				$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
+				$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 			}
-
-			$totalInvoicedHT += $invoice->total_ht;
-			$totalInvoicedTTC += $invoice->total_ttc;
-			$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
-			$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 		}
 	}
 
@@ -2013,8 +2042,10 @@ while ($i < $imaxinloop) {
 
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
-			print $obj->alias;
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2169,7 +2200,7 @@ while ($i < $imaxinloop) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right">'.showTotalAmount(price($obj->total_ht))."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -70,7 +70,7 @@ class EvaluationLine extends CommonObjectLine
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")')
@@ -96,7 +96,7 @@ class EvaluationLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -106,7 +106,7 @@ class EvaluationLine extends CommonObjectLine
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 		'fk_skill' => array('type' => 'integer:Skill:hrm/class/skill.class.php:1', 'label' => 'Skill', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
 		'fk_evaluation' => array('type' => 'integer:Evaluation:hrm/class/evaluation.class.php:1', 'label' => 'Evaluation', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
-		'rankorder' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'position' => 4, 'notnull' => 1, 'visible' => 1,),
+		'rankorder' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'position' => 4, 'notnull' => 1, 'visible' => 1, 'uieditable' => 1,),
 		'required_rank' => array('type' => 'integer', 'label' => 'requiredRank', 'enabled' => 1, 'position' => 5, 'notnull' => 1, 'visible' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
@@ -335,6 +335,60 @@ class EvaluationLine extends CommonObjectLine
 	}
 
 	/**
+	 * Check if user has a permission on evaluations, the lines of an evaluation have no permission of their own
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+
+		return in_array($mode, array('read', 'write', 'delete')) && $user->hasRight('hrm', 'evaluation', $mode);
+	}
+
+	/**
+	 * A line can be changed only while its evaluation is a draft
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is blocked by the status of the evaluation, false otherwise
+	 */
+	protected function isFieldBlockedByObjectState($field)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
+		$evaluation = new Evaluation($this->db);
+		if ($evaluation->fetch($this->fk_evaluation) <= 0) {
+			return true;
+		}
+
+		return (int) $evaluation->status !== Evaluation::STATUS_DRAFT;
+	}
+
+	/**
+	 * Return the value of a field posted by the user interface (core/ajax/objectfield.php).
+	 * A rank can only be "not applicable" (-1) or a level between 0 and the maximum number of levels.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if not posted or not valid
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		$value = parent::getFieldValueFromAjaxPost($field);
+
+		if ($field == 'rankorder' && !is_null($value)) {
+			require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+			if ($value < -1 || $value > getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL)) {
+				return null;
+			}
+		}
+
+		return $value;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -415,7 +469,7 @@ class EvaluationLine extends CommonObjectLine
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

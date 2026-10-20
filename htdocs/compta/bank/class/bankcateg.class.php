@@ -3,7 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . ((int) $catTypeID);
+		$sql .= " AND t.entity = ".((int) $conf->entity)." AND t.type = " . ((int) $catTypeID);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -203,7 +203,7 @@ class BankCateg // extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$this->db->begin();
 
@@ -349,7 +349,7 @@ class BankCateg // extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".((int) $catTypeID)." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".((int) $conf->entity)." AND type = ".((int) $catTypeID)." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

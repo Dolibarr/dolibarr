@@ -7,7 +7,7 @@
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,13 +111,15 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
-$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
-$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = $user->hasRight("takepos", "run");
+$permissiontodelete = $user->hasRight("takepos", "run") || ($permissiontoadd && $object->status == 0);
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
+$permissiontoreopen = $user->hasRight("takepos", "run");
+
 
 $sqlfilteronopdate = '';
 
@@ -127,7 +129,7 @@ $dateend = null;
 $syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y", 'tzuserrel'));
 $smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m", 'tzuserrel'));
 $sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d", 'tzuserrel'));
-// TODO Add a global option to define the end hours when doing a cash control
+// TODO Add a global option to allow to enter the end hours when doing a cash control (currently only end of hours 23:59:59 for local hour so :xx::xx for UTC is supported)
 $shour = 0;
 $smin = 0;
 $ssec = 0;
@@ -216,7 +218,7 @@ if (GETPOST('cancel', 'alpha')) {
 	}
 }
 
-if ($action == "reopen" && $permissiontoadd) {
+if ($action == "reopen" && $permissiontoreopen) {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_MODIFY');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -318,12 +320,14 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$datefilter = 'p.datep';
 	$modulesourcefilter = 'f.module_source';
 	$amountfield = 'pf.amount';
+	$possource = 'f.pos_source';
 	$fieldentity = 'p.entity';
 	$joinleft = 'LEFT ';
 	if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 		$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 		$modulesourcefilter = 'bl.module_source';
 		$amountfield = 'bl.amounts';
+		$possource = 'bl.pos_source';
 		$fieldentity = 'bl.entity';
 		$joinleft = '';
 	}
@@ -336,21 +340,19 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	foreach ($arrayofpaymentmode as $key => $val) {
 		// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
-		/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+		/*$sql = "SELECT p.rowid, p.ref as pref, p.datep as datep, cp.code,";
 		$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 		$sql .= " b.fk_account as bankid,";
 		$sql .= " bl.signature"; */
 		$sql = "SELECT SUM(".$db->sanitize($amountfield).") as total, COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
 		$sql .= " ".MAIN_DB_PREFIX."paiement as p";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
 		$sql .= " ".$db->sanitize($joinleft)." JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.action = 'PAYMENT_CUSTOMER_CREATE'";
 		$sql .= " AND bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity).",";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid,";
 		$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
+		$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
@@ -447,6 +449,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		// Delete OK
@@ -580,6 +583,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		foreach ($arrayofpaymentmode as $key => $val) {
 			// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
+			// TODO
 			/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
 			$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 			$sql .= " b.fk_account as bankid,";
@@ -612,6 +616,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
+					// $theoricalamountforterminal and $theoricalnbofinvoiceforterminal will be used to get the amount for period (cash_calculated, cheque_calculated and card_calculated)
 					$theoricalamountforterminal[$terminalid][$key] = $obj->total;
 					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
@@ -646,7 +651,7 @@ if ($action == "create" || $action == "start") {
 	if ($contextpage == 'takepos') {
 		print '<input type="hidden" name="contextpage" value="takepos">';
 	}
-	if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '<input type="hidden" name="action" value="add">';
 	} elseif ($action == 'close') {
 		print '<input type="hidden" name="action" value="valid">';
@@ -728,7 +733,7 @@ if ($action == "create" || $action == "start") {
 
 	// Button Start
 	print '<td>';
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '';
 	} else {
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
@@ -739,7 +744,7 @@ if ($action == "create" || $action == "start") {
 
 
 	// Table to see/enter balance
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 
@@ -930,6 +935,13 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
+		$htmltooltip .= '<br><br>';
+		if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("BlockedLog"), MAIN_DB_PREFIX."blockedlog", $langs->transnoentitiesnoconv("DateCreation"), "date_creation");
+		} else {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("Payment"), MAIN_DB_PREFIX."paiement", $langs->transnoentitiesnoconv("DatePayment"), "datep");
+		}
+
 		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
 
@@ -1023,9 +1035,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($object->status == CashControl::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+				if (!isALNERunningVersion()) {
+					if ($permissiontoreopen) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReOpen').'</a></div>';
+					}
+				}
 			}
 
 			print '</div>';
@@ -1040,7 +1058,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($contextpage == 'takepos') {
 				print '<input type="hidden" name="contextpage" value="takepos">';
 			}
-			if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+			if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 				print '<input type="hidden" name="action" value="add">';
 			} elseif ($action == 'close') {
 				print '<input type="hidden" name="action" value="valid">';
@@ -1056,7 +1074,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<br>';
 
-				print '<!-- section to enter declareda mount -->';
+				print '<!-- section to enter declared mount -->';
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent">';
 
@@ -1114,7 +1132,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 				print '</td>';
 
-				// Amount calculated per payment type
+				// Amount calculated per payment type (field cash_calculated, cheque_calculated, card_calculated)
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td class="smallheight center'.($i == 0 ? ' hide0' : '').'">';
@@ -1161,7 +1179,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 					if ($action == 'start') {
 						print 'disabled '; // To start cash user only can set opening cash
 					}
-					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="';
+					$suggestedvalue = '';
+					if ($key == 'cash') {
+						$suggestedvalue = price($object->opening + $theoricalamountforterminal[$terminalid][$key]);
+					} else {
+						$suggestedvalue = price($theoricalamountforterminal[$terminalid][$key]);
+					}
+					print GETPOSTISSET($key.'_amount') ? GETPOST($key.'_amount', 'alpha') : $suggestedvalue;
+					print '">';
 					print '</td>';
 					$i++;
 				}

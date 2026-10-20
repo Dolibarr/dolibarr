@@ -68,3 +68,4 @@ ApplyJobCandidature=สมัครงานนี้
 ErrorRecruitmmentCandidatureAlreadyExists= มีผู้สมัครเข้ารับบริการแล้วโดยใช้อีเมล %s
 RecruitmentCandidatureSaved=บันทึกข้อมูลการรับสมัครเรียบร้อยแล้ว
 NoOpenJobOffer=ยังไม่มีตำแหน่งงานว่างในขณะนี้
+ShowPositionToBeFilled=Show Position to be filled

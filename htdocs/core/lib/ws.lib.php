@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,12 @@
  */
 function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
 {
-	global $db, $conf, $langs;
+	global $db;
 	global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 	$fuser = new User($db);
 
-	if (!$error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY)) {
+	if (!$error && ($authentication['dolibarrkey'] != getDolGlobalString('WEBSERVICES_KEY'))) {
 		$error++;
 		$errorcode = 'BAD_VALUE_FOR_SECURITY_KEY';
 		$errorlabel = 'Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
@@ -65,7 +65,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 			$errorlabel = 'Bad value for login or password';
 		}
 
-		if (!$error && $fuser->statut == 0) {
+		if (!$error && $fuser->status == 0) {
 			$error++;
 			$errorcode = 'ERROR_USER_DISABLED';
 			$errorlabel = 'This user has been locked or disabled';

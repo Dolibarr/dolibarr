@@ -42,7 +42,7 @@ class ProductAttributeValue extends CommonObjectLine
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -81,6 +81,11 @@ class ProductAttributeValue extends CommonObjectLine
 	 * @var int
 	 */
 	public $id;
+
+	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
 
 	/**
 	 * ID of the parent attribute (ex: ID of the attribute "COLOR")
@@ -193,7 +198,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$sql .= " fk_product_attribute, ref, value, entity, position";
 		$sql .= ")";
 		$sql .= " VALUES (";
-		$sql .= "  " . ((int) $this->fk_product_attribute);
+		$sql .= " " . ((int) $this->fk_product_attribute);
 		$sql .= ", '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", '" . $this->db->escape($this->value) . "'";
 		$sql .= ", " . ((int) $this->entity);
@@ -203,7 +208,12 @@ class ProductAttributeValue extends CommonObjectLine
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 
@@ -234,21 +244,29 @@ class ProductAttributeValue extends CommonObjectLine
 	}
 
 	/**
-	 * Gets a product attribute value
+	 * Gets a product attribute value, from its id or from its ref
 	 *
-	 * @param int $id Product attribute value id
-	 * @return int Return integer <0 KO, >0 OK
+	 * Note: $id must not be typed as int, see ProductAttribute::fetch().
+	 * A value ref is only unique for a given attribute, so $fk_product_attribute is
+	 * required to look a value up by ref.
+	 *
+	 * @param	int|string	$id						Product attribute value id
+	 * @param	string		$ref					Value ref, used when $id is empty
+	 * @param	int			$fk_product_attribute	Parent attribute id, required with $ref
+	 * @return	int									Return integer <0 KO, 0 not found, >0 OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = '', $fk_product_attribute = 0)
 	{
 		global $langs;
 		$error = 0;
 
 		// Clean parameters
-		$id = $id > 0 ? $id : 0;
+		$id = $id > 0 ? (int) $id : 0;
+		$ref = trim((string) $ref);
+		$fk_product_attribute = (int) $fk_product_attribute;
 
 		// Check parameters
-		if (empty($id)) {
+		if (empty($id) && ($ref === '' || empty($fk_product_attribute))) {
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TechnicalID"));
 			$error++;
 		}
@@ -257,9 +275,14 @@ class ProductAttributeValue extends CommonObjectLine
 			return -1;
 		}
 
-		$sql = "SELECT rowid, fk_product_attribute, ref, value";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value, position";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int) $id);
+		if (!empty($id)) {
+			$sql .= " WHERE rowid = " . ((int) $id);
+		} else {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+			$sql .= " AND fk_product_attribute = " . ((int) $fk_product_attribute);
+		}
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -278,6 +301,7 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->fk_product_attribute = $obj->fk_product_attribute;
 			$this->ref = $obj->ref;
 			$this->value = $obj->value;
+			$this->position = (int) $obj->position;
 			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
@@ -382,8 +406,20 @@ class ProductAttributeValue extends CommonObjectLine
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
+		}
+
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -459,7 +495,7 @@ class ProductAttributeValue extends CommonObjectLine
 			}
 		}
 		if (!$error) {
-			$result = $this->insertExtraFields();
+			$result = $this->deleteExtraFields();
 			if ($result < 0) {
 				$error++;
 			}

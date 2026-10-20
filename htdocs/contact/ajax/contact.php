@@ -2,8 +2,8 @@
 /* Copyright (C) 2006      	Andre Cianfarani     	<acianfa@free.fr>
  * Copyright (C) 2005-2012 	Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2007-2019 	Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ if ($id > 0) {
 
 // Security check
 if ($user->socid > 0) {
-	unset($action);
+	$action = null;
 	$socid = $user->socid;
 	$object->id = $socid;
 }
@@ -118,7 +118,9 @@ if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
-	if (!$searchkey) {
+	// A non-numeric CONTACT_USE_SEARCH_TO_SELECT ('infinite', so getDolGlobalInt() returns 0) means "infinite
+	// list": an empty term is allowed and returns the (paginated) full list instead of nothing.
+	if (!$searchkey && getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT') >= 1) {
 		return;
 	}
 
@@ -158,7 +160,13 @@ if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 	if (getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT') && $nbchar < getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT')) {
 		print json_encode(array());
 	} else {
-		$arrayresult = $form->selectcontacts($socid, array(), (string) $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, (bool) $multiple, $disableifempty, $filter);
+		// Page size of this endpoint (CONTACT_LIMIT_SIZE): select2 keeps asking for the next page while a
+		// full page is returned, so the whole (filtered or "infinite list") result stays browsable by scrolling.
+		$limit = getDolGlobalInt('CONTACT_LIMIT_SIZE', 20);
+		$page = GETPOSTINT('page');
+		$limitoffset = ($page > 1) ? ($page - 1) * $limit : 0;
+
+		$arrayresult = $form->selectcontacts($socid, array(), (string) $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, (bool) $multiple, $disableifempty, $filter, $limit, $limitoffset);
 
 		print json_encode($arrayresult);
 	}

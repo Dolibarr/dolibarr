@@ -67,6 +67,9 @@ if ($user->socid) {
 }
 $hookmanager->initHooks(array('invoicenote'));
 
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'facture', $id, '');
 
 $usercancreate = $user->hasRight("facture", "creer");
@@ -163,8 +166,13 @@ if ($id > 0 || !empty($ref)) {
 
 
 	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 	print dol_get_fiche_end();
 }
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2023	Charlene BENKE				<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$object = new Contrat($db);
+$result = $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 $result = restrictedArea($user, 'contrat', $id);
 
 
@@ -78,8 +84,6 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_ti
 $form = new Form($db);
 $userstatic = new User($db);
 
-$object = new Contrat($db);
-$result = $object->fetch($id, $ref);
 $ret = $object->fetch_thirdparty();
 $head = contract_prepare_head($object);
 
@@ -188,7 +192,7 @@ print '<td  align="center" nowrap >'.$langs->trans("DateEnd").'</td>';
 print '<td  align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
-// on récupère la totalité des tickets liés au contrat
+// retrieve all tickets linked to the contract
 $allticketarray = $object->getTicketsArray();
 if (is_array($allticketarray) && count($allticketarray) > 0) {
 	foreach ($allticketarray as $key => $value) {

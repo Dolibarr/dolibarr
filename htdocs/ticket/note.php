@@ -5,7 +5,7 @@
  * Copyright (C) 2017       Ferran Marcet   <fmarcet@2byte.es>
  * Copyright (C) 2024-2026  Frédéric France <frederic.france@free.fr>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Charlene Benke	<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026	Charlene Benke	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +54,13 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $hookmanager->initHooks(array('ticketnote'));
-$result = restrictedArea($user, 'ticket', $id, 'ticket');
 
 $object = new Ticket($db);
 $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'ticket', $id, 'ticket');
 
 $permissiontoadd = $user->hasRight('ticket', 'write');
 $permissionnote = $user->hasRight('ticket', 'write'); // Used by the include of actions_setnotes.inc.php
@@ -158,8 +161,13 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 	print '</div>';
 
 	print dol_get_fiche_end();

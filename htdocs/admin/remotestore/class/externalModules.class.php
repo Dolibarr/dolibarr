@@ -60,6 +60,11 @@ class ExternalModules
 	public $cache_file;
 
 	/**
+	 * @var array<string,array{url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
+	 */
+	public $custom_sources = array();
+
+	/**
 	 * // the url of this page
 	 * @var string
 	 */
@@ -157,6 +162,54 @@ class ExternalModules
 		$this->file_source_url = "https://raw.githubusercontent.com/Dolibarr/dolibarr-community-modules/refs/heads/main/index.yaml";
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
 
+		// For the additional modules repositories (GitHub mono repositories with same structure than the community repository)
+		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a comma separated list of 'URL[:branch]'
+		// Example: 'https://github.com/DoliCloud/dolimods:master,https://github.com/owner/repo:develop'
+		// If the branch is not provided, 'main' is used.
+		$i = 0;
+		foreach (explode(',', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+			$customsource = trim($customsource);
+			if ($customsource === '') {
+				continue;
+			}
+			$i++;
+
+			$url = $customsource;
+			$branch = '';
+			$reg = array();
+			// A ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
+			if (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+				$url = $reg[1];
+				$branch = $reg[2];
+			}
+			$url = preg_replace('/\/+$/', '', $url);
+
+			$owner = '';
+			$repo = '';
+			// Accept 'https://github.com/owner/repo', 'https://github.com/owner/repo.git' or 'https://github.com/owner/repo/tree/branch'
+			if (preg_match('/^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/tree\/([\w.\/-]+))?$/', $url, $reg)) {
+				$owner = $reg[1];
+				$repo = $reg[2];
+				if (empty($branch)) {
+					$branch = empty($reg[3]) ? 'main' : $reg[3];
+				}
+			}
+
+			// The key is used to build the name of the constant to enable the source, so it must be stable
+			$key = ($owner ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '_', $owner.'_'.$repo)) : 'INVALID'.$i);
+
+			$this->custom_sources[$key] = array(
+				'url' => $url,
+				'branch' => $branch,
+				'const_enable' => 'MAIN_ENABLE_EXTERNALMODULES_CUSTOM_'.$key,
+				'raw_base_url' => ($owner ? 'https://github.com/'.$owner.'/'.$repo.'/raw/refs/heads/'.$branch : ''),
+				'file_source_url' => ($owner ? 'https://raw.githubusercontent.com/'.$owner.'/'.$repo.'/refs/heads/'.$branch.'/index.yaml' : ''),
+				'cache_file' => DOL_DATA_ROOT.'/admin/temp/remote_github_custom_modules_file_'.strtolower($key).'.yaml',
+				'status' => 0,
+				'error' => '',
+			);
+		}
+
 		$lang       = $langs->defaultlang;
 		$lang_array = array('en_US', 'fr_FR', 'es_ES', 'it_IT', 'de_DE');
 		if (!in_array($lang, $lang_array)) {
@@ -183,13 +236,33 @@ class ExternalModules
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
+		// Check access to the additional repos
+		$nbcustomsourcesok = 0;
+		foreach ($this->custom_sources as $key => $customsource) {
+			if (!getDolGlobalString($customsource['const_enable'])) {
+				continue;
+			}
+			if ($customsource['file_source_url']) {
+				$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
+
+				$this->error = '';
+				$this->getRemoteYamlFile($customsource['file_source_url'], $cachedelayforgithubrepo, $customsource['cache_file']);
+
+				$this->custom_sources[$key]['error'] = (string) $this->error;
+				$this->custom_sources[$key]['status'] = dol_is_file($customsource['cache_file']) ? 1 : 0;
+				$nbcustomsourcesok += $this->custom_sources[$key]['status'];
+			} else {
+				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be a GitHub repository URL like https://github.com/owner/repo or https://github.com/owner/repo:branch';
+			}
+		}
+
 		// Check access to Dolistore API /api/categories -> /api/index.php/marketplace/categories
 		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$this->dolistoreApiStatus = $this->checkApiStatus();
 		}
 
 		// Count the number of online providers
-		$this->numberOfProviders = $this->dolistoreApiStatus + $this->githubFileStatus;
+		$this->numberOfProviders = (int) $this->dolistoreApiStatus + (int) $this->githubFileStatus + $nbcustomsourcesok;
 	}
 
 	/**
@@ -253,18 +326,23 @@ class ExternalModules
 
 	/**
 	 * Fetch modules from a cache YAML file
-	 * @param array<string, mixed> $options Options for filter
+	 * @param array<string, mixed> 	$options 	Options for filter
+	 * @param string				$cache_file	Cache file to read. If empty, we use the cache file of the community repository.
 	 *
 	 * @return list<array<string, array<string, string|null>|string|null>> List of modules
 	 */
-	public function fetchModulesFromFile($options = array())
+	public function fetchModulesFromFile($options = array(), $cache_file = '')
 	{
 		$modules = array();
 
-		if (!empty($this->cache_file) && file_exists($this->cache_file)) {
-			dol_syslog(__METHOD__ . " - Loading cache file: " . $this->cache_file, LOG_DEBUG);
+		if (empty($cache_file)) {
+			$cache_file = $this->cache_file;
+		}
 
-			$content = file_get_contents($this->cache_file);
+		if (!empty($cache_file) && file_exists($cache_file)) {
+			dol_syslog(__METHOD__ . " - Loading cache file: " . $cache_file, LOG_DEBUG);
+
+			$content = file_get_contents($cache_file);
 			if ($content !== false) {
 				$modules = $this->readYaml($content);
 			} else {
@@ -324,9 +402,10 @@ class ExternalModules
 	 * Generate HTML for products.
 	 *
 	 * @param 	array<string,mixed> 	$options 	Options for the request
+	 * @param 	array<string,DolibarrModules>	$modules	Array of locally installed modules (keyed by module class name)
 	 * @return 	string|null 						HTML string representing the products.
 	 */
-	public function getProducts($options)
+	public function getProducts($options, $modules = array())
 	{
 		global $langs;
 
@@ -337,6 +416,18 @@ class ExternalModules
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
 
 		$this->products = array();
+
+		// Build a map of installed external module names to their versions (lowercase name => version)
+		$installedModules = array();
+		if (is_array($modules)) {
+			foreach ($modules as $objMod) {
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() != 'core') {
+					$moduleName = strtolower($objMod->name);
+					$moduleVersion = $objMod->getVersion(0);
+					$installedModules[$moduleName] = $moduleVersion;
+				}
+			}
+		}
 
 		$this->categorie = $options['categorie'] ?? 0;
 		$this->per_page  = $options['per_page'] ?? 11;
@@ -417,12 +508,33 @@ class ExternalModules
 			$fileProducts = $fileProducts['data'];
 		}
 
-		// Number of pages
-		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
+		// Fetch the products from the additional github repos
 
-		// Merge both sources (github community modules have priority on dolistore).
+		$customFileProducts = array();
+		$customFileProductsTotalMax = 0;
+		foreach ($this->custom_sources as $key => $customsource) {
+			if (empty($customsource['status']) || !getDolGlobalInt($customsource['const_enable'])) {
+				continue;
+			}
+			$tmpProducts = $this->fetchModulesFromFile($data, $customsource['cache_file']);
+
+			$tmpProducts = $this->adaptData($tmpProducts, 'githubcustom', $key);
+
+			$tmpProducts = $this->applyFilters($tmpProducts, $data);
+
+			$customFileProductsTotalMax = max($customFileProductsTotalMax, $tmpProducts['total']);
+
+			$this->numberTotalOfProducts += $tmpProducts['total'];
+
+			$customFileProducts = array_merge($customFileProducts, $tmpProducts['data']);
+		}
+
+		// Number of pages
+		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $customFileProductsTotalMax / $this->per_page, $dolistoreProductsTotal / $this->per_page));
+
+		// Merge all sources (github modules have priority on dolistore, the additional repos have priority on the community repo).
 		$this->products = $dolistoreProducts;
-		foreach ($fileProducts as $fileProduct) {
+		foreach (array_merge($fileProducts, $customFileProducts) as $fileProduct) {
 			$id = $fileProduct['id'];
 			if ($id > 0) {
 				if (empty($this->products[$id])) {		// Not already present in array
@@ -460,11 +572,53 @@ class ExternalModules
 				$images = '<img class="imgstore" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" />';
 			}
 
+			// Set and check version
+			$version = '';
+			$compatible = '';
+			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
+				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
+				$compatible = 'NotCompatible';
+			} else {
+				// A min or max version set to '', 'auto' or 'unknown' is an unknown version
+				$minknown = (!empty($product["dolibarr_min"]) && !in_array($product["dolibarr_min"], array('auto', 'unknown')));
+				$maxknown = (!empty($product["dolibarr_max"]) && !in_array($product["dolibarr_max"], array('auto', 'unknown')));
+
+				if ($minknown && $this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) > 0) {
+					// Need update of Dolibarr (current version is lower than min)
+					$version = '<span class="compatibleafterupdate">'.$langs->trans(
+						'CompatibleAfterUpdate',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				} elseif ($maxknown && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
+					// Compatible
+					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
+						'CompatibleUpTo',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = '';
+				} else {
+					// Not compatible (current version is higher than max, or max is unknown)
+					$version = '<span class="warning">'.$langs->trans(
+						'NotCompatible',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				}
+			}
+
 			// free or pay ?
+			$install_link = '';
 			if (array_key_exists('price_ht', $product) && price2num($product["price_ht"]) > 0) {
 				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 
-				$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
+				$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
 				$download_link .= img_picto('', 'url', 'class="size2x paddingright"');
 				$download_link .= '</a>';
 			} else {
@@ -472,7 +626,7 @@ class ExternalModules
 				if ($product['source'] === 'dolistore') {	// 0 on dolistore may mean 0 or a complementary fee to subscribe
 					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
 					$price = '<h3><a href="'.$urlview.'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
-				} elseif ($product['source'] === 'githubcommunity') {
+				} elseif (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
 					if (array_key_exists('price_ht', $product) && empty($product['price_ht'])) {
 						if ($product['status'] == 'soon') {
 							$price = '<h3>'.$langs->trans('StillInDevelopment').'</h3>';
@@ -490,14 +644,14 @@ class ExternalModules
 					$price = '<h3>'.$langs->trans('Unknown').'</h3>';
 				}
 
-				if ($product['source'] === 'githubcommunity') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
+				if (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
+					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
 					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright colorgrey"');
 					$download_link .= '</a>';
 
-					$urlview = $product["dolistore-download"];		// In a future, we will have the download to the zip file
+					$urlview = $product["dolistore-download"];		// View on Dolistore
 					if ($urlview) {
-						$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
+						$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
 						$download_link .= img_picto('', 'url', 'class="size2x"');
 						$download_link .= '</a>';
 					}
@@ -506,70 +660,96 @@ class ExternalModules
 						$reg = array();
 						if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
-							$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
 						}
 					}
 				} elseif ($product['source'] === 'dolistore') {
 					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
 					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
-					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
+					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
 					$download_link .= img_picto('', 'url', 'class="size2x"');
 					$download_link .= '</a>';
-					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+					$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
-			}
 
-			// Set and check version
-			$version = '';
-			$compatible = '';
-			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
-				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
-				$compatible = 'NotCompatible';
-			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
-				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
-					//compatible
-					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
-						'CompatibleUpTo',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = '';
-				} else {
-					// never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
-						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				}
-			} else {
-				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
-					// never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
-						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				} else {
-					//need update
-					$version = '<span class="compatibleafterupdate">'.$langs->trans(
-						'CompatibleAfterUpdate',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
+				// Direct install
+				if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
+					$urldownload = '';
+
+					if (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
+						$current_version = $product['module_version'] ?? '';
+						$module_name = strtolower(preg_replace('/@.*$/', '', $product['ref'] ?? ''));
+
+						// Remove "-" followed by current version at the end of the string if it exists
+						$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
+
+						$urldownload = $this->getGithubRawBaseUrl($product['source'], $product['custom_source_key'] ?? '').'/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
+
+						$reg = array();
+						$urlview = $product["dolistore-download"];		// View on Dolistore
+
+						// For community modules, we download from community repo.
+						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
+						if ($product["direct-download"] == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
+								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+							}
+						}
+					}
+					if ($product['source'] === 'dolistore') {
+						$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
+					}
+
+
+					$disableInstall = ($compatible === 'NotCompatible') && !getDolGlobalInt('MAIN_FEATURES_LEVEL');
+					// $disableInstall = false; // TODO: remove this.
+					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
+					$fields = ['action' => 'install', 'token' => newToken()];
+					foreach ($product as $key => $value) {
+						$fields['producttoinstall['.$key.']'] = $value;
+					}
+
+					$installConfirmMessage = $langs->transnoentities(
+							"extModuleConfirmInstallText",
+							$product['label'] ?? '',
+							$product['module_version'] ?? '',
+							$product['ref'] ?? '',
+							!empty($product['tms']) ? dol_print_date($product['tms'], '%d/%m/%Y') : ''
+						);
+					$installConfirmMessage .= $langs->trans("Path").' : '.$urldownload;
+
+					// Check if module is already installed locally to show "Upgrade" or "Re-install" instead of "Install"
+					$buttonLabel = $langs->trans("Install");
+					$remoteVersion = $product['module_version'] ?? '';
+					$remoteModuleName = strtolower(preg_replace('/@.*$/', '', $product['ref'] ?? ''));
+					// Remove "-" followed by current version at the end of the string if it exists
+					$remoteModuleName = preg_replace('/-' . preg_quote($remoteVersion, '/') . '$/', '', $remoteModuleName);
+					if (!empty($installedModules[$remoteModuleName]) && $remoteVersion && $remoteVersion != 'unknown') {
+						$localVersion = $installedModules[$remoteModuleName];
+						// $localVersion is guaranteed non-empty here (see !empty() test above), so only the 'unknown' value must be excluded
+						if ($localVersion != 'unknown') {
+							$versionDiff = $this->versionCompare($localVersion, $remoteVersion);
+							if ($versionDiff < 0) {
+								$buttonLabel = $langs->trans("Upgrade");
+							} elseif ($versionDiff == 0) {
+								$buttonLabel = $langs->trans("ReInstall");
+							}
+						}
+					}
+
+					$install_link = '<button class="valignmiddle ' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
+						. ($disableInfo     ? ' title="' . dol_escape_htmltag($disableInfo) . '"' : '')
+						. (!$disableInstall ? ' data-confirm' : '')
+						. (!$disableInstall ? ' data-fields="' . dol_escape_htmltag(json_encode($fields)) . '"' : '')
+						. (!$disableInstall ? ' data-url="' . dol_escape_htmltag($this->url) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($installConfirmMessage) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-label="' . dol_escape_htmltag($buttonLabel) . '"' : '')
+						. '>' . $buttonLabel . '</button>';
 				}
 			}
 
@@ -582,7 +762,7 @@ class ExternalModules
 			$html .= '</div></td>';
 
 			// Description
-			$html .= '<td class="margeCote minwidth500imp"><h2 class="appTitle">';
+			$html .= '<td class="margeCote minwidth400imp"><h2 class="appTitle">';
 			$html .= dolPrintHTML(dol_string_nohtmltag(ucfirst($product["label"])));
 			if (!empty($product['author']) && $product['author'] != 'unkownauthor') {
 				$html .= '<span class="small"> &nbsp; - &nbsp; '.img_picto('', 'company', 'class="pictofixedwidth"');
@@ -605,21 +785,25 @@ class ExternalModules
 			} else {
 				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
-			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
-			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
-			$html .= '</small><br>';
-			//$html .= '<div class="appSource valignmiddle inline-block">'.$langs->trans('Source').' &nbsp; </div>';
-			$html .= '<div class="appSource valignmiddle inline-block">';
+			$html .= ' &nbsp; &nbsp; ';
+
+			$html .= '<div class="appSource inline-block valigntop">';
 			if ($product["source"] == 'dolistore') {
-				//$html .= img_picto('DoliStore', 'shop', 'class="pictofixedwidth"');
-				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize imgmaxwidth100 valignmiddle" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
+				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize valignmiddle inline-block pictofixedwidth" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
 			} elseif ($product["source"] == 'githubcommunity') {
 				$html .= img_picto($langs->trans('Source').': GitHub community repo', 'group', 'class="pictofixedwidth valignmiddle"');
+			} elseif ($product["source"] == 'githubcustom') {
+				$html .= img_picto($langs->trans('Source').': '.($this->custom_sources[$product['custom_source_key']]['url'] ?? ''), 'fa-code-branch', 'class="pictofixedwidth valignmiddle"');
 			} else {
 				$html .= img_picto($langs->trans('Source').': '.$langs->trans('Other'), 'generic', 'class="pictofixedwidth"');
 			}
-			//$html .= $product["source"];
-			$html .= '</div> &nbsp;';
+			$html .= '</div>';
+
+			$html .= $langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
+			$html .= '</small><br>';
+
+
+			$html .= '&nbsp;';
 			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
 				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
 			}
@@ -639,6 +823,11 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
+			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+				if ($install_link) {
+					$html .= $install_link;
+				}
+			}
 
 			if (!getDolOptimizeSmallScreen()) {
 				$html .= '</td>';
@@ -662,6 +851,34 @@ class ExternalModules
 			$html .= '<br><br>';
 			$html .= '</td></tr>';
 		}
+
+		// JS for confirm install
+		$confirmLabel = $langs->trans("Install");
+		$cancelLabel = $langs->trans("Cancel");
+		$html .= '<script>
+		$(document).on("click","[data-confirm]",function(){
+			var button = $(this);
+			var confirmTitle = button.data("confirm-title");
+			var confirmText = button.data("confirm-text");
+			var buttons = {};
+			buttons[button.data("confirm-label")||\'' . dol_escape_js($confirmLabel) . '\'] = function(){
+				var form = $("<form method=\'POST\' style=\'display:none\'>").attr("action", button.data("url"));
+				$.each(button.data("fields"), function(name, value){
+					form.append($("<input type=\'hidden\'>").attr("name", name).val(value));
+				});
+				$("body").append(form);
+				form.submit();
+				$(this).dialog("close");
+			};
+			buttons[\'' . dol_escape_js($cancelLabel) . '\'] = function(){$(this).dialog("close");};
+			$("<div>").html(confirmText).dialog({
+				title: confirmTitle,
+				minWidth: 580,
+				modal: true,
+				buttons: buttons
+			});
+		});
+		</script>';
 
 		$this->numberOfProducts = count($this->products);
 
@@ -845,7 +1062,18 @@ class ExternalModules
 				if ($this->categorie != 0) {
 					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
 				}
-				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
+				// URL to go to another page (without no_page). Used when pressing Enter into the page input field.
+				$param_array = array();
+				if (!empty($this->search)) {
+					$param_array['search_keyword'] = $this->search;
+				}
+				if ($this->categorie != 0) {
+					$param_array['categorie'] = $this->categorie;
+				}
+				$urlforpage = $this->url.($param_array ? '&'.http_build_query($param_array) : '');
+				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" data-url="'.dol_escape_htmltag($urlforpage).'"';
+				$pagelist .= ' oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'"';
+				$pagelist .= ' onkeydown="if (event.key === \'Enter\') { event.preventDefault(); var p = parseInt(this.value, 10); if (isNaN(p) || p < 1) { p = 1; } window.location.href = this.dataset.url + \'&no_page=\' + p; }">';
 				$pagelist .= ' / '.$nbpages;
 				$pagelist .= '</li>';
 
@@ -911,16 +1139,35 @@ class ExternalModules
 	}
 
 	/**
+	 * Return the base URL to get raw files of a GitHub modules repository
+	 *
+	 * @param	string	$source		Source ('githubcommunity' or 'githubcustom')
+	 * @param	string	$sourcekey	Key of the additional repository into $this->custom_sources (when $source is 'githubcustom')
+	 * @return	string				Base URL (Example: 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main')
+	 */
+	public function getGithubRawBaseUrl($source, $sourcekey = '')
+	{
+		if ($source === 'githubcustom') {
+			return $this->custom_sources[$sourcekey]['raw_base_url'] ?? '';
+		}
+
+		return 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main';
+	}
+
+	/**
 	 * Get YAML file from remote source and put it into the cache file
 	 *
 	 * @param 	string 		$file_source_url 	URL of the remote source
 	 * @param 	int 		$cache_time 		Cache time
+	 * @param	string		$cache_file			Cache file to use. If empty, we use the cache file of the community repository.
 	 * @return 	bool|string 					File content
 	 */
-	public function getRemoteYamlFile($file_source_url, $cache_time)
+	public function getRemoteYamlFile($file_source_url, $cache_time, $cache_file = '')
 	{
 		$yaml = '';
-		$cache_file = $this->cache_file;
+		if (empty($cache_file)) {
+			$cache_file = $this->cache_file;
+		}
 		$cache_folder = dirname($cache_file);
 
 		// Check if cache directory exists
@@ -1025,9 +1272,10 @@ class ExternalModules
 	 *
 	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data 	Data fetched from github remote source
 	 * @param string $source 	Source of the data
+	 * @param string $sourcekey	Key of the additional repository into $this->custom_sources (when $source is 'githubcustom')
 	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
 	 */
-	public function adaptData($data, $source)
+	public function adaptData($data, $source, $sourcekey = '')
 	{
 		$adaptedData = [];
 
@@ -1035,7 +1283,7 @@ class ExternalModules
 			return $adaptedData;
 		}
 
-		if ($source === 'githubcommunity') {
+		if (in_array($source, array('githubcommunity', 'githubcustom'))) {
 			foreach ($data as $package) {
 				if (empty($package['modulename'])) {
 					continue;
@@ -1090,7 +1338,8 @@ class ExternalModules
 					'link' => !empty($package['git'])
 						? $package['git']
 						: '#',
-					'source' => 'githubcommunity',
+					'source' => $source,
+					'custom_source_key' => $sourcekey,
 					'status' => !empty($package['status']) ? $package['status'] : '',
 					'direct-download' => !empty($package['direct-download'])
 						? $package['direct-download']
@@ -1244,7 +1493,7 @@ class ExternalModules
 
 		$statusType = 'status4';
 		if ($status == 0) {
-			$statusType = 'status8';
+			$statusType = 'status3';
 		}
 
 		$labelStatus = [];
@@ -1256,5 +1505,154 @@ class ExternalModules
 		$labelStatusShort[1] = $langs->transnoentitiesnoconv("online");
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', array('badgeParams' => array('attr' => array('class' => 'classfortooltip', 'title' => $labelStatusShort[$status].$moretext))));
+	}
+
+
+	/**
+	 * Download a Dolibarr module from a Git repository URL or Dolistore download URL.
+	 *
+	 * @param  array<string, mixed> 	$producttoinstall Product information array
+	 * @return string|false				Path to the final ZIP file, or false on error
+	 */
+	public function getModuleZIP($producttoinstall = array())
+	{
+		global $conf;
+
+		// Check if cURL is available
+		if (!function_exists('curl_init')) {
+			dol_syslog(__METHOD__ . ': cURL is not available', LOG_ERR);
+			return false;
+		}
+
+		// Check required fields
+		if (empty($producttoinstall['ref'])) {
+			dol_syslog(__METHOD__ . ': Missing producttoinstall', LOG_ERR);
+			return false;
+		}
+
+		$current_version = $producttoinstall['module_version'] ?? '';
+		$module_name = strtolower(preg_replace('/@.*$/', '', $producttoinstall['ref'] ?? ''));
+
+		// Remove "-" followed by current version at the end of the string if it exists
+		$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
+
+		if (empty($module_name) || empty($current_version) || $current_version == 'unknown') {
+			dol_syslog(__METHOD__ . ': Missing or unknown module name/version for product', LOG_ERR);
+			return false;
+		}
+
+		// Create a temporary directory for the download
+		$tmpdir = $conf->admin->dir_temp . '/remotestoredl';
+		dol_mkdir($tmpdir);
+
+		$downloaded = false;
+		switch ($producttoinstall['source']) {
+			case 'dolistore':
+				if ($producttoinstall['id'] > 0) {
+					$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
+					$downloaded = $this->_downloadFile($source_url, $tmpdir);
+					if (!$downloaded) {
+						dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
+						return false;
+					}
+				} else {
+					dol_syslog(__METHOD__ . ': Invalid product ID for Dolistore download: ' . $producttoinstall['id'], LOG_ERR);
+					return false;
+				}
+				break;
+			case 'githubcommunity':
+			case 'githubcustom':
+				$sourcekey = (string) ($producttoinstall['custom_source_key'] ?? '');
+				if ($producttoinstall['source'] == 'githubcustom' && (empty($this->custom_sources[$sourcekey]['raw_base_url']) || !getDolGlobalString($this->custom_sources[$sourcekey]['const_enable']))) {
+					dol_syslog(__METHOD__ . ': The additional modules repository '.$sourcekey.' is not enabled or not valid into MAIN_ADD_EXTERNAL_MODULES_SOURCE', LOG_ERR);
+					return false;
+				}
+				if ($producttoinstall['direct-download'] && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
+					$source_url = $this->getGithubRawBaseUrl($producttoinstall['source'], $sourcekey).'/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
+					$downloaded = $this->_downloadFile($source_url, $tmpdir);
+					if (!$downloaded) {
+						dol_syslog(__METHOD__ . ': GitHub community module download failed: ' . $source_url . ', Try to find a Dolistore link', LOG_WARNING);
+						if ($producttoinstall['id'] > 0) {
+							$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
+							$downloaded = $this->_downloadFile($source_url, $tmpdir);
+							if (!$downloaded) {
+								dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
+								return false;
+							}
+						} else {
+							dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
+							return false;
+						}
+					}
+				} else {
+					dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
+					return false;
+				}
+				break;
+			default:
+				dol_syslog(__METHOD__ . ': Unsupported source type: ' . $producttoinstall['source'], LOG_ERR);
+		}
+
+
+		dol_syslog(__METHOD__ . ': Module downloaded successfully to: ' . $downloaded, LOG_DEBUG);
+		return $downloaded;
+	}
+
+
+	/**
+	 * Download a remote URL to a local file using getURLContent (native Dolibarr).
+	 *
+	 * @param  string  $url         Remote URL to download
+	 * @param  string  $dest_path   Local path to write the downloaded file (directory, not including filename)
+	 * @return string|false         Full path of downloaded file on success, false on failure
+	 */
+	private function _downloadFile(string $url, string $dest_path)
+	{
+		// HEAD request to get real filename from Content-Disposition
+		$filename = '';
+		$head = getURLContent($url, 'HEAD');
+		// Try to extract filename from Content-Disposition header
+		if (!empty($head['header'])) {
+			if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $head['header'], $m)) {
+				$filename = trim(end($m[1]), " \t\"'");
+			}
+		}
+
+		// If filename is not found in headers, try to extract it from URL
+		if (empty($filename)) {
+			$filename = basename(parse_url($url, PHP_URL_PATH));
+		}
+
+		// If filename is still empty or file name ne match the expected pattern (module_modulename-version.zip), log error and return false
+		if (empty($filename) || !preg_match('/^module_[a-z0-9_]+-[0-9]+\.[0-9]+\.[0-9]+\.zip$/i', $filename)) {
+			dol_syslog(__METHOD__ . ': Cannot determine filename from URL: ' . $url, LOG_ERR);
+			return false;
+		}
+
+		// Download the file
+		$response = getURLContent($url, 'GET');
+		if (empty($response['content']) || (isset($response['http_code']) && $response['http_code'] !== 200)) {
+			dol_syslog(
+				__METHOD__ . ': Download failed — HTTP ' . ($response['http_code'] ?? 'unknown') . ' — ' . $url,
+				LOG_WARNING
+			);
+			return false;
+		}
+
+		// Write to destination
+		$dest_file = $dest_path . '/' . $filename;
+		if (file_exists(dol_osencode($dest_file))) { // If file already exists, try to delete it first
+			chmod(dol_osencode($dest_file), 0755);
+			@unlink(dol_osencode($dest_file));
+		}
+		$writtenfile = file_put_contents(dol_osencode($dest_file), $response['content']);
+		if ($writtenfile === false || $writtenfile === 0) {
+			dol_syslog(__METHOD__ . ': Cannot write file: ' . $dest_file, LOG_ERR);
+			@unlink(dol_osencode($dest_file));
+			return false;
+		}
+
+		dol_syslog(__METHOD__ . ': Downloaded successfully to: ' . $dest_file, LOG_DEBUG);
+		return $dest_file;
 	}
 }

@@ -28,7 +28,6 @@ ListOfSupplierProductForSupplier=Lista de productos y precios de proveedor <b> %
 SentToSuppliers=Enviado a los vendedores
 ListOfSupplierOrders=Lista de órdenes de compra
 MenuOrdersSupplierToBill=Órdenes de compra para facturar
-NbDaysToDelivery=Plazo de entrega (días)
 DescNbDaysToDelivery=El mayor retraso de entrega de los productos de este pedido.
 SupplierReputation=Reputación del vendedor
 DoNotOrderThisProductToThisSupplier=No ordene

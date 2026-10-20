@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 		// Scan directories
 		if (count($listofdir)) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
 
 			if ($odtChosen) {
 				// Model for creation
@@ -192,6 +192,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		}
 
 		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
@@ -202,7 +205,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '<br></div></div>';
 
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div>';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -211,6 +214,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="USERGROUP_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
@@ -329,6 +333,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
+				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company

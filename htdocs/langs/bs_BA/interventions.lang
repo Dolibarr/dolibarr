@@ -10,7 +10,6 @@ ActionsOnFicheInter=Akcije na intervencijama
 LastInterventions=Najnovije %s intervencije
 AllInterventions=Sve intervencije
 CreateDraftIntervention=Kreiraj nacrt
-InterventionContact=Kontakt za intervenciju
 DeleteIntervention=Obriši intervenciju
 ValidateIntervention=Potvrdi intervenciju
 SignIntervention=Intervencija na znaku

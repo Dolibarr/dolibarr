@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
@@ -43,6 +43,7 @@
  * @var Translate $langs
  * @var User $user
  * @var ExtraFields $extrafields
+ *
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
@@ -51,6 +52,8 @@
  *
  * @var string $action
  * @var int	$dateSelector
+ * @var string $var
+ * @var int	$i
  */
 
 // Protection to avoid direct call of template
@@ -64,7 +67,10 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force Societe $seller
 @phan-var-force Societe $buyer
 @phan-var-force string $var
+@phan-var-force int $i
 ';
+
+global $db;
 
 // Handle subtotals line edit
 if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
@@ -93,6 +99,33 @@ if (empty($canchangeproduct)) {
 	$canchangeproduct = 0;
 }
 
+$situationinvoicelinewithparent = 0;
+$situationinvoicelinewithchild = 0;
+
+if (getDolGlobalInt('INVOICE_USE_SITUATION') && in_array($object->element, array('facture', 'facturedet'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+
+	// Set if invoice line has a parent
+	if (isset($line->fk_prev_id)) {
+		if ($object->isSituationInvoice()) {	// Method isSituationInvoice() exists only on invoices
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+	// Set if invoice line has a child
+	$sqlcheckchild = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_prev_id = ".((int) $line->id);
+	$resqlcheckchild = $db->query($sqlcheckchild);
+	if ($resqlcheckchild) {
+		$objcheckchild = $db->fetch_object($resqlcheckchild);
+		if ($objcheckchild->count > 0) {
+			$situationinvoicelinewithchild = 1;
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
+
 // Define colspan for the button 'Add'
 $colspan = 3; // Col total ht + col edit + col delete
 if (!empty($inputalsopricewithtax)) {
@@ -116,7 +149,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-current-line  PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -165,23 +198,7 @@ $coldisplay++;
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
-	$situationinvoicelinewithparent = 0;
-	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
-		/** @var CommonInvoice $object */
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
-			// Set constant to disallow editing during a situation cycle
-			$situationinvoicelinewithparent = 1;
-		}
-	}
-
-	// Do not allow editing during a situation cycle
-	// but in some situations that is required (update legal information for example)
-	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
-		$situationinvoicelinewithparent = 0;
-	}
-
-	if (!$situationinvoicelinewithparent) {
+	if (!$situationinvoicelinewithparent || getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
@@ -197,7 +214,7 @@ $coldisplay++;
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
 		print '</textarea>';
 	}
 
@@ -293,7 +310,7 @@ $coldisplay++;
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input type="text" class="flat right width50" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $line->qty).'"';
+		print '<input type="text" class="flat right width50" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : price($line->qty, 0, '', 0, 0)).'"';
 		if ($situationinvoicelinewithparent) {	// Do not allow editing during a situation cycle
 			print ' readonly';
 		}
@@ -335,7 +352,7 @@ $coldisplay++;
 	// Discount
 	$coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? $line->remise_percent : '')).'"';
+		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? price($line->remise_percent, 0, '', 0, 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -446,8 +463,8 @@ $coldisplay++;
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -541,13 +558,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		var ratejs = price2numjs(rate.val());
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("rateMustBeNumeric"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -571,7 +588,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		}
 
 		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
-		$("input[name='price_ht']:first").val(pricejs(price));
+		$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 		return true;
 	}
@@ -653,7 +670,7 @@ jQuery(document).ready(function()
 				<?php if ($line->fk_fournprice > 0) { ?>
 				if (this.id == <?php echo $line->fk_fournprice; ?>) {
 					options += ' selected';
-					$("#buying_price").val(this.price);
+					$("#buying_price").val(pricejs(this.price, 'MU'));
 					trouve = true;
 				}
 				<?php } ?>
@@ -670,7 +687,7 @@ jQuery(document).ready(function()
 			$("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-					$("#buying_price").val(selval).hide();
+					$("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 					$('#buying_price').show();
 			});

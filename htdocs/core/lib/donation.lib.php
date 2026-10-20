@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@
  */
 function donation_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('don');
 
 	$h = 0;
@@ -49,7 +48,7 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/admin/donation_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'don'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['don']['count'];
 	if ($nbExtrafields > 0) {

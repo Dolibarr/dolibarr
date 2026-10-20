@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  */
 
 /**
@@ -11,7 +12,17 @@
  *
  * @var string $action
  * @var string $withproject
+ * @var int $withproject
+ * @var int $id
+ * @var string $idcomment
  */
+'
+@phan-var-force string $action
+@phan-var-force string $withproject
+@phan-var-force int $withproject
+@phan-var-force int $id
+@phan-var-force string $idcomment
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -71,7 +82,7 @@ print '</table></form>';
 // List of comments
 if (!empty($object->comments)) {
 	// Default color for current user
-	$TColors = array($user->id => array('bgcolor'=>'efefef', 'color'=>'555'));
+	$TColors = array($user->id => array('bgcolor' => 'efefef', 'color' => '555'));
 	$first = true;
 	foreach ($object->comments as $comment) {
 		$fk_user = $comment->fk_user_author;
@@ -83,7 +94,7 @@ if (!empty($object->comments)) {
 				$bgcolor = $userstatic->color;
 			}
 			$color = (colorIsLight($bgcolor)) ? '555' : 'fff';
-			$TColors[$fk_user] = array('bgcolor'=>$bgcolor, 'color'=>$color);
+			$TColors[$fk_user] = array('bgcolor' => $bgcolor, 'color' => $color);
 		}
 		print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
 		if ($fk_user != $user->id) {

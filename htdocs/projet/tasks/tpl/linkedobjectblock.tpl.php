@@ -3,7 +3,7 @@
  * Copyright (C) 2014 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke      <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ $langs = $GLOBALS['langs'];
  * @var CommonObject $object
  */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+// Note - at this time there does not seem to be a list of linked objects
 '@phan-var-force CommonObject[] $linkedObjectBlock';
 /** @var Task[] $linkedObjectBlock */
 
@@ -48,7 +49,6 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("tasks");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
-'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
 /** @var Task[] $linkedObjectBlock */
 
 $total = 0;
@@ -61,14 +61,15 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Task"); ?>
+		<td class="linkedcol-element tdoverflowmax125">
 		<?php if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&action=selectlines&token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		} ?>
+		<?php echo $langs->trans("Task"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_start, 'day'); ?></td>
-		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_stop, 'day'); ?></td>
+		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_end, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		$total += $objectlink->budget_amount;
 		echo price($objectlink->budget_amount);

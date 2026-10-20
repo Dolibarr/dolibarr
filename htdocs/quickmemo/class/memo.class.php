@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ class Memo extends CommonObject
 	 * @var int<0,1>|string		Does this object support multicompany module ?
 	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 
 
@@ -94,7 +95,7 @@ class Memo extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -131,6 +132,7 @@ class Memo extends CommonObject
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, 'noteditable' => 1, 'index' => 1, "css" => "left", "comment" => "Id"),
+		"entity" => array("type" => "integer", "label" => "Entity", 'enabled' => 1, 'position' => 2, 'notnull' => 1, "visible" => 0, 'default' => '1', 'index' => 1),
 		"quick_note" => array("type" => "text", "label" => "Note", 'enabled' => 1, 'position' => 61, 'notnull' => 0, "visible" => -1, "cssview" => "wordbreak", "validate" => 1,),
 		"date_creation" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
@@ -410,7 +412,7 @@ class Memo extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -578,6 +580,12 @@ class Memo extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		// fetch() does not filter on entity, so an id of a memo of another entity may be provided (mass delete...)
+		if (!$this->isInCurrentEntity()) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -683,14 +691,14 @@ class Memo extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -954,7 +962,7 @@ class Memo extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -1023,14 +1031,14 @@ class Memo extends CommonObject
 		$return .= '<div class="quickmemo-info" >';
 		$return .= '	<div class="quickmemo-info__create" >';
 		$return .= '		<span class="quickmemo-info__user-create-name">'.$this->showOutputField($this->fields['fk_user_creat'], 'fk_user_creat', $this->user_creation_id).'</span>';
-		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M').'</span>';
+		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 		$return .= '	</div>';
 
 
 		if (!empty($this->tms) && $this->tms != $this->date_creation) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->user_modification_id != $this->user_creation_id) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_modif'], 'fk_user_modif', $this->user_modification_id).'</span>';
 			}
@@ -1041,17 +1049,13 @@ class Memo extends CommonObject
 		if (!empty($this->date_archived) && $this->status == self::STATUS_ARCHIVED) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->fk_user_modif != $this->fk_user_archived) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_archived'], 'fk_user_archived', $this->fk_user_archived).'</span>';
 			}
 
 			$return .= '	</div>';
 		}
-
-		$this->date_archived = dol_now();
-		$this->fk_user_archived = (int) $this->user->id;
-
 
 		$return .= '</div>';
 
@@ -1232,12 +1236,12 @@ class Memo extends CommonObject
 	}
 
 	/**
-	 * Vérifie si une couleur est un code hex valide
+	 * Checks if a color is a valid hex code
 	 *
 	 * @param mixed $color the color to check
 	 * @return bool
 	 */
-	static public function checkColor($color)
+	public static function checkColor($color)
 	{
 		if (!is_string($color)) {
 			return false;
@@ -1246,7 +1250,7 @@ class Memo extends CommonObject
 		// Remove spaces at the beginning/end
 		$color = trim($color);
 
-		// Vérifie #fff ou #ffffff
+		// Checks for #fff or #ffffff
 		return preg_match('/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/', $color) === 1;
 	}
 
@@ -1255,7 +1259,7 @@ class Memo extends CommonObject
 	 *
 	 * @return string[]
 	 */
-	static public function getColorPreset()
+	public static function getColorPreset()
 	{
 
 		$colorsConf = getDolGlobalString('QUICKMEMO_COLORS_PRESET');
@@ -1311,7 +1315,7 @@ class Memo extends CommonObject
 
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'memoContext' =>& $memoContext
+			'memoContext' => & $memoContext
 		);
 
 		$reshook = $hookmanager->executeHooks('getMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1329,7 +1333,7 @@ class Memo extends CommonObject
 	 *
 	 * @return void
 	 */
-	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
+	public static function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
 	{
 		$dolibarrContext = trim($dolibarrContext) ?: $tabContext;
 
@@ -1401,7 +1405,9 @@ class Memo extends CommonObject
 		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
 		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
 		foreach ($modules as $module) {
-			if (!isModEnabled($module) && $onlyActiveModules) { continue; }
+			if (!isModEnabled($module) && $onlyActiveModules) {
+				continue;
+			}
 
 			$moduleClean = str_replace('_', '', $module);
 
@@ -1423,7 +1429,7 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'contextTabMapping' =>& $contextTabMapping,
+			'contextTabMapping' => & $contextTabMapping,
 			'onlyActiveModules' => $onlyActiveModules
 		);
 
@@ -1451,9 +1457,9 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'list' =>& $list
+			'list' => & $list
 		);
-		$object = null;
+		$object = null;  // @phan-suppress-next-line PhanPluginConstantVariableNull
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$list = $hookmanager->resArray;
@@ -1462,9 +1468,15 @@ class Memo extends CommonObject
 		// Security check
 		$result = [];
 		foreach ($list as $k => $v) {
-			if (!is_string($v)) { continue; }
-			if (strlen($v) > 64) { continue; }
-			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
+			if (!is_string($v)) {
+				continue;
+			}
+			if (strlen($v) > 64) {
+				continue;
+			}
+			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) {
+				continue;
+			}
 			$result[] = $v;
 		}
 
@@ -1488,15 +1500,16 @@ class Memo extends CommonObject
 
 		$sql = 'SELECT COUNT(m.rowid) nb
 			FROM '.MAIN_DB_PREFIX.$this->table_element.' m
-			WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+			WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+			  AND m.element_type = \''.$this->db->escape($element_type).'\'
 			  AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
 			  AND m.context_tab = \''.$this->db->escape($context).'\'
 			  AND m.status = '.Memo::STATUS_ARCHIVED.'
 			  AND (m.private = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
 		$obj = $this->db->getRow($sql);
@@ -1527,18 +1540,19 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+        WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+          AND m.element_type = \''.$this->db->escape($element_type).'\'
           AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
           AND m.context_tab = \''.$this->db->escape($context).'\'
           AND m.status = '.self::STATUS_VALIDATED.'
           AND (COALESCE(m.private, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
+		$sql .= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
 		return $sql;
 	}
 
@@ -1563,7 +1577,8 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
+        WHERE m.entity IN ('.getEntity($this->element).')
+          AND m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
           AND m.status = '.self::STATUS_TPL.'
           AND (COALESCE(m.private_tpl, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
@@ -1572,11 +1587,11 @@ class Memo extends CommonObject
 			//$sql.= ' AND (m.context_tab = \''.$this->db->escape($context_tab).'\' OR m.element_type = \'\' ) ';
 		}
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
+		$sql .= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
 
 		return $sql;
 	}
@@ -1629,12 +1644,32 @@ class Memo extends CommonObject
 			return false;
 		}
 
-		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid> 0 ) {
+		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid > 0) {
 			return false;
 		}
 
 		if (!$user->hasRight('quickmemo', 'memo', 'read')) {
 			return false;
+		}
+
+		// Do not show memos of an object the user is not allowed to read
+		if (!empty($jsConfVars['elementType'])) {
+			require_once __DIR__.'/../lib/quickmemo.lib.php';
+			if (!quickMemoInterfaceCanAccessElement((string) $jsConfVars['elementType'], (int) ($jsConfVars['elementId'] ?? 0))) {
+				return false;
+			}
+		}
+
+		$autoResizeFontMin = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1);
+		$autoResizeFontMax = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE', 1.4);
+
+		// Apply safety limits
+		$autoResizeFontMin = max($autoResizeFontMin, 0.3);
+		$autoResizeFontMax = min($autoResizeFontMax, 5);
+
+		// Ensure min value is always lower than max value
+		if ($autoResizeFontMin >= $autoResizeFontMax) {
+			$autoResizeFontMin = max(0.3, $autoResizeFontMax - 0.1);
 		}
 
 		$defaultJsConfVars = [
@@ -1643,13 +1678,20 @@ class Memo extends CommonObject
 			'elementId' => 0,
 			'elementType' => '',
 			'context' => null,
-			'token' => newToken(),
+			'token' => currentToken(),
 			'colors' => Memo::getColorPreset(),
 			'userReadRight' => $user->hasRight('quickmemo', 'memo', 'read'),
 			'userWriteRight' => $user->hasRight('quickmemo', 'memo', 'write'),
-			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete')
+			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete'),
+			'autoResizeFontSize' => !getDolGlobalInt('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE'),
+			'autoResizeFontMin' => $autoResizeFontMin,
+			'autoResizeFontMax' => $autoResizeFontMax,
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
+
+		if (!empty($jsConfVars['elementType'])) {
+			$jsConfVars['shareBtnStatus'] = 1;
+		}
 
 		// LOAD Memo class
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo.css', 1) . '">'."\n";
@@ -1695,10 +1737,10 @@ class Memo extends CommonObject
 
 		$memo->shared_on_element = $this->shared_on_element;
 		$memo->private = (int) $this->private;
-		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M');
+		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
 		$memo->date_change =  '';
 		if (!empty($this->tms) && ((int) $this->date_creation !== (int) $this->tms || (int) $this->fk_user_modif > 0)) {
-			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M');
+			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M', 'tzuserrel');
 		}
 
 		$memo->fk_user_creat = $this->fk_user_creat;
@@ -1723,11 +1765,41 @@ class Memo extends CommonObject
 	}
 
 	/**
+	 * Check that the memo (loaded with fetch(), which does not filter on entity) belongs to an entity visible from current entity
+	 *
+	 * @return bool
+	 */
+	public function isInCurrentEntity()
+	{
+		// Without multicompany, field entity is removed by constructor and all memos are in entity 1
+		if (!isModEnabled('multicompany')) {
+			return true;
+		}
+
+		$entityKey = ($this->status == self::STATUS_TPL ? $this->element : self::getEntityElementKey((string) $this->element_type));
+
+		return in_array((int) $this->entity, array_map('intval', explode(',', getEntity($entityKey))), true);
+	}
+
+	/**
+	 * Element key to use with getEntity() for memos of an element type.
+	 * Memos linked to an object follow the multicompany sharing of this type of object,
+	 * global memos (home page...) and templates use the sharing of memos.
+	 *
+	 * @param string $element_type Element type of the linked object ('' for global memos)
+	 * @return string
+	 */
+	public static function getEntityElementKey($element_type)
+	{
+		return empty($element_type) ? 'memo' : $element_type;
+	}
+
+	/**
 	 * Get JS memo default
 	 *
 	 * @return stdClass
 	 */
-	static public function getJsMemoDefault()
+	public static function getJsMemoDefault()
 	{
 		$memo = new stdClass();
 		$memo->id = null;

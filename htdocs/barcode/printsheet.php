@@ -35,11 +35,6 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,12 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
- *
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+/**
  * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'members', 'errors'));
+$langs->loadLangs(array('admin', 'members'));
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -69,16 +70,11 @@ $label_product_ref_option = GETPOSTISSET('label_product_ref_option');
 $label_product_label_option = GETPOSTISSET('label_product_label_option');
 
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'nohtml') : null);
-} else {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'alpha') : null);
-}
-
-if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 	$security_check = 'nohtml';
 } else {
 	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', $security_check) : null);
 $label_product_label = (GETPOSTISSET('label_product_label') ? GETPOST('label_product_label', $security_check) : null);
 
 $mesg = '';
@@ -171,6 +167,7 @@ if (empty($reshook)) {
 		}
 		$MAXLENGTH = 51200;	// Limit set to 50Ko
 		if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
 			$error++;
 		}
@@ -336,6 +333,7 @@ if (empty($reshook)) {
 						);
 					}
 				} else {
+					$langs->load('errors');
 					$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
 					$error++;
 				}
@@ -344,6 +342,7 @@ if (empty($reshook)) {
 			// Build and output PDF
 			if (!$error && $mode == 'label') {
 				if (!count($arrayofrecords)) {
+					$langs->load('errors');
 					$mesg = $langs->trans("ErrorRecordNotFound");
 				}
 				if (empty($modellabel) || $modellabel == '-1') {
@@ -363,6 +362,7 @@ if (empty($reshook)) {
 					try {
 						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
+						$langs->load('errors');
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
 						$error++;
 					}

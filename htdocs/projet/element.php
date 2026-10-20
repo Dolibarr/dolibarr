@@ -9,7 +9,7 @@
  * Copyright (C) 2021-2023  Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
  * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
  * Copyright (C) 2026  		Ferran Marcet           <fmarcet@2byte.es>
@@ -67,9 +67,6 @@ if (isModEnabled('order')) {
 }
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -218,6 +215,9 @@ $expensereport = null;
 $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
+
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
@@ -410,22 +410,14 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJ
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-	if ($code) {
-		print $langs->trans("OppStatus".$code);
-	}
-
-	// Opportunity percent
-	print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-	if (strcmp($object->opp_percent, '')) {
-		print price($object->opp_percent, 0, $langs, 1, 0).' %';
-	}
-	print '</span></td></tr>';
+	$percent_value = (GETPOSTISSET('opp_percent') ? GETPOSTINT('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+	print $formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, 'none', 'none', '', 1);
+	print '</td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
-		print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+	if (strcmp($object->opp_amount, '')) {
+		print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
 			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 		}
@@ -659,20 +651,6 @@ $listofreferent = array(
 		'nototal' => 1,
 		'test' => isModEnabled('mrp') && $user->hasRight('mrp', 'read')
 	),
-	'trip' => array(
-		'name' => "TripsAndExpenses",
-		'title' => "ListExpenseReportsAssociatedProject",
-		'class' => 'Deplacement',
-		'table' => 'deplacement',
-		'datefieldname' => 'dated',
-		'margin' => 'minus',
-		'disableamount' => 1,
-		'urlnew' => DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-		'lang' => 'trips',
-		'buttonnew' => 'AddTrip',
-		'testnew' => $user->hasRight('deplacement', 'creer'),
-		'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
-	),
 	'expensereport' => array(
 		'name' => "ExpenseReports",
 		'title' => "ListExpenseReportsAssociatedProject",
@@ -737,7 +715,7 @@ $listofreferent = array(
 		'table' => 'projet_task',
 		'datefieldname' => 'element_date',
 		'disableamount' => ($canSeeFinancials ? 0 : 1),
-		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 		'buttonnew' => 'AddTimeSpent',
 		'testnew' => $user->hasRight('project', 'creer'),
 		'test' => isModEnabled('project') && $user->hasRight('projet', 'lire') && !getDolGlobalString('PROJECT_HIDE_TASKS')
@@ -760,8 +738,8 @@ $listofreferent = array(
 	'stock_mouvement' => array(
 		'name' => "MouvementStockAssociated",
 		'title' => "ListMouvementStockProject",
-		'class' => 'StockTransfer',
-		'table' => 'stocktransfer_stocktransfer',
+		'class' => 'MouvementStock',
+		'table' => 'stock_mouvement',
 		'datefieldname' => 'datem',
 		'margin' => 'minus',
 		'project_field' => 'fk_project',
@@ -846,19 +824,32 @@ if (!empty($hookmanager->resArray)) {
 	$listofreferent = $hookmanager->resPrint;
 }
 
-if ($action == "addelement") {
+if (in_array($action, ['addelement', 'unlink'])) {
+	// Only an element type listed (and allowed) on this page can be linked or unlinked, using the project field it declares
 	$tablename = GETPOST("tablename", "aZ09");
-	$elementselectid = GETPOSTINT("elementselect");
-	$result = $object->update_element($tablename, $elementselectid);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+	$projectField = '';
+	$excludeselect = ['payment_various'];
+	foreach ($listofreferent as $value) {
+		if (!empty($value['test']) && isset($value['table']) && $value['table'] === $tablename) {
+			$projectField = empty($value['project_field']) ? 'fk_projet' : $value['project_field'];
+			if (!empty($value['exclude_select_element'])) {
+				$excludeselect[] = $value['exclude_select_element'];
+			}
+			break;
+		}
 	}
-} elseif ($action == "unlink") {
-	$tablename = GETPOST("tablename", "aZ09");
-	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
-	$elementselectid = GETPOSTINT("elementselect");
+	if (!$permissiontoadd || $projectField === ''
+		|| ($action == 'addelement' && (getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') || in_array($tablename, $excludeselect)))
+		|| ($action == 'unlink' && (in_array($tablename, ['projet_task', 'stock_mouvement']) || (getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') && !$user->admin)))) {
+		accessforbidden('', 0, 0);
+	}
 
-	$result = $object->remove_element($tablename, $elementselectid, $projectField);
+	$elementselectid = GETPOSTINT("elementselect");
+	if ($action == "addelement") {
+		$result = $object->update_element($tablename, $elementselectid);
+	} else {
+		$result = $object->remove_element($tablename, $elementselectid, $projectField);
+	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -1089,8 +1080,11 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order.
+				// Skip when the element already participates to the margin computation via margin='minus'
+				// (line 1095 below will revert sign too, and double-negation would silently flip the value
+				// back to positive - see PROJECT_ELEMENTS_FOR_MINUS_MARGIN=order_supplier in #34684).
+				if (($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') && $margin !== 'minus') {
 					$total_ht_by_line = -$total_ht_by_line;
 					$total_ttc_by_line = -$total_ttc_by_line;
 				}
@@ -1257,7 +1251,7 @@ foreach ($listofreferent as $key => $value) {
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
 
-		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
+		if ($permissiontoadd && !getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
 			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
@@ -1268,12 +1262,13 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$addform .= '<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform .= '<input type="hidden" name="action" value="addelement">';
+				$addform .= '<input type="hidden" name="page_y" value="">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
 				$addform .= '<table><tr>';
 				//$addform .= '<td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -1300,13 +1295,13 @@ foreach ($listofreferent as $key => $value) {
 							if (typeof attr !== "undefined" && attr !== false) {
 								console.log("Show canceled");
 								$(".tr_canceled").show();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'");
+								$("#textBtnShow").text(\''.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'\');
 								$("#btnShow").removeAttr("data-canceledarehidden");
 								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
 							} else {
 								console.log("Hide canceled");
 								$(".tr_canceled").hide();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'");
+								$("#textBtnShow").text(\''.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'\');
 								$("#btnShow").attr("data-canceledarehidden", 1);
 								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
@@ -1323,13 +1318,13 @@ foreach ($listofreferent as $key => $value) {
 							if (typeof attr !== "undefined" && attr !== false) {
 								console.log("Show paid");
 								$(".tr_paid").show();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
+								$("#textBtnShowPaid").text(\''.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'\');
 								$("#btnShowPaid").removeAttr("data-paidarehidden");
 								$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
 							} else {
 								console.log("Hide paid");
 								$(".tr_paid").hide();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
+								$("#textBtnShowPaid").text(\''.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'\');
 								$("#btnShowPaid").attr("data-paidarehidden", 1);
 								$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
@@ -1410,6 +1405,13 @@ foreach ($listofreferent as $key => $value) {
 			print '</td>';
 		}
 
+		// Additional columns from hooks
+		$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename);
+		$reshook = $hookmanager->executeHooks('printOverviewDetailTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+		print $hookmanager->resPrint;
 
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -1531,8 +1533,8 @@ foreach ($listofreferent as $key => $value) {
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
-					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
+					if ($permissiontoadd && (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin)) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&token='.newToken().'&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}
@@ -1751,6 +1753,13 @@ foreach ($listofreferent as $key => $value) {
 					print '</td>';
 				}
 
+				// Additional columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'element' => $element, 'i' => $i, 'qualifiedfortotal' => $qualifiedfortotal);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 
 				// Amount without tax
 				$warning = '';
@@ -1921,11 +1930,7 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					if (!isset($total_time)) {
-						$total_time = $total_time_by_line;
-					} else {
-						$total_time += $total_time_by_line;
-					}
+					$total_time += $total_time_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename)) {
@@ -1977,6 +1982,13 @@ foreach ($listofreferent as $key => $value) {
 				if ($tablename == 'fichinter') {
 					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
+				// Additional total columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'nbelement' => $i);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailTotal', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 				print '<td class="right">';
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {

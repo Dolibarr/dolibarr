@@ -6,7 +6,7 @@
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,9 +64,6 @@ if (isModEnabled('contract')) {
 }
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -404,15 +401,6 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH')) {
@@ -420,7 +408,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -433,8 +421,22 @@ class doc_generic_task_odt extends ModelePDFTask
 			}
 			$texte .= '</div>';
 		}
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH');
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+		$texte .= '</div>';
+
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -620,12 +622,6 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of lines for tasks
 				try {
-					// Security check
-					$socid = 0;
-					if (!empty($project->fk_soc)) {
-						$socid = $project->fk_soc;
-					}
-
 					$tmparray = $this->get_substitutionarray_tasks($object, $outputlangs);
 					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach ($tmparray as $key => $val) {
@@ -646,15 +642,15 @@ class doc_generic_task_odt extends ModelePDFTask
 						}
 					}
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestaskres = null;
 					try {
 						$listlinestaskres = $odfHandler->setSegment('tasksressources');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestaskres = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+					if ($listlinestaskres && (is_array($contact_array) && count($contact_array) > 0)) {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
@@ -688,12 +684,12 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestasktime = null;
 					try {
 						$listlinestasktime = $odfHandler->setSegment('taskstimes');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestasktime = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 
@@ -708,7 +704,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= " ORDER BY t.element_date DESC";
 
 					$resql = $this->db->query($sql);
-					if ($foundtagforlines && $resql) {
+					if ($listlinestasktime !== null && $resql) {
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						$tasks = array();
@@ -744,15 +740,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 					// Replace tags of project files
 					// Check for segment
-					$foundtagforlines = 1;
+					$listtasksfiles = null;
 					try {
 						$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listtasksfiles = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($listtasksfiles !== null) {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
@@ -781,15 +777,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of project files
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines) {
+				if ($listlines !== null) {
 					try {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
@@ -825,15 +821,15 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 				}
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectcontacts');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+				if ($listlines !== null && (is_array($contact_array) && count($contact_array) > 0)) {
 					try {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {

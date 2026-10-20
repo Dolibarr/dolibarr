@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,11 +256,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
-if (!$user->hasRight('salaries', 'readchild')) {
-	$sql .= " AND s.fk_user = ".(int) $user->id;
-}
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$sql .= " AND sal.fk_user = ".(int) $user->id;
+	} else {
+		$sql .= " AND sal.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	}
 }
 
 // Search criteria
@@ -306,7 +308,8 @@ if ($search_type_id > 0) {
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
+$resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -591,7 +594,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $imaxinloop) {
+while ($i < $imaxinloop && $resql !== null) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break;
@@ -608,8 +611,8 @@ while ($i < $imaxinloop) {
 	$userstatic->login = $obj->login;
 	$userstatic->email = $obj->email;
 	$userstatic->socid = $obj->fk_soc;
-	$userstatic->statut = $obj->status;
-	$userstatic->status = $obj->status;
+	$userstatic->statut = (int) $obj->status;
+	$userstatic->status = (int) $obj->status;
 	$userstatic->gender = $obj->gender;
 	$userstatic->photo = $obj->photo;
 
@@ -816,7 +819,9 @@ if ($num == 0) {
 }
 
 
-$db->free($resql);
+if ($resql !== null) {
+	$db->free($resql);
+}
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook

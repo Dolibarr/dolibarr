@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Banks | Cash
+BankArea=Banks and cash area
+LatestBankTransactionsModified=Latest %s modified bank transactions
 MenuVariousPayment=Manual Journal Entries
 MenuNewVariousPayment=New manual journal entry
 BankName=Bank name
@@ -30,8 +32,6 @@ FutureBalance=Future balance
 ShowAllTimeBalance=Show balance from start
 Reconciliation=Reconciliation
 RIB=Bank Account Number
-IBAN=IBAN number
-BIC=BIC/SWIFT code
 CCI=Interbank code
 SwiftValid=BIC/SWIFT valid
 SwiftNotValid=BIC/SWIFT not valid
@@ -49,6 +49,9 @@ LastAccountStatements=Last account statements
 IOMonthlyReporting=Monthly reporting
 BankAccountDomiciliation=Bank address
 BankAccountCountry=Account country
+InstitutionNumber=Institution number
+TransitNumber=Branch (transit) number
+ABARoutingNumber=ABA routing number
 BankAccountOwner=Account owner name
 BankAccountOwnerAddress=Account owner address
 BankAccountOwnerZip=Account owner zip

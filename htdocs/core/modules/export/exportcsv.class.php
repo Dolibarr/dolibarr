@@ -211,6 +211,11 @@ class ExportCsv extends ModeleExports
 				$newvalue = $outputlangs->transnoentitiesnoconv($newvalue);
 			}
 
+			// Label may be stored HTML encoded (for example extrafield labels saved through Translate::trans()),
+			// so decode entities and remove HTML to keep the header consistent with the data cells.
+			$newvalue = dol_string_nohtmltag($newvalue);
+			$decodedlabel = $newvalue;
+
 			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$newvalue = csvClean($newvalue, getDolGlobalString('EXPORT_CSV_FORCE_CHARSET'), $this->separator);
@@ -219,7 +224,9 @@ class ExportCsv extends ModeleExports
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
-				$selectlabel[$code."_label"] = $newvalue."_label";
+				// Append the "_label" suffix before cleaning so the derived column stays valid CSV
+				// even when the decoded label contains the separator or a quote.
+				$selectlabel[$code."_label"] = csvClean($decodedlabel."_label", $outputlangs->charset_output, $this->separator);
 			}
 		}
 

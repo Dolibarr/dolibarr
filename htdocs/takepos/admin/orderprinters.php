@@ -57,7 +57,8 @@ if (is_numeric($type)) {
 	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
 }
 
-if (!$user->hasRight('categorie', 'lire')) {
+// Security check
+if (!$user->admin) {
 	accessforbidden();
 }
 
@@ -189,7 +190,8 @@ if ($nbofentries > 0) {
 	print '</tr>';
 }
 print "</table>";
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form><br><br>';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
@@ -224,6 +226,7 @@ if ($nbofentries > 0) {
 }
 print "</table>";
 print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer3
 print '<table class="liste nohover" width="100%">';

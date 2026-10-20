@@ -40,7 +40,7 @@
 function product_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("products");
+	$langs->loadLangs(array("products", "stocks"));
 
 	$label = $langs->trans('Product');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
@@ -188,11 +188,11 @@ function product_prepare_head($object)
 		$h++;
 	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/card.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/index.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
@@ -319,7 +319,7 @@ function productlot_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/expedition.php', ['showmessage' => 1, 'id' => $object->id]);
-	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][1] = $langs->trans('ReferringItems');
 	$head[$h][2] = 'referers';
 	$h++;
 
@@ -383,9 +383,8 @@ function productlot_prepare_head($object)
  */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
 	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
@@ -415,7 +414,7 @@ function product_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -426,7 +425,7 @@ function product_admin_prepare_head()
 
 	// Multilangs Extrafields
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lang_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lang'));
 		$head[$h][1] = $langs->trans("TranslationsExtrafields");
 		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -438,7 +437,7 @@ function product_admin_prepare_head()
 
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_price'));
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -450,7 +449,7 @@ function product_admin_prepare_head()
 
 	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_customer_price'));
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -461,7 +460,7 @@ function product_admin_prepare_head()
 	}
 
 	// Supplier prices
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_fournisseur_price'));
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -484,9 +483,8 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;
@@ -503,7 +501,7 @@ function product_lot_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lot'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
 	if ($nbExtrafields > 0) {
@@ -536,7 +534,7 @@ function show_stats_for_company($product, $socid)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre left">';
-	print $form->textwithpicto($langs->trans("Referers"), $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")));
+	print $form->textwithpicto($langs->trans("ReferringItems"), $langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")));
 	print '</td>';
 	print '<td class="liste_titre right">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td class="liste_titre right">'.$langs->trans("NbOfObjectReferers").'</td>';
@@ -850,7 +848,7 @@ function show_stats_for_batch($batch, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="left" width="25%">'.$langs->trans("ReferringItems").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';

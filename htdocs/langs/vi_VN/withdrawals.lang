@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Lương chờ thanh toán bằng chuyển khoản tín d�
 RefSalary=Mức lương
 NoSalaryInvoiceToWithdraw=Không có lương chờ '%s'. Vào tab '%s' trên thẻ lương để thực hiện yêu cầu.
 SalaryInvoiceWaitingWithdraw=Lương chờ thanh toán bằng chuyển khoản tín dụng
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

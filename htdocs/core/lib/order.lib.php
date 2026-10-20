@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,9 +180,8 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('commande');
 	$extrafields->fetch_name_optionals_label('commandedet');
 
@@ -196,7 +195,7 @@ function order_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['commande']['count'];
 	if ($nbExtrafields > 0) {
@@ -205,7 +204,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/orderdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commandedet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
 	if ($nbExtrafields > 0) {
@@ -265,84 +264,37 @@ function getCustomerOrderPieChart($socid = 0)
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		$total = 0;
-		$totalinprocess = 0;
-		$dataseries = array();
-		$colorseries = array();
 		$vals = array();
-		// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-		while ($i < $num) {
-			$row = $db->fetch_row($resql);
-			if ($row) {
-				if (!isset($vals[$row[1]])) {
-					$vals[$row[1]] = 0;
-				}
-				$vals[$row[1]] += $row[0];
-				$totalinprocess += $row[0];
-				$total += $row[0];
+		while ($row = $db->fetch_row($resql)) {
+			if (!isset($vals[$row[1]])) {
+				$vals[$row[1]] = 0;
 			}
-			$i++;
+			$vals[$row[1]] += $row[0];
 		}
 		$db->free($resql);
 
-		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
+		$colors = getThemeBadgeStatusColors();
+		$colorofstatus = array(
+			Commande::STATUS_DRAFT => '-'.$colors[0],
+			Commande::STATUS_VALIDATED => $colors[1],
+			Commande::STATUS_SHIPMENTONPROCESS => $colors[4],
+			Commande::STATUS_CLOSED => $colors[6],
+			Commande::STATUS_CANCELED => $colors[9],
+		);
 
-		$result = '<div class="div-table-responsive-no-min">';
-		$result .= '<table class="noborder nohover centpercent">';
-		$result .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-		$listofstatus = array(0, 1, 2, 3, -1);
-		foreach ($listofstatus as $status) {
-			$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-			if ($status == Commande::STATUS_DRAFT) {
-				$colorseries[$status] = '-'.$badgeStatus0;
-			}
-			if ($status == Commande::STATUS_VALIDATED) {
-				$colorseries[$status] = $badgeStatus1;
-			}
-			if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
-				$colorseries[$status] = $badgeStatus4;
-			}
-			if ($status == Commande::STATUS_CLOSED) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == Commande::STATUS_CANCELED) {
-				$colorseries[$status] = $badgeStatus9;
-			}
-
-			if (empty($conf->use_javascript_ajax)) {
-				$result .= '<tr class="oddeven">';
-				$result .= '<td>'.$commandestatic->LibStatut($status, 0, 0, 1).'</td>';
-				$result .= '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
-				$result .= $commandestatic->LibStatut($status, 0, 3, 1);
-				$result .= '</a></td>';
-				$result .= "</tr>\n";
-			}
-		}
-		if (!empty($conf->use_javascript_ajax)) {
-			$result .= '<tr class="oddeven"><td align="center" colspan="2">';
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->setHeight('150');
-			$dolgraph->setWidth('300');
-			$dolgraph->draw('idgraphstatus');
-			$result .= $dolgraph->show($total ? 0 : 1);
-
-			$result .= '</td></tr>';
+		$series = array();
+		foreach (array(0, 1, 2, 3, -1) as $status) {
+			$series[] = array(
+				'label' => $commandestatic->LibStatut($status, 0, 1, 1),
+				'labelnojs' => $commandestatic->LibStatut($status, 0, 0, 1),
+				'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+				'color' => $colorofstatus[$status],
+				'url' => DOL_URL_ROOT.'/commande/list.php?search_status='.$status,
+			);
 		}
 
-		//if ($totalinprocess != $total)
-		$result .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-		$result .= "</table></div><br>";
+		$result = getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("CustomersOrders"), $series, array('height' => 150, 'width' => 300));
 	} else {
 		dol_print_error($db);
 	}

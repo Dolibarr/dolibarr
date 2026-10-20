@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
  * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,30 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
+		// Scan directories
+		$nbofiles = count($listoffiles);
+		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
+			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte .= $nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte .= '</b><br>';
+		}
+
+		if ($nbofiles) {
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			// Show list of found files
+			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
+			}
+			$texte .= '</div>';
+		}
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
@@ -157,29 +181,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= '<br>';
 			$texte .= '<input type="hidden" name="value1" value="COMPANY_ADDON_PDF_ODT_PATH">';
 		}
+		$texte .= '</div>';
 
-		// Scan directories
-		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
-			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
-			$texte .= $nbofiles;
-			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
-		}
-
-		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
-			// Show list of found files
-			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
-				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
-				$texte .= '<br>';
-			}
-			$texte .= '</div>';
-		}
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -319,6 +324,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				$result = $this->db->query($sql);
 				$num = $this->db->num_rows($result);
+				$contactstatic = null;
 
 				if ($num) {
 					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -334,15 +340,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
-					$foundtagforlines = 1;
+					$listlines = null;
 					try {
 						$listlines = $odfHandler->setSegment('companycontacts');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlines = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && $contactstatic !== null) {
+					if ($listlines !== null && $contactstatic !== null) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {

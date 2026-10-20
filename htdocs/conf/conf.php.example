@@ -129,12 +129,13 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
-// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.
-// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode function.
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt function.
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
 // $dolibarr_main_db_pass='myuserpassword';
+// $dolibarr_main_db_pass='dolcrypt:abcdef123456789';
 //
 $dolibarr_main_db_pass='';
 
@@ -208,8 +209,8 @@ $dolibarr_main_dolcrypt_key='';
 // dolibarr_main_instance_unique_id
 // ================================
 // An ID that is unique for each installation.
-// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to get
-// a unique hashed key for URLs, application will hash the value to hash concatenated with this string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
+// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to generate
+// a unique hashed key for URLs, application may hash params including this key as salt. Example: dol_hash('dolibarr'+dolibarr_main_instance_unique_id+value)
 // Default value: randomly defined during installation
 // Examples:
 // $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
@@ -310,16 +311,28 @@ $dolibarr_main_force_https='0';
 //
 $dolibarr_main_prod='1';
 
+// dolibarr_login_badcharunauthorized
+// ==================================
+// List of characters forbidden in Dolibarr user logins.
+// This is a security-sensitive setting. Prefer LDAP/SSO mapping to the email field when possible.
+// If this parameter is not defined, the secure default value is used: ,@<>"'
+// Set it to an empty string only if you explicitly want to allow all characters.
+// Set it to 'MAIN_LOGIN_BADCHARUNAUTHORIZED' only if you explicitly trust the Dolibarr hidden setup value.
+// Examples:
+// $dolibarr_login_badcharunauthorized=',@<>"\'';
+// $dolibarr_login_badcharunauthorized='';
+// $dolibarr_login_badcharunauthorized='MAIN_LOGIN_BADCHARUNAUTHORIZED';
+
 // dolibarr_main_restrict_os_commands
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
+// Default value: 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
-// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd';
 //
-$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd';
 
 // dolibarr_main_restrict_eval_methods
 // ===================================
@@ -375,6 +388,19 @@ $dolibarr_nocsrfcheck='0';
 //
 // $dolibarr_api_count_always_enabled='1';
 
+// dolibarr_main_restrict_password_generation_none
+// ===============================================
+// Set this value to 1 so the 'none' password generation model (the one that applies no rule at
+// all when validating passwords) can never be used. It is then hidden from the admin security
+// page and cannot be selected. An installation still set to 'none' falls back to the 'standard'
+// model. It also forces a floor of 10 characters on the minimum length of the 'Perso' model.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_restrict_password_generation_none='1';
+//
+// $dolibarr_main_restrict_password_generation_none='1';
+
 // dolibarr_cron_allow_cli
 // =======================
 // If set to 1, you will be able to define some command line in the internal Job scheduler module.
@@ -399,6 +425,19 @@ $dolibarr_cron_allow_cli='0';
 //
 // $dolibarr_mailing_limit_sendbycli='0';
 
+// dolibarr_mail_allow_unrestricted_smtp_target
+// ============================================
+// When set to a not empty value, the SMTP target (host and port) used to send emails is no more restricted:
+// ports other than the standard SMTP ports (25, 465, 587, 2525) and private or reserved IP addresses are accepted.
+// Set this only if your SMTP server (for example an internal SMTP relay) requires a non standard port or is
+// reachable on a private network.
+// Warning: keep this parameter unset if you don't need it. When it is set, the email setup can be used to
+// connect to any host and port of your network (network scan risk).
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_mail_allow_unrestricted_smtp_target='1';
+
 // dolibarr_main_stream_to_disable
 // ================================
 // Can set a list of PHP stream to disable.
@@ -412,8 +451,8 @@ $dolibarr_cron_allow_cli='0';
 // By default for security purpose, it is not possible to add or edit PHP dynamic content into a website (even if user has permission for this). To be able
 // to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
 // 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
-// 1 will allow custom PHP inside website features, but only if dangerous PHP system functions are disabled (using the PHP disable_functions parameter)
-// 2 will allow custom PHP inside website features even if PHP remote execution features like "exec" are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
+// 1 will allow custom PHP inside website features, but only if all RCE PHP functions in the "exec" family are disabled (using the PHP disable_functions parameter)
+// 2 will allow custom PHP inside website features, even if RCE PHP functions in the "exec" family are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
 // Default value: '0'
 // Examples: '0', '1' or '2'
 //
@@ -493,6 +532,16 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_main_limit_users='0';
 
+// dolibarr_main_limit_sessions_per_user
+// ====================================
+// Can set a limit on the number of concurrent sessions per user. Only effective when
+// sessions are stored in database ($php_session_save_handler='db'). When a user opens a
+// new session above this limit, its oldest sessions are removed, which logs those other
+// browsers out on their next request. Set it to 1 to allow a single session per user.
+// Default value: 0 (unlimited)
+// Examples:
+// $dolibarr_main_limit_sessions_per_user='0';
+
 // dolibarr_strict_mode
 // ====================
 // Set this to 1 to enable the PHP strict mode. For dev environment only.
@@ -500,12 +549,13 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_strict_mode=0;
 
-// dolibarr_allow_download_external_modules
-// ========================================
+// dolibarr_allow_download_app
+// ============================
 // Provide a link to download the zip of an external modules, installed into custom directory, from the web admin.
+// Also allows the export of the application files from the backup page (this includes the external modules).
 // Default value: 0
 // Examples:
-// $dolibarr_allow_download_external_modules=0;
+// $dolibarr_allow_download_app=0;
 
 
 

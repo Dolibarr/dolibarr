@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Mali mpya
 AccountancyCodeAsset=Nambari ya hesabu (mali)
 AccountancyCodeDepreciationAsset=Nambari ya hesabu (akaunti ya mali ya kushuka)
 AccountancyCodeDepreciationExpense=Nambari ya hesabu (akaunti ya gharama ya kushuka kwa thamani)
 AssetsLines=Mali
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Futa
 DeleteAnAssetType=Futa muundo wa kipengee
 ConfirmDeleteAssetType=Je, una uhakika unataka kufuta muundo huu wa kipengee?
 ShowTypeCard=Onyesha muundo '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Mali
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Maelezo ya mali
-
-#
 # Admin page
-#
 AssetSetup=Mpangilio wa mali
 AssetSetupPage=Ukurasa wa usanidi wa mali
 ExtraFieldsAssetModel=Sifa za ziada (mfano wa Mali)
-
 AssetsType=Muundo wa mali
 AssetsTypeId=Kitambulisho cha muundo wa mali
 AssetsTypeLabel=Lebo ya muundo wa mali
 AssetsTypes=Miundo ya mali
 ASSET_ACCOUNTANCY_CATEGORY=Kikundi cha uhasibu wa mali zisizohamishika
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Mali
 MenuNewAsset=Mali mpya
 MenuAssetModels=Mali ya mfano
 MenuListAssets=Orodha
 MenuNewAssetModel=Muundo wa mali mpya
 MenuListAssetModels=Orodha
-
-#
 # Module
-#
 ConfirmDeleteAsset=Je, kweli unataka kuondoa kipengee hiki?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Chaguzi za kushuka kwa thamani
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Kushuka kwa thamani
-
-#
 # Asset
-#
 Asset=Mali
 Assets=Mali
 AssetReversalAmountHT=Kiasi cha kurejesha (bila ushuru)
@@ -89,32 +70,21 @@ AssetNotDepreciated=Haijapungua thamani
 AssetDisposal=Utupaji
 AssetConfirmDisposalAsk=Je, una uhakika unataka kutupa kipengee <b>  %s </b> ?
 AssetConfirmReOpenAsk=Je, una uhakika unataka kufungua tena kipengee <b>  %s </b> ?
-
-#
 # Asset status
-#
+AssetInDraft=Draft
 AssetInProgress=Inaendelea
 AssetDisposed=Imetolewa
 AssetRecorded=Imehesabiwa
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Tarehe ya kutupwa
 AssetDisposalAmount=Thamani ya utupaji
 AssetDisposalType=Aina ya utupaji
 AssetDisposalDepreciated=Punguza mwaka wa uhamisho
 AssetDisposalSubjectToVat=Utupaji chini ya VAT
-
-#
 # Asset model
-#
 AssetModel=Mfano wa mali
 AssetModels=Mifano ya mali
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Kushuka kwa thamani ya kiuchumi
 AssetDepreciationOptionAcceleratedDepreciation=Kushuka kwa thamani kwa kasi (kodi)
 AssetDepreciationOptionDepreciationType=Aina ya kushuka kwa thamani
@@ -131,10 +101,7 @@ AssetDepreciationOptionRate=Kadiria (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Msingi wa kushuka kwa thamani (isipokuwa VAT)
 AssetDepreciationOptionAmountBaseDeductibleHT=Msingi wa makato (isipokuwa VAT)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Jumla ya uchakavu wa mwisho (isipokuwa VAT)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Kushuka kwa thamani ya kiuchumi
 AssetAccountancyCodeAsset=Mali
 AssetAccountancyCodeDepreciationAsset=Kushuka kwa thamani
@@ -148,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Kushuka kwa thamani kwa 
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Gharama ya kushuka kwa thamani
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Umiliki/Utoaji
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Msingi wa kushuka kwa thamani (isipokuwa VAT)
 AssetDepreciationBeginDate=Kuanza kwa kushuka kwa thamani kumewashwa
 AssetDepreciationDuration=Muda
@@ -163,10 +127,7 @@ AssetResidualHT=Thamani ya mabaki (isipokuwa VAT)
 AssetDispatchedInBookkeeping=Uchakavu umerekodiwa
 AssetFutureDepreciationLine=Kushuka kwa thamani siku zijazo
 AssetDepreciationReversal=Kugeuza
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
 AssetErrorFetchAccountancyCodesForMode=Hitilafu wakati wa kurejesha akaunti za uhasibu za '%s' hali ya kushuka kwa thamani
 AssetErrorDeleteAccountancyCodesForMode=Hitilafu wakati wa kufuta akaunti za uhasibu kutoka kwa '%s' hali ya kushuka kwa thamani

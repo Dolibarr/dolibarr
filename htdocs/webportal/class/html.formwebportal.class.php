@@ -2,8 +2,8 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ class FormWebPortal extends Form
 		$out .= '>';
 		*/
 
-		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder);
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder, 'auto', DOL_URL_ROOT . "/theme/common/object_calendarday.png");
 
 		return $out;
 	}
@@ -542,6 +542,14 @@ class FormWebPortal extends Form
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
+			case 'phone':
+				if (preg_match('/^search_/', $keyprefix)) {
+					$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
+				} else {
+					$out = $this->showPhoneInput($value, $htmlName, !empty($object->country_id) ? $object->country_id : 0);
+				}
+				break;
+
 			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
@@ -653,8 +661,10 @@ class FormWebPortal extends Form
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {
@@ -965,7 +975,7 @@ class FormWebPortal extends Form
 			}
 
 			$sql = "SELECT " . $this->db->sanitize($keyList);
-			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+			$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1078,7 +1088,7 @@ class FormWebPortal extends Form
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+			// $sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1673,9 +1683,9 @@ class FormWebPortal extends Form
 		$context = Context::getInstance();
 
 		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/viewimage.php?'), urlencode($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&'), $html);
 		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/document.php?'), urlencode($context->getControllerUrl('document') . $additionalDocumentParams . '&'), $html);
 
 		return $html;
 	}

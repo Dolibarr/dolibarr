@@ -39,7 +39,6 @@ UNUSED_FILE=${TMP}/unused
 EXPECTED_REGEX='(Country..|ExportDataset_.*|Language_.._..|MonthVeryShort\d\d|PaperFormat.*||Permission.*|ProfId\d(..)?|TypeContact_shipping_external_.*|unit.*)'
 DYNAMIC_KEYS_SRC_FILE=${MYDIR}/dynamic_translation_keys.lst
 EXCLUDE_KEYS_SRC_FILE=${MYDIR}/ignore_translation_keys.lst
-DUPLICATE_KEYS_SRC_FILE=${MYDIR}/duplicate_translation_keys.lst
 
 # Grep options that are reused (normal grep)
 GREP_OPTS=""
@@ -63,9 +62,8 @@ exit_code=0
 grep --no-filename -r -oP -- '^([^#=]+?)(?=\s*=.*)' "${LANG_DIR}" \
 	| grep -x -v -F -f "${EXCLUDE_KEYS_SRC_FILE}" \
 	| sort > "${AVAILABLE_FILE_NODEDUP}"
-sort -u \
-	< "${AVAILABLE_FILE_NODEDUP}" \
-	> "${AVAILABLE_FILE}"
+# sort -u is buggued in ubutnu 26.04. The line StatusProspect-1 and StatusProspect1 are treated as similar lines Replaced with "uniq".
+uniq < "${AVAILABLE_FILE_NODEDUP}" > "${AVAILABLE_FILE}"
 
 
 # Combine strings found in sources with pre-determined dynamic string values.
@@ -132,9 +130,11 @@ diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	> "${MISSING_AND_UNUSED_FILE}"
 
 rm -f "${UNUSED_FILE}.grep" >/dev/null 2>&1
-sed -n 's@< \(.*\)@^\1\\s*=@p' \
-	< "${MISSING_AND_UNUSED_FILE}" \
-	> "${UNUSED_FILE}.grep"
+if [ "$1" == "--showunused" ]; then
+	sed -n 's@< \(.*\)@^\1\\s*=@p' \
+		< "${MISSING_AND_UNUSED_FILE}" \
+		> "${UNUSED_FILE}.grep"
+fi
 
 
 # Prepare file with exact matches for use with `git grep`, supposing " quotes
@@ -164,7 +164,7 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' ':*.js' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 error - Missing translation; @' > "${MISSING_FILE}.result"
 
 	if [ -s "${MISSING_FILE}.result" ] ; then
 		exit_code=1
@@ -200,7 +200,6 @@ fi
 
 diff "${AVAILABLE_FILE_NODEDUP}" "${AVAILABLE_FILE}" \
 	| grep -Po '(?<=^\< )(.*)$' \
-	| grep -x -v -F -f "${DUPLICATE_KEYS_SRC_FILE}" \
 	| sed 's/.*/^\0=/' \
 	> "${DUPLICATE_KEYS_FILE}"
 
@@ -211,8 +210,6 @@ if [ -s "${DUPLICATE_KEYS_FILE}" ] ; then
 	echo "## :warning:"
 	echo "##   Duplicate keys may be expected across language files."
 	echo "##   You may want to avoid them or they could be a copy/paste mistake."
-	echo "##   You can add add valid duplicates to $(basename "$DUPLICATE_KEYS_SRC_FILE")"
-	echo "##   so that they are ignored for this report."
 	cat "${DUPLICATE_KEYS_FILE}"
 	echo "##[endgroup]"
 	echo

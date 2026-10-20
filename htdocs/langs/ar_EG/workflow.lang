@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=إعداد وحدة سير العمل
 WorkflowDesc=توفر هذه الوحدة بعض الإجراءات التلقائية. بشكل افتراضي ، سير العمل مفتوح (يمكنك القيام بالأشياء بالترتيب الذي تريده) ولكن هنا يمكنك تنشيط بعض الإجراءات التلقائية.
 ThereIsNoWorkflowToModify=لا توجد تعديلات على سير العمل متاحة مع الوحدات المفعلة.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=إنشاء أمر مبيعات تلقائيًا بعد توقيع عرض تجاري (سيكون للطلب الجديد نفس مبلغ العرض)

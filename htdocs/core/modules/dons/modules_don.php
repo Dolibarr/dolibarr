@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,65 @@ abstract class ModeleDon extends CommonDocGenerator
 	 *  @return boolean     true if module can be used
 	 */
 	abstract public function isEnabled();
+
+	/**
+	 *  Return the identity of the donor of a donation.
+	 *  When option DONATION_USE_THIRDPARTIES is on, the donation only holds fk_soc and the donor fields
+	 *  stay empty, so each empty field is completed from the linked third party.
+	 *
+	 *  @param	Don			$don			Donation object
+	 *  @param	Translate	$outputlangs	Lang object for output language
+	 *  @return	array{company:string,lastname:string,firstname:string,name:string,address:string,zip:string,town:string,country_code:string,country:string,idprof1:string,thirdparty:?Societe}	Identity of the donor
+	 */
+	public function getDonorInfos($don, $outputlangs)
+	{
+		$donor = array(
+			'company' => (string) $don->societe,
+			'lastname' => (string) $don->lastname,
+			'firstname' => (string) $don->firstname,
+			'name' => '',
+			'address' => (string) $don->address,
+			'zip' => (string) $don->zip,
+			'town' => (string) $don->town,
+			'country_code' => (string) $don->country_code,
+			'country' => '',
+			'idprof1' => '',
+			'thirdparty' => null,
+		);
+
+		if (!empty($don->socid) && $don->socid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$thirdparty = new Societe($this->db);
+			if ($thirdparty->fetch($don->socid) > 0) {
+				$donor['thirdparty'] = $thirdparty;
+				if (dol_strlen(trim($donor['company'].$donor['lastname'].$donor['firstname'])) == 0) {
+					// A third party holds a single name field, even for a private individual
+					$donor['company'] = (string) $thirdparty->name;
+				}
+				foreach (array('address', 'zip', 'town', 'country_code') as $field) {
+					if (dol_strlen(trim($donor[$field])) == 0) {
+						$donor[$field] = (string) $thirdparty->$field;
+					}
+				}
+				$donor['idprof1'] = (string) $thirdparty->idprof1;
+			} else {
+				dol_syslog(get_class($this)."::getDonorInfos Failed to load thirdparty ".$don->socid." linked to donation ".$don->id, LOG_ERR);
+			}
+		}
+
+		$donor['name'] = trim(dolGetFirstLastname($donor['firstname'], $donor['lastname']));
+		if ($donor['company'] !== '') {
+			$donor['name'] = $donor['company'].($donor['name'] !== '' ? ' - '.$donor['name'] : '');
+		}
+		if ($donor['country_code'] !== '') {
+			$donor['country'] = $outputlangs->transnoentitiesnoconv("Country".$donor['country_code']);
+		}
+		if ($donor['name'] === '') {
+			dol_syslog(get_class($this)."::getDonorInfos No name found for the donor of donation ".$don->id, LOG_WARNING);
+		}
+
+		return $donor;
+	}
 }
 
 

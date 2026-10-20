@@ -61,7 +61,7 @@ class CTicketCategory extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
@@ -98,7 +98,7 @@ class CTicketCategory extends CommonObject
 		'active' => array('type' => 'integer', 'label' => 'Active', 'enabled' => 1, 'visible' => -1, 'position' => 35),
 		'use_default' => array('type' => 'integer', 'label' => 'Usedefault', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'description' => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 45),
-		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
+		'fk_parent' => array('type' => 'integer', 'label' => 'ParentCategory', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
 		'force_severity' => array('type' => 'varchar(32)', 'label' => 'Forceseverity', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'public' => array('type' => 'integer', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 	);

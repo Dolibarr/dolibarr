@@ -122,14 +122,13 @@ if ($id > 0 || !empty($ref)) {
 
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->batch, 16);
-	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_commande_fournisseur');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
 		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
@@ -223,7 +222,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<span class="opacitymedium">'.$langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")).'</span>';
 		} elseif ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur,";
 			$sql .= " cf.ref, cf.date_commande, cf.date_livraison as delivery_date, cf.fk_statut as statut, cf.rowid as facid,";
@@ -327,10 +326,6 @@ if ($id > 0 || !empty($ref)) {
 				if ($num > 0) {
 					while ($i < min($num, $limit)) {
 						$objp = $db->fetch_object($result);
-
-						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
-							$objp->qty = -($objp->qty);
-						}
 
 						//                      $total_ht_pondere += $objp->total_ht_pondere;
 						$total_qty += $objp->qty;

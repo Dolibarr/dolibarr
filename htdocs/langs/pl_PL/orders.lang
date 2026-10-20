@@ -166,6 +166,7 @@ PDFEdisonDescription=Uproszczony model zamówienia
 PDFProformaDescription=Kompletny szablon faktury proforma
 CreateInvoiceForThisCustomer=Fakturuj zamówienia
 CreateInvoiceForThisSupplier=Fakturuj zamówienia
+WarningOrderNotEligibleForInvoicing=Order %s has been skipped: its status does not allow creating an invoice
 CreateInvoiceForThisReceptions=Fakturuj przyjęcia
 NoOrdersToInvoice=Brak zleceń rozliczanych
 CloseProcessedOrdersAutomatically=Sklasyfikować "przetwarzane" wszystkie wybrane zamówienia.

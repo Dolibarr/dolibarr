@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,8 @@
  */
 function eventorganizationAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('actioncomm');
 	$extrafields->fetch_name_optionals_label('eventorganization_conferenceorboothattendee');
 
@@ -47,7 +46,7 @@ function eventorganizationAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_confbooth_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'actioncomm'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("EventOrganizationConfOrBooth").")";
 	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
 	if ($nbExtrafields > 0) {
@@ -56,7 +55,7 @@ function eventorganizationAdminPrepareHead()
 	$head[$h][2] = 'eventorganization_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_confboothattendee_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'eventorganization_conferenceorboothattendee'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Attendees").")";
 	$nbExtrafields = $extrafields->attributes['eventorganization_conferenceorboothattendee']['count'];
 	if ($nbExtrafields > 0) {

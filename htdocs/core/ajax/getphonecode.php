@@ -29,6 +29,9 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -39,13 +42,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
  */
 
 $country_id = GETPOSTINT('country_id');
-
-// Security check - user must be logged in
-if (empty($user->id)) {
-	http_response_code(403);
-	echo json_encode(array('error' => 'Not authorized'));
-	exit;
-}
 
 /*
  * View

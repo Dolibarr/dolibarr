@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ function holiday_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->holiday->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->holiday->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'holiday');
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/document.php', ['id' => $object->id]);
@@ -53,6 +53,11 @@ function holiday_prepare_head($object)
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	}
 	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/holiday_agenda.php', ['id' => $object->id]);
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'add', 'core');
@@ -81,9 +86,8 @@ function holiday_prepare_head($object)
  */
 function holiday_admin_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('holiday');
 
 	$h = 0;
@@ -100,7 +104,7 @@ function holiday_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/holiday_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'holiday'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['holiday']['count'];
 	if ($nbExtrafields > 0) {

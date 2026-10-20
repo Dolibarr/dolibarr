@@ -29,15 +29,11 @@ CREATE TABLE llx_bookcal_availabilities(
 	import_key varchar(14),
 	model_pdf varchar(255),
 	status integer NOT NULL,
-	start date NOT NULL,
-	end date NOT NULL,
+	date_start date NOT NULL,
+	date_end date NOT NULL,
 	duration integer DEFAULT 30 NOT NULL,
 	startHour integer NOT NULL,
 	endHour integer NOT NULL,
 	fk_bookcal_calendar integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
-
-
-SELECT * FROM llx_bookcal_availabilities
-WHERE rowid = 1;

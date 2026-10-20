@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,6 @@ $langs->loadLangs(array("admin", "members"));
 $action = GETPOST('action', 'aZ09');
 
 // Hook to be used by external payment modules (ie Payzen, ...)
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
 if (!$user->admin) {
@@ -75,7 +74,6 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = '';
 
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
@@ -174,7 +172,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div><br>';
+print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div>';
 
 $param = '';
 

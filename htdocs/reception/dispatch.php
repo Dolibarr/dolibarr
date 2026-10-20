@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -76,7 +76,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -135,6 +135,12 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+// Lines can be updated only while the stock of the reception is not moved (same rule as the display of the form)
+if ($action == 'updatelines' && $permissiontoreceive && !($object->status == Reception::STATUS_DRAFT || ($object->status == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')))) {
+	setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+	$action = '';
 }
 
 // Update a dispatched line
@@ -200,6 +206,11 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				if (!$error) {
 					if ($idline > 0) {
 						$result = $supplierorderdispatch->fetch($idline);
+						if ($result > 0 && (int) $supplierorderdispatch->fk_reception !== (int) $object->id) {
+							// The line must be a line of the reception of the page
+							$supplierorderdispatch->error = $langs->trans('ErrorRecordNotFound');
+							$result = -1;
+						}
 						if ($result < 0) {
 							setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
 							$error++;
@@ -384,7 +395,7 @@ if ($id > 0 || !empty($ref)) {
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($objectsrc->fk_project);
+				$proj->fetch((int) $objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -824,6 +835,10 @@ if ($id > 0 || !empty($ref)) {
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 									$type = 'batch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									if ($objp->tobatch == 2) {
+										// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+										print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+									}
 								} else {
 									$type = 'dispatch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -997,6 +1012,10 @@ if ($id > 0 || !empty($ref)) {
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 								$type = 'batch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								if ($objp->tobatch == 2) {
+									// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+									print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+								}
 							} else {
 								$type = 'dispatch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -1121,7 +1140,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print dol_get_fiche_end();
 
-	// traitement entrepot par défaut
+	// Handling of the default warehouse
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {

@@ -32,6 +32,7 @@
  *
  * @var string $websitekey
  */
+'@phan-var-force string $websitekey';
 
 // Load website class
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
@@ -251,7 +252,11 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php') {	// If we browsi
 		$sql = "SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
 		$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
 		$sql .= " WHERE wp.fk_website = ".((int) $website->id);
-		$sql .= " AND (wp.fk_page = ".((int) $pageid)." OR wp.rowid  = ".((int) $pageid);
+		if (!empty($pageid)) {
+			$sql .= " AND (wp.fk_page = ".((int) $pageid)." OR wp.rowid  = ".((int) $pageid);
+		} else {
+			$sql .= " AND (0";
+		}
 		if (is_object($websitepage) && $websitepage->fk_page > 0) {
 			$sql .= " OR wp.fk_page = ".((int) $websitepage->fk_page)." OR wp.rowid = ".((int) $websitepage->fk_page);
 		}
@@ -265,7 +270,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php') {	// If we browsi
 				$newpageid = $obj->rowid;
 				if ($newpageid != $pageid) { 		// To avoid to make a redirect on same page (infinite loop)
 					if (defined('USEDOLIBARRSERVER')) {
-						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'&l='.GETPOST('l', 'aZ09'));
+						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.urlencode((string) $websitekey).'&pageid='.$newpageid.'&l='.GETPOST('l', 'aZ09'));
 						exit;
 					} else {
 						$newpageref = $obj->pageurl;
@@ -321,7 +326,12 @@ if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom
 	print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
 	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
 	//print '<textarea cols="100" rows="5">';
-	$form = new Form($db);
+	if (!class_exists('Form')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	}
+	if (empty($form)) {
+		$form = new Form($db);
+	}
 	print $form->textwithpicto('', 'Current value for disable_functions = '.ini_get('disable_functions'));
 	print '<br>';
 	//print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.

@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -365,10 +365,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if ($columnName == 'eatby' || $columnName == 'sellby') {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -402,7 +402,7 @@ if ($search_stock_physique != '') {
 	} else {
 		$sql_having .= " HAVING";
 	}
-	$sql_having .= $natural_search_physique;
+	$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 }
 // Add HAVING from hooks
 $parameters = array();
@@ -457,14 +457,10 @@ if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all || $snom || $sref)
 	exit;
 }
 
-if (isset($type)) {
-	if ($type == 1) {
-		$texte = $langs->trans("Services");
-	} else {
-		$texte = $langs->trans("Products");
-	}
+if ($type == 1) {
+	$texte = $langs->trans("Services");
 } else {
-	$texte = $langs->trans("ProductsAndServices");
+	$texte = $langs->trans("Products");
 }
 $texte .= ' ('.$langs->trans("StocksByLotSerial").')';
 

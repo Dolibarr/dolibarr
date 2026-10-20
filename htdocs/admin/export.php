@@ -84,7 +84,7 @@ $h++;
 
 print dol_get_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "technic");
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 

@@ -31,9 +31,9 @@ UseDiscountOnTotal=ذیلی ٹوٹل پر
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=اس بات کی وضاحت کرتا ہے کہ کیا عالمی رعایت کو پروڈکٹ، سروس، یا مارجن کے حساب کے لیے صرف ذیلی ٹوٹل کے طور پر سمجھا جاتا ہے۔
 MARGIN_TYPE=مارجن کے حساب کتاب کے لیے بطور ڈیفالٹ تجویز کردہ خریدنا/قیمت کی قیمت
 MargeType1=بہترین وینڈر قیمت پر مارجن
-MargeType2=وزنی اوسط قیمت پر مارجن (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=لاگت کی قیمت پر مارجن
-MarginTypeDesc=* بہترین خرید قیمت پر مارجن = فروخت کی قیمت - پروڈکٹ کارڈ <br> پر بیان کردہ بہترین وینڈر قیمت * وزنی اوسط قیمت (WAP) پر مارجن = فروخت کی قیمت - پروڈکٹ کی وزنی اوسط قیمت (WAP) یا بہترین وینڈر کی قیمت اگر WAP نے ابھی تک <br> کی وضاحت نہیں کی ہے لاگت کی قیمت پر = فروخت کی قیمت - قیمت کی قیمت پروڈکٹ کارڈ یا WAP پر بیان کی گئی ہے اگر لاگت کی قیمت کی وضاحت نہیں کی گئی ہے، یا بہترین وینڈر کی قیمت اگر WAP کی ابھی تک وضاحت نہیں کی گئی ہے
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=لاگت کی قیمت
 UnitCharges=یونٹ چارجز
 Charges=چارجز

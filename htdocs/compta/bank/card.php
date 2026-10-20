@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -35,6 +35,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -66,7 +67,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $object = new Account($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -77,6 +77,10 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 // Security check
 $id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOST('ref');
 $fieldid = GETPOSTINT("id") ? 'rowid' : 'ref';
+if ($action == 'create' || $action == 'add') {
+	// On creation, the posted ref is the ref of the record to create, not the ref of an existing record to check permission on
+	$id = '';
+}
 
 if (GETPOSTINT("id") || GETPOST("ref")) {
 	if (GETPOSTINT("id")) {
@@ -366,6 +370,7 @@ if (empty($reshook)) {
 		// Delete
 		$object = new Account($db);
 		$object->fetch(GETPOSTINT("id"));
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {
@@ -604,7 +609,7 @@ if ($action == 'create') {
 				$content = 'undefined';
 			}
 
-			print '<td>'.$langs->trans($val).'</td>';
+			print '<td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
@@ -854,7 +859,7 @@ if ($action == 'create') {
 					$content = $object->cle_rib;
 				}
 
-				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<tr><td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 				print '<td>'.$content.'</td>';
 				print '</tr>';
 			}
@@ -937,7 +942,7 @@ if ($action == 'create') {
 
 			$canbedeleted = $object->can_be_deleted(); // Return true if account without movements
 			if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 
@@ -1204,7 +1209,7 @@ if ($action == 'create') {
 					$content = 'undefined';
 				}
 
-				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<tr><td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 				print '</tr>';
 			}

@@ -137,6 +137,21 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 	$error++;
 }
 
+// The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
+// request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
+// lists and the cards (entity, third parties of the sales representative, projects the user can see...).
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
+	$objecttmpforaccesscheck = new $objectclass($db);
+	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
+	if (!empty($refusedids)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		$error++;
+	}
+}
+
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
@@ -293,7 +308,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;
@@ -319,7 +334,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				foreach ($receivercc as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party
-						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+						$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 					} elseif ($val) {	// Id du contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -335,19 +350,23 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			foreach ($listofobjectref[$thirdpartyid] as $objectid => $objectobj) {
 				//var_dump($thirdpartyid.' - '.$objectid.' - '.$objectobj->statut);
-				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT) {
+				// Honour the same per-object hidden constants used by the "Send by email"
+				// button on the card pages (comm/propal/card.php, commande/card.php,
+				// compta/facture/card.php) so the behaviour is consistent between the
+				// single-object action and the mass action.
+				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT && !getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT) {
+				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT && !getDolGlobalString('COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT) {
+				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT && !getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';
@@ -499,29 +518,36 @@ if (!$error && $massaction == 'confirm_presend') {
 			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0) {
 				$langs->load("commercial");
-				$from = '';
+				$email_from = '';
 
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
 				if ($fromtype === 'user') {
-					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
+					$email_from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
-					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+					$email_from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-					$from = trim($tmp[((int) $reg[1] - 1)]);
+					$email_from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+					}
+				} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+					$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates WHERE rowid = ".(int) $reg[1];
+					$resql = $db->query($sql);
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$email_from = $obj->email_from;
 					}
 				} else {
-					$from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail', 'email').'>';
 				}
 
-				$replyto = $from;
+				$replyto = $email_from;
 				$subject = GETPOST('subject', 'restricthtml');
 				$message = GETPOST('message', 'restricthtml');
 
@@ -663,7 +689,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $email_from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
@@ -688,7 +714,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentByTo', $from, (string) $sendto);
+								$actionmsg = $langs->transnoentities('MailSentByTo', $email_from, (string) $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -757,12 +783,12 @@ if (!$error && $massaction == 'confirm_presend') {
 						} else {
 							$langs->load("other");
 							if ($mailfile->error) {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto);
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, (string) $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							} else {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -912,7 +938,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == $objecttmp::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -991,7 +1017,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == $objecttmp::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -1025,7 +1051,7 @@ if ($action == 'remove_file') {
 	$langs->load("other");
 	$upload_dir = $diroutputmassaction;
 	$file = $upload_dir.'/'.GETPOST('file');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
@@ -1070,10 +1096,22 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		}
 	}
 	if (!$error) {
-		$db->begin();
+		// MAIN_MASSVALIDATE_<OBJECTCLASS>_NO_GLOBAL_TRANSACTION = 1 wraps each
+		// record in its own transaction instead of all-or-nothing. Modules
+		// dealing with external systems (e.g. VeriFactu / AEAT for invoices)
+		// can enable it on the list pages they need so a mid-loop failure does
+		// not roll back the records already committed-and-pushed outside the
+		// database. The default remains the secured all-or-nothing mode (#37365).
+		$perrecordtransaction = (int) getDolGlobalInt('MAIN_MASSVALIDATE_'.strtoupper($objectclass).'_NO_GLOBAL_TRANSACTION');
+		if (!$perrecordtransaction) {
+			$db->begin();
+		}
 
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
+			if ($perrecordtransaction) {
+				$db->begin();
+			}
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if (method_exists($objecttmp, 'validate')) {
@@ -1088,10 +1126,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} else {
 					// validate() rename pdf but do not regenerate
@@ -1130,10 +1174,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 					}
 					$nbok++;
+					if ($perrecordtransaction) {
+						$db->commit();
+					}
 				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
+				if ($perrecordtransaction) {
+					$db->rollback();
+				}
 				break;
 			}
 		}
@@ -1144,8 +1194,10 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			} else {
 				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
-			$db->commit();
-		} else {
+			if (!$perrecordtransaction) {
+				$db->commit();
+			}
+		} elseif (!$perrecordtransaction) {
 			$db->rollback();
 		}
 	}
@@ -1156,6 +1208,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 	$nbok = 0;
 	$nbignored = 0;
 	/** @var string[] $TMsg */
@@ -1204,6 +1258,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} else {
+				$objecttmp->oldcopy = dol_clone($objecttmp);
 				$result = $objecttmp->delete($user);
 			}
 
@@ -1249,9 +1304,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	// Complete with classes that use this massaction
-	<<<'EOPHAN'
-@phan-var-force 'Commande'|'CommandeFournisseur'|'Contrat'|'Expedition'|'ExpenseReport'|'Facture'|'FactureFournisseur'|'Fichinter'|'Project'|'Propal'|'SupplierProposal' $objectclass
-EOPHAN;
+	'@phan-var-force \'Commande\'|\'CommandeFournisseur\'|\'Contrat\'|\'Expedition\'|\'ExpenseReport\'|\'Facture\'|\'FactureFournisseur\'|\'Fichinter\'|\'Project\'|\'Propal\'|\'SupplierProposal\' $objectclass';
 
 	$db->begin();
 	$nbok = 0;
@@ -1342,6 +1395,9 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 
 		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
+			// The CommonSocialNetworks trait forces $object to its own type on the global $object for phan, which
+			// makes phan lose the CommonObject methods here (fetch, setCategoriesCommon). Restore the real type.
+			'@phan-var-force CommonObject $object';
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
 				foreach ($toselect as $toselectid) {
@@ -1616,6 +1672,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields();
+				$nbok++;
 			} else {
 				$error++;
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1629,9 +1686,9 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("save"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
@@ -1748,6 +1805,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+				} else {
+					$nbok++;
 				}
 
 				// If no SQL error, we redirect to the request form
@@ -1760,67 +1819,29 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 
 				if (!$error) {
-					// To
-					$destinataire = new User($db);
-					$destinataire->fetch($objecttmp->fk_user);
-					$emailTo = $destinataire->email;
-
-					if (!$emailTo) {
-						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-					} else {
-						// From
-						$expediteur = new User($db);
-						$expediteur->fetch($objecttmp->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-						// Subject
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
-
-						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-						// Content
-						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
-						$message .= "\n";
-
-						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
-						$message .= "\n";
-
-						$trackid = 'leav'.$objecttmp->id;
-
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
-
-						// Sending email
-						$result = $mail->sendfile();
-
-						if (!$result) {
-							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-							$action = '';
-						}
+					$result = $objecttmp->sendApprovalEmail();
+					if ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+						$action = '';
 					}
 				}
 			} else {
@@ -1846,7 +1867,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+// Changing the balance of users requires the same permission than the single user update (holiday/define_holiday.php)
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $user->hasRight('holiday', 'define_holiday') && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	/** @var Holiday $holiday */
 	$db->begin();
@@ -1915,7 +1937,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if (empty($newproject->public)) {
 		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
 		$tmparray = explode(',', $tmps);
-		if (!in_array($newproject->id, $tmparray)) {
+		if (in_array($newproject->id, $tmparray)) {
 			$iscontactofnewproject = 1;
 		}
 	}
@@ -1927,8 +1949,30 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	}
 
 	if ($permisstiontoadd) {
+		$taskidsmapping = array();		// old task id => new cloned task id
+		$clonedtaskoldparent = array();	// new cloned task id => old parent task id
+
+		// Build the list of projects the current user is allowed to read, used to authorize
+		// every source task against its actual project before cloning it (the previous fix for
+		// CVE-2026-77923 only validated the destination project).
+		$authorizedsourceprojects = null;
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$sourceprojectstatic = new Project($db);
+			$tmps = $sourceprojectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$authorizedsourceprojects = explode(',', $tmps);
+		}
+
 		foreach (GETPOST('selected') as $task) {
-			$origin_task->fetch($task, '', 0);
+			if ($origin_task->fetch($task, '', 0) <= 0) {
+				continue;	// Source task not found, skip it
+			}
+
+			// Authorize the source task against its actual project before cloning it
+			if (is_array($authorizedsourceprojects) && !in_array($origin_task->fk_project, $authorizedsourceprojects)) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+				break;
+			}
 
 			$defaultref = '';
 			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
@@ -1959,6 +2003,8 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 
 				if ($taskid > 0) {
 					$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+					$taskidsmapping[$task] = $taskid;						// remember old id => new id
+					$clonedtaskoldparent[$taskid] = $origin_task->fk_task_parent;	// remember new id => old parent id
 					$num++;
 				} else {
 					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -1970,6 +2016,26 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 					}
 					$action = 'list';
 					$error++;
+				}
+			}
+		}
+
+		// Remap the parent of cloned tasks: if a cloned task's original parent was also cloned, point it to the
+		// new parent instead of the old id, otherwise the cloned sub-task would reference a task from the source
+		// project and end up orphaned (#39596). If the old parent was not cloned, detach it (set to 0).
+		if (!$error) {
+			foreach ($clonedtaskoldparent as $newtaskid => $oldparentid) {
+				if (empty($oldparentid)) {
+					continue;
+				}
+				$newparentid = isset($taskidsmapping[$oldparentid]) ? $taskidsmapping[$oldparentid] : 0;
+				$remaptask = new Task($db);
+				if ($remaptask->fetch($newtaskid) > 0 && $remaptask->fk_task_parent != $newparentid) {
+					$remaptask->fk_task_parent = $newparentid;
+					if ($remaptask->update($user) < 0) {
+						setEventMessages($remaptask->error, $remaptask->errors, 'errors');
+						$error++;
+					}
 				}
 			}
 		}

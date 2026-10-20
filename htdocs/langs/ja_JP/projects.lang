@@ -258,7 +258,7 @@ OtherFilteredTasks=その他のフィルタリングされたタスク
 NoAssignedTasks=割り当てられたタスクが見つからない(上部の選択ボックスから現在のユーザにプロジェクト/タスクを割り当てて、時間を入力する)
 ThirdPartyRequiredToGenerateIntervention=介入を作成できるようにするには、プロジェクト で 取引先 を定義する必要がある。
 ThirdPartyRequiredToGenerateInvoice=プロジェクトに請求できるようにするには、プロジェクトで取引先を定義する必要がある。
-ChooseANotYetAssignedTask=まだ割り当てられていないタスクを選択すること
+ChooseANotYetAssignedTask=まだあなたに割り当てられていないタスク
 # Comments trans
 AllowCommentOnTask=タスクへのユーザコメントを許可する
 AllowCommentOnProject=プロジェクトへのユーザコメントを許可する

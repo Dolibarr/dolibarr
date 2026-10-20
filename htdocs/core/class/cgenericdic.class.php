@@ -4,7 +4,7 @@
  * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class CGenericDic extends CommonDict
 	public $table_element = 'undefined';	// Will be defined into constructor
 
 	/**
-	 * @var CtyperesourceLine[] Lines
+	 * @var CGenericDic[] Lines
 	 */
 	public $lines = array();
 
@@ -81,8 +81,10 @@ class CGenericDic extends CommonDict
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
 		$fieldlabel = 'label';
 		if ($this->table_element == 'c_stcomm') {
+			$fieldrowid = 'id';
 			$fieldlabel = 'libelle';
 		} elseif ($this->table_element == 'c_type_fees') {
 			$fieldrowid = 'id';
@@ -104,13 +106,19 @@ class CGenericDic extends CommonDict
 
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
+		if (!empty($this->id)) {
+			$sql .= $this->db->sanitize($fieldrowid).',';	// Some dictionaries have no auto incremented id (c_stcomm)
+		}
 		$sql .= 'code,';
-		$sql .= $fieldlabel;
+		$sql .= $this->db->sanitize($fieldlabel).',';
 		$sql .= 'active';
 		$sql .= ') VALUES (';
+		if (!empty($this->id)) {
+			$sql .= ((int) $this->id).',';
+		}
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active);
+		$sql .= ' '.(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ')';
 
 		$this->db->begin();
@@ -122,9 +130,10 @@ class CGenericDic extends CommonDict
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
+		if (!$error && empty($this->id)) {
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element, $fieldrowid);
+		}
 		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
-
 			// Uncomment this and change CTYPERESOURCE to your own tag if you
 			// want this action to call a trigger.
 			//if (!$notrigger) {
@@ -181,7 +190,7 @@ class CGenericDic extends CommonDict
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+			$sql .= " WHERE ".$this->db->sanitize("t.".$fieldlabel)." = '".$this->db->escape($label)."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -258,7 +267,7 @@ class CGenericDic extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -284,6 +293,7 @@ class CGenericDic extends CommonDict
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
+			$this->lines = array();
 			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new self($this->db);
 
@@ -292,6 +302,8 @@ class CGenericDic extends CommonDict
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
+
+				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
 
@@ -345,7 +357,7 @@ class CGenericDic extends CommonDict
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= " ".$this->db->sanitize($fieldlabel)." = ".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
-		$sql .= " active = ".(isset($this->active) ? $this->active : "null");
+		$sql .= " active = ".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE ".$this->db->sanitize($fieldrowid)." = ".((int) $this->id);
 
 		$this->db->begin();
@@ -391,6 +403,9 @@ class CGenericDic extends CommonDict
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$fieldrowid = 'rowid';
+		if ($this->table_element == 'c_stcomm' || $this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
+		}
 
 		$error = 0;
 

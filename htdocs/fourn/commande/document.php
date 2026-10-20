@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,14 +83,17 @@ if ($object->fetch($id, $ref) < 0) {
 	dol_print_error($db);
 	exit;
 }
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 
 $upload_dir = getMultidirOutput($object).'/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();
 
 // Security check
 $socid = 0;
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
@@ -123,7 +126,7 @@ if ($object->id > 0) {
 
 	$head = ordersupplier_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -156,7 +159,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

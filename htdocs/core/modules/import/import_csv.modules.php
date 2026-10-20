@@ -255,13 +255,11 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array<int,array{val:string,type:int<-1,1>}>|false		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$arrayres = fgetcsv($this->handle, 100000, $this->separator, $this->enclosure, $this->escape);
 
 		// End of file
@@ -277,7 +275,7 @@ class ImportCsv extends ModeleImports
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
 				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
-					if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') {
+					if (strtolower(getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) == 'utf8') {
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					} else {
@@ -293,6 +291,8 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it's null
 					}
 				}
+
+				$newarrayres[$key]['val'] = trim($newarrayres[$key]['val']);
 			}
 
 			$this->col = count($newarrayres);

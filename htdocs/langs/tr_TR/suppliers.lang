@@ -5,7 +5,6 @@ SupplierInvoices=Tedarikçi faturaları
 ShowSupplierInvoice=Tedarikçi Faturası Göster
 NewSupplier=Yeni tedarikçi
 NewSupplierInvoice = Yeni satıcı faturası
-History=Geçmiş
 ListOfSuppliers=Tedarikçi listesi
 ShowSupplier=Tedarikçiyi göster
 BuyingPriceMin=En iyi alış fiyatı

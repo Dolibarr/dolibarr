@@ -87,14 +87,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax1;
 
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax2;
 
@@ -107,6 +107,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $atleastoneratenotnull = 0;
 
+	/**
+	 * @var int<0,1>
+	 */
+	public $showAmountBeforeDiscount = 1;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $showDiscountAmount = 1;
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -232,14 +241,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		// Add some human-readable information about what the bill is for.
 		$qrBill->setAdditionalInformation(
-			SwissQrBill\DataGroup\Element\AdditionalInformation::create(
+			SwissQrBill\DataGroup\Element\AdditionalInformation::create( // @phpstan-ignore-line
 				$object->ref
 			)
 		);
 
 		// Set debtor address; We _know_ zip&town have to be filled, so skip that if unfilled.
 		if (!empty($object->thirdparty->zip) && !empty($object->thirdparty->town)) {
-			$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
+			$address = SwissQrBill\DataGroup\Element\CombinedAddress::create( // @phpstan-ignore-line
 				$object->thirdparty->name,
 				$object->thirdparty->address,
 				$object->thirdparty->zip . " " . $object->thirdparty->town,
@@ -302,7 +311,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 			$pdf->setPage(1);
 			$pdf->SetTextColor(0, 0, 0);
-			$output = new SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput($qrBill, in_array($langs->shortlang, ['de', 'fr', 'it']) ? $langs->shortlang : 'en', $pdf);
+			$output = new SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput($qrBill, in_array($langs->shortlang, ['de', 'fr', 'it']) ? $langs->shortlang : 'en', $pdf); // @phpstan-ignore-line
 			$output->setPrintable(false)->getPaymentPart();
 		} catch (Exception $e) {
 			$pdf->rollbackTransaction(true);

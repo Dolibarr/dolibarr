@@ -7,7 +7,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -103,7 +104,7 @@ if (!$sortorder) {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
-$extrafields = new ExtraFields($db);
+
 $hookmanager->initHooks(array('bankaccountlist'));
 
 // fetch optionals attributes and labels
@@ -133,6 +134,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -177,6 +181,7 @@ if (empty($reshook)) {
 		$search_number = '';
 		$search_status = '';
 		$search_category_list = array();
+		$search_array_options = array();
 	}
 
 	// Mass actions
@@ -197,6 +202,9 @@ $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;d
 
 // Load array of financial accounts (opened by default)
 $accounts = array();
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
 
 // Build and execute select
@@ -228,7 +236,12 @@ if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
-	$sql .= natural_search('b.ref', $search_ref);
+	if (empty($arrayfields['b.label']['checked'])) {
+		// Label is shown into the ref column, so search on both
+		$sql .= natural_search(array('b.ref', 'b.label'), $search_ref);
+	} else {
+		$sql .= natural_search('b.ref', $search_ref);
+	}
 }
 if ($search_label != '') {
 	$sql .= natural_search('b.label', $search_label);
@@ -431,8 +444,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -613,7 +624,6 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('balance' => 0);
-$total = array();
 $found = 0;
 $lastcurrencycode = '';
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -677,7 +687,19 @@ foreach ($accounts as $key => $type) {
 		}
 		// Ref
 		if (!empty($arrayfields['b.ref']['checked'])) {
-			print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			if (empty($arrayfields['b.label']['checked'])) {
+				// Show label under the ref when label column is not enabled
+				print '<td class="tdlineheightsmall">';
+				print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+				print $objecttmp->getNomUrl(1);
+				if (!empty($objecttmp->label)) {
+					print '<br><span class="spantitle">'.dolPrintHTML($objecttmp->label).'</span>';
+				}
+				print '</div>';
+				print '</td>';
+			} else {
+				print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -685,7 +707,11 @@ foreach ($accounts as $key => $type) {
 
 		// Label
 		if (!empty($arrayfields['b.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objecttmp->label).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($objecttmp->label);
+			print '</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -859,8 +885,13 @@ foreach ($accounts as $key => $type) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'balance';
+				$totalarray['pospercurrency'][$totalarray['nbfield']] = 'balance';
 			}
 			$totalarray['val']['balance'] += $solde;
+			// Balances can't be summed across different currencies, so also keep a per-currency
+			// breakdown ($totalarray['valpercurrency']); list_print_total.tpl.php shows it as
+			// additional "Total <CCY>" lines once there is more than one currency in the list.
+			$totalarray['valpercurrency'][$objecttmp->currency_code]['balance'] = ($totalarray['valpercurrency'][$objecttmp->currency_code]['balance'] ?? 0) + $solde;
 		}
 
 		// Action column
@@ -880,12 +911,6 @@ foreach ($accounts as $key => $type) {
 		}
 
 		print '</tr>'."\n";
-
-		if (empty($total[$objecttmp->currency_code])) {
-			$total[$objecttmp->currency_code] = $solde;
-		} else {
-			$total[$objecttmp->currency_code] += $solde;
-		}
 	}
 	$i++;
 }
@@ -902,10 +927,19 @@ if (!$found) {
 }
 
 // Show total line
-if ($lastcurrencycode != 'various') {	// If there is several currency, $lastcurrencycode is set to 'various' before
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+if ($lastcurrencycode == 'various') {
+	// Summing balances of accounts in different currencies is meaningless, so the main "Total"
+	// line leaves the balance cell empty instead of showing a nonsensical combined figure;
+	// list_print_total.tpl.php still prints one "Total <CCY>" line per currency below it, using
+	// $totalarray['valpercurrency'] (independent of 'pos', so removing it here does not affect
+	// the per-currency lines).
+	$posKey = array_search('balance', $totalarray['pos'] ?? array(), true);
+	if ($posKey !== false) {
+		unset($totalarray['pos'][$posKey]);
+	}
+	unset($totalarray['val']['balance']);
 }
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 print '</table>'."\n";
 print '</div>'."\n";

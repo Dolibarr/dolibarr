@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,19 @@ if ($id > 0) {
 }
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
-$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+// Load the parent expense report so restrictedArea() can also check the user hierarchy
+$expensereport = new ExpenseReport($db);
+if ($object->fk_expensereport > 0) {
+	if ($expensereport->fetch($object->fk_expensereport) <= 0) {
+		accessforbidden();
+	}
+}
+
+$result = restrictedArea($user, 'expensereport', ($expensereport->id > 0 ? $expensereport : 0), 'expensereport');
 
 
 /*
@@ -72,6 +80,7 @@ $result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'exp
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expensereport', 'supprimer')) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -252,7 +261,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->hasRight('expensereport', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}

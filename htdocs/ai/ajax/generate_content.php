@@ -4,7 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,9 @@ if (is_null($jsonData)) {
 $ai = new Ai($db);
 
 // Get parameters
-$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
+// Default value is 'textgeneration'.
+// Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'textrephraser', 'textspellchecker', 'imagegeneration', 'videogeneration', ...
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];
 
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];						// Can be '' for text, 'html', ...
 
@@ -104,10 +106,14 @@ if (empty($instructions)) {
 		print "Error : " . $generatedContent['message'];
 		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
 	} elseif (!empty($generatedContent['message'])) {
-		http_response_code($generatedContent['code']);
+		if (!empty($generatedContent['code'])) {
+			http_response_code($generatedContent['code']);
+		}
 		print "Error returned by API call: " . $generatedContent['message'];
 	} else {
-		http_response_code($generatedContent['code']);
+		if (!empty($generatedContent['code'])) {
+			http_response_code($generatedContent['code']);
+		}
 		print "Error API returned no answer";
 	}
 } else {
@@ -116,7 +122,7 @@ if (empty($instructions)) {
 			print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
 		} else {
 			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
-			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			//print dol_string_onlythesehtmltags('"How are you" is a French expression and this is an HTML <a> tag', 1, 1, 1);
 			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
 			//print dol_string_nohtmltag($generatedContent);
 		}
@@ -132,7 +138,7 @@ if (empty($instructions)) {
 			print dolPrintHTML($generatedContent);
 		} else {
 			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
-			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			//print dol_string_onlythesehtmltags('"How are you" is a French expression and this is an HTML <a> tag', 1, 1, 1);
 			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
 		}
 	}

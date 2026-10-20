@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class mailing_xinputuser extends MailingTargets
 {
 	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+	public $desc = 'EMails input by user'; // Label used if no translation found for MailingModuleDescXXX or XXX=name
 
 	/**
 	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
@@ -109,9 +109,9 @@ class mailing_xinputuser extends MailingTargets
 
 
 	/**
-	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *   Display filter form shown on the mailing recipient selection page
 	 *
-	 *   @return     string      Retourne zone select
+	 *   @return     string      HTML select zone
 	 */
 	public function formFilter()
 	{

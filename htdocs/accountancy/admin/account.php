@@ -231,9 +231,21 @@ if (empty($reshook)) {
 	} elseif ($action == 'enable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
-			$result = $accounting->accountActivate($id, $mode);
-			if ($result < 0) {
-				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			// Block the activation of matching on a centralized account
+			if ($mode == 1 && !empty($accounting->centralized)) {
+				setEventMessages($langs->trans('CentralizedAccountCannotBeMatchable'), null, 'errors');
+			} else {
+				$result = $accounting->accountActivate($id, $mode);
+				if ($result < 0) {
+					setEventMessages($accounting->error, $accounting->errors, 'errors');
+				}
+				// When activating centralized mode, force matchable to 0
+				if ($mode == 2 && $result >= 0) {
+					$result = $accounting->accountDeactivate($id, 1);
+					if ($result < 0) {
+						setEventMessages($accounting->error, $accounting->errors, 'errors');
+					}
+				}
 			}
 		}
 		$action = 'update';
@@ -812,17 +824,24 @@ if ($resql) {
 			}
 		}
 
-		// Activated or not reconciliation on an accounting account
+		// Activated or not matching on an accounting account
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 			print '<td class="center">';
-			if (empty($obj->reconcilable)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&page='.$page.'&mode=1&token='.newToken().'">';
-				print img_picto($langs->trans("Disabled"), 'switch_off');
+			if (!empty($obj->centralized)) {
+				// Centralized account: matching not possible, grayed out switch
+				print '<a style="cursor:not-allowed;" title="' . dol_escape_htmltag($langs->trans('CentralizedAccountCannotBeMatchable')) . '">';
+				print img_picto('', !empty($obj->reconcilable) ? 'switch_on' : 'switch_off', '', 0, 0, 1, '', 'opacitymedium');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&page='.$page.'&mode=1&token='.newToken().'">';
-				print img_picto($langs->trans("Activated"), 'switch_on');
-				print '</a>';
+				if (empty($obj->reconcilable)) {
+					print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?id=' . $obj->rowid . '&action=enable&page=' . $page . '&mode=1&token=' . newToken() . '">';
+					print img_picto($langs->trans('Disabled'), 'switch_off');
+					print '</a>';
+				} else {
+					print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?id=' . $obj->rowid . '&action=disable&page=' . $page . '&mode=1&token=' . newToken() . '">';
+					print img_picto($langs->trans('Activated'), 'switch_on');
+					print '</a>';
+				}
 			}
 			print '</td>';
 			if (!$i) {

@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "errors"));
+$langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
@@ -224,6 +224,17 @@ $vatdata_cache = array();
 // Variables
 $cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined');
 $cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
+// Empty by default: deductible VAT stays on the dictionary account, or on ACCOUNTING_VAT_BUY_ACCOUNT.
+$cpttvaasset = getDolGlobalString('ACCOUNTING_VAT_BUY_ASSET_ACCOUNT');
+
+// Account-number prefixes of fixed assets. Class 2 in the French chart.
+// Several prefixes can be entered, separated by commas: "20,21,22,23,27".
+$assetaccountprefixlist = array();
+
+if ($cpttvaasset !== '') {
+	$assetaccountprefixlist = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_ASSET_ACCOUNT_PREFIXES', '2'))));
+}
+
 $rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
 $rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $cptlocaltax1 = getDolGlobalString('ACCOUNTING_LT1_BUY_ACCOUNT', 'NotDefined');
@@ -264,6 +275,13 @@ if ($result) {
 			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
+		// A bound fixed-asset account sends this line's deductible VAT to the dedicated account, ahead of the dictionary.
+		foreach ($assetaccountprefixlist as $assetaccountprefix) {
+			if (strpos((string) $compta_prod, $assetaccountprefix) === 0) {
+				$compta_tva = $cpttvaasset;
+				break;
+			}
+		}
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax1);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax2);
 		$compta_counterpart_tva_npr = getDolGlobalString('ACCOUNTING_COUNTERPART_VAT_NPR', 'NotDefined');
@@ -282,17 +300,15 @@ if ($result) {
 		//$line = new SupplierInvoiceLine($db);
 		//$line->fetch($obj->fdid);
 
-		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
-		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
-		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier.' ('.$obj->ref.')';
-		$tabfac[$obj->rowid]["refsologest"] = $obj->ref;
-		$tabfac[$obj->rowid]["refsuppliersologest"] = $obj->ref_supplier;
-		$tabfac[$obj->rowid]["type"] = $obj->type;
-		$tabfac[$obj->rowid]["description"] = $obj->description;
-		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
-
 		// Avoid warnings
+		if (!array_key_exists($obj->rowid, $tabfac)) {
+			$tabfac[$obj->rowid] = array();
+			$tabttc[$obj->rowid] = array();
+			$tabht[$obj->rowid] = array();
+			$tabtva[$obj->rowid] = array();
+			$tablocaltax1[$obj->rowid] = array();
+			$tablocaltax2[$obj->rowid] = array();
+		}
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
 			$tabttc[$obj->rowid][$compta_soc] = 0;
 		}
@@ -308,6 +324,16 @@ if ($result) {
 		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
 			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
 		}
+
+		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
+		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
+		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier.' ('.$obj->ref.')';
+		$tabfac[$obj->rowid]["refsologest"] = $obj->ref;
+		$tabfac[$obj->rowid]["refsuppliersologest"] = $obj->ref_supplier;
+		$tabfac[$obj->rowid]["type"] = $obj->type;
+		$tabfac[$obj->rowid]["description"] = $obj->description;
+		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
+		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
 
 		// VAT Reverse charge
 		if (($mysoc->country_code == 'FR' || getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) && $obj->vat_reverse_charge == 1 && (in_array($obj->country_code, $country_code_in_EEC) || getDolGlobalString('ACCOUNTING_REVERSE_CHARGE_ALSO_NON_EEC'))) {
@@ -325,6 +351,11 @@ if ($result) {
 				$def_tva[$obj->rowid][$rcd_compta_tva][$vat_key] = $val_value;
 			}
 
+			if (!array_key_exists($obj->rowid, $tabrctva)) {
+				$tabrctva[$obj->rowid] = array();
+				$tabrclocaltax1[$obj->rowid] = array();
+				$tabrclocaltax2[$obj->rowid] = array();
+			}
 			if (!isset($tabrctva[$obj->rowid][$rcc_compta_tva])) {
 				$tabrctva[$obj->rowid][$rcc_compta_tva] = 0;
 			}
@@ -476,10 +507,10 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["refsologest"];
-		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->ref_supplier = (string) $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->description = html_entity_decode(dol_trunc((string) $val["description"], 32));
+		$invoicestatic->close_code = (string) $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -799,6 +830,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			$db->rollback();
 
 			if ($error >= 10) {
+				$langs->load('errors');
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
 				break; // Break in the foreach
 			}
@@ -859,11 +891,11 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		$companystatic->fournisseur = 1;
 
 		$invoicestatic->id = (int) $key;
-		$invoicestatic->ref = $val["refsologest"];
-		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->ref = (string) $val["refsologest"];
+		$invoicestatic->ref_supplier = (string) $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->description = dol_trunc(html_entity_decode((string) $val["description"]), 32);
+		$invoicestatic->close_code = (string) $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -887,7 +919,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["refsologest"].'"'.$sep;
+			print '"'.((string) $val["refsologest"]).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg($companystatic->accountancy_code_supplier_general).'"'.$sep;
@@ -908,7 +940,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["refsologest"].'"'.$sep;
+			print '"'.((string) $val["refsologest"]).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -960,7 +992,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				if ($mt) {
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
-					print '"'.$val["refsologest"].'"'.$sep;
+					print '"'.((string) $val["refsologest"]).'"'.$sep;
 					print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -980,7 +1012,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					if ($mt) {
 						print '"'.$key.'"'.$sep;
 						print '"'.$date.'"'.$sep;
-						print '"'.$val["refsologest"].'"'.$sep;
+						print '"'.((string) $val["refsologest"]).'"'.$sep;
 						print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1114,11 +1146,11 @@ if (empty($action) || $action == 'view') {
 		$companystatic->fournisseur = 1;
 
 		$invoicestatic->id = (int) $key;
-		$invoicestatic->ref = $val["refsologest"];
-		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->ref = (string) $val["refsologest"];
+		$invoicestatic->ref_supplier = (string) $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->description = dol_trunc(html_entity_decode((string) $val["description"]), 32);
+		$invoicestatic->close_code = (string) $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
 

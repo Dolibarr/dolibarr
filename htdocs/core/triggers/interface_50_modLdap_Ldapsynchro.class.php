@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -551,79 +551,83 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
-					if (!method_exists($object->oldcopy, '_load_ldap_info')) {
-						dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
-						$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
-					}
+					$oldcopy = $object->oldcopy; // Copy for static analysis
 
-					$oldinfo = $object->oldcopy->_load_ldap_info();
-					$olddn = $object->oldcopy->_load_ldap_dn($oldinfo);
+					if (is_object($oldcopy)) {
+						if (!method_exists($oldcopy, '_load_ldap_info')) {
+							dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
+							$oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
+						}
 
-					// Verify if entry exist
-					$container = $object->oldcopy->_load_ldap_dn($oldinfo, 1);
-					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
-					$records = $ldap->search($container, $search);
-					if (count($records) && $records['count'] == 0) {
-						$olddn = '';
-					}
-
-					$info = $object->_load_ldap_info();
-					$dn = $object->_load_ldap_dn($info);
-					$newrdn = $object->_load_ldap_dn($info, 2);
-					$newparent = $object->_load_ldap_dn($info, 1);
-
-					$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
-
-					// For member type
-					if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-						require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
-
-						/*
-						 * Change member info
-						 */
-						$newmembertype = new AdherentType($this->db);
-						$newmembertype->fetch($object->typeid);
-						$newmembertype->listMembersForMemberType('', 1);
-
-						$oldinfo = $newmembertype->_load_ldap_info();
-						$olddn = $newmembertype->_load_ldap_dn($oldinfo);
+						$oldinfo = $oldcopy->_load_ldap_info();
+						$olddn = $oldcopy->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
-						$container = $newmembertype->_load_ldap_dn($oldinfo, 1);
-						$search = "(".$newmembertype->_load_ldap_dn($oldinfo, 2).")";
+						$container = $oldcopy->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$oldcopy->_load_ldap_dn($oldinfo, 2).")";
 						$records = $ldap->search($container, $search);
 						if (count($records) && $records['count'] == 0) {
 							$olddn = '';
 						}
 
-						$info = $newmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-						$dn = $newmembertype->_load_ldap_dn($info);
+						$info = $object->_load_ldap_info();
+						$dn = $object->_load_ldap_dn($info);
+						$newrdn = $object->_load_ldap_dn($info, 2);
+						$newparent = $object->_load_ldap_dn($info, 1);
 
-						$result = $ldap->update($dn, $info, $user, $olddn);
+						$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
 
-						if ($object->oldcopy->typeid != $object->typeid) {
+						// For member type
+						if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 							/*
-							 * Remove member in old member type
+							 * Change member info
 							 */
-							$oldmembertype = new AdherentType($this->db);
-							$oldmembertype->fetch($object->oldcopy->typeid);
-							$oldmembertype->listMembersForMemberType('', 1);
+							$newmembertype = new AdherentType($this->db);
+							$newmembertype->fetch($object->typeid);
+							$newmembertype->listMembersForMemberType('', 1);
 
-							$oldinfo = $oldmembertype->_load_ldap_info();
-							$olddn = $oldmembertype->_load_ldap_dn($oldinfo);
+							$oldinfo = $newmembertype->_load_ldap_info();
+							$olddn = $newmembertype->_load_ldap_dn($oldinfo);
 
 							// Verify if entry exist
-							$container = $oldmembertype->_load_ldap_dn($oldinfo, 1);
-							$search = "(".$oldmembertype->_load_ldap_dn($oldinfo, 2).")";
+							$container = $newmembertype->_load_ldap_dn($oldinfo, 1);
+							$search = "(".$newmembertype->_load_ldap_dn($oldinfo, 2).")";
 							$records = $ldap->search($container, $search);
 							if (count($records) && $records['count'] == 0) {
 								$olddn = '';
 							}
 
-							$info = $oldmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-							$dn = $oldmembertype->_load_ldap_dn($info);
+							$info = $newmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+							$dn = $newmembertype->_load_ldap_dn($info);
 
 							$result = $ldap->update($dn, $info, $user, $olddn);
+
+							if ($oldcopy->typeid != $object->typeid) {
+								/*
+								 * Remove member in old member type
+								 */
+								$oldmembertype = new AdherentType($this->db);
+								$oldmembertype->fetch($oldcopy->typeid);
+								$oldmembertype->listMembersForMemberType('', 1);
+
+								$oldinfo = $oldmembertype->_load_ldap_info();
+								$olddn = $oldmembertype->_load_ldap_dn($oldinfo);
+
+								// Verify if entry exist
+								$container = $oldmembertype->_load_ldap_dn($oldinfo, 1);
+								$search = "(".$oldmembertype->_load_ldap_dn($oldinfo, 2).")";
+								$records = $ldap->search($container, $search);
+								if (count($records) && $records['count'] == 0) {
+									$olddn = '';
+								}
+
+								$info = $oldmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+								$dn = $oldmembertype->_load_ldap_dn($info);
+
+								$result = $ldap->update($dn, $info, $user, $olddn);
+							}
 						}
 					}
 				}
@@ -766,25 +770,29 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
-					$object->oldcopy->listMembersForMemberType('', 1);
+					$oldcopy = $object->oldcopy;  // Local copy to help static analysis.
 
-					$oldinfo = $object->oldcopy->_load_ldap_info();
-					$olddn = $object->oldcopy->_load_ldap_dn($oldinfo);
+					if (is_object($oldcopy)) {
+						$oldcopy->listMembersForMemberType('', 1);
 
-					// Verify if entry exist
-					$container = $object->oldcopy->_load_ldap_dn($oldinfo, 1);
-					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
-					$records = $ldap->search($container, $search);
-					if (count($records) && $records['count'] == 0) {
-						$olddn = '';
+						$oldinfo = $oldcopy->_load_ldap_info();
+						$olddn = $oldcopy->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container = $oldcopy->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$oldcopy->_load_ldap_dn($oldinfo, 2).")";
+						$records = $ldap->search($container, $search);
+						if (count($records) && $records['count'] == 0) {
+							$olddn = '';
+						}
+
+						$object->listMembersForMemberType('', 1);
+
+						$info = $object->_load_ldap_info();
+						$dn = $object->_load_ldap_dn($info);
+
+						$result = $ldap->update($dn, $info, $user, $olddn);
 					}
-
-					$object->listMembersForMemberType('', 1);
-
-					$info = $object->_load_ldap_info();
-					$dn = $object->_load_ldap_dn($info);
-
-					$result = $ldap->update($dn, $info, $user, $olddn);
 				}
 
 				if ($result <= 0) {

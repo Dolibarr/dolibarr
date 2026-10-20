@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require '../main.inc.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies'));
+$langs->loadLangs(array('admin', 'bills', 'companies'));
 
 $action = '';
 
@@ -104,7 +105,7 @@ $constkey = 'MAIN_INFO_SETUP_FOR_COUNTRY_'.$mysoc->country_code;
 if (getDolGlobalString($constkey)) {
 	$langs->load("errors");
 	$warnpicto = img_warning('', 'style="padding-right: 6px;"');
-	print '<div class="warning">'.$warnpicto.$langs->trans(getDolGlobalString($constkey)).'</div>';
+	print '<div class="warning noshadow">'.$warnpicto.$langs->trans(getDolGlobalString($constkey)).'</div>';
 }
 
 
@@ -123,7 +124,7 @@ print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 10px;"');
-	print '<br><div class="warning marginrightonly"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning marginrightonly"><a class="warning" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
 print '</a>';
@@ -131,6 +132,7 @@ print '</section>';
 
 print '<br>';
 print '<br>';
+
 
 // Show info setup modules
 
@@ -153,12 +155,80 @@ print '<br><br>'.$langs->trans("SetupDescription4b");
 if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 10px;"');
-	print '<br><div class="warning marginrightonly"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
+	print '<br><div class="warning marginrightonly"><a class="warning" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
 }
 
 print '</section>';
 
 print '<br>';
+print '<br>';
+
+
+// Show info setup modules
+
+// A country has one entry, or one entry per direction ('issue', 'receive'). A module is found if it is in the 'module'
+// list of the entry, or if its descriptor declares the country (and direction):
+// $this->module_parts = array('einvoice' => array('DE' => array('issue', 'receive')));
+$arrayofeinvoiceneed = array(
+	'FR' => array('module' => array('einvoice', 'pdpconnectfr'), 'search' => 'e-invoice'),
+	'ES' => array('search' => 'verifactu'),
+	'BE' => array('search' => 'peppol'),
+	'PL' => array('module' => array('ksef'), 'search' => 'ksef'),
+	'DE' => array(
+		'issue' => array('label' => 'EInvoiceIssueCustomerInvoices', 'search' => 'einvoice-issue-de'),
+		'receive' => array('label' => 'EInvoiceReceiveSupplierInvoices', 'search' => 'einvoice-receive-de')
+	)
+);
+
+$urleinvoice = '';
+
+if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofeinvoiceneed))) {
+	$einvoiceneeds = $arrayofeinvoiceneed[$mysoc->country_code];
+	if (isset($einvoiceneeds['search'])) {
+		$einvoiceneeds = array($einvoiceneeds);
+	}
+	$einvoicetext = '';
+	foreach ($einvoiceneeds as $direction => $einvoiceneed) {
+		$modules = empty($einvoiceneed['module']) ? array() : $einvoiceneed['module'];
+		foreach (empty($conf->modules_parts['einvoice']) ? array() : $conf->modules_parts['einvoice'] as $module => $declared) {
+			'@phan-var-force array<string,string[]>|string $declared';
+			if (is_array($declared) && !empty($declared[$mysoc->country_code]) && (is_int($direction) || in_array($direction, (array) $declared[$mysoc->country_code]))) {
+				$modules[] = $module;
+			}
+		}
+		$modulefound = '';
+		foreach ($modules as $module) {
+			if (isModEnabled($module)) {
+				$modulefound = $module;
+				break;
+			}
+		}
+		if (!$modulefound) {
+			$url = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace&search_keyword='.urlencode($einvoiceneed['search']);
+		} else {
+			$url = DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($modulefound);
+		}
+		if (!$modulefound || !$urleinvoice) {	// The section leads to an entry without module
+			$urleinvoice = $url;
+		}
+		$einvoicetext .= '<br><br>'.(empty($einvoiceneed['label']) ? '' : $langs->trans($einvoiceneed['label']).': ');
+		if ($modulefound || getDolGlobalString('MAIN_FAKE_EINVOICE_MODULE_FOUND')) {
+			$einvoicetext .= $langs->trans("AnEInvoiceModuleHasBeenEnabled", $mysoc->country_code);
+		} else {
+			$einvoicetext .= $langs->trans("SetupDescriptionEInvoice", $mysoc->country_code);
+		}
+	}
+
+	print '<section class="setupsection setupeinvoice cursorpointer">';
+	// Show info setup module
+	print img_picto('', 'bill', 'class="paddingright valignmiddle double"');
+	print ' ';
+	print '<a class="nounderlineimp fontsize-1-1" href="'.$urleinvoice.'">'.$langs->transnoentities("EInvoice").'</a>';
+	print $einvoicetext;
+	print '</section>';
+}
+
+
 print '<br>';
 print '<br>';
 
@@ -174,6 +244,11 @@ print '<script>
 				event.preventDefault();
 				console.log("we click on setupmodules");
                 window.location.href = "'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home";
+            });
+            $(".setupeinvoice").click(function() {
+				event.preventDefault();
+				console.log("we click on setupeinvoice");
+                window.location.href = "'.$urleinvoice.'";
             });
         });
 </script>';

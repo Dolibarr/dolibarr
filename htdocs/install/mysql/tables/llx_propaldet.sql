@@ -36,11 +36,11 @@ create table llx_propaldet
     localtax2_tx               		double(7,4)     DEFAULT 0,      -- localtax2 rate
     localtax2_type			 		varchar(10)     NULL,           -- localtax2 type
     qty								real,                           -- quantity
-    remise_percent					real            DEFAULT 0,      -- discount percentage
-    remise							real            DEFAULT 0,      -- discount amount (obsolete)
-    price                           real,                           -- final price (obsolete)
-    subprice                        double(24,8)    DEFAULT 0,      -- unit price without tax
-    subprice_ttc    	  			double(24,8) 	DEFAULT 0,    	-- unit price if price was entered including tax
+    remise_percent					real            DEFAULT 0,      -- % of discount on line (example 20%)
+    remise							real            DEFAULT 0,      -- Deprecated (Do, not use)
+    price                           real,                           -- Deprecated (Do not use)
+    subprice                        double(24,8)    DEFAULT 0,      -- unit price HT (example 100) - discount not included
+    subprice_ttc    	  			double(24,8) 	DEFAULT 0,    	-- unit price if price was entered including tax - discount	not included
     total_ht                        double(24,8)    DEFAULT 0,      -- Total excluding VAT of the line all quantities and including line and global discount
     total_tva                       double(24,8)    DEFAULT 0,      -- Total VAT of the line any quantity and including discount line and global
     total_localtax1					double(24,8)    DEFAULT 0,      -- Total localtax1

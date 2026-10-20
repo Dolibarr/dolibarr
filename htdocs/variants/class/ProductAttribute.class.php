@@ -73,7 +73,7 @@ class ProductAttribute extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -111,6 +111,11 @@ class ProductAttribute extends CommonObject
 	 * @var int rowid
 	 */
 	public $id;
+
+	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
 
 	/**
 	 * @var string ref
@@ -249,7 +254,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 
@@ -280,21 +290,26 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Fetches the properties of a product attribute
+	 * Fetches the properties of a product attribute, from its id or from its ref
 	 *
-	 * @param int $id Attribute id
-	 * @return int Return integer <1 KO, >1 OK
+	 * Note: $id must not be typed as int. The import engine resolves a foreign key by
+	 * calling fetch('', $ref) and an empty string is not a numeric string in PHP 8.
+	 *
+	 * @param	int|string	$id		Attribute id
+	 * @param	string		$ref	Attribute ref, used when $id is empty
+	 * @return	int					Return integer <0 KO, 0 not found, >0 OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = '')
 	{
 		global $langs;
 		$error = 0;
 
 		// Clean parameters
-		$id = $id > 0 ? $id : 0;
+		$id = $id > 0 ? (int) $id : 0;
+		$ref = trim((string) $ref);
 
 		// Check parameters
-		if (empty($id)) {
+		if (empty($id) && $ref === '') {
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TechnicalID"));
 			$error++;
 		}
@@ -305,7 +320,11 @@ class ProductAttribute extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, position";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int) $id);
+		if (!empty($id)) {
+			$sql .= " WHERE rowid = " . ((int) $id);
+		} else {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+		}
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -420,7 +439,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 		if (!$error) {
@@ -492,6 +516,28 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
+			// Delete extrafields of values
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line . "_extrafields";
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element_line . " WHERE " . $this->fk_element . " = " . ((int) $this->id) . ")";
+
+			dol_syslog(__METHOD__ . ' - Delete extrafields of values', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = "Error " . $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			// Delete extrafields of the attribute
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			// Delete values
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line);
 			$sql .= " WHERE " . $this->db->sanitize($this->fk_element) . " = " . ((int) $this->id);
@@ -517,6 +563,14 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -529,10 +583,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param	string		$filters	Filter on other fields
+	 * @param	string		$sql_filters	Filter on other fields
 	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_lines($filters = '')
+	public function fetch_lines($sql_filters = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -559,8 +613,8 @@ class ProductAttribute extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
-		if ($filters) {
-			$sql .= $filters;
+		if ($sql_filters) {
+			$sql .= $sql_filters;
 		}
 		$sql .= $this->db->order("td.position", "asc");
 
@@ -684,6 +738,11 @@ class ProductAttribute extends CommonObject
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($lineid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(__METHOD__ . " lineid=$lineid, ref=$ref, value=$value, notrigger=$notrigger");
 
 		// Clean parameters
@@ -735,6 +794,10 @@ class ProductAttribute extends CommonObject
 		// Fetch current line from the database
 		$this->line = new ProductAttributeValue($this->db);
 		$result = $this->line->fetch($lineid);
+		if ($result > 0 && $this->id > 0 && (int) $this->line->fk_product_attribute !== (int) $this->id) {
+			$this->line->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			$result = -1;
+		}
 		if ($result > 0) {
 			$this->line->context = $this->context;
 
@@ -1199,7 +1262,7 @@ class ProductAttribute extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . dol_substr($filename, 0, $pospoint) . '_mini' . dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
@@ -1411,6 +1474,8 @@ class ProductAttribute extends CommonObject
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						/** @var CommonObject $object */
+						'@phan-var-force CommonObject $object';
 						$object->formAddObjectLine(1, $mysoc, $buyer);
 					}
 				}

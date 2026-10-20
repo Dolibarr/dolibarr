@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = Obiectul %s nu trebuie să fie fin
 ErrorObjectMustNotBeFinishedToModifyDateStart = Obiectul %s nu trebuie să fie finalizat pentru a modifica data de început.
 BOM_SUB_BOM=Utilizare sub-liste de materiale
 UseSearchToSelectBom=Așteaptă până când este apăsată o tastă înainte de a încărca conținutul listei combinate Bonuri/Devize.<br> Acest lucru poate îmbunătăți performanța dacă ai un număr mare de proiecte, dar este mai puțin convenabil.
+ReInitialize=Reinițializare
+ReInitializeHelp=Reinitialize the lines to consume and to produce (if the BOM has changed and the production has not started)

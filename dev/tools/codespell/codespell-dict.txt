@@ -18,7 +18,6 @@ dollibar->dolibarr
 dollibarr->dolibarr
 extrafeild->extrafield
 thoose->those
-# fiche->card
 maringbottomonly->marginbottomonly
 maxwidthonsmartpone->maxwidthonsmartphone
 maxwidthonspartphone->maxwidthonsmartphone

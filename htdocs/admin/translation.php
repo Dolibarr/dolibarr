@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "products", "admin", "sms", "other", "errors"));
+$langs->loadLangs(array("companies", "products", "admin", "sms", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -155,6 +155,7 @@ if ($action == 'update') {
 		} else {
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
 			} else {
 				setEventMessages($db->lasterror(), null, 'errors');
@@ -193,6 +194,7 @@ if ($action == 'add') {
 		} else {
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
 			} else {
 				setEventMessages($db->lasterror(), null, 'errors');
@@ -278,7 +280,7 @@ if ($transvalue) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -372,8 +374,8 @@ if ($mode == 'overwrite') {
 	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
 	$infoOnTransProcess = info_admin($text);
 
-	$infoOnTransProcess .= '<div class="justify">';
-	$infoOnTransProcess .= '<span class="opacitymedium">';
+	$infoOnTransProcess .= '<div class="justify info">';
+	$infoOnTransProcess .= '<span class="">';
 	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	$infoOnTransProcess .= '</span></div>';
@@ -400,7 +402,7 @@ if ($mode == 'overwrite') {
 	if (isModEnabled('multicompany') && !$user->entity) {
 		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print '<td align="center"></td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 
@@ -701,7 +703,7 @@ if ($mode == 'searchkey') {
 				}
 			} elseif (getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
+				print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
 
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {

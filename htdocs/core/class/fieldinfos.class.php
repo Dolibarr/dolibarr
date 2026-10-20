@@ -70,7 +70,7 @@ class FieldInfos
 	 *    			'date', 'datetime', 'timestamp', 'duration',
 	 *    			'boolean', 'checkbox', 'radio', 'array',
 	 *    			'email', 'phone', 'url', 'password', 'ip'
-	 *    			Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *    			Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 */
 	public $originType = '';
 
@@ -298,6 +298,11 @@ class FieldInfos
 	 * @var string|null		Dependency value (used for filter list from ajax)
 	 */
 	public $optionsSqlDependencyValue = null;
+
+	/**
+	 * @var string|null		Text searched (used for filter list from ajax)
+	 */
+	public $optionsSqlSearch = null;
 
 	/**
 	 * @var int|null		Current page when get sql result for options on 'sellist' and 'chkbxlst' field type

@@ -236,7 +236,6 @@ ActionAvailableOnVariantProductOnly=Acción solo disponible en la variante de pr
 ProductsPricePerCustomer=Precios de productos por clientes.
 ProductSupplierExtraFields=Atributos adicionales (precios de proveedores)
 DeleteLinkedProduct=Eliminar el producto secundario vinculado a la combinación
-PMPValue=precio medio ponderado
 mandatoryperiod=Períodos obligatorios
 mandatoryPeriodNeedTobeSet=Nota: Debe definirse el período (fecha de inicio y finalización)
 DefaultBOMDesc=La lista de materiales predeterminada que se recomienda usar para fabricar este producto. Este campo se puede configurar solo si la naturaleza del producto es '%s'.

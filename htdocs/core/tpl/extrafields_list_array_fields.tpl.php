@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025-2026	MDW	<mdeweerd@users.noreply.github.com>
  */
 
 // This tpl file is included into the init part of pages, so before action.
@@ -10,13 +10,19 @@
 /**
  * @var Conf	$conf
  *
+ * @var array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
  * @var string 	$extrafieldsobjectkey
  * @var string 	$extrafieldsobjectprefix
  * @var int		$extrafieldspositionoffset
+ * @var ?CommonObject $object
  */
 
 '
 @phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
+@phan-var-force string 	$extrafieldsobjectkey
+@phan-var-force string 	$extrafieldsobjectprefix
+@phan-var-force int		$extrafieldspositionoffset
+@phan-var-force ?CommonObject $object
 ';
 
 // Protection to avoid direct call of template

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026   	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new FactureFournisseur($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -115,6 +114,9 @@ if (!empty($user->socid)) {
 $usercancreate = false;
 
 $isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 

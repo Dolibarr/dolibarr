@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,10 +42,12 @@ if (isModEnabled('ldap')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_authentication
  */
 
 // Load translation files required by page
-$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
@@ -135,6 +137,7 @@ if (empty($reshook)) {
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 
+			$langs->load('errors');
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -175,6 +178,7 @@ if (empty($reshook)) {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
+						$langs->load('errors');
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success to set temporary password, send email

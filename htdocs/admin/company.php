@@ -6,8 +6,8 @@
  * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
- * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Nick Fragoulis
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
 
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
 
 /*
  * Actions
@@ -88,21 +94,31 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
+	$db->begin();
+
 	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
-		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
-			// For FR, default value of option to show profid SIREN is on by default
-			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		// Check we can change country
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if ($mysoc->country_code == 'FR' && $tmparray['code'] != $mysoc->country_code && isALNERunningVersion()) {
+			$langs->load("blockedlog");
+			setEventMessages($langs->trans("BlockedLogCountryChangeNotAllowedFR"), null, 'errors');
+			$error++;
+		} else {
+			if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+				// For FR, default value of option to show profid SIREN is on by default
+				$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+			}
+
+			$mysoc->country_id   = $tmparray['id'];
+			$mysoc->country_code = $tmparray['code'];
+			$mysoc->country_label = $tmparray['label'];
+
+			$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
+
+			activateModulesRequiredByCountry($mysoc->country_code);
 		}
-
-		$mysoc->country_id   = $tmparray['id'];
-		$mysoc->country_code = $tmparray['code'];
-		$mysoc->country_label = $tmparray['label'];
-
-		$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
-
-		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
 	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, 0, $langs, 0);
@@ -116,8 +132,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	} else {
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
-
-	$db->begin();
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("name", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -200,14 +214,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					} else {
 						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+				} elseif (!is_numeric($result)) {	// $result is a translation key
 					$error++;
 					$langs->load("errors");
-					$tmparray = explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
-					$error++;
-					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+					setEventMessages($langs->trans($result), null, 'errors');
 				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -239,6 +249,36 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
+	// Payment identifier used when the reference mode is one reference for the company.
+	// It is printed on every invoice, so a greek reference that checks one fixed amount
+	// is refused, the bank would reject most payments.
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+	$companypaymentid = GETPOST("MAIN_INFO_SOCIETE_PAYMENT_ID", 'alphanohtml');
+	if ($mysoc->country_code == 'GR' && dolGRIsAmountCheckedReference($companypaymentid)) {
+		setEventMessages($langs->trans("ErrorDIASReferenceAmountChecked"), null, 'errors');
+	} else {
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYMENT_ID", $companypaymentid, 'chaine', 0, '', $conf->entity);
+	}
+
+	// DIAS merchant code, greek companies only. It is assigned by the bank and a wrong
+	// value would route payments to another creditor, so refuse anything but 9nnnn.
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+	$diascode = preg_replace('/[^0-9]/', '', GETPOST("MAIN_INFO_SOCIETE_DIAS_CODE", 'alphanohtml'));
+	if ($diascode == '' || dolGRIsValidDiasCode($diascode)) {
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DIAS_CODE", $diascode, 'chaine', 0, '', $conf->entity);
+	} else {
+		setEventMessages($langs->trans("ErrorDIASCodeMustBe5Digits"), null, 'errors');
+	}
+
+	// DIAS code usage digit, position 10 of a greek reference
+	if (GETPOSTISSET("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE")) {
+		$diasusage = GETPOST("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", 'aZ09');
+		if (!in_array($diasusage, array('8', '9'), true)) {
+			$diasusage = '8';
+		}
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", $diasusage, 'chaine', 0, '', $conf->entity);
+	}
+
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOSTINT("SOCIETE_FISCAL_MONTH_START"), 'chaine', 0, '', $conf->entity);
 
 	// Sale tax options
@@ -255,6 +295,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat, 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE", GETPOST('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
@@ -436,8 +479,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters
@@ -450,11 +493,20 @@ if (!empty($conf->use_javascript_ajax)) {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
+
+		  // Show/hide VAT exemption code field based on VAT option
+		  $("input[name=\"optiontva\"]").change(function() {
+			if ($(this).val() == "0") {
+				$("#vat_exemption_code_div").show();
+			} else {
+				$("#vat_exemption_code_div").hide();
+			}
+		  });
 	  });';
 	print '</script>'."\n";
 }
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
@@ -503,20 +555,20 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_TEL'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_TEL'), 'phone', $mysoc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Phone mobile
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("PhoneMobile").'</label></td><td>';
-print img_picto('', 'object_phoning_mobile', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone_mobile" id="phone_mobile" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'), 'phone_mobile', $mysoc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150" name="fax" id="fax" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_FAX'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_FAX'), 'fax', $mysoc->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Email
@@ -606,6 +658,27 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintH
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
 print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
+
+// Payment identifier used to build the company wide payment reference
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("PaymentRefCompanyPaymentId"), $langs->trans("PaymentRefCompanyPaymentIdHelp")).'</td><td>';
+print '<input name="MAIN_INFO_SOCIETE_PAYMENT_ID" id="payment_id" class="minwidth250" maxlength="25" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')).'">';
+print '</td></tr>';
+
+// DIAS merchant code, greek companies only
+if ($mysoc->country_code == 'GR') {
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DIASCode"), $langs->trans("DIASCodeHelp")).'</td><td>';
+	print '<input name="MAIN_INFO_SOCIETE_DIAS_CODE" id="dias_code" class="minwidth100" maxlength="5" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE')).'">';
+	print ' <span class="opacitymedium">'.$langs->trans("DIASCodeExample").'</span>';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DIASCodeUsage"), $langs->trans("DIASCodeUsageHelp")).'</td><td>';
+	$arraydiasusage = array(
+		'8' => $langs->trans("DIASCodeUsage8"),
+		'9' => $langs->trans("DIASCodeUsage9"),
+	);
+	print $form->selectarray("MAIN_INFO_SOCIETE_DIAS_CODE_USAGE", $arraydiasusage, getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE_USAGE', '8'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '</td></tr>';
+}
 print '</td></tr>';
 
 // Tax ID Intra-community VAT number
@@ -780,6 +853,17 @@ if ($mysoc->country_code == 'FR') {
 	$tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
 }
 print '<label for="no_vat">'.$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
+
+print '<div class="shownifvatnotused" id="vat_exemption_code_div"'.(getDolGlobalString('FACTURE_TVAOPTION') ? ' style="display: none;"' : '').'>';
+$placeholder = (($mysoc->country_code == 'FR') ? 'VATEX-FR-FRANCHISE' : '');
+$tooltiptext = $langs->trans("VATExemptionCodeDesc").'<br>'.$langs->trans("VATExemptionCodeDesc2").'<br>'.$langs->trans("VATExemptionCodeDesc3");
+if (($mysoc->country_code == 'FR')) {
+	$tooltiptext .= '<br><br>'.$langs->trans("Example").':<br>';
+	$tooltiptext .= 'VATEX-FR-FRANCHISE, VATEX-FR-CGI261-4, VATEX-FR-J, VATEX-FR-I, VATEX-FR-D, ...';
+}
+print $form->textwithpicto($langs->trans("VATExemptionCode"), $tooltiptext, 1, 'help', 'valignmiddle', 0, 3, 'exemptioncode').' <input type="text" name="MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE" placeholder="'.$placeholder.'" value="'.getDolGlobalString('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE').'">';
+print '</div>';
+
 print "</td></tr>\n";
 
 print "</table>";
