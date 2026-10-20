@@ -689,6 +689,8 @@ if (empty($reshook)) {
 			$mesgs = array();
 
 			//$object->messtype       = (string) GETPOST("messtype");	// We must not be able to change the messtype
+			$previoussubject = (string) $object->sujet;
+			$previousbody = (string) $object->body;
 			$object->sujet          = (string) GETPOST("subject");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 			$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
@@ -703,6 +705,10 @@ if (empty($reshook)) {
 
 			if (!count($mesgs)) {
 				if ($object->update($user) >= 0) {
+					// Saving a different message drops its validation. A sent mailing keeps it.
+					if ($object->sujet !== $previoussubject || $object->body !== $previousbody) {
+						$object->clearMessageValidation($user);
+					}
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				}
@@ -717,13 +723,17 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action of validation confirmation
-	if ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidatesend) {
+	// Action of message validation confirmation
+	if ($action == 'confirm_validmessage' && $confirm == 'yes' && $permissiontovalidatesend) {
 		if ($object->id > 0) {
-			$object->valid($user);
-			setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-			exit;
+			$result = $object->validMessage($user);
+			if ($result > 0) {
+				setEventMessages($langs->trans("MailingMessageSuccessfullyValidated"), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			dol_print_error($db);
 		}
@@ -732,7 +742,7 @@ if (empty($reshook)) {
 	// Action of validation confirmation
 	if ($action == 'confirm_settodraft' && $confirm == 'yes' && $permissiontocreate) {
 		if ($object->id > 0) {
-			$result = $object->setStatut(0);
+			$result = $object->setDraft($user);
 			if ($result > 0) {
 				//setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -984,9 +994,9 @@ if ($action == 'create') {	// aaa
 		if ($action == 'settodraft') {
 			// Confirmation back to draft
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("SetToDraft"), $langs->trans("ConfirmUnvalidateEmailing"), "confirm_settodraft", '', '', 1);
-		} elseif ($action == 'valid') {
-			// Confirmation of mailing validation
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailing"), $langs->trans("ConfirmValidMailing"), "confirm_valid", '', '', 1);
+		} elseif ($action == 'validmessage') {
+			// Confirmation of message validation
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailingMessage"), $langs->trans("ConfirmValidMailingMessage"), "confirm_validmessage", '', '', 1);
 		} elseif ($action == 'reset') {
 			// Confirm reset
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ResetMailing"), $langs->trans("ConfirmResetMailing", $object->ref), "confirm_reset", '', '', 2);
@@ -1227,6 +1237,22 @@ if ($action == 'create') {	// aaa
 			}
 			print '</td></tr>';
 
+			// Message validation. The recipient list has its own validation on the recipients page.
+			print '<tr><td>';
+			print $langs->trans("MessageValidated");
+			print '</td><td>';
+			if (!empty($object->date_validation)) {
+				if ($object->user_validation_id > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($object->user_validation_id);
+					print $userstatic->getNomUrl(1).' ';
+				}
+				print dol_print_date($object->date_validation, 'dayhour');
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+			}
+			print '</td></tr>';
+
 			print '<tr><td>';
 			print $langs->trans("MAIN_MAIL_SENDMODE");
 			print '</td><td>';
@@ -1277,7 +1303,7 @@ if ($action == 'create') {	// aaa
 			}
 
 			// Actions Buttons
-			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test', 'editevenunsubscribe'))) {
+			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'validmessage', 'delete', 'sendall', 'clone', 'test', 'editevenunsubscribe'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
 				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
@@ -1309,13 +1335,14 @@ if ($action == 'create') {	// aaa
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&token='.newToken().'&id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
 				}
 
-				if ($object->status == 0) {
-					if ($object->nbemail <= 0) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("Validate").'</a>';
+				if ($object->status == 0 && empty($object->date_validation)) {
+					$messageisready = ($object->body !== '' && $object->body !== null && ($object->messtype == 'sms' || $object->sujet !== ''));
+					if (!$messageisready) {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("MessageNotReady")).'">'.$langs->trans("ValidateMessage").'</a>';
 					} elseif (!$user->hasRight('mailing', 'valider')) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</a>';
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidateMessage").'</a>';
 					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Validate").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validmessage&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ValidateMessage").'</a>';
 					}
 				}
 
@@ -1566,6 +1593,22 @@ if ($action == 'create') {	// aaa
 				} else {
 					print $nbemail;
 				}
+			}
+			print '</td></tr>';
+
+			// Message validation. The recipient list has its own validation on the recipients page.
+			print '<tr><td>';
+			print $langs->trans("MessageValidated");
+			print '</td><td>';
+			if (!empty($object->date_validation)) {
+				if ($object->user_validation_id > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($object->user_validation_id);
+					print $userstatic->getNomUrl(1).' ';
+				}
+				print dol_print_date($object->date_validation, 'dayhour');
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 			}
 			print '</td></tr>';
 
