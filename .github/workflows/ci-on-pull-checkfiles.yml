@@ -46,7 +46,7 @@ jobs:
             #  || echo "::warning::Failed to add the label \"PR not qualified\" on the PR."
 
             echo "::error::Translation files outside htdocs/langs/en_US must not be modified in a pull request. Translations are generated from en_US. The following files were modified:"
-            echo "$CHANGED_FILES" | sed 's/^/ - /'
+            echo "$CHANGED_FILES" | awk '{ print " - " $0 }'
             echo ""
             echo "Please revert your changes on these files and keep only modifications in htdocs/langs/en_US/."
             exit 1
@@ -86,3 +86,30 @@ jobs:
           fi
 
           echo "The number of files modified by the PR is not higher than 10. OK."
+
+      - name: Check that the ChangeLog file is not modified
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[].filename' \
+            | grep -E '^ChangeLog$' || true)
+
+          if [ -n "$CHANGED_FILES" ]; then
+            # Comment the PR to explain that the ChangeLog file must not be edited.
+            # The comment is added only once, because this workflow is also triggered on each new push into the PR.
+            COMMENT_BODY="PR must not modify the ChangeLog file. This file is generated from all commit messages during the release process by the Project releaser. Use an uppercase keyword (FIX, CLOSE, NEW, PERF, QUAL, UXUI) in the PR title to have it appear into the generated ChangeLog."
+            if ! gh api "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" --paginate --jq '.[].body' 2>/dev/null | grep -qF "PR must not modify the ChangeLog file"; then
+              gh pr comment "${{ github.event.number }}" --repo "${{ github.repository }}" --body "$COMMENT_BODY" \
+                || echo "::warning::Failed to comment the PR."
+            fi
+
+            echo "::error::The ChangeLog file must not be modified in a pull request. It is generated from commit messages during the release process."
+            echo ""
+            echo "Please revert your changes on the ChangeLog file."
+            exit 1
+          fi
+
+          echo "The ChangeLog file was not modified. OK."

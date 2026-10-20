@@ -688,9 +688,14 @@ class SMTPs
 					$_retVal = true;
 					break;
 				case 'PLAIN':
-					$this->socket_send_str('AUTH PLAIN', '334');
-					// The error here just means the ID/password combo doesn't work.
-					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					$_retVal = $this->socket_send_str('AUTH PLAIN', '334');
+					if (!$_retVal) {
+						// The login and password must not be sent if the server does not wait for them
+						$this->_setErr(130, 'Error when asking for AUTH PLAIN');
+					} else {
+						// The error here just means the ID/password combo doesn't work.
+						$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					}
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
@@ -807,15 +812,11 @@ class SMTPs
 					 */
 
 					/*
-					 * TODO
-					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
-					 * if not, the whole message will fail
-					 * If any email address fails, we will need to RESET the connection,
-					 * mark the last address as "bad" and start the address loop over again.
-					 * If any address fails, the entire message fails.
+					 * If any address fails, the entire message fails: the sending is reported as failed, so sending
+					 * the message to the other recipients would make duplicates when it is sent again.
+					 * Closing the connection before the end of the data cancels the message.
 					 */
 					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
-						// Stop here, sending DATA would desynchronize the SMTP responses
 						fclose($this->socket);
 						return false;
 					}
@@ -825,6 +826,7 @@ class SMTPs
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
 				if (!$this->socket_send_str('DATA', '354')) {
+					// The data must not be sent, the server would read it as SMTP commands
 					fclose($this->socket);
 					return false;
 				}
@@ -838,7 +840,7 @@ class SMTPs
 				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
-				fwrite($this->socket, 'QUIT');
+				$this->socket_send_str('QUIT');
 			} else {
 				// We got error code into $this->lastretval
 			}
@@ -1574,8 +1576,6 @@ class SMTPs
 	 */
 	public function getHeader()
 	{
-		global $conf;
-
 		$_header = 'From: '.$this->getFrom('org')."\r\n"
 		. 'To: '.$this->getTo()."\r\n";
 
@@ -1610,7 +1610,8 @@ class SMTPs
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
 		}
 		if ($this->getMoreInHeader()) {
-			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
+			// Value must include the "\r\n". With MAIN_FIX_FOR_BUGGED_MTA, CMailFile gives "\n", but SMTP needs "\r\n"
+			$_header .= preg_replace('/(?<!\r)\n/', "\r\n", $this->getMoreInHeader());
 		}
 
 		if ($this->getSensitivity()) {
@@ -1634,7 +1635,7 @@ class SMTPs
 		}
 
 		$_header .= 'X-Mailer: Dolibarr version '.DOL_VERSION.' (using SMTPs Mailer)'."\r\n";
-		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
+		$_header .= 'X-Dolibarr-Option: '.(getDolGlobalString('MAIN_MAIL_USE_MULTI_PART') ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
 		// Add also $this->references and In-Reply-To
@@ -1723,7 +1724,7 @@ class SMTPs
 			$_msgData = $_msgData[$_types[0]];
 
 			$content = 'Content-Type: '.$_msgData['mimeType'].'; charset="'.$this->getCharSet().'"'."\r\n"
-			. 'Content-Transfer-Encoding: '.$this->getTransEncodeType()."\r\n"
+			. 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_msgData['data'])."\r\n"
 			. 'Content-Disposition: inline'."\r\n"
 			. 'Content-Description: Message'."\r\n";
 
@@ -1805,6 +1806,7 @@ class SMTPs
 				} else {
 					if (array_key_exists('image', $this->_msgContent)) {
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n";
 						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 						$content .= 'Content-Type: multipart/related; boundary="'.$this->_getBoundary('related').'"'."\r\n";
@@ -1819,6 +1821,7 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'])."\r\n";
 						$content .= "\r\n".$_content['dataText']."\r\n";
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
@@ -1826,6 +1829,7 @@ class SMTPs
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
 					$content .= "\r\n";
+					$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['data'])."\r\n";
 
 					if ($this->getMD5flag()) {
 						$content .= 'Content-MD5: '.$_content['md5']."\r\n";
@@ -1848,6 +1852,23 @@ class SMTPs
 		}
 
 		return $content;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Content-Transfer-Encoding of a text part: the text is sent as is, so it is '8bit' when it has non ASCII
+	 * characters (UTF-8 accents...), '7bit' is valid only for an ASCII text (RFC 2045).
+	 *
+	 * @param	string	$text	Text of the part
+	 * @return	string			Content-Transfer-Encoding
+	 */
+	private function _getTextTransferEncoding($text)
+	{
+		// phpcs:enable
+		if (preg_match('/[^\x00-\x7F]/', $text)) {
+			return '8bit';
+		}
+		return $this->getTransEncodeType();
 	}
 
 	/**
@@ -2085,7 +2106,8 @@ class SMTPs
 		$limit = 0;
 
 		while (substr($server_response, 3, 1) != ' ' && $limit < 100) {
-			if (!($server_response = fgets($socket, 256))) {
+			// Read the whole line (a reply line longer than the read size would be read as 2 replies)
+			if (!($server_response = fgets($socket))) {
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 				break;

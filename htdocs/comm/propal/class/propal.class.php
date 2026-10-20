@@ -597,7 +597,6 @@ class Propal extends CommonObject
 		return parent::persistFieldValue($user, $field);
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Add line into array ->lines
