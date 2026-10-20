@@ -6981,20 +6981,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *     Show a confirmation HTML form or AJAX popup
+	 * Show a confirmation HTML form or AJAX popup
 	 *
-	 * @param string $page Url of page to call if confirmation is OK
-	 * @param string $title Title
-	 * @param string $question Question
-	 * @param string $action Action
-	 * @param array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                                                                                                                                                                                                                          'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                                                                                                                                                                                                                          'other', 'onecolumn' or 'hidden'...
-	 * @param string $selectedchoice "" or "no" or "yes"
-	 * @param int<0,2>|string $useajax 0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int $height Force height of box
-	 * @param int $width Force width of box
-	 * @return    void
+	 * @param 	string 	$page 				Url of page to call if confirmation is OK
+	 * @param 	string 	$title 				Title
+	 * @param 	string 	$question 			Question
+	 * @param 	string 	$action 			Action
+	 * @param 	array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *                                                                                                                                                                                                                                              'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                                                                                                                                                                                                                              'other', 'onecolumn' or 'hidden'...
+	 * @param 	string 	$selectedchoice 	"" or "no" or "yes"
+	 * @param 	int<0,2>|string $useajax 		0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * @param 	int 	$height 			Force height of box
+	 * @param 	int 	$width 				Force width of box
+	 * @return	void
 	 * @deprecated
 	 * @see formconfirm()
 	 */
