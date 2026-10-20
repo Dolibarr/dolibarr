@@ -117,6 +117,9 @@ if ($object instanceof CommonObject) {
 			if ($dependencyvalue !== '') {
 				$fieldInfos->optionsSqlDependencyValue = $dependencyvalue;
 			}
+			if ($search !== '') {
+				$fieldInfos->optionsSqlSearch = $search;
+			}
 
 			/**
 			 * @var CommonSellistField $field
