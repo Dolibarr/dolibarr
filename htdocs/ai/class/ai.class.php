@@ -526,7 +526,7 @@ class Ai
 	 *
 	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
 	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
-	 * @return array<string,string|float>	Array of values
+	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
@@ -542,7 +542,11 @@ class Ai
 			}
 
 			if (!empty($json['document_info']['title'])) {
-				$tmparray['title'] = $json['document_info']['title'];
+				$tmparray['invoice_label'] = $json['document_info']['title'];
+			} elseif (!empty($json['recipient']['description'])) {
+				$tmparray['invoice_label'] = $json['recipient']['description'];
+			} elseif (!empty($json['document_info']['invoice_reference'])) {
+				$tmparray['invoice_label'] = $json['document_info']['invoice_reference'];
 			}
 
 			// Issue date
@@ -560,12 +564,17 @@ class Ai
 			}
 
 			// Currency
-			if ($json['summary']['currency'] == '€') {
+			// Note: We extract subarrays into local variables, so the is_string() checks do not narrow the type of the $json subarrays for the rest of the method
+			$summary = (is_array($json['summary'] ?? null) ? $json['summary'] : array());
+			$documentinfo = (is_array($json['document_info'] ?? null) ? $json['document_info'] : array());
+			$currencyinsummary = (isset($summary['currency']) && is_string($summary['currency'])) ? $summary['currency'] : '';
+			$currencyindocinfo = (isset($documentinfo['currency_code']) && is_string($documentinfo['currency_code'])) ? $documentinfo['currency_code'] : '';
+			if ($currencyinsummary == '€') {
 				$tmparray['currency_code'] = 'EUR';
-			} elseif (strlen($json['summary']['currency']) == 3) {
-				$tmparray['currency_code'] = $json['summary']['currency'];
-			} elseif (strlen($json['document_info']['currency_code']) == 3) {
-				$tmparray['currency_code'] = $json['document_info']['currency_code'];
+			} elseif (dol_strlen($currencyinsummary) == 3) {
+				$tmparray['currency_code'] = $currencyinsummary;
+			} elseif (dol_strlen($currencyindocinfo) == 3) {
+				$tmparray['currency_code'] = $currencyindocinfo;
 			}
 
 			// Note
@@ -620,11 +629,6 @@ class Ai
 				}
 			}
 
-			// Invoice
-			if (!empty($json['recipient']['description'])) {
-				$tmparray['invoice_label'] = $json['recipient']['description'];
-			}
-
 			// Items
 			if (empty($json['items'])) {
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
@@ -640,12 +644,12 @@ class Ai
 
 					if (!empty($item['description'])) {
 						$tmparray['lines'][$i]['desc'] = $item['description'];
-					} elseif (!empty($item['service'] && is_string($item['service']))) {
+					} elseif (!empty($item['service']) && is_string($item['service'])) {
 						$tmparray['lines'][$i]['desc'] = $item['service'];
 					}
 
 					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
-					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? ($item['vat_rate'] ?? ($item['vatrate'] ?? null));
 					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
 					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
 					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
@@ -663,6 +667,21 @@ class Ai
 					if (!empty($item['period']) && !empty($item['period']['end_date'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
 					}
+				}
+			}
+
+			if (!empty($json['summary'])) {
+				// The AI service may use different key names for the same data
+				$tmparray['total_ht'] = $json['summary']['total_excluding_tax'] ?? ($json['summary']['total_excl_tax'] ?? ($json['summary']['total_ht'] ?? ($json['summary']['subtotal'] ?? null)));
+				$tmparray['vat_rate'] = $json['summary']['tax_rate'] ?? ($json['summary']['vat_rate'] ?? ((isset($json['summary']['tax']) && is_array($json['summary']['tax'])) ? ($json['summary']['tax']['rate'] ?? null) : null));
+				$tmparray['total_ttc'] = $json['summary']['total_including_tax'] ?? ($json['summary']['total_incl_tax'] ?? ($json['summary']['total_ttc'] ?? ($json['summary']['total'] ?? null)));
+			}
+
+			// If no global VAT rate found, use the VAT rate of lines when all lines have the same one
+			if (!isset($tmparray['vat_rate']) && !empty($tmparray['lines'])) {
+				$vatratesoflines = array_unique(array_map('strval', array_filter(array_column($tmparray['lines'], 'vat_rate'), 'is_numeric')));
+				if (count($vatratesoflines) == 1 && count(array_filter(array_column($tmparray['lines'], 'vat_rate'), 'is_numeric')) == count($tmparray['lines'])) {
+					$tmparray['vat_rate'] = (float) reset($vatratesoflines);
 				}
 			}
 		}
