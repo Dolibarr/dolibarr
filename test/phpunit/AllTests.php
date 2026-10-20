@@ -162,7 +162,7 @@ class AllTests
 	/**
 	 * Function suite to make all PHPUnit tests
 	 *
-	 * @return	void
+ * @return	PHPUnit\Framework\TestSuite
 	 */
 	public static function suite()
 	{
@@ -243,6 +243,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');
+		require_once dirname(__FILE__).'/UserCreateFromContactAddressTest.php';
+		$suite->addTestSuite('UserCreateFromContactAddressTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
 
@@ -255,6 +257,8 @@ class AllTests
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
+		require_once dirname(__FILE__).'/PdfBuildAddressContactSelectionTest.php';
+		$suite->addTestSuite('PdfBuildAddressContactSelectionTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
 		require_once dirname(__FILE__).'/CDavLibTest.php';
@@ -276,6 +280,8 @@ class AllTests
 		$suite->addTestSuite('FormMailTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
+		require_once dirname(__FILE__).'/SocieteImportExportAddressModeContractTest.php';
+		$suite->addTestSuite('SocieteImportExportAddressModeContractTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
 		$suite->addTestSuite('ExpeditionTest');
 		require_once dirname(__FILE__).'/ExpeditionLineFetchTest.php';
@@ -286,6 +292,14 @@ class AllTests
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
 		$suite->addTestSuite('ContactTest');
+		require_once dirname(__FILE__).'/ContactAddressResolutionTest.php';
+		$suite->addTestSuite('ContactAddressResolutionTest');
+		require_once dirname(__FILE__).'/ContactPersistenceAddressModeTest.php';
+		$suite->addTestSuite('ContactPersistenceAddressModeTest');
+		require_once dirname(__FILE__).'/ContactDocSubstitutionTest.php';
+		$suite->addTestSuite('ContactDocSubstitutionTest');
+		require_once dirname(__FILE__).'/ContactAddressMigrationContractTest.php';
+		$suite->addTestSuite('ContactAddressMigrationContractTest');
 		require_once dirname(__FILE__).'/AdherentTest.php';
 		$suite->addTestSuite('AdherentTest');
 
@@ -438,6 +452,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIUserTest');
 			require_once dirname(__FILE__).'/RestAPIContactTest.php';
 			$suite->addTestSuite('RestAPIContactTest');
+			require_once dirname(__FILE__).'/ApiContactsUseThirdpartyAddressTest.php';
+			$suite->addTestSuite('ApiContactsUseThirdpartyAddressTest');
 			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 			$suite->addTestSuite('RestAPIDocumentTest');
 			require_once dirname(__FILE__).'/RestAPIMoTest.php';

@@ -56,7 +56,7 @@ if (!empty($this->control->tpl['action_delete'])) {
 
 <tr>
 	<td width="20%"><?php echo $langs->trans("Lastname"); ?></td>
-	<td width="30%"><?php echo $this->control->tpl['name']; ?></td>
+	<td width="30%"><?php echo $this->control->tpl['lastname']; ?></td>
 	<td width="25%"><?php echo $langs->trans("Firstname"); ?></td>
 	<td width="25%"><?php echo $this->control->tpl['firstname']; ?></td>
 </tr>

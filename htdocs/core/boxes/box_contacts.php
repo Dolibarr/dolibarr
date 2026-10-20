@@ -84,7 +84,7 @@ class box_contacts extends ModeleBoxes
 		if ($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire')) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
-			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
+			$sql .= ", sp.address, sp.zip, sp.town, sp.fk_pays as country_id, sp.fk_departement as state_id, sp.use_thirdparty_address, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -96,9 +96,10 @@ class box_contacts extends ModeleBoxes
 				$sql .= ", s.code_compta_fournisseur";
 			}
 			$sql .= ", s.logo, s.email, s.entity";
-			$sql .= ", co.label as country, co.code as country_code";
+			$sql .= ", co.label as country, co.code as country_code, state.nom as state, state.code_departement as state_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state ON sp.fk_departement = state.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
@@ -139,6 +140,8 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->civility_id = $objp->civility_id;
 					$contactstatic->status = $objp->status;
 					$contactstatic->statut = $objp->status;
+					$contactstatic->socid = $objp->fk_soc;
+					$contactstatic->fk_soc = $objp->fk_soc;
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
@@ -146,8 +149,13 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
+					$contactstatic->country_id = $objp->country_id;
+					$contactstatic->state_id = $objp->state_id;
+					$contactstatic->use_thirdparty_address = isset($objp->use_thirdparty_address) && !is_null($objp->use_thirdparty_address) ? (int) $objp->use_thirdparty_address : null;
 					$contactstatic->country = $objp->country;
 					$contactstatic->country_code = $objp->country_code;
+					$contactstatic->state = $objp->state;
+					$contactstatic->state_code = $objp->state_code;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;

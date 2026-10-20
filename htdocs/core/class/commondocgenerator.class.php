@@ -562,27 +562,32 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $extrafields;
 
-		if (empty($object->country) && !empty($object->country_code)) {
-			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
+		$effectiveaddressobject = $object;
+		if (method_exists($object, 'getEffectiveAddressObject')) {
+			$effectiveaddressobject = $object->getEffectiveAddressObject();
 		}
-		if (empty($object->state) && !empty($object->state_code)) {
-			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
-			$object->state = getState($state_id, '0');
+
+		if (empty($effectiveaddressobject->country) && !empty($effectiveaddressobject->country_code)) {
+			$effectiveaddressobject->country = $outputlangs->transnoentitiesnoconv("Country".$effectiveaddressobject->country_code);
+		}
+		if (empty($effectiveaddressobject->state) && !empty($effectiveaddressobject->state_code)) {
+			$state_id = dol_getIdFromCode($this->db, $effectiveaddressobject->state_code, 'c_departements', 'code_departement', 'rowid');
+			$effectiveaddressobject->state = getState($state_id, '0');
 		}
 
 		$array_contact = array(
 			$array_key.'_fullname' => $object->getFullName($outputlangs, 1),
 			$array_key.'_lastname' => $object->lastname,
 			$array_key.'_firstname' => $object->firstname,
-			$array_key.'_address' => $object->address,
-			$array_key.'_zip' => $object->zip,
-			$array_key.'_town' => $object->town,
-			$array_key.'_state_id' => $object->state_id,
-			$array_key.'_state_code' => $object->state_code,
-			$array_key.'_state' => $object->state,
-			$array_key.'_country_id' => $object->country_id,
-			$array_key.'_country_code' => $object->country_code,
-			$array_key.'_country' => $object->country,
+			$array_key.'_address' => (string) $effectiveaddressobject->address,
+			$array_key.'_zip' => (string) $effectiveaddressobject->zip,
+			$array_key.'_town' => (string) $effectiveaddressobject->town,
+			$array_key.'_state_id' => $effectiveaddressobject->state_id,
+			$array_key.'_state_code' => (string) $effectiveaddressobject->state_code,
+			$array_key.'_state' => (string) $effectiveaddressobject->state,
+			$array_key.'_country_id' => $effectiveaddressobject->country_id,
+			$array_key.'_country_code' => (string) $effectiveaddressobject->country_code,
+			$array_key.'_country' => (string) $effectiveaddressobject->country,
 			$array_key.'_poste' => $object->poste,
 			$array_key.'_socid' => $object->socid,
 			$array_key.'_statut' => $object->statut ? $object->statut : $object->status,
