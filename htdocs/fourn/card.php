@@ -576,14 +576,14 @@ if ($object->id > 0) {
 
 		// Box outstanding bill
 		$text = $langs->trans("CurrentOutstandingBill");
-		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+		$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid';
 		$icon = 'bill';
 		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $langs->transnoentitiesnoconv("CurrentOutstandingBill"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $langs->transnoentitiesnoconv("CurrentOutstandingBill"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid', '', '');
 		} else {
 			$boxstat .= $boxstattmp;
 		}
@@ -592,14 +592,14 @@ if ($object->id > 0) {
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
-			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
+			$link = DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid&search_late=late';
 			$icon = 'bill';
 			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $langs->transnoentitiesnoconv("CurrentOutstandingBillLate"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id, '', '');
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $langs->transnoentitiesnoconv("CurrentOutstandingBillLate"), $boxstattmp, '/fourn/recap-fourn.php?socid='.$object->id.'&search_status=unpaid&search_late=late', '', '');
 			} else {
 				$boxstat .= $boxstattmp;
 			}

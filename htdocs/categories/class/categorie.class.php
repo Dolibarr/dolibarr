@@ -2334,7 +2334,7 @@ class Categorie extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		$current_lang = (is_object($langs) ? $langs->getDefaultLang() : '');	// $langs may be null when called from a page with NOREQUIRETRAN
 
 		$sql = "SELECT lang, label, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_lang";

@@ -465,7 +465,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Reconciliation
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
+	if (!empty($object->user_rappro) || !empty($object->fk_user_rappro) || !empty($object->date_rappro)) {
 		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
@@ -486,7 +486,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->fk_user_rappro ? $object->fk_user_rappro : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
