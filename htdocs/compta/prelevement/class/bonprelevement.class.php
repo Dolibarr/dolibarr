@@ -2021,7 +2021,7 @@ class BonPrelevement extends CommonObject
 							$bankaccount = new CompanyBankAccount($this->db);
 							$bankaccount->fetch($companybankaccountid);
 							if ($bankaccount->id > 0) {
-								$daterum = $bankaccount->date_rum;
+								$daterum = (!empty($bankaccount->date_rum) ? $bankaccount->date_rum : $bankaccount->datec);	// Same fallback as the default bank account, or <DtOfSgntr> is empty
 								$iban = $bankaccount->iban;
 								$bic = $bankaccount->bic;
 								$drum = $bankaccount->id;
@@ -2203,7 +2203,7 @@ class BonPrelevement extends CommonObject
 							$bankaccount = new CompanyBankAccount($this->db);
 							$bankaccount->fetch($companybankaccountid);
 							if ($bankaccount->id > 0) {
-								$daterum = $bankaccount->date_rum;
+								$daterum = (!empty($bankaccount->date_rum) ? $bankaccount->date_rum : $bankaccount->datec);	// Same fallback as the default bank account, or <DtOfSgntr> is empty
 								$iban = $bankaccount->iban;
 								$bic = $bankaccount->bic;
 								$drum = $bankaccount->id;
