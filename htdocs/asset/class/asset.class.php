@@ -794,7 +794,9 @@ class Asset extends CommonObject
 	public function hasDepreciationLinesInBookkeeping()
 	{
 		global $langs;
-		$langs->load('assets');
+		if (is_object($langs)) {	// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+			$langs->load('assets');
+		}
 
 		// Clean parameters
 		$this->id = $this->id > 0 ? $this->id : 0;

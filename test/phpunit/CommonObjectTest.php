@@ -1381,6 +1381,397 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * Data provider for testIsFieldReadableFromUi
+	 *
+	 * @return array<string,array{0:string,1:array<string,mixed>,2:bool}>
+	 */
+	public function fieldReadableFromUiProvider()
+	{
+		return array(
+			'visible_card' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 1), true),
+			'visible_card_not_list' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => -1), true),
+			'visible_view_only' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 5), true),
+			'visible_expression_true' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => '1 + 0'), true),
+			'visible_expression_false' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => '0 + 0'), false),
+			'visible_list_only' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 2), false),
+			'hidden' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1, 'visible' => 0), false),
+			'no_visible_attribute' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 1), false),
+			'hidden_but_uieditable' => array('test_field', array('type' => 'html', 'label' => 'Test', 'enabled' => 1, 'visible' => 0, 'uieditable' => 1), true),
+			'not_enabled' => array('test_field', array('type' => 'varchar(30)', 'label' => 'Test', 'enabled' => 0, 'visible' => 1), false),
+			'password' => array('test_field', array('type' => 'password', 'label' => 'Test', 'enabled' => 1, 'visible' => 1), false),
+		);
+	}
+
+	/**
+	 * isFieldReadableFromUi() allows only enabled fields visible on the card, or editable from the user interface
+	 *
+	 * @dataProvider fieldReadableFromUiProvider
+	 * @param string              $fieldName   Field name
+	 * @param array<string,mixed> $fieldConfig Field configuration
+	 * @param bool                $expected    Expected result
+	 * @return void
+	 */
+	public function testIsFieldReadableFromUi($fieldName, $fieldConfig, $expected)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db, $fieldName, $fieldConfig) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array();
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB              $db          Database handler
+			 * @param string              $fieldName   Field name
+			 * @param array<string,mixed> $fieldConfig Field configuration
+			 */
+			public function __construct($db, $fieldName, $fieldConfig)
+			{
+				$this->db = $db;
+				$this->fields[$fieldName] = $fieldConfig;
+			}
+		};
+
+		$this->assertSame($expected, $localobject->isFieldReadableFromUi($user, $fieldName), 'Config: '.json_encode($fieldConfig));
+		$this->assertFalse($localobject->isFieldReadableFromUi($user, 'undefined_field'), 'Undefined field must not be readable from UI');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Fields readable from the user interface on a core class: totals and notes, but not the private note for external users
+	 *
+	 * @return void
+	 */
+	public function testIsFieldReadableFromUiOnCoreClasses()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		foreach (array('ref', 'ref_client', 'total_ht', 'total_tva', 'total_ttc', 'note_public', 'note_private') as $field) {
+			$this->assertTrue($propal->isFieldReadableFromUi($user, $field), 'Propal '.$field.' must be readable from UI');
+		}
+		$this->assertFalse($propal->isFieldReadableFromUi($user, 'import_key'), 'Propal import_key is hidden');
+
+		$externaluser = clone $user;
+		$externaluser->socid = 1;
+		$this->assertTrue($propal->isFieldReadableFromUi($externaluser, 'note_public'));
+		$this->assertFalse($propal->isFieldReadableFromUi($externaluser, 'note_private'), 'The private note is hidden to external users');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * getFieldValueFromAjaxPost() reads the inputs named ajaxfield_<field> with a filter matching the type of field
+	 *
+	 * @return void
+	 */
+	public function testGetFieldValueFromAjaxPost()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 10),
+				'note' => array('type' => 'html', 'label' => 'Note', 'enabled' => 1, 'visible' => 1, 'position' => 20),
+				'qty' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'position' => 30),
+				'date_start' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 40),
+				'date_end' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 50),
+				'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 60),
+				'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'position' => 70),
+			);
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$savpost = $_POST;
+		$_POST = array(
+			'ajaxfield_label' => 'My <b>label</b>',
+			'ajaxfield_note' => '<b>Bold</b><script>alert(1)</script>',
+			'ajaxfield_qty' => '12',
+			'ajaxfield_date_startday' => '15', 'ajaxfield_date_startmonth' => '3', 'ajaxfield_date_startyear' => '2026',
+			'ajaxfield_date_endday' => '15', 'ajaxfield_date_endmonth' => '3', 'ajaxfield_date_endyear' => '2026', 'ajaxfield_date_endhour' => '14', 'ajaxfield_date_endmin' => '30',
+			'ajaxfield_fk_soc' => '1',
+			'ajaxfield_amount' => '10',
+			'value' => 'Not read, inputs are prefixed',
+		);
+
+		$this->assertSame('My label', $localobject->getFieldValueFromAjaxPost('label'), 'varchar is filtered with alphanohtml');
+		$this->assertStringContainsString('<b>Bold</b>', $localobject->getFieldValueFromAjaxPost('note'));
+		$this->assertStringNotContainsString('<script', $localobject->getFieldValueFromAjaxPost('note'), 'html is filtered with restricthtml');
+		$this->assertSame(12, $localobject->getFieldValueFromAjaxPost('qty'));
+		$this->assertEquals(dol_mktime(12, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'), 'Dates at noon like the cards');
+		$this->assertEquals(dol_mktime(14, 30, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_end'));
+		$this->assertSame(1, $localobject->getFieldValueFromAjaxPost('fk_soc'), 'Links are read as an id');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('amount'), 'Amounts are not supported yet');
+
+		$_POST = array('ajaxfield_label' => '');
+		$this->assertSame('', $localobject->getFieldValueFromAjaxPost('label'), 'An empty input empties the field');
+
+		$_POST = array('value' => 'Not read');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('label'), 'A missing input must never empty a field');
+		$this->assertNull($localobject->getFieldValueFromAjaxPost('date_start'));
+
+		$_POST = $savpost;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * ajaxOutputField() returns the output of showOutputField(), also for fields hidden from generic forms like notes
+	 *
+	 * @return void
+	 */
+	public function testAjaxOutputField()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		$propal->ref_client = 'REF<CLIENT>';
+		$propal->note_public = '<b>Public note</b>';
+
+		$this->assertSame($propal->showOutputField($propal->fields['ref_client'], 'ref_client', $propal->ref_client), $propal->ajaxOutputField('ref_client'));
+		$this->assertStringNotContainsString('<CLIENT>', $propal->ajaxOutputField('ref_client'), 'Output is escaped');
+		$this->assertStringContainsString('<b>Public note</b>', $propal->ajaxOutputField('note_public'), 'Note (visible = 0) is output');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * ajaxInputField() returns inputs named ajaxfield_<field>, read back by getFieldValueFromAjaxPost(), also for notes
+	 *
+	 * @return void
+	 */
+	public function testAjaxInputField()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+		$propal = new Propal($db);
+		$propal->ref_client = 'REF"CLIENT';
+		$propal->note_public = 'Public note';
+
+		$input = $propal->ajaxInputField('ref_client');
+		$this->assertStringContainsString('name="ajaxfield_ref_client"', $input);
+		$this->assertStringContainsString('value="REF&quot;CLIENT"', $input, 'Value is escaped');
+
+		// Constant used by DolEditor, defined by main.inc.php only
+		if (!defined('ROWS_3')) {
+			define('ROWS_3', 3);
+		}
+		$input = $propal->ajaxInputField('note_public');
+		$this->assertMatchesRegularExpression('/<textarea[^>]*name="ajaxfield_note_public"/', $input, 'Note (visible = 0) has an input');
+		$this->assertStringContainsString('Public note', $input);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
+	 *
+	 * @return void
+	 */
+	public function testUpdateFieldFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$localobject->ref_client = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+
+		// Field without the opt-in "uieditable"
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref', 'HACKED'));
+		$this->assertNotEmpty($localobject->error);
+
+		// User without the write permission
+		$userwithoutright = new User($db);
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($userwithoutright, 'note_public', 'Not allowed'));
+
+		// Note saved with update_note()
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'note_public', '<b>Public note</b>'), $localobject->error);
+		$checkobject = new Commande($db);
+		$checkobject->fetch($id);
+		$this->assertSame('<b>Public note</b>', $checkobject->note_public);
+
+		// Field saved with the default setValueFrom(), blocked when object is not a draft
+		$localobject->fields['ref_ext']['uieditable'] = 1;
+		$localobject->status = $localobject->statut = Commande::STATUS_VALIDATED;
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-LOCKED'));
+		$localobject->status = $localobject->statut = Commande::STATUS_DRAFT;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-'.$id), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame('REFEXT-'.$id, $checkobject->ref_ext);
+
+		// Customer ref saved with set_ref_client(), that refuses a ref already used by another order of the same thirdparty
+		$refclient = 'REFCLIENT-UI-'.$id;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_client', $refclient), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame($refclient, $checkobject->ref_client);
+
+		$otherobject = new Commande($db);
+		$otherobject->initAsSpecimen();
+		$otherobject->socid = $localobject->socid;
+		$otherobject->ref = '';
+		$otherobject->ref_client = '';
+		$otherid = $otherobject->create($user);
+		$this->assertGreaterThan(0, $otherid, 'create: '.$otherobject->error);
+		$otherobject = new Commande($db);
+		$otherobject->fetch($otherid);
+		if (!getDolGlobalString('ORDER_ALLOW_DUPLICATE_REF_CLIENT')) {
+			$this->assertLessThan(0, $otherobject->updateFieldFromUi($user, 'ref_client', $refclient));
+			$this->assertNotEmpty($otherobject->error);
+			$this->assertSame('', (string) $otherobject->ref_client, 'Value in memory must be restored when save fails');
+		}
+
+		$otherobject->delete($user);
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The opportunity status of a project is changed from the kanban view (core/ajax/objectfield.php), also when the project is open
+	 *
+	 * @return void
+	 */
+	public function testUpdateOpportunityStatusOfProjectFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savopportunities = getDolGlobalString('PROJECT_USE_OPPORTUNITIES');
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+		// The module and the write permission may be missing in the database of the CI
+		$savmodules = $conf->modules;
+		$savrights = isset($user->rights->projet) ? clone $user->rights->projet : null;
+		$conf->modules['projet'] = 'projet';
+		if (!isset($user->rights->projet)) {
+			$user->rights->projet = new stdClass();
+		}
+		$user->rights->projet->creer = 1;
+
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE active = 1 ORDER BY rowid DESC LIMIT 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$this->assertNotEmpty($obj, 'A status of opportunity is required');
+		$oppstatus = (int) $obj->rowid;
+
+		$localobject = new Project($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = 'PJUI-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Project($db);
+		$localobject->fetch($id);
+		$localobject->setValid($user);
+
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_opp_status'), 'Opportunity status editable from UI on an open project');
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'ref'), 'Ref of a project must not be editable from UI');
+		$this->assertFalse($localobject->isFieldEditableFromUi(new User($db), 'fk_opp_status'), 'User without permission');
+
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_opp_status', $oppstatus), $localobject->errorsToString());
+		$checkobject = new Project($db);
+		$checkobject->fetch($id);
+		$this->assertSame($oppstatus, (int) $checkobject->opp_status);
+		$code = dol_getIdFromCode($db, $oppstatus, 'c_lead_status', 'rowid', 'code');
+		$this->assertSame(dol_escape_htmltag($langs->trans('OppStatus'.$code)), $checkobject->ajaxOutputField('fk_opp_status'), 'Status shown with its label');
+
+		$localobject->delete($user);
+		$conf->global->PROJECT_USE_OPPORTUNITIES = $savopportunities;
+		$conf->modules = $savmodules;
+		if ($savrights === null) {
+			unset($user->rights->projet);
+		} else {
+			$user->rights->projet = $savrights;
+		}
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The level of a line of evaluation is editable from the user interface only while its evaluation is a draft,
+	 * and only with a value in the range of levels
+	 *
+	 * @return void
+	 */
+	public function testEvaluationLineFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+
+		$line = new EvaluationLine($db);
+		$this->assertSame('Evaluation', getElementProperties($line->parent_element)['classname'], 'Parent of a line is the evaluation');
+
+		$line->fk_evaluation = 0;
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'rankorder'), 'Line without its evaluation is not editable');
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'required_rank'), 'Only the level is editable from UI');
+
+		$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
+		$savpost = $_POST;
+		foreach (array(-1 => -1, 0 => 0, $maxrank => $maxrank, $maxrank + 1 => null, -2 => null) as $posted => $expected) {
+			$_POST = array('ajaxfield_rankorder' => (string) $posted);
+			$this->assertSame($expected, $line->getFieldValueFromAjaxPost('rankorder'), 'Level '.$posted);
+		}
+		$_POST = $savpost;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void

@@ -42,6 +42,7 @@ create table llx_user
   pass_crypted        varchar(128),
   pass_temp           varchar(128),			                  -- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
   force_pass_change   tinyint       DEFAULT 0,                -- 1 if user must change password at next login
+  passkey_required    tinyint       DEFAULT NULL,             -- 1 if user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
   api_key             varchar(128),			                  -- key to use REST API by this user
   gender              varchar(10),
   civility            varchar(6),

@@ -466,6 +466,94 @@ if ($id <= 0 && $projectidforalltimes == 0) {
 	$allprojectforuser = $user->id;
 }
 
+// Export selected time spent lines into a CSV file
+if ($massaction == 'exportlines' && !empty($toselect)) {
+	$sql = "SELECT t.rowid, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.note, t.thm,";
+	$sql .= " s.nom as thirdparty_name, p.ref as project_ref, p.title as project_label, pt.ref as task_ref, pt.label as task_label,";
+	$sql .= " u.lastname, u.firstname, u.login, prod.ref as product_ref, inv.ref as invoice_ref";
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as prod ON prod.rowid = t.fk_product";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as pt ON pt.rowid = t.fk_element";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = pt.fk_projet";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON t.fk_user = u.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+	$sql .= " WHERE t.elementtype = 'task'";
+	$sql .= " AND t.rowid IN (".$db->sanitize(implode(',', $toselect)).")";
+	$sql .= " AND p.entity IN (".getEntity('project').")";
+	if (!$user->hasRight('projet', 'all', 'lire')) {
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $user->socid > 0 ? $user->socid : 0);
+		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
+	}
+	if (empty($projectidforalltimes) && empty($allprojectforuser)) {
+		$sql .= " AND t.fk_element = ".((int) $object->id);
+	} elseif (!empty($projectidforalltimes)) {
+		$sql .= " AND pt.fk_projet = ".((int) $projectidforalltimes);
+	}
+	$sql .= $db->order('t.element_date,t.element_datehour,t.rowid', 'ASC,ASC,ASC');
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/export/export_csvutf8.modules.php';
+		$langs->load("salaries");
+
+		$array_fields = array(
+			'date' => 'Date',
+			'thirdparty_name' => 'ThirdParty',
+			'project_ref' => 'RefProject',
+			'project_label' => 'ProjectLabel',
+			'task_ref' => 'RefTask',
+			'task_label' => 'LabelTask',
+			'user' => 'By',
+			'note' => 'Note',
+			'duration' => 'Duration',
+			'duration_hours' => 'DurationInHours',
+			'product_ref' => 'Product',
+		);
+		if (isModEnabled('salaries')) {
+			$array_fields['value'] = 'Value';
+		}
+		$array_fields['invoice_ref'] = 'Invoice';
+		$array_selected = array_fill_keys(array_keys($array_fields), '1');
+
+		$exportcsv = new ExportCsvUtf8($db);
+		$filename = 'timespent_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
+
+		top_httphead('text/csv');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+		$exportcsv->open_file('php://output', $langs);
+		$exportcsv->write_header($langs);
+		$exportcsv->write_title($array_fields, $array_selected, $langs, array());
+		while ($obj = $db->fetch_object($resql)) {
+			$record = new stdClass();
+			$record->date = dol_print_date($db->jdate($obj->element_date_withhour ? $obj->element_datehour : $obj->element_date), ($obj->element_date_withhour ? 'dayhour' : 'day'), 'tzuserrel');
+			$record->thirdparty_name = $obj->thirdparty_name;
+			$record->project_ref = $obj->project_ref;
+			$record->project_label = $obj->project_label;
+			$record->task_ref = $obj->task_ref;
+			$record->task_label = $obj->task_label;
+			$record->user = dolGetFirstLastname($obj->firstname, $obj->lastname);
+			$record->note = $obj->note;
+			$record->duration = convertSecondToTime($obj->element_duration, 'allhourmin');
+			$record->duration_hours = price2num($obj->element_duration / 3600, 'MS');
+			$record->product_ref = $obj->product_ref;
+			$record->value = price2num($obj->thm * $obj->element_duration / 3600, 'MT', 1);
+			$record->invoice_ref = $obj->invoice_ref;
+			$exportcsv->write_record($array_selected, $record, $langs, array());
+		}
+		$exportcsv->write_footer($langs);
+		$exportcsv->close_file();
+
+		$db->free($resql);
+		$db->close();
+		exit;
+	} else {
+		setEventMessages($db->lasterror(), null, 'errors');
+	}
+}
+
 if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer')) {
 	if (!empty($projectstatic->socid)) {
 		$projectstatic->fetch_thirdparty();
@@ -1218,15 +1306,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// If we are on a given project.
 		if ($projectstatic->usage_bill_time) {
 			$arrayofmassactions = array(
-				'generateinvoice' => $langs->trans("GenerateBill"),
+				'generateinvoice' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("GenerateBill"),
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer')) {
 			$langs->load("interventions");
-			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+			$arrayofmassactions['generateinter'] = img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans("GenerateInter");
 		}
 	}
+	$arrayofmassactions['exportlines'] = img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("ExportLinesToFile");
 	if (in_array($massaction, array('presend', 'predelete', 'generateinvoice', 'generateinter'))) {
 		$arrayofmassactions = array();
 	}
@@ -2296,8 +2385,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							print '&nbsp;';
 
-							// Disable select if task not billable or already invoiced
-							$disabled = (intval($task_time->billable) != 1 || $invoiced);
+							// Disable select if task not billable or already invoiced (only when a mass action to generate invoice or intervention is available)
+							$disabled = ((isset($arrayofmassactions['generateinvoice']) || isset($arrayofmassactions['generateinter'])) && (intval($task_time->billable) != 1 || $invoiced));
 							$ctrl = '<input '.($disabled ? 'disabled' : '').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
 							if ($disabled) {
 								// If disabled, a dbl-click very close outside the control
@@ -2685,8 +2774,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							print '&nbsp;';
 
-							// Disable select if task not billable or already invoiced
-							$disabled = (intval($task_time->billable) != 1 || $invoiced);
+							// Disable select if task not billable or already invoiced (only when a mass action to generate invoice or intervention is available)
+							$disabled = ((isset($arrayofmassactions['generateinvoice']) || isset($arrayofmassactions['generateinter'])) && (intval($task_time->billable) != 1 || $invoiced));
 							$ctrl = '<input '.($disabled ? 'disabled' : '').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
 							if ($disabled) {
 								// If disabled, a dbl-click very close outside the control
