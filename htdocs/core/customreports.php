@@ -62,6 +62,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$mode = GETPOST('mode', 'alpha');
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
+	if ($objecttype == '-1') {	// -1 is the empty value of the combo of object types
+		$objecttype = '';
+	}
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
@@ -172,9 +175,12 @@ if (!isset($search_graph)) {
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
-if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
-	$objecttype = 'thirdparty';
+if (!is_string($objecttype)) {	// No object type is preselected
+	$objecttype = '';
 }
+/*if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
+	$objecttype = 'thirdparty';
+}*/
 '@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
 
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
@@ -304,7 +310,7 @@ forgeSQLFromUniversalSearchCriteria($search_component_params_input, $errorstr);	
 if ($errorstr) {
 	$value = $search_component_params_input;
 
-	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	$value = preg_replace('/([a-z0-9_\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
 	//var_dump($value);
 
@@ -414,7 +420,11 @@ if (!empty($object->element_for_permission)) {
 // Test on permission can be done on a given selected feature only
 
 // Security check (do not stop here, get only result to show message later)
-$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+if ($features) {
+	$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+} else {
+	$resultcheck = 1;	// No object type selected yet, so there is no data to protect
+}
 
 
 /*
@@ -551,6 +561,25 @@ if (count($sanitized_search_groupby)) {
 			$sql .= forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
 		}
 		*/
+		// Add the AND parts of the filter that use only the field of the group by, so the count of distinct values takes them into account
+		if ($search_component_params_hidden) {
+			$fieldofgroupby = preg_replace('/\-(year|month|day)$/', '', $gvalsanitized);
+			$sqlwhere = '';
+			foreach (dolForgeExplodeAnd($search_component_params_hidden) as $andpart) {
+				$matches = array();
+				preg_match_all('/\(([a-zA-Z0-9_\.]+):[<>!=insotlke]+:/i', $andpart, $matches);
+				if (!empty($matches[1]) && count(array_unique($matches[1])) == 1 && $matches[1][0] == $fieldofgroupby) {
+					$errormessage = '';
+					$tmpsql = forgeSQLFromUniversalSearchCriteria($andpart, $errormessage, 0, 0, 1);
+					if (!$errormessage) {
+						$sqlwhere .= $tmpsql;
+					}
+				}
+			}
+			if ($sqlwhere) {
+				$sql .= " WHERE 1 = 1".$sqlwhere;
+			}
+		}
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 
@@ -711,10 +740,10 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock liste_titre_bydiv_nothingafter centpercent">';
 
 	// Select object
-	print '<div class="divadvancedsearchfield center floatnone">';
-	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-
-	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth250', 1, '', 0, 1);
+	print '<div class="divadvancedsearchfield floatnone">';
+	//print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
+	print img_picto('', 'generic', 'class="paddingright pictofixedwidth"');
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, $langs->trans("StatisticsOn"), 0, 0, '', 1, 0, 0, '', 'minwidth250 customreportsobjecttype noborderfocus', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 	} else {
@@ -723,31 +752,50 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	        jQuery(document).ready(function() {
 	        	jQuery("#objecttype").change(function() {
 	        		console.log("Reload for "+jQuery("#objecttype").val());
-	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
+	                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"&focusonfilter=1'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOSTINT('show_search_component_params_hidden') ? '&show_search_component_params_hidden='.((int) GETPOSTINT('show_search_component_params_hidden')) : '').'";
 	        	});
 	        });
 	    </script>';
 	}
+	// When no object type is selected, the focus goes on the combo of object types
+	if (empty($objecttype)) {
+		print '<script nonce="'.getNonce().'">jQuery(document).ready(function() {
+			var objecttypeselection = jQuery("#objecttype").next(".select2").find(".select2-selection");
+			(objecttypeselection.length ? objecttypeselection : jQuery("#objecttype")).trigger("focus");
+		});</script>';
+	}
 	print '</div><div class="clearboth"></div>';
 
-	if (!empty($newarrayoftype)) {
+	// The components to select the filter, measures, X axis and group by are shown only once an object type is selected
+	if (!empty($newarrayoftype) && !empty($object)) {
 		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 		if (!empty($object)) {
 			print '<div class="divadvancedsearchfield divadvancedsearchfieldusf">';
 			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
 			print '</div>';
+			// After a change of the object type, the page is reloaded with focusonfilter=1 so the focus goes on the filter
+			if (GETPOSTINT('focusonfilter')) {
+				print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("#search_component_params_input").trigger("focus"); });</script>';
+			}
 		}
 
 		// YAxis (add measures into array)
 		$count = 0;
 		//var_dump($arrayofmesures);
 		print '<div class="divadvancedsearchfield clearboth">';
-		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+		print '<!-- measureComponent -->'."\n";
+		print '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
+		print '<span class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></span>';
 		$simplearrayofmesures = array();
 		foreach ($arrayofmesures as $key => $val) {
 			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 		}
-		print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		} else {
+			print customReportsSelectMeasures('search_measures', $arrayofmesures, $sanitized_search_measures, $langs->transnoentitiesnoconv("Measures"));
+		}
+		print '</div>';
 		print '</div>';
 
 		// XAxis
@@ -755,18 +803,26 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 		//var_dump($arrayofxaxis);
-		print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
+		} else {
+			print customReportsSelectXAxis('search_xaxis', $arrayofxaxis, $sanitized_search_xaxis, $langs->transnoentitiesnoconv("XAxis"));
+		}
 		print '</div>';
 
 		// Group by
 		$count = 0;
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-		print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		if (empty($conf->use_javascript_ajax)) {
+			print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		} else {
+			print customReportsSelectGroupBy('search_groupby', $arrayofgroupby, $sanitized_search_groupby, $langs->transnoentitiesnoconv("GroupBy"));
+		}
 		print '</div>';
 	}
 
-	if ($mode == 'grid') {
+	if ($mode == 'grid' && !empty($object)) {
 		// YAxis
 		print '<div class="divadvancedsearchfield">';
 		foreach ($object->fields as $key => $val) {
@@ -827,9 +883,9 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '</div>';
 	}
 
-	if (!empty($newarrayoftype)) {
+	if (!empty($newarrayoftype) && !empty($object)) {
 		print '<div class="divadvancedsearchfield">';
-		print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+		print '<button type="submit" class="butAction nomargintop customreportsrefresh">'.$langs->trans("Refresh").'</button>';
 		print '</div>';
 	}
 
@@ -913,7 +969,7 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 	}
 
 	// Init the list of tables added. We include by default always the main table.
-	$listoftablesalreadyadded = array($object->table_element => $object->table_element);
+	$listoftablesalreadyadded = array('t' => 't');	// List of table aliases already joined (the same table may be joined several times with different aliases)
 
 	// Add LEFT JOIN for all parent tables mentioned into the Xaxis
 	//var_dump($arrayofxaxis); var_dump($sanitized_search_xaxis);
@@ -921,19 +977,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofxaxis[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby);
-			$tmpforloop = dolExplodeIntoArray($arrayofxaxis[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -948,19 +1005,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofgroupby[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
-			$tmpforloop = dolExplodeIntoArray($arrayofgroupby[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -975,19 +1033,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		if (!empty($arrayofmesures[$val])) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofgroupby);
-			$tmpforloop = dolExplodeIntoArray($arrayofmesures[$val]['tablefromt'], ',');
-			foreach ($tmpforloop as $tmptable => $tmptablealias) {
-				if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
+			foreach ($tmpforloop as $tmptableandalias) {
+				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
 					$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-					$listoftablesalreadyadded[$tmptable] = $tmptable;
+					$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 					if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 					}
 				}
 			}
@@ -1010,19 +1069,20 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 		foreach ($fieldsUsedInFilter as $key => $val) {
 			if (!empty($arrayoffilterfields[$val])) {
 				$tmpval = explode('.', $val);
-				$tmpforloop = dolExplodeIntoArray($arrayoffilterfields[$val]['tablefromt'], ',');
-				foreach ($tmpforloop as $tmptable => $tmptablealias) {
-					if (! in_array($tmptable, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
+				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
+				foreach ($tmpforloop as $tmptableandalias) {
+					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);
 						$parenttableandfield = preg_replace('/__'.$endpart.'$/', '', $tmptablealias).'.'.$endpart;
 
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable." as ".$db->sanitize($tmptablealias)." ON ".$db->sanitize($parenttableandfield)." = ".$db->sanitize($tmptablealias).".rowid";
-						$listoftablesalreadyadded[$tmptable] = $tmptable;
+						$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 
 						if (preg_match('/^te/', $tmpval[0]) && preg_replace('/^t_/', 'te_', $tmptablealias) == $tmpval[0]) {
 							$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmptable."_extrafields as ".$db->sanitize($tmpval[0])." ON ".$db->sanitize($tmpval[0]).".fk_object = ".$db->sanitize($tmptablealias).".rowid";
-							$listoftablesalreadyadded[$tmptable] = $tmptable;
+							$listoftablesalreadyadded[$tmptablealias] = $tmptablealias;
 						}
 					}
 				}

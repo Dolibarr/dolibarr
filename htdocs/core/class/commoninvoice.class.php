@@ -620,8 +620,8 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@param		string	$filtertype			1 to filter on type of payment == 'PRE' for the payment lines
 	 *  @param      int     $multicurrency  	Return multicurrency_amount instead of amount
-	 *  @param		int		$mode				0=payments + discount, 1=payments only
-	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
+	 *  @param		int		$mode				0=payments + discount, 1=payments only, 2=discounts only
+	 *  @return     array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>		 Array with list of payments (date is the raw date returned by the database)
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0, $mode = 0)
 	{

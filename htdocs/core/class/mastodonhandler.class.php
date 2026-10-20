@@ -89,8 +89,8 @@ class MastodonHandler
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
-		if (empty($this->accessToken) && isset($authParams['access_token'])) {
-			return false;
+		if (empty($this->accessToken) && !empty($authParams['access_token'])) {
+			$this->accessToken = $authParams['access_token'];
 		}
 		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, '3');
 		$foundInCache = false;

@@ -609,7 +609,7 @@ if ($action == 'create') {
 				$content = 'undefined';
 			}
 
-			print '<td>'.$langs->trans($val).'</td>';
+			print '<td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
@@ -859,7 +859,7 @@ if ($action == 'create') {
 					$content = $object->cle_rib;
 				}
 
-				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<tr><td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 				print '<td>'.$content.'</td>';
 				print '</tr>';
 			}
@@ -1209,7 +1209,7 @@ if ($action == 'create') {
 					$content = 'undefined';
 				}
 
-				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<tr><td>'.$langs->trans($object->getBankFieldLabel($val)).'</td>';
 				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 				print '</tr>';
 			}

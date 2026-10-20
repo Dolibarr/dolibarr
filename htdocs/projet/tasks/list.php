@@ -1182,6 +1182,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->projecttitle;
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
+	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
 	if ($obj->socid) {
@@ -1268,7 +1269,7 @@ while ($i < $imaxinloop) {
 			// Label
 			if (!empty($arrayfields['t.label']['checked'])) {
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
-				print dol_escape_htmltag($object->label);
+				print '<span class="spantitle">'.dol_escape_htmltag($object->label).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1352,7 +1353,7 @@ while ($i < $imaxinloop) {
 			// Project status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
 				print '<td class="center">';
-				print $projectstatic->getLibStatut(1);
+				print $projectstatic->getLibStatut(5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
