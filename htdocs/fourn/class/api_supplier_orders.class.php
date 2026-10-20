@@ -402,6 +402,161 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Get one supplier order line after checking access to its parent.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $lineid Line ID
+	 * @return CommandeFournisseurLigne Order line
+	 * @url GET {id}/lines/{lineid}
+	 */
+	public function getLine($id, $lineid)
+	{
+		$line = clone $this->loadLineForOperation($id, $lineid);
+		$this->_cleanObjectDatas($line);
+		return $line;
+	}
+
+	/**
+	 * Update selected fields of a draft supplier order line.
+	 *
+	 * Omitted fields keep their current value. Dates are Unix timestamps or null.
+	 * Give only one price, in company currency (HT or TTC) or order currency (HT).
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $lineid Line ID
+	 * @param array<string,mixed>|null $request_data Fields to change
+	 * @return CommandeFournisseurLigne Updated line
+	 * @url PUT {id}/lines/{lineid}
+	 */
+	public function putLine($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'creer')) {
+			throw new RestException(403, 'Write permission is required');
+		}
+		$line = $this->loadLineForOperation($id, $lineid);
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_DRAFT) {
+			throw new RestException(409, 'Only draft supplier orders accept line changes');
+		}
+		$line = $this->prepareLineUpdate($line, $request_data);
+		$includingtax = isset($request_data['subprice_ttc']) || (!isset($request_data['subprice']) && $line->wasEnteredIncludingTax());
+		if (isset($request_data['multicurrency_subprice'])) {
+			$line->subprice = 0;
+			$includingtax = false;
+		} elseif ($includingtax || isset($request_data['subprice'])) {
+			$line->multicurrency_subprice = 0;
+		}
+		$vatrate = $line->tva_tx;
+		if (!isset($request_data['tva_tx']) && !empty($line->vat_src_code)) {
+			$vatrate .= ' ('.$line->vat_src_code.')';
+		}
+		if ($this->order->fetch_thirdparty() <= 0) {
+			throw new RestException(500, 'Unable to load supplier for tax calculations');
+		}
+		$result = $this->order->updateline(
+			$lineid, $line->desc, $includingtax ? $line->subprice_ttc : $line->subprice,
+			$line->qty, $line->remise_percent, $vatrate, $line->localtax1_tx, $line->localtax2_tx,
+			$includingtax ? 'TTC' : 'HT', $line->info_bits, $line->product_type, 0,
+			(int) $line->date_start, (int) $line->date_end, $line->array_options, $line->fk_unit,
+			$line->multicurrency_subprice, $line->ref_supplier
+		);
+		if ($result <= 0) {
+			throw new RestException(400, $this->order->errorsToString());
+		}
+		return $this->getLine($id, $lineid);
+	}
+
+	/**
+	 * Prepare a partial update without changing the original line or writing data.
+	 *
+	 * @param CommandeFournisseurLigne $line Current line
+	 * @param array<string,mixed>|null $request_data Fields to change
+	 * @return CommandeFournisseurLigne Prepared line
+	 */
+	protected function prepareLineUpdate($line, $request_data)
+	{
+		if (!is_array($request_data) || empty($request_data)) {
+			throw new RestException(400, 'A non-empty object of line changes is required');
+		}
+		$pricefields = array_intersect(array_keys($request_data), array('subprice', 'subprice_ttc', 'multicurrency_subprice'));
+		if (count($pricefields) > 1) {
+			throw new RestException(400, 'Give only one unit price: subprice, subprice_ttc or multicurrency_subprice');
+		}
+		$line = clone $line;
+		$allowed = array('desc', 'subprice', 'subprice_ttc', 'qty', 'remise_percent', 'tva_tx', 'localtax1_tx', 'localtax2_tx', 'date_start', 'date_end', 'array_options', 'fk_unit', 'multicurrency_subprice', 'ref_supplier');
+		foreach ($request_data as $field => $value) {
+			if (!in_array($field, $allowed, true)) {
+				throw new RestException(400, 'Unsupported line field: '.$field);
+			}
+			if ($field === 'array_options') {
+				if (!is_array($value)) {
+					throw new RestException(400, 'array_options must be an object');
+				}
+				foreach ($value as $key => $optional) {
+					$line->array_options[$key] = $this->_checkValExtrafieldsForAPI($key, $optional, $line);
+				}
+			} elseif (in_array($field, array('date_start', 'date_end', 'fk_unit'), true)) {
+				if ($value !== null && (!is_numeric($value) || (int) $value != $value || $value < ($field === 'fk_unit' ? 1 : 0))) {
+					throw new RestException(400, 'Expected a valid integer or null for '.$field);
+				}
+				$line->$field = $value === null ? null : (int) $value;
+			} elseif (in_array($field, array('desc', 'ref_supplier'), true)) {
+				if (!is_string($value)) {
+					throw new RestException(400, 'Expected a string for '.$field);
+				}
+				$line->$field = $this->_checkValForAPI($field, $value, $line);
+			} elseif (!is_numeric($value) || !is_finite((float) $value)) {
+				throw new RestException(400, 'Expected a finite numeric value for '.$field);
+			} else {
+				$line->$field = $value;
+			}
+		}
+		if ((float) $line->qty == 0) {
+			throw new RestException(400, 'Quantity must not be zero');
+		}
+		if ($line->date_start && $line->date_end && $line->date_start > $line->date_end) {
+			throw new RestException(400, 'Start date must not be later than end date');
+		}
+		return $line;
+	}
+
+	/**
+	 * Load an authorised order without sanitising its live database handle.
+	 *
+	 * @param int $id Supplier order ID
+	 * @return void
+	 */
+	protected function loadOrderForOperation($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire')) {
+			throw new RestException(403, 'Read permission is required');
+		}
+		if ($this->order->fetch($id) <= 0) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+		if (!static::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access denied to supplier order');
+		}
+	}
+
+	/**
+	 * Load the complete line after checking its parent and ownership.
+	 *
+	 * @param int $id Supplier order ID
+	 * @param int $lineid Line ID
+	 * @return CommandeFournisseurLigne Order line
+	 */
+	protected function loadLineForOperation($id, $lineid)
+	{
+		$this->loadOrderForOperation($id);
+		foreach ($this->order->lines as $line) {
+			if ((int) $line->id === (int) $lineid) {
+				return $line;
+			}
+		}
+		throw new RestException(404, 'Line not found in this supplier order');
+	}
+
+	/**
 	 * Get contacts of given supplier order
 	 *
 	 * Return an array with contact information

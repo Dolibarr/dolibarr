@@ -903,9 +903,9 @@ if (empty($reshook)) {
 				continue; // For some pages, department buyer is not mandatory
 			}
 			// Discard check of mandatory fields for other fields
-			$notmandatoryarray = array('localtax1', 'localtax2', 'color', 'formula', 'dayrule', 'einvoice_vatex');
+			$notmandatoryarray = array('localtax1', 'localtax2', 'color', 'formula', 'dayrule', 'einvoice_vatex', 'phone_code', 'trunk_prefix');
 			foreach ($notmandatoryarray as $notmandatory) {
-				if (!GETPOST($notmandatory)) {
+				if ($value == $notmandatory && !GETPOST($notmandatory)) {
 					continue 2;
 				}
 			}

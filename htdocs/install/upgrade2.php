@@ -206,6 +206,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// Load global conf
 	$conf->setValues($db);
 
+	// Init $mysoc, needed by the init() of some modules (e.g. BlockedLog)
+	require_once $dolibarr_main_document_root.'/societe/class/societe.class.php';
+	$mysoc = new Societe($db);
+	$mysoc->setMysoc($conf);
+
 
 	// Reforce log activation (samecode than into the inc.php)
 	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
@@ -5722,7 +5727,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";

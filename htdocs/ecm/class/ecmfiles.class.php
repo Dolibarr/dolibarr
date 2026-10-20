@@ -1078,12 +1078,14 @@ class EcmFiles extends CommonObject
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
+		// The picto link is a duplicate of the filename link, so we exclude it from keyboard navigation
+		$linkstartpicto = preg_replace('/^<a /', '<a tabindex="-1" ', $linkstart);
 
 		if ($withpicto) {
 			if (empty($this->filename)) {
-				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
+				$result .= ($linkstartpicto.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
-				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
+				$result .= ($linkstartpicto.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
 			}
 		}
 		$result .= $linkstart.$this->filename.$linkend;
