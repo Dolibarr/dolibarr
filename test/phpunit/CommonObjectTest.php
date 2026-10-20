@@ -126,6 +126,46 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 *  testGetRightsForUserWhenModuleIsSet
+	 *  The module of the object is set by fetchObjectByElement(). A core permission named like the element
+	 *  (commande->commande->export) must not be returned as the permissions of the object, else hasUserPermission() is false.
+	 *
+	 *  @return void
+	 */
+	public function testGetRightsForUserWhenModuleIsSet()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertTrue(isModEnabled('order'), 'Module order must be enabled for this test');
+
+		$savrights = isset($user->rights->commande) ? $user->rights->commande : null;
+
+		$localobject = new Commande($db);
+		$localobject->module = 'commande'; // As set by fetchObjectByElement()
+
+		$user->rights->commande = new stdClass();
+		$user->rights->commande->lire = 1;
+		$user->rights->commande->creer = 1;
+		$user->rights->commande->commande = new stdClass();
+		$user->rights->commande->commande->export = 1;
+		$this->assertSame($user->rights->commande, $localobject->getRightsForUser($user), 'Permissions of the core module');
+		$this->assertTrue($localobject->hasUserPermission($user, 'write'), 'Write permission of the core module');
+
+		// Object of a module built with ModuleBuilder, named like its module
+		$user->rights->commande->commande->read = 1;
+		$user->rights->commande->commande->write = 1;
+		$this->assertSame($user->rights->commande->commande, $localobject->getRightsForUser($user), 'Permissions of the object of a ModuleBuilder module');
+
+		$user->rights->commande = $savrights;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testFetchThirdParty
 	 *
 	 *  @return void
@@ -1312,6 +1352,37 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * setFieldValue() and getFieldUiValue() use the property holding a field when its name differs from the field
+	 * (the field fk_opp_status of a project is in the property opp_status)
+	 *
+	 * @return void
+	 */
+	public function testFieldPropertyName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		$project = new Project($db);
+		$project->opp_status = 3;
+		$this->assertSame(3, $project->getFieldUiValue('fk_opp_status'), 'Value read in the property opp_status');
+		$this->assertSame($project->title, $project->getFieldUiValue('title'), 'Other fields are read in the property of the same name');
+		$this->assertNull($project->getFieldUiValue('undefined_field'));
+
+		$project->fields['fk_opp_status']['enabled'] = 1;
+		$project->status = Project::STATUS_DRAFT;
+		$this->assertTrue($project->setFieldValue($user, 'fk_opp_status', 2, /* byPassUserPermission */ true), $project->getFieldError('fk_opp_status'));
+		$this->assertSame(2, $project->opp_status, 'Value set in the property opp_status');
+		$this->assertSame(2, $project->getFieldUiValue('fk_opp_status'));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * Data provider for testIsFieldReadableFromUi
 	 *
 	 * @return array<string,array{0:string,1:array<string,mixed>,2:bool}>
@@ -1698,77 +1769,6 @@ class CommonObjectTest extends CommonClassTest
 			$this->assertSame($expected, $line->getFieldValueFromAjaxPost('rankorder'), 'Level '.$posted);
 		}
 		$_POST = $savpost;
-
-		print __METHOD__." OK\n";
-	}
-
-	/**
-	 *  testGetRightsForUserWhenModuleIsSet
-	 *  The module of the object is set by fetchObjectByElement(). A core permission named like the element
-	 *  (commande->commande->export) must not be returned as the permissions of the object, else hasUserPermission() is false.
-	 *
-	 *  @return void
-	 */
-	public function testGetRightsForUserWhenModuleIsSet()
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$this->assertTrue(isModEnabled('order'), 'Module order must be enabled for this test');
-
-		$savrights = isset($user->rights->commande) ? $user->rights->commande : null;
-
-		$localobject = new Commande($db);
-		$localobject->module = 'commande'; // As set by fetchObjectByElement()
-
-		$user->rights->commande = new stdClass();
-		$user->rights->commande->lire = 1;
-		$user->rights->commande->creer = 1;
-		$user->rights->commande->commande = new stdClass();
-		$user->rights->commande->commande->export = 1;
-		$this->assertSame($user->rights->commande, $localobject->getRightsForUser($user), 'Permissions of the core module');
-		$this->assertTrue($localobject->hasUserPermission($user, 'write'), 'Write permission of the core module');
-
-		// Object of a module built with ModuleBuilder, named like its module
-		$user->rights->commande->commande->read = 1;
-		$user->rights->commande->commande->write = 1;
-		$this->assertSame($user->rights->commande->commande, $localobject->getRightsForUser($user), 'Permissions of the object of a ModuleBuilder module');
-
-		$user->rights->commande = $savrights;
-
-		print __METHOD__." OK\n";
-	}
-
-	/**
-	 * setFieldValue() and getFieldUiValue() use the property holding a field when its name differs from the field
-	 * (the field fk_opp_status of a project is in the property opp_status)
-	 *
-	 * @return void
-	 */
-	public function testFieldPropertyName()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-		$project = new Project($db);
-		$project->opp_status = 3;
-		$this->assertSame(3, $project->getFieldUiValue('fk_opp_status'), 'Value read in the property opp_status');
-		$this->assertSame($project->title, $project->getFieldUiValue('title'), 'Other fields are read in the property of the same name');
-		$this->assertNull($project->getFieldUiValue('undefined_field'));
-
-		$project->fields['fk_opp_status']['enabled'] = 1;
-		$project->status = Project::STATUS_DRAFT;
-		$this->assertTrue($project->setFieldValue($user, 'fk_opp_status', 2, /* byPassUserPermission */ true), $project->getFieldError('fk_opp_status'));
-		$this->assertSame(2, $project->opp_status, 'Value set in the property opp_status');
-		$this->assertSame(2, $project->getFieldUiValue('fk_opp_status'));
 
 		print __METHOD__." OK\n";
 	}

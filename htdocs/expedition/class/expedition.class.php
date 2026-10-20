@@ -111,7 +111,7 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var ?int ID of user that validates
+	 * @var ?int ID of user who validates
 	 * @deprecated use $user_validation_id
 	 */
 	public $fk_user_valid;
@@ -783,7 +783,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}
@@ -857,7 +858,7 @@ class Expedition extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.fk_user_author, e.fk_statut, e.signed_status, e.fk_projet as fk_project, e.billed";
-		$sql .= ", e.date_valid";
+		$sql .= ", e.date_valid, e.fk_user_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -900,6 +901,7 @@ class Expedition extends CommonObject
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->user_creation_id 	= $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid 			= $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
@@ -2518,6 +2520,8 @@ class Expedition extends CommonObject
 		$this->lines = array();
 
 		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_parent, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		$sql .= ', p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode';
+		$sql .= ', p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as ed';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = ed.fk_product)';
 		$sql .= ' WHERE ed.fk_expedition = '.((int) $this->id);
@@ -2540,9 +2544,19 @@ class Expedition extends CommonObject
 				$line->description      = $objp->description;
 				$line->desc				= $objp->description;
 				$line->qty              = $objp->qty;
+				$line->qty_shipped      = $objp->qty;	// Same properties as fetch_lines(): read by the PDF models and getTotalWeightVolume()
 				$line->fk_entrepot      = $objp->fk_entrepot;
 				$line->entrepot_id      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
+				$line->product_type     = (int) $objp->fk_product_type;
+				$line->fk_product_type  = $objp->fk_product_type;
+				$line->product_ref      = $objp->product_ref;
+				$line->product_label    = $objp->product_label;
+				$line->product_barcode  = $objp->product_barcode;
+				$line->weight           = $objp->weight;
+				$line->weight_units     = $objp->weight_units;
+				$line->volume           = $objp->volume;
+				$line->volume_units     = $objp->volume_units;
 				$line->fk_parent        = $objp->fk_parent;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
@@ -3441,15 +3455,15 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibility to ship from a proposal or other origin
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				// Lines are selected like in manageStockMvtOnEvt(), so reopening restores exactly what closing removed,
+				// including lines with no source order line (standalone shipment, SHIPMENT_STANDALONE)
+				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -3571,5 +3585,22 @@ class Expedition extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old product id
+	 * @param 	int 	$dest_id 	New product id
+	 * @return 	bool
+	 */
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'expeditiondet'
+		);
+
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 }
