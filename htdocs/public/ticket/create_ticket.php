@@ -4,6 +4,7 @@
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -451,42 +452,44 @@ if (empty($reshook)) {
 						$filename = $attachedfiles['names'];
 						$mimetype = $attachedfiles['mimes'];
 
-						// Send email to customer
-						$appli = $mysoc->name;
-
-						$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
-						$message  = (getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') !== '' ? getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
-						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
-
-						$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
-						$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
-						$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
-
-						$message .= $infos_new_ticket;
-						$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name));
-
-						$sendto = GETPOST('email', 'alpha');
-
-						$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
-						$replyto = $from;
 						$sendtocc = '';
 						$deliveryreceipt = 0;
 
-						$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
-						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
-							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-						}
-						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
-						if ($mailfile->error || !empty($mailfile->errors)) {
-							setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-						} else {
-							$result = $mailfile->sendfile();
-						}
-						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
-							$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-						}
+						// Send email to customer if option enabled
+						if (getDolGlobalInt('TICKET_SENDMAIL_ON_CREATION')) {
+							$appli = $mysoc->name;
 
+							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
+							$message  = (getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') !== '' ? getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
+							$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
+
+							$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
+							$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
+							$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
+
+							$message .= $infos_new_ticket;
+							$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name));
+
+							$sendto = GETPOST('email', 'alpha');
+
+							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+							$replyto = $from;
+
+							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+							}
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
+							if ($mailfile->error || !empty($mailfile->errors)) {
+								setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+							} else {
+								$result = $mailfile->sendfile();
+							}
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+							}
+						}
 						// Send email to TICKET_NOTIFICATION_EMAIL_TO
 						$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						if ($sendto) {
