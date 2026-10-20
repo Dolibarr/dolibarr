@@ -3965,6 +3965,8 @@ if (!function_exists("llxFooter")) {
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
+				} elseif (!empty($_POST['button_removefilter']) || !empty($_POST['button_removefilter_x'])) {
+					unset($_SESSION['lastsearch_values_'.$key]);	// Filters were removed, so previously saved criteria must not be restored later
 				}
 			}
 		}

@@ -134,6 +134,10 @@ class SupplierOrders extends DolibarrApi
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'validated', 'approved', 'running', 'received_start', 'received_end', 'cancelled', 'refused'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, validated, approved, running, received_start, received_end, cancelled, refused");
+		}
 		// Filter by status
 		if ($status == 'draft') {
 			$sql .= " AND t.fk_statut IN (0)";

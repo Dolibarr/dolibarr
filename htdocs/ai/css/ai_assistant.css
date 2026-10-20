@@ -211,6 +211,21 @@ body.ai-fullpage {
     background-color: var(--ai-surface-2);
 }
 
+/* Sparkle picto of the 'Auto' model, same as the one of the native select pill */
+.ai-picto-sparkle {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    background: no-repeat center / 14px 14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c5cff'%3E%3Cpath d='M12 2l2.2 6.3L20.5 11l-6.3 2.2L12 20l-2.2-6.3L3.5 11l6.3-2.2z'/%3E%3C/svg%3E");
+}
+
+/* Same width limits when the selects are rendered with select2 */
+.header-controls .select2-container {
+    max-width: 200px;
+    min-width: 0;
+}
+
 /* Header buttons (Clear, and popover window controls) */
 .icon-btn {
     background: transparent;
@@ -1058,11 +1073,13 @@ a.msg-action-btn.primary span {
     display: none;
 }
 
-.ai-in-popover .engine-select {
+.ai-in-popover .engine-select,
+.ai-in-popover .header-controls .select2-container {
     max-width: 110px;
 }
 
-.ai-popover.expanded .engine-select {
+.ai-popover.expanded .engine-select,
+.ai-popover.expanded .header-controls .select2-container {
     max-width: 160px;
 }
 
