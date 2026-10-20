@@ -160,7 +160,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload)
 }
 
 // Remove dir
-if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) {
+if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoadd) {	// Same permission than the Delete button and than ecm/index.php
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') {
 		$backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
