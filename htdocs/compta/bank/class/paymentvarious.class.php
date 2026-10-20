@@ -410,6 +410,13 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
+		// Delete attached documents directory
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$dir = $conf->bank->dir_output.'/various_payment/'.((int) $this->id);
+		if (file_exists($dir)) {
+			dol_delete_dir_recursive($dir);
+		}
+
 		return 1;
 	}
 
@@ -612,12 +619,14 @@ class PaymentVarious extends CommonObject
 					}
 				}
 
-				// Call trigger
-				$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
-				if ($result < 0) {
-					$error++;
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
-				// End call triggers
 			} else {
 				$error++;
 			}

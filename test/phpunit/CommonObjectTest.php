@@ -1352,6 +1352,37 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * setFieldValue() and getFieldUiValue() use the property holding a field when its name differs from the field
+	 * (the field fk_opp_status of a project is in the property opp_status)
+	 *
+	 * @return void
+	 */
+	public function testFieldPropertyName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		$project = new Project($db);
+		$project->opp_status = 3;
+		$this->assertSame(3, $project->getFieldUiValue('fk_opp_status'), 'Value read in the property opp_status');
+		$this->assertSame($project->title, $project->getFieldUiValue('title'), 'Other fields are read in the property of the same name');
+		$this->assertNull($project->getFieldUiValue('undefined_field'));
+
+		$project->fields['fk_opp_status']['enabled'] = 1;
+		$project->status = Project::STATUS_DRAFT;
+		$this->assertTrue($project->setFieldValue($user, 'fk_opp_status', 2, /* byPassUserPermission */ true), $project->getFieldError('fk_opp_status'));
+		$this->assertSame(2, $project->opp_status, 'Value set in the property opp_status');
+		$this->assertSame(2, $project->getFieldUiValue('fk_opp_status'));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 * Data provider for testIsFieldReadableFromUi
 	 *
 	 * @return array<string,array{0:string,1:array<string,mixed>,2:bool}>
@@ -1497,7 +1528,7 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertStringContainsString('<b>Bold</b>', $localobject->getFieldValueFromAjaxPost('note'));
 		$this->assertStringNotContainsString('<script', $localobject->getFieldValueFromAjaxPost('note'), 'html is filtered with restricthtml');
 		$this->assertSame(12, $localobject->getFieldValueFromAjaxPost('qty'));
-		$this->assertEquals(dol_mktime(0, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'));
+		$this->assertEquals(dol_mktime(12, 0, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_start'), 'Dates at noon like the cards');
 		$this->assertEquals(dol_mktime(14, 30, 0, 3, 15, 2026), $localobject->getFieldValueFromAjaxPost('date_end'));
 		$this->assertSame(1, $localobject->getFieldValueFromAjaxPost('fk_soc'), 'Links are read as an id');
 		$this->assertNull($localobject->getFieldValueFromAjaxPost('amount'), 'Amounts are not supported yet');
@@ -1650,6 +1681,102 @@ class CommonObjectTest extends CommonClassTest
 
 		$otherobject->delete($user);
 		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The opportunity status of a project is changed from the kanban view (core/ajax/objectfield.php), also when the project is open
+	 *
+	 * @return void
+	 */
+	public function testUpdateOpportunityStatusOfProjectFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savopportunities = getDolGlobalString('PROJECT_USE_OPPORTUNITIES');
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+		// The module and the write permission may be missing in the database of the CI
+		$savmodules = $conf->modules;
+		$savrights = isset($user->rights->projet) ? clone $user->rights->projet : null;
+		$conf->modules['projet'] = 'projet';
+		if (!isset($user->rights->projet)) {
+			$user->rights->projet = new stdClass();
+		}
+		$user->rights->projet->creer = 1;
+
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE active = 1 ORDER BY rowid DESC LIMIT 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$this->assertNotEmpty($obj, 'A status of opportunity is required');
+		$oppstatus = (int) $obj->rowid;
+
+		$localobject = new Project($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = 'PJUI-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Project($db);
+		$localobject->fetch($id);
+		$localobject->setValid($user);
+
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_opp_status'), 'Opportunity status editable from UI on an open project');
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'ref'), 'Ref of a project must not be editable from UI');
+		$this->assertFalse($localobject->isFieldEditableFromUi(new User($db), 'fk_opp_status'), 'User without permission');
+
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_opp_status', $oppstatus), $localobject->errorsToString());
+		$checkobject = new Project($db);
+		$checkobject->fetch($id);
+		$this->assertSame($oppstatus, (int) $checkobject->opp_status);
+		$code = dol_getIdFromCode($db, $oppstatus, 'c_lead_status', 'rowid', 'code');
+		$this->assertSame(dol_escape_htmltag($langs->trans('OppStatus'.$code)), $checkobject->ajaxOutputField('fk_opp_status'), 'Status shown with its label');
+
+		$localobject->delete($user);
+		$conf->global->PROJECT_USE_OPPORTUNITIES = $savopportunities;
+		$conf->modules = $savmodules;
+		if ($savrights === null) {
+			unset($user->rights->projet);
+		} else {
+			$user->rights->projet = $savrights;
+		}
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The level of a line of evaluation is editable from the user interface only while its evaluation is a draft,
+	 * and only with a value in the range of levels
+	 *
+	 * @return void
+	 */
+	public function testEvaluationLineFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+
+		$line = new EvaluationLine($db);
+		$this->assertSame('Evaluation', getElementProperties($line->parent_element)['classname'], 'Parent of a line is the evaluation');
+
+		$line->fk_evaluation = 0;
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'rankorder'), 'Line without its evaluation is not editable');
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'required_rank'), 'Only the level is editable from UI');
+
+		$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
+		$savpost = $_POST;
+		foreach (array(-1 => -1, 0 => 0, $maxrank => $maxrank, $maxrank + 1 => null, -2 => null) as $posted => $expected) {
+			$_POST = array('ajaxfield_rankorder' => (string) $posted);
+			$this->assertSame($expected, $line->getFieldValueFromAjaxPost('rankorder'), 'Level '.$posted);
+		}
+		$_POST = $savpost;
 
 		print __METHOD__." OK\n";
 	}
