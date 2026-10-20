@@ -158,6 +158,14 @@ if (empty($reshook)) {
 	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $user->hasRight('expedition', 'creer')) {
 		$object->fetch($id);
