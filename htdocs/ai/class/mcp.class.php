@@ -225,7 +225,7 @@ class McpHandler
 					// When the API bridge is on, it replaces the other native tools (they would
 					// duplicate what the API endpoints already offer). System tools are kept
 					// because parse_intent.php needs them to drive the conversation.
-					if (!in_array($basename, ['api_bridge', 'coffeemaker', 'conversation', 'email_cleaner', 'navigation', 'reports'])
+					if (!in_array($basename, ['api_bridge', 'coffeemaker', 'conversation', 'describe_object', 'ecm_documents', 'email_cleaner', 'linked_objects', 'navigation', 'reports'])
 						&& !$this->isSystemTool($toolInstance)) {
 						continue;
 					}
