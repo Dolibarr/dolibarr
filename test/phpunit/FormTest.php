@@ -87,7 +87,7 @@ class FormTest extends CommonClassTest
 		$this->assertSame(1, $xpath->query('//select[@name="confirm"]')->length);
 		$this->assertSame(0, $document->getElementsByTagName('button')->length);
 		$this->assertSame(1, $xpath->query('//input[@name="token" and string-length(@value)>0]')->length);
-		$this->assertSame(2, substr_count($this->renderConfirmForm(1, ''), 'text: '));
+		$this->assertStringContainsString('action=confirm_test&confirm=yes', $this->renderConfirmForm(1, ''));
 	}
 
 	/**
