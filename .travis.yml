@@ -129,40 +129,47 @@ before_install:
   echo ===== $(date) Install repository of packages for PHP
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
+  #sudo add-apt-repository -y ppa:ondrej/php
+  #sudo apt update
   echo "Run apt update to discover all PHP versions"
-  sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt update
+  sudo add-apt-repository -y -n ppa:ondrej/php
+  mkdir -p /tmp/ppa-only
+  cp /etc/apt/sources.list.d/ondrej-ubuntu-php-* /tmp/ppa-only/
+  sudo apt-get update \
+    -o Dir::Etc::sourcelist=/dev/null \
+    -o Dir::Etc::sourceparts=/tmp/ppa-only \
+    -o APT::Get::List-Cleanup=0
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
   echo TRAVIS_TYPE=$TRAVIS_TYPE
 
 - |
   echo ===== $(date) Install packages for PHP
   if [ "$DB" = 'postgresql' ]; then
-  	sudo apt install -y pgloader memcached
+    sudo apt install --no-install-recommends -y pgloader memcached
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
-  	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip php7.1-tidy libapache2-mod-php7.1
+    sudo apt install --no-install-recommends unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip php7.1-tidy php7.1-opcache libapache2-mod-php7.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
-  	sudo apt install unzip apache2 php7.2 php7.2-cli php7.2-curl php7.2-mysql php7.2-pgsql php7.2-gd php7.2-imap php7.2-intl php7.2-ldap php7.2-xml php7.2-mbstring php7.2-xml php7.2-zip php7.2-tidy libapache2-mod-php7.2
+    sudo apt install --no-install-recommends unzip apache2 php7.2 php7.2-cli php7.2-curl php7.2-mysql php7.2-pgsql php7.2-gd php7.2-imap php7.2-intl php7.2-ldap php7.2-xml php7.2-mbstring php7.2-xml php7.2-zip php7.2-tidy php7.2-opcache libapache2-mod-php7.2
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
-  	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip php8.1-tidy libapache2-mod-php8.1
+    sudo apt install --no-install-recommends unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip php8.1-tidy php8.1-opcache libapache2-mod-php8.1
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.2' ]; then
-  	sudo apt install unzip apache2 php8.2 php8.2-cli php8.2-curl php8.2-mysql php8.2-pgsql php8.2-gd php8.2-imap php8.2-intl php8.2-ldap php8.2-xml php8.2-mbstring php8.2-xml php8.2-zip php8.2-tidy libapache2-mod-php8.2
+    sudo apt install --no-install-recommends unzip apache2 php8.2 php8.2-cli php8.2-curl php8.2-mysql php8.2-pgsql php8.2-gd php8.2-imap php8.2-intl php8.2-ldap php8.2-xml php8.2-mbstring php8.2-xml php8.2-zip php8.2-tidy php8.2-opcache libapache2-mod-php8.2
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.3' ]; then
-  	sudo apt install unzip apache2 php8.3 php8.3-cli php8.3-curl php8.3-mysql php8.3-pgsql php8.3-gd php8.3-imap php8.3-intl php8.3-ldap php8.3-xml php8.3-mbstring php8.3-xml php8.3-zip php8.3-tidy libapache2-mod-php8.3
+    sudo apt install --no-install-recommends unzip apache2 php8.3 php8.3-cli php8.3-curl php8.3-mysql php8.3-pgsql php8.3-gd php8.3-imap php8.3-intl php8.3-ldap php8.3-xml php8.3-mbstring php8.3-xml php8.3-zip php8.3-tidy php8.3-opcache libapache2-mod-php8.3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.4' ]; then
-    sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip php8.4-tidy libapache2-mod-php8.4
+    sudo apt install --no-install-recommends unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip php8.4-tidy php8.4-opcache libapache2-mod-php8.4
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.5' ]; then
-    sudo apt install unzip apache2 php8.5 php8.5-cli php8.5-curl php8.5-mysql php8.5-pgsql php8.5-gd php8.5-imap php8.5-intl php8.5-ldap php8.5-xml php8.5-mbstring php8.5-xml php8.5-zip php8.5-tidy libapache2-mod-php8.5
+    sudo apt install --no-install-recommends unzip apache2 php8.5 php8.5-cli php8.5-curl php8.5-mysql php8.5-pgsql php8.5-gd php8.5-imap php8.5-intl php8.5-ldap php8.5-xml php8.5-mbstring php8.5-xml php8.5-zip php8.5-tidy libapache2-mod-php8.5
   fi
   if [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
-    sudo apt install unzip apache2 php8.5 php8.5-cli php8.5-curl php8.5-mysql php8.5-pgsql php8.5-gd php8.5-imap php8.5-intl php8.5-ldap php8.5-xml php8.5-mbstring php8.5-xml php8.5-zip php8.5-tidy libapache2-mod-php8.5
+    sudo apt install --no-install-recommends unzip apache2 php8.5 php8.5-cli php8.5-curl php8.5-mysql php8.5-pgsql php8.5-gd php8.5-imap php8.5-intl php8.5-ldap php8.5-xml php8.5-mbstring php8.5-xml php8.5-zip php8.5-tidy libapache2-mod-php8.5
   fi
   echo ===== $(date) end =====
 
@@ -216,12 +223,24 @@ install:
   php -i | head -
 
 - |
-  echo ===== $(date) Updating Composer config
-  curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-  HASH=`curl -sS https://composer.github.io/installer.sig`
+  echo ===== $(date) Install Composer and update Composer config
+  echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  # We download directly the expected version of composer.phar, so we avoid an install of the latest version followed by a self-update
+  if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+    COMPOSER_VERSION=2.2.18
+  else
+    COMPOSER_VERSION=2.4.4
+  fi
+  curl -sS https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar -o /tmp/composer.phar
+  HASH=`curl -sS https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar.sha256sum | cut -d ' ' -f 1`
   echo $HASH
-  php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-  sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  if echo "$HASH  /tmp/composer.phar" | sha256sum -c -; then
+    echo "Composer $COMPOSER_VERSION verified"
+  else
+    echo "Composer $COMPOSER_VERSION corrupt, we stop here"
+    travis_terminate 1
+  fi
+  sudo cp /tmp/composer.phar /usr/local/bin/composer
   sudo chmod -R a+rwx /usr/local/bin/composer
 
   #sudo apt install composer
@@ -233,41 +252,37 @@ install:
   echo
 
 - |
-  echo ===== $(date) Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION
-  echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  echo ===== $(date) Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION
+  # All packages are required in one composer call, so the resolution of dependencies is done only once
+  COMPOSER_OPTS=''
+  COMPOSER_PACKAGES=''
+  PARALLELLINT_VERSION=''
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
-    sudo composer self-update 2.2.18
-    composer -n require phpunit/phpunit ^7.5
-    if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
-      composer -n require squizlabs/php_codesniffer ^3
-    fi
-    if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
-      composer -n require php-parallel-lint/php-parallel-lint ^1 \
-                          php-parallel-lint/php-console-highlighter ^0
-    fi
+    COMPOSER_PACKAGES='phpunit/phpunit:^7.5'
+    PARALLELLINT_VERSION='^1'
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
-    sudo composer self-update 2.2.18
-    composer -n require phpunit/phpunit ^7.5
-    if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
-      composer -n require squizlabs/php_codesniffer ^3
-    fi
-    if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
-      composer -n require php-parallel-lint/php-parallel-lint ^1.2 \
-                          php-parallel-lint/php-console-highlighter ^0
-    fi
+    COMPOSER_PACKAGES='phpunit/phpunit:^7.5'
+    PARALLELLINT_VERSION='^1.2'
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.5' ] || [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
-    sudo composer self-update 2.4.4
+    COMPOSER_OPTS='--ignore-platform-reqs'
     # phpunit 8+ is required for php 8
-    composer -n require --ignore-platform-reqs phpunit/phpunit ^9
+    COMPOSER_PACKAGES='phpunit/phpunit:^9'
+    PARALLELLINT_VERSION='^1.2'
+  fi
+  if [ -n "$COMPOSER_PACKAGES" ]; then
     if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
-      composer -n require --ignore-platform-reqs squizlabs/php_codesniffer ^3
+      COMPOSER_PACKAGES="$COMPOSER_PACKAGES squizlabs/php_codesniffer:^3"
     fi
     if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
-      composer -n require --ignore-platform-reqs php-parallel-lint/php-parallel-lint ^1.2 \
-                                                 php-parallel-lint/php-console-highlighter ^0
+      COMPOSER_PACKAGES="$COMPOSER_PACKAGES php-parallel-lint/php-parallel-lint:$PARALLELLINT_VERSION php-parallel-lint/php-console-highlighter:^0"
     fi
+    # Show the composer cache dir (must be into ~/.cache that is saved by Travis) and its size, to check the cache is used
+    echo "Composer cache dir is $(composer config --global cache-dir)"
+    du -sh "$(composer config --global cache-dir)" 2>/dev/null || echo "No composer cache dir yet"
+    echo "composer -n require $COMPOSER_OPTS $COMPOSER_PACKAGES"
+    composer -n require $COMPOSER_OPTS $COMPOSER_PACKAGES
   fi
 
   # Remove non expected files
@@ -346,8 +361,14 @@ before_script:
       echo "MySQL flush"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
 
-      echo "MySQL load sql"
-      sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_4.0.0.sql
+      # For pull requests, we start from a v24 dump to save time. For push and cron, we test the full migration from v4.
+      if [ "$TRAVIS_TYPE" = 'pull_request' ]; then
+        echo "MySQL load sql dev/initdemo/mysqldump_dolibarr_24.0.0.sql"
+        sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_24.0.0.sql
+      else
+        echo "MySQL load sql dev/initdemo/mysqldump_dolibarr_4.0.0.sql"
+        sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_4.0.0.sql
+      fi
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo "PGSQL"
@@ -507,66 +528,69 @@ script:
     # I disable stop on error to be able to continue.
     set +e
     cd htdocs/install
-    php upgrade.php 4.0.0 5.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade400500.log
-    php upgrade2.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-2.log
-    php step5.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-3.log
-    php upgrade.php 5.0.0 6.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade500600.log
-    php upgrade2.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-2.log
-    php step5.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-3.log
-    php upgrade.php 6.0.0 7.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade600700.log
-    php upgrade2.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-2.log
-    php step5.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-3.log
-    php upgrade.php 7.0.0 8.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade700800.log
-    php upgrade2.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-2.log
-    php step5.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-3.log
-    php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
-    php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
-    php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
-    php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
-    php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
-    php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
-    php upgrade.php 10.0.0 11.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade10001100.log
-    php upgrade2.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-2.log
-    php step5.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-3.log
-    php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
-    php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
-    php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
-    php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
-    php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
-    php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
-    php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
-    php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
-    php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
-    php upgrade.php 14.0.0 15.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade14001500.log
-    php upgrade2.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-2.log
-    php step5.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
-    php upgrade.php 15.0.0 16.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade15001600.log
-    php upgrade2.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-2.log
-    php step5.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-3.log
-    php upgrade.php 16.0.0 17.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade16001700.log
-    php upgrade2.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-2.log
-    php step5.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-3.log
-    php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
-    php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
-    php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
-    php upgrade.php 18.0.0 19.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade18001900.log || cat $TRAVIS_BUILD_DIR/upgrade18001900.log
-    php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
-    php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
-    php upgrade.php 19.0.0 20.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade19002000.log || cat $TRAVIS_BUILD_DIR/upgrade19002000.log
-    php upgrade2.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-2.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-2.log
-    php step5.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-3.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-3.log
-    php upgrade.php 20.0.0 21.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade20002100.log || cat $TRAVIS_BUILD_DIR/upgrade20002100.log
-    php upgrade2.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-2.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-2.log
-    php step5.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-3.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-3.log
-    php upgrade.php 21.0.0 22.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade21002200.log || cat $TRAVIS_BUILD_DIR/upgrade21002200.log
-    php upgrade2.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-2.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-2.log
-    php step5.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-3.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-3.log
-    php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
-    php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
-    php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
-    php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
-    php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
-    php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
+    # For pull requests, the database was loaded from the v24 dump, so we only run migrations from v24.
+    if [ "$TRAVIS_TYPE" != 'pull_request' ]; then
+      php upgrade.php 4.0.0 5.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade400500.log
+      php upgrade2.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-2.log
+      php step5.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-3.log
+      php upgrade.php 5.0.0 6.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade500600.log
+      php upgrade2.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-2.log
+      php step5.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-3.log
+      php upgrade.php 6.0.0 7.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade600700.log
+      php upgrade2.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-2.log
+      php step5.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-3.log
+      php upgrade.php 7.0.0 8.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade700800.log
+      php upgrade2.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-2.log
+      php step5.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-3.log
+      php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
+      php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
+      php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
+      php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
+      php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
+      php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
+      php upgrade.php 10.0.0 11.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade10001100.log
+      php upgrade2.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-2.log
+      php step5.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade10001100-3.log
+      php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
+      php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
+      php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
+      php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
+      php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
+      php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+      php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
+      php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
+      php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
+      php upgrade.php 14.0.0 15.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade14001500.log
+      php upgrade2.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-2.log
+      php step5.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
+      php upgrade.php 15.0.0 16.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade15001600.log
+      php upgrade2.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-2.log
+      php step5.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-3.log
+      php upgrade.php 16.0.0 17.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade16001700.log
+      php upgrade2.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-2.log
+      php step5.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-3.log
+      php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
+      php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+      php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
+      php upgrade.php 18.0.0 19.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade18001900.log || cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+      php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
+      php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
+      php upgrade.php 19.0.0 20.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade19002000.log || cat $TRAVIS_BUILD_DIR/upgrade19002000.log
+      php upgrade2.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-2.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-2.log
+      php step5.php 19.0.0 20.0.0 > $TRAVIS_BUILD_DIR/upgrade19002000-3.log || cat $TRAVIS_BUILD_DIR/upgrade19002000-3.log
+      php upgrade.php 20.0.0 21.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade20002100.log || cat $TRAVIS_BUILD_DIR/upgrade20002100.log
+      php upgrade2.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-2.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-2.log
+      php step5.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-3.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-3.log
+      php upgrade.php 21.0.0 22.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade21002200.log || cat $TRAVIS_BUILD_DIR/upgrade21002200.log
+      php upgrade2.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-2.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-2.log
+      php step5.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-3.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-3.log
+      php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
+      php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
+      php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
+      php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
+      php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
+      php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
+    fi
     php upgrade.php 24.0.0 25.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade24002500.log || cat $TRAVIS_BUILD_DIR/upgrade24002500.log
     php upgrade2.php 24.0.0 25.0.0 > $TRAVIS_BUILD_DIR/upgrade24002500-2.log || cat $TRAVIS_BUILD_DIR/upgrade24002500-2.log
     php step5.php 24.0.0 25.0.0 > $TRAVIS_BUILD_DIR/upgrade24002500-3.log || cat $TRAVIS_BUILD_DIR/upgrade24002500-3.log
@@ -577,8 +601,12 @@ script:
   - |
     echo ===== $(date) Show some debug info, like table content, or migration log from some versions
     echo '\d llx_blockedlog' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    cat $TRAVIS_BUILD_DIR/upgrade500600.log
-    cat $TRAVIS_BUILD_DIR/upgrade19002000.log
+    if [ -f $TRAVIS_BUILD_DIR/upgrade500600.log ]; then
+      cat $TRAVIS_BUILD_DIR/upgrade500600.log
+    fi
+    if [ -f $TRAVIS_BUILD_DIR/upgrade19002000.log ]; then
+      cat $TRAVIS_BUILD_DIR/upgrade19002000.log
+    fi
     echo
 
   - |

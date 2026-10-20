@@ -96,17 +96,7 @@ class PrivacyGuard
 		);
 
 		// SWIFT / BIC Codes (8 or 11 characters)
-		$text = preg_replace_callback(
-			'/\b[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?\b/',
-			/**
-			 * @param array<int, string> $m
-			 * @return string
-			 */
-			function (array $m) {
-				return $this->createToken($m[0], 'SWIFT');
-			},
-			$text
-		);
+		$text = $this->maskSwift($text);
 
 		// Generic bank account numbers (Context-aware)
 		// This looks for numbers preceded by keywords to reduce false positives.
@@ -502,6 +492,40 @@ class PrivacyGuard
 	}
 
 	/**
+	 * Mask SWIFT / BIC codes.
+	 *
+	 * Any word of 8 or 11 capital letters has the shape of a BIC, so shape alone
+	 * masked ordinary words typed in capitals ("SOLUTION", "CUSTOMER",
+	 * "SUPPLIER") and the model then searched for the placeholder. A code is
+	 * masked when it is introduced as one ("BIC", "SWIFT", a "bic" field of a
+	 * record, within the 30 characters before it), or when its location or
+	 * branch part carries a digit, which words do not.
+	 *
+	 * @param string $text Text to mask.
+	 * @return string Masked text.
+	 */
+	private function maskSwift($text)
+	{
+		$m = array();
+		if (!preg_match_all('/\b[A-Z]{6}([A-Z0-9]{2})([A-Z0-9]{3})?\b/', $text, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+			return $text;
+		}
+		// Right to left, so the offsets of the earlier codes stay valid.
+		foreach (array_reverse($m) as $hit) {
+			list($code, $pos) = $hit[0];
+			$tail = $hit[1][0].(isset($hit[2]) ? $hit[2][0] : '');
+			$start = max(0, $pos - 30);
+			$before = substr($text, $start, $pos - $start);
+			if (!preg_match('/(bic|swift)/i', $before) && !preg_match('/[0-9]/', $tail)) {
+				continue;
+			}
+			$text = substr($text, 0, $pos).$this->createToken($code, 'SWIFT').substr($text, $pos + strlen($code));
+		}
+
+		return $text;
+	}
+
+	/**
 	 * Callback function for preg_replace_callback to mask credit cards.
 	 * It first validates the number using the Luhn algorithm.
 	 *
@@ -666,11 +690,25 @@ class PrivacyGuard
 			return dol_strlen($b) - dol_strlen($a);
 		});
 		foreach ($clean as $name) {
-			if (stripos($text, $name) === false) {
+			// Whole words only, case-insensitive in any script ("Acme" must not
+			// eat "Acmetal"), and never inside a placeholder already issued: a
+			// company called "Name" would otherwise break [[NAME_1ab12]].
+			$pattern = '/(?<![\p{L}\p{N}])'.preg_quote($name, '/').'(?![\p{L}\p{N}])/iu';
+			$parts = preg_split('/(\[\[[A-Z]+_[^\]]*\]\])/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+			if (!is_array($parts)) {
 				continue;
 			}
-			$token = $this->createToken($name, 'NAME');
-			$text = str_ireplace($name, $token, $text);
+			$found = false;
+			foreach ($parts as $pi => $part) {
+				if ($pi % 2 === 1 || !preg_match($pattern, $part)) {
+					continue;
+				}
+				$found = true;
+				$parts[$pi] = (string) preg_replace($pattern, $this->createToken($name, 'NAME'), $part);
+			}
+			if ($found) {
+				$text = implode('', $parts);
+			}
 		}
 
 		return $text;
