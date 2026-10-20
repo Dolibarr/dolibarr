@@ -256,6 +256,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						/** @var Expedition $element */
 						if ($element->status == Expedition::STATUS_VALIDATED || $element->status == Expedition::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
+							// A standalone shipment (without source order) has no price, so its amount is always 0 and can't
+							// be compared with the invoice: it is classified billed by the validation of an invoice linked to it.
+							if (empty($element->origin_id) && empty($element->billed)) {
+								$ret = $element->setBilled();
+								if ($ret < 0) {
+									return (int) $ret;
+								}
+							}
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);

@@ -2131,13 +2131,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
+									isset($lines[$i]) ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$i >= 0 ? $lines[$i]->special_code : 0,
+									isset($lines[$i]) ? $lines[$i]->special_code : 0,
 									$object->origin_type,
 									0,
 									0,
@@ -2226,17 +2226,9 @@ if (empty($reshook)) {
 									}
 
 									// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
-									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && $lines[$i]->fk_product > 0) {
-										$tmpprod = new Product($db);
-										if ($tmpprod->fetch($lines[$i]->fk_product) > 0) {
-											$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $object->thirdparty);
-											$lines[$i]->subprice = $datapriceofproduct['pu_ht'];
-											$lines[$i]->tva_tx = $datapriceofproduct['tva_tx'];
-											$lines[$i]->product_type = $tmpprod->type;
-										}
-									}
-									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && empty($lines[$i]->desc)) {
-										$lines[$i]->desc = $lines[$i]->description;
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id)) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+										shippingSetStandaloneLineSellPrice($lines[$i], $object->thirdparty);
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
