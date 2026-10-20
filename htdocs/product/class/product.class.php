@@ -5780,9 +5780,27 @@ class Product extends CommonObject
 		 }*/
 
 		// les prix de fournisseurs.
+		// All the columns describing the price must be copied, not only the five historical ones:
+		// unitprice defaults to 0 in the table and find_min_price_product_fournisseur() reads it
+		// directly, so a partial copy makes the best buying price of the new product evaluate to 0.
+		// entity defaults to 1 as well, which would move the rows out of their company.
+		// ref_fourn and barcode are deliberately left empty: the unique keys
+		// uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity) and
+		// uk_product_barcode (barcode, fk_barcode_type, entity) do not contain fk_product, so
+		// copying either value would collide with the row of the source product.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
+		$sql .= " datec, fk_product, entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -7503,6 +7521,233 @@ class Product extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PRODUCT);
+	}
+
+	/**
+	 *    Merge a product with current one, deleting the given product $product_origin_id.
+	 *    The product given in parameter will be removed.
+	 *    This is called for example by the product/card.php file.
+	 *    It calls the method replaceProduct() of each object with relation with products,
+	 *    including hook 'replaceProduct' for external modules.
+	 *
+	 *    @param	int     $product_origin_id	Product to merge the data from
+	 *    @return	int							-1 if error, >=0 if OK
+	 */
+	public function mergeProduct($product_origin_id)
+	{
+		global $conf, $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$productOrigin = new Product($this->db);		// The product that we will delete
+
+		dol_syslog("mergeProduct merge product id=".$product_origin_id." (will be deleted) into the product id=".$this->id);
+
+		if ($productOrigin->fetch($product_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		// Stock of origin product would be lost when it is deleted, so we refuse the merge
+		if (!$error) {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix()."product_stock";
+			$sql .= " WHERE fk_product = ".((int) $productOrigin->id)." AND reel <> 0";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			} else {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans('ErrorMergeOriginProductHasStock', $productOrigin->ref);
+					$error++;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$listofproperties = array(
+				'ref',
+				'ref_ext',
+				'label',
+				'description',
+				'url',
+				'barcode',
+				'fk_barcode_type',
+				'import_key',
+				'mandatory_period',
+				'accountancy_code_buy',
+				'accountancy_code_buy_intra',
+				'accountancy_code_buy_export',
+				'accountancy_code_sell',
+				'accountancy_code_sell_intra',
+				'accountancy_code_sell_export'
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $productOrigin->$property;
+				}
+			}
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $productOrigin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($productOrigin->array_options)) {
+				foreach ($productOrigin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// Merge categories
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$static_cat = new Categorie($this->db);
+			$custcats_ori = $static_cat->containing($productOrigin->id, 'product', 'id');
+			$custcats = $static_cat->containing($this->id, 'product', 'id');
+			$custcats = array_merge($custcats, $custcats_ori);
+			$this->setCategories($custcats);
+
+			// If product has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+			if ($productOrigin->barcode == $this->barcode) {
+				dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+				$productOrigin->barcode = '';
+				//$productOrigin->update($productOrigin->id, $user, 0, 'merge');
+			}
+
+			// Update
+			$result = $this->update($this->id, $user, 0, 'merge');
+			if ($result <= 0) {
+				$error++;
+			}
+
+			// Move links
+			if (!$error) {
+				// TODO add this functionality into the api_products.class.php
+				$objects = array(
+					'ActionComm' => '/comm/action/class/actioncomm.class.php',
+					// do not use Categorie, it cause foreign key error, merge is done before
+					//'Categorie' => '/categories/class/categorie.class.php',
+					'Commande' => '/commande/class/commande.class.php',
+					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+					'Contrat' => '/contrat/class/contrat.class.php',
+					'Delivery' => '/delivery/class/delivery.class.php',
+					'Expedition' => '/expedition/class/expedition.class.php',
+					'Facture' => '/compta/facture/class/facture.class.php',
+					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+					'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
+					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+					'Propal' => '/comm/propal/class/propal.class.php',
+					'Reception' => '/reception/class/reception.class.php',
+					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+					'TimeSpent' => '/core/class/timespent.class.php',
+				);
+				// Tables of these modules exist only if module was enabled once
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'bom_bom')) {
+					$objects['Bom'] = '/bom/class/bom.class.php';
+				}
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
+					$objects['Mo'] = '/mrp/class/mo.class.php';
+				}
+
+				// First, all core objects must update their tables
+				foreach ($objects as $object_name => $object_file) {
+					require_once DOL_DOCUMENT_ROOT.$object_file;
+
+					if (!$object_name::replaceProduct($this->db, $productOrigin->id, $this->id)) {
+						$error++;
+						$this->error = $this->db->lasterror();
+						break;
+					}
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceProduct', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge' => 1, 'mergefromid' => $productOrigin->id);
+
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// Move files from the dir of the product being deleted into the dir of the product kept.
+				// This must happen on success only: the filesystem is not part of the transaction, so
+				// moving the files on the failing path stripped the origin product of its documents
+				// while the database was rolled back, and left them orphaned on the successful one.
+				if (!empty($conf->product->multidir_output[$productOrigin->entity ?? $conf->entity])) {
+					$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? $conf->entity]."/".$productOrigin->ref;
+					$destdir = $conf->product->multidir_output[$this->entity ?? $conf->entity]."/".$this->ref;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							// dol_move() does not create the target directory, which may not exist yet
+							dol_mkdir(dirname($destfile));
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+
+				// dol_move() updated the path of moved files into ecm index, but they must also be linked to the kept product,
+				// otherwise the delete of origin product removes their index entries.
+				$sql = "UPDATE ".$this->db->prefix()."ecm_files SET src_object_id = ".((int) $this->id);
+				$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element)."' AND src_object_id = ".((int) $productOrigin->id);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				// Delete the product
+				if ($productOrigin->delete($user) < 1) {
+					$this->error = $productOrigin->error;
+					$this->errors = $productOrigin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsProductsMerge').' '.$this->error;
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		return -1;
 	}
 
 	/**

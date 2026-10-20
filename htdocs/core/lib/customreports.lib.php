@@ -174,7 +174,8 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofmesures = fillArrayOfMeasures($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofmesures, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -352,7 +353,8 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofxaxis, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -526,7 +528,8 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					$tmpobject = new $newobject($db);
 					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
-					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tablepath);
+					$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayofgroupby, $level + 1, $count, $tmptablepath);
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
@@ -655,9 +658,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 					$tmpobject = new $newobject($db);
 					$count++;
 					if (!empty($val['nodepth'])) {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tmptablepath);
 					} else {
-						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+						$tmptablepath = $tablepath;	// Use a copy so the path of a sibling link is not appended to the path of the next one
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, ($level >= 1 ? $labelofobject.' - ' : '').$langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tmptablepath);
 					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
@@ -667,4 +672,252 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 	}
 
 	return $arrayoffields;
+}
+
+
+/**
+ * Return HTML of the component to select measures. Fields are listed first and, for fields with variants
+ * (sum, average, min, max, standard deviation), variants are shown in an expandable sub list.
+ * Behaviour is managed by core/js/customreports.js. Selection is posted with a hidden multiple select.
+ *
+ * @param	string		$htmlname			Name of the HTML field (posted as $htmlname[])
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofmesures		Array of measures (from fillArrayOfMeasures())
+ * @param	string[]	$selected			Array of selected keys
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectMeasures($htmlname, $arrayofmesures, $selected, $placeholder = '')
+{
+	global $conf, $langs;
+
+	$variantlabels = array(
+		'sum' => $langs->trans("Sum"),
+		'average' => $langs->trans("Average"),
+		'min' => $langs->trans("Minimum"),
+		'max' => $langs->trans("Maximum"),
+		'stddevpop' => $langs->trans("StandardDeviationPop"),
+	);
+
+	// Group measures by field. Keys of variants are 'alias.field-variant'.
+	$groups = array();
+	foreach ($arrayofmesures as $key => $val) {
+		$reg = array();
+		if (preg_match('/^(.+)-(sum|average|min|max|stddevpop)$/', $key, $reg)) {
+			$groupkey = $reg[1];
+			$variant = $reg[2];
+		} else {
+			$groupkey = $key;
+			$variant = '';
+		}
+		if (!isset($groups[$groupkey])) {
+			// The label is the picto of the object followed by the labelnohtml (and the variant suffix), so we extract the picto
+			$picto = '';
+			$pos = strpos($val['label'], $val['labelnohtml']);
+			if ($pos !== false) {
+				$picto = substr($val['label'], 0, $pos);
+			}
+			$groups[$groupkey] = array(
+				'picto' => $picto,
+				'labelnohtml' => $val['labelnohtml'],
+				'variants' => array()
+			);
+		}
+		$groups[$groupkey]['variants'][$key] = ($variant ? $variantlabels[$variant] : '');
+	}
+
+	$out = '<div class="customreportsmeasures divadvancedsearchfieldcompinput inline-block minwidth300 maxwidth500" id="'.dol_escape_htmltag($htmlname).'_component" data-htmlname="'.dol_escape_htmltag($htmlname).'">';
+
+	// Hidden select used to post values
+	$out .= '<select id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'[]" multiple class="hideobject">';
+	foreach ($arrayofmesures as $key => $val) {
+		$out .= '<option value="'.dol_escape_htmltag($key).'"'.(in_array($key, $selected) ? ' selected' : '').'>'.dol_escape_htmltag($val['labelnohtml']).'</option>';
+	}
+	$out .= '</select>';
+
+	// Visible area with tags of selected measures
+	$out .= '<div class="customreportsmeasures-control noborderbottom search_component_params inline-block" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox">';
+	$out .= '<span class="customreportsmeasures-tags"></span>';
+	$out .= '<span class="customreportsmeasures-placeholder opacitymedium">'.dol_escape_htmltag($placeholder).'</span>';
+	$out .= '<span class="fas fa-caret-down customreportsmeasures-caret"></span>';
+	$out .= '</div>';
+
+	// Dropdown with list of fields then variants
+	$out .= '<div class="customreportsmeasures-dropdown hidden">';
+	$out .= '<div class="liinputsearch"><input type="text" class="customreportsmeasures-search noborderfocus" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autocomplete="off"></div>';
+	$out .= '<ul class="customreportsmeasures-list" role="listbox">';
+	foreach ($groups as $groupkey => $group) {
+		$hasvariants = (count($group['variants']) > 1 || key($group['variants']) != $groupkey);
+		$out .= '<li class="customreportsmeasures-field'.($hasvariants ? ' customreportsmeasures-hasvariants' : '').'" data-search="'.dol_escape_htmltag(dol_strtolower($group['labelnohtml'])).'">';
+		if ($hasvariants) {
+			$out .= '<div class="customreportsmeasures-fieldlabel">';
+			$out .= '<span class="customreportsmeasures-text">'.$group['picto'].dol_escape_htmltag($group['labelnohtml']).'</span>';
+			$out .= '<span class="customreportsmeasures-count badge badge-secondary hidden"></span>';
+			$out .= '<span class="fas fa-caret-right customreportsmeasures-expand"></span>';
+			$out .= '</div>';
+			$out .= '<ul class="customreportsmeasures-variants hidden">';
+			foreach ($group['variants'] as $key => $variantlabel) {
+				$out .= '<li class="customreportsmeasures-item" role="option" data-value="'.dol_escape_htmltag($key).'" data-tag="'.dol_escape_htmltag($group['labelnohtml'].' ('.$variantlabel.')').'">';
+				$out .= '<span class="customreportsmeasures-text">'.dol_escape_htmltag($variantlabel).'</span>';
+				$out .= '<span class="fas fa-check customreportsmeasures-check"></span>';
+				$out .= '</li>';
+			}
+			$out .= '</ul>';
+		} else {
+			$out .= '<div class="customreportsmeasures-fieldlabel customreportsmeasures-item" role="option" data-value="'.dol_escape_htmltag($groupkey).'" data-tag="'.dol_escape_htmltag($group['labelnohtml']).'">';
+			$out .= '<span class="customreportsmeasures-text">'.$group['picto'].dol_escape_htmltag($group['labelnohtml']).'</span>';
+			$out .= '<span class="fas fa-check customreportsmeasures-check"></span>';
+			$out .= '</div>';
+		}
+		$out .= '</li>';
+	}
+	$out .= '</ul>';
+	$out .= '</div>';
+
+	$out .= '</div>';
+
+	if (empty($conf->cache['customreportsjsloaded'])) {
+		$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+		$conf->cache['customreportsjsloaded'] = 1;
+	}
+	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsMeasures(\''.dol_escape_js($htmlname).'_component\'); });</script>';
+
+	return $out;
+}
+
+
+/**
+ * Return HTML of a combo to select one field (X axis, group by...). Same look and principle than the combo of fields of the filter
+ * component: the main element is open with its fields, the sub-elements are listed after its fields and are collapsed.
+ * Behaviour is managed by core/js/customreports.js. Selection is posted with a hidden input.
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayoffields		Array of fields (from fillArrayOfXAxis() or fillArrayOfGroupBy())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @param	int<0,1>	$allowclear			1 to show a button to clear the selection
+ * @return	string							HTML string of component
+ */
+function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $placeholder = '', $allowclear = 0)
+{
+	global $conf, $langs;
+
+	$selectedkey = (is_array($selected) && count($selected)) ? (string) reset($selected) : '';
+	$selectedlabel = '';
+	$selectedtitle = '';	// Full label of the selected field, shown as a tooltip because the label may be truncated
+
+	// Group fields by element. The element is the part of the key before the last dot ('t.ref' -> 't'), extrafields 'te...' are mapped onto 't...'.
+	$elements = array();
+	foreach ($arrayoffields as $key => $val) {
+		$elementkey = preg_replace('/^te(__|$)/', 't$1', preg_replace('/\.[^.]*$/', '', $key));
+		// The labelnohtml is 'LabelOfElement: LabelOfField' and the label is 'picto LabelOfElement: LabelOfField <span>(variant)</span>'
+		$elementlabel = $elementkey;
+		$reg = array();
+		if (preg_match('/^(.+?): /', $val['labelnohtml'], $reg)) {
+			$elementlabel = $reg[1];
+		}
+		$picto = '';
+		$fieldlabel = $val['labelnohtml'];
+		$pos = strpos($val['label'], $val['labelnohtml']);
+		if ($pos !== false) {
+			$picto = trim(substr($val['label'], 0, $pos));
+			$fieldlabel = trim(dol_string_nohtmltag(substr($val['label'], $pos + ($elementlabel != $elementkey ? strlen($elementlabel) + 2 : 0))));
+		}
+		if (!isset($elements[$elementkey])) {
+			$elements[$elementkey] = array('picto' => $picto, 'label' => $elementlabel, 'fields' => array());
+		}
+		$elements[$elementkey]['fields'][$key] = $fieldlabel;
+		if ($key === $selectedkey) {
+			$selectedlabel = $picto.' '.dol_escape_htmltag($elementlabel.': '.$fieldlabel);
+			$selectedtitle = $elementlabel.': '.$fieldlabel;
+		}
+	}
+
+	$out = '<div class="customreportscombo divadvancedsearchfieldcompinput" id="'.dol_escape_htmltag($htmlname).'_component">';
+	$out .= '<input type="hidden" id="'.dol_escape_htmltag($htmlname).'" name="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($selectedlabel ? $selectedkey : '').'">';
+	$out .= '<button type="button" class="customreportscombo-toggle noborderbottom search_component_params minwidth300">';
+	$out .= '<span class="customreportscombo-label'.($selectedlabel ? '' : ' opacitymedium').'"'.($selectedtitle ? ' title="'.dolPrintHTMLForAttribute($selectedtitle).'"' : '').' data-placeholder="'.dol_escape_htmltag($placeholder).'">'.($selectedlabel ? $selectedlabel : dol_escape_htmltag($placeholder)).'</span>';
+	if ($allowclear) {
+		$out .= '<span class="fas fa-times customreportscombo-clear'.($selectedlabel ? '' : ' hideobject').'" title="'.dol_escape_htmltag($langs->trans('Reset')).'"></span>';
+	}
+	$out .= '<span class="fas fa-caret-down customreportscombo-caret"></span>';
+	$out .= '</button>';
+	$out .= '<div class="customreportscombo-panel" style="display:none">';
+	$out .= '<div class="liinputsearch"><input type="text" class="customreportscombo-search noborderfocus" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'" autocomplete="off"></div>';
+	$out .= '<div class="customreportscombo-list">';
+
+	// Recursive rendering of an element: its fields first, then its sub-elements (a direct sub-element of 't' is 't__xxx' without other '__' after)
+	/**
+	 * @param	string		$elementkey		Key of the element to render
+	 * @return	string						HTML of the element and of its sub-elements
+	 */
+	$renderElement = function (string $elementkey) use ($elements, $selectedkey, &$renderElement): string {
+		$element = $elements[$elementkey];
+		$out = '<div class="customreportscombo-element" data-element="'.dol_escape_htmltag($elementkey).'">';
+		$out .= '<div class="customreportscombo-elementheader" tabindex="0"><span class="customreportscombo-elementlabel">'.$element['picto'].' '.dol_escape_htmltag($element['label']).'</span><span class="fas fa-caret-right customreportscombo-elementcaret"></span></div>';
+		$out .= '<div class="customreportscombo-fields" style="display:none">';
+		foreach ($element['fields'] as $fieldkey => $fieldlabel) {
+			$out .= '<div class="customreportscombo-field'.($fieldkey === $selectedkey ? ' selected' : '').'" tabindex="0" data-field="'.dol_escape_htmltag($fieldkey).'">'.dol_escape_htmltag($fieldlabel).'</div>';
+		}
+		$out .= '</div>';
+		$children = '';
+		foreach (array_keys($elements) as $childkey) {
+			if (strpos($childkey, $elementkey.'__') === 0 && strpos(substr($childkey, strlen($elementkey) + 2), '__') === false) {
+				$children .= $renderElement($childkey);
+			}
+		}
+		if ($children) {
+			$out .= '<div class="customreportscombo-children" style="display:none">'.$children.'</div>';
+		}
+		$out .= '</div>';
+		return $out;
+	};
+	// At root level, we render only the elements without parent element (or with a parent not found)
+	foreach (array_keys($elements) as $elementkey) {
+		$parentkey = (strpos($elementkey, '__') !== false) ? substr($elementkey, 0, strrpos($elementkey, '__')) : '';
+		if ($parentkey == '' || !isset($elements[$parentkey])) {
+			$out .= $renderElement($elementkey);
+		}
+	}
+
+	$out .= '</div>';
+	$out .= '</div>';
+	$out .= '</div>';
+
+	if (empty($conf->cache['customreportsjsloaded'])) {
+		$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/customreports.js"></script>';
+		$conf->cache['customreportsjsloaded'] = 1;
+	}
+	$out .= '<script nonce="'.getNonce().'">jQuery(document).ready(function() { initCustomReportsCombo(\''.dol_escape_js($htmlname).'_component\'); });</script>';
+
+	return $out;
+}
+
+
+/**
+ * Return HTML of the combo to select the X axis (see customReportsSelectFieldCombo())
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofxaxis		Array of X axis (from fillArrayOfXAxis())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectXAxis($htmlname, $arrayofxaxis, $selected, $placeholder = '')
+{
+	return customReportsSelectFieldCombo($htmlname, $arrayofxaxis, $selected, $placeholder, 0);
+}
+
+
+/**
+ * Return HTML of the combo to select the group by field (see customReportsSelectFieldCombo()). Selection can be cleared.
+ *
+ * @param	string		$htmlname			Name of the HTML field
+ * @param	array<string,array{label:string,labelnohtml:string,position:int|string,table:string,tablefromt:string}>	$arrayofgroupby		Array of group by (from fillArrayOfGroupBy())
+ * @param	string[]	$selected			Array of selected keys (only first one is used)
+ * @param	string		$placeholder		Placeholder
+ * @return	string							HTML string of component
+ */
+function customReportsSelectGroupBy($htmlname, $arrayofgroupby, $selected, $placeholder = '')
+{
+	return customReportsSelectFieldCombo($htmlname, $arrayofgroupby, $selected, $placeholder, 1);
 }

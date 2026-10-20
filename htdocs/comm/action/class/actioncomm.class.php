@@ -2850,7 +2850,7 @@ class ActionComm extends CommonObject
 	 */
 	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . " WHERE elementtype = 'product' AND fk_element = ".((int) $origin_id);
 		// using $dbs, not $this->db because function is static
 		if (!$dbs->query($sql)) {
 			//$this->errors = $dbs->lasterror();

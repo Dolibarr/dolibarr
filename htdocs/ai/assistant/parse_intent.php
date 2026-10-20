@@ -716,6 +716,10 @@ try {
 			}
 			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
 		}
+		// The acting user's identity: the rowid alone lets the model resolve
+		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
+		// write calls — no personal data sent to the provider for this.
+		$systemPrompt .= "Current user rowid: ".((int) $user->id)."\n";
 		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration

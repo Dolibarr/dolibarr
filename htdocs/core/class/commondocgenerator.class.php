@@ -186,14 +186,14 @@ abstract class CommonDocGenerator
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax1;
 
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax2;
 
