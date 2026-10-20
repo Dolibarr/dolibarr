@@ -526,7 +526,7 @@ class Ai
 	 *
 	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
 	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
-	 * @return array<string,string|float>	Array of values
+	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
@@ -564,8 +564,11 @@ class Ai
 			}
 
 			// Currency
-			$currencyinsummary = (isset($json['summary']['currency']) && is_string($json['summary']['currency'])) ? $json['summary']['currency'] : '';
-			$currencyindocinfo = (isset($json['document_info']['currency_code']) && is_string($json['document_info']['currency_code'])) ? $json['document_info']['currency_code'] : '';
+			// Note: We extract subarrays into local variables, so the is_string() checks do not narrow the type of the $json subarrays for the rest of the method
+			$summary = (is_array($json['summary'] ?? null) ? $json['summary'] : array());
+			$documentinfo = (is_array($json['document_info'] ?? null) ? $json['document_info'] : array());
+			$currencyinsummary = (isset($summary['currency']) && is_string($summary['currency'])) ? $summary['currency'] : '';
+			$currencyindocinfo = (isset($documentinfo['currency_code']) && is_string($documentinfo['currency_code'])) ? $documentinfo['currency_code'] : '';
 			if ($currencyinsummary == '€') {
 				$tmparray['currency_code'] = 'EUR';
 			} elseif (dol_strlen($currencyinsummary) == 3) {
