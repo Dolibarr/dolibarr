@@ -96,18 +96,30 @@ class box_bookmarks extends ModeleBoxes
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 
+					// External http(s) bookmarks show the site's own favicon
+					// (the request goes to the bookmarked host, no third party)
+					// and get a hover preview card with the icon and the URL.
+					$bmhost = (preg_match('/^https?:\/\//i', $objp->url) ? parse_url($objp->url, PHP_URL_HOST) : '');
+					$logo = $this->boximg;
+					$tooltip = $objp->title;
+					if ($bmhost) {
+						$fav = 'https://'.dol_escape_htmltag($bmhost).'/favicon.ico';
+						$logo = '<img src="'.$fav.'" width="16" height="16" alt="" onerror="this.remove()">';
+						$tooltip = '<span class="bookmark-hover-preview"><img src="'.$fav.'" width="32" height="32" alt="" onerror="this.hidden=true"><br>'.dol_escape_htmltag($objp->title).'<br><em>'.dol_escape_htmltag($objp->url).'</em></span>';
+					}
+
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="left" width="16"',
-						'logo' => $this->boximg,
+						'logo' => $logo,
 						'url' => $objp->url,
-						'tooltip' => $objp->title,
+						'tooltip' => $tooltip,
 						'target' => $objp->target ? 'newtab' : '',
 					);
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
 						'text' => $objp->title,
 						'url' => $objp->url,
-						'tooltip' => $objp->title,
+						'tooltip' => $tooltip,
 						'target' => $objp->target ? 'newtab' : '',
 					);
 
