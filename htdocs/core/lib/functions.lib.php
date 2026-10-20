@@ -9926,6 +9926,10 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 
 	$newstring = $stringtoencode;
 	if (dol_textishtml($stringtoencode)) {	// Check if text is already HTML or not
+		// A content with no tag was seen as HTML only because of its entities: its line feeds are its only line separator
+		if (!preg_match('/<[a-z!\/]/i', $newstring)) {
+			$newstring = dol_nl2br($newstring, $nl2brmode);
+		}
 		$newstring = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $newstring); // Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/<br>$/i', '', $newstring); // Remove last <br> (remove only last one)
