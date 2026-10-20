@@ -596,8 +596,6 @@ class Ai
 			}
 
 			// Vendor
-			// AI providers return varying JSON object shapes for invoice documents.
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			if (!empty($json['document_info']['vendor'])) {
 				$arrayforthirdparty = $json['document_info']['vendor'];
 			} elseif (!empty($json['vendor'])) {
@@ -630,20 +628,14 @@ class Ai
 
 			// Items
 			if (empty($json['items'])) {
-				// AI providers return varying JSON object shapes for invoice summaries.
-				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
 					$tmparray['description'] = 'Undefined';
 					$tmparray['total_ht'] = (float) $json['summary']['subtotal_excluding_tax'];
-					// @phan-suppress-next-line PhanTypeArraySuspiciousNull,PhanTypeInvalidDimOffset
 					$tmparray['vat_rate'] =  (float) $json['summary']['tax']['rate'];
 				}
 			} else {
 				$i = 0;
 				foreach ($json['items'] as $item) {
-					if (!is_array($item)) {
-						continue;
-					}
 					$i++;
 					$tmparray['lines'][$i] = array();
 

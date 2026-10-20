@@ -701,9 +701,6 @@ if ($action == 'showsummary') {
 			$json = null;
 		}
 	}
-	if (!is_array($json)) {
-		$json = array();
-	}
 
 	if ($modulepart == 'invoice_supplier') {
 		// Parse JSON to get information for an invoice
