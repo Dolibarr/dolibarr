@@ -176,9 +176,9 @@ class ToolApiBridge extends McpTool
 
 	/**
 	 * Product names given by the last normaliseWriteArgs() call that matched no
-	 * product, or several.
+	 * product, or several: name => close references found for it (may be empty).
 	 *
-	 * @var string[]
+	 * @var array<string,string[]>
 	 */
 	private $unresolvedProducts = [];
 
@@ -3359,6 +3359,21 @@ class ToolApiBridge extends McpTool
 					$found = ($prod->fetch((int) $obj->rowid) > 0);
 				}
 			}
+			if (!$found && $buy && $socid > 0) {
+				// A supplier document carries the SUPPLIER's references - a delivery
+				// note almost never shows ours. Look the ref up in that supplier's
+				// catalogue, and only there, so another supplier's "33303" never fits.
+				$sql = "SELECT DISTINCT pfp.fk_product FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
+				$sql .= " AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn = '".$this->db->escape($wanted)."'";
+				$sql .= " LIMIT 2";
+				$resql = $this->db->query($sql);
+				if ($resql && $this->db->num_rows($resql) === 1) {
+					$obj = $this->db->fetch_object($resql);
+					$found = ($prod->fetch((int) $obj->fk_product) > 0);
+				}
+			}
 			if ($found) {
 				$line['fk_product'] = $prod->id;
 				if (empty($line['fk_unit']) && !isset($line['unit']) && !empty($prod->fk_unit)) {
@@ -3377,7 +3392,7 @@ class ToolApiBridge extends McpTool
 				$line['desc'] = $wanted;
 			}
 			if (!$found) {
-				$this->unresolvedProducts[] = $wanted;
+				$this->unresolvedProducts[$wanted] = $this->closeProductRefs($wanted, $buy ? $socid : 0);
 			}
 			unset($line['product_ref']);
 		}
@@ -3750,7 +3765,7 @@ class ToolApiBridge extends McpTool
 				return $langs->transnoentitiesnoconv('AIWriteNoLines');
 			}
 			if (!empty($this->unresolvedProducts)) {
-				return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product, or create it with api_products_create first.";
+				return $this->unresolvedProductsMessage();
 			}
 			if ($kind === 'reception') {
 				foreach ($lines as $line) {
@@ -3779,10 +3794,80 @@ class ToolApiBridge extends McpTool
 			return "Record ".$parent->ref." is not a draft (status ".((int) $parent->status)."): lines can only be added to a draft. Nothing was written.";
 		}
 		if (!empty($this->unresolvedProducts)) {
-			return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product.";
+			return $this->unresolvedProductsMessage();
 		}
 
 		return '';
+	}
+
+	/**
+	 * References close to one that matched no product, for the user to pick from:
+	 * the supplier's references when the document is a supplier one (the note
+	 * says "33303", the catalogue has "33303-6"), else our own references.
+	 *
+	 * @param  string   $wanted Reference as written on the document.
+	 * @param  int      $socid  Supplier whose catalogue is searched, 0 for a customer document.
+	 * @return string[]         Up to five "ref = our ref (label)" strings, closest first.
+	 */
+	private function closeProductRefs($wanted, $socid)
+	{
+		$wanted = trim((string) $wanted);
+		if (dol_strlen($wanted) < 3) {
+			return array();
+		}
+		// "5553-987" on the note, "5553-12" and "5553-14" in the catalogue (a size
+		// the note omits): try the stem before the last separator too. Then the
+		// stem before a trailing number ("SEAFXR20" -> the SEAFXR family), so a
+		// missing size still shows its siblings.
+		$stems = array($wanted);
+		if (preg_match('/^(.{3,})[-\/ .][^-\/ .]+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		if (preg_match('/^(.{3,}?)\d+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		$found = array();
+		foreach ($stems as $stem) {
+			if ($socid > 0) {
+				$sql = "SELECT DISTINCT pfp.ref_fourn, p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = pfp.fk_product";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').") AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY pfp.ref_fourn LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref_fourn] = $obj->ref_fourn.' = '.$obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (empty($found)) {
+				$sql = "SELECT ref, label FROM ".$this->db->prefix()."product";
+				$sql .= " WHERE entity IN (".getEntity('product').") AND ref LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY ref LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref] = $obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (!empty($found)) {
+				break;
+			}
+		}
+
+		return array_slice(array_values($found), 0, 5);
+	}
+
+	/**
+	 * Message refusing a write whose products could not be resolved, with the
+	 * close references found for each, so the user (or the model) can pick one.
+	 *
+	 * @return string Message for the caller.
+	 */
+	private function unresolvedProductsMessage()
+	{
+		$parts = array();
+		foreach ($this->unresolvedProducts as $wanted => $close) {
+			$parts[] = "'".((string) $wanted)."'".(empty($close) ? '' : ' (close refs: '.implode(', ', $close).')');
+		}
+
+		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first.";
 	}
 
 	/**
@@ -4408,6 +4493,31 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Resolve 'me' sent as an argument value on user-referencing fields.
+	 *
+	 * The model may answer "assign this task to me" with
+	 * fk_user_assign: 'me' — the same sentinel the write defaults already
+	 * expand to the acting user. Only fields whose name references a user
+	 * are touched: a literal 'me' in a text field (subject, label, note)
+	 * is left alone.
+	 *
+	 * @param  array<string,mixed> $args Tool arguments as sent.
+	 * @return array<string,mixed>      Arguments with 'me' resolved on user fields.
+	 */
+	private function resolveUserSentinels(array $args)
+	{
+		foreach ($args as $name => $value) {
+			if ($value === 'me' && stripos((string) $name, 'user') !== false) {
+				$args[$name] = (int) $this->user->id;
+			} elseif (is_array($value)) {
+				$args[$name] = $this->resolveUserSentinels($value);
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
@@ -4585,6 +4695,8 @@ class ToolApiBridge extends McpTool
 				return ['error' => $e->getMessage()];
 			}
 		}
+
+		$args = $this->resolveUserSentinels($args);
 
 		$this->getDefinitions();	// ensure routes are built
 		if (empty($this->routes[$name])) {

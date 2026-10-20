@@ -3029,6 +3029,11 @@ class BookKeeping extends CommonObject
 			$this->errors[] = $langs->trans('ErrorRecordNotFound') . ' - ' . $langs->trans('FiscalPeriod') . ' (' . $fiscal_period_id . ')';
 			return -1;
 		}
+		if (empty($fiscal_period->date_end)) {
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorAccountancyClosureNoEndDate');
+			return -1;
+		}
 
 		// New fiscal period
 		$new_fiscal_period_id = max(0, $new_fiscal_period_id);
@@ -3046,6 +3051,11 @@ class BookKeeping extends CommonObject
 		} elseif (empty($new_fiscal_period->id)) {
 			$langs->loadLangs(array('errors', 'compta'));
 			$this->errors[] = $langs->trans('ErrorRecordNotFound') . ' - ' . $langs->trans('FiscalPeriod') . ' (' . $new_fiscal_period_id . ')';
+			return -1;
+		}
+		if ($new_fiscal_period->date_start <= $fiscal_period->date_end) {
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorAccountancyClosureNoNextFiscalPeriod');
 			return -1;
 		}
 

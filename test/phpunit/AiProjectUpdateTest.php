@@ -44,7 +44,7 @@ class AiProjectUpdateTest extends PHPUnit\Framework\TestCase
 		$this->previousTimezone = date_default_timezone_get();
 		date_default_timezone_set('UTC');
 		$langs = new AiProjectUpdateLanguageFixture();
-		$conf = (object) ['global' => new stdClass(), 'cache' => []];
+		$conf = (object) ['global' => new stdClass(), 'cache' => [], 'modules_parts' => ['hooks' => []]];
 		$this->bridge = new AiProjectUpdateBridgeFixture(null, new AiProjectUpdateUserFixture());
 		AiProjectUpdateEndpointFixture::$received = [];
 		AiProjectUpdateEndpointFixture::$customResult = false;
