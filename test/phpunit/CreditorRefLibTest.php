@@ -24,11 +24,10 @@
 
 global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_creditorref.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_gr.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/paymentref.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
