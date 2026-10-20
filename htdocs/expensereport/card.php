@@ -2323,13 +2323,9 @@ if ($action == 'create') {
 
 						// Unit price HT
 						print '<td class="right linecolunitht">';
-						if (!empty($line->value_unit_ht)) {
-							print price($line->value_unit_ht);
-						} else {
-							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
-							print price($pricenettoshow);
-						}
+						$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
+						$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
+						print price($pricenettoshow);
 						print '</td>';
 
 						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
@@ -2539,7 +2535,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num((!empty($line->value_unit_ht) ? $line->value_unit_ht : ""))).'"'.$taxlessUnitPriceDisabled.' />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value=""'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax

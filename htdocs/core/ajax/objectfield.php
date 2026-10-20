@@ -17,7 +17,7 @@
 
 /**
  *       \file      htdocs/core/ajax/objectfield.php
- *       \brief     Read or update fields of an object from the user interface (ajax edition of cards).
+ *       \brief     Read or update fields of an object from the user interface (ajax edition of cards, kanban views...).
  *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
  *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
  *                  With fields empty, it returns only the date of modification and the event messages waiting in session
@@ -30,6 +30,7 @@
  *                  Answer is a JsonResponse, data contains the values and their output html (CommonObject::ajaxOutputField()).
  *                  After an update, it also contains the other fields changed by the update (computed fields, triggers...),
  *                  and the event messages set by the update (JsonResponse::addSessionEventMessages()).
+ *                  A line of an object (ex: a line of evaluation) is checked with the permissions of its parent object.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -88,8 +89,26 @@ if (!is_object($object) || $object->id <= 0) {
 	$jsonResponse->output();
 }
 
-// Security check, restrictedArea() tests the read or write permission and the access of external users
-$result = restrictedArea($user, empty($object->module) ? $object->element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, $isupdate ? 'write' : 'read');
+// A line is protected by the permissions of its parent object (ex: a line of evaluation by its evaluation)
+$objecttocheck = $object;
+if ($object instanceof CommonObjectLine && !empty($object->parent_element) && !empty($object->fk_parent_attribute)) {
+	$parentattribute = $object->fk_parent_attribute;
+	$objecttocheck = fetchObjectByElement((int) $object->$parentattribute, $object->parent_element);
+	if (!is_object($objecttocheck) || $objecttocheck->id <= 0) {
+		$jsonResponse->setError($langs->transnoentitiesnoconv('ErrorRecordNotFound'), JsonResponse::HTTP_NOT_FOUND);
+		$jsonResponse->output();
+	}
+}
+
+// Security check, restrictedArea() tests the read or write permission and the access of external users.
+// Objects of a module with several objects (ex: evaluation of hrm, modules built with ModuleBuilder) have their
+// permissions at a second level named like the element, like in CommonObject::getRightsForUser().
+$features = empty($objecttocheck->module) ? $objecttocheck->element : $objecttocheck->module;
+$feature2 = '';
+if (!empty($objecttocheck->module) && $objecttocheck->module != $objecttocheck->element && isset($user->rights->{$objecttocheck->module}->{$objecttocheck->element})) {
+	$feature2 = $objecttocheck->element;
+}
+$result = restrictedArea($user, $features, $objecttocheck, $objecttocheck->table_element, $feature2, 'fk_soc', 'rowid', 0, 1, $isupdate ? 'write' : 'read');
 if (!$result) {
 	$jsonResponse->setError($langs->transnoentitiesnoconv('NotEnoughPermissions'), JsonResponse::HTTP_FORBIDDEN);
 	$jsonResponse->output();
