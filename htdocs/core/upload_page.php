@@ -503,6 +503,9 @@ if ($action == 'showsummary') {
 		print '<br>';
 		print '<br>';
 	}
+	if (!is_array($json)) {
+		$json = array();
+	}
 
 	if ($modulepart == 'invoice_supplier') {
 		// Parse JSON to get information for an invoice

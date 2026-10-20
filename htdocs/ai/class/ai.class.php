@@ -530,6 +530,7 @@ class Ai
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
+		'@phan-var-force array<string,mixed> $json';
 		$tmparray = array();
 
 		//var_dump($json['items']);
