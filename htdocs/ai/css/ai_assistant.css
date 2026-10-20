@@ -792,6 +792,16 @@ body.ai-fullpage {
 }
 
 /* Tables in chat */
+.chat-chart-wrap {
+	position: relative;
+	height: 220px;
+	margin: 8px 0;
+}
+
+.chat-chart-wrap canvas {
+	max-width: 100%;
+}
+
 .chat-table-wrap {
     overflow-x: auto;
     margin-top: 8px;
