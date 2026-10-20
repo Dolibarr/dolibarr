@@ -14,6 +14,7 @@ RUN apt-get update \
         dialog \
 		gh \
 		git \
+		golang-go \
         graphviz \
         gzip \
 		hurl \
