@@ -114,6 +114,7 @@ $MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKI
  */
 
 $parameters = array();
+/** @var int|Skill $result Set to the cloned object by actions_addupdatedelete.inc.php */
 $result = -1;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
