@@ -110,7 +110,7 @@ class Mos extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		$restrictonsocid = 1; // Mo::$fields has a 'fk_soc' field
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -133,7 +133,9 @@ class Mos extends DolibarrApi
 			if ($search_sale == -2) {
 				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				// t.fk_soc is optional on Mo (a manufacturing order is not necessarily linked to a thirdparty), so a Mo with no
+				// thirdparty is not restricted by sales representative visibility (there is no customer data to protect on it).
+				$sql .= " AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 			}
 		}
 		if ($sqlfilters) {

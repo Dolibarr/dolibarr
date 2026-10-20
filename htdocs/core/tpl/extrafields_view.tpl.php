@@ -33,6 +33,7 @@
  * @var int 	$cols		@deprecated 	Add this information into $parameters['cols']
  * @var string	$forcefieldid
  * @var string	$forceobjectid
+ * @var string	$moreparam		More parameters to add to the edit link/form url (must start with '&')
  */
 
 // Protection to avoid direct call of template
@@ -262,7 +263,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 						});
 					</script>';
 				}
-				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1'.(empty($moreparam) ? '' : $moreparam).'">'.img_edit().'</a>';
 				print'</td>';
 			}
 			print '</tr></table>';
@@ -296,15 +297,16 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			// TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permtoeditextrafield && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
 				// Show the extrafield in create or edit mode
-				$fieldid = 'id';
+				$fieldid = empty($forcefieldid) ? 'id' : $forcefieldid;
+				$valueid = empty($forceobjectid) ? $object->id : $forceobjectid;
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $object->id . '" method="post" name="formextra">';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $valueid . (empty($moreparam) ? '' : $moreparam) . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
+				print '<input type="hidden" name="'.$fieldid.'" value="'.$valueid.'">';
 				print '<input type="hidden" name="page_y" value="">';
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 

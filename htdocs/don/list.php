@@ -130,11 +130,13 @@ $fieldstosearchall = array(
 	'd.lastname' => 'Lastname',
 	'd.firstname' => 'Firstname',
 );
+
+$arrayfields = array();
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
-$arrayfields = array();
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 

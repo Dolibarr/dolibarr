@@ -51,8 +51,8 @@ $object = new PaymentExpenseReport($db);
 
 if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) {
-		dol_print_error($db, 'Failed to get payment id '.$id);
+	if ($result <= 0) {
+		recordNotFound();
 	}
 }
 
@@ -64,7 +64,7 @@ if ($user->socid > 0) {
 
 $result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
 
-$permissiontoadd = $user->hasRight('expensereport', 'creer');
+$permissiontoadd = $user->hasRight('expensereport', 'to_paid');
 
 
 /*
@@ -85,6 +85,10 @@ if ($action == 'add_payment' && $permissiontoadd) {
 	if (!$result) {
 		$error++;
 		setEventMessages($expensereport->error, $expensereport->errors, 'errors');
+	}
+	if (!$error && $expensereport->status != ExpenseReport::STATUS_APPROVED) {
+		$error++;
+		setEventMessages($langs->trans('StatusOfRefMustBe', $expensereport->ref, $langs->transnoentitiesnoconv('Approved')), null, 'errors');
 	}
 
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
@@ -121,6 +125,12 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			$error++;
 			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
 		}
+		// A payment can't be higher than the remainder to pay
+		$remaintopay = (float) price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+		if (!$error && (float) price2num(array_sum($amounts), 'MT') > $remaintopay) {
+			$error++;
+			setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
+		}
 
 		if (!$error) {
 			$db->begin();
@@ -155,7 +165,9 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 			if (!$error) {
 				$payment->fetch($paymentid);
-				if ($expensereport->total_ttc - $payment->amount == 0) {
+				// Set the expense report as paid when the sum of all its payments (not only this one) reaches its total
+				$remaintopay = price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				if ($remaintopay <= 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
 					if (!($result > 0)) {
 						setEventMessages($payment->error, $payment->errors, 'errors');

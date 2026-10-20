@@ -74,6 +74,8 @@ if (isModEnabled('multicompany')) {
 	$sql .= " JOIN ".$db->prefix()."entity as e ON oat.entity = e.rowid";
 }
 $sql .= " WHERE oat.rowid = ".((int) $tokenid);
+$sql .= " AND oat.fk_user = ".((int) $id);
+$sql .= " AND oat.service = 'dolibarr_rest_api'";
 
 $resql = $db->query($sql);
 
@@ -88,6 +90,9 @@ if (empty($object->api_key)) {
 
 $form = new Form($db);
 $token = $db->fetch_object($resql);
+if (!empty($tokenid) && empty($token)) {
+	accessforbidden();
+}
 
 $entity = $conf->entity;
 
@@ -128,7 +133,8 @@ if (empty($reshook)) {
 	if ($action == 'add' && $canedittoken) {
 		$tokenstring = GETPOST('api_key', 'alphanohtml');
 		$userid = GETPOSTINT('user');
-		$useridtoadd = !empty($userid) && $userid > 0 ? $userid : $id;
+		// Only an admin can create a token for another user
+		$useridtoadd = ($user->admin && $userid > 0) ? $userid : $id;
 
 		if (empty($tokenstring)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Token")), null, 'errors');
@@ -193,6 +199,8 @@ if (empty($reshook)) {
 		// Remove token
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE rowid = ".((int) $tokenid);
+		$sql .= " AND fk_user = ".((int) $object->id);
+		$sql .= " AND service = 'dolibarr_rest_api'";
 
 		$resql = $db->query($sql);
 

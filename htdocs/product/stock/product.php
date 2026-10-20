@@ -83,7 +83,7 @@ $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 $d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 $pdluoid = GETPOSTINT('pdluoid');
-$batchnumber = GETPOST('batch_number', 'aZ09comma');
+$batchnumber = GETPOST('batch_number', 'alphanohtml'); // Lot/serial number may contain chars like '/' so we must not use aZ09 sanitizing here. Value is escaped before SQL use.
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
@@ -423,13 +423,14 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
-					if ($result) {
-						$srcwarehouseid = $pdluo->warehouseid;
+					if ($result > 0 && $pdluo->id > 0 && $pdluo->fk_product == $object->id) {
+						// The lot row gives the lot and its dates, the source warehouse is the one selected in the form (checked against the target above)
+						$srcwarehouseid = GETPOSTINT('id_entrepot');
 						$batch = $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
 					} else {
-						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
+						setEventMessages($pdluo->error ? $pdluo->error : $langs->trans('ErrorRecordNotFound'), $pdluo->errors, 'errors');
 						$error++;
 					}
 				} else {

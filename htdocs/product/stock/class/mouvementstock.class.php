@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,6 +357,14 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
+			// An outgoing movement (qty < 0) takes the eat-by/sell-by dates of the lot as they are now: the dates given by
+			// the caller (often a copy kept on the line of a reception or shipment, so maybe outdated since the dates were
+			// corrected on the lot) must not block the movement nor be saved into the lot.
+			if ($qty < 0) {
+				$eatby = '';
+				$sellby = '';
+			}
+
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -514,6 +523,9 @@ class MouvementStock extends CommonObject
 				$origin_type = '';
 				$origin_id = 0;
 			}
+
+			// llx_stock_mouvement.label is VARCHAR(255)
+			$label = dol_trunc((string) $label, 255, 'right', 'UTF-8', 1);
 
 			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
@@ -1057,7 +1069,9 @@ class MouvementStock extends CommonObject
 					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
 
-					$result = dol_include_once('/'.$modulename.'/class/'.$classname.'.class.php');
+					// Dolibarr names its class files in lowercase, so use a lowercase file name whatever
+					// the case of the class name (class names themselves are case insensitive in PHP).
+					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 
 					if ($result) {
 						$classname = ucfirst($classname);

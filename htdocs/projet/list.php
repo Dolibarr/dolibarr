@@ -133,9 +133,9 @@ if (GETPOSTISSET('formfilteraction')) {
 
 $searchCategoryProjectOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryUserOperator = GETPOSTINT('search_category_project_operator');
+	$searchCategoryProjectOperator = GETPOSTINT('search_category_project_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT')) {
-	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
+	$searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
 }
 
 /*

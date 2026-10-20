@@ -343,8 +343,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
 			throw new RestException(500, 'Error when deleting invoice');
+		} elseif ($result == 0) {
+			throw new RestException(403, 'Invoice not erasable');
 		}
 
 		return array(
@@ -562,7 +565,15 @@ class SupplierInvoices extends DolibarrApi
 		$amounts[$id] = $paymentamount;
 
 		// Multicurrency
-		$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		// getWay() switches the payment to the invoice currency as soon as a multicurrency amount is set, so
+		// this value must match the partial amount, not always the full invoice TTC. When a partial amount was
+		// requested, convert it at the invoice rate (multicurrency_total_ttc / total_ttc); otherwise use the
+		// full multicurrency TTC (full payment).
+		if (null !== $amount && $amount > 0 && !empty($this->invoice->total_ttc)) {
+			$newvalue = (float) price2num($paymentamount * $this->invoice->multicurrency_total_ttc / $this->invoice->total_ttc, 'MT');
+		} else {
+			$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		}
 		$multicurrency_amounts[$id] = $newvalue;
 
 		// Creation of payment line
@@ -823,6 +834,14 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+
 		$request_data = (object) $request_data;
 
 		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
@@ -895,7 +914,13 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		// TODO Check the lineid $lineid is a line of object
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {

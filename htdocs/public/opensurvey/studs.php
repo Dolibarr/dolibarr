@@ -85,7 +85,9 @@ $error = 0;
 
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
-	if (!$canbemodified) {
+	if (!$canbemodified || empty($object->allow_comments)) {
+		// Comments are refused when the survey is expired/closed or when the survey does not allow comments
+		// (the comment form is hidden in that case, so a comment here can only come from a forged POST).
 		httponly_accessforbidden('ErrorForbidden');
 	}
 

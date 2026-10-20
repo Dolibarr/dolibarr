@@ -57,7 +57,8 @@ if (is_numeric($type)) {
 	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
 }
 
-if (!$user->hasRight('categorie', 'lire')) {
+// Security check
+if (!$user->admin) {
 	accessforbidden();
 }
 

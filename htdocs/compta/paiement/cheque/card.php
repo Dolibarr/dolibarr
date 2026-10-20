@@ -777,7 +777,7 @@ if ($action == 'new') {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&lineid='.$objp->rowid.'">'.img_delete().'</a>';
 				}
 				if ($object->statut == 1 && $objp->statut != 2) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reject_check&token='.newToken().'&lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"), 'disable').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reject_check&token='.newToken().'&lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"), 'fa-ban').'</a>';
 				}
 				if ($objp->statut == 2) {
 					print ' &nbsp; '.img_picto($langs->trans('CheckRejected'), 'statut8').'</a>';

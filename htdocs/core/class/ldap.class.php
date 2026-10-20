@@ -242,7 +242,7 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource The internal LDAP connection handle
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle
 	 */
 	public $connection;
 
@@ -1150,6 +1150,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// Pourquoi cette ligne ?
 		//$info = ldap_get_entries($this->connection, $this->result);
@@ -1449,15 +1455,15 @@ class Ldap
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
 		} else {
-			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0], $this->ldapcharset);
-			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
-			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
-			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
-			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
-			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
-			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
+			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0] ?? '', $this->ldapcharset);
+			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0] ?? '', $this->ldapcharset);
+			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0] ?? '', $this->ldapcharset);
+			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0] ?? '', $this->ldapcharset);
+			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0] ?? '', $this->ldapcharset);
+			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0] ?? '', $this->ldapcharset);
+			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0] ?? '', $this->ldapcharset);
 
-			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0], $this->ldapcharset));
+			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0] ?? '', $this->ldapcharset));
 			if (isset($result[0]["pwdlastset"][0])) {	// If expiration on password exists
 				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0) ? $this->convertTime($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)) : 0;
 			} else {
@@ -1466,7 +1472,7 @@ class Ldap
 			if (!$this->name && !$this->login) {
 				$this->pwdlastset = -1;
 			}
-			$this->badpwdtime = $this->convertTime($this->convToOutputCharset($result[0]["badpasswordtime"][0], $this->ldapcharset));
+			$this->badpwdtime = $this->convertTime($this->convToOutputCharset($result[0]["badpasswordtime"][0] ?? '', $this->ldapcharset));
 
 			// FQDN domain
 			$domain = str_replace('dc=', '', $this->domain);

@@ -87,6 +87,10 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
+		$error++;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 	if (empty($splitamounts)) {
 		$error++;
@@ -174,6 +178,10 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
+		$error++;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
 		$error++;
@@ -295,7 +303,13 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 
 	$discount = new DiscountAbsolute($db);
 	$result = $discount->fetch(GETPOSTINT("remid"));
-	$result = $discount->delete($user);
+	if ($result > 0 && $discount->fk_soc == $socid) {
+		$result = $discount->delete($user);
+	} else {
+		// The discount must belong to the thirdparty of the page
+		$result = -1;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
 	if ($result > 0) {
 		$db->commit();
 		header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id])); // To avoid pb with back

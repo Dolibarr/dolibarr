@@ -233,7 +233,7 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
 			// Test validity of decryption
-			if (!ascii_check($newchain)) {
+			if (!ascii_check($newchain) && !utf8_check($newchain)) {
 				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
 				return $chain;
 			}
@@ -497,6 +497,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
+		$tableandshare = 'subscription&adherent';
+		$parentfortableentity = 'fk_adherent@adherent';	// A subscription has no entity, the entity is the one of its member
 	}
 	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
@@ -1268,7 +1270,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
 				if (!$user->hasRight('expensereport', 'readall')) {
-					if (!in_array($useridtocheck, $childids)) {
+					if (!in_array($useridtocheck, $childids) && !($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id)) {
 						return false;
 					}
 				}
@@ -1294,6 +1296,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (in_array($feature, $checkuser) && is_object($object) && $objectid > 0) {
 			$useridtocheck = $object->fk_user;
 			if (!empty($useridtocheck) && $useridtocheck > 0 && $useridtocheck != $user->id && empty($user->admin)) {
+				return false;
+			}
+		}
+
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
 				return false;
 			}
 		}

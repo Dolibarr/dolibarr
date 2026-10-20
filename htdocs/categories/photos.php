@@ -92,7 +92,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoadd) {
 		if ($object->id) {
 			$file = $_FILES['userfile'];
 			if (is_array($file['name']) && count($file['name']) > 0) {
@@ -123,7 +123,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader("", "", $langs->trans("Categories"));
+llxHeader("", $langs->trans("Categories"));
 
 $form = new Form($db);
 $formother = new FormOther($db);

@@ -91,6 +91,13 @@ if (!is_object($conf)) {
 }
 
 
+// This page runs on the install bootstrap, which never sets $user.
+// dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
+// so we force an empty one here, before any action that may need it.
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user = new User($db);
+
+
 /*
  * View
  */
@@ -1043,7 +1050,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'invoice') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'invoice_supplier') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1051,19 +1058,19 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				}
 				if ($modulepart == 'propal') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order_supplier') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'contract') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1577,7 +1584,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1602,7 +1611,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1707,7 +1718,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1732,7 +1745,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1938,7 +1953,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			if (!($n_processed_rows & 0xff)) {
 				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 				flush();
-				ob_flush();
+				if (ob_get_level() > 0) {
+					ob_flush();
+				}
 			}
 		}
 	} else {

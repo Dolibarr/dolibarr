@@ -428,6 +428,22 @@ class EcmDirectory extends CommonObject
 
 		$this->db->begin();
 
+		// With the content, the subdirectories are deleted too (their files are deleted with the directory on disk)
+		if ($deletedirrecursive) {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_directories WHERE fk_parent = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$subdir = new EcmDirectory($this->db);
+					if ($subdir->fetch($obj->rowid) > 0 && $subdir->delete($user, 'databaseonly', 1) < 0) {
+						$this->error = $subdir->error;
+						$this->db->rollback();
+						return -2;
+					}
+				}
+			}
+		}
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql .= " WHERE rowid=".((int) $this->id);
 

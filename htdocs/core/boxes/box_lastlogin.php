@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2017 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2025  Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2014-2026  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,8 +81,8 @@ class box_lastlogin extends ModeleBoxes
 			'td' => '',
 			'text' => $langs->trans("PreviousConnexion"),
 		);
-		if ($user->datepreviouslogin) {
-			$tmp = dol_print_date((int) $user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
+		if (isDolTms($user->datepreviouslogin)) {
+			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}
@@ -97,8 +97,8 @@ class box_lastlogin extends ModeleBoxes
 			'td' => '',
 			'text' => $langs->trans("LastPasswordChange"),
 		);
-		if ($user->datelastpassvalidation) {
-			$tmp = dol_print_date((int) $user->datelastpassvalidation, "dayhour", 'tzuserrel');
+		if (isDolTms($user->datelastpassvalidation)) {
+			$tmp = dol_print_date($user->datelastpassvalidation, "dayhour", 'tzuserrel');
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}

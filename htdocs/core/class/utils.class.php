@@ -409,7 +409,7 @@ class Utils
 				} elseif ($compression == 'bz') {
 					$handle = bzopen($outputfile, 'w');
 				} elseif ($compression == 'zstd') {
-					$handle = fopen($outputfile, 'w');
+					$handle = fopen("compress.zstd://" . $outputfile, "wb");
 				}
 			} else {
 				// TODO Add a pipe into script to decrypt dolCrypted values
@@ -549,7 +549,7 @@ class Utils
 			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
 			} elseif ($compression == 'zstd') {
-				$handle = fopen($outputfile, 'r');
+				$handle = fopen("compress.zstd://" . $outputfile, "rb");
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.

@@ -798,7 +798,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			}
 
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
-				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+				for (i = 0; i < <?php echo($MAXPRODUCT - 2); ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");

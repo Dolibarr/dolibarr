@@ -127,6 +127,34 @@ class DolGeoIP
 	}
 
 	/**
+	 * Return the ISO country code for an IP or a host name using the embedded GeoIP2 reader.
+	 * A Country database is read with country(), but a City database (which also embeds the
+	 * country record) is read with city(), so a City datafile configured as the country
+	 * datafile still resolves instead of failing with a BadMethodCallException.
+	 *
+	 * @param	string	$ipOrName	IP address or host name to look up
+	 * @return	string				Country code (two letters, upper case) or '' if not found
+	 */
+	private function getGeoIp2IsoCode($ipOrName)
+	{
+		try {
+			$databasetype = '';
+			if (is_object($this->gi) && method_exists($this->gi, 'metadata')) {
+				$databasetype = (string) $this->gi->metadata()->databaseType;
+			}
+			if (strpos($databasetype, 'Country') === false && strpos($databasetype, 'City') !== false) {
+				$record = $this->gi->city($ipOrName);
+			} else {
+				$record = $this->gi->country($ipOrName);
+			}
+			return (string) $record->country->isoCode;
+		} catch (Exception $e) {
+			//return $e->getMessage();
+			return '';
+		}
+	}
+
+	/**
 	 * Return in lower case the country code from an ip
 	 *
 	 * @param	string	$ip		IP to scan
@@ -148,13 +176,7 @@ class DolGeoIP
 		} else {
 			if (preg_match('/^[0-9]+.[0-9]+\.[0-9]+\.[0-9]+/', $ip)) {
 				if ($geoipversion == '2') {
-					try {
-						$record = $this->gi->country($ip);
-						return strtolower($record->country->isoCode);
-					} catch (Exception $e) {
-						//return $e->getMessage();
-						return '';
-					}
+					return strtolower($this->getGeoIp2IsoCode($ip));
 				} else {
 					if (!function_exists('geoip_country_code_by_addr')) {
 						return strtolower(geoip_country_code_by_name($ip));
@@ -163,13 +185,7 @@ class DolGeoIP
 				}
 			} else {
 				if ($geoipversion == '2') {
-					try {
-						$record = $this->gi->country($ip);
-						return strtolower($record->country->isoCode);
-					} catch (Exception $e) {
-						//return $e->getMessage();
-						return '';
-					}
+					return strtolower($this->getGeoIp2IsoCode($ip));
 				} else {
 					if (function_exists('geoip_country_code_by_addr_v6')) {
 						return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
@@ -200,13 +216,7 @@ class DolGeoIP
 		}
 
 		if ($geoipversion == '2') {
-			try {
-				$record = $this->gi->country($name);
-				return $record->country->isoCode;
-			} catch (Exception $e) {
-				//return $e->getMessage();
-				return '';
-			}
+			return $this->getGeoIp2IsoCode($name);
 		} else {
 			return strtolower(geoip_country_code_by_name($name));
 		}

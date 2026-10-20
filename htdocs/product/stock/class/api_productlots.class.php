@@ -127,7 +127,9 @@ class Productlots extends DolibarrApi
 		$sql  = "SELECT pl.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot AS pl";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields AS ple ON ple.fk_object = pl.rowid";
-		$sql .= " WHERE 1=1";
+		// Productlot sets ismultientitymanaged = 1, so the list must be restricted to the entities the
+		// caller may see, as productlot_list.php does. Without it the API returns the lots of every entity.
+		$sql .= " WHERE pl.entity IN (".getEntity('productlot').")";
 
 		// Filtres universels
 		if ($sqlfilters) {

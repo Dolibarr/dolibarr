@@ -1433,7 +1433,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
 			}
 
-			if ($object->oldcopy->fk_user_assign > 0) {
+			if (isset($object->oldcopy->fk_user_assign) && $object->oldcopy->fk_user_assign > 0) {
 				$tmpuser = new User($this->db);
 				$tmpuser->fetch($object->oldcopy->fk_user_assign);
 				$object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);

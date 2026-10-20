@@ -99,6 +99,11 @@ if (empty($reshook)) {
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
 			}
+			// This loop walks the raw definition of the fields, not the one filtered by
+			// setInfosForMode(), so the fields reserved to an asset must be discarded here too
+			if (!empty($field_info['only_on_asset']) && !empty($class_type)) {
+				continue;
+			}
 			$key = $mode_key . '_' . $field_key;
 			$value = $assetdepreciationoptions->deprecation_options[$mode_key][$field_key] ?? null;
 

@@ -108,7 +108,7 @@ class Bookmark extends CommonObject
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				Return integer <0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -124,6 +124,11 @@ class Bookmark extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+			if (!$obj) {
+				// Bookmark not found (unknown id, or bookmark of another entity)
+				$this->db->free($resql);
+				return 0;
+			}
 
 			$this->id = $obj->rowid;
 			$this->ref = $obj->rowid;
