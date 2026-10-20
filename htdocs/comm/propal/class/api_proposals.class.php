@@ -436,6 +436,13 @@ class Proposals extends DolibarrApi
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
 
+		// Option flag: backward compatibility with the legacy special_code=3 pattern
+		if (!isset($request_data->is_option) && isset($request_data->special_code) && (int) $request_data->special_code === 3) {
+			$request_data->is_option = 1;
+			$request_data->special_code = 0;
+			dol_syslog("Deprecated: special_code=3 used to flag a proposal line as option via API. Use is_option instead. Removal planned in a future version.", LOG_WARNING);
+		}
+
 		$updateRes = $this->propal->addline(
 			$request_data->desc,
 			$request_data->subprice,
@@ -462,7 +469,9 @@ class Proposals extends DolibarrApi
 			$request_data->origin,
 			$request_data->origin_id,
 			$request_data->multicurrency_subprice,
-			$request_data->fk_remise_except
+			$request_data->fk_remise_except,
+			0,
+			(isset($request_data->is_option) && $request_data->is_option) ? 1 : 0
 		);
 
 		if ($updateRes > 0) {
@@ -513,6 +522,13 @@ class Proposals extends DolibarrApi
 			foreach ($TData as $lineData) {
 				$line = (object) $lineData;
 
+				// Option flag: backward compatibility with the legacy special_code=3 pattern
+				if (!isset($line->is_option) && isset($line->special_code) && (int) $line->special_code === 3) {
+					$line->is_option = 1;
+					$line->special_code = 0;
+					dol_syslog("Deprecated: special_code=3 used to flag a proposal line as option via API. Use is_option instead. Removal planned in a future version.", LOG_WARNING);
+				}
+
 				$updateRes = $this->propal->addline(
 					$line->desc,
 					$line->subprice,
@@ -539,7 +555,9 @@ class Proposals extends DolibarrApi
 					$line->origin,
 					$line->origin_id,
 					$line->multicurrency_subprice,
-					$line->fk_remise_except
+					$line->fk_remise_except,
+					0,
+					(isset($line->is_option) && $line->is_option) ? 1 : 0
 				);
 
 				if ($updateRes < 0) {
@@ -607,6 +625,13 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Line does not belong to this proposal');
 		}
 
+		// Option flag: backward compatibility with the legacy special_code=3 pattern
+		if (!isset($request_data->is_option) && isset($request_data->special_code) && (int) $request_data->special_code === 3) {
+			$request_data->is_option = 1;
+			$request_data->special_code = 0;
+			dol_syslog("Deprecated: special_code=3 used to flag a proposal line as option via API. Use is_option instead. Removal planned in a future version.", LOG_WARNING);
+		}
+
 		$updateRes = $this->propal->updateline(
 			$lineid,
 			isset($request_data->subprice) ? $request_data->subprice : $propalline->subprice,
@@ -631,7 +656,8 @@ class Proposals extends DolibarrApi
 			isset($request_data->fk_unit) ? $request_data->fk_unit : $propalline->fk_unit,
 			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice,
 			0,
-			isset($request_data->rang) ? $request_data->rang : $propalline->rang
+			isset($request_data->rang) ? $request_data->rang : $propalline->rang,
+			isset($request_data->is_option) ? ($request_data->is_option ? 1 : 0) : $propalline->is_option
 		);
 
 		if ($updateRes > 0) {

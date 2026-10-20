@@ -311,6 +311,12 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 
+	// Option badge (proposals): the line keeps its real quantity/price but is excluded from the document total
+	if ($object->element == 'propal' && !empty($line->is_option)) {
+		print '<div class="clearboth"></div>';
+		print dolGetBadge($langs->trans('LineIsOption'), '', 'secondary');
+	}
+
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -421,6 +427,9 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponpriceendmultiprice = '</span>';
 }
 
+// Option lines (proposals): mute their monetary amounts so they don't visually add up into the document total
+$optioncellmutecss = (!empty($line->is_option) ? ' opacitymedium' : '');
+
 // VAT Rate
 print '<td class="linecolvat nowrap right">';
 $coldisplay++;
@@ -443,7 +452,7 @@ print $tooltiponpriceend;
 print '</td>';
 ?>
 
-<td class="linecoluht nowraponall right">
+<td class="linecoluht nowraponall right<?php echo $optioncellmutecss; ?>">
 	<?php
 	$coldisplay++;
 	if (empty($line->fk_remise_except)) {
@@ -457,7 +466,7 @@ print '</td>';
 <?php
 // Multicurrency unit price excluding tax - HT
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowraponall right">
+	<td class="linecoluht_currency nowraponall right<?php echo $optioncellmutecss; ?>">
 	<?php $coldisplay++;
 	if (empty($line->fk_remise_except)) {
 		print price($sign * $line->multicurrency_subprice);
@@ -479,7 +488,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc nowraponall right<?php echo $optioncellmutecss; ?>"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
 		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
@@ -497,7 +506,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 
 // Multicurrency unit price including tax - TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc_currency nowraponall right<?php echo $optioncellmutecss; ?>"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
 	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
@@ -515,7 +524,10 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
-if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
+// New-style option lines (is_option) display their real quantity/price and are marked with a badge.
+// Only legacy special_code=3 lines keep the old fully-masked rendering (backward compatibility).
+$lineisoptionlegacy = (empty($line->is_option) && $line->special_code == 3);
+if ((($line->info_bits & 2) != 2) && !$lineisoptionlegacy) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
@@ -566,7 +578,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print $label;
 	print '</td>';
 }
-if (!empty($line->remise_percent) && $line->special_code != 3) {
+if (!empty($line->remise_percent) && !$lineisoptionlegacy) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -613,7 +625,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($line->special_code == 3) {
+if ($lineisoptionlegacy) {
 	$coldisplay++;
 	$colspanOptions	= '';
 	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
@@ -622,14 +634,14 @@ if ($line->special_code == 3) {
 	}
 	print '<td class="linecoloption nowrap right"'.$colspanOptions.'>'.$langs->trans('Option').'</td>';
 } else {
-	print '<td class="linecolht nowrap right">';
+	print '<td class="linecolht nowrap right'.$optioncellmutecss.'">';
 	$coldisplay++;
 	print $tooltiponprice;
 	print price($sign * $line->total_ht);
 	print $tooltiponpriceend;
 	print '</td>';
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecoltotalht_currency nowrap right">';
+		print '<td class="linecoltotalht_currency nowrap right'.$optioncellmutecss.'">';
 		print $tooltiponpricemultiprice;
 		print price($sign * $line->multicurrency_total_ht);
 		print $tooltiponpriceendmultiprice;
