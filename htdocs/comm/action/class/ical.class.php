@@ -176,8 +176,12 @@ class ICal
 
 			if ($usecachefile && !is_null($this->file_text)) {
 				// Save the file content into cache file
-				file_put_contents($usecachefile, $this->file_text, LOCK_EX);
-				dolChmod($usecachefile);
+				// Write into a temporary file then rename it, so a concurrent reader never gets a partial file
+				$tmpcachefile = $usecachefile.'.'.getmypid().'.tmp';
+				if (file_put_contents($tmpcachefile, $this->file_text, LOCK_EX) !== false) {
+					dolChmod($tmpcachefile);
+					rename($tmpcachefile, $usecachefile);
+				}
 			}
 		}
 
