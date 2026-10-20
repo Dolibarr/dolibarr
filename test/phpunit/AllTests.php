@@ -187,6 +187,8 @@ class AllTests
 		//$suite->addTestSuite('AiMcpWireTest');
 		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
 		//$suite->addTestSuite('AiWriteConfirmationTest');
+		require_once dirname(__FILE__).'/RestlerValidatorTest.php';
+		$suite->addTestSuite('RestlerValidatorTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
 		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
