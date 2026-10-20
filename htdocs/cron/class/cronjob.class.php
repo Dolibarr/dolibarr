@@ -1299,7 +1299,7 @@ class Cronjob extends CommonObject
 	public function run_jobs(string $userlogin)
 	{
 		// phpcs:enable
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf, $hookmanager, $user;
 
 		$hookmanager->initHooks(array('cron'));
 
@@ -1339,6 +1339,8 @@ class Cronjob extends CommonObject
 				return -1;
 			}
 		}
+
+		$user->loadRights();
 
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
