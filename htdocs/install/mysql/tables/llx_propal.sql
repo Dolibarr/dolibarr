@@ -68,6 +68,7 @@ create table llx_propal
   note_private			text,
   note_public			text,
 
+  email_sent_counter	integer DEFAULT 0,				-- counter used to track how many times the document was sent by email
   model_pdf				varchar(255),					-- last template used to generate main document (exemple: azur, generic_invoice_odt:/pathto/template_invoice.odt)
   model_pdf_pos_sign 	varchar(32),					-- last position used to include the signature (example: posX:posY:Height:Width)
   last_main_doc			varchar(255),					-- relative filepath+filename of the last main generated document
