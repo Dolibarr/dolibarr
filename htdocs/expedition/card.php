@@ -1527,6 +1527,12 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</tr>'."\n";
 
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$projectid = GETPOSTINT('projectid');

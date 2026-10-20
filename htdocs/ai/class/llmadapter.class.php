@@ -50,6 +50,9 @@ class UniversalLLMAdapter
 	/** @var int Timeout in seconds */
 	private $timeout;
 
+	/** @var int Maximum number of tokens of the answer, 0 = default of each provider */
+	private $maxTokens = 0;
+
 	/**
 	 * Constructor
 	 *
@@ -66,6 +69,18 @@ class UniversalLLMAdapter
 		$this->baseUrl = rtrim($baseUrl, '/');
 		$this->model = $model;
 		$this->timeout = $timeout;
+	}
+
+	/**
+	 * Set the maximum number of tokens of the answer, for callers that expect long answers
+	 * (with thinking models, the reasoning tokens count inside this limit)
+	 *
+	 * @param int $maxTokens Maximum number of tokens, 0 = default of each provider
+	 * @return void
+	 */
+	public function setMaxTokens(int $maxTokens): void
+	{
+		$this->maxTokens = max(0, $maxTokens);
 	}
 
 	/**
@@ -147,7 +162,9 @@ class UniversalLLMAdapter
 			"messages" => $messages,
 			"temperature" => 0.1
 		);
-		if (!empty($attachments)) {
+		if ($this->maxTokens > 0) {
+			$data["max_tokens"] = $this->maxTokens;
+		} elseif (!empty($attachments)) {
 			$data["max_tokens"] = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
@@ -213,7 +230,7 @@ class UniversalLLMAdapter
 			"model" => $this->model,
 			"system" => $sys,
 			"messages" => $messages,
-			"max_tokens" => $maxTokens
+			"max_tokens" => ($this->maxTokens > 0 ? $this->maxTokens : $maxTokens)
 		);
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
@@ -275,6 +292,9 @@ class UniversalLLMAdapter
 			"contents" => $contents,
 			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
+		if ($this->maxTokens > 0) {
+			$data["generationConfig"]["maxOutputTokens"] = $this->maxTokens;
+		}
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
@@ -486,7 +506,9 @@ class UniversalLLMAdapter
 		// Extraction Logic
 		$answer = null;
 		if ($isClaude) {
-			$answer = $json['content'][0]['text'] ?? null;
+			// The list of blocks, not only the first one: with thinking (on by default
+			// on recent models), a 'thinking' block comes before the 'text' one.
+			$answer = $json['content'] ?? null;
 		} elseif ($isGemini) {
 			$answer = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
 		}
@@ -496,7 +518,7 @@ class UniversalLLMAdapter
 			$answer = $json['choices'][0]['message']['content'] ?? null;
 		}
 
-		// A reasoning model (e.g. through GLM) may send the content as a list
+		// A reasoning model (e.g. Claude, or through GLM) may send the content as a list
 		// of chunks, a 'thinking' one before the 'text' one: keep only the text.
 		if (is_array($answer)) {
 			$text = '';

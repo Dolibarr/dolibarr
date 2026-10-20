@@ -1652,6 +1652,14 @@ class Memo extends CommonObject
 			return false;
 		}
 
+		// Do not show memos of an object the user is not allowed to read
+		if (!empty($jsConfVars['elementType'])) {
+			require_once __DIR__.'/../lib/quickmemo.lib.php';
+			if (!quickMemoInterfaceCanAccessElement((string) $jsConfVars['elementType'], (int) ($jsConfVars['elementId'] ?? 0))) {
+				return false;
+			}
+		}
+
 		$autoResizeFontMin = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1);
 		$autoResizeFontMax = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE', 1.4);
 
