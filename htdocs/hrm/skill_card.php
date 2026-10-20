@@ -226,9 +226,16 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		$id = $result->id;
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd && is_object($result)) {
+		'@phan-var-force Skill $result';
+		// createFromClone() names the copy "Copy of ...": apply the label typed in the clone dialog
+		$clonelabel = GETPOST('clone_label', 'alphanohtml');
+		if ($clonelabel !== '' && $clonelabel !== $result->label) {
+			if ($result->setValueFrom('label', $clonelabel, '', null, 'text', '', $user) < 0) {
+				setEventMessages($result->error, $result->errors, 'errors');
+			}
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$result->id);
 		exit;
 	}
 }
@@ -664,7 +671,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->id;
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";

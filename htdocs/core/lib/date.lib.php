@@ -586,7 +586,7 @@ function dol_get_prev_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
 
-	$time = dol_mktime(12, 0, 0, $month, $tmparray['first_day'], $year, 1, 0);
+	$time = dol_mktime(12, 0, 0, $tmparray['first_month'], $tmparray['first_day'], $tmparray['first_year'], 1, 0);
 	$time -= 24 * 60 * 60 * 7;
 	$tmparray = dol_getdate($time, true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
