@@ -109,7 +109,7 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlo
 	exit(1);
 }
 
-if ($action == 'displayfile') {	// Return the uploaded file content for preview. Only PDF and images uploaded by the current user are allowed.
+if ($action == 'displayfile') {	// Test on permission not required here. Only files uploaded by the current user are returned: the file name embeds the user id.
 	$filetodisplay = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
 	$mimetodisplay = dol_mimetype($filetodisplay);
 	if (!preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $filetodisplay)
@@ -187,7 +187,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 	dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
 }
 
-if ($action == 'addobject') {
+if ($action == 'addobject') {	// Test on permission done later
 	$mandatoryfieldsareko = 0;
 
 	if ($modulepart == 'invoice_supplier') {
@@ -242,7 +242,7 @@ if ($action == 'addobject') {
 }
 
 $createdobject = null;
-if ($action == 'addobject' && $modulepart == 'invoice_supplier') {
+if ($action == 'addobject' && $modulepart == 'invoice_supplier') {	// Test on permission already done
 	$error = 0;
 
 	$tmpthirdparty = new Societe($db);
@@ -704,7 +704,7 @@ if ($action == 'showsummary') {
 
 	if ($modulepart == 'invoice_supplier') {
 		// Parse JSON to get information for an invoice
-		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+		$invoiceindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'supplier_invoice');
 
 		//var_dump($json, $invoiceindoc);
 

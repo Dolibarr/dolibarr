@@ -23,6 +23,11 @@
  *                  acting user's rowid, everywhere else it stays a literal.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once __DIR__.'/../../htdocs/ai/class/mcptool.class.php';
 require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 
@@ -30,7 +35,7 @@ require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 /**
  * Class AiMcpApiBridgeUserSentinelTest
  */
-class AiMcpApiBridgeUserSentinelTest extends PHPUnit\Framework\TestCase
+class AiMcpApiBridgeUserSentinelTest extends CommonClassTest
 {
 	/**
 	 * 'me' resolves to the acting user's rowid on user-referencing fields.
