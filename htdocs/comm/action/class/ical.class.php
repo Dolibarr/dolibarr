@@ -350,6 +350,20 @@ class ICal
 
 		//print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
+		// RDATE (dates added to a recurrence). Values are kept as written (a PERIOD "start/end" is reduced to its start), accumulated over all the RDATE lines of the event.
+		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'RDATE') {
+			$rdates = (isset($this->cal[$type][$this->event_count]['RDATE']) && is_array($this->cal[$type][$this->event_count]['RDATE'])) ? $this->cal[$type][$this->event_count]['RDATE'] : [];
+			foreach (explode(',', $value) as $rdate) {
+				$rdate = trim(explode('/', $rdate)[0]);
+				if (preg_match('/^[0-9]{8}(T[0-9]{6}Z?)?$/', $rdate)) {
+					$rdates[] = $rdate;
+				}
+			}
+			$this->cal[$type][$this->event_count]['RDATE'] = $rdates;
+			$this->last_key = 'RDATE';
+			return;
+		}
+
 		// EXDATE (dates excluded from a recurrence). Only the days are kept, accumulated over all the EXDATE lines of the event.
 		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'EXDATE') {
 			$exdates = (isset($this->cal[$type][$this->event_count]['EXDATE']) && is_array($this->cal[$type][$this->event_count]['EXDATE'])) ? $this->cal[$type][$this->event_count]['EXDATE'] : [];
