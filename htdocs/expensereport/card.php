@@ -2685,19 +2685,21 @@ if ($action == 'create') {
 				$datefornewline = !empty($date) ? $date : -1;
 				if (!GETPOSTISSET('dateday') && !GETPOSTISSET('datemonth') && !GETPOSTISSET('dateyear') && !empty($object->date_debut) && isDolTms($object->date_debut)) {
 					$defaultlinedate = $object->date_debut;
-					$lastcreatedline = null;
+					$lastcreatedlineid = 0;
+					$lastcreatedlinedate = 0;
 					foreach ($object->lines as $existingline) {
-						if ($lastcreatedline === null || (int) $existingline->id > (int) $lastcreatedline->id) {
-							$lastcreatedline = $existingline;
+						if ((int) $existingline->id > $lastcreatedlineid) {
+							$lastcreatedlineid = (int) $existingline->id;
+							$lastcreatedlinedate = $existingline->dates;
 						}
 					}
 
 					// Compare calendar dates, independently of display order and daylight saving changes.
-					if ($lastcreatedline !== null && !empty($lastcreatedline->dates) && isDolTms($lastcreatedline->dates) && !empty($object->date_fin) && isDolTms($object->date_fin)) {
-						$lastlineday = dol_print_date($lastcreatedline->dates, '%Y%m%d', 'tzserver');
+					if ($lastcreatedlineid > 0 && !empty($lastcreatedlinedate) && isDolTms($lastcreatedlinedate) && !empty($object->date_fin) && isDolTms($object->date_fin)) {
+						$lastlineday = dol_print_date($lastcreatedlinedate, '%Y%m%d', 'tzserver');
 						if ($lastlineday >= dol_print_date($object->date_debut, '%Y%m%d', 'tzserver')
 							&& $lastlineday <= dol_print_date($object->date_fin, '%Y%m%d', 'tzserver')) {
-							$defaultlinedate = $lastcreatedline->dates;
+							$defaultlinedate = $lastcreatedlinedate;
 						}
 					}
 

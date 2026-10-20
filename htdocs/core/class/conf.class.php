@@ -651,6 +651,7 @@ class Conf extends stdClass
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
+								// @phan-suppress-next-line PhanTypeExpectedObjectPropAccessButGotNull
 								$this->$modulename->enabled = true;	// TODO Remove this
 							}
 						}
