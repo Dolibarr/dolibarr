@@ -227,6 +227,12 @@ ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
 
+-- Flag a document line whose currency unit price comes from a fixed per-currency product price (issue #32379)
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
