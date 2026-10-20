@@ -1596,7 +1596,7 @@ class CommonObjectTest extends CommonClassTest
 			define('ROWS_3', 3);
 		}
 		$input = $propal->ajaxInputField('note_public');
-		$this->assertMatchesRegularExpression('/<textarea[^>]*name="ajaxfield_note_public"/', $input, 'Note (visible = 0) has an input');
+		$this->assertSame(1, preg_match('/<textarea[^>]*name="ajaxfield_note_public"/', $input), 'Note (visible = 0) has an input');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 		$this->assertStringContainsString('Public note', $input);
 
 		print __METHOD__." OK\n";

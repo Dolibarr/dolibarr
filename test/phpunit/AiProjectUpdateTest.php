@@ -18,9 +18,6 @@ if (!defined('NOREQUIREDB')) {
 	define('NOREQUIREDB', '1');
 }
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
-if (!defined('DOL_DOCUMENT_ROOT')) {
-	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
-}
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';

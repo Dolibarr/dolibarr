@@ -1000,6 +1000,37 @@ class CodingPhpTest extends CommonClassTest
 	}
 
 	/**
+	 * Check that test files do not use assertions only available since PHPUnit 9.1 (CI also runs older PHPUnit versions).
+	 * Use instead $this->assertSame(1, preg_match(...)) or $this->assertSame(0, preg_match(...)).
+	 *
+	 * @return void
+	 */
+	public function testNoAssertionOnlyAvailableSincePhpUnit91()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$forbiddenassertions = array('assertMatchesRegularExpression', 'assertDoesNotMatchRegularExpression');
+
+		$filesarray = dol_dir_list(dirname(__FILE__, 2), 'files', 1, '\.php$', null, 'fullname', SORT_ASC, 0, 1, '', 1);
+		foreach ($filesarray as $file) {
+			if (realpath($file['fullname']) == realpath(__FILE__)) {
+				continue;	// Myself contains the forbidden strings
+			}
+
+			// We are not interested in the comments
+			$filecontent = $this->removePhpComments(file_get_contents($file['fullname']));
+
+			foreach ($forbiddenassertions as $assertion) {
+				$ok = (strpos($filecontent, $assertion.'(') === false);
+				if (!$ok) {
+					self::reportAndGetLine($assertion.'(', $filecontent, 'test/'.$file['relativename'], "Use assertSame(1|0, preg_match(...)) instead of $assertion(), only available since PHPUnit 9.1");
+				}
+				$this->assertTrue($ok, "Found $assertion(), only available since PHPUnit 9.1, in file test/".$file['relativename']);
+			}
+		}
+	}
+
+	/**
 	 * Verify that only known modules are used
 	 *
 	 * @param string $filecontent Contents to check for php code that uses a module name
@@ -1129,8 +1160,8 @@ class CodingPhpTest extends CommonClassTest
 		static $already_reported = array();
 		$linenbr = 0;
 		$linematches = array();
-		if (preg_match("/^(?<lines>.*)\\Q$needle\\E/s", $subject, $linematches)) {
-			$linenbr = substr_count($linematches['lines'], "\n");
+		if (preg_match("/^(?<lines>.*?)\\Q$needle\\E/s", $subject, $linematches)) {	// Ungreedy to get the first occurrence
+			$linenbr = substr_count($linematches['lines'], "\n") + 1;	// Line numbers start at 1
 		}
 
 		$msg = PHP_EOL."$filename:$linenbr: $errMessage".PHP_EOL;

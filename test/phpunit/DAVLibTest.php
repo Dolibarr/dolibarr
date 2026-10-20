@@ -25,6 +25,9 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning
@@ -42,7 +45,7 @@ if (!defined('CDAV_CONTACT_TAG')) {
 	define('CDAV_CONTACT_TAG', '');
 }
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
