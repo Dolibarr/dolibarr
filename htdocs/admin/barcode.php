@@ -91,7 +91,7 @@ if ($action == 'setcoder') {
 		dol_print_error($db);
 	}
 } elseif ($action == 'update') {
-	if (GETPOSTISSET('GENBARCODE_LOCATION', 'alpha')) {
+	if (GETPOSTISSET('GENBARCODE_LOCATION')) {
 		$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
 		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
 	}
