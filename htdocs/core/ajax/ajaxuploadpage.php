@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/core/ajax/ajaxuploadpage.php
- *       \brief      Page that decrypt a file saved into a temporary directory
+ *       \brief      Page that analyze a file saved into a temporary directory and suggest final import
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -165,7 +165,8 @@ if ($modulepart == 'invoice_supplier') {
 	 "document_info": {
 	  "document_ref": "<document ref or number>",
 	  "date": "<date>",
-	  "title": "<title>"
+	  "title": "<title>",
+	  "currency_code": "<currency_code>"
 	 },
 	 "vendor": {
 	  "name": "<name>",
@@ -219,7 +220,7 @@ if ($modulepart == 'invoice_supplier') {
 }
 
 
-// TODO Move this into an AJAX service and just output the JS code to call the ajax to start
+// TODO Move the convert code into an AJAX service and just output the JS code to call the ajax service to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	$result = dolDocToText($fullpathoffile, '', 'fulltext');
@@ -228,7 +229,7 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	}
 
 	if ($fileContent) {
-		$prompt = 'This is the content of the document:'."\n\n".substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
+		$prompt = 'This is the content of the document:'."\n\n".dol_substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
 
 		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
 		// $result is an array of error messages or a string with answer
@@ -248,7 +249,10 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 			$answer = preg_replace('/```$/', '', $answer);
 		}
 	} else {
-		$errors[] = 'Failed to convert document into TXT';
+		$langs->load("errors");
+		$error++;
+		$errors[] = $langs->trans("ErrorFailedToConvertFileInText");
+		$errors[] = $result['message'];
 	}
 }
 
@@ -460,6 +464,16 @@ if (!empty($errors)) {
 		$errors[] = 'Failed to decode answer';
 		print 'Failed to decode answer';
 	} else {
+		// Save the JSON answer into a cache file next to the uploaded file (only if file name has no path part)
+		if (dol_sanitizeFileName($file) === $file && dol_is_file($fullpathoffile)) {
+			$result = file_put_contents($fullpathoffile.'.json', $answer);
+			if ($result === false) {
+				dol_syslog("Failed to write the json file ".$fullpathoffile.'.json', LOG_WARNING);
+			} else {
+				dolChmod($fullpathoffile.'.json');
+			}
+		}
+
 		print $answer;
 	}
 }

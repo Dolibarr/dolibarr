@@ -337,7 +337,16 @@ class Paiement extends CommonObject
 				continue;
 			}
 			$value_converted = false;
+			// getInvoiceRate() returns false when the invoice cannot be read, so the result must
+			// be tested before being indexed, as PaiementFourn::create() already does. Without
+			// this the rate is read from a boolean, which emits a PHP warning and leaves it null,
+			// so no conversion is made and the payment is refused later on with
+			// 'Payment in same currency than company but this->amount != this->multicurrency_amount'.
 			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
+			if ($tmparray === false) {
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+				return -1;
+			}
 			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
 
@@ -346,7 +355,17 @@ class Paiement extends CommonObject
 				if ($way == 'dolibarr') {
 					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
 				} else {
-					$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					// A payment that settles the whole remaining amount in the foreign currency must
+					// clear the invoice: dividing by the rate and rounding can leave or take one cent,
+					// which keeps the invoice partially paid, so take the remaining amount directly.
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($key);
+					if ((float) price2num($value, 'MT') == (float) $invoice->getRemainToPay(1)) {
+						$value_converted = (float) $invoice->getRemainToPay(0);
+					} else {
+						$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+					}
 				}
 			} else {
 				$invoice_multicurrency_tx = false;
@@ -906,6 +925,11 @@ class Paiement extends CommonObject
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
+						// Skip the invoices that were listed but not paid, the same way create() does. Without this,
+						// a 'company' link is added to the bank line for a third party that received no payment.
+						if (!is_numeric($value) || $value == 0) {
+							continue;
+						}
 						if ($mode == 'payment') {
 							$fac = new Facture($this->db);
 							$fac->fetch($key);
@@ -1095,6 +1119,17 @@ class Paiement extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->num_payment = $this->db->escape($num_payment);
+
+				// Update Num in bank
+				$type = $this->element;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+				$sql .= " SET num_chq = '".$this->db->escape($num_payment)."'";
+				$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
+				$sql .= " AND rappro = 0";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = 'Error -1 '.$this->db->error();
+				}
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
@@ -1387,6 +1422,36 @@ class Paiement extends CommonObject
 
 
 	/**
+	 * Return array with content of the tooltip, so the getNomUrl() tooltip becomes hookable
+	 * (a module can toggle, reorder or add entries through the getTooltipContent hook).
+	 *
+	 * @param  array<string,mixed>  $params  Params to construct tooltip data
+	 * @return array<string,string>          Data to show in tooltip
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u>';
+		$datas['ref'] = '<br><strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$tmparray = dol_getdate($dateofpayment);
+			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'day');
+			} else {	// Hours was set to real date of payment (special case for POS for example)
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+			}
+		}
+		if ($this->amount) {
+			$datas['amount'] = '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -1406,21 +1471,8 @@ class Paiement extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
-		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
-		if ($dateofpayment) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
-			$tmparray = dol_getdate($dateofpayment);
-			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
-				$label .= dol_print_date($dateofpayment, 'day');
-			} else {	// Hours was set to real date of payment (special case for POS for example)
-				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
-			}
-		}
-		if ($this->amount) {
-			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
-		}
+		$params = array();
+		$label = $this->getTooltipContent($params);
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
 			if (is_array($arraybill) && count($arraybill) > 0) {

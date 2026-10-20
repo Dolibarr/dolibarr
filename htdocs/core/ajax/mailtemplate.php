@@ -69,6 +69,18 @@ $langs->load("mails");
 
 top_httphead();
 
+// Security checks: Verify user has required permissions for the requested template type
+$template = GETPOST('template', 'alpha');
+if (!empty($template)) {
+	// Check permissions based on template type
+	if ($template == 'news' && !$user->hasRight('website', 'read')) {
+		accessforbidden('You do not have permission to access website news');
+	}
+	if ($template == 'product' && !$user->hasRight('product', 'read') && !$user->hasRight('service', 'read')) {
+		accessforbidden('You do not have permission to access products');
+	}
+}
+
 // TODO Replace with ID of template
 if (GETPOSTISSET('template')) {
 	$templatefile = DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/'.dol_sanitizeFileName(GETPOST('template')).'.html';

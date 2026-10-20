@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,14 +141,17 @@ if (isModEnabled("product") || isModEnabled("service")) {
 
 	echo '<span class="prod_entry_mode_predef nowraponall">';
 
-	$statustoshow = -1;
+	// By default, show all products whatever their "on sale" status, because a BOM may legitimately use raw
+	// materials that are only bought and never sold. Set BOM_STATUS_OF_PRODUCT_TO_SHOW to 1 to list only the
+	// products on sale (like the sale documents do), or to 0 to list only the products not on sale.
+	$statustoshow = getDolGlobalInt('BOM_STATUS_OF_PRODUCT_TO_SHOW', -1);
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
 		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array:alphanohtml'), 1);
 	} else {
 		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array:alphanohtml'), 1);
 	}
-	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprod=__ID__').'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
 
 	echo '</span>';
@@ -262,7 +266,7 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getDurationUnitByProduct'
-					,'token' : "<?php echo newToken() ?>"
+					,'token' : "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
@@ -276,7 +280,7 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getWorkstationByProduct'
-					,'token' :  "<?php echo newToken() ?>"
+					,'token' :  "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {

@@ -859,6 +859,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			} elseif ($this->type == 'number') {
 				$val_const = GETPOSTINT($this->confKey);
+			} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
+				$val_const = GETPOST($this->confKey, 'password');
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -1172,6 +1174,11 @@ class FormSetupItem
 			// Add button to autosuggest a key
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		}
+
+		// Add button to show/hide a key masked with the css class 'text-security'
+		if (!empty($conf->use_javascript_ajax) && !empty($this->fieldParams['showEyeButton'])) {
+			$out .= '<span class="fa fa-eye paddingleft paddingright cursorpointer pictofixedwidth" title="'.dolPrintHTMLForAttribute($this->langs->trans('Show')).'" onclick="jQuery(\'#'.trim($this->confKey).'\').toggleClass(\'text-security\'); jQuery(this).toggleClass(\'fa-eye fa-eye-slash\');"></span>';
 		}
 
 		return $out;

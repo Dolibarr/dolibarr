@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Invoice day
 DOL_VALUE_DAY_LETTERS=Invoice day in letters
 DOL_LINE_FEED_REVERSE=Line feed reverse
 InvoiceID=Invoice ID
-InvoiceRef=Invoice ref
 DOL_PRINT_OBJECT_LINES=Invoice lines
 DOL_VALUE_CUSTOMER_FIRSTNAME=Customer first name
 DOL_VALUE_CUSTOMER_LASTNAME=Customer last name

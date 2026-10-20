@@ -81,7 +81,15 @@ $offset = $limit * $page;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
+
+if (!isModEnabled('stock')) {
+	accessforbidden("Module stock must be enabled to use this feature");
+}
+if (!$user->hasRight('stock', 'read')) {
+	accessforbidden("You need permission to read stock to access this feature");
+}
+
+restrictedArea($user, 'produit|service');
 
 
 /*
@@ -100,7 +108,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_dateyear = '';
 	$search_product = 0;
 }
-
 
 
 /*

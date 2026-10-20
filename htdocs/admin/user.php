@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,16 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'setusesearchtoselectuser') {
+	// Set the "search to select" mode of the user combo (0=no, 1/2/3=nb of chars to type before search, 'infinite'=infinite list)
+	$usersearch = GETPOST('activate_usesearchtoselectuser', 'aZ09');
+
+	if (dolibarr_set_const($db, "USER_USE_SEARCH_TO_SELECT", $usersearch, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -194,6 +204,31 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+// Use Ajax "search to select" form to select a user
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectUser"), $langs->trans("UseSearchToSelectUserTooltip"), 1).'</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center nowraponall" width="100">';
+if (empty($conf->use_javascript_ajax)) {
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+} else {
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setusesearchtoselectuser">';
+	$arrval = array(
+		'0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'infinite' => $langs->trans("UseSearchToSelectUserInfinite"),
+	);
+	print $form->selectarray("activate_usesearchtoselectuser", $arrval, getDolGlobalString('USER_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth200');
+	print ' <input type="submit" class="button small reposition" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+}
+print '</td></tr>';
+
 print '</table>';
 print '</div>';
 
@@ -255,8 +290,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);

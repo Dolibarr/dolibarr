@@ -138,6 +138,9 @@ $arrayfields = array(
 	'aa.data_suggest'       => array('label' => "DataUsedToSuggestAccount",         'position' => 1, 'checked' => '1', 'enabled' => '1'), // Seems not used in search.
 	'aa.account_number'     => array('label' => "AccountAccountingSuggest",         'position' => 1, 'checked' => '1', 'enabled' => '1'),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 // @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -226,6 +229,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
 				$sql .= " WHERE rowid = ".((int) $monId);
+				$sql .= " AND fk_facture_fourn IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE entity IN (".getEntity('facture_fourn', 0)."))";	// Line must belong to an object of an allowed entity
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);

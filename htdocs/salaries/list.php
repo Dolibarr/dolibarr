@@ -146,6 +146,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -359,12 +362,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_accoun
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON ps.fk_salary = s.rowid, ";
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
-$sql .= " AND s.entity IN (".getEntity('salaries').")";
-if (!$user->hasRight('salaries', 'readchild')) {
-	$sql .= " AND s.fk_user = ".(int) $user->id;
-}
+$sql .= " AND s.entity IN (".getEntity('salary').")";
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$sql .= " AND s.fk_user = ".(int) $user->id;
+	} else {
+		$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	}
 }
 
 //print $sql;
@@ -869,7 +873,7 @@ while ($i < $imaxinloop) {
 
 		// Label payment
 		if (!empty($arrayfields['s.label']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'"><span class="spantitle">'.dol_escape_htmltag($obj->label)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
