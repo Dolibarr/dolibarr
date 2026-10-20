@@ -2672,6 +2672,7 @@ abstract class CommonObject
 
 			return price((float) $value, 0, $langs, 1, -1, -1, $currency);
 		}
+
 		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
 		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
 		$fielddef = $this->fields[$field];
