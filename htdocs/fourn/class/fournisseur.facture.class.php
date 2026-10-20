@@ -3589,10 +3589,11 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'invoice_supplier_send')
 	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
-	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @param	string		$forcerecipient		Forced recipients (mandatory). A list of values separated by ';' among: a fixed email, 'thirdpartyemail' (email of thirdparty),
+	 *  										'internalfollowingcontact' (internal contacts of supplier invoice of type SALESREPFOLL), 'salesrepresentative' (emails of sales representatives of thirdparty).
 	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsRemindersOnSupplierInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = '')
+	public function sendEmailsRemindersOnSupplierInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = 'internalfollowingcontact')
 	{
 		global $conf, $langs, $user;
 
@@ -3613,6 +3614,24 @@ class FactureFournisseur extends CommonInvoice
 			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
 		}
+
+		// Build list of forced recipients (separator is ';' because cron splits parameters on ',')
+		$arrayforcerecipient = array();
+		foreach (explode(';', (string) $forcerecipient) as $tmpvalue) {
+			$tmpvalue = trim($tmpvalue);
+			if ($tmpvalue !== '') {
+				if (!in_array($tmpvalue, array('thirdpartyemail', 'internalfollowingcontact', 'salesrepresentative')) && !isValidEmail($tmpvalue)) {
+					$this->output .= 'Bad value "'.$tmpvalue.'" for parameter forcerecipient. Must be an email, "thirdpartyemail", "internalfollowingcontact" or "salesrepresentative"';
+					return 0;
+				}
+				$arrayforcerecipient[] = $tmpvalue;
+			}
+		}
+		if (empty($arrayforcerecipient)) {
+			$this->output .= 'Parameter forcerecipient is mandatory. Must be a list of values separated by ";" among an email, "thirdpartyemail", "internalfollowingcontact" or "salesrepresentative"';
+			return 0;
+		}
+		$forcerecipient = implode(';', $arrayforcerecipient);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -3725,33 +3744,46 @@ class FactureFournisseur extends CommonInvoice
 
 					// Recipient
 					$to = array();
-					if ($forcerecipient) {	// If a recipient was forced
-						$to = array($forcerecipient);
-					} else {
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'internal', 0, 'SALESREPFOLL');
-							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-								foreach ($tmparraycontact as $data_email) {
-									if (!empty($data_email['email'])) {
-										$to[] = $data_email['email'];
+					$res = $tmpinvoice->fetch_thirdparty();
+					$recipient = $tmpinvoice->thirdparty;
+					if ($res > 0) {
+						foreach ($arrayforcerecipient as $tmpforcerecipient) {
+							if ($tmpforcerecipient == 'thirdpartyemail') {
+								if (!empty($recipient->email)) {
+									$to[] = $recipient->email;
+								}
+							} elseif ($tmpforcerecipient == 'internalfollowingcontact') {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'internal', 0, 'SALESREPFOLL');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $data_email['email'];
+										}
 									}
 								}
+							} elseif ($tmpforcerecipient == 'salesrepresentative') {
+								$tmparraysalesrep = $recipient->getSalesRepresentatives($user);
+								if (is_array($tmparraysalesrep)) {
+									foreach ($tmparraysalesrep as $salesrep) {
+										if (!empty($salesrep['email']) && !empty($salesrep['status'])) {
+											$to[] = $salesrep['email'];
+										}
+									}
+								}
+							} else {	// A fixed email
+								$to[] = $tmpforcerecipient;
 							}
-							if (empty($to) && !empty($recipient->email)) {
-								$to[] = $recipient->email;
-							}
-							if (empty($to)) {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for supplier invoice or customer.";
-								$error++;
-								$errorforinvoice++;
-							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						}
+						$to = array_values(array_unique(array_filter($to)));
+						if (empty($to)) {
+							$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email found for recipients ".$forcerecipient.".";
 							$error++;
 							$errorforinvoice++;
 						}
+					} else {
+						$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						$error++;
+						$errorforinvoice++;
 					}
 
 					// Sender
