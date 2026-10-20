@@ -518,3 +518,6 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
 -- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
 ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
+
+-- RF or national reference the supplier provides to accept payments
+ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
