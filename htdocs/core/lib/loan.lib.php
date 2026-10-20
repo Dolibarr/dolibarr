@@ -592,3 +592,65 @@ function loanRateAt($history, $current, $date)
 	}
 	return ($first !== null ? (float) $first->rate_old : (float) $current);
 }
+
+/**
+ * Next payment of a loan that has no schedule, worked out from the loan and the payments already made: due on the
+ * first payment date after the last payment; interest on the capital left for that period, at the rate in force
+ * on that date (daily or per period); capital so that the remaining payments repay the capital left (less the
+ * balloon), the last payment repaying all that is left; charge from the charge type of the loan.
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	Loan	$loan	Loan (fetched)
+ * @return	?array{date:int,term:int,capital:float,interest:float,charge:float}	Null if nothing is left to repay
+ */
+function loanNextPayment($db, $loan)
+{
+	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+
+	$frequency = ((int) $loan->frequency > 0 ? (int) $loan->frequency : 12);
+	$datestart = (int) $loan->datestart;
+	$nbterm = (int) $loan->nbterm;
+
+	// Payments already made
+	$paidcapital = 0.0;
+	$lastdate = 0;
+	$sql = "SELECT amount_capital, datep FROM ".MAIN_DB_PREFIX."payment_loan WHERE fk_loan = ".((int) $loan->id);
+	$resql = $db->query($sql);
+	while ($resql && ($obj = $db->fetch_object($resql))) {
+		$paidcapital += (float) $obj->amount_capital;
+		$lastdate = max($lastdate, (int) $db->jdate($obj->datep));
+	}
+	$capital = (float) price2num((float) $loan->capital - $paidcapital, 'MT');
+	if ($capital <= 0 || empty($datestart) || $nbterm <= 0) {
+		return null;
+	}
+
+	// First payment date after the last payment (index 0 = first payment of the loan)
+	$index = 0;
+	if ($lastdate) {
+		while ($index < $nbterm - 1 && loanTermDate($datestart, $index, $frequency) <= $lastdate) {
+			$index++;
+		}
+	}
+	$date = loanTermDate($datestart, $index, $frequency);
+
+	$rate = loanRateAt(loanFetchChanges($db, $loan->id), (float) $loan->rate, $date);
+	$days = ((int) $loan->interest_basis ? loanPeriodDays($datestart, $index + 1, $frequency) : 0);
+	$interest = (float) price2num($capital * loanPeriodRate($rate, $frequency, (int) $loan->interest_basis, $days) / 100, 'MT');
+
+	$left = $nbterm - $index;
+	if ($left <= 1) {
+		$amort = $capital;	// last payment: all that is left (with the balloon if any)
+	} else {
+		$calc = new LoanSchedule($db);
+		$mens = (float) price2num($calc->calcMonthlyPayments($capital, $rate / 100, $left, $frequency, (int) $loan->interest_basis, (float) $loan->balloon_amount), 'MT');
+		$amort = (float) price2num($mens - $interest, 'MT');
+	}
+
+	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	if ($index == 0) {
+		$charge = (float) price2num($charge + $chargeregul, 'MT');
+	}
+
+	return array('date' => $date, 'term' => $index + 1, 'capital' => $amort, 'interest' => $interest, 'charge' => $charge);
+}

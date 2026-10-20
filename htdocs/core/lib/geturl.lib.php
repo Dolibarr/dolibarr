@@ -57,7 +57,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".maskSecretsForLog($url));
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
@@ -243,7 +243,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//if USE_PROXY constant set at begin of this method.
 	if ($USE_PROXY) {
-		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".($PROXY_PASS ? '****' : ''));
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
@@ -402,7 +402,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
-	dol_syslog("getURLContent request without content body=".$request);
+	dol_syslog("getURLContent request without content body=".maskSecretsForLog((string) $request));
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we don't output response by default.
 		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
@@ -490,7 +490,7 @@ function removeCredentialHeaders($headers)
 		return [];
 	}
 
-	$credentialheaders = ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey'];
+	$credentialheaders = getCredentialHeaderNames();
 
 	$ret = [];
 	foreach ($headers as $header) {
@@ -502,6 +502,38 @@ function removeCredentialHeaders($headers)
 	}
 
 	return $ret;
+}
+
+/**
+ * Return the names (lower case) of the HTTP request headers that carry a credential.
+ *
+ * @return	string[]	Array of header names
+ */
+function getCredentialHeaderNames()
+{
+	return ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey', 'client-secret'];
+}
+
+/**
+ * Mask the secrets (API keys, tokens, passwords...) found into an URL or into the header of a HTTP request, so it can be
+ * written into the logs. Only the first 3 characters of each secret are kept.
+ * Example: 'https://maps.googleapis.com/maps/api/geocode/json?address=x&key=AIzaSyXXX' => '...&key=AIz...'
+ *
+ * @param	string	$string		URL, or header of a HTTP request (one header per line)
+ * @return	string				Same string with secrets masked
+ */
+function maskSecretsForLog($string)
+{
+	// Parameters of the query string (into an URL or into the first line of a request header)
+	$string = (string) preg_replace('/([?&](?:[a-z0-9_.-]*(?:key|token|secret|password|passwd|pwd|signature)|pass)=[^&#\s]{0,3})[^&#\s]*/i', '$1...', $string);
+
+	// Header lines carrying a credential
+	$headernames = implode('|', array_map(function (string $name): string {
+		return preg_quote($name, '/');
+	}, getCredentialHeaderNames()));
+	$string = (string) preg_replace('/^((?:'.$headernames.')[ \t]*:[ \t]*[^\r\n]{0,3})[^\r\n]*/im', '$1...', $string);
+
+	return $string;
 }
 
 

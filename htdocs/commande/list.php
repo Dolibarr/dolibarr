@@ -414,8 +414,8 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -2581,8 +2581,10 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
 			print dolPrintLabel($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

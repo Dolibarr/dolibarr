@@ -432,6 +432,8 @@ class GetUrlLibTest extends CommonClassTest
 			'api-key: secret',
 			'DOLAPIKEY: secret',
 			'x-goog-api-key: secret',
+			'Client-Secret: secret',
+			'Client-Id: kept',
 			'X-Custom: kept',
 			'Content-Type: application/json',
 			'malformed header without colon',
@@ -439,9 +441,30 @@ class GetUrlLibTest extends CommonClassTest
 
 		$result = removeCredentialHeaders($headers);
 
-		$this->assertSame(['Accept: application/json', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+		$this->assertSame(['Accept: application/json', 'Client-Id: kept', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
 
 		$this->assertSame([], removeCredentialHeaders([]));
 		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
+	}
+
+	/**
+	 * testMaskSecretsForLog
+	 *
+	 * @return	void
+	 */
+	public function testMaskSecretsForLog()
+	{
+		$result = maskSecretsForLog('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIzaSyABCDEF');
+		$this->assertSame('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIz...', $result, 'The API key in the query string must be masked');
+
+		$result = maskSecretsForLog('https://example.com/api?api_key=abcdef&page=2&access_token=tok123#anchor');
+		$this->assertSame('https://example.com/api?api_key=abc...&page=2&access_token=tok...#anchor', $result, 'Each secret parameter must be masked, the other ones kept');
+
+		$result = maskSecretsForLog('https://example.com/page?address=keyboard&id=4');
+		$this->assertSame('https://example.com/page?address=keyboard&id=4', $result, 'An URL without secret must not be modified');
+
+		$request = "GET /api?key=AIzaSy123 HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer eyJhbGciOi\r\nAccept: */*\r\nCookie: DOLSESSID_xxx=secret\r\n\r\n";
+		$result = maskSecretsForLog($request);
+		$this->assertSame("GET /api?key=AIz... HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bea...\r\nAccept: */*\r\nCookie: DOL...\r\n\r\n", $result, 'Secrets in the request line and in the credential headers must be masked');
 	}
 }

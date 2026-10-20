@@ -711,8 +711,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->eventorganization->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->hasRight('project', 'conferenceorboothattendee', 'read'); // If you can read, you can build the PDF to read content
-			$delallowed = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('project', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('project', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('eventorganization:ConferenceOrBoothAttendee', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, (string) $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

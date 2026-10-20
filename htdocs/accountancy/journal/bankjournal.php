@@ -515,7 +515,7 @@ if ($result) {
 						if ($is_sc) {
 							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
 						} else {
-							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							$tabtp[$obj->rowid][$compta_user] = isset($tabtp[$obj->rowid][$compta_user]) ? $tabtp[$obj->rowid][$compta_user] + $amounttouse : $amounttouse;
 						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
@@ -616,7 +616,7 @@ if ($result) {
 							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								$tabtp[$obj->rowid][$compta_user] = isset($tabtp[$obj->rowid][$compta_user]) ? $tabtp[$obj->rowid][$compta_user] + $amounttouse : $amounttouse;
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
@@ -693,7 +693,7 @@ if ($result) {
 							$tmpinvoice->fetch($invoiceid);
 							$tmpinvoice->fetch_thirdparty();
 							if ($tmpinvoice->thirdparty->code_compta_client) {
-								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] += $amount;
+								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] = isset($tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client]) ? $tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] + $amount : $amount;
 							}
 						}
 					}

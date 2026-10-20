@@ -342,7 +342,7 @@ class Facture extends CommonInvoice
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 5),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10, 'uieditable' => 1, 'alwayseditable' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 12),
 		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -368,8 +368,8 @@ class Facture extends CommonInvoice
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
@@ -483,6 +483,23 @@ class Facture extends CommonInvoice
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of invoices is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client((string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
 	}
 
 	/**
@@ -796,6 +813,12 @@ class Facture extends CommonInvoice
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
+			// Keep author on object so a later call to update() does not reset fk_user_author
+			if ($origin_user_author_id > 0) {
+				$this->user_creation_id = $origin_user_author_id;
+				$this->fk_user_author = $origin_user_author_id;
+			}
+
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
@@ -967,8 +990,12 @@ class Facture extends CommonInvoice
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
-				foreach ($this->lines as $i => $val) {
-					$line = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$line = $linestoadd[$i];
 					'@phan-var-force FactureLigne $line';
 
 					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
@@ -2393,6 +2420,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -2979,8 +3007,22 @@ class Facture extends CommonInvoice
 				$srcinvoice->fetch($remise->fk_facture_source);
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
+				// A deposit or credit note is converted into one discount per VAT rate, and a discount can be split,
+				// so keep only the cost of the source lines with the same VAT rate, prorated to the amount of the discount.
+				$srclinesofvat = array();
+				foreach ($srcinvoice->lines as $srcline) {
+					if (price2num($srcline->tva_tx) == price2num($remise->tva_tx)) {
+						$srclinesofvat[] = $srcline;
+					}
+				}
+				if (count($srclinesofvat) > 0) {
+					$srcinvoice->lines = $srclinesofvat;
+				}
 				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
 				$facligne->pa_ht = $arraytmp['pa_total'];
+				if ((float) $arraytmp['pv_total'] != 0 && price2num($arraytmp['pv_total'], 'MT') != price2num(abs((float) $remise->total_ht), 'MT')) {
+					$facligne->pa_ht = (float) price2num($arraytmp['pa_total'] * abs((float) $remise->total_ht / (float) $arraytmp['pv_total']), 'MU');
+				}
 			}
 
 			$facligne->total_ht  = -(float) $remise->total_ht;
@@ -3293,9 +3335,9 @@ class Facture extends CommonInvoice
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref));
 						} else {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceDeleteDolibarr", $this->ref)); // we use 0 for price, to not change the weighted average value
 						}
 					}
 				}
@@ -3853,7 +3895,7 @@ class Facture extends CommonInvoice
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
 							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
 								$this->setErrorsFromObject($mouvP);
@@ -3905,7 +3947,7 @@ class Facture extends CommonInvoice
 												// not enough (take all in batch)
 												$product_batch_qty = $batch->qty;
 											}
-											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
 												$this->setErrorsFromObject($mouvP);
@@ -3929,7 +3971,7 @@ class Facture extends CommonInvoice
 											} else {
 												// take in the first batch
 												$batch = $batchList[0];
-												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
 													$this->setErrorsFromObject($mouvP);
@@ -3941,7 +3983,7 @@ class Facture extends CommonInvoice
 							}
 
 							if (!$is_batch_line) {	// If stock move not yet processed
-								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
 									$this->setErrorsFromObject($mouvP);
@@ -6517,8 +6559,25 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						if (is_numeric($template)) {
+							// The cron was started with a template id and that id cannot be
+							// resolved at all. This is almost certainly a global setup error
+							// (template deleted or wrong id passed to the cron), and every
+							// remaining invoice in this batch would fail the same way. Stop
+							// here so the operator can fix the setup before retrying, instead
+							// of flooding the cron output with one identical error per
+							// invoice (per @eldy's review of PR #38547).
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+						// The cron was started with a template label and getEMailTemplate
+						// also filters by the recipient's language (see html.formmail.class.php
+						// line 1786). Only the invoices for thirdparties whose default_lang
+						// has no matching template fail; the rest of the batch is fine.
+						// Log the error and continue so a single missing translation does
+						// not stop reminders for everyone else (see issue #34656).
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL

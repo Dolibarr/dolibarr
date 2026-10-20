@@ -151,15 +151,6 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= getDolGlobalString('CONTRACT_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('CONTRACT_ADDON_PDF_ODT_PATH')) {
@@ -167,7 +158,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -180,8 +171,22 @@ class doc_generic_contract_odt extends ModelePDFContract
 			}
 			$texte .= '</div>';
 		}
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= getDolGlobalString('CONTRACT_ADDON_PDF_ODT_PATH');
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+		$texte .= '</div>';
+
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
