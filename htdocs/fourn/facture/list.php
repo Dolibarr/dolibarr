@@ -143,7 +143,7 @@ $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
-	$search_status = '1';
+	$search_status = array('1');
 }
 $filter = GETPOST('filtre', 'alpha');
 
@@ -1097,13 +1097,9 @@ if ($search_amount_no_tax) {
 if ($search_amount_all_tax) {
 	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 }
-if ($search_status != '') {
-	if (is_array($search_status)) {
-		foreach ($search_status as $key => $val) {
-			$param .= '&search_status[]='.urlencode($val);
-		}
-	} else {
-		$param .= '&search_status='.urlencode($search_status);
+if (is_array($search_status)) {
+	foreach ($search_status as $key => $val) {
+		$param .= '&search_status[]='.urlencode($val);
 	}
 }
 if ($search_paymentmode) {
