@@ -113,6 +113,7 @@ NonExistentOrder=Nonexistent order
 StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
+ShippingUseItsOwnContacts=Shipping use it's own contacts
 # ModelDocument
 DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
