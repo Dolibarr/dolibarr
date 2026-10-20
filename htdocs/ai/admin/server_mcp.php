@@ -5,6 +5,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,6 +153,24 @@ if ($action == 'update_external') {
 }
 
 // Generate New API Key
+$probeauthorization = '';
+$probeauthorizationdetail = '';
+if ($action == 'probe_authorization') {
+	// Ask the MCP endpoint itself whether an Authorization header reaches it
+	// (see the probe branch in ai/server/mcp_server.php). Local addresses are
+	// allowed on purpose: the server calls its own public URL.
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	$probeurl = dol_buildpath('/ai/server/mcp_server.php', 3);
+	$probe = getURLContent($probeurl, 'POST', '{}', 1, array('Content-Type: application/json', 'Accept: application/json, text/event-stream', 'Authorization: Bearer dolibarr-probe', 'X-Dolibarr-Probe: 1'), array('http', 'https'), 2, -1);
+	$probejson = (empty($probe['curl_error_no']) && !empty($probe['content'])) ? json_decode($probe['content'], true) : null;
+	if (is_array($probejson) && isset($probejson['authorization_seen'])) {
+		$probeauthorization = $probejson['authorization_seen'] ? 'seen' : 'lost';
+	} else {
+		$probeauthorization = 'unreachable';
+		$probeauthorizationdetail = !empty($probe['curl_error_msg']) ? $probe['curl_error_msg'] : 'HTTP '.(isset($probe['http_code']) ? $probe['http_code'] : '?');
+	}
+}
+
 if ($action == 'generate_key') {
 	$newKey = dolGetRandomBytes(64);
 
@@ -385,30 +404,73 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
+	// Does the Authorization header reach PHP? Apache running PHP as CGI/FastCGI
+	// drops it unless CGIPassAuth is on, and the OAuth flow then ends on a 401
+	// after a successful consent. Detected by asking the endpoint itself; the
+	// fix belongs to the web server configuration (a .htaccess is not supported).
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpProbeAuth'), $langs->trans('AiMcpProbeAuthHelp')).'</td>';
+	print '<td>';
+	print '<a class="button small smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=probe_authorization&token='.newToken().'">'.$langs->trans("AiMcpProbeAuthRun").'</a>';
+	if ($probeauthorization == 'seen') {
+		print ' <span class="badge badge-status4 badge-status">'.$langs->trans("AiMcpProbeAuthOk").'</span>';
+	} elseif ($probeauthorization == 'lost') {
+		print '<div class="warning" style="margin-top: 6px;">'.$langs->trans("AiMcpProbeAuthLost").'<br>';
+		print '<code>CGIPassAuth On</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthApache").'</span><br>';
+		print '<code>SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthApacheAlt").'</span><br>';
+		print '<code>fastcgi_param HTTP_AUTHORIZATION $http_authorization;</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthNginx").'</span>';
+		print '</div>';
+	} elseif ($probeauthorization == 'unreachable') {
+		print ' <span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthUnreachable", dol_escape_htmltag($probeauthorizationdetail)).'</span>';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// A connector signs the user in with OAuth instead of being handed a key.
+	// Self-registration is what lets it do that without an administrator
+	// creating anything first, which is how claude.ai and the ChatGPT
+	// connector expect to arrive. It is off until someone decides otherwise:
+	// the endpoint accepts registrations from anyone who can reach it.
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpOauthDynamicRegistration'), $langs->trans('AiMcpOauthDynamicRegistrationHelp')).'</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_MCP_OAUTH_DYNAMIC_REGISTRATION', array(), null, 0, 0, 1);
+	print '</td>';
+	print '</tr>';
+
 	print '</table>';
 	print '</div>';
 
 	print '</form>';
 
-	// Configuration Examples
+	// How to connect a client
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
-	print '<strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('
-	{
-	  "mcpServers": {
-	    "dolibarr": {
-	      "command": "node",
-	      "args": ["/path/to/mcp-bridge.js"],
-	      "env": {
-	        "DOLIBARR_URL": "'.$endpoint.'",
-	        "DOLIBARR_API_KEY": "'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"
-	      }
-	    }
-	  }
-	}');
+
+	print '<strong>'.$langs->trans("AiMcpConnectTitle").'</strong>';
+
+	print '<p>'.$langs->trans("AiMcpConnectConnector").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dol_escape_htmltag($endpoint);
 	print '</pre>';
+
+	print '<p>'.$langs->trans("AiMcpConnectLocalClient").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print htmlspecialchars('{
+  "mcpServers": {
+    "dolibarr": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "'.$endpoint.'"]
+    }
+  }
+}');
+	print '</pre>';
+
+	print '<p>'.$langs->trans("AiMcpConnectApiKey").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dol_escape_htmltag('Authorization: Bearer <'.$langs->trans("AiMcpConnectYourApiKey").'>');
+	print '</pre>';
+
 	print '</div>';
 }
 

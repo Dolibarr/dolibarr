@@ -175,8 +175,12 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/AiMcpAuthTest.php';
+		$suite->addTestSuite('AiMcpAuthTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpOauthTest.php';
+		$suite->addTestSuite('AiMcpOauthTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
