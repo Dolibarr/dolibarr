@@ -508,7 +508,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' situation_percent, fk_prev_id,';
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
-		$sql .= ' batch, fk_warehouse';
+		$sql .= ' batch, fk_warehouse, extraparams';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_facture.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
@@ -553,6 +553,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
 		$sql .= ", '".$this->db->escape($this->batch)."'";
 		$sql .= ", ".((int) $this->fk_warehouse);
+		// Keep extra parameters (for example the options of subtotal lines) when a line is copied from another one
+		$extraparams = (!empty($this->extraparams) ? dol_trunc(json_encode($this->extraparams), 250) : null);
+		$sql .= ", ".(!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -977,11 +980,14 @@ class FactureLigne extends CommonInvoiceLine
 					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+					$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // A draft or abandoned credit note does not change the progress
 
 					$res = $this->db->query($sql);
 					if ($res) {
 						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent += (float) $obj->situation_percent;
+							// A credit note always reduces the progress. Its situation_percent is stored negative
+							// in legacy mode but positive in progressive mode, so we subtract the absolute value.
+							$returnPercent -= abs((float) $obj->situation_percent);
 						}
 					} else {
 						dol_print_error($this->db);
@@ -1043,11 +1049,14 @@ class FactureLigne extends CommonInvoiceLine
 						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
 						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+						$sql_credit_note .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // A draft or abandoned credit note does not change the progress
 
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
 							while ($cn = $this->db->fetch_object($res_credit_note)) {
-								$cumulated_percent += (float) $cn->situation_percent;
+								// A credit note always reduces the progress. Its situation_percent is stored negative
+								// in legacy mode but positive in progressive mode, so we subtract the absolute value.
+								$cumulated_percent -= abs((float) $cn->situation_percent);
 							}
 						} else {
 							dol_print_error($this->db);
