@@ -1656,6 +1656,8 @@ class Propal extends CommonObject
 		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $this->id;
+		$object->context['createfromclone_fromref'] = $this->ref;
 		$result = $object->create($user);
 		if ($result < 0) {
 			$this->setErrorsFromObject($object);
@@ -1692,6 +1694,8 @@ class Propal extends CommonObject
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
