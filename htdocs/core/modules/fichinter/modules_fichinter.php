@@ -102,7 +102,7 @@ abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
  *  @param	DoliDB		$db  			object base de donnee
- *  @param	Object		$object			Object fichinter
+ *  @param	Fichinter	$object			Object fichinter
  *  @param	string		$modele			force le modele a utiliser ('' par default)
  *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
