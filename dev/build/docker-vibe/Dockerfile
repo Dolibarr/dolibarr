@@ -15,6 +15,7 @@ RUN apt-get update \
 		gh \
 		ghostscript \
 		git \
+		golang-go \
         graphviz \
         gzip \
 		hurl \
@@ -123,7 +124,7 @@ COPY .pre-commit-config.yaml* /tmp/pre-commit-warmup/
 RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
         git init -q /tmp/pre-commit-warmup \
         && cd /tmp/pre-commit-warmup \
-        && pre-commit install-hooks \
+        && for i in 1 2 3; do pre-commit install-hooks && break; [ "$i" = 3 ] && exit 1; echo "pre-commit install-hooks failed, retry $i..."; sleep 10; done \
         && cd / \
         && rm -rf /tmp/pre-commit-warmup \
         && chmod -R a+rwX /var/cache/pre-commit; \

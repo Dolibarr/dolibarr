@@ -2226,17 +2226,9 @@ if (empty($reshook)) {
 									}
 
 									// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
-									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && $lines[$i]->fk_product > 0) {
-										$tmpprod = new Product($db);
-										if ($tmpprod->fetch($lines[$i]->fk_product) > 0) {
-											$datapriceofproduct = $tmpprod->getSellPrice($mysoc, $object->thirdparty);
-											$lines[$i]->subprice = $datapriceofproduct['pu_ht'];
-											$lines[$i]->tva_tx = $datapriceofproduct['tva_tx'];
-											$lines[$i]->product_type = $tmpprod->type;
-										}
-									}
-									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id) && empty($lines[$i]->desc)) {
-										$lines[$i]->desc = $lines[$i]->description;
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id)) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+										shippingSetStandaloneLineSellPrice($lines[$i], $object->thirdparty);
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
@@ -2668,7 +2660,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE || !empty($line->fk_remise_except)) {
 				continue;
 			}
 			$tvatx = $line->tva_tx;

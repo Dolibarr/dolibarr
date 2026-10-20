@@ -511,7 +511,7 @@ function removeCredentialHeaders($headers)
  */
 function getCredentialHeaderNames()
 {
-	return ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey'];
+	return ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey', 'client-secret'];
 }
 
 /**

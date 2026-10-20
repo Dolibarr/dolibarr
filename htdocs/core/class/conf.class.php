@@ -893,8 +893,6 @@ class Conf extends stdClass
 			$this->productbatch->multidir_temp = array($this->entity => $rootfortemp."/productlot/temp");
 
 			// Module contrat
-			$this->contract->multidir_output = array($this->entity => $rootfordata."/contract");
-			$this->contract->multidir_temp = array($this->entity => $rootfortemp."/contract/temp");
 			$this->contrat->multidir_output = array($this->entity => $rootfordata."/contract");
 			$this->contrat->multidir_temp = array($this->entity => $rootfortemp."/contract/temp");
 			// For backward compatibility

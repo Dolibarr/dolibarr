@@ -396,6 +396,10 @@ if (empty($reshook)) {
 			$error++;
 		}
 		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
+		// If the stockable_product checkbox was shown in the form, use the submitted value
+		if (isModEnabled('stock') && ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES'))) {
+			$stockable_product = GETPOSTISSET('stockable_product') ? 1 : 0;
+		}
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
 			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
@@ -793,6 +797,18 @@ if (empty($reshook)) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 				if ($ret < 0) {
 					$error++;
+				}
+
+				// The lot/serial fields are not in the form when module productbatch is disabled: keep their values,
+				// an empty status_batch would switch the product to "no lot" and move all its stock out of its lots.
+				if (!GETPOSTISSET('status_batch')) {
+					$object->status_batch = $object->oldcopy->status_batch;
+				}
+				if (!GETPOSTISSET('sell_or_eat_by_mandatory')) {
+					$object->sell_or_eat_by_mandatory = $object->oldcopy->sell_or_eat_by_mandatory;
+				}
+				if (!GETPOSTISSET('batch_mask')) {
+					$object->batch_mask = $object->oldcopy->batch_mask;
 				}
 
 				if (!$error && $object->check()) {
@@ -1352,6 +1368,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -1523,8 +1542,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if (($type != 1 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+				// Stockable product
+				if (isModEnabled('productbatch') && GETPOSTINT('status_batch')) {
+					print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
+					$checked_stockable = 'checked';
+				} else {
+					$checked_stockable = ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) ? 'checked' : '';
+					print '<tr><td><label for="stockable_product">' . $langs->trans("StockableProduct") . '</label></td>';
+					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked_stockable . ' /></td></tr>';
+				}
 				// Default warehouse
-				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print '<tr class="showifstockable' . (empty($checked_stockable) ? ' hidden' : '') . '"><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses(GETPOSTINT('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOSTINT('type')).'">';
@@ -1883,6 +1911,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 			print '</table>';
+		}
+
+		if (!empty($conf->use_javascript_ajax) && isModEnabled('stock')) {
+			print '<script>';
+			print '$(document).ready(function() {
+				$("#stockable_product").change(function() {
+					$(".showifstockable").toggle(this.checked);
+				});
+			});';
+			print '</script>';
 		}
 
 		print dol_get_fiche_end();
