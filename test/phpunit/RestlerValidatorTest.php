@@ -31,8 +31,6 @@ require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-spl_autoload_register(Luracast\Restler\AutoLoader::instance());
-
 use Luracast\Restler\Data\ValidationInfo;
 use Luracast\Restler\Data\Validator;
 
@@ -50,6 +48,43 @@ use Luracast\Restler\Data\Validator;
  */
 class RestlerValidatorTest extends CommonClassTest
 {
+	/**
+	 * @var callable|null Restler's autoloader while a test is running
+	 */
+	private $restlerloader = null;
+
+	/**
+	 * Register Restler's autoloader for the duration of a test only.
+	 *
+	 * It resolves any class name it is asked about, so leaving it registered
+	 * while PHPUnit builds the suite makes PHPUnit fail to load its own
+	 * classes. Inside a test it has nothing to collide with.
+	 *
+	 * @return void
+	 */
+	protected function setUp(): void
+	{
+		parent::setUp();
+
+		$this->restlerloader = Luracast\Restler\AutoLoader::instance();
+		spl_autoload_register($this->restlerloader);
+	}
+
+	/**
+	 * Put the autoloader back where it was found.
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		if ($this->restlerloader !== null) {
+			spl_autoload_unregister($this->restlerloader);
+			$this->restlerloader = null;
+		}
+
+		parent::tearDown();
+	}
+
 	/**
 	 * Build the validation info Restler derives from a PHPDoc @param line.
 	 *
