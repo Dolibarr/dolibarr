@@ -92,6 +92,15 @@ class ExpeditionLineFetchTest extends CommonClassTest
 			'qty' => 2,
 			'rang' => 1,
 			'extraparams' => '{"source":"test"}',
+			// Product columns joined by fetch_lines_free()
+			'product_ref' => 'PRODUCT7',
+			'product_label' => 'Product 7',
+			'fk_product_type' => 0,
+			'product_barcode' => null,
+			'weight' => 2,
+			'weight_units' => 0,
+			'volume' => null,
+			'volume_units' => null,
 		);
 	}
 
@@ -171,6 +180,9 @@ class ExpeditionLineFetchTest extends CommonClassTest
 			$this->assertSame($expected->fk_entrepot, $line->fk_entrepot);
 			$this->assertSame($expected->element_type, $line->element_type);
 			$this->assertSame($expected->fk_elementdet, $line->fk_elementdet);
+			$this->assertSame($expected->qty, $line->qty_shipped);
+			$this->assertSame($expected->product_ref, $line->product_ref);
+			$this->assertSame($expected->weight, $line->weight);
 		}
 	}
 

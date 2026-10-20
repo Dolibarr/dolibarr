@@ -656,6 +656,24 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if consumption or production has started on the MO (it has consumed or produced lines).
+	 * If yes, $this->error is set with the message to show.
+	 *
+	 * @return 	bool		True if the MO has consumed or produced lines
+	 */
+	public function hasConsumedOrProducedLines()
+	{
+		global $langs;
+
+		if (count($this->fetchLinesLinked('consumed')) || count($this->fetchLinesLinked('produced'))) {
+			$langs->load('mrp');
+			$this->error = $langs->trans('ErrorMoConsumptionOrProductionStarted');
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Count number of movement with origin of MO
@@ -735,6 +753,11 @@ class Mo extends CommonObject
 	{
 		$error = 0;
 		$role = "";
+
+		// The consumed and produced lines can't be deleted here, their stock movements would not be reversed
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		if ($this->status != self::STATUS_DRAFT) {
 			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
@@ -1011,6 +1034,14 @@ class Mo extends CommonObject
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
+		// A line to produce can't be deleted once something was produced from it (the production would stay in stock)
+		$arrayofproducedlines = $this->fetchLinesLinked('produced', $idline);
+		if (!empty($arrayofproducedlines)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordHasChildren');
+			return -1;
+		}
+
 		$result = 0;
 		$error = 0;
 
@@ -1036,8 +1067,8 @@ class Mo extends CommonObject
 			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-			$codemovementCancel = $langs->trans("StockIncrease");
+			$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
@@ -1060,8 +1091,8 @@ class Mo extends CommonObject
 				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
+				$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 
 				if ($qtytoprocess >= 0) {
@@ -1198,7 +1229,8 @@ class Mo extends CommonObject
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid = '".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -1279,6 +1311,63 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 *      Set status of the MO and record the user who changed it
+	 *
+	 *      @param	int		$status			Status to set
+	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
+	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
+	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
+	 *      @return int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
+	{
+		global $user;
+
+		$result = parent::setStatut($status, $elementId, $elementType, $trigkey, $fieldstatus);
+		if ($result > 0 && empty($elementId) && empty($elementType)) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Set status of the MO and record the user who changed it
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	string	$triggercode	Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$result = parent::setStatusCommon($user, $status, $notrigger, $triggercode);
+		if ($result > 0) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Record the user of the last change, as the generic status setters only update the status
+	 *
+	 *	@param	User	$user	User who made the change
+	 *	@return	void
+	 */
+	private function setUserModif($user)
+	{
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		if ($this->db->query($sql)) {
+			$this->fk_user_modif = $user->id;
+		}
+	}
+
+	/**
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -1290,6 +1379,10 @@ class Mo extends CommonObject
 		// Protection
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
+		}
+		// Once consumption or production has started, the lines can't be changed or reset any more
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
 		}
 
 		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
@@ -1425,8 +1518,8 @@ class Mo extends CommonObject
 					$qtytoprocess = $lineDetails['qty'];
 
 					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
+					$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
@@ -1944,6 +2037,21 @@ class Mo extends CommonObject
 		$tables = array('mrp_mo');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old product id
+	 * @param int 		$dest_id 		New product id
+	 * @return bool
+	 */
+	public static function replaceProduct($db, $origin_id, $dest_id)
+	{
+		$tables = array('mrp_mo', 'mrp_production');
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 
 

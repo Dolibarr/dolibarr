@@ -645,7 +645,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew =
 /**
  * 	Get list of entity id to use.
  *
- * 	@param	string	$element		Current element
+ * 	@param	string	$element		Current element. The value is usually coming from $object->element property. Example:
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
  *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
@@ -688,7 +688,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans', 'extrafields');
 		if (getDolGlobalString('HOLIDAY_ALLOW_ZERO_IN_DIC')) { // this constant break the dictionary admin without Multicompany
 			$addzero[] = 'c_holiday_types';
 		}
@@ -2355,7 +2355,8 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr((string) $stringtoescape, $substitjs);
+	// Escape also "</script" so the string can't close the <script> block that contains it ("<\/" is "</" in a JS string)
+	return preg_replace('/<\/(script)/i', '<\\/$1', strtr((string) $stringtoescape, $substitjs));
 }
 
 /**
@@ -4866,6 +4867,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 
 	if (empty($thirdparty_seller) || !is_object($thirdparty_seller)) {
 		$thirdparty_seller = $mysoc;
+	}
+	// $mysoc may be null when called from a page with NOREQUIRESOC (like viewimage.php). With no seller, there is no localtax.
+	if (!is_object($thirdparty_seller)) {
+		return 0;
 	}
 
 	dol_syslog(
@@ -11043,6 +11048,12 @@ function getElementProperties($elementType)
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
+	} elseif ($elementType == 'cashcontrol') {
+		$classpath = 'compta/cashcontrol/class';
+		$classfile = 'cashcontrol';
+		$classname = 'CashControl';
+		$module = 'takepos';
+		$table_element = 'pos_cash_fence';
 	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';
@@ -11778,9 +11789,16 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Add fields that are ALWAYS forbidden when using USF search criteria
 	$newforbiddenfields[] = 'pass';
 	$newforbiddenfields[] = 'pass_crypted';
+	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	// An operand with more than one level of prefix (example: dbprefix.table.field) is not valid into a USF criteria,
+	// we neutralize it like a forbidden field to avoid any leak or SQL error based on db prefix existence
+	if (substr_count($operand, '.') > 1) {
+		return '1=1';
+	}
 
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {

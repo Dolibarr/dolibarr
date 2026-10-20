@@ -176,16 +176,21 @@ jobs:
           echo "===== $(date) Install mariadb 10.6 (the addons of .travis.yml)"
           sudo systemctl stop mysql || true
           sudo rm -fr /var/lib/mysql
-          sudo apt-get install -y mariadb-server
+          sudo apt-get install -y --no-install-recommends mariadb-server
 
           echo "===== $(date) Install memcached (the services of .travis.yml)"
-          sudo apt-get install -y memcached
+          sudo apt-get install -y --no-install-recommends memcached
 
           echo "===== $(date) Install packages for PHP $PHP_APT_VERSION"
           if [ "$DB" = 'postgresql' ]; then
-            sudo apt-get install -y pgloader
+            sudo apt-get install -y --no-install-recommends pgloader
           fi
-          sudo apt-get install -y unzip apache2 php$PHP_APT_VERSION php$PHP_APT_VERSION-cli php$PHP_APT_VERSION-curl php$PHP_APT_VERSION-mysql php$PHP_APT_VERSION-pgsql php$PHP_APT_VERSION-gd php$PHP_APT_VERSION-imap php$PHP_APT_VERSION-intl php$PHP_APT_VERSION-ldap php$PHP_APT_VERSION-xml php$PHP_APT_VERSION-mbstring php$PHP_APT_VERSION-zip php$PHP_APT_VERSION-tidy libapache2-mod-php$PHP_APT_VERSION
+          # opcache is no more a recommended package with --no-install-recommends, so we add it (it is built in PHP since 8.5)
+          PHP_APT_OPCACHE="php$PHP_APT_VERSION-opcache"
+          if [ "$PHP_APT_VERSION" = '8.5' ]; then
+            PHP_APT_OPCACHE=''
+          fi
+          sudo apt-get install -y --no-install-recommends unzip apache2 php$PHP_APT_VERSION php$PHP_APT_VERSION-cli php$PHP_APT_VERSION-curl php$PHP_APT_VERSION-mysql php$PHP_APT_VERSION-pgsql php$PHP_APT_VERSION-gd php$PHP_APT_VERSION-imap php$PHP_APT_VERSION-intl php$PHP_APT_VERSION-ldap php$PHP_APT_VERSION-xml php$PHP_APT_VERSION-mbstring php$PHP_APT_VERSION-zip php$PHP_APT_VERSION-tidy $PHP_APT_OPCACHE libapache2-mod-php$PHP_APT_VERSION
           echo "===== $(date) end ====="
 
       # Port of the install section

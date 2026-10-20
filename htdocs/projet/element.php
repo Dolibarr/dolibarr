@@ -1262,12 +1262,13 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$addform .= '<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform .= '<input type="hidden" name="action" value="addelement">';
+				$addform .= '<input type="hidden" name="page_y" value="">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
 				$addform .= '<table><tr>';
 				//$addform .= '<td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';

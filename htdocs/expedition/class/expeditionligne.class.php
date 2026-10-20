@@ -198,6 +198,11 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_label;
 
 	/**
+	 * @var string	Custom label of the order line
+	 */
+	public $label;
+
+	/**
 	 * @var string product description
 	 * @deprecated
 	 * @see $product_desc
