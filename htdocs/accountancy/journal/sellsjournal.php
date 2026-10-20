@@ -148,7 +148,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 }
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.module_source, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.situation_final,";
-$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.localtax1_tx, fd.localtax2_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
+$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.localtax1_tx, fd.localtax2_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits, fd.date_start, fd.date_end,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.fk_pays,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
@@ -224,6 +224,7 @@ $sql .= " ORDER BY f.datef, f.ref";
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
 $tabfac = array();
 $tabht = array();
+$tabsplit = array();
 $tabtva = array();
 $def_tva = array();
 $tabwarranty = array();
@@ -379,9 +380,6 @@ if ($result) {
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
 			$tabttc[$obj->rowid][$compta_soc] = 0;
 		}
-		if (!isset($tabht[$obj->rowid][$compta_prod])) {
-			$tabht[$obj->rowid][$compta_prod] = 0;
-		}
 		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
 			$tabtva[$obj->rowid][$compta_tva] = 0;
 		}
@@ -411,7 +409,27 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
+		$amountht = $obj->total_ht * $situation_ratio;
+		$splitlines = array();
+		if (getDolGlobalInt('ACCOUNTING_SPLIT_AMOUNT_ACROSS_YEARS') && !empty($obj->date_start) && !empty($obj->date_end) && !accountingAccountIsExcludedFromSplit($compta_prod)) {
+			$splitlines = accountingSplitLinesPerYear((float) $amountht, $obj->date_start, $obj->date_end, (int) substr($obj->df, 0, 4), $compta_prod, getDolGlobalString('ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME', 'NotDefined'), getDolGlobalString('ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined'));
+		}
+		if (empty($splitlines)) {
+			if (!isset($tabht[$obj->rowid][$compta_prod])) {
+				$tabht[$obj->rowid][$compta_prod] = 0;
+			}
+			$tabht[$obj->rowid][$compta_prod] += $amountht;
+		} elseif (!isset($tabht[$obj->rowid])) {
+			$tabht[$obj->rowid] = array();
+		}
+		foreach ($splitlines as $splitline) {
+			$splitkey = $splitline['account'].'|'.$splitline['subledger'].'|'.$splitline['label'];
+			if (isset($tabsplit[$obj->rowid][$splitkey])) {
+				$tabsplit[$obj->rowid][$splitkey]['amount'] += $splitline['amount'];
+			} else {
+				$tabsplit[$obj->rowid][$splitkey] = $splitline;
+			}
+		}
 		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
@@ -793,6 +811,55 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 							$errorforinvoice[$key] = 'other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
+					}
+				}
+			}
+		}
+
+		// Split across years
+		if (!$errorforline && !empty($tabsplit[$key])) {
+			foreach ($tabsplit[$key] as $splitline) {
+				$mt = $splitline['amount'];
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $splitline['account'], true);
+				$subledgeraccount = new AccountingAccount($db);
+				$subledgeraccount->fetch(0, $splitline['subledger'], true);
+
+				$bookkeeping = new BookKeeping($db);
+				$bookkeeping->doc_date = $val["date"];
+				$bookkeeping->date_lim_reglement = $val["datereg"];
+				$bookkeeping->doc_ref = $val["ref"];
+				$bookkeeping->date_creation = $now;
+				$bookkeeping->doc_type = 'customer_invoice';
+				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_docdet = 0;
+				$bookkeeping->thirdparty_code = $companystatic->code_client;
+				$bookkeeping->subledger_account = $splitline['subledger'];
+				$bookkeeping->subledger_label = $subledgeraccount->label;
+				$bookkeeping->numero_compte = $splitline['account'];
+				$bookkeeping->label_compte = $accountingaccount->label;
+				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label']);
+				$bookkeeping->montant = $mt;
+				$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+				$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
+				$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+				$bookkeeping->code_journal = $journal;
+				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+				$bookkeeping->fk_user_author = $user->id;
+				$bookkeeping->entity = $conf->entity;
+
+				$totaldebit += $bookkeeping->debit;
+				$totalcredit += $bookkeeping->credit;
+
+				$result = $bookkeeping->create($user);
+				if ($result < 0) {
+					$error++;
+					$errorforline++;
+					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {
+						$errorforinvoice[$key] = 'alreadyjournalized';
+					} else {
+						$errorforinvoice[$key] = 'other';
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
 				}
 			}
@@ -1289,6 +1356,26 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//}
 		}
 
+		// Split across years
+		foreach ($tabsplit[$key] ?? array() as $splitline) {
+			$mt = $splitline['amount'];
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(0, $splitline['account'], true);
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
+			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($splitline['subledger'])).'"'.$sep;
+			print '"'.csvClean(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'])).'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
+		}
+
 		// VAT
 		$listoftax = array(0, 1, 2);
 		foreach ($listoftax as $numtax) {
@@ -1687,6 +1774,34 @@ if (empty($action) || $action == 'view') {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label, 1) . "</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print "</tr>";
+
+			$i++;
+		}
+
+		// Split across years
+		foreach ($tabsplit[$key] ?? array() as $splitline) {
+			$mt = $splitline['amount'];
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(0, $splitline['account'], true);
+			print '<tr class="oddeven">';
+			print "<!-- Split across years -->";
+			print "<td>".$date."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+			// Account
+			print "<td>";
+			$accountoshow = length_accountg($splitline['account']);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">'.$langs->trans("AccountNotDefined").'</span>';
+			} else {
+				print $accountoshow;
+			}
+			print "</td>";
+			// Subledger account
+			print "<td>".length_accountg($splitline['subledger'])."</td>";
+			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'], 1)."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";

@@ -536,3 +536,93 @@ function getNextFiscalYear($db, $after_date, $gm = 'tzserver')
 
 	return null;  // No next fiscal year found
 }
+
+/**
+ * Split an amount across the calendar years covered by a service period, prorated on the number of days in each year.
+ * The share of the document year is the amount minus the shares of the other years, so the shares always sum to the amount.
+ *
+ * @param	float	$amount			Amount to split
+ * @param	string	$datestart		Start of the service period (YYYY-MM-DD, time is ignored)
+ * @param	string	$dateend		End of the service period (YYYY-MM-DD, time is ignored)
+ * @param	int		$docyear		Year of the document date
+ * @return	array<int,array{days:int,percent:float,amount:float}>	Shares per year, empty when the whole period is within the document year
+ */
+function accountingSplitAmountPerYear(float $amount, string $datestart, string $dateend, int $docyear): array
+{
+	$utc = new DateTimeZone('UTC');
+	$start = new DateTimeImmutable(substr($datestart, 0, 10), $utc);
+	$end = new DateTimeImmutable(substr($dateend, 0, 10), $utc);
+	$firstyear = (int) $start->format('Y');
+	$lastyear = (int) $end->format('Y');
+	if ($end < $start || ($firstyear == $docyear && $lastyear == $docyear)) {
+		return array();
+	}
+
+	$totaldays = $start->diff($end)->days + 1;
+	$shares = array($docyear => array('days' => 0, 'percent' => 0.0, 'amount' => 0.0));
+	$amountotheryears = 0.0;
+	for ($year = $firstyear; $year <= $lastyear; $year++) {
+		$periodstart = ($year == $firstyear ? $start : new DateTimeImmutable($year.'-01-01', $utc));
+		$periodend = ($year == $lastyear ? $end : new DateTimeImmutable($year.'-12-31', $utc));
+		$days = $periodstart->diff($periodend)->days + 1;
+		$shares[$year] = array('days' => $days, 'percent' => round($days * 100 / $totaldays, 2), 'amount' => 0.0);
+		if ($year != $docyear) {
+			$shares[$year]['amount'] = (float) price2num($amount * $days / $totaldays, 'MT');
+			$amountotheryears += $shares[$year]['amount'];
+		}
+	}
+	$shares[$docyear]['amount'] = (float) price2num($amount - $amountotheryears, 'MT');
+	ksort($shares);
+
+	return $shares;
+}
+
+/**
+ * Return the accounting lines of an invoice line whose service period overlaps several years, one per year with the year, days and percentage as label.
+ * The share of the document year stays on the account of the line, the shares of other years go to the given accounts with the account of the line as subledger account.
+ *
+ * @param	float	$amount					Amount of the invoice line
+ * @param	string	$datestart				Start of the service period
+ * @param	string	$dateend				End of the service period
+ * @param	int		$docyear				Year of the document date
+ * @param	string	$account				Account of the invoice line
+ * @param	string	$previousyearsaccount	Account of the shares of previous years
+ * @param	string	$nextyearsaccount		Account of the shares of next years
+ * @return	list<array{account:string,subledger:string,label:string,amount:float}>	Empty when the whole period is within the document year
+ */
+function accountingSplitLinesPerYear(float $amount, string $datestart, string $dateend, int $docyear, string $account, string $previousyearsaccount, string $nextyearsaccount): array
+{
+	global $langs;
+
+	$lines = array();
+	foreach (accountingSplitAmountPerYear($amount, $datestart, $dateend, $docyear) as $year => $share) {
+		if ($share['amount'] == 0) {
+			continue;
+		}
+		$label = $langs->transnoentities('AccrualShare', (string) $year, (string) $share['days'], (string) $share['percent']);
+		if ($year == $docyear) {
+			$lines[] = array('account' => $account, 'subledger' => '', 'label' => $label, 'amount' => $share['amount']);
+		} else {
+			$lines[] = array('account' => ($year < $docyear ? $previousyearsaccount : $nextyearsaccount), 'subledger' => $account, 'label' => $label, 'amount' => $share['amount']);
+		}
+	}
+
+	return $lines;
+}
+
+/**
+ * Return whether an account is one of the accounts set to never be split across years, or a sub-account of one of them.
+ *
+ * @param	string	$account	Account number
+ * @return	bool
+ */
+function accountingAccountIsExcludedFromSplit(string $account): bool
+{
+	foreach (explode(',', getDolGlobalString('ACCOUNTING_SPLIT_AMOUNT_EXCLUDED_ACCOUNTS')) as $excludedaccount) {
+		if ($excludedaccount !== '' && str_starts_with($account, $excludedaccount)) {
+			return true;
+		}
+	}
+
+	return false;
+}
