@@ -2041,7 +2041,7 @@ class Commande extends CommonOrder
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $langs;
+		global $mysoc, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -2079,7 +2079,7 @@ class Commande extends CommonOrder
 
 			$result = $line->insert();
 			if ($result > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'none', 0, $mysoc);
 				if ($result > 0) {
 					$this->db->commit();
 					return 1;
@@ -2447,7 +2447,8 @@ class Commande extends CommonOrder
 			$line->oldline = $staticline;
 
 			if ($line->delete($user) > 0) {
-				$result = $this->update_price(1);
+				global $mysoc;
+				$result = $this->update_price(1, 'none', 0, $mysoc);
 
 				if ($result > 0) {
 					$this->db->commit();
@@ -2518,9 +2519,10 @@ class Commande extends CommonOrder
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->oldcopy = clone $this;
 				$this->remise_percent = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -2584,9 +2586,10 @@ class Commande extends CommonOrder
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->oldcopy = clone $this;
 				$this->remise_absolue = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -3329,7 +3332,7 @@ class Commande extends CommonOrder
 				}
 
 				// Mise a jour info denormalisees
-				$this->update_price(1, 'auto');
+				$this->update_price(1, 'auto', 0, $mysoc);
 
 				$this->db->commit();
 				return $result;

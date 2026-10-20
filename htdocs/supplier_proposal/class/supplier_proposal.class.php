@@ -342,7 +342,7 @@ class SupplierProposal extends CommonObject
 
 			$result = $supplier_proposalligne->insert();
 			if ($result > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'none', 0, $this->thirdparty);
 				if ($result > 0) {
 					$this->db->commit();
 					return 1;
@@ -822,7 +822,7 @@ class SupplierProposal extends CommonObject
 					$this->line_order(true, 'DESC');
 				}
 
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 
 				$this->fk_supplier_proposal = $this->id;
 
@@ -855,7 +855,7 @@ class SupplierProposal extends CommonObject
 			$line->fetch($lineid);
 
 			if ($line->delete() > 0) {
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 
 				return 1;
 			} else {
@@ -1056,7 +1056,7 @@ class SupplierProposal extends CommonObject
 
 				if (!$error) {
 					// Mise a jour infos denormalisees
-					$resql = $this->update_price(1);
+					$resql = $this->update_price(1, 'none', 0, $this->thirdparty);
 					if ($resql) {
 						$action = 'update';
 
@@ -1580,7 +1580,7 @@ class SupplierProposal extends CommonObject
 
 			if ($this->db->query($sql)) {
 				$this->remise_percent = ((float) $remise);
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 				return 1;
 			} else {
 				$this->error = $this->db->error();
@@ -1615,7 +1615,7 @@ class SupplierProposal extends CommonObject
 
 			if ($this->db->query($sql)) {
 				$this->remise_absolue = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 				return 1;
 			} else {
 				$this->error = $this->db->error();

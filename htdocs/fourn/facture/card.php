@@ -911,7 +911,7 @@ if (empty($reshook)) {
 							}
 						}
 
-						$object->update_price(1);
+						$object->update_price(1, 'none', 0, $object->thirdparty);
 					}
 				}
 
