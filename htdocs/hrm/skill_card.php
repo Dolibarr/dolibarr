@@ -206,8 +206,8 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
-	/** @var int $result May be set by the includes above */
-	'@phan-var-force int $result';
+	/** @var int|Skill $result May be set by the includes above */
+	'@phan-var-force int|Skill $result';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
