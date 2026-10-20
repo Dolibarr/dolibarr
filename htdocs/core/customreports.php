@@ -742,7 +742,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Select object
 	print '<div class="divadvancedsearchfield floatnone">';
 	//print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-	print img_picto('', 'generic', 'class="paddingright pictofixedwidth"');
+	print img_picto('', 'generic', 'class="paddingright pictofixedwidth linkobject boxfilter"');
 	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, $langs->trans("StatisticsOn"), 0, 0, '', 1, 0, 0, '', 'minwidth250 customreportsobjecttype noborderfocus', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
