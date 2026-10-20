@@ -975,13 +975,21 @@ function getAiChatAssistantHtml($mode = 'page')
 		// In the popover the title links to the full standalone page
 		$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
 		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+		$out .= '<span class="chat-header-text">';
 		$out .= '<h2>'.$title.'</h2>';
+		// Provider in use under the title, as on the full page
+		$aiprovider = getAiAssistantProviderLabel();
+		if ($aiprovider !== '') {
+			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
+		}
+		$out .= '</span>';
 	} else {
 		// Full page: assistant identity (avatar + title + current LLM model)
 		$out .= '<div class="chat-header-id">';
-		$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
+		// Same picto as the title of the popover (no avatar box)
+		//$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
 		$out .= '<span class="chat-header-text">';
-		$out .= '<span class="chat-header-title">'.$langs->trans("AIAssistant").'</span>';
+		$out .= '<span class="chat-header-title">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
 		$aiprovider = getAiAssistantProviderLabel();
 		if ($aiprovider !== '') {
 			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
@@ -1003,15 +1011,16 @@ function getAiChatAssistantHtml($mode = 'page')
 	if ($defaultModel !== '') {
 		$autoLabel .= ' ('.$defaultModel.')';
 	}
-	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
+	$out .= '<option value="" data-picto="ai-picto-sparkle">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	//$out .= ajax_combobox("model-select");
 
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
-	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
-	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
-	$out .= '<option value="whisper">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
+	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
+	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	$out .= '<option value="whisper" data-picto="fa fa-microphone">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
 	// Note: the legacy 'local_docs'/'cloud_docs' selector modes are gone — documents
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).
