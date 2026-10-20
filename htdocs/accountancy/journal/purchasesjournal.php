@@ -224,6 +224,17 @@ $vatdata_cache = array();
 // Variables
 $cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined');
 $cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
+// Empty by default: deductible VAT stays on the dictionary account, or on ACCOUNTING_VAT_BUY_ACCOUNT.
+$cpttvaasset = getDolGlobalString('ACCOUNTING_VAT_BUY_ASSET_ACCOUNT');
+
+// Account-number prefixes of fixed assets. Class 2 in the French chart.
+// Several prefixes can be entered, separated by commas: "20,21,22,23,27".
+$assetaccountprefixlist = array();
+
+if ($cpttvaasset !== '') {
+	$assetaccountprefixlist = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_ASSET_ACCOUNT_PREFIXES', '2'))));
+}
+
 $rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
 $rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 $cptlocaltax1 = getDolGlobalString('ACCOUNTING_LT1_BUY_ACCOUNT', 'NotDefined');
@@ -264,6 +275,13 @@ if ($result) {
 			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
+		// A bound fixed-asset account sends this line's deductible VAT to the dedicated account, ahead of the dictionary.
+		foreach ($assetaccountprefixlist as $assetaccountprefix) {
+			if (strpos((string) $compta_prod, $assetaccountprefix) === 0) {
+				$compta_tva = $cpttvaasset;
+				break;
+			}
+		}
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax1);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cptlocaltax2);
 		$compta_counterpart_tva_npr = getDolGlobalString('ACCOUNTING_COUNTERPART_VAT_NPR', 'NotDefined');

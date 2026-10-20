@@ -1604,6 +1604,174 @@ class CommonObjectTest extends CommonClassTest
 	}
 
 	/**
+	 * updateFieldFromUi() saves only fields editable from the user interface, with the dedicated business method when there is one
+	 *
+	 * @return void
+	 */
+	public function testUpdateFieldFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = '';
+		$localobject->ref_client = '';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+
+		// Field without the opt-in "uieditable"
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref', 'HACKED'));
+		$this->assertNotEmpty($localobject->error);
+
+		// User without the write permission
+		$userwithoutright = new User($db);
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($userwithoutright, 'note_public', 'Not allowed'));
+
+		// Note saved with update_note()
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'note_public', '<b>Public note</b>'), $localobject->error);
+		$checkobject = new Commande($db);
+		$checkobject->fetch($id);
+		$this->assertSame('<b>Public note</b>', $checkobject->note_public);
+
+		// Field saved with the default setValueFrom(), blocked when object is not a draft
+		$localobject->fields['ref_ext']['uieditable'] = 1;
+		$localobject->status = $localobject->statut = Commande::STATUS_VALIDATED;
+		$this->assertLessThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-LOCKED'));
+		$localobject->status = $localobject->statut = Commande::STATUS_DRAFT;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_ext', 'REFEXT-'.$id), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame('REFEXT-'.$id, $checkobject->ref_ext);
+
+		// Customer ref saved with set_ref_client(), that refuses a ref already used by another order of the same thirdparty
+		$refclient = 'REFCLIENT-UI-'.$id;
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'ref_client', $refclient), $localobject->error);
+		$checkobject->fetch($id);
+		$this->assertSame($refclient, $checkobject->ref_client);
+
+		$otherobject = new Commande($db);
+		$otherobject->initAsSpecimen();
+		$otherobject->socid = $localobject->socid;
+		$otherobject->ref = '';
+		$otherobject->ref_client = '';
+		$otherid = $otherobject->create($user);
+		$this->assertGreaterThan(0, $otherid, 'create: '.$otherobject->error);
+		$otherobject = new Commande($db);
+		$otherobject->fetch($otherid);
+		if (!getDolGlobalString('ORDER_ALLOW_DUPLICATE_REF_CLIENT')) {
+			$this->assertLessThan(0, $otherobject->updateFieldFromUi($user, 'ref_client', $refclient));
+			$this->assertNotEmpty($otherobject->error);
+			$this->assertSame('', (string) $otherobject->ref_client, 'Value in memory must be restored when save fails');
+		}
+
+		$otherobject->delete($user);
+		$localobject->delete($user);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The opportunity status of a project is changed from the kanban view (core/ajax/objectfield.php), also when the project is open
+	 *
+	 * @return void
+	 */
+	public function testUpdateOpportunityStatusOfProjectFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savopportunities = getDolGlobalString('PROJECT_USE_OPPORTUNITIES');
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+		// The module and the write permission may be missing in the database of the CI
+		$savmodules = $conf->modules;
+		$savrights = isset($user->rights->projet) ? clone $user->rights->projet : null;
+		$conf->modules['projet'] = 'projet';
+		if (!isset($user->rights->projet)) {
+			$user->rights->projet = new stdClass();
+		}
+		$user->rights->projet->creer = 1;
+
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE active = 1 ORDER BY rowid DESC LIMIT 1");
+		$obj = $resql ? $db->fetch_object($resql) : null;
+		$this->assertNotEmpty($obj, 'A status of opportunity is required');
+		$oppstatus = (int) $obj->rowid;
+
+		$localobject = new Project($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = 'PJUI-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Project($db);
+		$localobject->fetch($id);
+		$localobject->setValid($user);
+
+		$this->assertTrue($localobject->isFieldEditableFromUi($user, 'fk_opp_status'), 'Opportunity status editable from UI on an open project');
+		$this->assertFalse($localobject->isFieldEditableFromUi($user, 'ref'), 'Ref of a project must not be editable from UI');
+		$this->assertFalse($localobject->isFieldEditableFromUi(new User($db), 'fk_opp_status'), 'User without permission');
+
+		$this->assertGreaterThan(0, $localobject->updateFieldFromUi($user, 'fk_opp_status', $oppstatus), $localobject->errorsToString());
+		$checkobject = new Project($db);
+		$checkobject->fetch($id);
+		$this->assertSame($oppstatus, (int) $checkobject->opp_status);
+		$code = dol_getIdFromCode($db, $oppstatus, 'c_lead_status', 'rowid', 'code');
+		$this->assertSame(dol_escape_htmltag($langs->trans('OppStatus'.$code)), $checkobject->ajaxOutputField('fk_opp_status'), 'Status shown with its label');
+
+		$localobject->delete($user);
+		$conf->global->PROJECT_USE_OPPORTUNITIES = $savopportunities;
+		$conf->modules = $savmodules;
+		if ($savrights === null) {
+			unset($user->rights->projet);
+		} else {
+			$user->rights->projet = $savrights;
+		}
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * The level of a line of evaluation is editable from the user interface only while its evaluation is a draft,
+	 * and only with a value in the range of levels
+	 *
+	 * @return void
+	 */
+	public function testEvaluationLineFromUi()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+
+		$line = new EvaluationLine($db);
+		$this->assertSame('Evaluation', getElementProperties($line->parent_element)['classname'], 'Parent of a line is the evaluation');
+
+		$line->fk_evaluation = 0;
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'rankorder'), 'Line without its evaluation is not editable');
+		$this->assertFalse($line->isFieldEditableFromUi($user, 'required_rank'), 'Only the level is editable from UI');
+
+		$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
+		$savpost = $_POST;
+		foreach (array(-1 => -1, 0 => 0, $maxrank => $maxrank, $maxrank + 1 => null, -2 => null) as $posted => $expected) {
+			$_POST = array('ajaxfield_rankorder' => (string) $posted);
+			$this->assertSame($expected, $line->getFieldValueFromAjaxPost('rankorder'), 'Level '.$posted);
+		}
+		$_POST = $savpost;
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
 	 *  testCrudCommonTriggerCodesUseTriggerPrefix
 	 *
 	 *  @return void
