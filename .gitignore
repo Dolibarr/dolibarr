@@ -95,6 +95,9 @@ phpstan_custom.neon
 .htaccess
 /.run-phpstan
 
+# IA setup
+/AGENTS.md
+
 # Mistral Vibe
 .vibe
 /.vibeignore

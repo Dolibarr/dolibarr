@@ -139,10 +139,6 @@ class RedditHandler
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
-		if (empty($this->accessToken) && !$this->authenticate()) {
-			return false;
-		}
-
 		$cacheFile = $cacheDir . '/' . dol_hash($urlAPI, '3');
 		$foundInCache = false;
 		$data = null;
@@ -157,6 +153,11 @@ class RedditHandler
 		}
 
 		if (!$foundInCache) {
+			// Authenticate only when the API must be called (not at each display when the cache is used)
+			if (empty($this->accessToken) && !$this->authenticate()) {
+				return false;
+			}
+
 			$headers = [
 				'Authorization: Bearer ' . $this->accessToken,
 				'User-Agent: ' . $this->userAgent,
@@ -180,7 +181,7 @@ class RedditHandler
 		if (!is_null($data)) {
 			$data = json_decode($data, true);
 
-			if (is_array($data)) {
+			if (is_array($data) && isset($data['data']['children']) && is_array($data['data']['children'])) {
 				$this->posts = [];
 				$count = 0;
 
@@ -188,7 +189,7 @@ class RedditHandler
 					if ($count >= $maxNb) {
 						break;
 					}
-					$this->posts[$count] = $this->normalizeData($postData['data']);
+					$this->posts[$count] = $this->normalizeData($postData['data'] ?? []);
 					$count++;
 				}
 

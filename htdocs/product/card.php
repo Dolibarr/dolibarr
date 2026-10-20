@@ -111,10 +111,11 @@ $formbarcode = null;
 // Get parameters
 $id  = GETPOSTINT('id');
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
+	$security_check = 'nohtml';
 } else {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', $security_check) : null);
 $type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
@@ -1483,6 +1484,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';

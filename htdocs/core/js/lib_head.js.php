@@ -1560,13 +1560,20 @@ jQuery(document).ready(function() {
 	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
 	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
 	// this the browser silently truncates the paste and the user records an id short of a few digits.
-	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+	// Same for the dots of a field marked with data-profidnodot (SIREN "849.943.618").
+	jQuery(document).on("paste", "input[data-profidnospace], input[data-profidnodot]", function(event) {
 		var clipboardData = (event.originalEvent || event).clipboardData;
 		if (!clipboardData) {
 			return;
 		}
 		var pastedText = clipboardData.getData("text");
-		var cleanedText = pastedText.replace(/\s+/g, "");
+		var cleanedText = pastedText;
+		if (this.hasAttribute("data-profidnospace")) {
+			cleanedText = cleanedText.replace(/\s+/g, "");
+		}
+		if (this.hasAttribute("data-profidnodot")) {
+			cleanedText = cleanedText.replace(/\.+/g, "");
+		}
 		if (cleanedText == pastedText) {
 			return;		// Nothing to remove, leave the paste to the browser
 		}

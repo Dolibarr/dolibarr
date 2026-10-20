@@ -3139,18 +3139,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formmail.class.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''formemail''\|''formemailforlines''\|''formemailwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formemail''\|''formemailforlines''\|''formemailwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1

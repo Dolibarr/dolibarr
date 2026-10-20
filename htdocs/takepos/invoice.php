@@ -179,7 +179,7 @@ function takeposDeleteLineWithChildren($invoice, $lineid)
 
 
 
-$number = (float) GETPOST('number', 'alpha');
+$number = GETPOSTFLOAT('number', '', 0);	// Option 0: the value is typed in the free zone (user format) or sent by the numeric pad (always with a dot)
 $idline = GETPOSTINT('idline');
 $selectedline = GETPOSTINT('selectedline');
 $desc = GETPOST('desc', 'alphanohtml');
@@ -2345,7 +2345,6 @@ if ($placeid > 0) {
 								if ($obj) {
 									$stock_real = price2num($obj->reel, 'MS');
 								}
-								$htmlforlines .= $line->qty;
 								$htmlforlines .= '&nbsp; ';
 								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
 								$htmlforlines .= '(';

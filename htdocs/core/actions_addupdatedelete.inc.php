@@ -127,9 +127,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $tmpvalue) {
@@ -289,9 +299,19 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (preg_match('/^text/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
+				$check = $tmparray[1];
 			} else {
-				$value = GETPOST($key, 'nohtml');
+				$check = 'nohtml';
+			}
+			if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+				$security_check = 'alphanohtml';
+			} else {
+				$security_check = $check;
+			}
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $security_check);
+			} else {
+				$value = GETPOST($key, $security_check);
 				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
 					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
 					foreach ($tmparraymultiselect as $keytmp => $tmpvalue) {

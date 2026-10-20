@@ -340,6 +340,7 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							} else {
+								print '<span'.($val2['enabled'] ? '' : ' class="vsmenudisabled"').'>';
 								if ($val2['enabled']) {	// Allowed
 									$lastlevel2[$val2['level']] = 'enabled';
 								} else {
@@ -357,6 +358,8 @@ class MenuManager
 							print ucfirst($val2['titre']);
 							if ($relurl2) {
 								print '</a>';
+							} else {
+								print '</span>';
 							}
 
 							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);

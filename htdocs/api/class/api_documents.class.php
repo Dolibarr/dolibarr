@@ -110,6 +110,10 @@ class Documents extends DolibarrApi
 		if (!$accessallowed) {
 			throw new RestException(403);
 		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'read')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
+		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
 			if ($sqlprotectagainstexternals) {
@@ -212,6 +216,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
@@ -929,6 +937,10 @@ class Documents extends DolibarrApi
 			if (empty($tmp['accessallowed'])) {
 				throw new RestException(403, 'Access not allowed to upload file into this directory');
 			}
+			// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+			if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+				throw new RestException(403, 'Access not allowed to the object of this document');
+			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
@@ -954,6 +966,10 @@ class Documents extends DolibarrApi
 				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
 				if (empty($tmp['accessallowed'])) {
 					throw new RestException(403, 'Access not allowed to upload file into this directory');
+				}
+				// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+				if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile.'/'.$original_file, 'write')) {
+					throw new RestException(403, 'Access not allowed to the object of this document');
 				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
@@ -1148,6 +1164,10 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(403);
+		}
+		// Check permission on the object the document is attached to (thirdparties of a restricted sales representative, ...)
+		if (!checkUserAccessToDocumentObject(DolibarrApiAccess::$user, $modulepart, $relativefile, 'write')) {
+			throw new RestException(403, 'Access not allowed to the object of this document');
 		}
 
 		if (DolibarrApiAccess::$user->socid > 0) {
