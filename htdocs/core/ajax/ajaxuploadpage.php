@@ -220,7 +220,7 @@ if ($modulepart == 'invoice_supplier') {
 }
 
 
-// TODO Move this into an AJAX service and just output the JS code to call the ajax to start
+// TODO Move the convert code into an AJAX service and just output the JS code to call the ajax service to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	$result = dolDocToText($fullpathoffile, '', 'fulltext');
@@ -464,6 +464,16 @@ if (!empty($errors)) {
 		$errors[] = 'Failed to decode answer';
 		print 'Failed to decode answer';
 	} else {
+		// Save the JSON answer into a cache file next to the uploaded file (only if file name has no path part)
+		if (dol_sanitizeFileName($file) === $file && dol_is_file($fullpathoffile)) {
+			$result = file_put_contents($fullpathoffile.'.json', $answer);
+			if ($result === false) {
+				dol_syslog("Failed to write the json file ".$fullpathoffile.'.json', LOG_WARNING);
+			} else {
+				dolChmod($fullpathoffile.'.json');
+			}
+		}
+
 		print $answer;
 	}
 }
