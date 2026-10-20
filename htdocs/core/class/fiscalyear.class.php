@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2014-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020       OScss-Shop					<support@oscss-shop.fr>
  * Copyright (C) 2023       Frédéric France				<frederic.france@free.fr>
  *
@@ -475,10 +475,15 @@ class Fiscalyear extends CommonObject
 			$dateend = $this->date_end;
 		}
 
+		// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+		$datestart_day = dol_print_date($datestart, '%Y-%m-%d', 'gmt');
+		$dateend_day   = dol_print_date($dateend, '%Y-%m-%d', 'gmt');
+
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
 		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
-		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
+		$sql .= " AND doc_date >= '".$this->db->escape($datestart_day)."'";
+		$sql .= " AND doc_date <= '".$this->db->escape($dateend_day)."'";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -509,10 +514,15 @@ class Fiscalyear extends CommonObject
 			$dateend = $this->date_end;
 		}
 
+		// We only keep the date portion (Y-m-d), without converting the time zone, because doc_date is an SQL field of type DATE (not DATETIME)
+		$datestart_day = dol_print_date($datestart, '%Y-%m-%d', 'gmt');
+		$dateend_day   = dol_print_date($dateend, '%Y-%m-%d', 'gmt');
+
 		$sql = "SELECT count(rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping ";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
-		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
+		$sql .= " AND doc_date >= '".$this->db->escape($datestart_day)."'";
+		$sql .= " AND doc_date <= '".$this->db->escape($dateend_day)."'";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
