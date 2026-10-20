@@ -111,7 +111,7 @@ if ($object->fetch($id)) {
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
-$documentTransferOrderType = 'customer';
+$documentTransferSourceType = 'order';
 include DOL_DOCUMENT_ROOT.'/core/actions_documenttransfer.inc.php';
 
 
@@ -200,7 +200,7 @@ if ($id > 0 || !empty($ref)) {
 		$permtoedit = $user->hasRight('commande', 'creer');
 		$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-		include DOL_DOCUMENT_ROOT.'/core/tpl/document_transfer_order_invoice.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_transfer.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

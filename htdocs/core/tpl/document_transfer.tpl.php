@@ -16,8 +16,8 @@
  */
 
 /**
- * \file       htdocs/core/tpl/document_transfer_order_invoice.tpl.php
- * \brief      Transfer an order attachment to a related invoice
+ * \file       htdocs/core/tpl/document_transfer.tpl.php
+ * \brief      Transfer an attachment to another document-bearing object
  */
 
 /**
@@ -26,14 +26,24 @@
  * @var CommonObject $object
  * @var array<int,array<string,mixed>> $filearray
  * @var array<string,mixed> $documentTransferPreview
- * @var string $documentTransferOrderType
+ * @var string $documentTransferSourceType
  */
 
-$documentTransferOrderType = (string) ($documentTransferOrderType ?? '');
-$canTransfer = $documentTransferOrderType === 'customer'
-	? ($user->hasRight('commande', 'creer') && $user->hasRight('facture', 'lire') && $user->hasRight('facture', 'creer'))
-	: ($documentTransferOrderType === 'supplier' && $user->hasRight('fournisseur', 'commande', 'creer')
-		&& $user->hasRight('fournisseur', 'facture', 'lire') && $user->hasRight('fournisseur', 'facture', 'creer'));
+$documentTransferSourceType = (string) ($documentTransferSourceType ?? '');
+$canTransfer = !empty($permissiontoadd);
+$targetTypes = array(
+	'invoice' => 'Invoice',
+	'supplier_invoice' => 'SupplierInvoice',
+	'order' => 'Order',
+	'supplier_order' => 'SupplierOrder',
+	'propal' => 'Proposal',
+	'supplier_proposal' => 'SupplierProposal',
+	'project' => 'Project',
+	'project_task' => 'Task',
+	'contract' => 'Contract',
+	'shipment' => 'Shipment',
+	'ticket' => 'Ticket'
+);
 $transferableFiles = array();
 foreach ((array) ($filearray ?? array()) as $file) {
 	if (!empty($file['name']) && $file['name'] !== dol_sanitizeFileName($object->ref).'.pdf') {
@@ -41,23 +51,28 @@ foreach ((array) ($filearray ?? array()) as $file) {
 	}
 }
 if ($canTransfer && !empty($transferableFiles)) {
-	$langs->load('ecm');
-	print load_fiche_titre($langs->trans('ECMTransferToInvoice'), '', 'file');
+	$langs->loadLangs(array('ecm', 'propal', 'supplier_proposal', 'projects', 'contracts', 'sendings', 'ticket'));
+	print load_fiche_titre($langs->trans('ECMTransferToObject'), '', 'file');
 	print '<p class="opacitymedium">'.$langs->trans('ECMTransferExplanation').'</p>';
 
 	if (!empty($documentTransferPreview)) {
+		$sourceLabel = $langs->trans($targetTypes[$documentTransferSourceType] ?? 'Object');
+		$targetLabel = $langs->trans($targetTypes[$documentTransferPreview['target_type']] ?? 'Object');
 		print '<div class="info">';
 		print $langs->trans('ECMTransferPreview',
 			dol_escape_htmltag($documentTransferPreview['filename']),
-			dol_escape_htmltag($documentTransferPreview['order_ref']),
-			dol_escape_htmltag($documentTransferPreview['invoice_ref']));
+			dol_escape_htmltag($sourceLabel),
+			dol_escape_htmltag($documentTransferPreview['source_ref']),
+			dol_escape_htmltag($targetLabel),
+			dol_escape_htmltag($documentTransferPreview['target_ref']));
 		print '</div>';
 		print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?id='.((int) $object->id).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirmtransfer">';
 		print '<input type="hidden" name="transfer_filename" value="'.dolPrintHTMLForAttribute($documentTransferPreview['filename']).'">';
-		print '<input type="hidden" name="transfer_invoice_id" value="'.((int) $documentTransferPreview['invoice_id']).'">';
-		print '<input type="hidden" name="transfer_invoice_ref" value="'.dolPrintHTMLForAttribute($documentTransferPreview['invoice_ref']).'">';
+		print '<input type="hidden" name="transfer_target_type" value="'.dolPrintHTMLForAttribute($documentTransferPreview['target_type']).'">';
+		print '<input type="hidden" name="transfer_target_id" value="'.((int) $documentTransferPreview['target_id']).'">';
+		print '<input type="hidden" name="transfer_target_ref" value="'.dolPrintHTMLForAttribute($documentTransferPreview['target_ref']).'">';
 		print '<input type="hidden" name="transfer_sha256" value="'.dolPrintHTMLForAttribute($documentTransferPreview['sha256']).'">';
 		print '<div class="center"><input type="submit" class="button button-save" value="'.dolPrintHTMLForAttribute($langs->trans('ECMTransferConfirm')).'"></div>';
 		print '</form>';
@@ -74,8 +89,14 @@ if ($canTransfer && !empty($transferableFiles)) {
 		print '<option value="'.dolPrintHTMLForAttribute($filename).'">'.dol_escape_htmltag($filename).'</option>';
 	}
 	print '</select></td></tr>';
-	print '<tr><td>'.$langs->trans('ECMTransferInvoiceRef').'</td><td>';
-	print '<input class="flat minwidth300" type="text" name="transfer_invoice_ref" required>';
+	print '<tr><td>'.$langs->trans('ECMTransferTargetType').'</td><td>';
+	print '<select class="flat minwidth300" name="transfer_target_type" required>';
+	foreach ($targetTypes as $type => $key) {
+		print '<option value="'.dolPrintHTMLForAttribute($type).'">'.$langs->trans($key).'</option>';
+	}
+	print '</select></td></tr>';
+	print '<tr><td>'.$langs->trans('ECMTransferTargetId').'</td><td>';
+	print '<input class="flat minwidth300" type="number" min="1" name="transfer_target_id" required>';
 	print '</td></tr>';
 	print '</table>';
 	print '<div class="center"><input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('ECMTransferCheck')).'"></div>';

@@ -17,7 +17,7 @@
 
 /**
  * \file       htdocs/core/actions_documenttransfer.inc.php
- * \brief      Order document transfer actions shared by both order document pages
+ * \brief      Document transfer actions shared by document pages
  */
 
 /**
@@ -26,14 +26,14 @@
  * @var User $user
  * @var CommonObject $object
  * @var string $action
- * @var string $documentTransferOrderType
+ * @var string $documentTransferSourceType
  */
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/documenttransfer.class.php';
 
-$documentTransferOrderType = (string) ($documentTransferOrderType ?? '');
+$documentTransferSourceType = (string) ($documentTransferSourceType ?? '');
 $documentTransferPreview = array();
-if (!in_array($documentTransferOrderType, array('customer', 'supplier'), true)) {
+if ($documentTransferSourceType === '') {
 	return;
 }
 if ($action === 'previewtransfer' || $action === 'confirmtransfer') {
@@ -43,24 +43,14 @@ if ($action === 'previewtransfer' || $action === 'confirmtransfer') {
 	} else {
 		$transfer = new DocumentTransfer($db);
 		$filename = GETPOST('transfer_filename', 'alpha');
-		$invoiceId = GETPOSTINT('transfer_invoice_id');
-		$invoiceRef = GETPOST('transfer_invoice_ref', 'alpha');
-		if ($action === 'previewtransfer') {
-			if ($documentTransferOrderType === 'customer') {
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				$invoice = new Facture($db);
-			} else {
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-				$invoice = new FactureFournisseur($db);
-			}
-			$invoiceId = ($invoiceRef !== '' && $invoice->fetch(0, $invoiceRef) > 0 ? (int) $invoice->id : 0);
-		}
-		if ($action === 'confirmtransfer' && $invoiceRef === '') {
-			setEventMessages($langs->trans('ECMTransferInvalidInput'), null, 'errors');
-		} elseif ($invoiceId <= 0) {
+		$targetType = GETPOST('transfer_target_type', 'aZ09arobase');
+		$targetId = GETPOSTINT('transfer_target_id');
+		$targetRef = GETPOST('transfer_target_ref', 'alpha');
+		$sourceType = $documentTransferSourceType;
+		if ($targetId <= 0) {
 			setEventMessages($langs->trans('ECMTransferNotFound'), null, 'errors');
 		} elseif ($action === 'previewtransfer') {
-			$checked = $transfer->inspectOrderToInvoice($documentTransferOrderType, (int) $object->id, $invoiceId, $filename, $user);
+			$checked = $transfer->inspect($sourceType, (int) $object->id, $targetType, $targetId, $filename, $user);
 			if ($checked === false) {
 				setEventMessages($langs->trans($transfer->error), null, 'errors');
 			} else {
@@ -68,11 +58,11 @@ if ($action === 'previewtransfer' || $action === 'confirmtransfer') {
 			}
 		} else {
 			$expectedHash = GETPOST('transfer_sha256', 'alpha');
-			$result = $transfer->moveOrderToInvoice($documentTransferOrderType, (int) $object->id, $invoiceId, $filename, $user, $expectedHash, $invoiceRef);
+			$result = $transfer->move($sourceType, (int) $object->id, $targetType, $targetId, $filename, $user, $expectedHash, $targetRef);
 			if ($result === false) {
 				setEventMessages($langs->trans($transfer->error), null, 'errors');
 			} else {
-				setEventMessages($langs->trans('ECMTransferDone', $result['filename'], $result['invoice_ref']), null);
+				setEventMessages($langs->trans('ECMTransferDone', $result['filename'], $result['target_ref']), null);
 			}
 		}
 	}

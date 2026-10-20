@@ -49,6 +49,72 @@ class Documents extends DolibarrApi
 		$this->db = $db;
 	}
 
+	/**
+	 * Inspect an attachment move between two document-bearing objects.
+	 *
+	 * @param string $source_type Source document modulepart
+	 * @param int $source_id Source object rowid
+	 * @param string $target_type Target document modulepart
+	 * @param int $target_id Target object rowid
+	 * @param string $filename Exact filename without a path
+	 * @return array<string,mixed> Transfer preview including SHA-256 and target ref
+	 * @url POST /inspectdocumenttransfer
+	 * @throws RestException
+	 */
+	public function inspectDocumentTransfer($source_type, $source_id, $target_type, $target_id, $filename)
+	{
+		global $langs;
+		$langs->load('ecm');
+		if (!ctype_digit((string) $source_id) || !ctype_digit((string) $target_id)) {
+			throw new RestException(400, $langs->transnoentitiesnoconv('ECMTransferInvalidInput'));
+		}
+		if (!(DolibarrApiAccess::$user instanceof User)) {
+			throw new RestException(403, $langs->transnoentitiesnoconv('ECMTransferDenied'));
+		}
+		require_once DOL_DOCUMENT_ROOT.'/ecm/class/documenttransfer.class.php';
+		$transfer = new DocumentTransfer($this->db);
+		$checked = $transfer->inspect($source_type, $source_id, $target_type, $target_id, $filename, DolibarrApiAccess::$user);
+		if ($checked === false) {
+			throw new RestException($transfer->status ?: 500, $langs->transnoentitiesnoconv($transfer->error).' ['.$transfer->reason.']');
+		}
+		return $transfer->publicResult($checked, $checked['ecm_file_id'], false);
+	}
+
+	/**
+	 * Move an attachment after inspecting and approving the exact target and hash.
+	 *
+	 * @param string $source_type Source document modulepart
+	 * @param int $source_id Source object rowid
+	 * @param string $target_type Target document modulepart
+	 * @param int $target_id Target object rowid
+	 * @param string $filename Exact filename without a path
+	 * @param string $expected_sha256 SHA-256 returned by inspectdocumenttransfer
+	 * @param string $expected_target_ref Target ref returned by inspectdocumenttransfer
+	 * @return array<string,mixed> Completed transfer summary without server paths
+	 * @url POST /transferdocument
+	 * @throws RestException
+	 */
+	public function transferDocument($source_type, $source_id, $target_type, $target_id, $filename, $expected_sha256, $expected_target_ref)
+	{
+		global $langs;
+		$langs->load('ecm');
+		if (!ctype_digit((string) $source_id) || !ctype_digit((string) $target_id)
+			|| !preg_match('/^[a-f0-9]{64}$/i', (string) $expected_sha256)
+			|| $expected_target_ref === '') {
+			throw new RestException(400, $langs->transnoentitiesnoconv('ECMTransferInvalidInput'));
+		}
+		if (!(DolibarrApiAccess::$user instanceof User)) {
+			throw new RestException(403, $langs->transnoentitiesnoconv('ECMTransferDenied'));
+		}
+		require_once DOL_DOCUMENT_ROOT.'/ecm/class/documenttransfer.class.php';
+		$transfer = new DocumentTransfer($this->db);
+		$result = $transfer->move($source_type, $source_id, $target_type, $target_id, $filename, DolibarrApiAccess::$user, $expected_sha256, $expected_target_ref);
+		if ($result === false) {
+			throw new RestException($transfer->status ?: 500, $langs->transnoentitiesnoconv($transfer->error).' ['.$transfer->reason.']');
+		}
+		return $result;
+	}
+
 
 	/**
 	 * Download a given document
