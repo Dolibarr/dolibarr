@@ -13,6 +13,11 @@
  * \brief Bounded project writes through the AI bridge, without persistence.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
 }
@@ -21,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/ai/class/mcptool.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 
 /** Exercise update validation, permissions, confirmation and endpoint dispatch. */
-class AiProjectUpdateTest extends PHPUnit\Framework\TestCase
+class AiProjectUpdateTest extends CommonClassTest
 {
 	/** @var AiProjectUpdateBridgeFixture Bridge fixture */
 	private $bridge;
@@ -37,6 +42,8 @@ class AiProjectUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $langs, $user, $conf;
 		$this->previousLangs = $langs;
 		$this->previousUser = $user;
@@ -59,6 +66,8 @@ class AiProjectUpdateTest extends PHPUnit\Framework\TestCase
 		$user = $this->previousUser;
 		$conf = $this->previousConf;
 		date_default_timezone_set($this->previousTimezone);
+
+		parent::tearDown();
 	}
 
 	/** @return void */

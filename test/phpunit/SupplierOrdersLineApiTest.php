@@ -13,6 +13,11 @@
  * \brief Supplier order partial-update tests without database writes.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
 }
@@ -39,7 +44,7 @@ call_user_func(
 /**
  * Exercise the REST boundary using an order whose persistence is mocked.
  */
-class SupplierOrdersLineApiTest extends PHPUnit\Framework\TestCase
+class SupplierOrdersLineApiTest extends CommonClassTest
 {
 	/** @var User|null Previous API user */
 	private $previousUser;
@@ -59,6 +64,8 @@ class SupplierOrdersLineApiTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $extrafields;
 		$this->previousUser = DolibarrApiAccess::$user;
 		$this->previousExtrafields = $extrafields;
@@ -86,6 +93,8 @@ class SupplierOrdersLineApiTest extends PHPUnit\Framework\TestCase
 		DolibarrApiAccess::$user = $this->previousUser;
 		$extrafields = $this->previousExtrafields;
 		SupplierOrderLineApiFixture::$accessAllowed = true;
+
+		parent::tearDown();
 	}
 
 	/** @return void */

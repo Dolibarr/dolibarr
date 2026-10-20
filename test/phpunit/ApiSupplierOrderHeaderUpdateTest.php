@@ -13,6 +13,11 @@
  * \brief Partial header updates through the AI bridge, without database writes.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', __DIR__.'/../../htdocs');
 }
@@ -23,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/ai/tools/api_bridge.class.php';
 /**
  * Exercise metadata, confirmation, precheck and dispatch with local fixtures.
  */
-class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
+class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 {
 	/** @var ApiSupplierOrderHeaderBridgeFixture Bridge fixture */
 	private $bridge;
@@ -35,6 +40,8 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 	/** @return void */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $langs, $user;
 		$this->previousLangs = $langs;
 		$this->previousUser = $user;
@@ -51,6 +58,8 @@ class ApiSupplierOrderHeaderUpdateTest extends PHPUnit\Framework\TestCase
 		$langs = $this->previousLangs;
 		$user = $this->previousUser;
 		ApiSupplierOrderHeaderEndpointFixture::$fail = false;
+
+		parent::tearDown();
 	}
 
 	/** @return void */
