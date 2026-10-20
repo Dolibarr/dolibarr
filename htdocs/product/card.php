@@ -799,6 +799,18 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				// The lot/serial fields are not in the form when module productbatch is disabled: keep their values,
+				// an empty status_batch would switch the product to "no lot" and move all its stock out of its lots.
+				if (!GETPOSTISSET('status_batch')) {
+					$object->status_batch = $object->oldcopy->status_batch;
+				}
+				if (!GETPOSTISSET('sell_or_eat_by_mandatory')) {
+					$object->sell_or_eat_by_mandatory = $object->oldcopy->sell_or_eat_by_mandatory;
+				}
+				if (!GETPOSTISSET('batch_mask')) {
+					$object->batch_mask = $object->oldcopy->batch_mask;
+				}
+
 				if (!$error && $object->check()) {
 					if ($object->update($object->id, $user) > 0) {
 						// Category association
@@ -1356,6 +1368,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';
