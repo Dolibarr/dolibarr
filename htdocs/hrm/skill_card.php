@@ -114,6 +114,7 @@ $MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKI
  */
 
 $parameters = array();
+/** @var int|Skill $result Set to the cloned object by actions_addupdatedelete.inc.php */
 $result = -1;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -206,8 +207,8 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
-	/** @var int $result May be set by the includes above */
-	'@phan-var-force int $result';
+	/** @var int|Skill $result May be set by the includes above */
+	'@phan-var-force int|Skill $result';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
