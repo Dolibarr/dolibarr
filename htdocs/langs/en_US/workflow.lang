@@ -24,7 +24,7 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, cl
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments, except for a shipment without sales order, which has no amount)
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
