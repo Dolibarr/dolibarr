@@ -597,6 +597,7 @@ class Ai
 
 			// Vendor
 			if (!empty($json['document_info']['vendor'])) {
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				$arrayforthirdparty = $json['document_info']['vendor'];
 			} elseif (!empty($json['vendor'])) {
 				$arrayforthirdparty = $json['vendor'];
@@ -630,7 +631,9 @@ class Ai
 			if (empty($json['items'])) {
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
 					$tmparray['description'] = 'Undefined';
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$tmparray['total_ht'] = (float) $json['summary']['subtotal_excluding_tax'];
+					// @phan-suppress-next-line PhanTypeArraySuspiciousNull,PhanTypeInvalidDimOffset
 					$tmparray['vat_rate'] =  (float) $json['summary']['tax']['rate'];
 				}
 			} else {
@@ -670,6 +673,7 @@ class Ai
 			if (!empty($json['summary'])) {
 				// The AI service may use different key names for the same data
 				$tmparray['total_ht'] = $json['summary']['total_excluding_tax'] ?? ($json['summary']['total_excl_tax'] ?? ($json['summary']['total_ht'] ?? ($json['summary']['subtotal'] ?? null)));
+				// @phan-suppress-next-line PhanTypeArraySuspiciousNull,PhanTypeInvalidDimOffset
 				$tmparray['vat_rate'] = $json['summary']['tax_rate'] ?? ($json['summary']['vat_rate'] ?? ((isset($json['summary']['tax']) && is_array($json['summary']['tax'])) ? ($json['summary']['tax']['rate'] ?? null) : null));
 				$tmparray['total_ttc'] = $json['summary']['total_including_tax'] ?? ($json['summary']['total_incl_tax'] ?? ($json['summary']['total_ttc'] ?? ($json['summary']['total'] ?? null)));
 			}
