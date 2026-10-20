@@ -1904,9 +1904,10 @@ class Mo extends CommonObject
 	 *
 	 *	@param	''|'services'	$restrictlist		''=All lines, 'services'=Restrict to services only
 	 *  @param  int[]       $selectedLines      Array of lines id for selected lines
+	 *  @param  int[]       $supportedProductTypes Array of supported product types
 	 *  @return	void
 	 */
-	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
+	public function printOriginLinesList($restrictlist = '', $selectedLines = array(), $supportedProductTypes = array())
 	{
 		global $langs, $hookmanager, $form, $action;
 
@@ -1960,7 +1961,7 @@ class Mo extends CommonObject
 					}
 					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
-				if (empty($reshook)) {
+				if (empty($reshook) && (empty($supportedProductTypes) || in_array((int) $line->product_type, $supportedProductTypes))) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
