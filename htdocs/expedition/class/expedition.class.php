@@ -111,7 +111,7 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var ?int ID of user that validates
+	 * @var ?int ID of user who validates
 	 * @deprecated use $user_validation_id
 	 */
 	public $fk_user_valid;
@@ -783,7 +783,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}

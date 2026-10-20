@@ -1839,23 +1839,26 @@ $(document).ready(function() {
 function onKanbanColumnChange(item, newColumn) {
 	console.log("Call onKanbanColumnChange");
 	var originalColumn = item.data('original-column');
+	var field = newColumn.data('groupbyfield');
+	var data = {
+		field: field,
+		element: item.data('element'),
+		id: item.data('itemid'),
+		/* Token of the current page: this file is cached by the browser, so it must not contain a token */
+		token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
+	};
+	/* The column of the records without any value uses the id 'undefined', saved as 0 like the "Undefined" entry of the dictionary */
+	var value = newColumn.data('groupbyid');
+	data['ajaxfield_'+field] = (value === 'undefined' ? 0 : value);
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php',
-		data: {
-			field: 'editval_'+newColumn.data('groupbyfield'),
-			element: item.data('element'),
-			table_element: item.data('tableelement'),
-			fk_element: item.data('itemid'),
-			value: newColumn.data('groupbyid'),
-			/* Token of the current page: this file is cached by the browser, so it must not contain a token */
-			token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
-		},
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/objectfield.php',
+		data: data,
 		context: document.body,
 		dataType: 'json',
 		success: function(response) {
-			if (response && response.error) {
-				onKanbanColumnChangeFailed(item, originalColumn, response.error);
+			if (!response || !response.result) {
+				onKanbanColumnChangeFailed(item, originalColumn, response ? response.msg : '');
 				return;
 			}
 			/* Record is saved, the new column becomes the reference for the next move */
@@ -1865,7 +1868,7 @@ function onKanbanColumnChange(item, newColumn) {
 			}
 		},
 		error: function(xhr) {
-			onKanbanColumnChangeFailed(item, originalColumn, xhr.status+' '+xhr.statusText);
+			onKanbanColumnChangeFailed(item, originalColumn, (xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : xhr.status+' '+xhr.statusText);
 		}
 	});
 }
