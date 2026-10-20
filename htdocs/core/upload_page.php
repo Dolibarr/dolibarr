@@ -109,7 +109,7 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlo
 	exit(1);
 }
 
-if ($action == 'displayfile') {	// Return the uploaded file content for preview. Only PDF and images uploaded by the current user are allowed.
+if ($action == 'displayfile') {	// Test on permission already done: the filename is scoped to the current user. Only PDF and images are allowed.
 	$filetodisplay = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
 	$mimetodisplay = dol_mimetype($filetodisplay);
 	if (!preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $filetodisplay)
