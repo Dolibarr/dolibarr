@@ -1,21 +1,23 @@
 <?php
-/*
- * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
- * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2026		John BOTELLA
  *
- * This program and files/directory inner it is free software: you can
- * redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License (AGPL) as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU AGPL for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU AGPL
- * along with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file       htdocs/admin/tools/ui/resources/hidden-conf.php
+ * \brief      Documentation page listing hidden configuration constants
  */
 
 // Load Dolibarr environment
@@ -23,7 +25,6 @@ require '../../../../main.inc.php';
 
 /**
  * @var DoliDB $db
- * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
@@ -34,51 +35,57 @@ if ($user->socid > 0) {
 }
 
 // Includes
-require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
-require_once __DIR__ . '/hidden-conf-list.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/tools/ui/class/documentation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/tools/ui/resources/hidden-conf.lib.php';
 
 // Load documentation translations
-$langs->load('uxdocumentation');
+$langs->loadLangs(array('uxdocumentation', 'hiddenconf'));
 
-//
+$hidenavmenu = GETPOST('hidenavmenu');
+
 $documentation = new Documentation($db);
+$data = getListOfHiddenConf();
+
+// Summary with one link per section
+foreach ($data as $sectionKey => $section) {
+	$documentation->menu['Resources']['submenu']['HiddenConf']['summary'][$section['label']] = '#hiddenconf-section-'.$sectionKey;
+}
 
 // Output html head + body - Param is Title
-$documentation->docHeader('Hidden-confs', [], ['admin/tools/ui/css/hidden-conf.css'], GETPOST('hidenavmenu'));
+$documentation->docHeader($langs->trans('DocHiddenConfTitle'), [], ['admin/tools/ui/css/hidden-conf.css'], $hidenavmenu);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
-$documentation->view = array('Resources','Hidden-conf');
+$documentation->view = array('Resources', 'HiddenConf');
 $form = new Form($db);
 
-$mode = GETPOST('mode'); // ex : no-btn
-
 // Output sidebar
-if (!GETPOST('hidenavmenu')) {
+if (!$hidenavmenu) {
 	$documentation->showSidebar();
 }
 ?>
 
-<div class="doc-wrapper<?php print GETPOST('hidenavmenu') ? "-bis" : ""; ?>">
+<div class="doc-wrapper<?php print $hidenavmenu ? "-bis" : ""; ?>">
 
 		<?php
-		if (!GETPOST('hidenavmenu')) {
+		if (!$hidenavmenu) {
 			$documentation->showBreadCrumb();
 		}
 		?>
 
 		<div class="doc-content-wrapper">
 
-			<h1 class="documentation-title"><?php echo $langs->trans('DocHiddenConfTitle'); ?></h1>
-			<p class="documentation-text"><?php echo $langs->trans('DocHiddenConfDescription'); ?></p>
-			<div class="documentation-disclaimer warning"><?php echo $langs->trans('DocHiddenConfDisclaimer'); ?></div>
+			<h1 class="documentation-title"><?php print $langs->trans('DocHiddenConfTitle'); ?></h1>
+			<p class="documentation-text"><?php print $langs->trans('DocHiddenConfDescription'); ?></p>
+			<div class="documentation-disclaimer warning"><?php print $langs->trans('DocHiddenConfDisclaimer'); ?></div>
+			<p class="documentation-text"><?php print $langs->trans('DocHiddenConfHowTo', DOL_URL_ROOT.'/admin/const.php'); ?></p>
+
+			<?php hiddenConfPrintObsoleteWarning($data); ?>
 
 			<!-- Summary -->
 			<?php $documentation->showSummary(); ?>
 
-			<br>
-
-			<div class="documentation-section" id="search-form-container" >
+			<div class="documentation-section" id="search-form-container">
 				<?php
 				print $form->getSearchFilterToolInput(
 					'#hidden-conf-search-zone .conf-item',
@@ -92,13 +99,12 @@ if (!GETPOST('hidenavmenu')) {
 					]
 				);
 				?>
-
-				<div id="hidden-conf-counter" ><span class="badge badge-pill badge-light">Counter : <strong class="counter badge badge-primary">--</strong></span></div>
+				<div id="hidden-conf-counter"><span class="badge badge-pill badge-light"><?php print $langs->trans('HiddenConfCounter'); ?> <strong class="counter badge badge-primary">--</strong></span></div>
 				<div class="search-tool-no-results"></div>
 			</div>
-			<div id="hidden-conf-search-zone" >
-			<!-- List of usage font awesome icon -->
-			<?php renderHiddenConfList(); ?>
+
+			<div id="hidden-conf-search-zone">
+				<?php hiddenConfPrintList($data); ?>
 			</div>
 		</div>
 	</div>

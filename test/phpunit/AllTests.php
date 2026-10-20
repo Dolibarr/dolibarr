@@ -514,6 +514,8 @@ class AllTests
 			$suite->addTestSuite('CodingSqlTest');
 			require_once dirname(__FILE__).'/CodingPhpTest.php';
 			$suite->addTestSuite('CodingPhpTest');
+			require_once dirname(__FILE__).'/HiddenConfListTest.php';
+			$suite->addTestSuite('HiddenConfListTest');
 		} else {
 			print "Check on source code has been disabled by parameter or env var 'PHPUNIT_DISABLE_SOURCE_SCAN'.\n";
 		}

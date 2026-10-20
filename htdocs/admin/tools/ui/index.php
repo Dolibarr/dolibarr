@@ -65,8 +65,8 @@ $documentation->showSidebar(); ?>
 					<div class="link-content"><?php print $langs->trans('DocHowContributeDescription'); ?></div>
 				</a>
 				<a class="doc-link size-default" href="<?php print dol_buildpath($documentation->baseUrl.'/resources/hidden-conf.php', 1); ?>" >
-					<div class="link-title"><span class="fas fa-external-link-alt paddingright"></span> Hidden conf</div>
-					<div class="link-content">Comprehensive list of hidden configuration options available in Dolibarr</div>
+					<div class="link-title"><span class="fas fa-code paddingright"></span> <?php print $langs->trans('HiddenConf'); ?></div>
+					<div class="link-content"><?php print $langs->trans('DocHiddenConfIndexDescription'); ?></div>
 				</a>
 				<a class="doc-link size-default" href="https://www.dolibarr.fr/forum/" target="_blank">
 					<div class="link-title"><span class="fas fa-external-link-alt paddingright"></span> Dolibarr community</div>

@@ -1,585 +1,857 @@
 <?php
+/* Copyright (C) 2026		John BOTELLA
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
- * @phpstan-type ConfValueType 'bool'|'int'|'float'|'string'|'array'|'json'
+ * \file       htdocs/admin/tools/ui/resources/hidden-conf-list.lib.php
+ * \brief      List of hidden configuration constants (sections follow the wiki page Setup_Other)
  *
- * @phpstan-type HiddenConf array{
- *     name: string,
- *     description: string,
- *     type?: ConfValueType,
- *     example?: string|null,
- *     added_in?: string|null,
- *     removed_in?: string|null,
- *     deprecated?: bool,
- *     deprecated_since?: string|null,
- *     module?: string,
- *     tags?: string[]
- * }
+ * Each conf entry only needs the keys that differ from the defaults (see hiddenConfNormalize()):
+ * - title, description, warning: keys HiddenConfTitle_<NAME>, HiddenConfDesc_<NAME> and HiddenConfWarning_<NAME>
+ *   in langs/en_US/hiddenconf.lang (the warning, shown in orange, is for a bug or a trap found in the code)
+ * - type: 'bool' (default, set to 1 to enable), 'int', 'string', 'list' (comma separated values)
+ * - example: example of value
+ * - added_in / removed_in: major version
+ * - status: 'hidden' (default), 'in_setup' (now available in a setup page, see setup_url) or 'removed'
+ * - setup_url: url of the setup page (relative to DOL_URL_ROOT) when status is 'in_setup'
+ * - deprecated: true if the conf should not be used anymore
+ * - tags: list of tags (security, pdf, ui, danger, ...)
  *
- * @phpstan-type HiddenConfSection array{
- *     label: string,
- *     confs: array<string, HiddenConf>
- * }
+ * test/phpunit/HiddenConfListTest.php checks that this list stays in line with the code.
+ */
+
+
+/**
+ * Return the list of hidden configuration constants, grouped by section
  *
- * @phpstan-type HiddenConfList array<string, HiddenConfSection>
- *
- * @return array<string, array{
- *     label: string,
- *     confs: array<string, array{
- *         name: string,
- *         description: string,
- *         type: 'bool'|'int'|'float'|'string'|'array'|'json',
- *         example: string|null,
- *         added_in: string|null,
- *         removed_in: string|null,
- *         deprecated: bool,
- *         deprecated_since: string|null,
- *         module: string,
- *         tags: string[]
- *     }>
- * }>
+ * @return array<string, array{label: string, wiki_anchor: string, confs: array<string, array<string, mixed>>}>
  */
 function getListOfHiddenConf()
 {
 	return [
-		'GLOBAL' => [
-			'label' => 'Global / System',
+		'GLOBAL_OPTIONS' => [
+			'label' => 'Global Options',
+			'wiki_anchor' => 'Global_Options',
 			'confs' => [
-				'ADD_UNSPLASH_LOGIN_BACKGROUND' => [
-					'name' => 'ADD_UNSPLASH_LOGIN_BACKGROUND',
-					'title' => 'Use Unsplash random image as login background (external call)',
-					'description' => 'The background image will be refreshed on every login page refresh. Background image is pulled from the popular open source image website Unsplash. If an already saved static background image exists, then this code will override it (but not delete the saved image). Warning: Using this may allow this external website to steel your login credentials (the value to be put is the URL of the service',
-					'type' => 'string',
-					'example' => 'https://source.unsplash.com/random',
-					'added_in' => '10',
-					'removed_in' => null,
-					'deprecated' => false,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['ui', 'external'],
-				],
-
-				'MAIN_HIDE_POWERED_BY' => [
-					'name' => 'MAIN_HIDE_POWERED_BY',
-					'title' => 'Hide "Powered by Dolibarr" logo on public pages',
-					'description' => '',
-					'type' => 'bool',
-					'example' => '1',
-					'added_in' => null,
-					'removed_in' => null,
-					'deprecated' => false,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['ui'],
-				],
-
-				'MAIN_APPLICATION_TITLE' => [
-					'name' => 'MAIN_APPLICATION_TITLE',
-					'title' => 'Override application title (login page)',
-					'description' => 'This will change the title of software (that appears on the login page by default).
-									Warning: changing this may make Dolibarr version detection to fail by smartphone applications like
-									<a href="https://wiki.dolibarr.org/index.php/Application_Android_-_DoliDroid" title="Application Android - DoliDroid" target="_blank">Application Android - DoliDroid</a>,
-									breaking some features when using Dolibarr from such application. If the text start with a "+",
-									the text will be added to the standard "Dolibarr" label instead of replacing it.',
-					'type' => 'string',
-					'example' => 'My ERP',
-					'added_in' => null,
-					'removed_in' => null,
-					'deprecated' => false,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['ui'],
-				],
-
-				'MAIN_AUTOFILL_DATE' => [
-					'name' => 'MAIN_AUTOFILL_DATE',
-					'title' => 'Auto-fill document dates with current date (dangerous)',
-					'description' => ' If this constant is defined (to something other than 0), the date of invoice, proposal, order or payment are auto-filled with the current date. It is highly recommended to NOT ENABLE this feature. This can create a lot of input errors with data not validated by users. This leads to incorrect values saved in the database causing confusion when you have to do your accountancy reports!',
-					'type' => 'bool',
-					'example' => '1',
-					'added_in' => null,
-					'removed_in' => null,
-					'deprecated' => true,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['danger'],
-				],
-
-				'MAIN_AUTOFILL_DATE_PROPOSAL' => [
-					'name' => 'MAIN_AUTOFILL_DATE_PROPOSAL',
-					'title' => 'Auto-fill proposal date',
-					'description' => 'If this constant is defined (to something other than 0), the date of proposal is auto-filled with the current date.',
-					'type' => 'bool',
-					'example' => '1',
-					'added_in' => null,
-					'removed_in' => null,
-					'deprecated' => true,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['proposal'],
-				],
-
-				'MAIN_DEFAULT_LANGUAGE_FILTER' => [
-					'name' => 'MAIN_DEFAULT_LANGUAGE_FILTER',
-					'title' => 'Filter out en_US from language list',
-					'description' => 'Useful if you do not want to show <code>en_US</code> language option in combo boxes (other languages can easily be removed in <code>langs</code> directory but not <code>en_US</code>)',
-					'type' => 'bool',
-					'example' => '1',
-					'added_in' => '10.0',
-					'removed_in' => null,
-					'deprecated' => false,
-					'deprecated_since' => null,
-					'module' => 'core',
-					'tags' => ['ui'],
-				],
-
-				//              'MAIN_LANGUAGES_ALLOWED' => [
-				//                  'name' => 'MAIN_LANGUAGES_ALLOWED',
-				//                  'title' => 'Restrict allowed languages list',
-				//                  'description' => '',
-				//                  'type' => 'string',
-				//                  'example' => 'fr_FR,en_US,de_DE',
-				//                  'added_in' => '11.0',
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['ui'],
-				//              ],
-				//
-				//              'MAIN_DISABLE_FULL_SCANLIST' => [
-				//                  'name' => 'MAIN_DISABLE_FULL_SCANLIST',
-				//                  'title' => 'Disable full table scan for pagination performance',
-				//                  'description' => '',
-				//                  'type' => 'bool',
-				//                  'example' => '1',
-				//                  'added_in' => null,
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['performance'],
-				//              ],
-				//
-				//              'MAIN_DISABLE_JQUERY_JNOTIFY' => [
-				//                  'name' => 'MAIN_DISABLE_JQUERY_JNOTIFY',
-				//                  'title' => 'Disable JNotify alerts',
-				//                  'description' => '',
-				//                  'type' => 'bool',
-				//                  'example' => '1',
-				//                  'added_in' => null,
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['ui'],
-				//              ],
-				//
-				//              'MAIN_DISABLE_AJAX_COMBOX' => [
-				//                  'name' => 'MAIN_DISABLE_AJAX_COMBOX',
-				//                  'title' => 'Disable AJAX autocomplete in selects',
-				//                  'description' => '',
-				//                  'type' => 'bool',
-				//                  'example' => '1',
-				//                  'added_in' => '3.6',
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['ui'],
-				//              ],
-				//
-				//              'MAIN_DISABLE_MULTIPLE_FILEUPLOAD' => [
-				//                  'name' => 'MAIN_DISABLE_MULTIPLE_FILEUPLOAD',
-				//                  'title' => 'Disable multiple file upload',
-				//                  'description' => '',
-				//                  'type' => 'bool',
-				//                  'example' => '1',
-				//                  'added_in' => null,
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['upload'],
-				//              ],
-				//
-				//              'MAIN_DISABLE_TRUNC' => [
-				//                  'name' => 'MAIN_DISABLE_TRUNC',
-				//                  'title' => 'Disable truncation in select lists',
-				//                  'description' => '',
-				//                  'type' => 'bool',
-				//                  'example' => '1',
-				//                  'added_in' => '7.0',
-				//                  'removed_in' => null,
-				//                  'deprecated' => false,
-				//                  'deprecated_since' => null,
-				//                  'module' => 'core',
-				//                  'tags' => ['ui'],
-				//              ],
+				'ADD_UNSPLASH_LOGIN_BACKGROUND' => ['type' => 'string', 'example' => 'https://picsum.photos/1920/1080', 'added_in' => '10.0', 'tags' => ['ui', 'external']],
+				'API_DISABLE_LOGIN_API' => ['added_in' => '14.0', 'status' => 'removed', 'removed_in' => '24.0'],
+				'GRAPH_USE_FISCAL_YEAR' => ['added_in' => '11.0'],
+				'MAIN_ALL_TOWN_TO_UPPER' => ['added_in' => '13.0'],
+				'MAIN_ALL_TO_UPPER' => ['added_in' => '11.0'],
+				'MAIN_APPLICATION_TITLE' => ['type' => 'string', 'example' => '+ MyCompany', 'tags' => ['ui']],
+				'MAIN_AUTOFILL_DATE' => ['tags' => ['danger']],
+				'MAIN_AUTOFILL_DATE_PROPOSAL' => ['added_in' => '21.0', 'status' => 'removed', 'removed_in' => '23.0'],
+				'MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES' => ['added_in' => '4.0'],
+				'MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES' => ['added_in' => '4.0'],
+				'MAIN_CHECKBOX_LEFT_COLUMN' => ['example' => '0', 'added_in' => '16.0', 'status' => 'in_setup', 'setup_url' => '/admin/ihm.php'],
+				'MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION' => ['example' => '0', 'added_in' => '12.0'],
+				'MAIN_DEFAULT_LANGUAGE_FILTER' => ['type' => 'string', 'example' => 'en_US', 'added_in' => '10.0', 'tags' => ['ui']],
+				'MAIN_DEFAULT_PAYMENT_TERM_ID' => ['type' => 'int', 'example' => '1', 'added_in' => '5.0', 'deprecated' => true],
+				'MAIN_DEFAULT_PAYMENT_TYPE_ID' => ['type' => 'int', 'example' => '6', 'added_in' => '12.0', 'deprecated' => true],
+				'MAIN_DISABLEDRAFTSTATUS' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_AJAX_COMBOX' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_CONTACTS_TAB' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_FULL_SCANLIST' => [],
+				'MAIN_DISABLE_JQUERY_JNOTIFY' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_MULTIPLE_FILEUPLOAD' => ['added_in' => '6.0'],
+				'MAIN_DISABLE_NOTES_TAB' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_PDF_THUMBS' => ['added_in' => '6.0', 'tags' => ['pdf']],
+				'MAIN_DISABLE_SELECT2_FOCUS_PROTECTION' => ['added_in' => '18.0'],
+				'MAIN_DISABLE_TRUNC' => [],
+				'MAIN_DOC_SORT_FIELD' => ['type' => 'string', 'example' => 'date', 'added_in' => '11.0'],
+				'MAIN_DOC_SORT_ORDER' => ['type' => 'string', 'example' => 'DESC', 'added_in' => '11.0'],
+				'MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT' => ['added_in' => '10.0'],
+				'MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME' => ['added_in' => '4.0'],
+				'MAIN_DOC_USE_TIMING' => ['type' => 'string', 'example' => '%Y%m%d%H%M', 'added_in' => '4.0'],
+				'MAIN_DOL_SCRIPTS_ROOT' => ['type' => 'string', 'example' => '/var/www/dolibarr', 'added_in' => '14.0'],
+				'MAIN_DONT_KEEP_NOTE_ON_CLONING' => ['added_in' => '11.0'],
+				'MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER' => ['added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/emailcollector_list.php'],
+				'MAIN_ENABLE_AJAX_TOOLTIP' => ['added_in' => '18.0'],
+				'MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES' => ['added_in' => '8.0'],
+				'MAIN_ENABLE_LOG_TO_HTML' => ['added_in' => '4.0'],
+				'MAIN_FEATURES_LEVEL' => ['type' => 'int', 'example' => '1'],
+				'MAIN_FILESYSTEM_ENCODING' => ['type' => 'string', 'example' => 'utf-8'],
+				'MAIN_FIRST_TO_UPPER' => ['added_in' => '4.0'],
+				'MAIN_FORCELANGDIR' => ['type' => 'string', 'example' => '/mymodule', 'added_in' => '4.0'],
+				'MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT' => ['type' => 'string', 'example' => 'service', 'added_in' => '13.0'],
+				'MAIN_HELPCENTER_LINKTOUSE' => ['type' => 'string', 'example' => 'https://help.example.com', 'added_in' => '4.0'],
+				'MAIN_HIDE_POWERED_BY' => ['added_in' => '11.0', 'tags' => ['ui']],
+				'MAIN_HOOK_DEBUG' => ['added_in' => '19.0'],
+				'MAIN_HTML_TITLE' => ['type' => 'list', 'example' => 'showapp,thirdpartynameonly', 'added_in' => '4.0'],
+				'MAIN_HTTP_CONTENT_SECURITY_POLICY' => ['type' => 'string', 'example' => 'default-src \'self\'', 'added_in' => '6.0', 'status' => 'removed', 'removed_in' => '17.0', 'tags' => ['security']],
+				'MAIN_KEEP_REF_CUSTOMER_ON_CLONING' => ['added_in' => '4.0'],
+				'MAIN_LANGUAGES_ALLOWED' => ['type' => 'list', 'example' => 'fr_FR,en_US,de_DE', 'added_in' => '11.0', 'tags' => ['ui']],
+				'MAIN_LINK_BY_REF' => ['status' => 'removed'],
+				'MAIN_LIST_ALLOW_PRIVATE_NOTES' => ['added_in' => '13.0', 'status' => 'removed', 'removed_in' => '24.0'],
+				'MAIN_LIST_ALLOW_PUBLIC_NOTES' => ['added_in' => '13.0', 'status' => 'removed', 'removed_in' => '24.0'],
+				'MAIN_LOGIN_BADCHARUNAUTHORIZED' => ['type' => 'string', 'example' => ',@;', 'added_in' => '16.0'],
+				'MAIN_LOGOUT_GOTO_URL' => ['type' => 'string', 'example' => 'https://www.example.com'],
+				'MAIN_MAXLIST_OVERLOAD' => ['type' => 'int', 'example' => '200', 'added_in' => '4.0'],
+				'MAIN_MAXTABS_IN_CARD' => ['type' => 'int', 'example' => '6', 'added_in' => '4.0'],
+				'MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING' => ['type' => 'int', 'example' => '0', 'added_in' => '4.0'],
+				'MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT' => ['type' => 'string', 'example' => 'common', 'added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/modules.php'],
+				'MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH' => ['type' => 'int', 'example' => '5', 'added_in' => '13.0'],
+				'MAIN_NO_CONCAT_DESCRIPTION' => ['added_in' => '10.0', 'status' => 'removed', 'removed_in' => '22.0'],
+				'MAIN_NO_INPUT_PRICE_WITH_TAX' => ['added_in' => '18.0'],
+				'MAIN_ONLY_LOGIN_ALLOWED' => ['type' => 'string', 'example' => 'admin;support'],
+				'MAIN_OPTIMIZEFORTEXTBROWSER' => ['type' => 'int', 'example' => '1'],
+				'MAIN_OPTIMIZE_SPEED' => ['type' => 'int', 'example' => '2'],
+				'MAIN_PAGESIZE_CHOICES' => ['type' => 'list', 'example' => '10:10,25:25,50:50,100:100', 'added_in' => '4.0'],
+				'MAIN_PASSWORD_FORGOTLINK' => ['type' => 'string', 'example' => 'https://sso.example.com/reset', 'added_in' => '9.0'],
+				'MAIN_PHONE_SEPAR' => ['type' => 'string', 'example' => '.', 'added_in' => '12.0'],
+				'MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN' => ['type' => 'string', 'example' => '0', 'added_in' => '4.0'],
+				'MAIN_PUBLIC_NOTE_IN_ADDRESS' => ['added_in' => '4.0'],
+				'MAIN_REMOVE_INSTALL_WARNING' => [],
+				'MAIN_REPEATCONTACTONEACHTAB' => ['status' => 'removed', 'removed_in' => '7.0'],
+				'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND' => ['added_in' => '4.0'],
+				'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER' => ['added_in' => '20.0'],
+				'MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED' => ['added_in' => '4.0'],
+				'MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE' => ['example' => '0', 'added_in' => '4.0'],
+				'MAIN_SEARCH_FORM_ON_HOME_AREAS' => ['added_in' => '6.0'],
+				'MAIN_SERVER_TZ' => ['type' => 'string', 'example' => 'UTC', 'added_in' => '4.0'],
+				'MAIN_SERVICES_ARE_ECOMMERCE_200238EC' => ['type' => 'int', 'example' => '2', 'status' => 'removed'],
+				'MAIN_SHOWDATABASENAMEINHELPPAGESLINK' => ['added_in' => '8.0'],
+				'MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP' => ['added_in' => '8.0'],
+				'MAIN_SHOW_TECHNICAL_ID' => ['added_in' => '4.0'],
+				'MAIN_SHOW_TUNING_INFO' => ['added_in' => '4.0'],
+				'MAIN_STATS_GRAPHS_SHOW_N_YEARS' => ['type' => 'int', 'example' => '5', 'added_in' => '14.0'],
+				'MAIN_STORE_COMPUTED_EXTRAFIELDS' => ['added_in' => '11.0'],
+				'MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES' => ['example' => '1'],
+				'MAIN_USE_ADVANCED_PERMS' => ['status' => 'in_setup', 'setup_url' => '/admin/security_other.php'],
+				'MAIN_USE_ALTERNATE_TRANSLATION_FOR' => ['type' => 'string', 'example' => 'societe:name,town;contact:firstname,lastname', 'added_in' => '12.0'],
+				'MAIN_USE_HOURMIN_IN_DATE_RANGE' => [],
+				'MAIN_USE_JQUERY_JEDITABLE' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '24.0'],
+				'MAIN_USE_JQUERY_MULTISELECT' => ['type' => 'string', 'example' => 'select2', 'added_in' => '4.0'],
+				'MAIN_USE_OLD_SEARCH_FORM' => ['added_in' => '4.0'],
+				'MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN' => ['added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/ihm.php'],
+				'MAIN_USE_TOP_MENU_SEARCH_DROPDOWN' => ['added_in' => '11.0', 'status' => 'in_setup', 'setup_url' => '/admin/ihm.php'],
+				'MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL' => ['added_in' => '14.0', 'status' => 'removed', 'removed_in' => '23.0'],
+				'MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID' => ['added_in' => '13.0', 'status' => 'removed', 'removed_in' => '14.0'],
+				'MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC' => ['added_in' => '9.0'],
+				'MAIN_USE_ZIPTOWN_DICTIONNARY' => ['added_in' => '4.0'],
+				'MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS' => ['type' => 'string', 'example' => '20', 'added_in' => '4.0'],
+				'MAIN_VIEW_LINE_NUMBER' => ['added_in' => '4.0'],
+				'MAIN_VIEW_LINE_NUMBER_IN_LIST' => ['added_in' => '12.0'],
+				'MAIN_VOLUME_DEFAULT_ROUND' => ['type' => 'int', 'example' => '2', 'added_in' => '4.0'],
+				'MAIN_VOLUME_DEFAULT_UNIT' => ['type' => 'int', 'example' => '-3', 'added_in' => '4.0'],
+				'MAIN_WEIGHT_DEFAULT_ROUND' => ['type' => 'int', 'example' => '2', 'added_in' => '4.0'],
+				'MAIN_WEIGHT_DEFAULT_UNIT' => ['type' => 'int', 'example' => '-3', 'added_in' => '4.0'],
+				'SHOW_SOCINFO_ON_PRINT' => ['added_in' => '12.0'],
+				'SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/mailing.php'],
+				'USER_HIDE_INACTIVE_IN_COMBOBOX' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/user.php'],
 			],
 		],
-
-		//      'SECURITY' => [
-		//          'label' => 'Security',
-		//          'confs' => [
-		//              'MAIN_SECURITY_CSRF_WITH_TOKEN' => [
-		//                  'name' => 'MAIN_SECURITY_CSRF_WITH_TOKEN',
-		//                  'title' => 'CSRF protection level',
-		//                  'description' => '',
-		//                  'type' => 'int',
-		//                  'example' => '2',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'core',
-		//                  'tags' => ['security'],
-		//              ],
-		//
-		//              'MAIN_RESTRICT_IPS' => [
-		//                  'name' => 'MAIN_RESTRICT_IPS',
-		//                  'title' => 'Restrict access by IP range',
-		//                  'description' => '',
-		//                  'type' => 'string',
-		//                  'example' => '192.168.0.0/24',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'core',
-		//                  'tags' => ['security'],
-		//              ],
-		//
-		//              'MAIN_ALLOW_SVG_FILES_AS_IMAGES' => [
-		//                  'name' => 'MAIN_ALLOW_SVG_FILES_AS_IMAGES',
-		//                  'title' => 'Allow SVG upload (security risk)',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => true,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'core',
-		//                  'tags' => ['danger'],
-		//              ],
-		//          ],
-		//      ],
-		//
-		//      'INVOICE' => [
-		//          'label' => 'Invoices',
-		//          'confs' => [
-		//              'INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE' => [
-		//                  'name' => 'INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE',
-		//                  'title' => 'Allow invoice editing after payment started',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'invoice',
-		//                  'tags' => ['danger'],
-		//              ],
-		//
-		//              'INVOICE_CAN_ALWAYS_BE_REMOVED' => [
-		//                  'name' => 'INVOICE_CAN_ALWAYS_BE_REMOVED',
-		//                  'title' => 'Allow invoice deletion even if not last',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'invoice',
-		//                  'tags' => ['danger'],
-		//              ],
-		//          ],
-		//      ],
-		//
-		//      'PRODUCT' => [
-		//          'label' => 'Products',
-		//          'confs' => [
-		//              'PRODUCT_DISABLE_SELLBY' => [
-		//                  'name' => 'PRODUCT_DISABLE_SELLBY',
-		//                  'title' => 'Hide sell-by date field',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => '13',
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'product',
-		//                  'tags' => ['ui'],
-		//              ],
-		//
-		//              'PRODUCT_DISABLE_EATBY' => [
-		//                  'name' => 'PRODUCT_DISABLE_EATBY',
-		//                  'title' => 'Hide eat-by date field',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => '13',
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'product',
-		//                  'tags' => ['ui'],
-		//              ],
-		//
-		//              'PRODUCT_DENY_CHANGE_PRODUCT_TYPE' => [
-		//                  'name' => 'PRODUCT_DENY_CHANGE_PRODUCT_TYPE',
-		//                  'title' => 'Prevent changing product type',
-		//                  'description' => '',
-		//                  'type' => 'bool',
-		//                  'example' => '1',
-		//                  'added_in' => null,
-		//                  'removed_in' => null,
-		//                  'deprecated' => false,
-		//                  'deprecated_since' => null,
-		//                  'module' => 'product',
-		//                  'tags' => ['security'],
-		//              ],
-		//          ],
-		//      ],
-	];
-}
-
-
-
-
-
-/**
- * Render hidden Dolibarr configuration list
- *
- * @return void
- */
-function renderHiddenConfList(): void
-{
-	$data = getListOfHiddenConf();
-
-	foreach ($data as $sectionKey => $section) {
-		renderSection($sectionKey, $section);
-	}
-}
-
-/**
- * Render one section
- *
- * @param string               $sectionKey the selection
- * @param array<string, mixed> $section section array
- *
- * @return void
- */
-function renderSection(string $sectionKey, array $section): void
-{
-	print '<div class="documentation-section" data-section="'.dol_escape_htmltag($sectionKey).'">';
-	print '<h2 class="documentation-title">' . htmlspecialchars($section['label']) . '</h2>';
-
-	print '<div class="conf-list">';
-
-	foreach ($section['confs'] as $conf) {
-		renderConfItem($conf);
-	}
-
-	print '</div>';
-	print '</div>';
-}
-
-/**
- * Render one configuration item
- *
- * @param array<string, mixed> $conf conf item array
- *
- * @return void
- */
-function renderConfItem(array $conf): void
-{
-	global $langs;
-
-	$type = $conf['type'] ?? 'string';
-	if ($type === 'bool') {
-		$type.= ' ( 0 | 1 )';
-	}
-
-	// TODO : compare current DOL_VERSION with 'removed_in'
-	// TODO : Add used badge if conf is currently Used, and add in search form a warning if deprecated conf are used
-
-	print '<div class="conf-item">';
-
-	print '		<div class="conf-header">';
-	print '			<span class="conf-name">' . dolPrintHTML($conf['name']) . '</span>';
-	print '			<span class="conf-badges">' . renderBadges($conf) . '</span>';
-	print '		</div>';
-
-	print '		<div class="conf-body">';
-
-
-	$description = trim((string) ($conf['description'] ?? ''));
-
-	if (!empty($description)) {
-		print '		<details class="conf-details">';
-		print '			<summary class="conf-title">' .  dolPrintHTML($conf['title'] ?? $conf['name']) . '</summary>';
-		print '			<div class="conf-desc">' . dolPrintHTML($description, 0, ['code']) . '</div>';
-		print '		</details>';
-	} else {
-		print '		<div class="conf-title">' . ($conf['title']??'') . '</div>';
-	}
-
-
-	print '			<div class="conf-meta">';
-
-	print renderMeta('Type', $type);
-	print renderMeta('Example', $conf['example']);
-	print renderMeta($langs->trans('AddedInVersion'), $conf['added_in']);
-	print renderMeta('Removed', $conf['removed_in']);
-
-	print '			</div>';
-
-	print '		</div>';
-
-	print '</div>';
-}
-
-/**
- * Render metadata line
- *
- * @param string      $label meta label
- * @param string|null $value meta value
- *
- * @return string
- */
-function renderMeta(string $label, ?string $value): string
-{
-	if (empty($value)) {
-		return '';
-	}
-
-	return '<div class="conf-meta-line">
-				<span class="meta-label">' . dolPrintHTML($label) . ':</span>
-				<span class="meta-value">' . dolPrintHTML($value) . '</span>
-			</div>';
-}
-
-/**
- * Render badges from tags + deprecated state
- *
- * @param array<string, mixed> $conf render tags for a conf item
- *
- * @return string
- */
-function renderBadges(array $conf): string
-{
-	global $langs;
-
-	$html = '';
-
-	$tags = $conf['tags'] ?? [];
-
-	foreach ($tags as $tag) {
-		$class = getTagBadgeClass($tag);
-		$html .= '<span class="badge badge-pill ' . $class . '">' . dol_escape_htmltag($tag) . '</span> ';
-	}
-
-	if (!empty($conf['deprecated'])) {
-		$html .= '<span class="badge badge-pill badge-danger">'. $langs->trans('deprecated') . '</span>';
-	}
-
-	return $html;
-}
-
-/**
- * Map tag to bootstrap-like badge class
- *
- * @param string $tag the tag name
- *
- * @return string
- */
-function getTagBadgeClass(string $tag): string
-{
-	return match ($tag) {
-		'security', 'danger' => 'badge-danger',
-		'ui' => 'badge-info',
-		'performance' => 'badge-warning',
-		'upload' => 'badge-secondary',
-		default => 'badge-light',
-	};
-}
-
-/**
- * Normalize and validate hidden configuration list.
- *
- * - Ensures required fields
- * - Applies defaults
- * - Normalizes types
- *
- * @param array<string, array{label: string, confs: array<string, array<string, mixed>>}> $confList the conf list
- * @return array<string, array{label: string, confs: array<string, array<string, mixed>>}>
- */
-function normalizeHiddenConfList(array $confList): array
-{
-	foreach ($confList as $sectionKey => &$section) {
-		if (!isset($section['confs']) || !is_array($section['confs'])) {
-			$section['confs'] = [];
-		}
-
-		foreach ($section['confs'] as $confKey => &$conf) {
-			$conf = normalizeHiddenConf($conf, $confKey);
-		}
-	}
-
-	return $confList;
-}
-
-/**
- * Normalize a single configuration entry
- *
- * @param array<string, mixed> $conf th conf array
- * @param string $fallbackName a fallback name
- * @return array<string, mixed>
- */
-function normalizeHiddenConf(array $conf, string $fallbackName): array
-{
-	// REQUIRED FIELDS
-	$name = $conf['name'] ?? $fallbackName;
-	$description = $conf['description'] ?? '';
-
-	if ($description === '') {
-		throw new InvalidArgumentException("Missing description for conf: " . $name);
-	}
-
-	// TYPE NORMALIZATION
-	$type = $conf['type'] ?? 'string';
-
-	$allowedTypes = ['bool', 'int', 'float', 'string', 'array', 'json'];
-	if (!in_array($type, $allowedTypes, true)) {
-		$type = 'string';
-	}
-
-	// TAGS NORMALIZATION
-	$tags = $conf['tags'] ?? [];
-	if (!is_array($tags)) {
-		$tags = [];
-	}
-
-	$tags = array_values(array_unique(array_map('strval', $tags)));
-
-	// BOOLEAN NORMALIZATION
-	$deprecated = (bool) ($conf['deprecated'] ?? false);
-
-	return [
-		'name' => (string) $name,
-		'description' => (string) $description,
-		'type' => $type,
-		'example' => $conf['example'] ?? null,
-		'added_in' => $conf['added_in'] ?? null,
-		'removed_in' => $conf['removed_in'] ?? null,
-		'deprecated' => $deprecated,
-		'deprecated_since' => $conf['deprecated_since'] ?? null,
-		'module' => $conf['module'] ?? 'core',
-		'tags' => $tags,
+		'SECURITY_OPTIONS' => [
+			'label' => 'Security Options',
+			'wiki_anchor' => 'Security_Options',
+			'confs' => [
+				'MAIN_ALLOW_SVG_FILES_AS_IMAGES' => ['added_in' => '13.0', 'tags' => ['security']],
+				'MAIN_MODULES_FOR_EXTERNAL' => ['type' => 'list', 'example' => 'societe,propal,commande,facture,contact,ticket', 'added_in' => '4.0', 'tags' => ['security']],
+				'MAIN_RESTRICTHTML_ONLY_VALID_HTML' => ['type' => 'int', 'example' => '2', 'added_in' => '14.0', 'tags' => ['security']],
+				'MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY' => ['example' => '0', 'added_in' => '19.0', 'tags' => ['security']],
+				'MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES' => ['added_in' => '14.0', 'tags' => ['security']],
+				'MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML' => ['added_in' => '13.0', 'tags' => ['security']],
+				'MAIN_SECURITY_ANTI_SSRF_SERVER_IP' => ['type' => 'list', 'example' => '192.0.2.10,10.0.0.5', 'added_in' => '14.0', 'tags' => ['security']],
+				'MAIN_SECURITY_CSRF_WITH_TOKEN' => ['type' => 'int', 'example' => '2', 'added_in' => '5.0', 'tags' => ['security']],
+				'MAIN_SECURITY_FORCERP' => ['type' => 'string', 'example' => 'strict-origin-when-cross-origin', 'added_in' => '17.0', 'status' => 'in_setup', 'setup_url' => '/admin/security_headers_http.php', 'tags' => ['security']],
+				'MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT' => ['type' => 'int', 'example' => '50', 'added_in' => '17.0', 'status' => 'in_setup', 'setup_url' => '/admin/security_other.php', 'tags' => ['security']],
+				'MAIN_SECURITY_SALT' => ['type' => 'string', 'example' => 'k8Qz2pLw', 'added_in' => '4.0', 'tags' => ['security']],
+			],
+		],
+		'MEMBERS_MODULE' => [
+			'label' => 'Members Module',
+			'wiki_anchor' => 'Members_Module',
+			'confs' => [
+				'ADHERENT_DEFAULT_CREATE_THIRDPARTY' => ['added_in' => '14.0'],
+				'MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH' => ['type' => 'int', 'example' => '3', 'added_in' => '18.0'],
+				'MEMBER_ALLOW_CHANGE_OF_TYPE' => ['added_in' => '14.0', 'status' => 'in_setup', 'setup_url' => '/adherents/admin/member.php'],
+				'MEMBER_NEWFORM_FORCEMORPHY' => ['type' => 'string', 'example' => 'phy', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/adherents/admin/website.php'],
+				'MEMBER_NO_SYNC_LINKED_THIRDPARTY' => ['added_in' => '23.0'],
+				'MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH' => ['added_in' => '18.0'],
+				'MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR' => ['added_in' => '18.0'],
+			],
+		],
+		'ACCOUNTING_MODULE' => [
+			'label' => 'Accounting Module',
+			'wiki_anchor' => 'Accounting_Module',
+			'confs' => [
+				'ACCOUNTANCY_COMBO_FOR_AUX' => ['added_in' => '6.0', 'status' => 'removed', 'removed_in' => '24.0'],
+				'ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY' => ['added_in' => '14.0'],
+				'ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE' => ['added_in' => '14.0', 'status' => 'in_setup', 'setup_url' => '/accountancy/admin/index.php'],
+				'ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE' => ['example' => '1', 'added_in' => '14.0', 'status' => 'removed', 'removed_in' => '21.0'],
+				'ACCOUNTING_MANAGE_ZERO' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/accountancy/admin/index.php'],
+			],
+		],
+		'AGENDA_MODULE' => [
+			'label' => 'Agenda Module',
+			'wiki_anchor' => 'Agenda_Module',
+			'confs' => [
+				'AGENDA_ADDACTIONFOREMAIL' => [],
+				'AGENDA_ADDACTIONFORPHONE' => [],
+				'AGENDA_ALL_CALENDARS' => ['added_in' => '4.0'],
+				'AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS' => ['type' => 'int', 'example' => '2', 'added_in' => '4.0'],
+				'AGENDA_DISABLE_LOCATION' => ['added_in' => '4.0'],
+				'AGENDA_MAX_EVENTS_DAY_VIEW' => ['type' => 'int', 'example' => '5'],
+				'AGENDA_SUPPORT_PRIORITY_IN_EVENTS' => ['added_in' => '13.0'],
+				'AGENDA_USE_EVENT_TYPE' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/agenda_other.php'],
+				'MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT' => ['added_in' => '18.0'],
+				'MAIN_ADD_EVENT_ON_ELEMENT_CARD' => ['added_in' => '4.0'],
+			],
+		],
+		'BANK_MODULE' => [
+			'label' => 'Bank Module',
+			'wiki_anchor' => 'Bank_Module',
+			'confs' => [
+				'BANK_ASK_PAYMENT_BANK_DURING_ORDER' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/order.php'],
+				'BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/propal.php'],
+				'BANK_CAN_RECONCILIATE_CASHACCOUNT' => ['added_in' => '4.0'],
+				'BANK_DISABLE_CHECK_DEPOSIT' => ['added_in' => '4.0'],
+				'BANK_USE_OLD_VARIOUS_PAYMENT' => ['added_in' => '9.0', 'deprecated' => true],
+				'MAIN_IBAN_IS_NEVER_MANDATORY' => ['added_in' => '15.0'],
+			],
+		],
+		'BOM_AND_MO_MODULE' => [
+			'label' => 'BOM and MO Module',
+			'wiki_anchor' => 'BOM_and_MO_Module',
+			'confs' => [
+				'ALLOW_USE_KITS_INTO_BOM_AND_MO' => ['added_in' => '14.0'],
+				'BOM_SUB_BOM' => ['added_in' => '15.0', 'status' => 'in_setup', 'setup_url' => '/admin/bom.php'],
+			],
+		],
+		'BOOKMARKS_MODULE' => [
+			'label' => 'Bookmarks Module',
+			'wiki_anchor' => 'Bookmarks_Module',
+			'confs' => [
+				'BOOKMARKS_SHOW_IN_MENU' => ['type' => 'int', 'example' => '10', 'status' => 'in_setup', 'setup_url' => '/bookmarks/admin/bookmark.php'],
+			],
+		],
+		'INALTERABLE_LOG_MODULE' => [
+			'label' => 'Inalterable Log Module',
+			'wiki_anchor' => 'Inalterable_Log_Module',
+			'confs' => [
+				'BLOCKEDLOG_ADD_ACTIONS_SUPPORTED' => ['type' => 'list', 'example' => 'ORDER_VALIDATE,BILL_SENTBYMAIL', 'added_in' => '13.0'],
+				'BLOCKEDLOG_USE_REMOTE_AUTHORITY' => ['added_in' => '6.0'],
+			],
+		],
+		'CATEGORY_TAGS_MODULE' => [
+			'label' => 'Category-Tags Module',
+			'wiki_anchor' => 'Category-Tags_Module',
+			'confs' => [
+				'CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP' => ['added_in' => '22.0'],
+				'CATEGORY_SHOW_COUNTS' => ['added_in' => '12.0'],
+			],
+		],
+		'CONTRACTS' => [
+			'label' => 'Contracts',
+			'wiki_anchor' => 'Contracts',
+			'confs' => [
+				'CONTRACT_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '14.0', 'status' => 'in_setup', 'setup_url' => '/admin/contract.php'],
+				'CONTRACT_HIDE_PLANNED_DATE_ON_PDF' => ['added_in' => '10.0', 'tags' => ['pdf']],
+				'CONTRACT_HIDE_PRICE_ON_PDF' => ['added_in' => '16.0', 'tags' => ['pdf']],
+				'CONTRACT_HIDE_QTY_ON_PDF' => ['added_in' => '16.0', 'tags' => ['pdf']],
+				'CONTRACT_HIDE_REAL_DATE_ON_PDF' => ['added_in' => '10.0', 'tags' => ['pdf']],
+				'CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS' => ['added_in' => '21.0'],
+				'CONTRACT_SUPPORT_PRODUCTS' => ['added_in' => '4.0'],
+			],
+		],
+		'CRON_MODULE' => [
+			'label' => 'Cron module',
+			'wiki_anchor' => 'Cron_module',
+			'confs' => [
+				'CRON_DISABLE_KEY_CHANGE' => ['type' => 'int', 'example' => '1', 'added_in' => '5.0'],
+				'CRON_DISABLE_TUTORIAL_CRON' => ['added_in' => '5.0'],
+				'CRON_WARNING_DELAY_HOURS' => ['type' => 'int', 'example' => '4', 'added_in' => '5.0'],
+			],
+		],
+		'DIRECT_DEBIT_ORDERS' => [
+			'label' => 'Direct Debit Orders',
+			'wiki_anchor' => 'Direct_Debit_Orders',
+			'confs' => [
+				'WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS' => ['added_in' => '11.0'],
+			],
+		],
+		'DONATION_MODULE' => [
+			'label' => 'Donation Module',
+			'wiki_anchor' => 'Donation_Module',
+			'confs' => [
+				'DONATION_USE_THIRDPARTIES' => ['added_in' => '9.0', 'status' => 'in_setup', 'setup_url' => '/don/admin/donation.php'],
+			],
+		],
+		'EMAIL' => [
+			'label' => 'Email',
+			'wiki_anchor' => 'Email',
+			'confs' => [
+				'MAIL_FORCE_DELIVERY_RECEIPT_INVOICE' => ['added_in' => '4.0'],
+				'MAIL_FORCE_DELIVERY_RECEIPT_ORDER' => ['added_in' => '4.0'],
+				'MAIL_FORCE_DELIVERY_RECEIPT_PROPAL' => ['added_in' => '4.0'],
+				'MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL' => ['added_in' => '4.0'],
+				'MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND' => ['added_in' => '24.0'],
+				'MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL' => ['type' => 'int', 'example' => '20', 'added_in' => '5.0'],
+				'MAIL_PREFIX_FOR_EMAIL_ID' => ['type' => 'string', 'example' => 'SERVER_NAME', 'added_in' => '5.0'],
+				'MAIN_COPY_FILE_IN_EVENT_AUTO' => ['added_in' => '6.0'],
+				'MAIN_EMAIL_ADD_TRACK_ID' => ['type' => 'int', 'example' => '2', 'added_in' => '4.0', 'status' => 'removed', 'removed_in' => '15.0'],
+				'MAIN_EMAIL_SUPPORT_ACK' => ['added_in' => '17.0'],
+				'MAIN_EMAIL_USECCC' => ['type' => 'string', 'example' => '1'],
+				'MAIN_EMAIL_USE_LAYOUT' => ['example' => '0', 'added_in' => '20.0'],
+				'MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS' => ['type' => 'list', 'example' => '1.2.3.4,5.6.7.8', 'added_in' => '7.0'],
+				'MAIN_FIX_FOR_BUGGED_MTA' => ['example' => '0', 'added_in' => '4.0'],
+				'MAIN_IMAP_USE_PHPIMAP' => ['added_in' => '17.0', 'status' => 'in_setup', 'setup_url' => '/admin/emailcollector_list.php'],
+				'MAIN_INFO_SOCIETE_MAIL_ALIASES' => ['type' => 'list', 'example' => 'Sales <sales@mycompany.com>,support@mycompany.com', 'added_in' => '5.0'],
+				'MAIN_MAILFORM_DISABLE_ENTERKEY' => ['added_in' => '4.0'],
+				'MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS' => ['added_in' => '6.0'],
+				'MAIN_MAIL_ALLOW_SENDMAIL_F' => [],
+				'MAIN_MAIL_AUTOCOPY_PROPOSAL_TO' => ['type' => 'string', 'example' => 'archive@mycompany.com', 'added_in' => '4.0'],
+				'MAIN_MAIL_DEBUG' => [],
+				'MAIN_MAIL_DEBUG_ERR_WITH_DATE' => ['added_in' => '18.0'],
+				'MAIN_MAIL_DEBUG_LOG_WITH_DATE' => ['type' => 'int', 'example' => '10', 'added_in' => '19.0'],
+				'MAIN_MAIL_DO_NOT_USE_SIGN' => ['added_in' => '4.0'],
+				'MAIN_MAIL_ENABLED_USER_DEST_SELECT' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/mails.php'],
+				'MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML' => ['added_in' => '5.0'],
+				'MAIN_MAIL_FORCE_FROM' => ['type' => 'string', 'example' => 'noreply@example.com', 'added_in' => '19.0'],
+				'MAIN_MAIL_FORCE_NOT_SENDING_TO' => ['type' => 'list', 'example' => 'boss@example.com,archive@example.com', 'added_in' => '20.0'],
+				'MAIN_MAIL_NO_FULL_EMAIL' => [],
+				'MAIN_MAIL_SENDMAIL_FORCE_BA' => ['added_in' => '4.0'],
+				'MAIN_MAIL_USE_MULTI_PART' => ['added_in' => '6.0'],
+			],
+		],
+		'EMAILING_MODULE' => [
+			'label' => 'Emailing Module',
+			'wiki_anchor' => 'Emailing_Module',
+			'confs' => [
+				'EMAILING_USE_ADVANCED_SELECTOR' => ['added_in' => '4.0'],
+				'MAILING_LIMIT_SENDBYCLI' => ['type' => 'int', 'example' => '500', 'added_in' => '5.0'],
+				'MAILING_LIMIT_SENDBYWEB' => ['type' => 'int', 'example' => '50', 'status' => 'in_setup', 'setup_url' => '/admin/mailing.php'],
+				'MAILING_LIMIT_WARNING_NOPHPMAIL' => ['type' => 'string', 'example' => 'MyWarningSmtpKey', 'added_in' => '5.0'],
+				'MAILING_LIMIT_WARNING_PHPMAIL' => ['type' => 'string', 'example' => 'MyWarningPhpMailKey', 'added_in' => '5.0'],
+				'MAILING_NO_USING_PHPMAIL' => ['added_in' => '4.0'],
+				'MAILING_PREFIX_FOR_EMAIL_ID' => ['type' => 'string', 'example' => 'SERVER_NAME', 'status' => 'removed'],
+				'MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS' => ['type' => 'string', 'example' => 'support@myhoster.com', 'added_in' => '4.0'],
+			],
+		],
+		'EXPENSE_REPORT' => [
+			'label' => 'Expense Report',
+			'wiki_anchor' => 'Expense_Report',
+			'confs' => [
+				'EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS' => ['added_in' => '7.0'],
+				'EXPENSEREPORT_OVERRIDE_VAT' => ['added_in' => '12.0'],
+				'EXPENSEREPORT_USE_OLD_NUMBERING_RULE' => ['added_in' => '7.0'],
+				'MAIN_USE_EXPENSE_IK' => ['added_in' => '7.0'],
+				'MAIN_USE_EXPENSE_RULE' => ['added_in' => '7.0', 'status' => 'removed', 'removed_in' => '15.0'],
+			],
+		],
+		'EXPORT_MODULE' => [
+			'label' => 'Export Module',
+			'wiki_anchor' => 'Export_Module',
+			'confs' => [
+				'EXPORTS_SHARE_MODELS' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/export.php'],
+				'EXPORTTOOL_CATEGORIES' => ['added_in' => '4.0'],
+				'EXPORT_CSV_FORCE_CHARSET' => ['type' => 'string', 'example' => 'UTF-8', 'added_in' => '4.0'],
+				'EXPORT_CSV_SEPARATOR_TO_USE' => ['type' => 'string', 'example' => ';', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/export.php'],
+				'USE_STRICT_CSV_RULES' => ['type' => 'int', 'example' => '1', 'added_in' => '5.0'],
+			],
+		],
+		'FOUNDATION_MODULE' => [
+			'label' => 'Foundation Module',
+			'wiki_anchor' => 'Foundation_Module',
+			'confs' => [
+				'MEMBER_EXT_URL_SUBSCRIPTION_INFO' => ['type' => 'string', 'example' => 'https://www.mysite.com/membership.html', 'added_in' => '4.0'],
+				'MEMBER_URL_REDIRECT_SUBSCRIPTION' => ['type' => 'string', 'example' => 'https://www.mysite.com/thanks.html'],
+			],
+		],
+		'HOLIDAY_MODULE' => [
+			'label' => 'Holiday Module',
+			'wiki_anchor' => 'Holiday_Module',
+			'confs' => [
+				'HOLIDAY_HIDE_BALANCE' => ['type' => 'string', 'example' => '1', 'added_in' => '6.0'],
+			],
+		],
+		'INTERVENTIONS_MODULE' => [
+			'label' => 'Interventions Module',
+			'wiki_anchor' => 'Interventions_Module',
+			'confs' => [
+				'FICHINTER_CLASSIFY_BILLED' => ['added_in' => '4.0', 'deprecated' => true],
+				'FICHINTER_DISABLE_DETAILS' => ['type' => 'int', 'example' => '1', 'added_in' => '4.0'],
+			],
+		],
+		'INVOICE_MODULE' => [
+			'label' => 'Invoice Module',
+			'wiki_anchor' => 'Invoice_Module',
+			'confs' => [
+				'FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM' => ['added_in' => '13.0'],
+				'FACTURE_DEPOSITS_ARE_JUST_PAYMENTS' => ['added_in' => '4.0'],
+				'FACTURE_ENABLE_NEGATIVE' => ['added_in' => '4.0'],
+				'FACTURE_ENABLE_NEGATIVE_LINES' => ['added_in' => '7.0'],
+				'FACTURE_REUSE_NOTES_ON_CREATE_FROM' => ['added_in' => '10.0'],
+				'FACTURE_SENDBYEMAIL_FOR_ALL_STATUS' => ['added_in' => '4.0'],
+				'INVOICEREC_SET_AUTOFILL_DATE_START' => ['added_in' => '16.0'],
+				'INVOICE_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '7.0', 'status' => 'in_setup', 'setup_url' => '/admin/invoice.php'],
+				'INVOICE_ALLOW_FREE_REF' => ['added_in' => '11.0'],
+				'INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED' => ['added_in' => '11.0'],
+				'INVOICE_AUTO_NEXT_MONTH_ON_LINES' => ['added_in' => '14.0'],
+				'INVOICE_CAN_ALWAYS_BE_REMOVED' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '23.0'],
+				'INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE' => ['added_in' => '16.0'],
+				'INVOICE_CAN_NEVER_BE_EDITED' => ['added_in' => '22.0'],
+				'INVOICE_CAN_NEVER_BE_REMOVED' => ['added_in' => '4.0'],
+				'INVOICE_CREDIT_NOTE_STANDALONE' => ['added_in' => '4.0'],
+				'INVOICE_DEFAULT_NOTE_PUBLIC' => ['type' => 'string', 'example' => 'Thank you for your business', 'status' => 'removed'],
+				'INVOICE_DISABLE_CREDIT_NOTE' => ['added_in' => '5.0'],
+				'INVOICE_DISABLE_DEPOSIT' => ['added_in' => '5.0'],
+				'INVOICE_DISABLE_REPLACEMENT' => ['type' => 'int', 'example' => '1', 'added_in' => '5.0'],
+				'INVOICE_DISALLOW_REOPEN' => ['added_in' => '14.0'],
+				'INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN' => ['added_in' => '10.0'],
+				'INVOICE_MAX_FUTURE_DELAY' => ['type' => 'int', 'example' => '86400', 'added_in' => '14.0'],
+				'INVOICE_POINTOFTAX_DATE' => ['added_in' => '4.0'],
+				'INVOICE_POSITIVE_CREDIT_NOTE' => ['added_in' => '4.0'],
+				'INVOICE_REC_DATE_TO_YES' => ['added_in' => '16.0'],
+				'INVOICE_SUBTYPE_ENABLED' => ['added_in' => '19.0'],
+				'INVOICE_USE_DEFAULT_DOCUMENT' => ['added_in' => '9.0'],
+				'INVOICE_USE_RETAINED_WARRANTY' => ['added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/admin/invoice_situation.php'],
+				'INVOICE_USE_SITUATION' => ['type' => 'int', 'example' => '2', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/invoice_situation.php'],
+				'INVOICE_USE_SITUATION_CREDIT_NOTE' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/invoice_situation.php'],
+				'LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED' => ['type' => 'int', 'example' => '100', 'added_in' => '22.0'],
+				'MAIN_DEPOSIT_MULTI_TVA' => ['added_in' => '6.0'],
+				'MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php'],
+				'MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN' => ['added_in' => '4.0'],
+				'MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST' => ['added_in' => '7.0'],
+				'PDF_INVOICE_SHOW_PRICE_INCL_TAX' => ['added_in' => '21.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED' => ['added_in' => '11.0'],
+				'SUPPLIER_INVOICE_ENABLE_NEGATIVE' => ['added_in' => '21.0'],
+				'SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES' => ['added_in' => '21.0'],
+				'WORKFLOW_BILL_ON_SHIPMENT' => ['type' => 'int', 'example' => '1', 'added_in' => '4.0'],
+			],
+		],
+		'LEAVE' => [
+			'label' => 'Leave',
+			'wiki_anchor' => 'Leave',
+			'confs' => [
+				'MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY' => ['type' => 'int', 'example' => '0', 'added_in' => '11.0', 'status' => 'in_setup', 'setup_url' => '/admin/holiday.php'],
+				'MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY' => ['type' => 'int', 'example' => '0', 'added_in' => '11.0', 'status' => 'in_setup', 'setup_url' => '/admin/holiday.php'],
+			],
+		],
+		'LOOK_OR_THEME' => [
+			'label' => 'Look or Theme',
+			'wiki_anchor' => 'Look_or_Theme',
+			'confs' => [
+				'ALLOW_THEME_JS' => ['added_in' => '16.0'],
+				'MAIN_DISABLE_GLOBAL_BOXSTATS' => ['added_in' => '11.0'],
+				'MAIN_DISABLE_GLOBAL_WORKBOARD' => ['added_in' => '11.0', 'status' => 'in_setup', 'setup_url' => '/admin/ihm.php'],
+				'MAIN_EASTER_EGG_COMMITSTRIP' => ['added_in' => '6.0'],
+				'MAIN_FAVICON_URL' => ['type' => 'string', 'example' => 'https://www.mysite.com/favicon.ico', 'added_in' => '4.0'],
+				'MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD' => ['added_in' => '11.0'],
+				'THEME_AGRESSIVENESS_RATIO' => ['type' => 'int', 'example' => '-50', 'added_in' => '11.0', 'status' => 'removed', 'removed_in' => '12.0'],
+				'THEME_SHOW_BORDER_ON_INPUT' => ['type' => 'int', 'example' => '0', 'added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/ihm.php?mode=template'],
+			],
+		],
+		'MANIFEST_PROGRESSIVE_WEB_APP' => [
+			'label' => 'Manifest (Progressive Web App)',
+			'wiki_anchor' => 'Manifest_(Progressive_Web_App)',
+			'confs' => [
+				'MAIN_MANIFEST_APPLI_BG_COLOR' => ['type' => 'string', 'example' => '#ffffff', 'added_in' => '14.0'],
+				'MAIN_MANIFEST_APPLI_LOGO_URL' => ['type' => 'string', 'example' => 'https://example.com/logo-512.png', 'added_in' => '14.0'],
+				'MAIN_MANIFEST_APPLI_LOGO_URL_SIZE' => ['type' => 'int', 'example' => '512', 'added_in' => '14.0'],
+				'MAIN_MANIFEST_APPLI_THEME_COLOR' => ['type' => 'string', 'example' => '#263C5C', 'added_in' => '14.0'],
+			],
+		],
+		'ORDER_MODULE' => [
+			'label' => 'Order Module',
+			'wiki_anchor' => 'Order_Module',
+			'confs' => [
+				'MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_MANY' => ['added_in' => '20.0'],
+				'MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_ONE' => ['added_in' => '20.0'],
+				'MAIN_ORDERLIST_CREATEBILLS_ONEBYTHIRD' => ['type' => 'string', 'example' => 'yes', 'added_in' => '20.0'],
+				'MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER' => ['added_in' => '20.0'],
+				'MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER' => ['added_in' => '4.0'],
+				'ORDER_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '7.0', 'status' => 'in_setup', 'setup_url' => '/admin/order.php'],
+				'ORDER_DEFAULT_NOTE_PUBLIC' => ['type' => 'string', 'example' => 'Thank you for your order', 'status' => 'removed'],
+				'ORDER_ENABLE_NEGATIVE' => ['added_in' => '12.0'],
+				'ORDER_REQUIRE_SOURCE' => ['added_in' => '12.0'],
+				'ORDER_VALID_AFTER_CLOSE_PROPAL' => ['added_in' => '12.0'],
+				'THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER' => ['added_in' => '11.0'],
+			],
+		],
+		'PDF_OPTIONS' => [
+			'label' => 'PDF Options',
+			'wiki_anchor' => 'PDF_Options',
+			'confs' => [
+				'DOC_SHOW_FIRST_SALES_REP' => ['added_in' => '5.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_ADD_PDF_BACKGROUND' => ['type' => 'string', 'example' => 'background.pdf', 'added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_DISABLE_FORCE_SAVEAS' => ['type' => 'int', 'example' => '2', 'tags' => ['pdf']],
+				'MAIN_DISABLE_PDF_AUTOUPDATE' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_DISABLE_PDF_COMPRESSION' => ['tags' => ['pdf']],
+				'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_COMMANDE' => ['added_in' => '13.0', 'tags' => ['pdf']],
+				'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_FACTURE' => ['added_in' => '13.0', 'tags' => ['pdf']],
+				'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_INVOICE_SUPPLIER' => ['added_in' => '13.0', 'tags' => ['pdf']],
+				'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_ORDER_SUPPLIER' => ['added_in' => '13.0', 'tags' => ['pdf']],
+				'MAIN_DOCUMENTS_WITH_PICTURE_WIDTH' => ['type' => 'int', 'example' => '30', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_GENERATE_INVOICES_WITH_PICTURE' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'MAIN_GENERATE_ORDERS_WITH_PICTURE' => ['added_in' => '9.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'MAIN_GENERATE_PROPOSALS_WITH_PICTURE' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE' => ['added_in' => '7.0', 'tags' => ['pdf']],
+				'MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_INVERT_SENDER_RECIPIENT' => ['status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_ODT_AS_PDF' => ['type' => 'string', 'example' => 'libreoffice', 'added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_ODT_AS_PDF_DEL_SOURCE' => ['status' => 'removed', 'tags' => ['pdf']],
+				'MAIN_PDF_ADDALSOTARGETDETAILS' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_DASH_BETWEEN_LINES' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_DONOTREPEAT_HEAD' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_FORCE_FONT' => ['type' => 'string', 'example' => 'DejaVuSans', 'added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_FORCE_FONT_SIZE' => ['type' => 'int', 'example' => '9', 'added_in' => '11.0', 'tags' => ['pdf']],
+				'MAIN_PDF_FREETEXT_HEIGHT' => ['type' => 'int', 'example' => '20', 'added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_HIDE_SENDER_NAME' => ['added_in' => '15.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_PDF_NO_RECIPENT_FRAME' => ['added_in' => '15.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_PDF_NO_SENDER_FRAME' => ['added_in' => '15.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'MAIN_PDF_TITLE_BACKGROUND_COLOR' => ['type' => 'string', 'example' => '230,230,230', 'added_in' => '4.0', 'tags' => ['pdf']],
+				'MAIN_PDF_USE_LARGE_LOGO' => ['added_in' => '11.0', 'tags' => ['pdf']],
+				'MAIN_PROFID1_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_PROFID2_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_PROFID3_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_PROFID4_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_PROFID5_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_PROFID6_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_TVAINTRA_IN_SOURCE_ADDRESS' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'MAIN_USE_BACKGROUND_ON_PDF' => ['type' => 'string', 'example' => 'background.jpg', 'tags' => ['pdf']],
+				'MAIN_USE_COMPANY_NAME_OF_CONTACT' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF' => ['added_in' => '22.0', 'tags' => ['pdf']],
+				'PDF_ADD_POSITION' => ['added_in' => '20.0', 'tags' => ['pdf']],
+				'PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'PDF_BOLD_PRODUCT_REF_AND_PERIOD' => ['added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES' => ['added_in' => '15.0', 'tags' => ['pdf']],
+				'PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES' => ['type' => 'int', 'example' => '1', 'added_in' => '5.0', 'tags' => ['pdf']],
+				'PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME' => ['type' => 'int', 'example' => '1', 'added_in' => '6.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'PDF_ORDER_SHOW_PRICE_INCL_TAX' => ['added_in' => '19.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'PDF_PROPAL_SHOW_PRICE_INCL_TAX' => ['added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'PDF_SECURITY_ENCRYPTION' => ['tags' => ['security', 'pdf']],
+				'PDF_SHOW_PROJECT' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'PDF_USE_ALSO_LANGUAGE_CODE' => ['type' => 'string', 'example' => 'en_US', 'added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+				'PDF_USE_GETALIASNBPAGE_FOR_TOTAL' => ['added_in' => '19.0', 'status' => 'removed', 'removed_in' => '20.0', 'tags' => ['pdf']],
+				'SHIPPING_PDF_DISPLAY_AMOUNT_HT' => ['added_in' => '9.0', 'tags' => ['pdf']],
+				'SHOW_SUBPRODUCT_REF_IN_PDF' => ['added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf.php', 'tags' => ['pdf']],
+			],
+		],
+		'POINT_OF_SALE_POS' => [
+			'label' => 'Point of Sale (POS)',
+			'wiki_anchor' => 'Point_of_Sale_(POS)',
+			'confs' => [
+				'CASHDESK_SHOW_KEYPAD' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '15.0'],
+				'POS_ADDON' => ['type' => 'string', 'example' => 'mod_facture_terre', 'added_in' => '6.0', 'status' => 'removed', 'removed_in' => '15.0'],
+				'TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT' => ['added_in' => '13.0'],
+				'TAKEPOS_CONTROL_CASH_OPENING' => ['added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/takepos/admin/setup.php'],
+				'TAKEPOS_ENABLE_SUMUP' => ['added_in' => '11.0'],
+				'TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS' => ['added_in' => '13.0', 'status' => 'removed', 'removed_in' => '15.0'],
+			],
+		],
+		'PRODUCTS_MODULE' => [
+			'label' => 'Products Module',
+			'wiki_anchor' => 'Products_Module',
+			'confs' => [
+				'CATEGORY_GRAPHSTATS_ON_PRODUCTS' => ['added_in' => '4.0'],
+				'MAIN_DIRECT_STATUS_UPDATE' => ['added_in' => '4.0'],
+				'MAIN_DISABLE_FREE_LINES' => ['added_in' => '8.0'],
+				'MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE' => ['added_in' => '14.0'],
+				'MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE' => ['added_in' => '4.0'],
+				'MAIN_SEARCH_PRODUCT_BY_FOURN_REF' => ['added_in' => '9.0'],
+				'MAIN_SHOW_PRODUCT_ACTIVITY_TRIM' => ['added_in' => '5.0'],
+				'PRODUCT_ADD_FORM_ADD_TO' => ['added_in' => '5.0'],
+				'PRODUCT_ADD_NET_MEASURE' => ['added_in' => '11.0'],
+				'PRODUCT_ADD_TYPE_IN_DOCUMENTS' => [],
+				'PRODUCT_DENY_CHANGE_PRODUCT_TYPE' => ['added_in' => '11.0'],
+				'PRODUCT_DISABLE_ACCOUNTING' => ['added_in' => '14.0'],
+				'PRODUCT_DISABLE_CUSTOM_INFO' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '22.0'],
+				'PRODUCT_DISABLE_EATBY' => ['added_in' => '13.0'],
+				'PRODUCT_DISABLE_LENGTH' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '6.0'],
+				'PRODUCT_DISABLE_NATURE' => ['added_in' => '14.0'],
+				'PRODUCT_DISABLE_PRICES' => ['added_in' => '14.0'],
+				'PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES' => ['added_in' => '11.0'],
+				'PRODUCT_DISABLE_PUBLIC_URL' => ['added_in' => '14.0'],
+				'PRODUCT_DISABLE_SELLBY' => ['added_in' => '13.0'],
+				'PRODUCT_DISABLE_SIZE' => ['added_in' => '6.0'],
+				'PRODUCT_DISABLE_STOCK_LEVELS' => ['added_in' => '14.0'],
+				'PRODUCT_DISABLE_SURFACE' => ['added_in' => '4.0'],
+				'PRODUCT_DISABLE_VOLUME' => ['added_in' => '6.0'],
+				'PRODUCT_DISABLE_WEIGHT' => ['added_in' => '14.0'],
+				'PRODUCT_DONOTSEARCH_ANYWHERE' => [],
+				'PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES' => ['added_in' => '14.0'],
+				'PRODUCT_LOT_ENABLE_QUALITY_CONTROL' => ['added_in' => '14.0'],
+				'PRODUCT_MAX_LENGTH_COMBO' => ['type' => 'int', 'example' => '80', 'added_in' => '4.0'],
+				'PRODUCT_MAX_VISIBLE_PHOTO' => ['type' => 'int', 'example' => '3', 'added_in' => '4.0'],
+				'PRODUCT_PRICE_BASE_TYPE' => ['type' => 'string', 'example' => 'TTC', 'added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/product/admin/product.php'],
+				'PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE' => ['type' => 'int', 'example' => '0', 'added_in' => '21.0'],
+				'PRODUCT_SHOW_ORIGIN_IN_COMBO' => ['added_in' => '12.0'],
+				'PRODUCT_SORT_BY_CATEGORY' => ['type' => 'int', 'example' => '1', 'added_in' => '10.0'],
+				'PRODUCT_USE_OLD_PATH_FOR_PHOTO' => ['added_in' => '4.0'],
+				'PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY' => ['added_in' => '16.0'],
+				'PRODUCT_USE_UNITS' => ['added_in' => '4.0'],
+				'PRODUIT_ATTRIBUTES_HIDECHILD' => ['added_in' => '6.0', 'status' => 'in_setup', 'setup_url' => '/variants/admin/admin.php'],
+				'PRODUIT_CUSTOMER_PRICES_BY_QTY' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/product/admin/product.php'],
+				'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES' => ['added_in' => '7.0', 'status' => 'in_setup', 'setup_url' => '/product/admin/product.php'],
+				'PRODUIT_DESC_IN_LIST' => ['status' => 'removed'],
+				'PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL' => ['added_in' => '4.0'],
+				'PRODUIT_PDF_MERGE_PROPAL' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/product/admin/product.php', 'tags' => ['pdf']],
+				'RESOURCE_ON_PRODUCTS' => ['added_in' => '10.0'],
+				'RESOURCE_ON_SERVICES' => ['added_in' => '10.0'],
+			],
+		],
+		'PROJECTS_MODULE' => [
+			'label' => 'Projects Module',
+			'wiki_anchor' => 'Projects_Module',
+			'confs' => [
+				'PROJECT_ALLOW_COMMENT_ON_PROJECT' => ['added_in' => '7.0'],
+				'PROJECT_ALLOW_COMMENT_ON_TASK' => ['added_in' => '7.0'],
+				'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY' => ['type' => 'list', 'example' => '12,45', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/projet/admin/project.php'],
+				'PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT' => ['added_in' => '20.0'],
+				'PROJECT_CAN_ALWAYS_LINK_TO_ALL_CUSTOMERS' => ['added_in' => '23.0'],
+				'PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS' => ['type' => 'int', 'example' => '0', 'added_in' => '4.0'],
+				'PROJECT_CREATE_NO_DRAFT' => ['added_in' => '6.0'],
+				'PROJECT_CREATE_ON_OVERVIEW_DISABLED' => ['added_in' => '4.0'],
+				'PROJECT_DISABLE_UNLINK_FROM_OVERVIEW' => ['added_in' => '7.0'],
+				'PROJECT_ELEMENTS_FOR_MINUS_MARGIN' => ['type' => 'list', 'example' => 'order_supplier,invoice_supplier', 'added_in' => '12.0'],
+				'PROJECT_ENABLE_SUB_PROJECT' => ['added_in' => '18.0'],
+				'PROJECT_HIDE_TASKS' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/projet/admin/project.php'],
+				'PROJECT_HIDE_UNSELECTABLES' => ['added_in' => '4.0'],
+				'PROJECT_LINK_ON_OVERWIEW_DISABLED' => ['added_in' => '4.0'],
+				'PROJECT_LIST_SHOW_STARTDATE' => ['status' => 'removed'],
+				'PROJECT_OPEN_ALWAYS_ON_TAB' => ['type' => 'string', 'example' => 'task', 'added_in' => '12.0'],
+				'PROJECT_SHOW_REF_INTO_LISTS' => ['added_in' => '4.0', 'status' => 'removed', 'removed_in' => '5.0'],
+				'PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS' => ['status' => 'removed'],
+				'TIMESPENT_ALWAYS_UPDATE_THM' => ['added_in' => '17.0'],
+			],
+		],
+		'PROPOSALS_MODULE' => [
+			'label' => 'Proposals Module',
+			'wiki_anchor' => 'Proposals_Module',
+			'confs' => [
+				'MAIN_PROPAL_CHOOSE_ODT_DOCUMENT' => ['added_in' => '4.0'],
+				'PROPAL_CLONE_ON_CREATE_PAGE' => [],
+				'PROPAL_DEFAULT_NOTE_PUBLIC' => ['status' => 'removed'],
+				'PROPAL_DISABLE_SIGNATURE' => ['added_in' => '4.0'],
+				'PROPAL_ENABLE_NEGATIVE' => ['added_in' => '13.0'],
+				'PROPAL_REOPEN_UNSIGNED_ONLY' => ['added_in' => '15.0'],
+				'PROPAL_SIGNATURE_ON_ALL_PAGES' => ['added_in' => '19.0'],
+				'PROPAL_SIGNATURE_ON_SPECIFIC_PAGE' => ['type' => 'int', 'example' => '-1', 'added_in' => '20.0'],
+				'PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '7.0', 'status' => 'in_setup', 'setup_url' => '/admin/propal.php'],
+				'PROPOSAL_ARE_NOT_BILLABLE' => ['added_in' => '15.0'],
+				'PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT' => ['added_in' => '9.0'],
+				'PROPOSAL_PDF_HIDE_PAYMENTMODE' => ['added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'PROPOSAL_PDF_HIDE_PAYMENTTERM' => ['added_in' => '12.0', 'status' => 'in_setup', 'setup_url' => '/admin/pdf_other.php', 'tags' => ['pdf']],
+				'WORKFLOW_PROPAL_CAN_CLASSIFY_BILLED_WITHOUT_INVOICES' => ['status' => 'removed'],
+			],
+		],
+		'RECEPTIONS' => [
+			'label' => 'Receptions',
+			'wiki_anchor' => 'Receptions',
+			'confs' => [
+				'RECEPTION_STANDALONE' => ['added_in' => '23.0'],
+			],
+		],
+		'RECRUITMENT' => [
+			'label' => 'Recruitment',
+			'wiki_anchor' => 'Recruitment',
+			'confs' => [
+				'MAIN_RECRUITMENT_CSS_URL' => ['type' => 'string', 'example' => 'https://example.com/recruitment.css', 'added_in' => '13.0'],
+				'RECRUITMENT_IMAGE_PUBLIC_INTERFACE' => ['type' => 'string', 'example' => 'https://example.com/banner.png', 'added_in' => '14.0'],
+				'RECRUITMENT_NEWFORM_TEXT' => ['type' => 'string', 'example' => 'Send us your application', 'added_in' => '13.0'],
+			],
+		],
+		'SERVICES_MODULE' => [
+			'label' => 'Services Module',
+			'wiki_anchor' => 'Services_Module',
+			'confs' => [
+				'MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE' => ['added_in' => '13.0'],
+				'SERVICE_ARE_ECOMMERCE_200238EC' => ['type' => 'int', 'example' => '2'],
+			],
+		],
+		'SHIPMENTS' => [
+			'label' => 'Shipments',
+			'wiki_anchor' => 'Shipments',
+			'confs' => [
+				'SHIPMENT_GETS_ALL_ORDER_PRODUCTS' => ['added_in' => '4.0'],
+				'SHIPMENT_STANDALONE' => ['added_in' => '23.0'],
+				'SHIPMENT_SUPPORTS_SERVICES' => ['added_in' => '19.0'],
+				'SHIPPING_DISPLAY_STOCK_ENTRY_DATE' => ['added_in' => '19.0', 'status' => 'in_setup', 'setup_url' => '/admin/expedition.php'],
+				'SHIPPING_PDF_HIDE_ORDERED' => ['added_in' => '4.0', 'tags' => ['pdf']],
+				'STOCK_SUPPORTS_SERVICES' => ['status' => 'in_setup', 'setup_url' => '/admin/stock.php'],
+				'STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS' => ['added_in' => '4.0'],
+			],
+		],
+		'SMS' => [
+			'label' => 'SMS',
+			'wiki_anchor' => 'SMS',
+			'confs' => [
+				'MAIN_SMS_DEBUG' => ['added_in' => '4.0'],
+			],
+		],
+		'STOCKS' => [
+			'label' => 'Stocks',
+			'wiki_anchor' => 'Stocks',
+			'confs' => [
+				'DISABLE_QTY_OVERWRITE' => ['status' => 'removed'],
+				'ENTREPOT_EXTRA_STATUS' => ['added_in' => '4.0'],
+				'MAIN_WAREHOUSE_LIST_DISPLAY_MODE' => ['type' => 'int', 'example' => '1', 'added_in' => '21.0'],
+				'STOCK_ALLOW_DELETE_OF_MOVEMENT' => ['added_in' => '12.0'],
+				'STOCK_EXCLUDE_VIRTUAL_PRODUCTS' => ['added_in' => '13.0'],
+				'STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE' => ['added_in' => '15.0'],
+				'SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED' => ['added_in' => '4.0'],
+				'SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK' => ['type' => 'list', 'example' => '2,3,4', 'added_in' => '14.0'],
+			],
+		],
+		'STRIPE' => [
+			'label' => 'Stripe',
+			'wiki_anchor' => 'Stripe',
+			'confs' => [
+				'STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION' => ['type' => 'int', 'example' => '2', 'added_in' => '10.0'],
+			],
+		],
+		'SUPPLIERS_MODULE' => [
+			'label' => 'Suppliers Module',
+			'wiki_anchor' => 'Suppliers_Module',
+			'confs' => [
+				'DISPLAY_DISCOUNTED_SUPPLIER_PRICE' => ['added_in' => '10.0'],
+				'FOURN_PRODUCT_AVAILABILITY' => ['added_in' => '4.0'],
+				'MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER' => ['added_in' => '10.0'],
+				'RELOAD_PAGE_ON_SUPPLIER_CHANGE' => ['added_in' => '6.0', 'status' => 'removed', 'removed_in' => '20.0'],
+				'SUPPLIER_HIDE_SUPPLIER_OBJECTLINES' => ['added_in' => '14.0'],
+				'SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY' => ['type' => 'int', 'example' => '1', 'added_in' => '8.0'],
+				'SUPPLIER_ORDER_AUTOADD_USER_CONTACT' => ['added_in' => '4.0'],
+				'SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT' => ['added_in' => '11.0'],
+				'SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID' => ['type' => 'int', 'example' => '2', 'added_in' => '5.0'],
+				'SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT' => ['added_in' => '6.0'],
+				'SUPPLIER_ORDER_MORE_THAN_WISHED' => ['added_in' => '8.0'],
+				'SUPPLIER_ORDER_NO_DIRECT_APPROVE' => ['added_in' => '4.0'],
+				'SUPPLIER_ORDER_USE_DISPATCH_STATUS' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/supplier_order/admin/supplier_order.php'],
+				'SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY' => ['type' => 'int', 'example' => '1', 'added_in' => '8.0'],
+				'SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '14.0'],
+				'SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY' => ['type' => 'int', 'example' => '1', 'added_in' => '8.0'],
+			],
+		],
+		'THIRD_PARTIES_MODULE' => [
+			'label' => 'Third Parties Module',
+			'wiki_anchor' => 'Third_Parties_Module',
+			'confs' => [
+				'COMPANY_AQUARIUM_CLEAN_REGEX' => ['type' => 'string', 'example' => '^..(..)..(.*)', 'added_in' => '8.0'],
+				'CONTACT_DISABLE_PERSONALINFO' => ['status' => 'removed'],
+				'MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES' => ['added_in' => '4.0'],
+				'MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS' => ['added_in' => '11.0'],
+				'SOCIETE_ADD_REF_IN_LIST' => ['type' => 'int', 'example' => '1', 'added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/societe/admin/societe.php'],
+				'SOCIETE_ASK_FOR_SHIPPING_METHOD' => ['added_in' => '4.0', 'status' => 'in_setup', 'setup_url' => '/societe/admin/societe.php'],
+				'SOCIETE_DISABLE_CUSTOMERS' => ['added_in' => '4.0'],
+				'SOCIETE_DISABLE_PARENTCOMPANY' => ['added_in' => '4.0'],
+				'SOCIETE_DISABLE_PROSPECTS' => ['added_in' => '4.0'],
+				'SOCIETE_DISABLE_PROSPECTSCUSTOMERS' => ['added_in' => '5.0', 'status' => 'in_setup', 'setup_url' => '/societe/admin/societe.php'],
+				'SOCIETE_DISABLE_STATE' => ['added_in' => '4.0'],
+				'SOCIETE_DISABLE_WORKFORCE' => ['added_in' => '14.0'],
+				'SOCIETE_EMAIL_MANDATORY' => ['added_in' => '7.0'],
+				'SOCIETE_NO_SYNC_LINKED_MEMBER' => ['added_in' => '23.0'],
+				'SOCIETE_SHOW_VAT_IN_LIST' => ['added_in' => '15.0', 'status' => 'in_setup', 'setup_url' => '/societe/admin/societe.php'],
+				'SOCIETE_SORT_ON_TYPEENT' => ['type' => 'string', 'example' => 'NONE', 'added_in' => '4.0'],
+				'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER' => ['added_in' => '8.0', 'status' => 'removed', 'removed_in' => '16.0'],
+				'THIRDPARTY_CUSTOMERCODE_EQUALS_MEMBERREF' => ['added_in' => '22.0'],
+				'THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT' => ['added_in' => '4.0'],
+				'THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT' => ['type' => 'int', 'example' => '1', 'added_in' => '10.0', 'status' => 'in_setup', 'setup_url' => '/societe/admin/societe.php'],
+				'THIRDPARTY_DEFAULT_CREATE_CONTACT' => ['added_in' => '5.0'],
+				'THIRDPARTY_DEFAULT_USELOCALTAX1' => ['added_in' => '5.0'],
+				'THIRDPARTY_DEFAULT_USELOCALTAX2' => ['added_in' => '5.0'],
+				'THIRDPARTY_INCLUDE_PARENT_IN_LINKTO' => ['added_in' => '6.0'],
+				'THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO' => ['added_in' => '6.0'],
+				'THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD' => ['added_in' => '8.0'],
+				'THIRDPARTY_MIN_NB_PROF_ID' => ['type' => 'int', 'example' => '4', 'added_in' => '20.0'],
+				'THIRDPARTY_NOTCUSTOMERPROSPECT_BY_DEFAULT' => ['status' => 'removed'],
+				'THIRDPARTY_QUICKSEARCH_ON_FIELDS' => ['type' => 'string', 'example' => 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode', 'added_in' => '8.0'],
+				'THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION' => ['added_in' => '10.0'],
+				'THIRDPARTY_SUPPLIER_BY_DEFAULT' => ['added_in' => '4.0'],
+			],
+		],
+		'TICKET_MODULE' => [
+			'label' => 'Ticket Module',
+			'wiki_anchor' => 'Ticket_Module',
+			'confs' => [
+				'TICKETS_MESSAGE_FORCE_MAIL' => ['added_in' => '15.0'],
+				'TICKET_ADD_AUTHOR_AS_CONTACT' => ['type' => 'int', 'example' => '2', 'added_in' => '15.0'],
+				'TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED' => ['added_in' => '19.0', 'status' => 'removed', 'removed_in' => '21.0'],
+				'TICKET_ASSIGN_CONTACT_TO_MESSAGE' => ['added_in' => '19.0', 'status' => 'in_setup', 'setup_url' => '/admin/ticket_public.php'],
+				'TICKET_AUTO_ASSIGN_CONTRACT_CREATE' => ['added_in' => '8.0', 'status' => 'removed', 'removed_in' => '16.0'],
+				'TICKET_AUTO_ASSIGN_USER_CREATE' => ['type' => 'int', 'example' => '1', 'added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/ticket.php'],
+				'TICKET_AUTO_CREATE_FICHINTER_CREATE' => ['added_in' => '8.0', 'status' => 'removed', 'removed_in' => '16.0'],
+				'TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION' => ['added_in' => '16.0', 'status' => 'in_setup', 'setup_url' => '/admin/ticket.php'],
+				'TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE' => ['added_in' => '22.0'],
+				'TICKET_INCLUDE_SUSPENDED_STATUS' => ['added_in' => '20.0'],
+				'TICKET_LIMIT_VIEW_ASSIGNED_ONLY' => ['added_in' => '8.0', 'status' => 'in_setup', 'setup_url' => '/admin/ticket.php'],
+				'TICKET_SEND_PRIVATE_EMAIL' => ['added_in' => '18.0'],
+				'TICKET_SHOW_MESSAGES_ON_CARD' => ['added_in' => '12.0'],
+				'WORKFLOW_TICKET_CLOSE_INTERVENTION' => ['added_in' => '13.0'],
+			],
+		],
+		'VAT_REPORT' => [
+			'label' => 'VAT Report',
+			'wiki_anchor' => 'VAT_Report',
+			'confs' => [
+				'MAIN_INCLUDE_ZERO_VAT_IN_REPORTS' => ['added_in' => '9.0', 'status' => 'removed', 'removed_in' => '13.0'],
+			],
+		],
+		'WEBSITE_MODULE' => [
+			'label' => 'Website Module',
+			'wiki_anchor' => 'Website_Module',
+			'confs' => [
+				'WEBSITE_ADD_CSS_TO_BODY' => ['type' => 'string', 'example' => 'my-theme dark-header', 'added_in' => '12.0'],
+				'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' => ['added_in' => '20.0'],
+				'WEBSITE_USE_WEBSITE_ACCOUNTS' => ['added_in' => '7.0', 'status' => 'removed', 'removed_in' => '22.0'],
+			],
+		],
+		'WYSIWYG_EDITOR' => [
+			'label' => 'WYSIWYG Editor',
+			'wiki_anchor' => 'WYSIWYG_Editor',
+			'confs' => [
+				'FCKEDITOR_ALLOW_ANY_CONTENT' => ['added_in' => '4.0'],
+				'FCKEDITOR_ENABLE_DETAILS_FULL' => ['added_in' => '4.0'],
+				'FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP' => ['added_in' => '14.0'],
+				'MAIN_ALLOW_WYSIWYG_EVEN_ON_UNSECURED_EXTERNAL_HTTP_URL' => ['added_in' => '22.0'],
+				'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK' => ['added_in' => '19.0'],
+			],
+		],
+		'STRIPE_MODULE' => [
+			'label' => 'STRIPE Module',
+			'wiki_anchor' => 'STRIPE_Module',
+			'confs' => [
+				'STRIPE_FORCE_VERSION' => ['type' => 'string', 'example' => '2022-11-15', 'added_in' => '11.0'],
+				'STRIPE_REUSE_EXISTING_INTENT_IF_FOUND' => ['added_in' => '13.0'],
+			],
+		],
+		'CLICKTODIAL_MODULE' => [
+			'label' => 'ClickToDial Module',
+			'wiki_anchor' => 'ClickToDial_Module',
+			'confs' => [
+				'CLICKTODIAL_FORCENEWTARGET' => [],
+			],
+		],
+		'FOR_SAAS_CLOUD_HOSTING_INTEGRATORS' => [
+			'label' => 'For SaaS / Cloud hosting integrators',
+			'wiki_anchor' => 'For_SaaS_/_Cloud_hosting_integrators',
+			'confs' => [
+				'MAILING_LIMIT_SENDBYDAY' => ['type' => 'int', 'example' => '500', 'added_in' => '16.0'],
+				'MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE' => ['added_in' => '7.0'],
+				'MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD' => ['type' => 'string', 'example' => 'include:spf.mysaas.com', 'added_in' => '11.0'],
+				'MAIN_FILECHECK_LOCAL_SUFFIX' => ['type' => 'string', 'example' => '-mysaassolution', 'added_in' => '8.0'],
+				'MAIN_FIRST_PING_OK_ID' => ['type' => 'string', 'example' => 'disabled', 'added_in' => '11.0'],
+				'MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP' => ['added_in' => '13.0', 'status' => 'in_setup', 'setup_url' => '/admin/mails.php'],
+				'MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE' => ['added_in' => '16.0'],
+				'MAIN_SETUP_MODULES_DESC' => ['added_in' => '23.0'],
+				'SYSLOG_DISABLE_LOGHANDLER_SYSLOG' => ['added_in' => '6.0'],
+				'WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER' => ['type' => 'string', 'example' => 'MyDeployInfoKey', 'added_in' => '9.0'],
+			],
+		],
 	];
 }
