@@ -919,9 +919,16 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "payment_expensereport as t, ".MAIN_DB_PREFIX."expensereport as e";
-		$sql .= " WHERE e.rowid = t.fk_expensereport";
-		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql .= " WHERE EXISTS (";
+		$sql .= " SELECT 1";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e";
+		$sql .= " ON e.rowid = per.fk_expensereport";
+		$sql .= " WHERE per.fk_payment = t.rowid";
+		$sql .= " AND e.entity IN (".getEntity('expensereport').")";
+		$sql .= ")";
 
 		// Restrict to payments of expense reports the user is allowed to see
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'readall')) {
@@ -1015,6 +1022,7 @@ class ExpenseReports extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
 			throw new RestException(403);
 		}
+
 		// Check mandatory fields
 		$result = $this->_validatepayment($request_data);
 
@@ -1032,10 +1040,42 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if (!is_array($request_data['amounts'])) {
+			throw new RestException(400, 'amounts field must be an array');
+		}
+
+		/*
+		 * Historically amounts was indexed by user ID.
+		 *
+		 * This endpoint creates a payment for one expense report,
+		 * so preserve the total amount while converting the internal
+		 * representation to:
+		 *
+		 *     expense_report_id => amount
+		 */
+		$totalamount = 0;
+
+		foreach ($request_data['amounts'] as $amount) {
+			$totalamount += (float) price2num($amount, 'MT');
+		}
+
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
-		$paymentExpenseReport->fk_expensereport = $id;
+		$paymentExpenseReport->fk_expensereport = (int) $id;
+		$paymentExpenseReport->amounts = array(
+			(int) $id => $totalamount
+		);
+
 		foreach ($request_data as $field => $value) {
-			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+			// Already normalized above.
+			if ($field === 'amounts' || $field === 'fk_expensereport') {
+				continue;
+			}
+
+			$paymentExpenseReport->$field = $this->_checkValForAPI(
+				$field,
+				$value,
+				$paymentExpenseReport
+			);
 		}
 
 		// Same checks as expensereport/payment/payment.php: only an approved report is paid, never more than the remainder
@@ -1058,6 +1098,7 @@ class ExpenseReports extends DolibarrApi
 			$this->db->rollback();
 			throw new RestException(400, 'Payment error : '.$paymentExpenseReport->errorsToString());
 		}
+
 		if (isModEnabled("bank")) {
 			$result = $paymentExpenseReport->addPaymentToBank(
 				DolibarrApiAccess::$user,
@@ -1140,7 +1181,24 @@ class ExpenseReports extends DolibarrApi
 			if ($field == 'id' || $field == 'fk_expensereport') {	// A payment can't be moved to another report
 				continue;
 			}
-			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+
+			/*
+			 * These fields define the expense-report allocation.
+			 * Updating only the legacy payment row would make it
+			 * inconsistent with paymentexpensereport_expensereport.
+			 */
+			if (in_array($field, array('amount', 'amounts'), true)) {
+				throw new RestException(
+					400,
+					'Field "'.$field.'" cannot be modified on an existing expense report payment'
+				);
+			}
+
+			$paymentExpenseReport->$field = $this->_checkValForAPI(
+				$field,
+				$value,
+				$paymentExpenseReport
+			);
 		}
 
 		// The payments of the report can't exceed its total
