@@ -367,6 +367,7 @@ if ($action == 'addobject') {	// Test on permission done later
 $createdobject = null;
 $destdir = '';	// Directory where to move the uploaded file once object is created
 $destfilename = '';	// Name of the attached file once moved into $destdir
+$dateexpense = '';	// Date of expense, defined when adding a line into an expense report
 if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {	// Test on permission already done
 	$error = 0;
 
@@ -529,7 +530,7 @@ if ($action == 'addobject' && $modulepart == 'expensereport') {	// Test on permi
 		$destdir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($createdobject->ref);
 	}
 }
-if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {
+if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {	// Test on permission already done
 	// Move the uploaded file as an attached file of the created object
 	if (!$error && $destdir) {
 		$filetoattach = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
@@ -557,7 +558,7 @@ if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 's
 			$fk_ecm_files = (int) $ecmfiles->id;
 		}
 		$vatrate = (GETPOST('vat_rate', 'alpha') !== '' ? price2num(GETPOST('vat_rate', 'alpha')) : 0);
-		$result = $createdobject->addline(1, price2num(GETPOST('amount_ttc', 'alpha'), 'MU'), $feetypeid, $vatrate, $dateexpense, GETPOST('comments', 'alphanohtml'), 0, 0, 0, $fk_ecm_files);
+		$result = $createdobject->addline(1, (float) price2num(GETPOST('amount_ttc', 'alpha'), 'MU'), $feetypeid, $vatrate, $dateexpense, GETPOST('comments', 'alphanohtml'), 0, 0, 0, $fk_ecm_files);
 		if ($result <= 0) {
 			$error++;
 			setEventMessages($createdobject->error, $createdobject->errors, 'errors');
