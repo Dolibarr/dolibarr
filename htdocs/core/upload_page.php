@@ -43,6 +43,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';	// Needed by ExpenseReport::addline()
 
 $langs->loadLangs(array("main", "exports", "other"));
 
@@ -58,6 +60,17 @@ if (preg_match('/^idprod_(\d+)$/', GETPOST('prodid', 'alpha'), $reg)) {
 	$tmpproductfournisseur = new ProductFournisseur($db);
 	if ($tmpproductfournisseur->fetch_product_fournisseur_price(GETPOSTINT('prodid')) > 0) {
 		$prodid = (int) $tmpproductfournisseur->fk_product;
+	}
+}
+// The selector of type of fees of the upload form returns the code of the type, the one of the summary page returns the id, so we convert it into an id
+$feetypeid = 0;
+if (preg_match('/^\d+$/', GETPOST('feetypeid', 'aZ09'))) {
+	$feetypeid = GETPOSTINT('feetypeid');
+} elseif (GETPOST('feetypeid', 'aZ09') && GETPOST('feetypeid', 'aZ09') != '-1') {
+	$sql = "SELECT id FROM ".$db->prefix()."c_type_fees WHERE code = '".$db->escape(GETPOST('feetypeid', 'aZ09'))."'";
+	$resql = $db->query($sql);
+	if ($resql && ($obj = $db->fetch_object($resql))) {
+		$feetypeid = (int) $obj->id;
 	}
 }
 
@@ -151,6 +164,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		$permlevel2 = 'read';
 		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-thiid'.(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'expensereport') {
+		$permlevel1 = 'lire';
 		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-erid'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'salaries') {
 		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-salid'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
@@ -310,6 +324,39 @@ if ($action == 'addobject') {	// Test on permission done later
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 			$mandatoryfieldsareko = 1;
 		}
+	} elseif ($modulepart == 'expensereport') {
+		// Check mandatory fields for a line of expense report (same rules than expensereport/card.php)
+		$langs->loadLangs(array("trips", "hrm"));
+		if (GETPOSTINT('userexpensereportid') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if ($feetypeid <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!dol_mktime(0, 0, 0, GETPOSTINT("datemonth"), GETPOSTINT("dateday"), GETPOSTINT("dateyear"))) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (GETPOSTFLOAT('amount_ttc') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AmountTTC")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (isModEnabled('project') && getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set (as in expensereport/card.php)
+		if (!$user->hasRight('expensereport', 'creer') && !(getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance'))) {
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		} elseif (GETPOSTINT('userexpensereportid') > 0 && (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+			if (!in_array(GETPOSTINT('userexpensereportid'), $user->getAllChildIds(1))) {
+				setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+				$mandatoryfieldsareko = 1;
+			}
+		}
 	}
 
 	if ($mandatoryfieldsareko) {
@@ -319,7 +366,8 @@ if ($action == 'addobject') {	// Test on permission done later
 
 $createdobject = null;
 $destdir = '';	// Directory where to move the uploaded file once object is created
-if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales'))) {	// Test on permission already done
+$destfilename = '';	// Name of the attached file once moved into $destdir
+if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {	// Test on permission already done
 	$error = 0;
 
 	$db->begin();
@@ -434,12 +482,59 @@ if ($action == 'addobject' && $modulepart == 'chargesociales') {	// Test on perm
 		$destdir = $conf->tax->dir_output.'/'.dol_sanitizeFileName((string) $createdobject->ref);
 	}
 }
-if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales'))) {
+if ($action == 'addobject' && $modulepart == 'expensereport') {	// Test on permission already done
+	$dateexpense = dol_mktime(0, 0, 0, GETPOSTINT("datemonth"), GETPOSTINT("dateday"), GETPOSTINT("dateyear"));
+	$fuser = new User($db);
+	$fuser->fetch(GETPOSTINT('userexpensereportid'));
+
+	// Search a draft expense report of the employee whose period includes the date of expense
+	$createdobject = new ExpenseReport($db);
+	$sql = "SELECT rowid FROM ".$db->prefix()."expensereport";
+	$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
+	$sql .= " AND fk_statut = ".((int) ExpenseReport::STATUS_DRAFT);
+	$sql .= " AND date_debut <= '".$db->escape(dol_print_date($dateexpense, 'dayrfc'))."' AND date_fin >= '".$db->escape(dol_print_date($dateexpense, 'dayrfc'))."'";
+	$sql .= " AND entity IN (".getEntity('expensereport').")";
+	$sql .= " ORDER BY rowid DESC";
+	$sql .= $db->plimit(1);
+	$resql = $db->query($sql);
+	$obj = ($resql ? $db->fetch_object($resql) : null);
+	if (!$resql) {
+		$error++;
+		setEventMessages($db->lasterror(), null, 'errors');
+	} elseif ($obj) {
+		$createdobject->fetch($obj->rowid);
+	} else {
+		// No draft found, so we create a new expense report for the month of the expense
+		$tmpdate = dol_getdate($dateexpense);
+		$createdobject->date_debut = dol_get_first_day($tmpdate['year'], $tmpdate['mon']);
+		$createdobject->date_fin = dol_get_last_day($tmpdate['year'], $tmpdate['mon']);
+		$createdobject->fk_user_author = $fuser->id;
+		$createdobject->fk_user_validator = $fuser->fk_user_expense_validator;
+		$createdobject->status = ExpenseReport::STATUS_DRAFT;
+
+		if (!getDolGlobalString('EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS') && $createdobject->periodExists($fuser, $createdobject->date_debut, $createdobject->date_fin) > 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
+		} else {
+			$result = $createdobject->create($user);
+			if ($result <= 0) {
+				$error++;
+				setEventMessages($createdobject->error, $createdobject->errors, 'errors');
+			} else {
+				$createdobject->fetch($result);
+			}
+		}
+	}
+	if (!$error) {
+		$destdir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($createdobject->ref);
+	}
+}
+if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {
 	// Move the uploaded file as an attached file of the created object
 	if (!$error && $destdir) {
 		$filetoattach = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
 		if (preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $filetoattach) && dol_is_file($upload_dir.'/'.$filetoattach)) {
-			$destfilename = preg_replace('/^upload_page-[a-z_]+-uid\d+(-thiid\d+)?(-pid\d+)?(-erid\d+)?(-salid\d+)?-/', '', $filetoattach);
+			$destfilename = preg_replace('/^upload_page-[a-z_]+-uid\d+(-(thiid|pid|erid|salid)\d+)*-/', '', $filetoattach);	// Markers can be in any order
 			dol_mkdir($destdir);
 			$result = dol_move($upload_dir.'/'.$filetoattach, $destdir.'/'.$destfilename, '0', 1, 0, 1, array('gen_or_uploaded' => 'uploaded'));
 			if (!$result) {
@@ -449,6 +544,23 @@ if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 's
 			} else {
 				dol_delete_file($upload_dir.'/'.$filetoattach.'.json');
 			}
+		}
+	}
+
+	// For an expense report, we add the line of expense, linked to the file we just attached (as done by expensereport/card.php)
+	if (!$error && $createdobject instanceof ExpenseReport) {
+		$fk_ecm_files = 0;
+		if (!empty($destfilename)) {
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+			$ecmfiles = new EcmFiles($db);
+			$ecmfiles->fetch(0, '', 'expensereport/'.dol_sanitizeFileName($createdobject->ref).'/'.$destfilename);
+			$fk_ecm_files = (int) $ecmfiles->id;
+		}
+		$vatrate = (GETPOST('vat_rate', 'alpha') !== '' ? price2num(GETPOST('vat_rate', 'alpha')) : 0);
+		$result = $createdobject->addline(1, price2num(GETPOST('amount_ttc', 'alpha'), 'MU'), $feetypeid, $vatrate, $dateexpense, GETPOST('comments', 'alphanohtml'), 0, 0, 0, $fk_ecm_files);
+		if ($result <= 0) {
+			$error++;
+			setEventMessages($createdobject->error, $createdobject->errors, 'errors');
 		}
 	}
 
@@ -781,6 +893,8 @@ if ($action == 'uploadfile') {
 	print '<input type="hidden" name="usersalaryid" value="'.GETPOSTINT('usersalaryid').'">';
 	print '<input type="hidden" name="socialcontrib" value="'.GETPOSTINT('socialcontrib').'">';
 	print '<input type="hidden" name="usertaxid" value="'.GETPOSTINT('usertaxid').'">';
+	print '<input type="hidden" name="userexpensereportid" value="'.GETPOSTINT('userexpensereportid').'">';
+	print '<input type="hidden" name="feetypeid" value="'.$feetypeid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="">';	// Fill by the ajax answer with the JSON encoded in base64
 	print '<div id="ajax-result-message"></div>';
@@ -1198,6 +1312,112 @@ if ($action == 'showsummary') {
 
 		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 		print "\n";
+	} elseif ($modulepart == 'expensereport') {
+		$langs->loadLangs(array("trips", "hrm", "bills"));
+
+		// Parse JSON to get information for an expense
+		$expenseindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'expense');
+
+		// Date found in document is a timestamp of the day in user timezone. We convert it into the same day, as dates of expensereport/card.php.
+		$dateindoc = '';
+		$reg = array();
+		if (!empty($expenseindoc['date']) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', dol_print_date($expenseindoc['date'], '%Y-%m-%d', 'tzuserrel'), $reg)) {
+			$dateindoc = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+		}
+		// Values posted (when back after an error) have priority on values found in document
+		$dateexpense = GETPOSTISSET('dateday') ? dol_mktime(0, 0, 0, GETPOSTINT("datemonth"), GETPOSTINT("dateday"), GETPOSTINT("dateyear")) : $dateindoc;
+		$amount_ttc = GETPOSTISSET('amount_ttc') ? GETPOST('amount_ttc', 'alpha') : (is_numeric($expenseindoc['total_ttc'] ?? null) ? price((float) $expenseindoc['total_ttc']) : '');
+		$vat_rate = GETPOSTISSET('vat_rate') ? GETPOST('vat_rate', 'alpha') : (is_numeric($expenseindoc['vat_rate'] ?? null) ? price((float) $expenseindoc['vat_rate']) : '');
+		$comments = GETPOSTISSET('comments') ? GETPOST('comments', 'alphanohtml') : trim((string) ($expenseindoc['merchant'] ?? '').(!empty($expenseindoc['label']) ? ' - '.$expenseindoc['label'] : ''), ' -');
+		$expenseuserid = GETPOSTINT('userexpensereportid');
+
+		print "\n\n";
+		print '<div id="userexpensereport" class="">';
+
+		// Employee
+		print img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("Employee").'<br>';
+		print $langs->trans("WillUse").' ';
+		print $form->select_dolusers($expenseuserid > 0 ? $expenseuserid : -1, 'userexpensereportid', 1, null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+
+		print "\n";
+		print '<br><br><hr><br>';
+		print "\n";
+
+		// Expense
+		print img_picto('', 'expensereport', 'class="pictofixedwidth"').$langs->trans("ExpenseReportLine").'<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$tmpvalue = array();
+		if (!empty($expenseindoc['merchant'])) {
+			$tmpvalue[] = dolPrintLabel($expenseindoc['merchant']);
+		}
+		if (!empty($expenseindoc['label'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Label").': '.dolPrintLabel($expenseindoc['label']);
+		}
+		if (!empty($expenseindoc['category'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Type").': '.dolPrintLabel($expenseindoc['category']);
+		}
+		if ($dateindoc) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Date").': '.dol_print_date($dateindoc, 'day');
+		}
+		if (is_numeric($expenseindoc['vat_rate'] ?? null)) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("VATRate").': '.vatrate((string) $expenseindoc['vat_rate'], true);
+		}
+		if (is_numeric($expenseindoc['total_ttc'] ?? null)) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("AmountTTC").': '.price((float) $expenseindoc['total_ttc']);
+		}
+		if (!empty($expenseindoc['currency_code'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Currency").': '.dolPrintLabel($expenseindoc['currency_code']);
+		}
+		$s = implode(', ', $tmpvalue);
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br><br>';
+
+		// Show the draft expense report the line will be added to, if there is one for this employee and this date
+		$tmpexpensereport = new ExpenseReport($db);
+		if ($expenseuserid > 0 && $dateexpense) {
+			$sql = "SELECT rowid FROM ".$db->prefix()."expensereport";
+			$sql .= " WHERE fk_user_author = ".((int) $expenseuserid);
+			$sql .= " AND fk_statut = ".((int) ExpenseReport::STATUS_DRAFT);
+			$sql .= " AND date_debut <= '".$db->escape(dol_print_date($dateexpense, 'dayrfc'))."' AND date_fin >= '".$db->escape(dol_print_date($dateexpense, 'dayrfc'))."'";
+			$sql .= " AND entity IN (".getEntity('expensereport').")";
+			$sql .= " ORDER BY rowid DESC";
+			$sql .= $db->plimit(1);
+			$resql = $db->query($sql);
+			if ($resql && ($obj = $db->fetch_object($resql))) {
+				$tmpexpensereport->fetch($obj->rowid);
+			}
+		}
+		if ($tmpexpensereport->id > 0) {
+			print $langs->trans("ExpenseWillBeAddedToDraftExpenseReport").' '.$tmpexpensereport->getNomUrl(1).'<br>';
+		} else {
+			print $langs->trans("NewExpenseReportWillBeCreated").'<br>';
+		}
+
+		print $langs->trans("Type").' ';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
+		$formexpensereport = new FormExpenseReport($db);
+		print $formexpensereport->selectTypeExpenseReport($feetypeid > 0 ? $feetypeid : '', 'feetypeid', 1);
+		print '<br>';
+		print $langs->trans("Date").' ';
+		print $form->selectDate($dateexpense, 'date', 0, 0, 1, 'summary-result', 1, 0);
+		print '<br>';
+		print $langs->trans("Description").' ';
+		print '<input type="text" class="minwidth300" name="comments" id="comments" value="'.dolPrintHTMLForAttribute($comments).'"><br>';
+		print $langs->trans("VATRate").' ';
+		print '<input type="text" class="width50 right" name="vat_rate" id="vat_rate" value="'.dolPrintHTMLForAttribute((string) $vat_rate).'">%<br>';
+		print $langs->trans("AmountTTC").' ';
+		print '<input type="text" class="width100 right" name="amount_ttc" id="amount_ttc" value="'.dolPrintHTMLForAttribute((string) $amount_ttc).'">';
+
+		print '<br>
+		</div>
+		</div>';
+		print "\n";
+
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print "\n";
 	}
 
 	// Preview of the uploaded file (PDF is shown with the native viewer of the browser)
@@ -1232,6 +1452,8 @@ if ($action == 'showsummary') {
 		print $langs->trans("SalaryCreatedFromFile").' ';
 	} elseif ($createdobject instanceof ChargeSociales) {
 		print $langs->trans("SocialContributionCreatedFromFile").' ';
+	} elseif ($createdobject instanceof ExpenseReport) {
+		print $langs->trans("ExpenseAddedFromFile").' ';
 	} else {
 		print $langs->trans("DraftInvoiceCreatedFromFile").' ';
 	}

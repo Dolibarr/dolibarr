@@ -289,6 +289,37 @@ if ($modulepart == 'invoice_supplier') {
 	 }
 	}
 	';
+} elseif ($modulepart == 'expensereport') {
+	$docformat = 'pdf';
+	$doctypelabel = 'receipt';
+
+	// Call IA to get information on the receipt of an expense (restaurant, hotel, transport, fuel, ...)
+	$prompt = 'Analyze the contents of this '.$docformat.' document of a '.$doctypelabel.' (a receipt or an invoice of an expense paid by an employee) and convert the information into a structured JSON format. Follow these guidelines:
+
+	1. **Structure:** Use exactly the keys of the example JSON structure below. Use null when a value is not found.
+	2. **Normalize Dates:** Format dates in ISO format (YYYY-MM-DD). The date is the date of the expense.
+	3. **Normalize Amounts:** Amounts are numbers with a dot as decimal separator, without currency symbol and without thousand separator.
+	4. **VAT:** If there are several VAT rates, set "vat_rate" to null and give the total amounts.
+	5. **Privacy:** Do not return card numbers or bank account numbers.
+
+	**Example JSON Structure:**
+
+	{
+	 "document_info": {
+	  "merchant": "<name of the shop, restaurant, hotel or company>",
+	  "title": "<short description of the expense>",
+	  "category": "<one of: meal, hotel, transport, fuel, parking, toll, other>",
+	  "date": "<YYYY-MM-DD>",
+	  "currency_code": "<ISO 4217 currency code>"
+	 },
+	 "summary": {
+	  "total_excluding_tax": "<total amount excluding tax>",
+	  "vat_rate": "<VAT rate in percent>",
+	  "vat_amount": "<total amount of VAT>",
+	  "total_including_tax": "<total amount paid including tax>"
+	 }
+	}
+	';
 }
 
 
