@@ -80,8 +80,8 @@ class ProductLibTest extends CommonClassTest
 
 		$out = getBatchLinesToggleHeader($langs, true);
 
-		$this->assertMatchesRegularExpression('/id="batchlines_show_all"[^>]*class="[^"]*hideobject/', $out);
-		$this->assertDoesNotMatchRegularExpression('/id="batchlines_hide_all"[^>]*class="[^"]*hideobject/', $out);
+		$this->assertSame(1, preg_match('/id="batchlines_show_all"[^>]*class="[^"]*hideobject/', $out));
+		$this->assertSame(0, preg_match('/id="batchlines_hide_all"[^>]*class="[^"]*hideobject/', $out));
 	}
 
 	/**
@@ -93,8 +93,8 @@ class ProductLibTest extends CommonClassTest
 
 		$out = getBatchLinesToggleHeader($langs, false);
 
-		$this->assertDoesNotMatchRegularExpression('/id="batchlines_show_all"[^>]*class="[^"]*hideobject/', $out);
-		$this->assertMatchesRegularExpression('/id="batchlines_hide_all"[^>]*class="[^"]*hideobject/', $out);
+		$this->assertSame(0, preg_match('/id="batchlines_show_all"[^>]*class="[^"]*hideobject/', $out));
+		$this->assertSame(1, preg_match('/id="batchlines_hide_all"[^>]*class="[^"]*hideobject/', $out));
 	}
 
 	/**
@@ -124,10 +124,10 @@ class ProductLibTest extends CommonClassTest
 		$hidden = getBatchLineToggleLink('exp12', false);
 
 		$this->assertStringContainsString('data-batchtoggle="exp12"', $shown);
-		$this->assertMatchesRegularExpression('/fa-plus-square[^"]*batchlines_icon_collapsed hideobject/', $shown);
-		$this->assertDoesNotMatchRegularExpression('/batchlines_icon_expanded hideobject/', $shown);
-		$this->assertMatchesRegularExpression('/fa-minus-square[^"]*batchlines_icon_expanded hideobject/', $hidden);
-		$this->assertDoesNotMatchRegularExpression('/batchlines_icon_collapsed hideobject/', $hidden);
+		$this->assertSame(1, preg_match('/fa-plus-square[^"]*batchlines_icon_collapsed hideobject/', $shown));
+		$this->assertSame(0, preg_match('/batchlines_icon_expanded hideobject/', $shown));
+		$this->assertSame(1, preg_match('/fa-minus-square[^"]*batchlines_icon_expanded hideobject/', $hidden));
+		$this->assertSame(0, preg_match('/batchlines_icon_collapsed hideobject/', $hidden));
 	}
 
 	/**

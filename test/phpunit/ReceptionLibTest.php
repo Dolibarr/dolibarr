@@ -159,6 +159,6 @@ class ReceptionLibTest extends CommonClassTest
 		$out = getReceptionLineQtyOrderedCells($this->savdb, new Form($this->savdb), $this->savlangs, $this->makeLine(900), $alreadySent, 5, true);
 		unset($conf->cache['reception'][901], $conf->cache['reception'][902]);
 
-		$this->assertMatchesRegularExpression('/linecolqtyinotherreceptions">(<[^>]*>)*5\b/', $out);
+		$this->assertSame(1, preg_match('/linecolqtyinotherreceptions">(<[^>]*>)*5\b/', $out));
 	}
 }
