@@ -576,8 +576,8 @@ class Reception extends CommonObject
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
-				$this->origin_type          = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin ? $obj->origin : ($obj->origin_id > 0 ? 'commande' : '')); // For compatibility. A standalone reception has no origin.
+				$this->origin_type          = ($obj->origin ? $obj->origin : ($obj->origin_id > 0 ? 'commande' : '')); // For compatibility. A standalone reception has no origin.
 				$this->origin_id            = $obj->origin_id;
 
 				$this->trueWeight           = $obj->weight;
@@ -2685,7 +2685,9 @@ class Reception extends CommonObject
 
 		$modelpath = "core/modules/reception/doc/";
 
-		$this->fetch_origin();
+		if (!empty($this->origin) && $this->origin_id > 0) {
+			$this->fetch_origin();
+		}
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}

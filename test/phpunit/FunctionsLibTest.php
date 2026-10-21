@@ -30,12 +30,11 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
