@@ -403,6 +403,20 @@ class AiTaskUpdateTest extends PHPUnit\Framework\TestCase
 			$this->assertSame([['projet', 'creer'], ['projet', 'lire']], $this->bridge->getRequiredRights('api_'.$endpoint.'_update'));
 		}
 	}
+
+	/** @return void */
+	public function testBoundedTaskUpdateKeepsTimeSpentAsASeparateTool()
+	{
+		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
+		if (PHP_VERSION_ID < 80100) {
+			$metadata->setAccessible(true);
+		}
+		$methods = $metadata->getValue($this->bridge)['tasks']['methods'];
+		$this->assertSame('update', $methods['put']['suffix']);
+		$this->assertArrayNotHasKey('progress', $methods['put']['write']['update']);
+		$this->assertSame('add_timespent', $methods['addTimeSpent']['suffix']);
+		$this->assertSame('AIPreviewAddTimespent', $methods['addTimeSpent']['write']['preview']);
+	}
 }
 
 /** User fixture granting read-all but allowing an individual right to be denied. */

@@ -53,7 +53,7 @@ class SocialNetworkManager
 	/**
 	 * @var int
 	 */
-	private $lastFetchDate; // @phpstan-ignore-line
+	private $lastFetchDate;
 
 	/**
 	 *	Constructor
@@ -109,6 +109,14 @@ class SocialNetworkManager
 
 		if (!empty($this->handler->error)) {
 			$this->error = $this->handler->error;
+		}
+
+		// Date of the data shown: date of the cache file (also the date of the last successful fetch when this one failed)
+		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, '3');
+		if ($cacheDir && dol_is_file($cacheFile)) {
+			$this->lastFetchDate = dol_filemtime($cacheFile);
+		} elseif ($result !== false) {
+			$this->lastFetchDate = dol_now();
 		}
 
 		return $result;

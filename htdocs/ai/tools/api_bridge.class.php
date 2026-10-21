@@ -812,7 +812,29 @@ class ToolApiBridge extends McpTool
 					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
 					'params' => ['id' => "Rowid of the task."]
 				],
-				'put' => $this->taskUpdateMethod()
+				'put' => $this->taskUpdateMethod(),
+				'addTimeSpent' => [
+					'suffix' => 'add_timespent',
+					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTimespent',
+						'required' => ['id', 'date', 'duration'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['duration', 'date', 'id'],
+						// No 'dates' entry: the REST method parses the text
+						// itself — a timestamp would be re-parsed into garbage.
+						'hours' => ['duration'],
+					],
+					'params' => [
+						'id' => "Rowid of the task (required).",
+						'date' => "Date of the work YYYY-MM-DD or 'today' (required).",
+						'duration' => "Duration in hours, e.g. 1.5 (required).",
+						'note' => "Optional note for the record.",
+						'user_id' => "Rowid of the user who did the work, or 'me' for yourself. Omit to use the acting user.",
+						'progress' => "New task progress percent 0-100 (optional)."
+					]
+				]
 			]
 		];
 
@@ -2657,6 +2679,8 @@ class ToolApiBridge extends McpTool
 			$schema = $this->updateInputSchema($meta['write']);
 		}
 
+		$schema = self::normalizeInputSchema($schema);
+
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
 		// When an explicit description is given, it has priority on auto-generated description
 		if (!empty($meta['description'])) {
@@ -2674,7 +2698,8 @@ class ToolApiBridge extends McpTool
 	 * Lift Restler's inline validation tags out of a parameter description.
 	 *
 	 * The REST API documents constraints the way Restler reads them to build
-	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags}.
+	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags},
+	 * {@const value}.
 	 * Those carry exactly what JSON Schema calls minimum, maximum, enum and
 	 * pattern, so they are translated instead of being shown to the model as
 	 * part of the sentence. Tags with no JSON Schema equivalent ({@type} names a
@@ -2714,6 +2739,18 @@ class ToolApiBridge extends McpTool
 						}
 					}
 					$constraints['enum'] = array_values($choices);
+				} elseif (($name === 'const' || $name === 'constant') && $value !== '') {
+					$val = $value;
+					if ($ptype === 'integer' || $ptype === 'number') {
+						if (is_numeric($val)) {
+							$val = $this->tagValueToNumber($val);
+						}
+					} elseif ($ptype === 'boolean') {
+						$val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+					}
+					// JSON Schema const is rejected by Gemini and some LLM function-calling APIs;
+					// normalize to a single-element enum instead.
+					$constraints['enum'] = array($val);
 				} elseif ($name === 'pattern' && $value !== '') {
 					$pattern = $this->restlerPatternToJsonSchema($value);
 					if ($pattern !== '') {

@@ -4,8 +4,9 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +118,7 @@ class CompanyBankAccount extends Account
 		'currency_code' => array('type' => 'varchar(3)', 'label' => 'Currencycode', 'enabled' => 1, 'position' => 105, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'rum' => array('type' => 'varchar(32)', 'label' => 'Rum', 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'date_rum' => array('type' => 'date', 'label' => 'Daterum', 'enabled' => 1, 'position' => 115, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'payment_reference' => array('type' => 'varchar(35)', 'label' => 'PaymentReferenceOfAccount', 'enabled' => 1, 'position' => 117, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'frstrecur' => array('type' => 'varchar(16)', 'label' => 'Frstrecur', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
 		'last_four' => array('type' => 'varchar(4)', 'label' => 'Lastfour', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
@@ -236,6 +238,12 @@ class CompanyBankAccount extends Account
 	 * @var int date rum
 	 */
 	public $date_rum;
+
+	/**
+	 * @var string Reference to give when paying to this account: the RF (ISO 11649) or national
+	 *             reference a supplier gave us.
+	 */
+	public $payment_reference;
 
 	/**
 	 * Value 'FRST' or 'RCUR' (For SEPA mandate)
@@ -454,6 +462,17 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
+		// Stored clean (an RF without spaces), the object keeps what is stored. A reference with
+		// check digits (RF) is checked, a typing error is found at once.
+		$this->payment_reference = self::cleanPaymentReference((string) $this->payment_reference);
+		$errorkey = self::checkPaymentReference($this->payment_reference);
+		if ($errorkey !== '') {
+			$langs->load('banks');
+			$this->error = $langs->trans($errorkey);
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		if (!empty($this->address) && dol_strlen($this->address) > 255) {
 			$this->address = dol_trunc($this->address, 254, 'right', 'UTF-8', 1);
 		}
@@ -483,6 +502,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
+		$sql .= ",payment_reference = ".($this->payment_reference !== '' ? "'".$this->db->escape($this->payment_reference)."'" : "NULL");
 		if (isModEnabled('prelevement')) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
@@ -545,7 +565,7 @@ class CompanyBankAccount extends Account
 
 		$sql = "SELECT sr.rowid, sr.label, sr.type, sr.fk_soc as socid, sr.bank, sr.number, sr.code_banque, sr.code_guichet, sr.cle_rib, sr.bic, sr.iban_prefix as iban,";
 		$sql .= " sr.currency_code, sr.fk_country, sr.state_id, sr.status, sr.domiciliation as address,";
-		$sql .= " sr.proprio as owner_name, sr.owner_address, sr.default_rib, sr.datec, sr.tms as datem, sr.rum, sr.frstrecur, sr.date_rum,";
+		$sql .= " sr.proprio as owner_name, sr.owner_address, sr.default_rib, sr.datec, sr.tms as datem, sr.rum, sr.frstrecur, sr.date_rum, sr.payment_reference,";
 		$sql .= " sr.stripe_card_ref, sr.stripe_account, sr.ext_payment_site,";
 		$sql .= " sr.last_main_doc, model_pdf,";
 		$sql .= " cc.code as country_code";
@@ -604,6 +624,7 @@ class CompanyBankAccount extends Account
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
 				$this->date_rum        = $this->db->jdate($obj->date_rum);
+				$this->payment_reference = (string) $obj->payment_reference;
 				$this->stripe_card_ref = $obj->stripe_card_ref;		// External system payment mode ID
 				$this->stripe_account  = $obj->stripe_account;		// External system customer ID
 				$this->ext_payment_site = $obj->ext_payment_site;	// External system name ('StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...)
@@ -660,6 +681,50 @@ class CompanyBankAccount extends Account
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Payment reference in the form it is stored: an ISO 11649 (RF) reference without
+	 * spaces and in upper case, any other reference trimmed (national references, such as
+	 * the belgian structured communication, keep their separators)
+	 *
+	 * @param	string	$ref	Payment reference as typed
+	 * @return	string			Payment reference to store, '' for none
+	 */
+	public static function cleanPaymentReference($ref)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$ref = trim($ref);
+		if (strtoupper(substr(dolPayRefStrip($ref), 0, 2)) === 'RF') {
+			$ref = strtoupper(dolPayRefStrip($ref));
+		}
+
+		return $ref;
+	}
+
+	/**
+	 * Check a payment reference before it is stored
+	 *
+	 * @param	string	$ref	Payment reference as typed
+	 * @return	string			Translation key of the error, '' when it can be stored
+	 */
+	public static function checkPaymentReference($ref)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
+
+		$ref = self::cleanPaymentReference($ref);
+		if ($ref === '') {
+			return '';
+		}
+		if (dol_strlen($ref) > 35) {
+			return 'ErrorPaymentReferenceOfAccountTooLong';
+		}
+		if (dolPayRefDetectScheme($ref) == 'SCOR' && !dolCreditorRefIsValid($ref)) {
+			return 'ErrorPaymentReferenceOfAccountNotValid';
+		}
+
+		return '';
 	}
 
 	/**
