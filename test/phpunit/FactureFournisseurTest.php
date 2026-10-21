@@ -203,6 +203,38 @@ class FactureFournisseurTest extends CommonClassTest
 	}
 
 	/**
+	 * testFactureFournisseurUpdatelineChangesDescription
+	 *
+	 * @return	void
+	 */
+	public function testFactureFournisseurUpdatelineChangesDescription()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new FactureFournisseur($db);
+		$localobject->initAsSpecimen();
+		$localobject->lines = array();
+		$result = $localobject->create($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$lineid = $localobject->addline('Description before', 10, 20, 0, 0, 1);
+		$this->assertGreaterThan(0, $lineid, $localobject->errorsToString());
+
+		$result = $localobject->updateline($lineid, 'Description after', 10, 20, 0, 0, 1);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$line = new SupplierInvoiceLine($db);
+		$line->fetch($lineid);
+		$this->assertEquals('Description after', $line->description);
+
+		$localobject->delete($user);
+	}
+
+	/**
 	 * testFactureFournisseurRecGetNextDate
 	 *
 	 * @return	void

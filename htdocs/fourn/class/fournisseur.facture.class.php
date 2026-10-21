@@ -2547,6 +2547,7 @@ class FactureFournisseur extends CommonInvoice
 			$apply_abs_price_on_credit_note = true;
 		}
 
+		$line->description = $desc;
 		$line->desc = $desc;
 
 		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
