@@ -526,7 +526,7 @@ class Ai
 	 * Decode JSON into array
 	 *
 	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
-	 * @param string					$type		Type of document to get ('supplier_invoice', 'salary', 'social_contribution', 'thirdparty', ...)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'salary', 'social_contribution', 'expense', 'thirdparty', ...)
 	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
@@ -752,6 +752,38 @@ class Ai
 
 			// Amount
 			$tmparray['amount'] = $summary['amount_to_pay'] ?? ($summary['total_to_pay'] ?? ($summary['amount'] ?? ($summary['total'] ?? null)));
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
+			}
+		} elseif ($type == 'expense') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			foreach (array('merchant' => 'merchant', 'title' => 'label', 'category' => 'category') as $keysrc => $keydest) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc])) {
+					$tmparray[$keydest] = $docinfo[$keysrc];
+				}
+			}
+
+			// Date of expense
+			foreach (array('date', 'expense_date', 'issue_date') as $keysrc) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+					$tmparray['date'] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+					break;
+				}
+			}
+
+			// Amounts. If VAT rate is not provided, we try to calculate it from amounts.
+			$tmparray['total_ttc'] = $summary['total_including_tax'] ?? ($summary['total_ttc'] ?? ($summary['total'] ?? null));
+			$tmparray['total_ht'] = $summary['total_excluding_tax'] ?? ($summary['total_ht'] ?? null);
+			$tmparray['vat_rate'] = $summary['vat_rate'] ?? ($summary['tax_rate'] ?? null);
+			$vatamount = $summary['vat_amount'] ?? ($summary['tax_amount'] ?? null);
+			if (!is_numeric($tmparray['vat_rate']) && is_numeric($vatamount) && is_numeric($tmparray['total_ht']) && $tmparray['total_ht'] > 0) {
+				$tmparray['vat_rate'] = round(100 * (float) $vatamount / (float) $tmparray['total_ht'], 1);
+			}
 
 			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
 			if (dol_strlen($currency) == 3) {
