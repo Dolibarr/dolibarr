@@ -568,8 +568,13 @@ export function initAiAssistant(container) {
         // Show the picto declared into the data-picto attribute of the option before its label
         const withPicto = (data) => {
             const picto = data.element ? data.element.getAttribute('data-picto') : '';
+            const experimental = data.element ? data.element.getAttribute('data-experimental') : '';
             if (!picto) return data.text;
-            return window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+            const span = window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+            if (experimental) {
+                span.append(window.jQuery('<span class="opacitymedium paddingleft"></span>').text('(' + t('VersionExperimental') + ')'));
+            }
+            return span;
         };
         $sel.select2({
             dir: 'ltr',
