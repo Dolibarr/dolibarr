@@ -14,18 +14,12 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-// These unit tests need no configured Dolibarr installation or database connection.
-if (!defined('DOL_DOCUMENT_ROOT')) {
-	define('DOL_DOCUMENT_ROOT', dirname(__FILE__).'/../../htdocs');
-}
-if (!defined('DOL_DATA_ROOT')) {
-	define('DOL_DATA_ROOT', sys_get_temp_dir());
-}
-if (!defined('MAIN_DB_PREFIX')) {
-	define('MAIN_DB_PREFIX', 'llx_');
-}
+// These unit tests need no database connection.
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
