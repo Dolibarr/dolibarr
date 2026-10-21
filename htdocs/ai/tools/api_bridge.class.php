@@ -811,6 +811,51 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'timespent_list',
 					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
 					'params' => ['id' => "Rowid of the task."]
+				],
+				'put' => [
+					'suffix' => 'update',
+					'description' => "Update fields of an existing task: label, description, progress percent, planned workload, dates. Only the fields given are changed. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUpdateRecord',
+						'required' => ['id'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['id'],
+						'dates' => ['date_start', 'date_end'],
+						'hours' => ['planned_workload'],
+						'trim_fields' => ['label', 'description'],
+					],
+					'params' => [
+						'id' => "Rowid of the task to update (required).",
+						'label' => "New label.",
+						'description' => "New description.",
+						'progress' => "New progress percent 0-100.",
+						'planned_workload' => "New planned workload in hours.",
+						'date_start' => "New start date YYYY-MM-DD.",
+						'date_end' => "New end date YYYY-MM-DD."
+					]
+				],
+				'addTimeSpent' => [
+					'suffix' => 'add_timespent',
+					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTimespent',
+						'required' => ['id', 'date', 'duration'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['duration', 'date', 'id'],
+						// No 'dates' entry: the REST method parses the text
+						// itself — a timestamp would be re-parsed into garbage.
+						'hours' => ['duration'],
+					],
+					'params' => [
+						'id' => "Rowid of the task (required).",
+						'date' => "Date of the work YYYY-MM-DD or 'today' (required).",
+						'duration' => "Duration in hours, e.g. 1.5 (required).",
+						'note' => "Optional note for the record.",
+						'user_id' => "Rowid of the user who did the work, or 'me' for yourself. Omit to use the acting user.",
+						'progress' => "New task progress percent 0-100 (optional)."
+					]
 				]
 			]
 		];

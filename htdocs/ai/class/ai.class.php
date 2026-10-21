@@ -26,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 
@@ -525,7 +526,7 @@ class Ai
 	 * Decode JSON into array
 	 *
 	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
-	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'salary', 'social_contribution', 'expense', 'thirdparty', ...)
 	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
@@ -683,6 +684,110 @@ class Ai
 				if (count($vatratesoflines) == 1 && count(array_filter(array_column($tmparray['lines'], 'vat_rate'), 'is_numeric')) == count($tmparray['lines'])) {
 					$tmparray['vat_rate'] = (float) reset($vatratesoflines);
 				}
+			}
+		} elseif ($type == 'salary') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$employee = (isset($json['employee']) && is_array($json['employee'])) ? $json['employee'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			if (!empty($employee['name']) && is_string($employee['name'])) {
+				$tmparray['employee_name'] = $employee['name'];
+			}
+			if (!empty($docinfo['title']) && is_string($docinfo['title'])) {
+				$tmparray['label'] = $docinfo['title'];
+			}
+
+			// Dates (period of salary and payment date)
+			$arraydatekeys = array(
+				'period_start' => array('period_start', 'start_date', 'date_start'),
+				'period_end' => array('period_end', 'end_date', 'date_end'),
+				'payment_date' => array('payment_date', 'date_payment', 'paid_on')
+			);
+			foreach ($arraydatekeys as $keydest => $keyssrc) {
+				foreach ($keyssrc as $keysrc) {
+					if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+						$tmparray[$keydest] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+						break;
+					}
+				}
+			}
+
+			// Amounts
+			$tmparray['gross_salary'] = $summary['gross_salary'] ?? ($summary['gross_pay'] ?? ($summary['gross'] ?? null));
+			$tmparray['net_to_pay'] = $summary['net_to_pay'] ?? ($summary['net_pay'] ?? ($summary['net_paid'] ?? ($summary['net_salary'] ?? null)));
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
+			}
+		} elseif ($type == 'social_contribution') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			foreach (array('title' => 'label', 'organization' => 'organization', 'reference' => 'reference') as $keysrc => $keydest) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc])) {
+					$tmparray[$keydest] = $docinfo[$keysrc];
+				}
+			}
+			if (!empty($json['employee']['name']) && is_string($json['employee']['name'])) {
+				$tmparray['employee_name'] = $json['employee']['name'];
+			}
+
+			// Dates (end of period the tax is related to, and due date)
+			$arraydatekeys = array(
+				'period_start' => array('period_start', 'start_date'),
+				'period_end' => array('period_end', 'end_date'),
+				'due_date' => array('due_date', 'payment_date', 'date_limit')
+			);
+			foreach ($arraydatekeys as $keydest => $keyssrc) {
+				foreach ($keyssrc as $keysrc) {
+					if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+						$tmparray[$keydest] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+						break;
+					}
+				}
+			}
+
+			// Amount
+			$tmparray['amount'] = $summary['amount_to_pay'] ?? ($summary['total_to_pay'] ?? ($summary['amount'] ?? ($summary['total'] ?? null)));
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
+			}
+		} elseif ($type == 'expense') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			foreach (array('merchant' => 'merchant', 'title' => 'label', 'category' => 'category') as $keysrc => $keydest) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc])) {
+					$tmparray[$keydest] = $docinfo[$keysrc];
+				}
+			}
+
+			// Date of expense
+			foreach (array('date', 'expense_date', 'issue_date') as $keysrc) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+					$tmparray['date'] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+					break;
+				}
+			}
+
+			// Amounts. If VAT rate is not provided, we try to calculate it from amounts.
+			$tmparray['total_ttc'] = $summary['total_including_tax'] ?? ($summary['total_ttc'] ?? ($summary['total'] ?? null));
+			$tmparray['total_ht'] = $summary['total_excluding_tax'] ?? ($summary['total_ht'] ?? null);
+			$tmparray['vat_rate'] = $summary['vat_rate'] ?? ($summary['tax_rate'] ?? null);
+			$vatamount = $summary['vat_amount'] ?? ($summary['tax_amount'] ?? null);
+			if (!is_numeric($tmparray['vat_rate']) && is_numeric($vatamount) && is_numeric($tmparray['total_ht']) && $tmparray['total_ht'] > 0) {
+				$tmparray['vat_rate'] = round(100 * (float) $vatamount / (float) $tmparray['total_ht'], 1);
+			}
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
 			}
 		}
 

@@ -13740,7 +13740,22 @@ class Form
 						$("#dateone").datepicker("option", "disabled", false);
 						$("#value-selector").prop("disabled", false);
 					}
-				});
+
+						// For the "in list" operators on a field with a list of predefined values, values are typed as a list
+						// into the free text input, so we show it instead of the single value selector
+						const selectedFieldForOperator = $("#search_filter_field").val();
+						if (arrayoffiltercriterias[selectedFieldForOperator] !== undefined && arrayoffiltercriterias[selectedFieldForOperator]["arrayofkeyval"] !== undefined) {
+							if (selectedOperator === "IsInList" || selectedOperator === "IsNotInList") {
+								$("#value-selector").hide();
+								$("#value-selector").next(".select2-container").hide();
+								$(".value-input").val("").show();
+							} else {
+								$(".value-input").val("").hide();
+								$("#value-selector").show();
+								$("#value-selector").next(".select2-container").show();
+							}
+						}
+					});
 
 				$(".add-filter-btn").on("click", function(event) {
 					console.log("We click on add-filter-btn");
@@ -13760,8 +13775,9 @@ class Form
 						console.log("value="+value);
 					}
 
-					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					// If the selected field has an array of values then take the selected value,
+					// except for the "in list" operators for which the values are typed into the free text input
+					if (operator !== "IsInList" && operator !== "IsNotInList" && arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 

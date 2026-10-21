@@ -8,6 +8,7 @@ ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. This generally happens when a translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
+ErrorSalaryAlreadyExistsForThisPeriod=A salary already exists for this employee and this period.
 ErrorTitleAlreadyExists=Title <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
