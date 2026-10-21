@@ -162,6 +162,145 @@ class DocumentTransfer
 	}
 
 	/**
+	 * Dolibarr stores core links under the object's element, while objects loaded
+	 * by fetchObjectByElement() may also expose a module-prefixed link type.
+	 * Search both aliases so destination discovery and final validation agree.
+	 *
+	 * @param CommonObject $source Source object
+	 * @return array{objects:array<int,CommonObject>,ids:array<string,array<int,int>>}|false Related objects and IDs
+	 */
+	private function fetchRelatedObjects(CommonObject $source)
+	{
+		$related = array('objects' => array(), 'ids' => array());
+		$aliases = array_unique(array($source->element, $source->getElementType()));
+		foreach ($aliases as $alias) {
+			$source->clearObjectLinkedCache();
+			if ($source->fetchObjectLinked((int) $source->id, $alias, (int) $source->id, $alias) < 0) {
+				return $this->fail(500, 'ECMTransferFailed', 'related_objects_lookup_failed');
+			}
+			foreach ((array) $source->linkedObjects as $linkedObjects) {
+				foreach ((array) $linkedObjects as $linkedObject) {
+					$related['objects'][] = $linkedObject;
+				}
+			}
+			foreach ((array) $source->linkedObjectsIds as $linkedType => $links) {
+				foreach ((array) $links as $linkedId) {
+					$related['ids'][$linkedType][] = (int) $linkedId;
+				}
+			}
+		}
+		return $related;
+	}
+
+	/**
+	 * List directly linked document destinations that the user may write to.
+	 * The final file-specific checks are repeated by inspect() before any move.
+	 *
+	 * @param CommonObject $source Source object
+	 * @param string $filename Safe filename from the source document list
+	 * @param User $user Acting user
+	 * @return array<int,array{type:string,id:int,ref:string}>|false Related destinations
+	 */
+	public function getRelatedDestinations(CommonObject $source, $filename, User $user)
+	{
+		$typeByElement = array(
+			'facture' => 'invoice',
+			'invoice_supplier' => 'supplier_invoice',
+			'commande' => 'order',
+			'order_supplier' => 'supplier_order',
+			'propal' => 'propal',
+			'supplier_proposal' => 'supplier_proposal',
+			'project' => 'project',
+			'project_task' => 'project_task',
+			'contrat' => 'contract',
+			'shipping' => 'shipment',
+			'ticket' => 'ticket'
+		);
+		$related = $this->fetchRelatedObjects($source);
+		if ($related === false) {
+			return false;
+		}
+		$candidates = $related['objects'];
+		$projectId = (int) ($source->fk_project ?? $source->fk_projet ?? 0);
+		if ($projectId > 0 && $source->element !== 'project') {
+			$project = fetchObjectByElement($projectId, 'project');
+			if ($project instanceof CommonObject && (int) $project->id === $projectId) {
+				$candidates[] = $project;
+			}
+		}
+
+		$destinations = array();
+		foreach ($candidates as $candidate) {
+			if (!($candidate instanceof CommonObject) || empty($typeByElement[$candidate->element])
+				|| empty($candidate->id) || empty($candidate->ref)
+				|| ($candidate->element === $source->element && (int) $candidate->id === (int) $source->id)) {
+				continue;
+			}
+			$type = $typeByElement[$candidate->element];
+			$resolved = $this->resolve($type, (int) $candidate->id, $filename, $user, false);
+			if ($resolved === false) {
+				continue;
+			}
+			$key = $type.':'.((int) $candidate->id);
+			$destinations[$key] = array('type' => $type, 'id' => (int) $candidate->id, 'ref' => (string) $resolved['object']->ref);
+		}
+		$this->error = '';
+		$this->reason = '';
+		$this->status = 0;
+		return array_values($destinations);
+	}
+
+	/**
+	 * Accept only a direct Dolibarr object link or the object's assigned project.
+	 *
+	 * @param CommonObject $source Source object
+	 * @param CommonObject $target Destination object
+	 * @return bool|null True when related, null when the link lookup failed
+	 */
+	private function areRelated(CommonObject $source, CommonObject $target)
+	{
+		$sourceProjectId = (int) ($source->fk_project ?? $source->fk_projet ?? 0);
+		$targetProjectId = (int) ($target->fk_project ?? $target->fk_projet ?? 0);
+		if (($target->element === 'project' && $sourceProjectId === (int) $target->id)
+			|| ($source->element === 'project' && $targetProjectId === (int) $source->id)) {
+			return true;
+		}
+		$related = $this->fetchRelatedObjects($source);
+		if ($related === false) {
+			return null;
+		}
+		foreach ($related['ids'] as $linkedType => $links) {
+			if ($linkedType !== $target->getElementType() && $linkedType !== $target->element) {
+				continue;
+			}
+			if (in_array((int) $target->id, $links, true)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Both Dolibarr's file indexer and its uploader can bind an ECM row to an
+	 * object; the former stores element and the latter stores table_element.
+	 *
+	 * @param EcmFiles $ecm Indexed document
+	 * @param CommonObject $object Expected owner
+	 * @return bool True when the ECM row belongs to the object
+	 */
+	private function isBoundToObject(EcmFiles $ecm, CommonObject $object)
+	{
+		if ((int) $ecm->src_object_id !== (int) $object->id) {
+			return false;
+		}
+		$types = array($object->element, $object->table_element);
+		if (!empty($object->module)) {
+			$types[] = $object->table_element.'@'.$object->module;
+		}
+		return in_array($ecm->src_object_type, $types, true);
+	}
+
+	/**
 	 * Check a transfer without changing files or database rows.
 	 *
 	 * @param string $sourceType Source document modulepart
@@ -198,6 +337,13 @@ class DocumentTransfer
 		if ($target === false) {
 			return false;
 		}
+		$related = $this->areRelated($source['object'], $target['object']);
+		if ($related === null) {
+			return $this->fail(500, 'ECMTransferFailed', 'related_objects_lookup_failed');
+		}
+		if (!$related) {
+			return $this->fail(409, 'ECMTransferUnrelated', 'objects_not_related');
+		}
 		if ((int) $source['object']->entity !== (int) $target['object']->entity
 			|| $source['path'] === $target['path']) {
 			return $this->fail(409, 'ECMTransferConflict', 'same_storage_or_cross_entity');
@@ -222,7 +368,7 @@ class DocumentTransfer
 			return $this->fail(500, 'ECMTransferFailed', 'source_index_lookup_failed');
 		}
 		if ($found > 0) {
-			$bound = (int) $ecm->src_object_id === $sourceId && $ecm->src_object_type === $source['object']->table_element;
+			$bound = $this->isBoundToObject($ecm, $source['object']);
 			$unbound = empty($ecm->src_object_id) && empty($ecm->src_object_type);
 			if ((int) $ecm->entity !== (int) $source['object']->entity || (!$bound && !$unbound)) {
 				return $this->fail(409, 'ECMTransferConflict', 'source_index_wrong_object');
@@ -300,8 +446,7 @@ class DocumentTransfer
 			if ($ecm->fetch($checked['ecm_file_id']) <= 0
 				|| $ecm->filepath.'/'.$ecm->filename !== $checked['source']['ecm_path']
 				|| (int) $ecm->entity !== (int) $checked['source']['object']->entity
-				|| !((int) $ecm->src_object_id === (int) $sourceId
-					&& $ecm->src_object_type === $checked['source']['object']->table_element
+				|| !($this->isBoundToObject($ecm, $checked['source']['object'])
 					|| (empty($ecm->src_object_id) && empty($ecm->src_object_type)))
 				|| !empty($ecm->share) || $ecm->gen_or_uploaded === 'generated') {
 				return $this->discardCopy($targetPath, 'source_index_changed', 409, 'ECMTransferConflict');

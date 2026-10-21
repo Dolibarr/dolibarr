@@ -52,19 +52,21 @@ foreach ((array) ($filearray ?? array()) as $file) {
 }
 if ($canTransfer && !empty($transferableFiles)) {
 	$langs->loadLangs(array('ecm', 'propal', 'supplier_proposal', 'projects', 'contracts', 'sendings', 'ticket'));
+	$transfer = new DocumentTransfer($db);
+	$relatedDestinations = $transfer->getRelatedDestinations($object, $transferableFiles[0], $user);
 	print load_fiche_titre($langs->trans('ECMTransferToObject'), '', 'file');
 	print '<p class="opacitymedium">'.$langs->trans('ECMTransferExplanation').'</p>';
 
 	if (!empty($documentTransferPreview)) {
-		$sourceLabel = $langs->trans($targetTypes[$documentTransferSourceType] ?? 'Object');
-		$targetLabel = $langs->trans($targetTypes[$documentTransferPreview['target_type']] ?? 'Object');
+		$sourceLabel = $langs->transnoentitiesnoconv($targetTypes[$documentTransferSourceType] ?? 'Object');
+		$targetLabel = $langs->transnoentitiesnoconv($targetTypes[$documentTransferPreview['target_type']] ?? 'Object');
 		print '<div class="info">';
-		print $langs->trans('ECMTransferPreview',
-			dol_escape_htmltag($documentTransferPreview['filename']),
-			dol_escape_htmltag($sourceLabel),
-			dol_escape_htmltag($documentTransferPreview['source_ref']),
-			dol_escape_htmltag($targetLabel),
-			dol_escape_htmltag($documentTransferPreview['target_ref']));
+		print dol_escape_htmltag($langs->transnoentitiesnoconv('ECMTransferPreview',
+			$documentTransferPreview['filename'],
+			$sourceLabel,
+			$documentTransferPreview['source_ref'],
+			$targetLabel,
+			$documentTransferPreview['target_ref']));
 		print '</div>';
 		print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?id='.((int) $object->id).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -78,27 +80,34 @@ if ($canTransfer && !empty($transferableFiles)) {
 		print '</form>';
 	}
 
-	print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?id='.((int) $object->id).'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="previewtransfer">';
-	print '<table class="border centpercent">';
-	print '<tr><td class="titlefield">'.$langs->trans('ECMTransferChooseFile').'</td><td>';
-	print '<select class="flat minwidth300" name="transfer_filename" required>';
-	print '<option value=""></option>';
-	foreach ($transferableFiles as $filename) {
-		print '<option value="'.dolPrintHTMLForAttribute($filename).'">'.dol_escape_htmltag($filename).'</option>';
+	if ($relatedDestinations === false) {
+		print '<div class="error">'.$langs->trans($transfer->error).'</div>';
+	} elseif (empty($relatedDestinations)) {
+		print '<div class="opacitymedium">'.$langs->trans('ECMTransferNoRelatedDestination').'</div>';
+	} else {
+		print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?id='.((int) $object->id).'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="previewtransfer">';
+		print '<table class="border centpercent">';
+		print '<tr><td class="titlefield">'.$langs->trans('ECMTransferChooseFile').'</td><td>';
+		print '<select class="flat minwidth300" name="transfer_filename" required>';
+		print '<option value=""></option>';
+		foreach ($transferableFiles as $filename) {
+			print '<option value="'.dolPrintHTMLForAttribute($filename).'">'.dol_escape_htmltag($filename).'</option>';
+		}
+		print '</select></td></tr>';
+		print '<tr><td>'.$langs->trans('ECMTransferRelatedDestination').'</td><td>';
+		print '<select class="flat minwidth300" name="transfer_destination" required>';
+		print '<option value=""></option>';
+		foreach ($relatedDestinations as $destination) {
+			$typeLabel = $langs->trans($targetTypes[$destination['type']] ?? 'Object');
+			print '<option value="'.dolPrintHTMLForAttribute($destination['type'].':'.$destination['id']).'">';
+			print dol_escape_htmltag($typeLabel.' '.$destination['ref']);
+			print '</option>';
+		}
+		print '</select></td></tr>';
+		print '</table>';
+		print '<div class="center"><input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('ECMTransferCheck')).'"></div>';
+		print '</form>';
 	}
-	print '</select></td></tr>';
-	print '<tr><td>'.$langs->trans('ECMTransferTargetType').'</td><td>';
-	print '<select class="flat minwidth300" name="transfer_target_type" required>';
-	foreach ($targetTypes as $type => $key) {
-		print '<option value="'.dolPrintHTMLForAttribute($type).'">'.$langs->trans($key).'</option>';
-	}
-	print '</select></td></tr>';
-	print '<tr><td>'.$langs->trans('ECMTransferTargetId').'</td><td>';
-	print '<input class="flat minwidth300" type="number" min="1" name="transfer_target_id" required>';
-	print '</td></tr>';
-	print '</table>';
-	print '<div class="center"><input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('ECMTransferCheck')).'"></div>';
-	print '</form>';
 }

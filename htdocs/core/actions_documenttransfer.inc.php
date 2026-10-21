@@ -45,6 +45,15 @@ if ($action === 'previewtransfer' || $action === 'confirmtransfer') {
 		$filename = GETPOST('transfer_filename', 'alpha');
 		$targetType = GETPOST('transfer_target_type', 'aZ09arobase');
 		$targetId = GETPOSTINT('transfer_target_id');
+		if ($action === 'previewtransfer') {
+			$destination = GETPOST('transfer_destination', 'alpha');
+			if (preg_match('/^([a-z][a-z0-9_]*):([1-9][0-9]*)$/', $destination, $matches)) {
+				$targetType = $matches[1];
+				$targetId = (int) $matches[2];
+			} else {
+				$targetId = 0;
+			}
+		}
 		$targetRef = GETPOST('transfer_target_ref', 'alpha');
 		$sourceType = $documentTransferSourceType;
 		if ($targetId <= 0) {

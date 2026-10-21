@@ -109,4 +109,85 @@ class DocumentTransferTest extends PHPUnit\Framework\TestCase
 		$this->assertArrayNotHasKey('source', $result);
 		$this->assertArrayNotHasKey('target', $result);
 	}
+
+	/**
+	 * The object API can prefix a core module's link type, even when the link
+	 * itself was stored using the unprefixed element name.
+	 *
+	 * @return void
+	 */
+	public function testOnlyLinkedTargetsAreAcceptedAcrossCoreTypeAliases()
+	{
+		global $db;
+
+		$source = new class($db) extends CommonObject {
+			public $element = 'order_supplier';
+			public $table_element = 'commande_fournisseur';
+			public $module = 'fournisseur';
+			public $id = 7;
+
+			/**
+			 * Return a linked supplier invoice only for the core element alias.
+			 *
+			 * @param ?int $sourceid Source ID
+			 * @param string $sourcetype Source type
+			 * @param ?int $targetid Target ID
+			 * @param string $targettype Target type
+			 * @param string $clause Link clause
+			 * @param int $alsosametype Include same type
+			 * @param string $orderby Sort order
+			 * @param int $loadalsoobjects Load objects
+			 * @return int Success
+			 */
+			public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
+			{
+				$this->linkedObjectsIds = $sourcetype === 'order_supplier' ? array('invoice_supplier' => array(1 => 11)) : array();
+				$this->linkedObjects = array();
+				return 1;
+			}
+		};
+		$target = new class($db) extends CommonObject {
+			public $element = 'invoice_supplier';
+			public $table_element = 'facture_fourn';
+			public $module = 'fournisseur';
+			public $id = 11;
+		};
+		$transfer = new DocumentTransfer($db);
+		$method = new ReflectionMethod(DocumentTransfer::class, 'areRelated');
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
+		$this->assertTrue($method->invoke($transfer, $source, $target));
+		$target->id = 12;
+		$this->assertFalse($method->invoke($transfer, $source, $target));
+	}
+
+	/**
+	 * Dolibarr may index a file under either the element or its table name.
+	 *
+	 * @return void
+	 */
+	public function testIndexedFileAcceptsBothCoreObjectAliases()
+	{
+		global $db;
+
+		$object = new class($db) extends CommonObject {
+			public $element = 'order_supplier';
+			public $table_element = 'commande_fournisseur';
+			public $id = 7;
+		};
+		$ecm = new EcmFiles($db);
+		$ecm->src_object_id = 7;
+		$transfer = new DocumentTransfer($db);
+		$method = new ReflectionMethod(DocumentTransfer::class, 'isBoundToObject');
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
+		$ecm->src_object_type = 'order_supplier';
+		$this->assertTrue($method->invoke($transfer, $ecm, $object));
+		$ecm->src_object_type = 'commande_fournisseur';
+		$this->assertTrue($method->invoke($transfer, $ecm, $object));
+		$ecm->src_object_type = 'invoice_supplier';
+		$this->assertFalse($method->invoke($transfer, $ecm, $object));
+	}
 }
