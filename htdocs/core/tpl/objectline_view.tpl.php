@@ -693,7 +693,11 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" data-dol-action="editline" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
+		<a class="editfielda reposition" data-dol-action="editline"<?php
+		if ($this->isAjaxLineEdit()) {
+			// Edited in ajax by Dolibarr.tools.card.lines, the url is used without javascript
+			print ' data-dol-edit-line="'.((int) $line->id).'" data-dol-element="'.dolPrintHTMLForAttribute($this->element).'" data-dol-id="'.((int) $this->id).'"';
+		} ?> href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -702,7 +706,12 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (!$situationinvoicelinewithchild && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a child line.
-		print '<a class="reposition" data-dol-action="deleteline" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
+		print '<a class="reposition" data-dol-action="deleteline"';
+		if ($this->isAjaxLineEdit()) {
+			// Deleted in ajax by Dolibarr.tools.card.lines, the url is used without javascript
+			print ' data-dol-delete-line="'.((int) $line->id).'" data-dol-element="'.dolPrintHTMLForAttribute($this->element).'" data-dol-id="'.((int) $this->id).'"';
+		}
+		print ' href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
