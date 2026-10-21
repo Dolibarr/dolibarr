@@ -126,7 +126,6 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if ($color == '-1') {
 			$color = '';
 		}
-		$enabled = trim(GETPOST('AGENDA_EXT_ENABLED'.$i, 'alpha'));
 		$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE'.$i) : '');
 
 		if (!empty($src) && !dol_is_url($src)) {
@@ -151,10 +150,6 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 			$error++;
 		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
