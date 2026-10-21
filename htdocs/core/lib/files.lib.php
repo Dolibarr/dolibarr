@@ -4418,15 +4418,23 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 		$utils = new Utils($db);
 		$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+		$outputfiletxt = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.txt'; // File where docling writes the converted text
+
+		// Docling can convert images with OCR, so we set the input format according to the file extension
+		$fromformat = (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filetoprocess) ? 'image' : 'pdf');
 
 		// We also exclude '/temp/' dir and 'documents/admin/documents'
 		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
-		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text ".escapeshellarg($filetoprocess);
+		dol_delete_file($outputfiletxt);
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from ".$fromformat." --to text --output-file ".escapeshellarg($outputfiletxt)." ".escapeshellarg($filetoprocess);
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-		if (!$resultexec['error']) {
-			$txt = $resultexec['output'];
+		// Docling writes the result into the file set with --output-file. The standard output contains only logs, and docling may
+		// return no error even if conversion failed, so the conversion is a success only if the output file was created.
+		if (!$resultexec['error'] && dol_is_file($outputfiletxt)) {
+			$txt = (string) file_get_contents($outputfiletxt);
+			dol_delete_file($outputfiletxt);
 			//$matches = array();
 			//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
 			//	$keywords = $matches[1];
@@ -4437,8 +4445,8 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 			$textforfulltextindex = $txt;
 		} else {
 			$message .= $resultexec['output'];
-			$message .= ($message ? "\n" : "").$resultexec['error'];
-			dol_syslog($resultexec['error']);
+			$message .= ($message ? "\n" : "").($resultexec['error'] ? $resultexec['error'] : 'Docling did not generate the output file');
+			dol_syslog('dolDocToText docling failed: '.($resultexec['error'] ? $resultexec['error'] : 'no output file'), LOG_WARNING);
 			$error++;
 		}
 	}

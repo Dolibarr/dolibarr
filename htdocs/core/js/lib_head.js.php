@@ -1257,6 +1257,9 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 		selectlink: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		text: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,

@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 $langs->loadLangs(array("main", "exports", "other"));
 
@@ -109,7 +111,7 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlo
 	exit(1);
 }
 
-if ($action == 'displayfile') {	// Return the uploaded file content for preview. Only PDF and images uploaded by the current user are allowed.
+if ($action == 'displayfile') {	// Test on permission not required here. Only files uploaded by the current user are returned: the file name embeds the user id.
 	$filetodisplay = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
 	$mimetodisplay = dol_mimetype($filetodisplay);
 	if (!preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $filetodisplay)
@@ -152,6 +154,10 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-erid'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'salaries') {
 		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-salid'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
+	} elseif ($modulepart == 'chargesociales') {
+		$permlevel1 = 'charges';
+		$permlevel2 = 'lire';
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id;
 	}
 
 	if ($permlevel2) {
@@ -187,7 +193,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 	dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
 }
 
-if ($action == 'addobject') {
+if ($action == 'addobject') {	// Test on permission done later
 	$mandatoryfieldsareko = 0;
 
 	if ($modulepart == 'invoice_supplier') {
@@ -234,6 +240,76 @@ if ($action == 'addobject') {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 			$mandatoryfieldsareko = 1;
 		}
+	} elseif ($modulepart == 'salaries') {
+		// Check mandatory fields for salary (same rules than salaries/card.php)
+		$langs->load("salaries");
+		$datesp = dol_mktime(12, 0, 0, GETPOSTINT("datespmonth"), GETPOSTINT("datespday"), GETPOSTINT("datespyear"));
+		$dateep = dol_mktime(12, 0, 0, GETPOSTINT("dateepmonth"), GETPOSTINT("dateepday"), GETPOSTINT("dateepyear"));
+		if (GETPOSTINT('usersalaryid') <= 0) {
+			$langs->load("hrm");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!GETPOST('label', 'alphanohtml')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (empty($datesp) || empty($dateep)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Period")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (GETPOSTFLOAT('amount') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!$mandatoryfieldsareko) {
+			// Check there is not already a salary for the same employee and the same period
+			$sql = "SELECT rowid FROM ".$db->prefix()."salary";
+			$sql .= " WHERE fk_user = ".((int) GETPOSTINT('usersalaryid'));
+			$sql .= " AND datesp = '".$db->escape(dol_print_date($datesp, 'dayrfc'))."'";
+			$sql .= " AND dateep = '".$db->escape(dol_print_date($dateep, 'dayrfc'))."'";
+			$sql .= " AND entity IN (".getEntity('salary').")";
+			$sql .= $db->plimit(1);
+			$resql = $db->query($sql);
+			if (!$resql) {
+				setEventMessages($db->lasterror(), null, 'errors');
+				$mandatoryfieldsareko = 1;
+			} elseif ($db->num_rows($resql) > 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorSalaryAlreadyExistsForThisPeriod"), null, 'errors');
+				$mandatoryfieldsareko = 1;
+			}
+		}
+		if (!$user->hasRight('salaries', 'write')) {
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+	} elseif ($modulepart == 'chargesociales') {
+		// Check mandatory fields for social or fiscal tax (same rules than compta/sociales/card.php)
+		if (GETPOSTINT('socialcontrib') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!GETPOST('label', 'alphanohtml')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!dol_mktime(12, 0, 0, GETPOSTINT("echmonth"), GETPOSTINT("echday"), GETPOSTINT("echyear"))) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateDue")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!dol_mktime(12, 0, 0, GETPOSTINT("periodmonth"), GETPOSTINT("periodday"), GETPOSTINT("periodyear"))) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PeriodEndDate")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (GETPOSTFLOAT('amount') <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
+		if (!$user->hasRight('tax', 'charges', 'creer')) {
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			$mandatoryfieldsareko = 1;
+		}
 	}
 
 	if ($mandatoryfieldsareko) {
@@ -242,9 +318,13 @@ if ($action == 'addobject') {
 }
 
 $createdobject = null;
-if ($action == 'addobject' && $modulepart == 'invoice_supplier') {
+$destdir = '';	// Directory where to move the uploaded file once object is created
+if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales'))) {	// Test on permission already done
 	$error = 0;
 
+	$db->begin();
+}
+if ($action == 'addobject' && $modulepart == 'invoice_supplier') {	// Test on permission already done
 	$tmpthirdparty = new Societe($db);
 	$tmpthirdparty->fetch(GETPOSTINT('socid'));
 	$tmpproduct = new Product($db);
@@ -257,8 +337,6 @@ if ($action == 'addobject' && $modulepart == 'invoice_supplier') {
 	}
 	$vat_rate = price2num($vat_rate);
 	$currency_code = GETPOST('currency_code', 'aZ09');
-
-	$db->begin();
 
 	$createdobject = new FactureFournisseur($db);
 	$createdobject->socid = $tmpthirdparty->id;
@@ -307,12 +385,61 @@ if ($action == 'addobject' && $modulepart == 'invoice_supplier') {
 		}
 	}
 
-	// Move the uploaded file as an attached file of the invoice
 	if (!$error) {
+		$destdir = getMultidirOutput($createdobject).'/'.get_exdir($createdobject->id, 2, 0, 0, $createdobject, 'invoice_supplier').dol_sanitizeFileName($createdobject->ref);
+	}
+}
+if ($action == 'addobject' && $modulepart == 'salaries') {	// Test on permission already done
+	$fuser = new User($db);
+	$fuser->fetch(GETPOSTINT('usersalaryid'));
+
+	$createdobject = new Salary($db);
+	$createdobject->fk_user = $fuser->id;
+	$createdobject->label = GETPOST('label', 'alphanohtml');
+	$createdobject->datesp = dol_mktime(12, 0, 0, GETPOSTINT("datespmonth"), GETPOSTINT("datespday"), GETPOSTINT("datespyear"));
+	$createdobject->dateep = dol_mktime(12, 0, 0, GETPOSTINT("dateepmonth"), GETPOSTINT("dateepday"), GETPOSTINT("dateepyear"));
+	$createdobject->amount = price2num(GETPOST('amount', 'alpha'), 'MT', 2);
+	$createdobject->salary = $fuser->salary;	// Set user current salary as ref salary, as in salaries/card.php
+	$createdobject->type_payment = 0;
+	$createdobject->fk_user_author = $user->id;
+	if (GETPOSTFLOAT('gross_salary') > 0) {
+		$createdobject->note = $langs->transnoentitiesnoconv("GrossSalary").': '.price(GETPOSTFLOAT('gross_salary'), 0, $langs, 1, -1, -1, $conf->currency);
+	}
+
+	$result = $createdobject->create($user);
+	if ($result <= 0) {
+		$error++;
+		setEventMessages($createdobject->error, $createdobject->errors, 'errors');
+	} else {
+		$createdobject->fetch($createdobject->id);	// To get properties like ref, used by getNomUrl()
+		$destdir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName((string) $createdobject->id);
+	}
+}
+if ($action == 'addobject' && $modulepart == 'chargesociales') {	// Test on permission already done
+	$createdobject = new ChargeSociales($db);
+	$createdobject->type = GETPOSTINT('socialcontrib');
+	$createdobject->label = GETPOST('label', 'alphanohtml');
+	$createdobject->date_ech = dol_mktime(12, 0, 0, GETPOSTINT("echmonth"), GETPOSTINT("echday"), GETPOSTINT("echyear"));
+	$createdobject->period = dol_mktime(12, 0, 0, GETPOSTINT("periodmonth"), GETPOSTINT("periodday"), GETPOSTINT("periodyear"));
+	$createdobject->amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+	$createdobject->fk_user = (GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : 0);
+	$createdobject->paye = ChargeSociales::STATUS_UNPAID;
+
+	$result = $createdobject->create($user);
+	if ($result <= 0) {
+		$error++;
+		setEventMessages($createdobject->error, $createdobject->errors, 'errors');
+	} else {
+		$createdobject->fetch($createdobject->id);	// To get properties like ref, used by getNomUrl()
+		$destdir = $conf->tax->dir_output.'/'.dol_sanitizeFileName((string) $createdobject->ref);
+	}
+}
+if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales'))) {
+	// Move the uploaded file as an attached file of the created object
+	if (!$error && $destdir) {
 		$filetoattach = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
 		if (preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $filetoattach) && dol_is_file($upload_dir.'/'.$filetoattach)) {
 			$destfilename = preg_replace('/^upload_page-[a-z_]+-uid\d+(-thiid\d+)?(-pid\d+)?(-erid\d+)?(-salid\d+)?-/', '', $filetoattach);
-			$destdir = getMultidirOutput($createdobject).'/'.get_exdir($createdobject->id, 2, 0, 0, $createdobject, 'invoice_supplier').dol_sanitizeFileName($createdobject->ref);
 			dol_mkdir($destdir);
 			$result = dol_move($upload_dir.'/'.$filetoattach, $destdir.'/'.$destfilename, '0', 1, 0, 1, array('gen_or_uploaded' => 'uploaded'));
 			if (!$result) {
@@ -455,7 +582,7 @@ if (empty($action)) {
 	if (isModEnabled('tax')) {
 		$langs->load("taxes");
 		$uploadform .= '
-		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
+		<div id="socialcontribution" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("SocialContribution").'<br><br>';
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
@@ -651,6 +778,9 @@ if ($action == 'uploadfile') {
 	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 	print '<input type="hidden" name="prodid" value="'.($prodid > 0 ? 'idprod_'.$prodid : '').'">';
+	print '<input type="hidden" name="usersalaryid" value="'.GETPOSTINT('usersalaryid').'">';
+	print '<input type="hidden" name="socialcontrib" value="'.GETPOSTINT('socialcontrib').'">';
+	print '<input type="hidden" name="usertaxid" value="'.GETPOSTINT('usertaxid').'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="">';	// Fill by the ajax answer with the JSON encoded in base64
 	print '<div id="ajax-result-message"></div>';
@@ -704,7 +834,7 @@ if ($action == 'showsummary') {
 
 	if ($modulepart == 'invoice_supplier') {
 		// Parse JSON to get information for an invoice
-		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+		$invoiceindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'supplier_invoice');
 
 		//var_dump($json, $invoiceindoc);
 
@@ -746,7 +876,7 @@ if ($action == 'showsummary') {
 			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
 		}
 		print $s;
-		print '<br>';
+		print '<br><br>';
 		if (empty($tmpthirdparty->id)) {
 			if ($s) {
 				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
@@ -806,7 +936,7 @@ if ($action == 'showsummary') {
 			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
 		}
 		print $s;
-		print '<br>';
+		print '<br><br>';
 		if (empty($tmpproduct->id)) {
 			print $langs->trans("ChooseTheProductTouse").' ';
 			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
@@ -849,7 +979,7 @@ if ($action == 'showsummary') {
 			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
 		}
 		print $s;
-		print '<br>';
+		print '<br><br>';
 		if (!empty($invoiceindoc['supplierref'])) {
 			// Try to find supplier invoice
 
@@ -896,6 +1026,178 @@ if ($action == 'showsummary') {
 
 		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 		print "\n";
+	} elseif ($modulepart == 'salaries') {
+		$langs->loadLangs(array("salaries", "hrm", "compta", "bills"));
+
+		// Parse JSON to get information for a salary
+		$salaryindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'salary');
+
+		// Dates found in document are timestamps of the day in user timezone. We convert them into the same day at noon, as dates of salaries/card.php.
+		$arrayofdates = array();
+		foreach (array('period_start', 'period_end', 'payment_date') as $keydate) {
+			$arrayofdates[$keydate] = '';
+			$reg = array();
+			if (!empty($salaryindoc[$keydate]) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', dol_print_date($salaryindoc[$keydate], '%Y-%m-%d', 'tzuserrel'), $reg)) {
+				$arrayofdates[$keydate] = dol_mktime(12, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			}
+		}
+		// Values posted (when back after an error) have priority on values found in document
+		$datesp = GETPOSTISSET('datespday') ? dol_mktime(12, 0, 0, GETPOSTINT("datespmonth"), GETPOSTINT("datespday"), GETPOSTINT("datespyear")) : $arrayofdates['period_start'];
+		$dateep = GETPOSTISSET('dateepday') ? dol_mktime(12, 0, 0, GETPOSTINT("dateepmonth"), GETPOSTINT("dateepday"), GETPOSTINT("dateepyear")) : $arrayofdates['period_end'];
+		$amount = GETPOSTISSET('amount') ? GETPOST('amount', 'alpha') : (is_numeric($salaryindoc['net_to_pay'] ?? null) ? price((float) $salaryindoc['net_to_pay']) : '');
+		$label = GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $langs->transnoentitiesnoconv("Salary").($datesp ? ' '.dol_print_date($datesp, '%m/%Y') : '');
+
+		print "\n\n";
+		print '<div id="userpayroll" class="">';
+
+		// Employee
+		print img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("Employee").'<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		if (empty($salaryindoc['employee_name'])) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		} else {
+			print dolPrintLabel($salaryindoc['employee_name']);
+		}
+		print '<br><br>';
+		print $langs->trans("WillUse").' ';
+		print $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : -1, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+
+		print "\n";
+		print '<br><br><hr><br>';
+		print "\n";
+
+		// Salary
+		print img_picto('', 'salary', 'class="pictofixedwidth"').$langs->trans("Salary").'<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$tmpvalue = array();
+		if ($arrayofdates['period_start'] && $arrayofdates['period_end']) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Period").': '.dol_print_date($arrayofdates['period_start'], 'day').' - '.dol_print_date($arrayofdates['period_end'], 'day');
+		}
+		if ($arrayofdates['payment_date']) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("DatePayment").': '.dol_print_date($arrayofdates['payment_date'], 'day');
+		}
+		if (is_numeric($salaryindoc['gross_salary'] ?? null)) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("GrossSalary").': '.price((float) $salaryindoc['gross_salary']);
+		}
+		if (is_numeric($salaryindoc['net_to_pay'] ?? null)) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("NetToBePaid").': '.price((float) $salaryindoc['net_to_pay']);
+		}
+		if (!empty($salaryindoc['currency_code'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Currency").': '.dolPrintLabel($salaryindoc['currency_code']);
+		}
+		$s = implode(', ', $tmpvalue);
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br><br>';
+		print $langs->trans("SalaryWillBeCreated").'<br>';
+
+		print $langs->trans("Label").' ';
+		print '<input type="text" class="minwidth300" name="label" id="label" value="'.dolPrintHTMLForAttribute($label).'"><br>';
+		print $langs->trans("DateStartPeriod").' ';
+		print $form->selectDate($datesp, 'datesp', 0, 0, 1, 'summary-result', 1, 0);
+		print '<br>';
+		print $langs->trans("DateEndPeriod").' ';
+		print $form->selectDate($dateep, 'dateep', 0, 0, 1, 'summary-result', 1, 0);
+		print '<br>';
+		print $langs->trans("NetToBePaid").' ';
+		print '<input type="text" class="width100 right" name="amount" id="amount" value="'.dolPrintHTMLForAttribute((string) $amount).'">';
+		if (is_numeric($salaryindoc['gross_salary'] ?? null)) {
+			print '<input type="hidden" name="gross_salary" value="'.((float) $salaryindoc['gross_salary']).'">';
+		}
+
+		print '<br>
+		</div>
+		</div>';
+		print "\n";
+
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print "\n";
+	} elseif ($modulepart == 'chargesociales') {
+		$langs->loadLangs(array("compta", "hrm", "bills"));
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+		$formsocialcontrib = new FormSocialContrib($db);
+
+		// Parse JSON to get information for a social or fiscal tax
+		$taxindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'social_contribution');
+
+		// Dates found in document are timestamps of the day in user timezone. We convert them into the same day at noon, as dates of compta/sociales/card.php.
+		$arrayofdates = array();
+		foreach (array('period_start', 'period_end', 'due_date') as $keydate) {
+			$arrayofdates[$keydate] = '';
+			$reg = array();
+			if (!empty($taxindoc[$keydate]) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', dol_print_date($taxindoc[$keydate], '%Y-%m-%d', 'tzuserrel'), $reg)) {
+				$arrayofdates[$keydate] = dol_mktime(12, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
+			}
+		}
+		// Values posted (when back after an error) have priority on values found in document
+		$dateech = GETPOSTISSET('echday') ? dol_mktime(12, 0, 0, GETPOSTINT("echmonth"), GETPOSTINT("echday"), GETPOSTINT("echyear")) : $arrayofdates['due_date'];
+		$dateperiod = GETPOSTISSET('periodday') ? dol_mktime(12, 0, 0, GETPOSTINT("periodmonth"), GETPOSTINT("periodday"), GETPOSTINT("periodyear")) : $arrayofdates['period_end'];
+		$amount = GETPOSTISSET('amount') ? GETPOST('amount', 'alpha') : (is_numeric($taxindoc['amount'] ?? null) ? price((float) $taxindoc['amount']) : '');
+		$label = GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : trim((string) ($taxindoc['label'] ?? '').(!empty($taxindoc['organization']) && ($taxindoc['organization'] != ($taxindoc['label'] ?? '')) ? ' - '.$taxindoc['organization'] : ''));
+
+		print "\n\n";
+		print '<div id="socialcontribution" class="">';
+
+		print img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("SocialContribution").'<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$tmpvalue = array();
+		if (!empty($taxindoc['organization'])) {
+			$tmpvalue[] = dolPrintLabel($taxindoc['organization']);
+		}
+		if (!empty($taxindoc['label'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Label").': '.dolPrintLabel($taxindoc['label']);
+		}
+		if (!empty($taxindoc['reference'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Ref").': '.dolPrintLabel($taxindoc['reference']);
+		}
+		if ($arrayofdates['period_start'] || $arrayofdates['period_end']) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Period").': '.dol_print_date($arrayofdates['period_start'], 'day').' - '.dol_print_date($arrayofdates['period_end'], 'day');
+		}
+		if ($arrayofdates['due_date']) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("DateDue").': '.dol_print_date($arrayofdates['due_date'], 'day');
+		}
+		if (is_numeric($taxindoc['amount'] ?? null)) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Amount").': '.price((float) $taxindoc['amount']);
+		}
+		if (!empty($taxindoc['currency_code'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Currency").': '.dolPrintLabel($taxindoc['currency_code']);
+		}
+		if (!empty($taxindoc['employee_name'])) {
+			$tmpvalue[] = $langs->transnoentitiesnoconv("Employee").': '.dolPrintLabel($taxindoc['employee_name']);
+		}
+		$s = implode(', ', $tmpvalue);
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br><br>';
+		print $langs->trans("SocialContributionWillBeCreated").'<br>';
+
+		print $langs->trans("Type").' ';
+		print $formsocialcontrib->select_type_socialcontrib(GETPOSTINT('socialcontrib') > 0 ? GETPOSTINT('socialcontrib') : 0, 'socialcontrib', 1, 0, 1, 'minwidth200 maxwidth300', 0, 1);
+		print '<br>';
+		print $langs->trans("Label").' ';
+		print '<input type="text" class="minwidth300" name="label" id="label" value="'.dolPrintHTMLForAttribute($label).'"><br>';
+		print $langs->trans("DateDue").' ';
+		print $form->selectDate($dateech, 'ech', 0, 0, 1, 'summary-result', 1, 0);
+		print '<br>';
+		print $langs->trans("PeriodEndDate").' ';
+		print $form->selectDate($dateperiod, 'period', 0, 0, 1, 'summary-result', 1, 0);
+		print '<br>';
+		print $langs->trans("Amount").' ';
+		print '<input type="text" class="width100 right" name="amount" id="amount" value="'.dolPrintHTMLForAttribute((string) $amount).'"><br>';
+		print $langs->trans("Employee").' ';
+		print $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : -1, 'usertaxid', 1, null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+
+		print '<br>
+		</div>
+		</div>';
+		print "\n";
+
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print "\n";
 	}
 
 	// Preview of the uploaded file (PDF is shown with the native viewer of the browser)
@@ -926,7 +1228,13 @@ if ($action == 'showsummary') {
 
 	print '<div class="neutral">';
 	print '<br>';
-	print $langs->trans("DraftInvoiceCreatedFromFile").' ';
+	if ($createdobject instanceof Salary) {
+		print $langs->trans("SalaryCreatedFromFile").' ';
+	} elseif ($createdobject instanceof ChargeSociales) {
+		print $langs->trans("SocialContributionCreatedFromFile").' ';
+	} else {
+		print $langs->trans("DraftInvoiceCreatedFromFile").' ';
+	}
 	print $createdobject->getNomUrl(1);
 	print '<br>';
 	print '<br>';
@@ -1003,6 +1311,15 @@ if ($action == 'showsummary') {
 			console.log(event);
 			if (!event.target.closest('.disableautoopen')) {
 				$('#modulepart').val('salaries');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#socialcontribution:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link socialcontribution to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('chargesociales');
 				$('#fileInput').click();
 			}
 		});

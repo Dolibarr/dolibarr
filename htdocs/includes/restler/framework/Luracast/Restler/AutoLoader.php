@@ -72,7 +72,10 @@ namespace Luracast\Restler {
 
 			if (false !== $loaders = spl_autoload_functions())
 			if (0 < $count = count($loaders))
-				for ($i = 0, static::$rogueLoaders += $loaders;
+				// @CHANGE DOL Never keep an AutoLoader (current or previous instance) as a rogue loader, or loadLastResort() calls itself in an infinite loop
+				for ($i = 0, static::$rogueLoaders += array_filter($loaders, function ($loader) {
+						return !($loader instanceof AutoLoader);
+					});
 					 $i < $count && false != ($loader = $loaders[$i]);
 					 $i++)
 					if ($loader !== static::$perfectLoaders[0])

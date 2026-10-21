@@ -13,6 +13,11 @@
  * \brief Tests for the ticket write tools exposed by the AI MCP API bridge.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once __DIR__.'/../../htdocs/ai/class/mcptool.class.php';
 require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 
@@ -104,7 +109,7 @@ class AiMcpTicketWriteApiFixture
 /**
  * Ticket write metadata tests requiring neither a database nor an API credential.
  */
-class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
+class AiMcpApiBridgeTicketsTest extends CommonClassTest
 {
 	/**
 	 * The tickets endpoint now lists the write methods on top of the reads.

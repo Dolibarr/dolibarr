@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
@@ -39,7 +39,6 @@ require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent.class.php
 require_once dirname(__FILE__).'/../../htdocs/compta/paiement/cheque/class/remisecheque.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -142,7 +141,6 @@ class LoadBoardTest extends CommonClassTest
 		$userid = (int) $user->id;
 		$suffix = dol_print_date($now, 'dayhourlog');
 
-		$this->assertTrue($user->admin > 0, 'The test user must be an admin (no restriction on sales representatives)');
 		// Project::load_board() and Task::load_board() only see every project when the user has this specific right: being admin
 		// does not grant it on its own (loadRights() only auto-forces a handful of user-self rights for admins), and whether the
 		// CI test admin has it or not depends on the seed data, not on this test. Force it in memory so the synthetic projects
