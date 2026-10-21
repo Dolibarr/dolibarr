@@ -293,6 +293,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
 				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
 				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
 				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
@@ -322,6 +323,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
 				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag($buggedfile)
@@ -707,7 +709,8 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
+			$cachedelayshown = (!empty($val['cachedelay']) && $val['cachedelay'] > 0 ? (int) $val['cachedelay'] : $DELAYFORCACHE);
+			$tooltip = $langs->trans("Cache").' '.($cachedelayshown < 120 ? $cachedelayshown.'s' : round($cachedelayshown / 60).'mn');
 
 			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" class="marginleftonly check_ext_'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar"><span class="check_ext_text small">'.dol_escape_htmltag($val['name']).'</small></label> &nbsp; </div>';
 		}
@@ -910,7 +913,7 @@ if (count($listofextcals)) {
 		//var_dump($pathforcachefile);exit;
 
 		$ical = new ICal();
-		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
+		$ical->parse($url, $pathforcachefile, (!empty($extcal['cachedelay']) && $extcal['cachedelay'] > 0 ? (int) $extcal['cachedelay'] : $DELAYFORCACHE));
 		if ($ical->error) {
 			// Save error message for extcal
 			$listofextcals[$key]['error'] = $ical->error;
