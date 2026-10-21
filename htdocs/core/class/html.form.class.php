@@ -155,6 +155,31 @@ class Form
 	}
 
 	/**
+	 * Return if a field shown with editfieldkey() and editfieldval() is edited in ajax on the card, without reloading the page.
+	 * Enabled with MAIN_FEATURES_LEVEL >= 2 or the hidden option MAIN_USE_AJAX_FIELD_EDIT, only for the fields
+	 * of a CommonObject editable from the user interface (attribute 'uieditable', see CommonObject::isFieldEditableFromUi()).
+	 * Other fields keep the edition by reloading the page (action=edit<field>).
+	 *
+	 * @param	?object				$object		Object shown on the page
+	 * @param	string				$htmlname	Field name
+	 * @param	int<0,1>|boolean	$perm		Permission to edit the field
+	 * @return	bool
+	 */
+	protected function isAjaxFieldEdit($object, $htmlname, $perm)
+	{
+		global $user;
+
+		if (!$perm || !($object instanceof CommonObject) || empty($object->id) || empty($object->element)) {
+			return false;
+		}
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString('MAIN_USE_AJAX_FIELD_EDIT')) {
+			return false;
+		}
+
+		return $object->isFieldEditableFromUi($user, $htmlname);
+	}
+
+	/**
 	 * Output key field for an editable field
 	 *
 	 * @param 	string				$text 			Text of label or key to translate
@@ -176,8 +201,10 @@ class Form
 
 		$ret = '';
 
-		// TODO change for compatibility
-		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;/', $typeofdata)) {
+		$ajaxfieldedit = $this->isAjaxFieldEdit($object, $htmlname, $perm);
+
+		// Deprecated: option MAIN_USE_EDIT_IN_PLACE (jeditable) is replaced by the ajax edition of fields, see isAjaxFieldEdit()
+		if (!$ajaxfieldedit && getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;/', $typeofdata)) {
 			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
@@ -231,7 +258,13 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm && is_object($object)) {
-				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '">';
+				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '"';
+				if ($ajaxfieldedit && $object instanceof CommonObject) {
+					// The link opens the edition of the field on the card (Dolibarr.tools.fieldEdit), the url is used without javascript
+					$ret .= ' data-dol-edit-field="' . dolPrintHTMLForAttribute($htmlname) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '"';
+					$ret .= ' data-dol-tms="' . (empty($object->date_modification) ? 0 : (int) $object->date_modification) . '"';
+				}
+				$ret .= '>';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
 			}
@@ -307,8 +340,12 @@ class Form
 			}
 		}
 
+		$ajaxfieldedit = $this->isAjaxFieldEdit($object, $htmlname, $perm);
+
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		// Deprecated: option MAIN_USE_EDIT_IN_PLACE (jeditable) is replaced by the ajax edition of fields, see isAjaxFieldEdit()
+		if (!$ajaxfieldedit && getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+			// @phan-suppress-next-line PhanDeprecatedFunction
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
@@ -464,6 +501,11 @@ class Form
 				if ($formatfunc && method_exists($object, $formatfunc)) {
 					$ret = $object->$formatfunc($ret);
 				}
+
+				// Container of the value, replaced by the editor of the field and by its new value after an ajax edition
+				if ($ajaxfieldedit && $object instanceof CommonObject) {
+					$ret = '<span data-dol-field="' . dolPrintHTMLForAttribute($htmlname) . '" data-dol-element="' . dolPrintHTMLForAttribute($object->element) . '" data-dol-id="' . ((int) $object->id) . '">' . $ret . '</span>';
+				}
 			}
 		}
 		return $ret;
@@ -546,6 +588,8 @@ class Form
 
 	/**
 	 * Output edit in place form
+	 *
+	 * @deprecated Option MAIN_USE_EDIT_IN_PLACE (jeditable) is replaced by the ajax edition of fields, see isAjaxFieldEdit()
 	 *
 	 * @param 	CommonObject	$object 	Object
 	 * @param 	string 	$value 		Value to show/edit

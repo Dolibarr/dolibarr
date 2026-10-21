@@ -30,6 +30,8 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/defaultvalues.class.php';
 
@@ -1565,6 +1567,14 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertStringNotContainsString('<CLIENT>', $propal->ajaxOutputField('ref_client'), 'Output is escaped');
 		$this->assertStringContainsString('<b>Public note</b>', $propal->ajaxOutputField('note_public'), 'Note (visible = 0) is output');
 
+		// Totals are output with their currency, like on the cards
+		$propal->total_ht = 1234.5;
+		$propal->multicurrency_total_ht = 1500;
+		$propal->multicurrency_code = 'USD';
+		$this->assertSame(price(1234.5, 0, $langs, 1, -1, -1, $conf->currency), $propal->ajaxOutputField('total_ht'), 'Total in main currency');
+		$this->assertSame(price(1500, 0, $langs, 1, -1, -1, 'USD'), $propal->ajaxOutputField('multicurrency_total_ht'), 'Multicurrency total in currency of the object');
+		$this->assertNotSame($propal->ajaxOutputField('multicurrency_total_ht'), price(1500, 0, $langs, 1, -1, -1, $conf->currency), 'Currency of the object is not the main one');
+
 		print __METHOD__." OK\n";
 	}
 
@@ -1813,6 +1823,159 @@ class CommonObjectTest extends CommonClassTest
 			array('DEFAULTVALUESTRIGGERSPY_CREATE', 'DEFAULTVALUESTRIGGERSPY_MODIFY', 'DEFAULTVALUESTRIGGERSPY_DELETE'),
 			$this->runCrudCommon($localobject, 'triggerprefixempty')
 		);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testGetObjectLineHtml
+	 *  The HTML of a line must be the same as the one printed by printObjectLines() in the card
+	 *
+	 *  @return void
+	 */
+	public function testGetObjectLineHtml()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		global $object,$form,$inputalsopricewithtax;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$localobject->fetch_thirdparty();
+		$localobject->getLinesArray();
+		$this->assertNotEmpty($localobject->lines);
+		$lineid = $localobject->lines[count($localobject->lines) - 1]->id;
+
+		// Lines printed as in the card
+		$object = $localobject;
+		$form = new Form($db);
+		$linesContext = $localobject->initObjectLinesDisplay();
+		$this->assertSame(1, $inputalsopricewithtax, 'initObjectLinesDisplay must set the global variables of the line templates');
+		ob_start();
+		$localobject->printObjectLines('', $linesContext['seller'], $linesContext['buyer'], 0, $linesContext['dateSelector']);
+		$cardhtml = ob_get_clean();
+
+		// Line rendered alone, with other global variables of the caller
+		$callerobject = new stdClass();
+		$object = $callerobject;
+		$form = null;
+		$inputalsopricewithtax = 0;
+		$linehtml = $localobject->getObjectLineHtml($lineid);
+
+		$this->assertStringContainsString('id="row-'.$lineid.'"', $linehtml);
+		$this->assertStringContainsString($linehtml, $cardhtml, 'The line must be rendered as in printObjectLines()');
+		$this->assertSame($callerobject, $object, 'Global $object of the caller must be restored');
+		$this->assertNull($form, 'Global $form of the caller must be restored');
+		$this->assertSame(0, $inputalsopricewithtax, 'Global variables of the line templates must be restored');
+
+		// Edit form of the line, the order is a draft. Constants of the editors are defined by main.inc.php only.
+		for ($i = 1; $i <= 10; $i++) {
+			if (!defined('ROWS_'.$i)) {
+				define('ROWS_'.$i, $i);
+			}
+		}
+		$edithtml = $localobject->getObjectLineHtml($lineid, 'editline');
+		$this->assertStringContainsString('name="lineid" value="'.$lineid.'"', $edithtml, 'Edit form of the line');
+		$this->assertStringContainsString('name="save"', $edithtml);
+
+		// Unknown line
+		$this->assertSame('', $localobject->getObjectLineHtml(-1));
+		$this->assertSame('ErrorRecordNotFound', $localobject->error);
+
+		$this->assertGreaterThan(0, $localobject->delete($user));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testIsAjaxLineEdit
+	 *  Lines of a draft are edited in ajax with MAIN_FEATURES_LEVEL 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT,
+	 *  the edit link of the lines then gets the attributes used by Dolibarr.tools.lineEdit
+	 *
+	 *  @return void
+	 */
+	public function testIsAjaxLineEdit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savfeatureslevel = getDolGlobalString('MAIN_FEATURES_LEVEL');
+		$savoption = getDolGlobalString('MAIN_USE_AJAX_LINE_EDIT');
+		$savajax = $conf->use_javascript_ajax;
+		$conf->use_javascript_ajax = 1;
+		$conf->global->MAIN_FEATURES_LEVEL = 0;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$localobject->fetch_thirdparty();
+		$localobject->getLinesArray();
+		$lineid = $localobject->lines[0]->id;
+
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Disabled by default');
+		$this->assertStringNotContainsString('data-dol-edit-line', $localobject->getObjectLineHtml($lineid));
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '1';
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with the hidden option');
+		$linehtml = $localobject->getObjectLineHtml($lineid);
+		$this->assertStringContainsString('data-dol-edit-line="'.$lineid.'"', $linehtml, 'Edit link marked for the ajax edition');
+		$this->assertStringContainsString('data-dol-delete-line="'.$lineid.'"', $linehtml, 'Delete link marked for the ajax deletion');
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+		$conf->global->MAIN_FEATURES_LEVEL = 2;
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with MAIN_FEATURES_LEVEL 2');
+
+		$localobject->status = Commande::STATUS_VALIDATED;
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Only on a draft');
+
+		$conf->use_javascript_ajax = $savajax;
+		$conf->global->MAIN_FEATURES_LEVEL = $savfeatureslevel;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = $savoption;
+
+		$localobject->status = Commande::STATUS_DRAFT;
+		$this->assertGreaterThan(0, $localobject->delete($user));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testGetObjectLinesDisplayContextSupplier
+	 *  On supplier documents, the supplier is the seller
+	 *
+	 *  @return void
+	 */
+	public function testGetObjectLinesDisplayContextSupplier()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new FactureFournisseur($db);
+		$localobject->thirdparty = new Societe($db);
+
+		$context = $localobject->getObjectLinesDisplayContext();
+		$this->assertSame($localobject->thirdparty, $context['seller']);
+		$this->assertSame($mysoc, $context['buyer']);
+		$this->assertSame(1, $context['forceall']);
+		$this->assertSame(1, $context['inputalsopricewithtax']);
+		$this->assertSame(getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') : 2, $context['senderissupplier']);
 
 		print __METHOD__." OK\n";
 	}
