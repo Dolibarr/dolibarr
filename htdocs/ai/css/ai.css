@@ -1,0 +1,16 @@
+/* AI Module Styles */
+
+/**
+ * configure_tools.php
+ */
+
+/* Chevron rotation animation on collapse/expand */
+.toggle-icon {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.trgroup.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
