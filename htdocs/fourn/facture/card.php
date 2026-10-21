@@ -377,6 +377,25 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
+	} elseif ($action == 'confirm_massdellines' && $confirm == 'yes' && $usercancreate) {
+		$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+		if (count($arrLines2del) > 0) {
+			// Remove lines
+			$result = 0;
+			foreach ($arrLines2del as $lineid) {
+				$result = $object->deleteLine((int) $lineid);
+				if ($result <= 0) {
+					$langs->load("errors");
+					setEventMessages($object->error, $object->errors, 'errors');
+					break;
+				}
+			}
+			if ($result >= 0) {
+				$object->line_order(true);
+				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+				exit();
+			}
+		}
 	} elseif ($action == 'unlinkdiscount' && $usercancreate) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
@@ -3706,7 +3725,16 @@ if ($action == 'create') {
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
-
+		// Confirmation to mass delete lines
+		if ($action == 'ask_massdellines') {
+			// Confirmation delete product/service line
+			$lines2del = GETPOST('line_checkbox', 'array:int');
+			if (is_array($lines2del) && count($lines2del) > 0) {
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' . implode(',', $lines2del), $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
+			} else {
+				setEventMessage($langs->trans('NoRecordSelected'), 'warnings');
+			}
+		}
 		// Confirmation to delete a subtotal / title / text line (subtotals module)
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load('subtotals');
@@ -4575,7 +4603,7 @@ if ($action == 'create') {
 
 			// Form to add new line
 			if ($object->status == FactureFournisseur::STATUS_DRAFT && $usercancreate) {
-				if ($action != 'editline') {
+				if ($action != 'editline' && $action != 'massdellines') {
 					// Add free products/services
 
 					$parameters = array();

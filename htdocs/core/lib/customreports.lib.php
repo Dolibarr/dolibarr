@@ -869,7 +869,7 @@ function customReportsSelectFieldCombo($htmlname, $arrayoffields, $selected, $pl
 			$out .= '<div class="customreportscombo-children" style="display:none">'.$children.'</div>';
 		}
 		$out .= '</div>';
-		return $out;
+		return (string) $out;
 	};
 	// At root level, we render only the elements without parent element (or with a parent not found)
 	foreach (array_keys($elements) as $elementkey) {
