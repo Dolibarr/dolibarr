@@ -52,7 +52,7 @@ foreach ((array) ($filearray ?? array()) as $file) {
 }
 if ($canTransfer && !empty($transferableFiles)) {
 	$langs->loadLangs(array('ecm', 'propal', 'supplier_proposal', 'projects', 'contracts', 'sendings', 'ticket'));
-	$transfer = new DocumentTransfer($db);
+	$transfer = new DocumentTransfer($object->db);
 	$relatedDestinations = $transfer->getRelatedDestinations($object, $transferableFiles[0], $user);
 	print load_fiche_titre($langs->trans('ECMTransferToObject'), '', 'file');
 	print '<p class="opacitymedium">'.$langs->trans('ECMTransferExplanation').'</p>';

@@ -113,7 +113,8 @@ class DocumentTransfer
 			|| !checkUserAccessToObject($user, array($object->element), $object, $object->table_element, '')) {
 			return $this->fail(403, 'ECMTransferDenied', 'object_inaccessible');
 		}
-		if ($user->socid > 0 && !empty($object->socid) && (int) $object->socid !== (int) $user->socid) {
+		$objectSocid = (int) (get_object_vars($object)['socid'] ?? 0);
+		if ($user->socid > 0 && $objectSocid > 0 && $objectSocid !== (int) $user->socid) {
 			return $this->fail(403, 'ECMTransferDenied', 'thirdparty_inaccessible');
 		}
 
@@ -221,7 +222,7 @@ class DocumentTransfer
 			return false;
 		}
 		$candidates = $related['objects'];
-		$projectId = (int) ($source->fk_project ?? $source->fk_projet ?? 0);
+		$projectId = (int) ($source->fk_project ?? $source->fk_projet);
 		if ($projectId > 0 && $source->element !== 'project') {
 			$project = fetchObjectByElement($projectId, 'project');
 			if ($project instanceof CommonObject && (int) $project->id === $projectId) {
@@ -259,8 +260,8 @@ class DocumentTransfer
 	 */
 	private function areRelated(CommonObject $source, CommonObject $target)
 	{
-		$sourceProjectId = (int) ($source->fk_project ?? $source->fk_projet ?? 0);
-		$targetProjectId = (int) ($target->fk_project ?? $target->fk_projet ?? 0);
+		$sourceProjectId = (int) ($source->fk_project ?? $source->fk_projet);
+		$targetProjectId = (int) ($target->fk_project ?? $target->fk_projet);
 		if (($target->element === 'project' && $sourceProjectId === (int) $target->id)
 			|| ($source->element === 'project' && $targetProjectId === (int) $source->id)) {
 			return true;
