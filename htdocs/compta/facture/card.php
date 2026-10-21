@@ -1927,13 +1927,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
+									isset($lines[$i]) ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$i >= 0 ? $lines[$i]->special_code : 0,
+									isset($lines[$i]) ? $lines[$i]->special_code : 0,
 									$object->origin_type,
 									0,
 									0,
@@ -2430,7 +2430,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE || !empty($line->fk_remise_except)) {
 				continue;
 			}
 			$tvatx = $line->tva_tx;

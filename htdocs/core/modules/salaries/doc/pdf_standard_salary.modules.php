@@ -163,6 +163,8 @@ class pdf_standard_salary extends ModelePDFSalary
 			$pdf->Output($file, 'F');
 			dolChmod($file);
 
+			$this->result = array('fullpath' => $file);
+
 			return 1;
 		} else {
 			$this->error = $langs->trans("ErrorDirIsNotWritable", $dir);
