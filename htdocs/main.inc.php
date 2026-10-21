@@ -1924,6 +1924,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
 		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
+		$jsContextFiles[] = 'dolibarr-tool.replacecontent.js'; // Replace content of the page with html received in ajax
+		$jsContextFiles[] = 'dolibarr-tool.object.js'; // Read and update an object in ajax (data, no change of the page)
+		$jsContextFiles[] = 'dolibarr-tool.card.js'; // Controller of the card of an object: refresh fields, lines and sections of the page
+		$jsContextFiles[] = 'dolibarr-tool.fieldedit.js'; // Part fields of the card tool: edition of the fields in ajax, see Form::isAjaxFieldEdit()
+		$jsContextFiles[] = 'dolibarr-tool.lineedit.js'; // Part lines of the card tool: edition of the document lines in ajax, see CommonObject::isAjaxLineEdit()
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -1931,6 +1936,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
 			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
+		}
+
+		// Hook contexts of the page, sent back by the ajax requests printing parts of the page (ex: core/ajax/objectline.php),
+		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
+		if (is_object($hookmanager)) {
+			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
 		}
 
 		// Load context and all js tools
@@ -3947,7 +3958,11 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		dol_htmloutput_events($disabledoutputofmessages);
+		// A page loaded in background by an ajax tool (noflusheventmessages=1) keeps them in session:
+		// they are returned to the ajax tool by the next JsonResponse (JsonResponse::addSessionEventMessages()).
+		if (!GETPOSTINT('noflusheventmessages')) {
+			dol_htmloutput_events($disabledoutputofmessages);
+		}
 
 		// Code for search criteria persistence.
 		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists

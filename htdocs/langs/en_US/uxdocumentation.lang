@@ -174,6 +174,9 @@ UxDolibarrContextKnowsHooks = Common JS Hooks list
 
 UxMenuTooltipTheme = Tooltips & themes
 TooltipThemesAndOrientation = Tooltip Themes and orientation
+UxMenuAjaxCardEdition = Ajax edition of cards
+AjaxCardEditionEnable = How to enable it
+AjaxCardEditionWhat = What is edited in ajax
 
 # Start experiements menu title
 ExperimentalUxInputAjaxFeedback = Input feedback
@@ -201,6 +204,11 @@ ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new cont
 JSContextCompatAndDeprecations = Backward compatibility and deprecations
 SetEventMessageTool = Dolibarr Tool : Set event message
 FetchTool = Dolibarr Tool : Fetch (ajax requests)
+ReplaceContentTool = Dolibarr Tool : Replace content
+ObjectTool = Dolibarr Tool : Object (read and update an object in ajax)
+CardTool = Dolibarr Tool : Card (controller of the card of an object displayed in the page)
+FieldEditTool = Dolibarr Tool : Card, part fields (edition of the fields of a card in ajax)
+LineEditTool = Dolibarr Tool : Card, part lines (edition of the document lines of a card in ajax)
 
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.

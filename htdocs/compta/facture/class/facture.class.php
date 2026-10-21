@@ -348,9 +348,9 @@ class Facture extends CommonInvoice
 		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
-		'datef' => array('type' => 'date', 'label' => 'DateInvoice', 'enabled' => 1, 'visible' => 1, 'position' => 20),
+		'datef' => array('type' => 'date', 'label' => 'DateInvoice', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'uieditable' => 1),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 22),
-		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25),
+		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25, 'uieditable' => 1, 'alwayseditable' => 1),
 		'payment_reference' => array('type' => 'varchar(25)', 'label' => 'PaymentReference', 'enabled' => 1, 'visible' => -1, 'position' => 26),
 		'date_closing' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'paye' => array('type' => 'smallint(6)', 'label' => 'InvoicePaidCompletely', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
@@ -363,15 +363,15 @@ class Facture extends CommonInvoice
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 115, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'isameasure' => 1),
 		'fk_facture_source' => array('type' => 'integer', 'label' => 'SourceInvoice', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 1, 'visible' => -1, 'position' => 175),
-		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 175, 'uieditable' => 1, 'alwayseditable' => 1),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 180, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190, 'uieditable' => 1, 'alwayseditable' => 1),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'uieditable' => 1, 'alwayseditable' => 1),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205, 'uieditable' => 1, 'alwayseditable' => 1),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
-		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220),
+		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220, 'uieditable' => 1, 'alwayseditable' => 1),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 		'situation_cycle_ref' => array('type' => 'smallint(6)', 'label' => 'Situation cycle ref', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 230),
 		'situation_counter' => array('type' => 'smallint(6)', 'label' => 'Situation counter', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 235),
@@ -381,7 +381,7 @@ class Facture extends CommonInvoice
 		'retained_warranty_fk_cond_reglement' => array('type' => 'integer', 'label' => 'Retained warranty fk cond reglement', 'enabled' => 'getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")', 'visible' => -1, 'position' => 255),
 		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 260),
 		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 265),
-		'date_pointoftax' => array('type' => 'date', 'label' => 'DatePointOfTax', 'enabled' => 'getDolGlobalString("INVOICE_POINTOFTAX_DATE")', 'visible' => -1, 'position' => 270),
+		'date_pointoftax' => array('type' => 'date', 'label' => 'DatePointOfTax', 'enabled' => 'getDolGlobalString("INVOICE_POINTOFTAX_DATE")', 'visible' => -1, 'position' => 270, 'uieditable' => 1),
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyID', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 275),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Currency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 280),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'CurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 285, 'isameasure' => 1),
@@ -495,11 +495,133 @@ class Facture extends CommonInvoice
 	 */
 	protected function persistFieldValue(User $user, $field)
 	{
-		if ($field == 'ref_client') {
-			return $this->set_ref_client((string) $this->ref_client);
+		global $langs;
+
+		switch ($field) {
+			case 'ref_client':
+				return $this->set_ref_client((string) $this->ref_client);
+			case 'fk_input_reason':
+				return $this->setInputReason((int) $this->demand_reason_id);
+			case 'datef':
+				if (empty($this->date)) {
+					$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Date'));
+					return -1;
+				}
+				if ($this->date > (dol_now('tzuserrel') + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
+					setEventMessages($langs->trans(getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 'WarningInvoiceDateTooFarInFuture' : 'WarningInvoiceDateInFuture'), null, 'warnings');
+				}
+				// Due date recomputed by onFieldValueChanged()
+				return $this->update($user);
+			case 'date_lim_reglement':
+				if ($this->date_lim_reglement < $this->date) {
+					$this->date_lim_reglement = $this->calculate_date_lim_reglement();
+					setEventMessages($langs->trans('DatePaymentTermCantBeLowerThanObjectDate'), null, 'warnings');
+				}
+				return $this->update($user);
+			case 'date_pointoftax':
+				return $this->update($user);
+			case 'fk_cond_reglement':
+				// Payment term and due date recomputed by onFieldValueChanged() saved together
+				$this->db->begin();
+				$result = $this->setPaymentTerms((int) $this->cond_reglement_id);
+				if ($result > 0) {
+					$result = $this->update($user);
+				}
+				if ($result > 0) {
+					$this->db->commit();
+				} else {
+					$this->db->rollback();
+				}
+				return $result;
 		}
 
 		return parent::persistFieldValue($user, $field);
+	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Override of CommonObject::getFieldPropertyName(): the date of invoices is in the property date.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		if ($field == 'datef') {
+			return 'date';
+		}
+
+		return parent::getFieldPropertyName($field);
+	}
+
+	/**
+	 * Check whether a field can be edited from the user interface with generic tools (ajax edition of cards...).
+	 * Override of CommonObject::isFieldEditableFromUi(): same rules as the card, a credit note has no payment term nor due date,
+	 * and the date of the invoice is set at validation with option FAC_FORCE_DATE_VALIDATION.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @return bool         True if the field can be edited from the user interface, false otherwise
+	 */
+	public function isFieldEditableFromUi(User $user, $field)
+	{
+		if (($field == 'fk_cond_reglement' || $field == 'date_lim_reglement') && $this->type == self::TYPE_CREDIT_NOTE) {
+			return false;
+		}
+		if ($field == 'datef' && getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {
+			return false;
+		}
+
+		return parent::isFieldEditableFromUi($user, $field);
+	}
+
+	/**
+	 * Recompute the fields depending on a field changed by setFieldValue().
+	 * Override of CommonObject::onFieldValueChanged(): like on the card, the due date follows the date and the payment term,
+	 * and is never before the date of the invoice.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		if ($fieldKey == 'fk_cond_reglement') {
+			// Like on the card: the code of the previous payment term is used before its id by calculate_date_lim_reglement()
+			$this->cond_reglement_code = '';
+		}
+		if (($fieldKey == 'datef' || $fieldKey == 'fk_cond_reglement') && !empty($this->date)) {
+			$duedate = $this->calculate_date_lim_reglement();
+			if ($duedate) {
+				$this->date_lim_reglement = $duedate;
+			}
+			if ($this->date_lim_reglement < $this->date) {
+				$this->date_lim_reglement = $this->date;
+			}
+		}
+	}
+
+	/**
+	 * Return the output html of a field for an ajax refresh of the card (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxOutputField(): dates are shown like on the card, with the warning of delay for the due date.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		global $langs;
+
+		if (in_array($field, array('datef', 'date_lim_reglement', 'date_pointoftax'))) {
+			$out = '<span class="valuedate">'.dol_print_date($this->getFieldUiValue($field), 'day').'</span>';
+			if ($field == 'date_lim_reglement' && $this->hasDelay()) {
+				$out .= img_warning($langs->trans('Late'));
+			}
+
+			return $out;
+		}
+
+		return parent::ajaxOutputField($field);
 	}
 
 	/**
@@ -5990,6 +6112,19 @@ class Facture extends CommonInvoice
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**
