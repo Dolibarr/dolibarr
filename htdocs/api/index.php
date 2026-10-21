@@ -236,8 +236,8 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
-		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		print 'APIs are not allowed from the IP '.$ipremote;
 		//session_destroy();
 		exit(0);
 	}
