@@ -601,7 +601,7 @@ class ICal
 	 * @param	array<string,mixed>	$event	Parsed calendar component
 	 * @return	bool
 	 */
-	public function has_start_date($event)
+	public function hasStartDate($event)
 	{
 		if (isset($event['DTSTART;VALUE=DATE'])) {
 			return $event['DTSTART;VALUE=DATE'] !== '';

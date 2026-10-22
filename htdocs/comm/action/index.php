@@ -945,7 +945,7 @@ if (count($listofextcals)) {
 			// Duplicate all repeatable events into new entries
 			$moreicalevents = array();
 			foreach ($icalevents as $icalkey => $icalevent) {
-				if (!$ical->has_start_date($icalevent)) {
+				if (!$ical->hasStartDate($icalevent)) {
 					dol_syslog("Skip external calendar component without a valid DTSTART", LOG_WARNING);
 					continue;
 				}
@@ -1101,7 +1101,7 @@ if (count($listofextcals)) {
 			foreach ($icalevents as $icalevent) {
 				//var_dump($icalevent);
 
-				if (!$ical->has_start_date($icalevent)) {
+				if (!$ical->hasStartDate($icalevent)) {
 					continue;
 				}
 
