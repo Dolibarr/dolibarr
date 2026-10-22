@@ -1927,7 +1927,7 @@ export function initAiAssistant(container) {
                 // The read only fetched the ids the asked action needs: hand its result
                 // back to the model instead of showing it, and let it perform the action.
                 if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
-                    appendMsg('system', t('AISearchDoneNowPreparingAction'));
+                    appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
                     followupSnippet = contextSnippetOf(result, intent.tool);
                     followupResult = result;
                     continue;

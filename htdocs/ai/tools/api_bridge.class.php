@@ -1510,7 +1510,7 @@ class ToolApiBridge extends McpTool
 			'methods' => array(
 				'index' => array(
 					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
-					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost,fk_default_home'
+					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost'
 				),
 				'get' => array('description' => "One website."),
 				'getByRef' => array(
