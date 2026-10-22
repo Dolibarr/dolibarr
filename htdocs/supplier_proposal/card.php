@@ -578,6 +578,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Set accepted/refused
 		$status = GETPOSTINT('statut');
+		if ($confirm == 'yes') {
+			$status = SupplierProposal::STATUS_SIGNED;
+		} elseif ($confirm == 'no') {
+			$status = SupplierProposal::STATUS_NOTSIGNED;
+		}
 		if (!in_array($status, array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED), true)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
@@ -1539,11 +1544,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 
-$arrayofjs = array();
-if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
-	$arrayofjs[] = '/supplier_proposal/js/acceptrefuse.js';
-}
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, '', '', 'mod-supplierproposal page-card');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -2000,19 +2001,14 @@ if ($action == 'create') {
 	}
 	// Form to set the supplier proposal accepted/refused
 	if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
-		$formconfirm = '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" id="formacceptrefuse" data-title="'.dol_escape_htmltag($langs->transnoentities('SetAcceptedRefused')).'" data-cancel-url="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		$formconfirm .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$formconfirm .= '<input type="hidden" name="action" value="setstatut">';
+		$text = '';
 		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
-			$formconfirm .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
+			$text = $langs->trans('SupplierProposalRefFournNotice'); // TODO Suggest a permanent checkbox instead of option
 		}
-		$formconfirm .= '<label for="note">'.$langs->trans('Note').'</label>';
-		$formconfirm .= '<textarea id="note" name="note" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private).'</textarea>';
-		$formconfirm .= '<div class="center formacceptrefuse-buttons">';
-		$formconfirm .= '<button type="submit" name="statut" value="'.SupplierProposal::STATUS_SIGNED.'" class="button">'.$langs->trans('ToAccept').'</button>';
-		$formconfirm .= '<button type="submit" name="statut" value="'.SupplierProposal::STATUS_NOTSIGNED.'" class="button">'.$langs->trans('ToRefuse').'</button>';
-		$formconfirm .= '<button type="submit" name="cancel" value="1" class="button button-cancel">'.$langs->trans('Cancel').'</button>';
-		$formconfirm .= '</div></form>';
+		$formquestion = array(
+			array('type' => 'textarea', 'name' => 'note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
+		);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'ToAccept', 'ToRefuse', '', 'Cancel', '');
 	}
 	// Subtotal line form
 	if ($action == 'add_title_line') {
