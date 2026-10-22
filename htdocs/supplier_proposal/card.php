@@ -82,6 +82,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
 $confirm = GETPOST('confirm', 'alpha');
+$closingnote = GETPOSTISSET('closing_note') ? GETPOST('closing_note', 'restricthtml') : GETPOST('note', 'restricthtml');
 $lineid = GETPOSTINT('lineid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
@@ -589,7 +590,7 @@ if (empty($reshook)) {
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->status == SupplierProposal::STATUS_VALIDATED) {
-				$result = $object->cloture($user, $status, GETPOST('note', 'restricthtml'));
+				$result = $object->cloture($user, $status, $closingnote);
 				if ($result > 0) {
 					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 					exit();
@@ -2006,7 +2007,7 @@ if ($action == 'create') {
 			$text = $langs->trans('SupplierProposalRefFournNotice'); // TODO Suggest a permanent checkbox instead of option
 		}
 		$formquestion = array(
-			array('type' => 'textarea', 'name' => 'note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
+			array('type' => 'textarea', 'name' => 'closing_note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('closing_note') || GETPOSTISSET('note') ? $closingnote : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
 		);
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'ToAccept', 'ToRefuse', '', 'Cancel', '');
 	}
