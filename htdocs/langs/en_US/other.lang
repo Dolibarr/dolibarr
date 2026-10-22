@@ -521,6 +521,7 @@ AIPreviewCreateIntervention=Create a draft intervention%s: "%s".
 AIPreviewCreateContract=Create a draft contract%s.
 AIPreviewCreateProject=Create the project "%s"%s.
 AIPreviewCreateTask=Create the task "%s" in project %s.
+AIPreviewCreateWebsitePage=Create the web page "%s" (alias %s) in the website id %s%s.
 AIPreviewAddTimespent=Log %s seconds of work on %s on task %s%s.
 AIWriteRecordNotFound=No %s "%s" was found, or you cannot access it.
 AIWriteNotDraftValidate=The %s %s is not a draft, so it cannot be validated.
