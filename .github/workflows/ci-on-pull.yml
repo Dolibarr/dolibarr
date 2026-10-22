@@ -14,7 +14,7 @@ jobs:
   wait-for-pr-checks:
     name: Wait for the cheap PR checks to be green
     runs-on: ubuntu-latest
-    timeout-minutes: 1
+    timeout-minutes: 11
     permissions:
       contents: read
       actions: read # to read the workflow runs of the PR checks
