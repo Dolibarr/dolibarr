@@ -288,7 +288,9 @@ drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
 --select * from tmp_links_double;
-delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);	--update to avoid duplicate, delete to delete
+
+--update to avoid duplicate, delete to delete
+delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);
 drop table tmp_links_double;
 
 
@@ -297,7 +299,8 @@ drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_product_double;
-update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);	--update to avoid duplicate, delete to delete
+--update to avoid duplicate, delete to delete
+update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
 drop table tmp_product_double;
 
 
@@ -315,7 +318,9 @@ drop table tmp_accounting_account_double;
 --select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
 create table tmp_accounting_account_double as (select account_number, fk_pcg_version, entity, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version, entity having count(rowid) >= 2);
 --select * from tmp_accounting_account_double;
-delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
+
+--update to avoid duplicate, delete to delete
+delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);
 drop table tmp_accounting_account_double;
 
 
@@ -324,7 +329,8 @@ drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
 create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
 --select * from tmp_commande_extrafields_double;
-delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
+--update to avoid duplicate, delete to delete
+delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);
 drop table tmp_commande_extrafields_double;
 
 
