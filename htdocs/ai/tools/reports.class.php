@@ -261,7 +261,7 @@ class ToolReports extends McpTool
 	 * Generate a sales/revenue report.
 	 *
 	 * @param array<string, mixed> $args Input arguments (date_start, date_end, limit, etc.)
-	 * @return array<int, array<string, string>> List of sales with localized keys and values.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getSalesReport(array $args): array
 	{
@@ -277,6 +277,8 @@ class ToolReports extends McpTool
 
 		$list      = [];
 		$totalSum  = 0.0;
+		$chartLabels = [];
+		$chartData   = [];
 		// Status Filter: Valid (1) and Paid (2). Exclude Draft (0) and Abandoned (3).
 		$dateRange = " AND f.datef >= '" . $this->db->idate($dateStart)
 			. "' AND f.datef <= '" . $this->db->idate($dateEnd)
@@ -361,6 +363,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[]   = (float) $r->total_amount;
 					$list[] = [
 						$colName                                  => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number")   => (int) $r->count_inv,
@@ -389,6 +393,19 @@ class ToolReports extends McpTool
 				$langs->transnoentitiesnoconv("Total")  => $langs->transnoentitiesnoconv("Total"),
 				$langs->transnoentitiesnoconv("Amount") => price($totalSum)
 			];
+		}
+
+		// Grouped results carry a chart payload the chat renders as a bar/line
+		// chart; the rows stay in 'rows' so the model and the table are unchanged.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
 		}
 
 		return $list;
@@ -539,7 +556,7 @@ class ToolReports extends McpTool
 	 * Generate a purchase/expense report.
 	 *
 	 * @param array<string, mixed> $args Input arguments.
-	 * @return array<int, array<string, string>> List of purchases or groups.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getPurchaseReport(array $args): array
 	{
@@ -553,6 +570,8 @@ class ToolReports extends McpTool
 		$dateEnd = dol_stringtotime($args['date_end']);
 		$list = [];
 		$totalSum = 0.0;
+		$chartLabels = [];
+		$chartData = [];
 
 		// Detailed report for a specific Supplier
 		if ($socid) {
@@ -609,6 +628,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[] = (float) $r->total_amount;
 					$list[] = [
 						$colName => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number") => $r->count_inv,
@@ -637,6 +658,18 @@ class ToolReports extends McpTool
 			$summary[$langs->transnoentitiesnoconv("Number")] = "";
 		}
 		$list[] = $summary;
+
+		// Same contract as getSalesReport: grouped results carry a chart payload.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
+		}
 
 		return $list;
 	}
