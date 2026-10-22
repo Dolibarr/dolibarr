@@ -521,7 +521,7 @@ if (empty($reshook)) {
 	}
 
 	// Set Price by quantity
-	if ($action == 'activate_price_by_qty') {
+	if ($action == 'activate_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -533,7 +533,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Unset Price by quantity
-	if ($action == 'disable_price_by_qty') {
+	if ($action == 'disable_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -545,12 +545,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité. Test on permission not required, it only reads the rowid.
 		$rowid = GETPOSTINT('rowid');
 	}
 
 	// Add or update price by quantity
-	if ($action == 'update_price_by_qty') {
+	if ($action == 'update_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Récupération des variables
 		$rowid = GETPOSTINT('rowid');
 		$priceid = GETPOSTINT('priceid');
@@ -607,7 +607,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_price_by_qty') {
+	if ($action == 'delete_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$rowid = GETPOSTINT('rowid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -619,7 +619,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_all_price_by_qty') {
+	if ($action == 'delete_all_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$priceid = GETPOSTINT('priceid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
