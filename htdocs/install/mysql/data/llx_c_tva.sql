@@ -121,6 +121,11 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (7
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (78,    '5','0','VAT rate 5',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (78,   '19','0','VAT rate - standard',1,__ENTITY__);
 
+-- CZECH REPUBLIC (id country=79)
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (79,     '0','0','VAT rate 0',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (79,    '12','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (79,    '21','0','VAT rate - standard',1,__ENTITY__);
+
 -- DENMARK (id country=80)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (80,    '0','0','VAT rate 0',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (80,   '25','0','VAT rate - standard',1,__ENTITY__);

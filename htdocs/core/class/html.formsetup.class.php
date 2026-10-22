@@ -859,6 +859,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			} elseif ($this->type == 'number') {
 				$val_const = GETPOSTINT($this->confKey);
+			} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
+				$val_const = GETPOST($this->confKey, 'password');
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}

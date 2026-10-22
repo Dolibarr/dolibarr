@@ -5,11 +5,12 @@
  * Copyright (C) 2020-2026  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024       Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2026		Benjamin Falière		<benjamin@faliere.com>
  * Copyright (C) 2026		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1907,8 +1908,8 @@ class Thirdparties extends DolibarrApi
 	 * @param	int		$id		ID of the third party
 	 *
 	 * @return	array
-	 * @phan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
-	 * @phpstan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
+	 * @phan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string,payment_reference:string}>
+	 * @phpstan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string,payment_reference:string}>
 	 *
 	 * @url		GET		{id}/bankaccounts
 	 *
@@ -1967,7 +1968,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 
-		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum', 'payment_reference');
 
 		$returnAccounts = array();
 

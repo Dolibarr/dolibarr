@@ -4246,8 +4246,11 @@ class Form
 		}
 
 		// Sort by category
+		// The preselected product is put first so it is not cut by the limit (for example a product just created with the + button of the line form)
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+			$sql .= " ORDER BY".((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "")." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ((int) $selected > 0) {
+			$sql .= " ORDER BY CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END, p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -13687,7 +13690,22 @@ class Form
 						$("#dateone").datepicker("option", "disabled", false);
 						$("#value-selector").prop("disabled", false);
 					}
-				});
+
+						// For the "in list" operators on a field with a list of predefined values, values are typed as a list
+						// into the free text input, so we show it instead of the single value selector
+						const selectedFieldForOperator = $("#search_filter_field").val();
+						if (arrayoffiltercriterias[selectedFieldForOperator] !== undefined && arrayoffiltercriterias[selectedFieldForOperator]["arrayofkeyval"] !== undefined) {
+							if (selectedOperator === "IsInList" || selectedOperator === "IsNotInList") {
+								$("#value-selector").hide();
+								$("#value-selector").next(".select2-container").hide();
+								$(".value-input").val("").show();
+							} else {
+								$(".value-input").val("").hide();
+								$("#value-selector").show();
+								$("#value-selector").next(".select2-container").show();
+							}
+						}
+					});
 
 				$(".add-filter-btn").on("click", function(event) {
 					console.log("We click on add-filter-btn");
@@ -13707,8 +13725,9 @@ class Form
 						console.log("value="+value);
 					}
 
-					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					// If the selected field has an array of values then take the selected value,
+					// except for the "in list" operators for which the values are typed into the free text input
+					if (operator !== "IsInList" && operator !== "IsNotInList" && arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 

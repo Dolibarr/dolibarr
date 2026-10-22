@@ -41,7 +41,7 @@ class SocialNetworkManager
 	private $platform;
 
 	/**
-	 * @var MastodonHandler	Instance of class handler
+	 * @var MastodonHandler|DiasporaHandler|RedditHandler|null	Instance of class handler
 	 */
 	private $handler;
 
@@ -53,7 +53,7 @@ class SocialNetworkManager
 	/**
 	 * @var int
 	 */
-	private $lastFetchDate; // @phpstan-ignore-line
+	private $lastFetchDate;
 
 	/**
 	 *	Constructor
@@ -74,6 +74,12 @@ class SocialNetworkManager
 	 */
 	private function initializeHandler($authParams)
 	{
+		// Load the file of the handler (only the handlers provided with Dolibarr, the platform is the name given in setup)
+		$handlerFile = strtolower((string) $this->platform);
+		if (in_array($handlerFile, array('mastodon', 'diaspora', 'reddit'))) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/'.$handlerFile.'handler.class.php';
+		}
+
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
 		if (class_exists($handlerClass)) {
 			$this->handler = new $handlerClass($authParams);
@@ -103,6 +109,14 @@ class SocialNetworkManager
 
 		if (!empty($this->handler->error)) {
 			$this->error = $this->handler->error;
+		}
+
+		// Date of the data shown: date of the cache file (also the date of the last successful fetch when this one failed)
+		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, '3');
+		if ($cacheDir && dol_is_file($cacheFile)) {
+			$this->lastFetchDate = dol_filemtime($cacheFile);
+		} elseif ($result !== false) {
+			$this->lastFetchDate = dol_now();
 		}
 
 		return $result;
