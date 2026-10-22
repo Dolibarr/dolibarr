@@ -4592,7 +4592,7 @@ class ToolApiBridge extends McpTool
 				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', $label, (string) $given);
 			} elseif ($obj) {
 				$args[$field] = (int) $obj->id;
-				if (!empty($write['track_from_target']) && empty($args['track_id'])) {
+				if (!empty($write['track_from_target']) && empty($args['track_id']) && $obj instanceof Ticket) {
 					$args['track_id'] = (string) $obj->track_id;
 				}
 			}
