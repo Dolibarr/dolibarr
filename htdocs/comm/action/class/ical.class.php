@@ -170,6 +170,9 @@ class ICal
 		$this->event_count = -1;
 		$this->file_text = '';
 
+		$stalecachetext = '';	// Content of an expired cache file, used if the download fails
+		$datefile = 0;
+
 		// Save file into a cache
 		if ($usecachefile) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -181,6 +184,12 @@ class ICal
 				$this->file_text = file_get_contents($usecachefile);
 				if (!$this->isIcalText($this->file_text)) {
 					$this->file_text = '';	// Not an iCal file (for example a HTML page cached by an old version), so we download it again
+				}
+			} elseif ($datefile) {
+				// The cache is too old: we download it again, but we keep the old content to use it if the download fails
+				$oldtext = (string) file_get_contents($usecachefile);
+				if ($this->isIcalText($oldtext)) {
+					$stalecachetext = $oldtext;
 				}
 			}
 		}
@@ -218,6 +227,12 @@ class ICal
 					rename($tmpcachefile, $usecachefile);
 				}
 			}
+		}
+
+		if (is_null($this->file_text) && $stalecachetext !== '') {
+			// The download failed: we use the last copy we have (the cache file is not rewritten, so we will try again later)
+			$this->file_text = $stalecachetext;
+			$this->error .= ' (the copy downloaded on '.dol_print_date((int) $datefile, 'dayhour', 'gmt').' UTC is used)';
 		}
 
 		$file_text_array = preg_split("[\n]", ltrim((string) $this->file_text, "\xEF\xBB\xBF \t\r\n"));	// Ignore a BOM and the blank lines before BEGIN:VCALENDAR
