@@ -924,6 +924,18 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$_SESSION['payerID'] = '';
 	}
 
+	// Save in database the data of the session (key = id of the charge or PaymentIntent), paymentok.php reads them from there first
+	if (!$error && !empty($_SESSION['TRANSACTIONID'])) {
+		onlinePaymentSessionSave(getDolGlobalString('STRIPE_LIVE') ? 'StripeLive' : 'StripeTest', $_SESSION['TRANSACTIONID'], array(
+			'fulltag' => $FULLTAG,
+			'FinalPaymentAmt' => $amount,
+			'currencyCodeType' => $currency,
+			'ipaddress' => $_SESSION['ipaddress'],
+			'payerID' => $_SESSION['payerID'],
+			'paymentType' => ''
+		));
+	}
+
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[HTTP_X_FORWARDED_HOST] = ".(empty($_SERVER["HTTP_X_FORWARDED_HOST"]) ? '' : dol_escape_htmltag($_SERVER["HTTP_X_FORWARDED_HOST"])), LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
@@ -2685,6 +2697,21 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				if ($stripe->error) {
 					setEventMessages($stripe->error, null, 'errors');
 				}
+
+				// Save the data needed by paymentok.php in database (key = PaymentIntent id), so they are found even if the session cookie is lost on the return from Stripe
+				if (is_object($paymentintent) && !empty($paymentintent->id)) {
+					$resultsave = onlinePaymentSessionSave($service, $paymentintent->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => getUserRemoteIP() ? getUserRemoteIP() : 'unknown',
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
+					if ($resultsave < 0) {
+						dol_syslog("Failed to save the data of the payment ".$paymentintent->id." into llx_onlinepayment_session", LOG_ERR, 0, '_payment');
+					}
+				}
 			}
 		}
 
@@ -2797,7 +2824,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 						)),
 						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
-						'success_url' => $urlok,
+						'success_url' => $urlok.'&session_id={CHECKOUT_SESSION_ID}',	// Stripe replaces the placeholder by the Checkout Session id, used by paymentok.php to find the session saved data
 						'cancel_url' => $urlko,
 						'payment_intent_data' => $arrayforpaymentintent
 					);
@@ -2823,6 +2850,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 					$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 					$_SESSION['payerID'] = is_object($stripecu) ? $stripecu->id : '';
 					$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
+
+					// Save the data needed by paymentok.php in database (key = Checkout Session id), so they are found even if the session cookie is lost
+					onlinePaymentSessionSave($service, $sessionstripe->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => ($remoteip ? $remoteip : 'unknown'),
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
 				} catch (Exception $e) {
 					print $e->getMessage();
 				} ?>
