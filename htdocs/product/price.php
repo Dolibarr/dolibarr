@@ -521,7 +521,7 @@ if (empty($reshook)) {
 	}
 
 	// Set Price by quantity
-	if ($action == 'activate_price_by_qty') {
+	if ($action == 'activate_price_by_qty' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -545,7 +545,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité. Test on permission not required, it only reads the rowid.
 		$rowid = GETPOSTINT('rowid');
 	}
 
