@@ -95,7 +95,7 @@ class ProductCombination2ValuePair
 	 * Creates a product combination 2 value pair
 	 *
 	 * @param	User	$user		User that create
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function create($user)
 	{

@@ -135,7 +135,7 @@ class ExtraFields
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int             $printable          Is extrafield displayed on PDF
 	 *  @param	array			$moreparams			More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
-	 *  @return int      							<=0 if KO, >0 if OK
+	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
 	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
@@ -197,7 +197,7 @@ class ExtraFields
 	 *  @param  string  $computed           Computed value
 	 *  @param	string	$help				Help on tooltip
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
-	 *  @return int      	           		<=0 if KO, >0 if OK
+	 *  @return int      	           		Return integer <=0 if KO, >0 if OK
 	 */
 	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
@@ -300,7 +300,7 @@ class ExtraFields
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
 	 *  @param  int             $printable      Is extrafield displayed on PDF
 	 *  @param	array			$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
-	 *  @return	int								<=0 if KO, >0 if OK
+	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
 	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
@@ -433,7 +433,7 @@ class ExtraFields
 	 *
 	 *	@param	string	$attrname		Code of attribute to delete
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
-	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
+	 *  @return int              		Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
 	public function delete($attrname, $elementtype = 'member')
 	{
@@ -491,7 +491,7 @@ class ExtraFields
 	 *
 	 *	@param	string	$attrname			Code of attribute to delete
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
-	 *  @return int              			< 0 if KO, 0 if nothing is done, 1 if OK
+	 *  @return int              			Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
 	private function delete_label($attrname, $elementtype = 'member')
 	{
@@ -673,7 +673,7 @@ class ExtraFields
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
 	 *  @param  int     $printable        	Is extrafield displayed on PDF
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
-	 *  @return	int							<=0 if KO, >0 if OK
+	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
 	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())

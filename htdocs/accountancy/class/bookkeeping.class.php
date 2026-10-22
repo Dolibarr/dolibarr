@@ -200,7 +200,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  User	$user		User that creates
 	 * @param  bool	$notrigger	false=launch triggers after, true=disable triggers
-	 * @return int				<0 if KO, Id of created object if OK
+	 * @return int				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -540,7 +540,7 @@ class BookKeeping extends CommonObject
 	 * @param  User	$user	   User that creates
 	 * @param  bool	$notrigger  false=launch triggers after, true=disable triggers
 	 * @param  string  $mode 	   Mode
-	 * @return int				 <0 if KO, Id of created object if OK
+	 * @return int				 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createStd(User $user, $notrigger = false, $mode = '')
 	{
@@ -720,7 +720,7 @@ class BookKeeping extends CommonObject
 	 * @param string $ref Ref
 	 * @param string $mode 	Mode
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -827,7 +827,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @param	int		$countonly		Do not fill the $object->lines, return only the count.
-	 * @return 	int 					<0 if KO, Number of lines if OK
+	 * @return 	int 					Return integer <0 if KO, Number of lines if OK
 	 */
 	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0, $countonly = 0)
 	{
@@ -1004,7 +1004,7 @@ class BookKeeping extends CommonObject
 	 * @param array 		$filter                         Filter array
 	 * @param string 		$filtermode                     Filter mode (AND or OR)
 	 * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
-	 * @return int                                          <0 if KO, >0 if OK
+	 * @return int                                          Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $showAlreadyExportMovements = 1)
 	{
@@ -1155,7 +1155,7 @@ class BookKeeping extends CommonObject
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
-	 * @return 	int 					<0 if KO, >0 if OK
+	 * @return 	int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
 	{
@@ -1263,7 +1263,7 @@ class BookKeeping extends CommonObject
 	 * @param  User    $user       User that modifies
 	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
 	 * @param  string  $mode       Mode ('' or _tmp')
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false, $mode = '')
 	{
@@ -1395,7 +1395,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
 	 * @param  string  $mode           Mode ('' or _tmp')
-	 * @return number                  <0 if KO, >0 if OK
+	 * @return number                  Return value <0 if KO, >0 if OK
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{
@@ -1433,7 +1433,7 @@ class BookKeeping extends CommonObject
 	 * @param User $user User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 * @param string $mode Mode
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false, $mode = '')
 	{
@@ -1512,7 +1512,7 @@ class BookKeeping extends CommonObject
 	 * @param  string $journal		Journal to delete
 	 * @param  string $mode 		Mode
 	 * @param  int	  $delmonth     Month
-	 * @return int					<0 if KO, >0 if OK
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
 	{
@@ -1684,7 +1684,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param int $piecenum Accounting document to get
 	 * @param string $mode Mode
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPerMvt($piecenum, $mode = '')
 	{
@@ -1764,7 +1764,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  int     $piecenum   Id of line to get
 	 * @param  string  $mode       Mode
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllPerMvt($piecenum, $mode = '')
 	{

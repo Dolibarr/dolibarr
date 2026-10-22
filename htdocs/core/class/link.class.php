@@ -147,7 +147,7 @@ class Link extends CommonObject
 	 *
 	 *  @param  User	$user            			User executing update
 	 *  @param  int		$call_trigger    			0=no, 1=yes
-	 *  @return int  			           			<0 if KO, >=0 if OK
+	 *  @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($user = '', $call_trigger = 1)
 	{
@@ -346,7 +346,7 @@ class Link extends CommonObject
 	 *    Delete a link from database
 	 *
 	 *	  @param	User		$user		Object suer
-	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
+	 *    @return	int						Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($user)
 	{

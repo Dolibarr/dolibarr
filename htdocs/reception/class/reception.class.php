@@ -213,7 +213,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param	User	$user       Objet du user qui cree
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id reception creee si ok
+	 *  @return int 				Return integer <0 si erreur, id reception creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -501,7 +501,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -724,7 +724,7 @@ class Reception extends CommonObject
 	/**
 	 * Get status from all dispatched lines
 	 *
-	 * @return		int		                        <0 if KO, Status of reception if OK
+	 * @return		int		                        Return integer <0 if KO, Status of reception if OK
 	 */
 	public function getStatusDispatch()
 	{
@@ -825,7 +825,7 @@ class Reception extends CommonObject
 	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	double		$cost_price			Line cost
-	 * @return	int							<0 if KO, index of line if OK
+	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
 	{
@@ -902,7 +902,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 			       	<0 if KO, >0 if OK
+	 *  @return int 			       	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1435,7 +1435,7 @@ class Reception extends CommonObject
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
@@ -1553,7 +1553,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as closed (this record also the stock movement)
 	 *
-	 *	@return     int     <0 if KO, >0 if OK
+	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
@@ -1709,7 +1709,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as invoiced (used when WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -1753,7 +1753,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function reOpen()
 	{
@@ -1877,7 +1877,7 @@ class Reception extends CommonObject
 	  *	Set draft status
 	  *
 	  *	@param	User	$user			Object user that modify
-	  *	@return	int						<0 if KO, >0 if OK
+	  *	@return	int						Return integer <0 if KO, >0 if OK
 	  */
 	public function setDraft($user)
 	{

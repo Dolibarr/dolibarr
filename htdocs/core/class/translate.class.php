@@ -166,7 +166,7 @@ class Translate
 	 *  Load translation files.
 	 *
 	 *  @param	array	$domains      		Array of lang files to load
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int							Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadLangs($domains)
 	{
@@ -200,7 +200,7 @@ class Translate
 	 * 	@param	int		$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
-	 *	@return	int									<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
 	 */
 	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0)
@@ -432,7 +432,7 @@ class Translate
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
 	 *  @param  DoliDB    $db             Database handler
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int							Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
 	{

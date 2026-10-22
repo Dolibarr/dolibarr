@@ -422,7 +422,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -731,7 +731,7 @@ class BonPrelevement extends CommonObject
 	 *  Returns amount waiting for direct debit payment or credit transfer payment
 	 *
 	 *  @param  string  $mode       'direct-debit' or 'bank-transfer'
-	 *  @return double              <O if KO, Total amount
+	 *  @return double              Return value <0 if KO, total amount if OK
 	 */
 	public function SommeAPrelever($mode = 'direct-debit')
 	{
@@ -779,7 +779,7 @@ class BonPrelevement extends CommonObject
 	 *  Get number of invoices waiting for payment
 	 *
 	 *  @param  string  $mode       'direct-debit' or 'bank-transfer'
-	 *  @return int                 <O if KO, number of invoices if OK
+	 *  @return int                 Return integer <O if KO, number of invoices if OK
 	 */
 	public function nbOfInvoiceToPay($mode = 'direct-debit')
 	{
@@ -791,7 +791,7 @@ class BonPrelevement extends CommonObject
 	 *  Get number of invoices to pay
 	 *
 	 *  @param  string  $type       'direct-debit' or 'bank-transfer'
-	 *  @return int                 <O if KO, number of invoices if OK
+	 *  @return int                 Return integer <O if KO, number of invoices if OK
 	 */
 	public function NbFactureAPrelever($type = 'direct-debit')
 	{
@@ -852,7 +852,7 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $type               'direct-debit' or 'bank-transfer'
 	 *  @param  int     $did                ID of an existing payment request. If $did is defined, no entry
 	 *  @param  int     $fk_bank_account    Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 *  @return int                         <0 if KO, No of invoice included into file if OK
+	 *  @return int                         Return integer <0 if KO, No of invoice included into file if OK
 	 */
 	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0)
 	{
@@ -2476,7 +2476,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *      @param      User    $user           Object user
 	 *      @param      string  $mode           Mode 'direct_debit' or 'credit_transfer'
-	 *      @return     WorkboardResponse|int   <0 if KO, WorkboardResponse if OK
+	 *      @return     WorkboardResponse|int   Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{

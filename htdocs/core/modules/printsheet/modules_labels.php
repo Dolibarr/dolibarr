@@ -73,7 +73,7 @@ class ModelePDFLabels
  *	@param	string		$outputdir			Output directory
  *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
  *  @param  string      $filename           Short file name of PDF output file
- *	@return int        						<0 if KO, >0 if OK
+ *	@return int        						Return integer <0 if KO, >0 if OK
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {

@@ -73,7 +73,7 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -126,7 +126,7 @@ class PriceExpression
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -198,7 +198,7 @@ class PriceExpression
 	 *  Returns any existing rowid with specified title
 	 *
 	 *  @param		String	$title  Title of expression
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
 	{
@@ -228,7 +228,7 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -276,7 +276,7 @@ class PriceExpression
 	  *
 	  *	@param  User	$user        User that deletes
 	  *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	  *  @return	int					 <0 if KO, >0 if OK
+	  *  @return	int					 Return integer <0 if KO, >0 if OK
 	  */
 	public function delete(User $user, $notrigger = 0)
 	{

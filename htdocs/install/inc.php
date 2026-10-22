@@ -395,7 +395,7 @@ if (GETPOST('lang', 'aZ09')) {
  * Load conf file (file must exists)
  *
  * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
- * @return	int												<0 if KO, >0 if OK
+ * @return	int												Return integer <0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {

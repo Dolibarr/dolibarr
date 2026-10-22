@@ -696,7 +696,7 @@ abstract class CommonObject
 	 *  @param	int		$id      	Id of object
 	 *  @param  string	$ref     	Ref of object to check
 	 *  @param	string	$ref_ext	Ref ext of object to check
-	 *  @return int     			<0 if KO, 0 if OK but not found, >0 if OK and exists
+	 *  @return int     			Return integer <0 if KO, 0 if OK but not found, >0 if OK and exists
 	 */
 	public static function isExistingObject($element, $id, $ref = '', $ref_ext = '')
 	{
@@ -1018,7 +1018,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, 0 if already added or code not valid, >0 if OK
+	 *  @return int         	        		Return integer <0 if KO, 0 if already added or code not valid, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1148,7 +1148,7 @@ abstract class CommonObject
 	 * 		@param	int		$statut	            New status of link
 	 *      @param  int		$type_contact_id    Id of contact type (not modified if 0)
 	 *      @param  int		$fk_socpeople	    Id of soc_people to update (not modified if 0)
-	 *      @return int                 		<0 if KO, >= 0 if OK
+	 *      @return int                 		Return integer <0 if KO, >= 0 if OK
 	 */
 	public function update_contact($rowid, $statut, $type_contact_id = 0, $fk_socpeople = 0)
 	{
@@ -1240,7 +1240,7 @@ abstract class CommonObject
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
-	 *    @return   int					<0 if KO, 0=Nothing done, >0 if OK
+	 *    @return   int					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function delete_linked_contact($source = '', $code = '')
 	{
@@ -1385,7 +1385,7 @@ abstract class CommonObject
 	 * 		Update status of a contact linked to object
 	 *
 	 * 		@param	int		$rowid		Id of link between object and contact
-	 * 		@return	int					<0 if KO, >=0 if OK
+	 * 		@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function swapContactStatus($rowid)
 	{
@@ -1639,7 +1639,7 @@ abstract class CommonObject
 	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
 	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
@@ -1664,7 +1664,7 @@ abstract class CommonObject
 	 *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
 	 *
 	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								<0 if KO, >0 if OK
+	 *		@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
@@ -1734,7 +1734,7 @@ abstract class CommonObject
 	 *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
 	 *  if it is not defined, ->element must be defined to know default barcode type.
 	 *
-	 *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
+	 *	@return		int			Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
 	 */
 	public function fetch_barcode()
 	{
@@ -1781,7 +1781,7 @@ abstract class CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_project()
 	{
@@ -1793,7 +1793,7 @@ abstract class CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_projet()
 	{
@@ -1819,7 +1819,7 @@ abstract class CommonObject
 	/**
 	 *		Load the product with id $this->fk_product into this->product
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_product()
 	{
@@ -1842,7 +1842,7 @@ abstract class CommonObject
 	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_user($userid)
 	{
@@ -1886,7 +1886,7 @@ abstract class CommonObject
 	 *  @param	string	$field		Field selected
 	 *  @param	string	$key		Import key
 	 *  @param	string	$element	Element name
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchObjectFrom($table, $field, $key, $element = null)
 	{
@@ -1921,7 +1921,7 @@ abstract class CommonObject
 	 *	@param	string	$table		Table of element or element line
 	 *	@param	int		$id			Element id
 	 *	@param	string	$field		Field selected
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getValueFrom($table, $id, $field)
 	{
@@ -1953,7 +1953,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 *  @see updateExtraField()
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
@@ -2086,7 +2086,7 @@ abstract class CommonObject
 	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
-	 *      @return int         		<0 if KO, >0 if OK
+	 *      @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_previous_next_ref($filter, $fieldid, $nodbprefix = 0)
 	{
@@ -2296,7 +2296,7 @@ abstract class CommonObject
 	 *
 	 *	@param     	int		$projectid		Project id to link element to
 	 *  @param		int		$notrigger		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setProject($projectid, $notrigger = 0)
 	{
@@ -2813,7 +2813,7 @@ abstract class CommonObject
 	 *  @deprecated
 	 *
 	 *	@param      int		$id		Address id
-	 *	@return     int				<0 si ko, >0 si ok
+	 *	@return     int				Return integer <0 si ko, >0 si ok
 	 */
 	public function setDeliveryAddress($id)
 	{
@@ -2934,7 +2934,7 @@ abstract class CommonObject
 	 *
 	 *		@param		User	$user		User object that make change
 	 *		@param		string	$modelpdf	Modele name
-	 *		@return		int					<0 if KO, >0 if OK
+	 *		@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDocModel($user, $modelpdf)
 	{
@@ -3032,7 +3032,7 @@ abstract class CommonObject
 	 * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
 	 * 	@param		string		$rowidorder		   ASC or DESC
 	 * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
-	 * 	@return		int                            <0 if KO, >0 if OK
+	 * 	@return		int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function line_order($renum = false, $rowidorder = 'ASC', $fk_parent_line = true)
 	{
@@ -3196,7 +3196,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
@@ -3405,7 +3405,7 @@ abstract class CommonObject
 	 *  Update external ref of element
 	 *
 	 *  @param      string		$ref_ext	Update field ref_ext
-	 *  @return     int      		   		<0 if KO, >0 if OK
+	 *  @return     int      		   		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_ref_ext($ref_ext)
 	{
@@ -3436,7 +3436,7 @@ abstract class CommonObject
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
 	 *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
-	 *  @return     int      		   		<0 if KO, >0 if OK
+	 *  @return     int      		   		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_note($note, $suffix = '', $notrigger = 0)
 	{
@@ -3522,7 +3522,7 @@ abstract class CommonObject
 	 * 	Update public note (kept for backward compatibility)
 	 *
 	 * @param      string		$note		New value for note
-	 * @return     int      		   		<0 if KO, >0 if OK
+	 * @return     int      		   		Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 * @see update_note()
 	 */
@@ -3541,7 +3541,7 @@ abstract class CommonObject
 	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
 	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
-	 *	@return	int    			           	<0 if KO, >0 if OK
+	 *	@return	int    			           	Return integer <0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
 	{
@@ -3829,7 +3829,7 @@ abstract class CommonObject
 	 *	@param		int		$origin_id	Linked element id
 	 * 	@param		User	$f_user		User that create
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 *	@return		int					<=0 if KO, >0 if OK
+	 *	@return		int					Return integer <=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
@@ -3927,7 +3927,7 @@ abstract class CommonObject
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
 	 *  @param	int|string	$loadalsoobjects	Load also array this->linkedObjects. Use 0 to increase performances, Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
-	 *	@return int								<0 if KO, >0 if OK
+	 *	@return int								Return integer <0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
@@ -4152,7 +4152,7 @@ abstract class CommonObject
 	/**
 	 *	Clear the cache saying that all linked object were already loaded. So next fetchObjectLinked will reload all links.
 	 *
-	 *	@return int						<0 if KO, >0 if OK
+	 *	@return int						Return integer <0 if KO, >0 if OK
 	 *  @see	fetchObjectLinked()
 	 */
 	public function clearObjectLinkedCache()
@@ -4352,7 +4352,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to remove linked items
 	 * @param	string	$field_where			name of field of object we need to delete linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	int								<0 if KO, 0 if nothing done, >0 if OK and something done
+	 * @return 	int								Return integer <0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	public static function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
@@ -4380,7 +4380,7 @@ abstract class CommonObject
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
 	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
-	 *      @return int						<0 if KO, >0 if OK
+	 *      @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
@@ -4511,7 +4511,7 @@ abstract class CommonObject
 	 *
 	 *  @param      int		$id     Record id
 	 *  @param      string	$ref    Record ref
-	 *  @return		int				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return		int				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function getCanvas($id = 0, $ref = '')
 	{
@@ -4578,7 +4578,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		$id			Force id of object
 	 *  @param	int		$entity		Force entity to check
-	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
+	 *  @return	int					Return integer <0 if KO, 0 if not used, >0 if already used
 	 */
 	public function isObjectUsed($id = 0, $entity = 0)
 	{
@@ -4663,7 +4663,7 @@ abstract class CommonObject
 	 *  Function to say how many lines object contains
 	 *
 	 *	@param	int		$predefined		-1=All, 0=Count free product/service only, 1=Count predefined product/service only, 2=Count predefined product, 3=Count predefined service
-	 *  @return	int						<0 if KO, 0 if no predefined products, nb of lines with predefined products if found
+	 *  @return	int						Return integer <0 if KO, 0 if no predefined products, nb of lines with predefined products if found
 	 */
 	public function hasProductsOrServices($predefined = -1)
 	{
@@ -4837,7 +4837,7 @@ abstract class CommonObject
 	/**
 	 *	Set extra parameters
 	 *
-	 *	@return	int      <0 if KO, >0 if OK
+	 *	@return	int      Return integer <0 if KO, >0 if OK
 	 */
 	public function setExtraParameters()
 	{
@@ -5334,7 +5334,7 @@ abstract class CommonObject
 	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
-	 *	@return		int							<=0 if KO, >0 if OK
+	 *	@return		int							Return integer <=0 if KO, >0 if OK
 	 */
 	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0)
 	{
@@ -5621,7 +5621,7 @@ abstract class CommonObject
 	 * @param	int		$update_main_doc_field	Update field main_doc fied into the table of object.
 	 * 											This param is set when called for a document generation if document generator hase
 	 * 											->update_main_doc_field set and returns ->result['fullpath'].
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function indexFile($destfull, $update_main_doc_field)
 	{
@@ -5883,7 +5883,7 @@ abstract class CommonObject
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
 	 *
-	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @return	int						Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
 	 */
 	public function fetchValuesForExtraLanguages()
@@ -6061,7 +6061,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
-	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
+	 *  @return	int						Return integer <0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 *  @see fetchValuesForExtraLanguages()
 	 */
 	public function fetch_optionals($rowid = null, $optionsArray = null)
@@ -6172,7 +6172,7 @@ abstract class CommonObject
 	/**
 	 *	Delete all extra fields values for the current object.
 	 *
-	 *  @return	int		<0 if KO, >0 if OK
+	 *  @return	int		Return integer <0 if KO, >0 if OK
 	 *  @see deleteExtraLanguages(), insertExtraField(), updateExtraField(), setValueFrom()
 	 */
 	public function deleteExtraFields()
@@ -8642,7 +8642,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice		 Product unit price
 	 * @param float		$discountPercent Line discount percent
 	 * @param int		$fk_product		 Product id
-	 * @return	float                    <0 if KO, buyprice if OK
+	 * @return	float                    Return value <0 if KO, buyprice if OK
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9283,7 +9283,7 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = false)
 	{
@@ -9460,7 +9460,7 @@ abstract class CommonObject
 	 * @param	int    	$id				Id object
 	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
-	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '')
 	{
@@ -9516,7 +9516,7 @@ abstract class CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
-	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesCommon($morewhere = '')
 	{
@@ -9567,7 +9567,7 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      	User that modifies
 	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
-	 * @return int             	<0 if KO, >0 if OK
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
@@ -9671,7 +9671,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @return 	int             				Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{
@@ -9809,7 +9809,7 @@ abstract class CommonObject
 	 * @param		string	$parentField   Name of Foreign key parent column
 	 * @param 		array 	$filter		an array filter
 	 * @param		string	$filtermode	AND or OR
-	 * @return		int						<0 if KO, >0 if OK
+	 * @return		int						Return integer <0 if KO, >0 if OK
 	 * @throws Exception
 	 */
 	public function deleteByParentField($parentId = 0, $parentField = '', $filter = array(), $filtermode = "AND")
@@ -9949,7 +9949,7 @@ abstract class CommonObject
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
 	{
@@ -10126,7 +10126,7 @@ abstract class CommonObject
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
 	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
@@ -10201,7 +10201,7 @@ abstract class CommonObject
 	 * @param  int		$fromId	Id object source
 	 * @param  int		$toId	Id object cible
 	 * @param  string	$type	Type of category ('product', ...)
-	 * @return int      < 0 if error, > 0 if ok
+	 * @return int      Return integer < 0 if error, > 0 if ok
 	 */
 	public function cloneCategories($fromId, $toId, $type = '')
 	{

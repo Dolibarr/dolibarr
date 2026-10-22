@@ -95,7 +95,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -137,7 +137,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      int		$id    			Id of CUnit object to fetch (rowid)
 	 *  @param		string	$code			Code
-	 *  @return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
@@ -260,7 +260,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -295,7 +295,7 @@ class CProductNature // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -326,7 +326,7 @@ class CProductNature // extends CommonObject
 	 * Get unit from code
 	 * @param int $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getProductNatureFromCode($code, $mode = 'code')
 	{
