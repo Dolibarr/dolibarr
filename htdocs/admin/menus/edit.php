@@ -76,6 +76,16 @@ if (GETPOST("menu_handler")) {
 	$menu_handler = GETPOST("menu_handler");
 }
 
+// Security check: the menu entry (or parent menu entry when creating) must belong to the current entity
+if (GETPOSTINT('menuId') > 0) {
+	$menutocheck = new Menubase($db);
+	$menutocheck->fetch(GETPOSTINT('menuId'));
+	if (empty($menutocheck->id) || (int) $menutocheck->entity != (int) $conf->entity) {
+		$langs->load("errors");
+		accessforbidden('ErrorRecordNotFound');
+	}
+}
+
 
 
 /*
@@ -84,7 +94,7 @@ if (GETPOST("menu_handler")) {
 
 if ($action == 'add') {
 	if ($cancel) {
-		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
+		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".urlencode($menu_handler));
 		exit;
 	}
 
@@ -164,7 +174,7 @@ if ($action == 'add') {
 
 		$result = $menu->create($user);
 		if ($result > 0) {
-			header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".GETPOST('menu_handler', 'aZ09'));
+			header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".urlencode(GETPOST('menu_handler', 'aZ09')));
 			exit;
 		} else {
 			$action = 'create';
@@ -236,13 +246,13 @@ if ($action == 'update') {
 
 			$action = "edit";
 
-			header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
+			header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".urlencode($menu_handler));
 			exit;
 		} else {
 			$action = 'edit';
 		}
 	} else {
-		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
+		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".urlencode($menu_handler));
 		exit;
 	}
 }
@@ -306,6 +316,7 @@ if ($action == 'create') {
 		$sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs";
 		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql .= " WHERE m.rowid = ".(GETPOSTINT('menuId'));
+		$sql .= " AND m.entity = ".((int) $conf->entity);
 		$res = $db->query($sql);
 		if ($res) {
 			while ($menu = $db->fetch_array($res)) {
@@ -366,7 +377,7 @@ if ($action == 'create') {
 
 	// Mainmenu code
 	print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOSTISSET("propertymainmenu") ? GETPOST("propertymainmenu", 'alphanohtml') : '').'"></td>';
+	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOSTISSET("propertymainmenu") ? dol_escape_htmltag(GETPOST("propertymainmenu", 'alphanohtml')) : '').'"></td>';
 	print '<td>';
 	print $langs->trans("Example").': mytopmenukey';
 	print '</td></tr>';
@@ -374,9 +385,9 @@ if ($action == 'create') {
 	// MenuId Parent
 	print '<tr class="menuidparent"><td>'.$langs->trans('MenuIdParent').'</td>';
 	if ($parent_rowid) {
-		print '<td>'.$parent_rowid.'<input type="hidden" name="menuIdParent" value="'.$parent_rowid.'"></td>';
+		print '<td>'.$parent_rowid.'<input type="hidden" name="menuIdParent" value="'.((int) $parent_rowid).'"></td>';
 	} else {
-		print '<td><input type="text" class="minwidth300" id="menuIdParent" name="menuIdParent" value="'.(GETPOSTISSET("menuIdParent") ? GETPOST("menuIdParent", 'alphanohtml') : '').'"></td>';
+		print '<td><input type="text" class="minwidth300" id="menuIdParent" name="menuIdParent" value="'.(GETPOSTISSET("menuIdParent") ? dol_escape_htmltag(GETPOST("menuIdParent", 'alphanohtml')) : '').'"></td>';
 	}
 	print '<td>'.$langs->trans('DetailMenuIdParent');
 	print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
@@ -414,7 +425,7 @@ if ($action == 'create') {
 	// Show URL into a frame
 	if (getDolGlobalString("MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME")) {
 		print '<tr class="hideforleftmenu"><td>'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
-		print '<td><input type="checkbox" value="1" name="showtopmenuinframe"'.(GETPOSTINT("showtopmenuinframe") ? ' checked="checked"' : '').'"></td><td></td></tr>';
+		print '<td><input type="checkbox" value="1" name="showtopmenuinframe"'.(GETPOSTINT("showtopmenuinframe") ? ' checked="checked"' : '').'></td><td></td></tr>';
 	}
 
 	// Position
@@ -423,11 +434,11 @@ if ($action == 'create') {
 
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
-	print '<td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+	print '<td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? dol_escape_htmltag(GETPOST("enabled", 'alphanohtml')) : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
 	// Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
-	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? dol_escape_htmltag(GETPOST('perms', 'alphanohtml')) : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -440,10 +451,10 @@ if ($action == 'create') {
 } elseif ($action == 'edit') {
 	print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
 
-	print '<form action="./edit.php" method="POST" name="formmenuedit" specllcheck="false" spellcheck="false">';
+	print '<form action="./edit.php" method="POST" name="formmenuedit" spellcheck="false">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
+	print '<input type="hidden" name="handler_origine" value="'.dol_escape_htmltag($menu_handler).'">';
 	print '<input type="hidden" name="menuId" value="'.GETPOSTINT('menuId').'">';
 
 	print dol_get_fiche_head();
@@ -459,13 +470,13 @@ if ($action == 'create') {
 	print '<tr><td>'.$form->textwithpicto($langs->trans('MenuID'), $langs->trans('DetailId')).'</td><td>'.$menu->id.'</td><td></td></tr>';
 
 	// Module
-	print '<tr><td>'.$form->textwithpicto($langs->trans('MenuModule'), $langs->trans('DetailMenuModule')).'</td><td>'.(empty($menu->module) ? 'Core' : $menu->module).'</td><td></td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans('MenuModule'), $langs->trans('DetailMenuModule')).'</td><td>'.(empty($menu->module) ? 'Core' : dolPrintLabel($menu->module)).'</td><td></td></tr>';
 
 	// Handler
 	if ($menu->menu_handler == 'all') {
 		$handler = $langs->trans('AllMenus');
 	} else {
-		$handler = $menu->menu_handler;
+		$handler = dolPrintLabel($menu->menu_handler);
 	}
 	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans('MenuHandler'), $langs->transnoentitiesnoconv("DetailMenuHandler")).'</td><td>'.$handler.'</td>';
 	print '<td></td></tr>';
@@ -483,7 +494,7 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td>';
 	print '<td>'.$langs->trans(ucfirst($menu->type));
-	print '<input type="hidden" name="type" value="'.$menu->type.'">';
+	print '<input type="hidden" name="type" value="'.dol_escape_htmltag($menu->type).'">';
 	print '</td><td>';
 	print $langs->transnoentitiesnoconv("DetailType");
 	print '</td></tr>';
@@ -491,7 +502,7 @@ if ($action == 'create') {
 	// Mainmenu code
 	if ($menu->type == 'top') {
 		print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-		print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alphanohtml') ? GETPOST("propertymainmenu", 'alphanohtml') : $menu->mainmenu).'"></td>';
+		print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.dol_escape_htmltag(GETPOST("propertymainmenu", 'alphanohtml') ? GETPOST("propertymainmenu", 'alphanohtml') : $menu->mainmenu).'"></td>';
 		print '<td>';
 		print $langs->trans("Example").': mytopmenukey';
 		print '</td></tr>';
@@ -548,7 +559,7 @@ if ($action == 'create') {
 	// Show URL into a frame
 	if (getDolGlobalString("MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME") && $menu->type == 'top') {
 		print '<tr class="hideforleftmenu"><td>'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
-		print '<td><input type="checkbox" value="1" name="showtopmenuinframe" '.($menu->showtopmenuinframe ? ' checked="checked"' : '').'"></td><td></td></tr>';
+		print '<td><input type="checkbox" value="1" name="showtopmenuinframe" '.($menu->showtopmenuinframe ? ' checked="checked"' : '').'></td><td></td></tr>';
 	}
 
 	// Position
