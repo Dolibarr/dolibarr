@@ -438,6 +438,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
+if ($socid > 0) {
+	$param .= '&socid='.((int) $socid);
+}
 if ($sall != '') {
 	$param .= '&sall='.urlencode($sall);
 }
