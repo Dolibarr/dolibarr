@@ -609,6 +609,7 @@ ActionCancelled=Action Cancelled
 ExecutingTool=Executing Tool
 FetchingData=Fetching Data
 AISearchDoneNowPreparingAction=Search done, preparing the action
+AIRetry=Retry
 GeneratingLink=Generating navigation link...
 Found=Found
 VoiceYesNo=Say Yes or No

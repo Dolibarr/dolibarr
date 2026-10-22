@@ -1322,6 +1322,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
+    // A server failure (HTTP 5xx) may be transient: offer a button that runs the same request again.
+    function retryActionsFor(result, onRetry) {
+        if (!result || !result.error || !(parseInt(result.http_status, 10) >= 500)) return null;
+        return [{ text: t('AIRetry'), icon: 'fa-redo', onclick: (ev) => { ev.currentTarget.closest('.msg-actions').remove(); onRetry(); } }];
+    }
+
     function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
@@ -1619,7 +1625,9 @@ export function initAiAssistant(container) {
             }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
+            const failedIntent = pendingIntent;
+            const retry = retryActionsFor(result, () => { pendingIntent = failedIntent; executePendingIntent(); });
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), retry, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
@@ -1948,7 +1956,9 @@ export function initAiAssistant(container) {
                     input.disabled = false; input.focus(); return;
                 }
                 lastResult = { data: result, tool: intent.tool, query: query };
-                appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
+                const failedRequest = lastSent;
+                const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
+                appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
                 resolveThirdpartyNames(chat.lastElementChild);
                 break;
             }

@@ -860,6 +860,7 @@ function getAiChatAssistantConfig()
 		'ExecutingTool',
 		'FetchingData',
 		'AISearchDoneNowPreparingAction',
+		'AIRetry',
 		'GeneratingLink',
 		'Found',
 		'File',

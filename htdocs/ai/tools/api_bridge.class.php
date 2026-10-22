@@ -1520,7 +1520,7 @@ class ToolApiBridge extends McpTool
 				),
 				'indexPages' => array(
 					'suffix' => 'pages_list',
-					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'banner', 'other'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
+					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
 					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
 					'params' => array('id' => "Rowid of the website.")
 				),
