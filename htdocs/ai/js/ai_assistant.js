@@ -1347,6 +1347,8 @@ export function initAiAssistant(container) {
             const bubble = document.createElement('div');
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
+            // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
+            if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
             // Context pin: the last AUTO_CONTEXT exchanges follow the model by
             // default (sliding window), the user pins older ones explicitly or
@@ -1747,11 +1749,11 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
-            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('AIContextClear') + '</a>';
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
+            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {

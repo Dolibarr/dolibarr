@@ -365,6 +365,10 @@ body.ai-fullpage {
     max-width: calc(100% - 40px);
 }
 
+.msg.bot .msg-bubble.msg-bubble-wide {
+    flex: 1 1 auto;
+}
+
 .msg.system {
     text-align: center;
     background: transparent;
