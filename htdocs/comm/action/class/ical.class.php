@@ -265,6 +265,34 @@ class ICal
 			}
 		}
 
+		$events = $this->get_event_list();
+		if (!empty($events)) {
+			// An occurrence of a recurring event that was modified or cancelled is an event with the same UID and a RECURRENCE-ID.
+			// We add its day to the excluded days (EXDATE) of the main event, so the original occurrence is not shown.
+			// The modified occurrence stays an event of its own.
+			$mainkeys = [];
+			foreach ($events as $evkey => $event) {
+				if (empty($event['RECURRENCE-ID']) && !empty($event['UID'])) {
+					$mainkeys[$event['UID']] = $evkey;
+				}
+			}
+			foreach ($events as $event) {
+				if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($mainkeys[$event['UID']])) {
+					$mainkey = $mainkeys[$event['UID']];
+					$exdates = (isset($events[$mainkey]['EXDATE']) && is_array($events[$mainkey]['EXDATE'])) ? $events[$mainkey]['EXDATE'] : [];
+					$exdates[] = $event['RECURRENCE-ID'];
+					$events[$mainkey]['EXDATE'] = $exdates;
+				}
+			}
+			// Events (or occurrences) with STATUS:CANCELLED are not returned
+			foreach ($events as $evkey => $event) {
+				if (isset($event['STATUS']) && is_string($event['STATUS']) && strtoupper(trim($event['STATUS'])) == 'CANCELLED') {
+					unset($events[$evkey]);
+				}
+			}
+			$this->cal['VEVENT'] = $events;
+		}
+
 		//var_dump($this->cal);
 		return $this->cal;
 	}
@@ -322,6 +350,13 @@ class ICal
 				break;
 
 			case "VEVENT":
+				if (strtoupper(explode(';', $key, 2)[0]) == 'RECURRENCE-ID') {
+					// Occurrence of a recurring event that is replaced by this event. We keep only the day (as written in the file).
+					$key = 'RECURRENCE-ID';
+					if (preg_match('/^\s*([0-9]{8})/', $value, $reg)) {
+						$value = $reg[1];
+					}
+				}
 				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->event_count][$key] = ($key == 'RRULE' ? $this->ical_rrule($value) : $value);	// RRULE of an event is decoded into an array
 				break;
