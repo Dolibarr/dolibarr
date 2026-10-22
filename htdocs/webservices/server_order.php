@@ -728,7 +728,9 @@ function createOrder($authentication, $order)
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $order[$key];
+				if (isset($order[$key])) {
+					$newobject->array_options[$key] = $order[$key];
+				}
 			}
 		}
 
@@ -769,7 +771,9 @@ function createOrder($authentication, $order)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $tmpkey => $tmplabel) {
 					$tmpkey = 'options_'.$tmpkey;
-					$newline->array_options[$tmpkey] = $line[$tmpkey];
+					if (isset($line[$tmpkey])) {
+						$newline->array_options[$tmpkey] = $line[$tmpkey];
+					}
 				}
 			}
 

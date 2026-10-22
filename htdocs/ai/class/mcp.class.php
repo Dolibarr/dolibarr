@@ -342,6 +342,9 @@ class McpHandler
 				if (empty($def['categories'])) {
 					$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
 				}
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
 				$schema[] = $def;
 			}
 		}
@@ -371,6 +374,10 @@ class McpHandler
 
 			foreach ($tool->getDefinitions() as $def) {
 				$name = isset($def['name']) ? $def['name'] : '';
+
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
 
 				if ($isSystem) {
 					// Always include system tools but tag them so parse_intent.php
@@ -445,6 +452,10 @@ class McpHandler
 			foreach ($tool->getDefinitions() as $def) {
 				$name = isset($def['name']) ? $def['name'] : '';
 
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
+
 				// Check is_system flag in the definition array itself.
 				// This is set directly in conversation.class.php getDefinitions()
 				// and works even if the isSystem() class method is not yet deployed.
@@ -476,6 +487,20 @@ class McpHandler
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Normalize a tool input schema to ensure broad compatibility with LLM
+	 * function-calling APIs (e.g. Google Gemini, Claude, OpenAI).
+	 *
+	 * Delegates to McpTool::normalizeInputSchema().
+	 *
+	 * @param array<string, mixed> $schema Input schema to normalize
+	 * @return array<string, mixed> Normalized input schema
+	 */
+	public static function normalizeInputSchema(array $schema): array
+	{
+		return McpTool::normalizeInputSchema($schema);
 	}
 
 	/**
