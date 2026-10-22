@@ -935,7 +935,7 @@ function getAiChatAssistantConfig()
 		// Off (0) until an administrator decides otherwise: past answers carry
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
 		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
 		// model list by a name heuristic that is not reliable, so hidden by default.
 		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
