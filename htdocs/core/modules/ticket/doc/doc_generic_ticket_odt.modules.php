@@ -144,9 +144,9 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 
 		// Scan directories
 		if (count($listofdir)) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b></span><br>';
 
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=tickets/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';

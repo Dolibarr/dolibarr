@@ -321,7 +321,7 @@ class Conf extends stdClass
 	public $adherent;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $member;
 
@@ -372,12 +372,12 @@ class Conf extends stdClass
 	public $supplier_proposal;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $supplier_order;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $supplier_invoice;
 
@@ -527,6 +527,10 @@ class Conf extends stdClass
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 		$this->api = new stdClass();
+		// supplier_order and supplier_invoice may have been set artificially by a previous call when module supplier was on,
+		// so we reset them to not keep the setup of a previous entity. They are set again later if module is on.
+		$this->supplier_order = null;
+		$this->supplier_invoice = null;
 
 		// Common arrays
 		$this->cache = array();
@@ -578,7 +582,7 @@ class Conf extends stdClass
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
+						$this->global->$key = dolDecrypt($value);	// decrypt data encrypted by dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -647,21 +651,8 @@ class Conf extends stdClass
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
+								// @phan-suppress-next-line PhanTypeExpectedObjectPropAccessButGotNull
 								$this->$modulename->enabled = true;	// TODO Remove this
-
-								// Duplicate entry with the new name
-								/*
-								$mapping = $this->deprecatedProperties();
-								if (array_key_exists($modulename, $mapping)) {
-									$newmodulename = $mapping[$modulename];
-									$this->modules[$newmodulename] = $newmodulename;
-
-									if (!isset($this->$newmodulename) || !is_object($this->$newmodulename)) {
-										$this->$newmodulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
-									}
-									$this->$newmodulename->enabled = true;	// TODO Remove this
-								}
-								*/
 							}
 						}
 					}
@@ -675,7 +666,7 @@ class Conf extends stdClass
 			if (!empty($this->global->LOCAL_CONSTS_FILES)) {
 				$filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
 				foreach ($filesList as $file) {
-					$file = dol_sanitizeFileName($file);
+					$file = dol_sanitizeFileName(basename($file));
 					dol_include_once($file."/".$file."_consts.php"); // This file can run code like setting $this->global->XXX vars.
 				}
 			}
@@ -821,7 +812,7 @@ class Conf extends stdClass
 			$this->user->multidir_output = array($this->entity => $rootfordata."/users");
 			$this->user->multidir_temp = array($this->entity => $rootfortemp."/users/temp");
 			// For backward compatibility
-			$this->user->dir_output = $rootforuser."/users";
+			$this->user->dir_output = $rootfordata."/users";
 			$this->user->dir_temp = $rootfortemp."/users/temp";
 
 			// For proposal storage
@@ -1154,7 +1145,7 @@ class Conf extends stdClass
 				$this->global->MAIN_SHOW_STATE_CODE = 1;
 			}
 
-			// By default, we show state code in combo list
+			// By default, we use the currency rate of the origin object when creating an object from another one
 			if (!isset($this->global->MULTICURRENCY_USE_ORIGIN_TX)) {
 				$this->global->MULTICURRENCY_USE_ORIGIN_TX = 1;
 			}
@@ -1219,7 +1210,7 @@ class Conf extends stdClass
 
 			// Delay before warnings
 			// Avoid strict errors. TODO: Replace conf->xxx->warning_delay with a property conf->warning_delays['xxx']
-			if (isset($this->agenda)) {
+			if (isset($this->adherent)) {
 				$this->warning_delays['subscription'] = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
 				$this->adherent->subscription = new stdClass();
 				$this->adherent->subscription->warning_delay = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
@@ -1315,9 +1306,8 @@ class Conf extends stdClass
 			}
 
 			// conf->main_checkbox_left_column = constant to set checkbox list to left
-			if (!isset($this->main_checkbox_left_column)) {
-				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
-			}
+			// This value can be overwritten by user choice in main.inc.php
+			$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
 
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
@@ -1445,13 +1435,10 @@ class Conf extends stdClass
 				$this->category = $this->categorie;
 			}
 			// project is new use, projet is old use still initialised
-			if (isset($this->projet) && !isset($this->project)) {
-				$this->project = $this->projet;
-			}
+			// We always reset it, so it does not keep the object of a previous entity when setValues() is called again by setEntityValues()
+			$this->project = (isset($this->projet) ? $this->projet : null);
 			// member is new use, adherent is old use still initialised
-			if (isset($this->adherent) && !isset($this->member)) {
-				$this->member = $this->adherent;
-			}
+			$this->member = (isset($this->adherent) ? $this->adherent : null);
 
 			// Object $mc
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
@@ -1464,10 +1451,15 @@ class Conf extends stdClass
 				// We init log handlers
 				if (!empty($this->global->SYSLOG_HANDLERS)) {
 					$handlers = json_decode($this->global->SYSLOG_HANDLERS);
-				} else {
+				}
+				if (empty($handlers) || !is_array($handlers)) {	// If SYSLOG_HANDLERS is empty or is not a valid json array
 					$handlers = array();
 				}
 				foreach ($handlers as $handler) {
+					// The handler name is used to build a file path and a class name, so it must be a simple name
+					if (!is_string($handler) || !preg_match('/^[a-zA-Z0-9_]+$/', $handler)) {
+						continue;
+					}
 					$handler_file_found = '';
 					$dirsyslogs = array('/core/modules/syslog/');
 					if (!empty($this->modules_parts['syslog']) && is_array($this->modules_parts['syslog'])) {

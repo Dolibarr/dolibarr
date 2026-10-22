@@ -450,7 +450,7 @@ class Mailing extends CommonObject
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode((string) $obj->extraparams, true);
 
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;

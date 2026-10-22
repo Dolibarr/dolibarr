@@ -163,15 +163,15 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b></span>';
 		}
 
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hidden opacitylow">';
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'];
 				//$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=recruitementjobposition/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
