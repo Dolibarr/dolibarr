@@ -836,14 +836,29 @@ class Mo extends CommonObject
 	 * @param  string 	$role    	MoLine Role that products are added as ('toproduce', 'toconsume', 'produced', 'consumed')
 	 * @param  BOM 		$bom        BOM to parse lines from
 	 * @param  float 	$quantity 	Quantity modifier for sub products/BOM
+	 * @param  int 		$fk_product	Id of product produced by $bom (0 = product of the MO)
 	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
-	public function processBOM(User $user, $role, $bom, $quantity)
+	public function processBOM(User $user, $role, $bom, $quantity, $fk_product = 0)
 	{
+		global $action, $hookmanager;
+
 		$error = 0;
 
+		// A module can replace the lines of the BOM to process (for example to use the variant of a product)
+		$bomlines = $bom->lines;
+		$hookmanager->initHooks(array('modao'));
+		$parameters = array('role' => $role, 'bom' => $bom, 'quantity' => $quantity, 'fk_product' => ($fk_product > 0 ? $fk_product : $this->fk_product));
+		$reshook = $hookmanager->executeHooks('processBOMLines', $parameters, $this, $action);
+		if ($reshook < 0) {
+			$this->setErrorsFromObject($hookmanager);
+			return 1;
+		} elseif ($reshook > 0 && isset($hookmanager->resArray['lines']) && is_array($hookmanager->resArray['lines'])) {
+			$bomlines = $hookmanager->resArray['lines'];
+		}
+
 		$quantity /= $bom->qty;
-		foreach ($bom->lines as $line) {
+		foreach ($bomlines as $line) {
 			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
@@ -851,7 +866,7 @@ class Mo extends CommonObject
 			if ($line->fk_bom_child > 0 && !in_array($line->id, $this->noFlattenBomLineIds)) {
 				$bom = new BOM($this->db);
 				$bom->fetch((int) $line->fk_bom_child);
-				$error += $this->processBOM($user, $role, $bom, $quantity_line);
+				$error += $this->processBOM($user, $role, $bom, $quantity_line, $line->fk_product);
 			} else {
 				$moline = new MoLine($this->db);
 				$moline->fk_mo = $this->id;
