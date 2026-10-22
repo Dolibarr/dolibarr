@@ -254,7 +254,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'confirm_reopen') {
+	if ($action == 'confirm_reopen' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 }
