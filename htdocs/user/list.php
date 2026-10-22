@@ -169,6 +169,17 @@ if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => '0', 'position' => 110);
 }
 
+// Number of passkeys of each user, to find the users who did not create one yet.
+// Same permission than to see the passkeys of another user (see user/passkeys.php).
+require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+$permissiontoseepasskeys = (passkeyIsEnabled() && !empty($user->admin) && $user->hasRight("user", "user", "password") && empty($user->socid));
+if ($permissiontoseepasskeys) {
+	$arrayfields['nb_passkeys'] = array('label' => "Passkeys", 'checked' => '0', 'position' => 120);
+} elseif ($sortfield == 'nb_passkeys') {
+	$sortfield = "u.login";
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -404,6 +415,9 @@ $sql .= " GREATEST(u.tms, COALESCE(ef.tms, u.tms)) as date_modification, u.datec
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
+if ($permissiontoseepasskeys) {
+	$sql .= ", (SELECT COUNT(pk.rowid) FROM ".MAIN_DB_PREFIX."oauth_token as pk WHERE pk.fk_user = u.rowid AND pk.service = '".$db->escape(UserPasskey::SERVICE)."') as nb_passkeys";
+}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -861,6 +875,9 @@ if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_
 if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['nb_passkeys']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -994,6 +1011,10 @@ if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_
 }
 if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['nb_passkeys']['checked'])) {
+	print_liste_field_titre($arrayfields['nb_passkeys']['label'], $_SERVER['PHP_SELF'], "nb_passkeys", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -1392,6 +1413,15 @@ while ($i < $imaxinloop) {
 		// Date previous login
 		if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Number of passkeys
+		if (!empty($arrayfields['nb_passkeys']['checked'])) {
+			print '<td class="center">';
+			print '<a href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.((int) $obj->rowid).'"><span class="badge badge-info">'.((int) $obj->nb_passkeys).'</span></a>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
