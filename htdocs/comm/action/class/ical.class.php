@@ -322,6 +322,25 @@ class ICal
 					$events[$mainkey]['EXDATE'] = $exdates;
 				}
 			}
+			// An event can have a DURATION instead of a DTEND: we define the end from the duration.
+			foreach ($events as $evkey => $event) {
+				if (empty($event['DURATION']) || !is_string($event['DURATION']) || isset($event['DTEND']) || isset($event['DTEND;VALUE=DATE'])) {
+					continue;
+				}
+				$seconds = $this->ical_duration_to_seconds($event['DURATION']);
+				if ($seconds === null) {
+					continue;
+				}
+				if (!empty($event['DTSTART;VALUE=DATE']) && is_string($event['DTSTART;VALUE=DATE'])) {
+					// All day event: the end is the day after the last day, so a duration of 1 day is DTEND = next day
+					$start = gmmktime(0, 0, 0, (int) substr($event['DTSTART;VALUE=DATE'], 4, 2), (int) substr($event['DTSTART;VALUE=DATE'], 6, 2), (int) substr($event['DTSTART;VALUE=DATE'], 0, 4));
+					$events[$evkey]['DTEND;VALUE=DATE'] = gmdate('Ymd', $start + max(1, (int) ceil($seconds / 86400)) * 86400);
+				} elseif (isset($event['DTSTART']) && is_array($event['DTSTART']) && isset($event['DTSTART']['unixtime'])) {
+					$events[$evkey]['DTEND'] = array('TZID' => ($event['DTSTART']['TZID'] ?? ''), 'unixtime' => (int) $event['DTSTART']['unixtime'] + $seconds);
+				} elseif (!empty($event['DTSTART']) && !is_array($event['DTSTART'])) {
+					$events[$evkey]['DTEND'] = (int) $event['DTSTART'] + $seconds;
+				}
+			}
 			// Events (or occurrences) with STATUS:CANCELLED are not returned
 			foreach ($events as $evkey => $event) {
 				if (isset($event['STATUS']) && is_string($event['STATUS']) && strtoupper(trim($event['STATUS'])) == 'CANCELLED') {
@@ -469,6 +488,24 @@ class ICal
 			}
 		}
 		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Return the number of seconds of an iCal duration (RFC 5545: P1W, P1D, PT1H30M, -PT15M, P1DT2H...)
+	 *
+	 * @param 	string		$duration	Duration
+	 * @return 	int|null				Number of seconds, or null if the value is not a valid duration
+	 */
+	public function ical_duration_to_seconds($duration)
+	{
+		// phpcs:enable
+		$reg = array();
+		if (!preg_match('/^([+-])?P(?:([0-9]+)W)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?)?$/', strtoupper(trim($duration)), $reg) || $reg[0] == 'P' || substr($reg[0], -1) == 'T') {
+			return null;
+		}
+		$seconds = ((int) ($reg[2] ?? 0)) * 7 * 86400 + ((int) ($reg[3] ?? 0)) * 86400 + ((int) ($reg[4] ?? 0)) * 3600 + ((int) ($reg[5] ?? 0)) * 60 + ((int) ($reg[6] ?? 0));
+		return (($reg[1] ?? '') == '-' ? -$seconds : $seconds);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
