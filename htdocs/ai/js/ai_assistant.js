@@ -227,7 +227,7 @@ export function initAiAssistant(container) {
     }
 
     // Start a new conversation: used by the Clear button and the "/new" command
-    function clearConversation() {
+    function clearConversation(fromOtherInstance = false) {
         // Remove conversation messages; keep the welcome element so it can be
         // shown again on the full page (the popover has no welcome screen).
         chat.querySelectorAll('.msg').forEach((n) => n.remove());
@@ -247,8 +247,15 @@ export function initAiAssistant(container) {
             } catch (e) { /* ignore */ }
         }
         updateContextBar();
+        if (fromOtherInstance) return;
+        // The other chat of the page (popover over the full page) shows the same conversation: clear it too.
+        document.dispatchEvent(new CustomEvent('aiChatCleared', { detail: { key: HISTORY_KEY, source: container } }));
         input.focus();
     }
+
+    document.addEventListener('aiChatCleared', (ev) => {
+        if (ev.detail && ev.detail.source !== container && ev.detail.key === HISTORY_KEY) clearConversation(true);
+    });
 
     // Clear Chat History
     clearBtn.addEventListener('click', () => {

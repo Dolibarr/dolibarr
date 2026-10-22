@@ -805,6 +805,9 @@ body.ai-fullpage {
 .chat-table-wrap {
     overflow-x: auto;
     margin-top: 8px;
+    /* A wide table must scroll here, not widen the page: on the full page, the chat lives into a table-cell sized on its content */
+    width: 0;
+    min-width: 100%;
 }
 
 .chat-table {
