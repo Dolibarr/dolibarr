@@ -1824,11 +1824,19 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['invoices']['methods']['validate'] = $this->validateMethod('customer invoice', 'Facture', 'AIPreviewValidateInvoice', $advanced ? array('facture', 'invoice_advance', 'validate') : array('facture', 'creer'), array('force_number' => '', 'notrigger' => 0), 'STOCK_CALCULATE_ON_BILL');
 		$this->enrichments['orders']['methods']['validate'] = $this->validateMethod('sale order', 'Commande', 'AIPreviewValidateOrder', $advanced ? array('commande', 'order_advance', 'validate') : array('commande', 'creer'), array('notrigger' => 0), 'STOCK_CALCULATE_ON_VALIDATE_ORDER');
 		$this->enrichments['proposals']['methods']['validate'] = $this->validateMethod('commercial proposal', 'Propal', 'AIPreviewValidateProposal', $advanced ? array('propal', 'propal_advance', 'validate') : array('propal', 'creer'), array('notrigger' => 0), '');
-		// Logistic documents: validating a reception brings the goods into stock,
-		// validating a shipment takes them out. Each line carries its own warehouse,
-		// so no warehouse is asked here, and the stock always moves.
-		$this->enrichments['receptions']['methods']['validate'] = $this->validateMethod('supplier reception', 'Reception', 'AIPreviewValidateReception', $advanced ? array('reception', 'reception_advance', 'validate') : array('reception', 'creer'), array('notrigger' => 0), '');
-		$this->enrichments['shipments']['methods']['validate'] = $this->validateMethod('shipment', 'Expedition', 'AIPreviewValidateShipment', $advanced ? array('expedition', 'shipping_advance', 'validate') : array('expedition', 'creer'), array('notrigger' => 0), '');
+		// Logistic documents. Each line carries its own warehouse, so none is asked
+		// here; whether validating moves the stock is a setup choice of the instance
+		// (STOCK_CALCULATE_ON_RECEPTION / _SHIPMENT), and the confirmation says so.
+		$receptionMovesStock = isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION');
+		$shipmentMovesStock = isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT');
+		$this->enrichments['receptions']['methods']['validate'] = $this->validateMethod('supplier reception', 'Reception', $receptionMovesStock ? 'AIPreviewValidateReceptionStock' : 'AIPreviewValidateReception', $advanced ? array('reception', 'reception_advance', 'validate') : array('reception', 'creer'), array('notrigger' => 0), '');
+		$this->enrichments['shipments']['methods']['validate'] = $this->validateMethod('shipment', 'Expedition', $shipmentMovesStock ? 'AIPreviewValidateShipmentStock' : 'AIPreviewValidateShipment', $advanced ? array('expedition', 'shipping_advance', 'validate') : array('expedition', 'creer'), array('notrigger' => 0), '');
+		if ($receptionMovesStock) {
+			$this->enrichments['receptions']['methods']['validate']['description'] .= " On this Dolibarr, validating a reception brings the received goods into the stock of their warehouses.";
+		}
+		if ($shipmentMovesStock) {
+			$this->enrichments['shipments']['methods']['validate']['description'] .= " On this Dolibarr, validating a shipment takes the shipped goods out of stock.";
+		}
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
