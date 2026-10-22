@@ -126,6 +126,24 @@ before_install:
   fi
 
 - |
+  echo "===== $(date) Stop here if a job of GitHub Actions already failed on the pull request (title, description, quota...)"
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] || [ -z "$TRAVIS_PULL_REQUEST" ]; then
+    echo "Not a pull request, we do not check the GitHub checks"
+  elif ! command -v jq >/dev/null 2>&1; then
+    echo "Command jq not found, we do not check the GitHub checks"
+  else
+    # GITHUB_TOKEN is optional, it only avoids the rate limit of the anonymous API (not available on pull request from a fork)
+    failed_checks=$(curl -s ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+      "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_PULL_REQUEST_SHA/check-runs?per_page=100" \
+      | jq -r '.check_runs[]? | select(.conclusion == "failure" and .app.slug != "travis-ci") | .name' 2>/dev/null)
+    if [ -n "$failed_checks" ]; then
+      echo "These GitHub checks failed, we stop the build to save Travis minutes:"
+      echo "$failed_checks"
+      travis_terminate 1
+    fi
+  fi
+
+- |
   echo ===== $(date) Install repository of packages for PHP
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv

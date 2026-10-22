@@ -156,7 +156,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 		// Scan directories
 		if (count($listofdir)) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b></span><br>';
 
 			if ($odtChosen) {
 				// Model for creation
@@ -181,7 +181,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$texte .= "</td></tr>";
 				$texte .= '</table>';
 			}
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=usergroups/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';

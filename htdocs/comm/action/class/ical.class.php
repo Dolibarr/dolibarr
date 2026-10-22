@@ -42,7 +42,7 @@ class ICal
 	public $file;
 
 	/**
-	 * @var string  Text in file
+	 * @var string|null  Text in file (null if it could not be read or is not an iCal file)
 	 */
 	public $file_text;
 
@@ -110,7 +110,7 @@ class ICal
 		$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], $localip, $sslverify);
 		if ($tmpresult['http_code'] != 200) {
 			$file_text = null;
-			$this->error = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+			$this->error = 'Error: '.$tmpresult['http_code'].' '.dol_trunc(trim((string) preg_replace('/\s+/', ' ', dol_string_nohtmltag((string) $tmpresult['content']))), 200);
 		} else {
 			$file_text = preg_replace("/[\r\n]{1,} /", "", $tmpresult['content']);
 		}
@@ -144,6 +144,17 @@ class ICal
 	}
 
 	/**
+	 * Return if a text looks like an iCal file (it starts, after a BOM and blank lines, with BEGIN:VCALENDAR)
+	 *
+	 * @param	string	$text	Text
+	 * @return	bool			True if it looks like an iCal file
+	 */
+	private function isIcalText($text)
+	{
+		return (bool) preg_match('/^[\xEF\xBB\xBF\s]*BEGIN:VCALENDAR/i', $text);
+	}
+
+	/**
 	 * Translate Calendar
 	 *
 	 * @param	string	 	$uri			Url
@@ -167,12 +178,35 @@ class ICal
 			if ($datefile && $datefile > ($now - $delaycache)) {
 				// We reuse the cache file
 				$this->file_text = file_get_contents($usecachefile);
+				if (!$this->isIcalText($this->file_text)) {
+					$this->file_text = '';	// Not an iCal file (for example a HTML page cached by an old version), so we download it again
+				}
 			}
 		}
 
 		// read FILE text
 		if (empty($this->file_text)) {
-			$this->file_text = $this->read_file($uri);
+			// A failure is remembered a few minutes, to not download again and wait for the timeout at each display of the page
+			$failfile = ($usecachefile ? $usecachefile.'.fail' : '');
+			if ($failfile && dol_filemtime($failfile) > (dol_now('gmt') - min($delaycache, 300))) {
+				$this->error = (string) file_get_contents($failfile);
+				$this->file_text = null;
+			} else {
+				$this->file_text = $this->read_file($uri);
+				if (!is_null($this->file_text) && !$this->isIcalText($this->file_text)) {
+					// We got something that is not an iCal file (an error page in HTML, a login page...). We do not keep it.
+					$this->error = 'Error: the server did not return an iCal file (received: '.dol_trunc(trim((string) preg_replace('/\s+/', ' ', dol_string_nohtmltag($this->file_text))), 100).')';
+					$this->file_text = null;
+				}
+				if ($failfile) {
+					if (is_null($this->file_text)) {
+						file_put_contents($failfile, $this->error, LOCK_EX);
+						dolChmod($failfile);
+					} else {
+						dol_delete_file($failfile);
+					}
+				}
+			}
 
 			if ($usecachefile && !is_null($this->file_text)) {
 				// Save the file content into cache file
@@ -181,7 +215,7 @@ class ICal
 			}
 		}
 
-		$file_text_array = preg_split("[\n]", $this->file_text);
+		$file_text_array = preg_split("[\n]", ltrim((string) $this->file_text, "\xEF\xBB\xBF \t\r\n"));	// Ignore a BOM and the blank lines before BEGIN:VCALENDAR
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
 		if (!stristr($file_text_array[0], 'BEGIN:VCALENDAR')) {
@@ -265,6 +299,34 @@ class ICal
 			}
 		}
 
+		$events = $this->get_event_list();
+		if (!empty($events)) {
+			// An occurrence of a recurring event that was modified or cancelled is an event with the same UID and a RECURRENCE-ID.
+			// We add its day to the excluded days (EXDATE) of the main event, so the original occurrence is not shown.
+			// The modified occurrence stays an event of its own.
+			$mainkeys = [];
+			foreach ($events as $evkey => $event) {
+				if (empty($event['RECURRENCE-ID']) && !empty($event['UID'])) {
+					$mainkeys[$event['UID']] = $evkey;
+				}
+			}
+			foreach ($events as $event) {
+				if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($mainkeys[$event['UID']])) {
+					$mainkey = $mainkeys[$event['UID']];
+					$exdates = (isset($events[$mainkey]['EXDATE']) && is_array($events[$mainkey]['EXDATE'])) ? $events[$mainkey]['EXDATE'] : [];
+					$exdates[] = $event['RECURRENCE-ID'];
+					$events[$mainkey]['EXDATE'] = $exdates;
+				}
+			}
+			// Events (or occurrences) with STATUS:CANCELLED are not returned
+			foreach ($events as $evkey => $event) {
+				if (isset($event['STATUS']) && is_string($event['STATUS']) && strtoupper(trim($event['STATUS'])) == 'CANCELLED') {
+					unset($events[$evkey]);
+				}
+			}
+			$this->cal['VEVENT'] = $events;
+		}
+
 		//var_dump($this->cal);
 		return $this->cal;
 	}
@@ -283,6 +345,19 @@ class ICal
 		// phpcs:enable
 
 		//print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
+
+		// EXDATE (dates excluded from a recurrence). Only the days are kept, accumulated over all the EXDATE lines of the event.
+		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'EXDATE') {
+			$exdates = (isset($this->cal[$type][$this->event_count]['EXDATE']) && is_array($this->cal[$type][$this->event_count]['EXDATE'])) ? $this->cal[$type][$this->event_count]['EXDATE'] : [];
+			foreach (explode(',', $value) as $exdate) {
+				if (preg_match('/^\s*([0-9]{8})/', $exdate, $reg)) {
+					$exdates[] = $reg[1];
+				}
+			}
+			$this->cal[$type][$this->event_count]['EXDATE'] = $exdates;
+			$this->last_key = 'EXDATE';
+			return;
+		}
 
 		if (empty($key)) {
 			$key = $this->last_key;
@@ -322,8 +397,15 @@ class ICal
 				break;
 
 			case "VEVENT":
+				if (strtoupper(explode(';', $key, 2)[0]) == 'RECURRENCE-ID') {
+					// Occurrence of a recurring event that is replaced by this event. We keep only the day (as written in the file).
+					$key = 'RECURRENCE-ID';
+					if (preg_match('/^\s*([0-9]{8})/', $value, $reg)) {
+						$value = $reg[1];
+					}
+				}
 				// @phan-suppress-next-line PhanTypeMismatchReturn
-				$this->cal[$type][$this->event_count][$key] = $value;
+				$this->cal[$type][$this->event_count][$key] = ($key == 'RRULE' ? $this->ical_rrule($value) : $value);	// RRULE of an event is decoded into an array
 				break;
 
 			case "VFREEBUSY":
@@ -377,8 +459,10 @@ class ICal
 		$result = array();
 		$rrule = explode(';', $value);
 		foreach ($rrule as $line) {
-			$rcontent = explode('=', $line);
-			$result[$rcontent[0]] = $rcontent[1];
+			$rcontent = explode('=', $line, 2);
+			if (count($rcontent) == 2) {
+				$result[strtoupper($rcontent[0])] = $rcontent[1];
+			}
 		}
 		return $result;
 	}
@@ -443,7 +527,7 @@ class ICal
 	/**
 	 * Return sorted eventlist as array or false if calendar is empty
 	 *
-	 * @return array<int,array<string,string>>|false
+	 * @return array<int,array<string,string|array<int|string,string>>>|false
 	 */
 	public function get_sort_event_list()
 	{
@@ -475,7 +559,7 @@ class ICal
 	/**
 	 * Return eventlist array (not sorted eventlist array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_event_list()
 	{
@@ -487,7 +571,7 @@ class ICal
 	/**
 	 * Return freebusy array (not sort eventlist array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_freebusy_list()
 	{
@@ -499,7 +583,7 @@ class ICal
 	/**
 	 * Return to do array (not sorted todo array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_todo_list()
 	{
@@ -511,7 +595,7 @@ class ICal
 	/**
 	 * Return base calendar data
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_calender_data()
 	{
