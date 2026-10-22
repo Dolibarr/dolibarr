@@ -1247,13 +1247,18 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function getPathOfDump()
 	{
-		$fullpathofdump = '/pathtomysqldump/mysqldump';
+		// MariaDB renamed its client binaries and mysqldump is now only a deprecated symlink that
+		// writes "Deprecated program name" on stderr, which makes the backup fail. Both names are
+		// in the default $dolibarr_main_restrict_os_commands, so suggest the one the server ships.
+		$dumpname = (stripos($this->getVersion(), 'mariadb') !== false ? 'mariadb-dump' : 'mysqldump');
+
+		$fullpathofdump = '/pathto'.$dumpname.'/'.$dumpname;
 
 		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
-			$fullpathofdump = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/mysqldump';
+			$fullpathofdump = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/'.$dumpname;
 		}
 		return $fullpathofdump;
 	}
@@ -1265,13 +1270,16 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function getPathOfRestore()
 	{
-		$fullpathofimport = '/pathtomysql/mysql';
+		// Same renaming as for the dump program, see getPathOfDump().
+		$clientname = (stripos($this->getVersion(), 'mariadb') !== false ? 'mariadb' : 'mysql');
+
+		$fullpathofimport = '/pathto'.$clientname.'/'.$clientname;
 
 		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
-			$fullpathofimport = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/mysql';
+			$fullpathofimport = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/'.$clientname;
 		}
 		return $fullpathofimport;
 	}
