@@ -431,11 +431,17 @@ class ToolApiBridge extends McpTool
 						'preview' => 'AIPreviewUpdateRecord',
 						'update' => [
 							'ref_supplier' => ['type' => 'string'], 'note_private' => ['type' => 'string'], 'note_public' => ['type' => 'string'],
-							'delivery_date' => ['type' => ['integer', 'null'], 'minimum' => 0],
-							'fk_project' => ['type' => ['integer', 'null'], 'minimum' => 1], 'array_options' => ['type' => 'object']
+							'delivery_date' => ['type' => ['integer', 'null'], 'minimum' => 0, 'description' => 'Unix timestamp, or null to clear.'],
+							'fk_project' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Rowid of the project, or null to unlink it.'],
+							'array_options' => ['type' => 'object', 'description' => 'Extra fields by their options_ code, e.g. {"options_mycode": "value"}.']
 						],
 						'preview_labels' => ['ref_supplier' => 'RefSupplier', 'note_private' => 'NotePrivate', 'note_public' => 'NotePublic', 'delivery_date' => 'DeliveryDate', 'fk_project' => 'Project'],
 						'preview_dates' => ['delivery_date'],
+						// Named in the confirmation by ref and label, not by rowid.
+						'preview_objects' => ['fk_project' => 'Project'],
+						// Extra fields the order really has: a misspelt one is refused
+						// before the confirmation rather than silently ignored.
+						'extrafields' => 'commande_fournisseur',
 						'references' => ['fk_project' => ['projet', 'projet', '']]
 					]
 				]
@@ -665,29 +671,47 @@ class ToolApiBridge extends McpTool
 				],
 				'postNewMessage' => [
 					'suffix' => 'reply',
-					'description' => "Post a message on an existing support ticket. Needs the ticket public tracking id (track_id): when only the rowid or ref is known, read the ticket first with api_tickets_get or api_tickets_get_by_ref to get it. The user confirms before anything is written.",
+					'description' => "Post a message on an existing support ticket, given by its rowid or its ref. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewReplyTicket',
-						'required' => ['track_id', 'message'],
+						'required' => ['message'],
 						'object' => 'Ticket',
+						'label' => 'ticket',
 						'right' => ['ticket', 'write'],
 						'args' => ['track_id', 'message'],
+						// The ticket by rowid or ref; its tracking id is filled in here,
+						// so the model never has to read or repeat that credential.
+						'target' => 'id',
+						'lookup' => 'ref',
+						'target_or' => 'track_id',
+						'track_from_target' => true,
 					],
 					'params' => [
-						'track_id' => "Public tracking id of the ticket (the hash the customer received by email). Required.",
+						'id' => "The ticket: rowid, or its ref (e.g. TS2401-0001).",
+						'track_id' => "Public tracking id of the ticket, only when neither the rowid nor the ref is known.",
 						'message' => "Message text to post on the ticket (required).",
 						'private' => "1 for an internal note the customer never sees, 0 (default) for a public message."
 					]
 				],
 				'put' => [
 					'suffix' => 'update',
-					'description' => "Update fields of an existing support ticket: assign a user (fk_user_assign), change status (fk_statut), severity, type... Only the fields given are changed. The user confirms before anything is written.",
+					'description' => "Update fields of an existing support ticket: subject, status, severity, type, category, project, third party. Only the fields given are changed. To close, cancel or assign it use api_tickets_close / api_tickets_assign. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUpdateTicket',
 						'required' => ['id'],
 						'object' => 'Ticket',
+						'label' => 'ticket',
 						'right' => ['ticket', 'write'],
 						'args' => ['id'],
+						'target' => 'id',
+						'lookup' => 'ref',
+						// Closing and assigning go through their own tools, which run
+						// what the card runs (closing date, triggers, notifications).
+						'refuse_values' => [
+							'fk_statut' => ['values' => [8, 9], 'tool' => 'api_tickets_close'],
+							'status' => ['values' => [8, 9], 'tool' => 'api_tickets_close'],
+							'fk_user_assign' => ['values' => null, 'tool' => 'api_tickets_assign'],
+						],
 						// Same name mismatch as the create: the API validates
 						// 'socid' while Ticket::update persists 'fk_soc', and
 						// the status column reads 'status' (fk_statut is a
@@ -696,11 +720,10 @@ class ToolApiBridge extends McpTool
 						'rename' => ['fk_statut' => 'status'],
 					],
 					'params' => [
-						'id' => "Rowid of the ticket to update (required). When only the ref is known, look it up with api_tickets_get_by_ref.",
+						'id' => "The ticket: rowid, or its ref (required).",
 						'subject' => "New subject.",
 						'socid' => "Rowid of the customer to link the ticket to, or its name as said.",
-						'fk_user_assign' => "Rowid of the user to assign the ticket to.",
-						'fk_statut' => "New status: 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled.",
+						'fk_statut' => "New status: 0=not read, 1=read, 3=in progress, 5=needs more info, 7=waiting. To close or cancel use api_tickets_close, to assign use api_tickets_assign.",
 						'severity_code' => "New severity: LOW, NORMAL, HIGH or BLOCKING.",
 						'type_code' => "New nature: COM, ISSUE, HELP or OTHER.",
 						'category_code' => "New group/category code.",
@@ -714,13 +737,17 @@ class ToolApiBridge extends McpTool
 						'preview' => 'AIPreviewAddTicketContact',
 						'required' => ['id', 'contactid', 'type'],
 						'object' => 'Ticket',
+						'label' => 'ticket',
 						'right' => ['ticket', 'write'],
 						'args' => ['contactid', 'id'],
+						'target' => 'id',
+						'lookup' => 'ref',
+						'contact' => 'ticket',
 					],
 					'params' => [
-						'id' => "Rowid of the ticket (required).",
-						'contactid' => "Rowid of the contact to link (required).",
-						'type' => "Contact role on the ticket, e.g. 'contributor', 'observer', 'assignee' (required).",
+						'id' => "The ticket: rowid, or its ref (required).",
+						'contactid' => "Rowid of the contact (a person of a third party), or of the user when source is 'internal' (required).",
+						'type' => "Role on the ticket (required): SUPPORTCLI (customer contact following it) or CONTRIBUTOR for a contact; SUPPORTTEC (in charge) or CONTRIBUTOR for a user.",
 						'source' => "'external' (default) for a third-party contact, 'internal' for a Dolibarr user."
 					]
 				],
@@ -731,14 +758,61 @@ class ToolApiBridge extends McpTool
 						'preview' => 'AIPreviewRemoveTicketContact',
 						'required' => ['id', 'contactid', 'type'],
 						'object' => 'Ticket',
+						'label' => 'ticket',
 						'right' => ['ticket', 'write'],
 						'args' => ['contactid', 'id'],
+						'target' => 'id',
+						'lookup' => 'ref',
+						'contact' => 'ticket',
 					],
 					'params' => [
-						'id' => "Rowid of the ticket (required).",
-						'contactid' => "Rowid of the contact to unlink (required).",
-						'type' => "Contact role to remove (required).",
+						'id' => "The ticket: rowid, or its ref (required).",
+						'contactid' => "Rowid of the contact, or of the user when source is 'internal' (required).",
+						'type' => "Role to remove (required): SUPPORTCLI, CONTRIBUTOR or SUPPORTTEC.",
 						'source' => "'external' (default) or 'internal'."
+					]
+				],
+				'close' => [
+					'suffix' => 'close',
+					'description' => "Close a support ticket, or cancel it (cancel: 1), as the Close and Abandon buttons of the card do: closing date, progress and notifications included. Give 'id' (rowid, or its ref). The user confirms before anything is written.",
+					'write' => [
+						'kind' => 'action',
+						'preview' => 'AIPreviewCloseTicket',
+						'preview_cancel' => 'AIPreviewCancelTicket',
+						'object' => 'Ticket',
+						'label' => 'ticket',
+						'target' => 'id',
+						'lookup' => 'ref',
+						// Every status but closed (8) and canceled (9).
+						'states' => [0, 1, 2, 3, 5, 6, 7],
+						'state_error' => 'AIWriteTicketClosed',
+						'pass' => ['cancel'],
+						'right' => ['ticket', 'write'],
+					],
+					'params' => [
+						'id' => "The ticket: rowid, or its ref.",
+						'cancel' => "1 to cancel (abandon) the ticket instead of closing it."
+					]
+				],
+				'assign' => [
+					'suffix' => 'assign',
+					'description' => "Assign a support ticket to a user, or unassign it (fk_user_assign: 0), as the card does: the status follows and the user is notified. Give 'id' (rowid, or its ref) and fk_user_assign (rowid of the user, or 'me'). The user confirms before anything is written.",
+					'write' => [
+						'kind' => 'action',
+						'preview' => 'AIPreviewAssignTicket',
+						'preview_unassign' => 'AIPreviewUnassignTicket',
+						'object' => 'Ticket',
+						'label' => 'ticket',
+						'target' => 'id',
+						'lookup' => 'ref',
+						'states' => [0, 1, 2, 3, 5, 6, 7],
+						'state_error' => 'AIWriteTicketClosed',
+						'pass' => ['fk_user_assign'],
+						'right' => ['ticket', 'write'],
+					],
+					'params' => [
+						'id' => "The ticket: rowid, or its ref.",
+						'fk_user_assign' => "Rowid of the user to assign it to, 'me' for yourself, or 0 to unassign."
 					]
 				],
 				'index' => [
@@ -817,17 +891,20 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'update',
 					'description' => "Update fields of an existing task: label, description, progress percent, planned workload, dates. Only the fields given are changed. The user confirms before anything is written.",
 					'write' => [
-						'preview' => 'AIPreviewUpdateRecord',
+						'preview' => 'AIPreviewChangeTask',
 						'required' => ['id'],
 						'object' => 'Task',
+						'label' => 'task',
 						'right' => ['projet', 'creer'],
 						'args' => ['id'],
+						'target' => 'id',
+						'lookup' => 'ref',
 						'dates' => ['date_start', 'date_end'],
 						'hours' => ['planned_workload'],
 						'trim_fields' => ['label', 'description'],
 					],
 					'params' => [
-						'id' => "Rowid of the task to update (required).",
+						'id' => "The task: rowid, or its ref (required).",
 						'label' => "New label.",
 						'description' => "New description.",
 						'progress' => "New progress percent 0-100.",
@@ -843,14 +920,19 @@ class ToolApiBridge extends McpTool
 						'preview' => 'AIPreviewAddTimespent',
 						'required' => ['id', 'date', 'duration'],
 						'object' => 'Task',
+						'label' => 'task',
 						'right' => ['projet', 'creer'],
+						'target' => 'id',
+						'lookup' => 'ref',
 						'args' => ['duration', 'date', 'id'],
 						// No 'dates' entry: the REST method parses the text
 						// itself — a timestamp would be re-parsed into garbage.
+						// It is checked as text instead.
+						'text_dates' => ['date'],
 						'hours' => ['duration'],
 					],
 					'params' => [
-						'id' => "Rowid of the task (required).",
+						'id' => "The task: rowid, or its ref (required).",
 						'date' => "Date of the work YYYY-MM-DD or 'today' (required).",
 						'duration' => "Duration in hours, e.g. 1.5 (required).",
 						'note' => "Optional note for the record.",
@@ -992,7 +1074,7 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
-					'description' => "Create a DRAFT customer shipment (delivery note) WITHOUT a source order, as the shipment card allows when standalone shipments are enabled. Nothing is validated: stock does not move until the user validates the shipment in Dolibarr. The customer is mandatory: give socid, or simply the customer name. Each line names a catalogue product (product_ref or fk_product) or carries a free desc, with a qty and an optional unit. To ship an existing order, do not use this tool: tell the user to create the shipment from the order card.",
+					'description' => "Create a DRAFT customer shipment (delivery note) WITHOUT a source order, as the shipment card allows when standalone shipments are enabled. Nothing is validated and no stock moves: like the lines added on the shipment card, these lines carry no warehouse, and a product tracked by lot or serial number cannot be shipped this way. The customer is mandatory: give socid, or simply the customer name. Each line names a catalogue product (product_ref or fk_product) or carries a free desc, with a qty and an optional unit. To ship an existing order, do not use this tool: tell the user to create the shipment from the order card.",
 					'write' => [
 						'preview' => 'AIPreviewCreateShipment',
 						'required' => ['socid'],
@@ -1593,13 +1675,6 @@ class ToolApiBridge extends McpTool
 				)
 			),
 			'products' => array(
-				'getStock' => array(
-					'suffix' => 'stock',
-					// Needs the Stock module on top of Products: without it the tool does not exist.
-					'module' => 'stock',
-					'description' => "Stock of one product per warehouse (real stock, and the warehouse it is in).",
-					'params' => array('id' => "Rowid of the product.", 'selected_warehouse_id' => "Rowid of one warehouse to restrict to.")
-				),
 				'getSubproducts' => array(
 					'suffix' => 'subproducts',
 					'description' => "Components of a kit (virtual product): each sub-product with its quantity.",
@@ -1992,6 +2067,7 @@ class ToolApiBridge extends McpTool
 				'object' => 'Contrat',
 				'thirdparty' => 'socid',
 				'args' => array('_who'),
+				'dates' => array('date_contrat'),
 				// Contrat::create() refuses without them; the card proposes the user.
 				'defaults' => array('date_contrat' => 'now', 'commercial_signature_id' => 'me', 'commercial_suivi_id' => 'me'),
 				'right' => array('contrat', 'creer')
@@ -1999,6 +2075,7 @@ class ToolApiBridge extends McpTool
 			'params' => array(
 				'socid' => "Third party: rowid, or its name.",
 				'ref_customer' => "The customer's own reference.",
+				'date_contrat' => "Date of the contract YYYY-MM-DD. Omit for today.",
 				'note_public' => "Public note."
 			)
 		);
@@ -2015,6 +2092,9 @@ class ToolApiBridge extends McpTool
 				'args' => array('title', '_who'),
 				'dates' => array('date_start', 'date_end'),
 				'defaults' => array('ref' => 'auto', 'date_start' => 'now'),
+				// The card makes its creator the project leader; without it a user
+				// who cannot see every project could not see the one just made.
+				'creator_contact' => 'PROJECTLEADER',
 				'right' => array('projet', 'creer')
 			),
 			'params' => array(
@@ -2115,7 +2195,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string               $label      Document name, as the model reads it.
 	 * @param  string               $class      Business class of the document.
 	 * @param  string               $preview    Translation key of the confirmation.
-	 * @param  string[]             $right      Right needed to validate.
+	 * @param  string[]             $right      Right needed to validate. With advanced permissions (a module, perm, subperm triple) the REST method still checks the module's 'creer', which is then required too.
 	 * @param  array<string,mixed>  $fixed      Arguments the call always carries, whatever the model sends.
 	 * @param  string               $stockconst Constant that makes the validation move stock, '' for none.
 	 * @return array<string,mixed>              Method enrichment.
@@ -2143,7 +2223,7 @@ class ToolApiBridge extends McpTool
 				'fixed' => $fixed,
 				'stock' => $stockconst,
 				'right' => $right
-			),
+			) + (count($right) === 3 ? array('read_right' => array($right[0], 'creer')) : array()),
 			'params' => $params
 		);
 	}
@@ -3016,6 +3096,30 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * A record linked by a header field, as the confirmation names it: its ref
+	 * and label, or "none" when the field is empty.
+	 *
+	 * @param  string $class Business class of the linked record.
+	 * @param  mixed  $id    Rowid, or null.
+	 * @return string        Readable name.
+	 */
+	private function previewObjectName($class, $id)
+	{
+		global $langs;
+
+		if (empty($id) || !is_numeric($id)) {
+			return $langs->transnoentitiesnoconv('None');
+		}
+		$obj = $this->fetchBusinessObject($class, (int) $id);
+		if (!$obj) {
+			return '#'.((int) $id);
+		}
+		$name = (string) ($obj->title ?? ($obj->label ?? ($obj->name ?? '')));
+
+		return $obj->ref.($name !== '' ? ' - '.$name : '');
+	}
+
+	/**
 	 * Record a line write goes into, for a write declaring a 'parent'.
 	 *
 	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
@@ -3186,6 +3290,17 @@ class ToolApiBridge extends McpTool
 				throw new InvalidArgumentException('Access denied to '.$field);
 			}
 		}
+		if (!empty($write['extrafields']) && isset($changes['array_options']) && !empty($this->db)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extrafields->fetch_name_optionals_label((string) $write['extrafields']);
+			$known = array_keys((array) ($extrafields->attributes[$write['extrafields']]['label'] ?? []));
+			foreach (array_keys($changes['array_options']) as $key) {
+				if (strpos((string) $key, 'options_') !== 0 || !in_array(substr((string) $key, 8), $known, true)) {
+					throw new InvalidArgumentException('Unknown extra field '.$key.($known ? ' (known: options_'.implode(', options_', $known).')' : ' (this record has no extra fields)'));
+				}
+			}
+		}
 		unset($args[$refkey]);
 		$args[$idkey] = (int) $parent->id;
 		return $args;
@@ -3299,6 +3414,9 @@ class ToolApiBridge extends McpTool
 		if (in_array($kind, array('update', 'action', 'delete', 'payment'), true)) {
 			return $this->normaliseTargetArgs($args, $write);
 		}
+		if (!empty($write['lookup']) && $kind === '') {
+			$args = $this->normaliseOneRecordArgs($args, $write);
+		}
 
 		// Record fields under the names a model is likely to use: the database
 		// column (nom) rather than the API field (name), or the obvious synonym.
@@ -3370,17 +3488,16 @@ class ToolApiBridge extends McpTool
 			// The business classes want timestamps, a model writes dates as text.
 			foreach (array('date_delivery', 'date_reception') as $datefield) {
 				if (isset($args[$datefield]) && !is_numeric($args[$datefield])) {
-					$ts = dol_stringtotime((string) $args[$datefield], 1);
-					if ($ts > 0) {
-						$args[$datefield] = $ts;
-					} else {
+					$args[$datefield] = $this->writeDate($datefield, $args[$datefield]);
+					if ($args[$datefield] === null) {
 						unset($args[$datefield]);
 					}
 				}
 			}
 			foreach (array('warehouse', 'warehouse_id', 'fk_warehouse', 'entrepot') as $key) {
-				if (!empty($args[$key]) && !is_array($args[$key])) {
-					$headerWarehouse = $this->warehouseIdFromName((string) $args[$key]);
+				if (!empty($args[$key]) && !is_array($args[$key]) && $kind === 'reception') {
+					// A warehouse that was named must exist and be open: never the default instead.
+					$headerWarehouse = $this->resolveWarehouse((string) $args[$key]);
 				}
 				unset($args[$key]);	// the API reads the warehouse on each line, never on the header
 			}
@@ -3529,14 +3646,28 @@ class ToolApiBridge extends McpTool
 			// A logistic line moves stock: it needs a warehouse, by name or rowid,
 			// else the one given on the header, else the default one. No VAT, no
 			// selling price on such a line.
-			if (isset($line['fk_entrepot']) && !is_numeric($line['fk_entrepot'])) {
-				$line['fk_entrepot'] = $this->warehouseIdFromName((string) $line['fk_entrepot']);
-			}
-			if (empty($line['fk_entrepot'])) {
-				$line['fk_entrepot'] = $defaultWarehouse > 0 ? $defaultWarehouse : $this->defaultWarehouseId();
-			}
-			if (empty($line['fk_entrepot'])) {
+			if ($kind === 'shipment') {
+				// A shipment line without a source order is a free line, which core
+				// records with no warehouse (as the shipment card does): none is
+				// given, so none is announced in the confirmation either.
 				unset($line['fk_entrepot']);
+				$lotprod = empty($line['fk_product']) ? null : $this->fetchBusinessObject('Product', (int) $line['fk_product']);
+				if (isModEnabled('productbatch') && $lotprod instanceof Product && $lotprod->hasbatch()) {
+					global $langs;
+					$langs->load('other');
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteShipmentLotProduct', $lotprod->ref);
+				}
+			} else {
+				if (isset($line['fk_entrepot']) && (string) $line['fk_entrepot'] !== '' && !is_array($line['fk_entrepot'])) {
+					// Named on the line, by name or rowid: an open warehouse, or refused.
+					$line['fk_entrepot'] = $this->resolveWarehouse((string) $line['fk_entrepot']);
+				}
+				if (empty($line['fk_entrepot'])) {
+					$line['fk_entrepot'] = $defaultWarehouse > 0 ? $defaultWarehouse : $this->defaultWarehouseId();
+				}
+				if (empty($line['fk_entrepot'])) {
+					unset($line['fk_entrepot']);
+				}
 			}
 			// No VAT and no selling price on a logistic line: a shipment line carries
 			// no amount at all, a received line is valued by its cost price.
@@ -3553,10 +3684,8 @@ class ToolApiBridge extends McpTool
 				// Lot dates arrive as text: the line class wants timestamps.
 				foreach (array('eatby', 'sellby') as $datefield) {
 					if (isset($line[$datefield]) && !is_numeric($line[$datefield])) {
-						$ts = dol_stringtotime((string) $line[$datefield], 1);
-						if ($ts > 0) {
-							$line[$datefield] = $ts;
-						} else {
+						$line[$datefield] = $this->writeDate($datefield, $line[$datefield]);
+						if ($line[$datefield] === null) {
 							unset($line[$datefield]);
 						}
 					}
@@ -3576,33 +3705,75 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Warehouse rowid from the way a user names it: its ref or its label, or the
-	 * rowid itself.
+	 * A date written as text, as a timestamp. A date that cannot be read is
+	 * refused before the confirmation, never dropped or replaced by today.
 	 *
-	 * @param  string $name Warehouse as written.
-	 * @return int          Rowid, 0 when none or several match.
+	 * @param  string $field Field name, for the message.
+	 * @param  mixed  $value Date as written.
+	 * @param  int    $gmt   1 to read it in GMT (logistic dates), 0 in the server time zone.
+	 * @return int|null      Timestamp, or null when empty or unreadable.
 	 */
-	private function warehouseIdFromName($name)
+	private function writeDate($field, $value, $gmt = 1)
 	{
-		$want = trim((string) $name);
-		if ($want === '') {
-			return 0;
-		}
-		if (is_numeric($want)) {
-			return (int) $want;
-		}
-		$sql = "SELECT rowid FROM ".$this->db->prefix()."entrepot";
-		$sql .= " WHERE entity IN (".getEntity('stock').") AND statut = 1";
-		$sql .= " AND (ref = '".$this->db->escape($want)."' OR lieu = '".$this->db->escape($want)."')";
-		$sql .= " LIMIT 2";
-		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) === 1) {
-			$obj = $this->db->fetch_object($resql);
+		global $langs;
 
-			return (int) $obj->rowid;
+		$text = trim((string) $value);
+		if ($text === '') {
+			return null;
+		}
+		$ts = dol_stringtotime($text, $gmt);
+		if ($ts > 0) {
+			return $ts;
+		}
+		$langs->load('other');
+		$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUnreadableDate', $text, $field);
+
+		return null;
+	}
+
+	/**
+	 * The lines of a reception or shipment as the confirmation lists them:
+	 * quantity, product, and for a reception the warehouse and the cost.
+	 *
+	 * @param  array<int,mixed> $lines Normalised lines.
+	 * @param  string           $kind  'reception' or 'shipment'.
+	 * @return string                  Lines, separated by semicolons.
+	 */
+	private function previewLogisticLines(array $lines, $kind)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$warehouses = array();
+		$out = array();
+		foreach (array_slice($lines, 0, 10) as $line) {
+			if (!is_array($line)) {
+				continue;
+			}
+			$product = empty($line['fk_product']) ? null : $this->fetchBusinessObject('Product', (int) $line['fk_product']);
+			$name = ($product instanceof Product) ? $product->ref.' - '.$product->label : (string) ($line['desc'] ?? '');
+			$text = price2num($line['qty'] ?? 1).' × '.dol_trunc($name, 50);
+			if ($kind === 'reception') {
+				$wid = (int) ($line['fk_entrepot'] ?? 0);
+				if ($wid > 0 && !isset($warehouses[$wid])) {
+					$warehouse = new Entrepot($this->db);
+					$warehouses[$wid] = ($warehouse->fetch($wid) > 0) ? $warehouse->ref : '#'.$wid;
+				}
+				if ($wid > 0) {
+					$text .= ' '.$langs->trans('AIPreviewIntoWarehouse', $warehouses[$wid]);
+				}
+				$text .= (isset($line['cost_price']) && (float) $line['cost_price'] > 0) ? ' @ '.price($line['cost_price']) : ' ('.$langs->trans('AIPreviewNoCostPrice').')';
+				if (!empty($line['batch'])) {
+					$text .= ', '.$langs->trans('Batch').' '.$line['batch'];
+				}
+			}
+			$out[] = $text;
+		}
+		if (count($lines) > 10) {
+			$out[] = '…';
 		}
 
-		return 0;
+		return implode('; ', $out);
 	}
 
 	/**
@@ -3677,14 +3848,21 @@ class ToolApiBridge extends McpTool
 						foreach ($args[$field] as $key => $value) {
 							$changes[] = $label.'.'.$key.': '.json_encode($old[$key] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).' → '.json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 						}
+					} elseif (!empty($write['preview_objects'][$field])) {
+						// A linked record by its ref and label, "none" when unlinked.
+						$changes[] = $label.': '.$this->previewObjectName((string) $write['preview_objects'][$field], $old).' → '.$this->previewObjectName((string) $write['preview_objects'][$field], $args[$field]);
 					} else {
 						$isdate = in_array($field, $write['preview_dates'] ?? [], true);
 						$dateonly = !empty($write['preview_dateonly']);
-						$format = $dateonly ? 'dayrfc' : 'standard';
-						$tz = $dateonly ? 'tzserver' : 'gmt';
-						$suffix = $dateonly ? '' : ' UTC';
-						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, $format, $tz).$suffix : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], $format, $tz).$suffix : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						// A date with its hour reads as the card shows it: in the user's time zone.
+						$format = $dateonly ? 'dayrfc' : 'dayhour';
+						$tz = $dateonly ? 'tzserver' : 'tzuserrel';
+						$oldvalue = $isdate && is_numeric($old) ? dol_print_date($old, $format, $tz) : json_encode($old, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						$newvalue = $isdate && is_numeric($args[$field]) ? dol_print_date($args[$field], $format, $tz) : json_encode($args[$field], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						if ($isdate && !$dateonly) {
+							$oldvalue = empty($old) ? $langs->transnoentitiesnoconv('None') : $oldvalue;
+							$newvalue = empty($args[$field]) ? $langs->transnoentitiesnoconv('None') : $newvalue;
+						}
 						$changes[] = $label.': '.$oldvalue.' → '.$newvalue;
 					}
 				}
@@ -3716,20 +3894,23 @@ class ToolApiBridge extends McpTool
 
 		// A single record (third party, product, category, ticket) has no lines:
 		// it names the arguments that make up its sentence, then every other
-		// argument actually provided, so the human approves nothing they did
+		// argument the call will write, so the human approves nothing they did
 		// not get to see. Language keys opt in to that extra list with a
 		// trailing %s; keys without it simply ignore the appended value.
 		if (!empty($write['args'])) {
 			$values = array();
 			foreach ($write['args'] as $argname) {
-				$values[] = dol_trunc((string) ($args[$argname] ?? ''), 60);
+				$values[] = dol_trunc($this->previewValue($write, $argname, $args[$argname] ?? '', $args), 80);
 			}
+			// Only the declared parameters reach the REST call (see execute()): an
+			// internal '_' argument or one the call drops is never shown as written.
+			$declared = (array) ($this->methodMetaFor($toolName)['params'] ?? array());
 			$extra = array();
 			foreach ($args as $argname => $argvalue) {
-				if (in_array($argname, $write['args'], true) || $argname === 'requestState' || is_array($argvalue)) {
+				if (in_array($argname, $write['args'], true) || !array_key_exists($argname, $declared) || is_array($argvalue) || (string) $argvalue === '') {
 					continue;
 				}
-				$extra[] = $argname.'='.dol_trunc((string) $argvalue, 40);
+				$extra[] = $argname.'='.dol_trunc($this->previewValue($write, $argname, $argvalue, $args), 40);
 			}
 			$values[] = empty($extra) ? '' : ' ('.implode(', ', $extra).')';
 			return $langs->trans($write['preview'], ...$values);
@@ -3763,8 +3944,66 @@ class ToolApiBridge extends McpTool
 		} elseif (($write['kind'] ?? '') !== 'shipment') {
 			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");	// a shipment line carries no price at all
 		}
+		if (($write['kind'] ?? '') !== '' && $lines) {
+			// Goods are confirmed line by line: what, how many, and where they go.
+			$what .= ': '.$this->previewLogisticLines($lines, (string) $write['kind']);
+		}
 
 		return $langs->trans($write['preview'], $who, $what);
+	}
+
+	/**
+	 * One value of a confirmation sentence, the way the user knows it: the record
+	 * an id stands for, hours rather than the seconds the API takes, a date as
+	 * a date. Anything else is shown as given.
+	 *
+	 * @param  array<string,mixed> $write   The 'write' enrichment of the tool.
+	 * @param  string              $argname Argument name.
+	 * @param  mixed               $value   Its value, after normaliseWriteArgs().
+	 * @param  array<string,mixed> $args    All the arguments (the source of a contact).
+	 * @return string                       Text for the sentence.
+	 */
+	private function previewValue(array $write, $argname, $value, array $args)
+	{
+		global $langs;
+
+		if (is_array($value)) {
+			return '';
+		}
+		$value = (string) $value;
+		if ($value !== '' && in_array($argname, (array) ($write['hours'] ?? array()), true) && is_numeric($value)) {
+			return convertSecondToTime((int) $value, 'allhourmin');
+		}
+		if ($value !== '' && in_array($argname, (array) ($write['dates'] ?? array()), true) && is_numeric($value)) {
+			return dol_print_date((int) $value, 'day');
+		}
+		$class = (string) ($write['object'] ?? '');
+		// The record the write is about, named only to a user who may see it.
+		if ($class !== '' && $argname === (string) ($write['target'] ?? 'id') && is_numeric($value) && (int) $value > 0 && !empty($this->db)) {
+			$obj = $this->fetchRecord($class, (int) $value);
+			return ($obj && $this->userCanReach($class, (int) $obj->id)) ? $this->describeRecord($obj) : $value;
+		}
+		if ($argname === (string) ($write['thirdparty'] ?? '') && is_numeric($value) && (int) $value > 0 && !empty($this->db)) {
+			$soc = $this->fetchRecord('Societe', (int) $value);
+			return ($soc && $this->userCanReach('Societe', (int) $soc->id)) ? $this->describeRecord($soc) : $value;
+		}
+		if ($class === 'Ticket' && $argname === 'track_id' && $value !== '' && !empty($this->db)) {
+			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+			$ticket = new Ticket($this->db);
+			if ($ticket->fetch(0, '', $value) > 0 && $this->userCanReach('Ticket', (int) $ticket->id)) {
+				return $this->describeRecord($ticket);
+			}
+		}
+		if ($argname === 'contactid' && is_numeric($value) && (int) $value > 0 && !empty($this->db)) {
+			if ((string) ($args['source'] ?? 'external') === 'internal') {
+				$u = new User($this->db);
+				return ($u->fetch((int) $value) > 0) ? $u->getFullName($langs) : $value;
+			}
+			$contact = $this->fetchRecord('Contact', (int) $value);
+			return ($contact && $this->userCanReach('Contact', (int) $contact->id)) ? $this->describeRecord($contact) : $value;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -3829,6 +4068,13 @@ class ToolApiBridge extends McpTool
 			if ($optional && !$named) {
 				$field = '';
 			}
+			// A rowid the user may not see is refused like an unknown one, before
+			// a confirmation sentence could name it (the REST class would refuse
+			// the write itself, but only after the user read the sentence).
+			if ($field !== '' && is_numeric($args[$field] ?? '') && (int) $args[$field] > 0 && $this->user instanceof User && !$this->userCanReach('Societe', (int) $args[$field])) {
+				$langs->load('other');
+				return $langs->transnoentitiesnoconv('AIWriteThirdpartyNotFound', (string) ((int) $args[$field]));
+			}
 			if ($field !== '' && (empty($args[$field]) || !is_numeric($args[$field]) || (int) $args[$field] <= 0)) {
 				$langs->load('other');
 				$named = '';
@@ -3870,7 +4116,11 @@ class ToolApiBridge extends McpTool
 		if ($kind !== '') {
 			$langs->load('other');
 			$standaloneConst = ($kind === 'reception') ? 'RECEPTION_STANDALONE' : 'SHIPMENT_STANDALONE';
-			if (!getDolGlobalString($standaloneConst) && empty($args['origin_id'])) {
+			if (!empty($args['origin_id']) || !empty($args['origin_type'])) {
+				// These tools write free lines: from an order, the card is the way.
+				return $langs->transnoentitiesnoconv('AIWriteLogisticFromOrder', $kind);
+			}
+			if (!getDolGlobalString($standaloneConst)) {
 				return $langs->transnoentitiesnoconv('AIWriteStandaloneOff', $kind, $standaloneConst);
 			}
 			$lines = isset($args[$write['lines']]) && is_array($args[$write['lines']]) ? $args[$write['lines']] : array();
@@ -3899,7 +4149,9 @@ class ToolApiBridge extends McpTool
 		}
 
 		$parent = $this->fetchWriteParent($write, $args);
-		if (!$parent) {
+		// A document the user may not see is answered like a missing one: no ref,
+		// no status, no sentence naming it.
+		if (!$parent || ($this->user instanceof User && !$this->userCanReach((string) $write['object'], (int) $parent->id))) {
 			return "No record found with ".$write['parent']."=".((string) ($args[$write['parent']] ?? '')).". Look its rowid up by ref first.";
 		}
 		// Core only adds lines to a draft, and otherwise fails with no message.
@@ -4093,6 +4345,8 @@ class ToolApiBridge extends McpTool
 	{
 		// Feature, table&shared element, second level feature: as each REST class passes them.
 		$map = array(
+			'Task' => array('task', '', ''),
+			'Ticket' => array('ticket', '', ''),
 			'Facture' => array('facture', '', ''),
 			'Commande' => array('commande', '', ''),
 			'Propal' => array('propal', '', ''),
@@ -4146,6 +4400,13 @@ class ToolApiBridge extends McpTool
 			return $obj->getFullName($langs);
 		}
 		$parts = array((string) $obj->ref);
+		// A task or a ticket is known by its label or subject more than its ref.
+		if ($obj instanceof Task && (string) $obj->label !== '') {
+			$parts[] = (string) $obj->label;
+		}
+		if ($obj instanceof Ticket && (string) $obj->subject !== '') {
+			$parts[] = (string) $obj->subject;
+		}
 		if ($this->socidOf($obj) > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$soc = new Societe($this->db);
@@ -4303,6 +4564,97 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Arguments of a write on one existing record that is not a targeted write
+	 * (a ticket reply, a ticket or task edit, a ticket contact): the record given
+	 * by rowid or ref is found here, with the user's access, so a ref works as
+	 * the id and an unknown record is refused before the confirmation. A
+	 * contact is checked the same way, and a value another tool handles (a
+	 * ticket closed or assigned) is pointed to that tool.
+	 *
+	 * @param  array<string,mixed> $args  Arguments as sent.
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @return array<string,mixed>        Arguments with the record rowid.
+	 */
+	private function normaliseOneRecordArgs(array $args, array $write)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$class = (string) ($write['object'] ?? '');
+		$label = (string) ($write['label'] ?? $class);
+		$field = (string) ($write['target'] ?? 'id');
+		$given = $args[$field] ?? ($args['ref'] ?? '');
+		unset($args['ref']);
+		$canCheck = !empty($this->db) && $this->user instanceof User;
+		if ((string) $given !== '') {
+			$obj = $canCheck ? $this->resolveWriteTarget($write, $given) : null;
+			if ($canCheck && (!$obj || !$this->userCanReach($class, (int) $obj->id))) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', $label, (string) $given);
+			} elseif ($obj) {
+				$args[$field] = (int) $obj->id;
+				if (!empty($write['track_from_target']) && empty($args['track_id'])) {
+					$args['track_id'] = (string) $obj->track_id;
+				}
+			}
+		} elseif (!empty($write['target_or']) && (string) ($args[$write['target_or']] ?? '') !== '') {
+			if ($class === 'Ticket' && $canCheck) {
+				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+				$ticket = new Ticket($this->db);
+				if ($ticket->fetch(0, '', (string) $args[$write['target_or']]) <= 0 || !$this->userCanReach('Ticket', (int) $ticket->id)) {
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', $label, (string) $args[$write['target_or']]);
+				}
+			}
+		} elseif (!empty($write['target_or'])) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', $field);
+		}
+
+		foreach ((array) ($write['refuse_values'] ?? array()) as $name => $rule) {
+			if (!array_key_exists($name, $args) || (string) $args[$name] === '') {
+				continue;
+			}
+			if ($rule['values'] === null || in_array((int) $args[$name], (array) $rule['values'], true)) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUseOtherTool', $name, (string) $args[$name], (string) $rule['tool']);
+			}
+		}
+
+		if (!empty($write['contact']) && $canCheck) {
+			$source = ((string) ($args['source'] ?? 'external') === 'internal') ? 'internal' : 'external';
+			$args['source'] = $source;
+			$cid = (int) ($args['contactid'] ?? 0);
+			if ($cid > 0) {
+				if ($source === 'internal') {
+					$u = new User($this->db);
+					if ($u->fetch($cid) <= 0 || (int) $u->status !== 1) {
+						$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'user', (string) $cid);
+					}
+				} else {
+					$contact = $this->fetchRecord('Contact', $cid);
+					if (!$contact || !$this->userCanReach('Contact', $cid)) {
+						$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'contact', (string) $cid);
+					}
+				}
+			}
+			// The role by its code, as the dictionary of contact types has it.
+			$type = strtoupper(trim((string) ($args['type'] ?? '')));
+			if ($type !== '') {
+				$codes = array();
+				$sql = "SELECT code FROM ".$this->db->prefix()."c_type_contact";
+				$sql .= " WHERE element = '".$this->db->escape((string) $write['contact'])."' AND source = '".$this->db->escape($source)."' AND active = 1";
+				$resql = $this->db->query($sql);
+				while ($resql && ($o = $this->db->fetch_object($resql))) {
+					$codes[] = (string) $o->code;
+				}
+				if (!in_array($type, $codes, true)) {
+					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUnknownRole', (string) $args['type'], implode(', ', $codes));
+				}
+				$args['type'] = $type;
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Arguments of a write on an existing record (update, validation, deletion,
 	 * payment): the record found from what the user said, and only what the
 	 * REST method may receive.
@@ -4342,6 +4694,12 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($kind === 'action') {
+			// An action taking more than its record (who to assign it to, cancel).
+			foreach ((array) ($write['pass'] ?? array()) as $name) {
+				if (array_key_exists($name, $args) && !is_array($args[$name])) {
+					$out[$name] = ($args[$name] === 'me' && $this->user instanceof User) ? (int) $this->user->id : $args[$name];
+				}
+			}
 			if (!empty($write['stock']) && $this->writeTarget && $this->validationMovesStock($write, $this->writeTarget)) {
 				$out['idwarehouse'] = $this->resolveWarehouse($args['warehouse'] ?? ($args['idwarehouse'] ?? ''));
 			}
@@ -4437,12 +4795,21 @@ class ToolApiBridge extends McpTool
 		}
 		foreach ((array) ($write['dates'] ?? array()) as $field) {
 			if (isset($args[$field]) && $args[$field] !== 'now' && !is_numeric($args[$field])) {
-				$ts = dol_stringtotime((string) $args[$field]);
-				if ($ts > 0) {
-					$args[$field] = $ts;
-				} else {
+				$args[$field] = $this->writeDate($field, $args[$field], 0);
+				if ($args[$field] === null) {
 					unset($args[$field]);
 				}
+			}
+		}
+		// Dates the REST method reads as text itself: checked here, 'today' as a date.
+		foreach ((array) ($write['text_dates'] ?? array()) as $field) {
+			if (!isset($args[$field]) || is_numeric($args[$field])) {
+				continue;
+			}
+			if (in_array(dol_strtolower(trim((string) $args[$field])), array('today', 'now'), true)) {
+				$args[$field] = dol_print_date(dol_now(), 'dayrfc', 'tzuserrel');
+			} elseif ($this->writeDate($field, $args[$field]) === null) {
+				unset($args[$field]);
 			}
 		}
 		foreach ((array) ($write['hours'] ?? array()) as $field) {
@@ -4501,6 +4868,20 @@ class ToolApiBridge extends McpTool
 			return $langs->trans($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how);
 		}
 
+		// Other actions: who the record goes to, or the other way to end it.
+		if (array_key_exists('fk_user_assign', $args) && !empty($write['preview_unassign'])) {
+			if ((int) $args['fk_user_assign'] <= 0) {
+				return $langs->trans($write['preview_unassign'], $what);
+			}
+			$assignee = new User($this->db);
+			$name = ($assignee->fetch((int) $args['fk_user_assign']) > 0) ? $assignee->getFullName($langs) : (string) $args['fk_user_assign'];
+
+			return $langs->trans($write['preview'], $what, $name);
+		}
+		if (!empty($args['cancel']) && !empty($write['preview_cancel'])) {
+			return $langs->trans($write['preview_cancel'], $what);
+		}
+
 		// Validation: the warehouse is said when the stock moves.
 		if (!empty($args['idwarehouse'])) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -4542,6 +4923,20 @@ class ToolApiBridge extends McpTool
 			}
 			if (count($args) < 2) {
 				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
+			}
+
+			return '';
+		}
+		if ($kind === 'action' && isset($write['states'])) {
+			// An action other than a validation: allowed in the statuses it lists.
+			if (!in_array((int) $obj->status, (array) $write['states'], true)) {
+				return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, (string) $obj->ref);
+			}
+			if (array_key_exists('fk_user_assign', $args) && (int) $args['fk_user_assign'] > 0) {
+				$assignee = new User($this->db);
+				if ($assignee->fetch((int) $args['fk_user_assign']) <= 0 || (int) $assignee->status !== 1) {
+					return $langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'user', (string) $args['fk_user_assign']);
+				}
 			}
 
 			return '';
@@ -4789,6 +5184,28 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Link the acting user to a record just created, with the role the card
+	 * gives its creator (the leader of a project). A role missing from the
+	 * dictionary is logged, not fatal: the record exists, as on the card.
+	 *
+	 * @param  string $class Business class of the record.
+	 * @param  int    $id    Rowid of the record.
+	 * @param  string $code  Internal contact type code.
+	 * @return void
+	 */
+	private function addCreatorContact($class, $id, $code)
+	{
+		$obj = $this->fetchRecord($class, $id);
+		if (!$obj || !$this->user instanceof User) {
+			return;
+		}
+		$result = $obj->add_contact((int) $this->user->id, $code, 'internal');
+		if ($result < 0) {
+			dol_syslog(get_class($this).'::addCreatorContact '.$class.' '.$id.' '.$code.' result='.$result.' '.$obj->error, LOG_WARNING);
+		}
+	}
+
+	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
@@ -4993,6 +5410,9 @@ class ToolApiBridge extends McpTool
 						$ref = $this->refOfCreatedObject($writemeta['object'], $output['id']);
 						if ($ref !== '') {
 							$output['ref'] = $ref;
+						}
+						if (!empty($writemeta['creator_contact'])) {
+							$this->addCreatorContact((string) $writemeta['object'], (int) $output['id'], (string) $writemeta['creator_contact']);
 						}
 					}
 				}
