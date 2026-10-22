@@ -181,7 +181,7 @@ if ($action == 'update' && $user->hasRight('multicurrency', 'currency', 'read'))
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $rateinput;
 		$res = $currencyRate->update($user);
-		if ($res) {
+		if ($res > 0) {
 			setEventMessages($langs->trans('successUpdateRate'), null);
 		} else {
 			setEventMessages($currencyRate->error, $currencyRate->errors, "errors");
