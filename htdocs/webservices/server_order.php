@@ -675,6 +675,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * phpcs:ignore Generic.Files.LineLength
  * @param 	array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{line:mixed,id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
  * @return 	array{result:array{result_code:string,result_label:string}} Array result
  */
@@ -728,7 +729,9 @@ function createOrder($authentication, $order)
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $order[$key];
+				if (isset($order[$key])) {
+					$newobject->array_options[$key] = $order[$key];
+				}
 			}
 		}
 
@@ -769,7 +772,9 @@ function createOrder($authentication, $order)
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 				foreach ($extrafields->attributes[$elementtype]['label'] as $tmpkey => $tmplabel) {
 					$tmpkey = 'options_'.$tmpkey;
-					$newline->array_options[$tmpkey] = $line[$tmpkey];
+					if (isset($line[$tmpkey])) {
+						$newline->array_options[$tmpkey] = $line[$tmpkey];
+					}
 				}
 			}
 

@@ -73,6 +73,149 @@ class FormProductOptionTest extends Form
 class FormTest extends CommonClassTest
 {
 	/**
+	 * Existing callers keep the two-choice HTML selector and no extra button.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmWithoutThirdButton()
+	{
+		$html = $this->renderConfirmForm(0, '');
+		$document = new DOMDocument();
+		$document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+		$xpath = new DOMXPath($document);
+		$this->assertSame(1, $xpath->query('//select[@name="confirm"]')->length);
+		$this->assertSame(0, $document->getElementsByTagName('button')->length);
+		$this->assertSame(1, $xpath->query('//input[@name="token" and string-length(@value)>0]')->length);
+		$this->assertStringContainsString('action=confirm_test&confirm=yes', $this->renderConfirmForm(1, ''));
+	}
+
+	/**
+	 * Each HTML button supplies a distinct decision with the same protected form.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmThirdHtmlDecision()
+	{
+		foreach (array(0, 1) as $ajaxenabled) {
+			$html = $this->renderConfirmForm(0, 'Save', 'later', 0, $ajaxenabled);
+			$document = new DOMDocument();
+			$document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+			$xpath = new DOMXPath($document);
+			$this->assertSame(1, $document->getElementsByTagName('form')->length);
+			$this->assertSame(0, $xpath->query('//select[@name="confirm"]')->length);
+			$buttons = $xpath->query('//button[@type="submit" and @name="confirm"]');
+			$this->assertSame(3, $buttons->length);
+			foreach (array('yes', 'no', 'later') as $index => $value) {
+				$this->assertSame($value, $buttons->item($index)->getAttribute('value'));
+			}
+			$this->assertSame(1, $xpath->query('//input[@name="action" and @value="confirm_test"]')->length);
+			$this->assertSame(1, $xpath->query('//input[@name="token" and string-length(@value)>0]')->length);
+			$this->assertSame('Initial note', $xpath->query('//textarea[@name="note"]')->item(0)->textContent);
+			$this->assertStringContainsString('Confirmation help', $html);
+		}
+	}
+
+	/**
+	 * A third cancel button has no confirm value and works inside a parent form.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmThirdHtmlCancellation()
+	{
+		$html = $this->renderConfirmForm(0, 'Cancel', '', 1);
+		$document = new DOMDocument();
+		$document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+		$xpath = new DOMXPath($document);
+		$this->assertSame(0, $document->getElementsByTagName('form')->length);
+		$this->assertSame(2, $xpath->query('//button[@name="confirm"]')->length);
+		$this->assertSame(1, $xpath->query('//button[@name="cancel" and @value="1" and @formnovalidate]')->length);
+		$this->assertSame(0, $xpath->query('//input[@name="confirm"]')->length);
+	}
+
+	/**
+	 * The optional decision is available in every Ajax mode and retains form inputs.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmThirdAjaxDecision()
+	{
+		foreach (array(1, 2, 'openchoice') as $useajax) {
+			$html = $this->renderConfirmForm($useajax);
+			$this->assertSame(3, substr_count($html, 'text: '));
+			$this->assertStringContainsString('action=confirm_test&confirm=later', $html);
+			$this->assertStringContainsString('var inputok = ["note","recordid"];', $html);
+			$this->assertStringContainsString('var inputko = ["note"];', $html);
+			$this->assertStringContainsString('dolSubmitConfirmForm(urljump, pageother, options, ', $html);
+			$this->assertStringContainsString('Confirmation help', $html);
+			$this->assertStringContainsString('token=', $html);
+			$this->assertStringNotContainsString('<form', $html);
+			$this->assertStringContainsString($useajax === 'openchoice' ? 'id="dialog-confirm-openchoice"' : 'id="dialog-confirm"', $html);
+			$this->assertStringContainsString($useajax === 2 ? 'action=confirm_test&confirm=no' : "var pageno='';", $html);
+		}
+	}
+
+	/**
+	 * Cancellation closes the popup without creating a third submission target.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmThirdAjaxCancellation()
+	{
+		$html = $this->renderConfirmForm(2, 'Cancel', '');
+		$this->assertSame(3, substr_count($html, 'text: '));
+		$this->assertStringNotContainsString('pageother', $html);
+		$this->assertStringNotContainsString('confirm=other', $html);
+	}
+
+	/**
+	 * Labels and decision values remain data in HTML and JavaScript contexts.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmThirdButtonEscapingAndFallback()
+	{
+		$value = 'later"&<';
+		$html = $this->renderConfirmForm(1, 'Save', $value);
+		$this->assertStringContainsString('confirm='.urlencode($value), $html);
+		$label = 'Third "<& choice';
+		$html = $this->renderConfirmForm(1, $label, $value, 0, 0);
+		$document = new DOMDocument();
+		$document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+		$xpath = new DOMXPath($document);
+		$this->assertSame($value, $xpath->query('//button[@name="confirm"]')->item(2)->getAttribute('value'));
+		$this->assertSame($label, $xpath->query('//button[@name="confirm"]')->item(2)->textContent);
+		$this->assertStringNotContainsString('dialog-confirm', $html);
+	}
+
+	/**
+	 * Render the actual component without changing shared configuration or records.
+	 *
+	 * @param int|string $useajax Dialog mode
+	 * @param string $labelbuttonother Third button translation key
+	 * @param string $valuebuttonother Third decision
+	 * @param int $disableformtag Omit the form element
+	 * @param int $ajaxenabled Enable JavaScript
+	 * @return string
+	 */
+	private function renderConfirmForm($useajax, $labelbuttonother = 'Save', $valuebuttonother = 'later', $disableformtag = 0, $ajaxenabled = 1)
+	{
+		global $conf;
+
+		$savedconf = $conf;
+		$conf = clone $conf;
+		$conf->browser = clone $conf->browser;
+		$conf->browser->layout = 'classic';
+		$conf->dol_use_jmobile = 0;
+		$conf->use_javascript_ajax = $ajaxenabled;
+		$form = new Form($this->savdb);
+		try {
+			return $form->formconfirm('card.php?id=1', 'Confirmation', '', 'confirm_test', array(array('type' => 'textarea', 'name' => 'note', 'value' => 'Initial note', 'inputko' => 1), array('type' => 'hidden', 'name' => 'recordid', 'value' => '1')), '', $useajax, 0, 600, $disableformtag, 'Yes', 'No', 'Confirmation help', $labelbuttonother, $valuebuttonother);
+		} finally {
+			$conf = $savedconf;
+		}
+	}
+
+	/**
 	 * testSelectProduitsList
 	 *
 	 * @return int

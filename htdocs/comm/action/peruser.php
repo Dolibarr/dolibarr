@@ -1165,7 +1165,14 @@ if (count($listofextcals)) {
 		$colorcal = $extcal['color'];
 		$buggedfile = $extcal['buggedfile'];
 
-		$pathforcachefile = dol_sanitizePathName($conf->user->dir_temp).'/'.dol_sanitizeFileName('extcal_'.$namecal.'_user'.$user->id).'.cache';
+		if ($extcal['type'] == 'globalsetup') {
+			// Calendar defined by the admin: one cache file shared by all users, stored in the temp directory of the module (the name depends on the url)
+			dol_mkdir($conf->agenda->dir_temp);
+			$pathforcachefile = dol_sanitizePathName($conf->agenda->dir_temp).'/'.dol_sanitizeFileName('extcal_'.$namecal.'_'.substr(md5($url), 0, 12)).'.cache';
+		} else {
+			// Calendar defined by the user: one cache file per user
+			$pathforcachefile = dol_sanitizePathName($conf->user->dir_temp).'/'.dol_sanitizeFileName('extcal_'.$namecal.'_user'.$user->id).'.cache';
+		}
 		//var_dump($pathforcachefile);exit;
 
 		$ical = new ICal();
@@ -1230,6 +1237,10 @@ if (count($listofextcals)) {
 					}
 					//print 'xx'.$datecurstart;exit;
 
+					// Days excluded from the recurrence (EXDATE). $exdateshift converts a start into the day as written in the file (a TZID date is a local time)
+					$exdates = (isset($icalevent['EXDATE']) && is_array($icalevent['EXDATE'])) ? $icalevent['EXDATE'] : [];
+					$exdateshift = (isset($icalevent['DTSTART']) && is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) ? ((int) $icalevent['DTSTART']['unixtime'] - (int) $datecurstart) : 0;
+
 					// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
 					$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
 					foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
@@ -1255,7 +1266,7 @@ if (count($listofextcals)) {
 
 					$numofevent = 0;
 					while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
-						if ($datecurend >= $firstdaytoshow) {    // We add event
+						if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
 							$newevent = $icalevent;
 							unset($newevent['RRULE']);
 							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
