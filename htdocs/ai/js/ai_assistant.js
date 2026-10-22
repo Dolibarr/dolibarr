@@ -2066,7 +2066,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url') continue;
+                if (key === 'url' || key === 'chart') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the
@@ -2077,6 +2077,11 @@ export function initAiAssistant(container) {
             }
             content += '</ul></div>';
             content += nested;
+            if (data.chart && Array.isArray(data.chart.labels) && Array.isArray(data.chart.datasets)) {
+                const cid = 'ai-chart-' + Math.random().toString(36).slice(2, 10);
+                content += `<div class="chat-chart-wrap"><canvas id="${cid}"></canvas></div>`;
+                setTimeout(() => aiRenderChart(cid, data.chart, config.urlRoot || config.baseUrl || ''), 0);
+            }
         }
         else { return String(data); }
 
@@ -2091,6 +2096,29 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+}
+
+// Renders a report chart payload ({type, labels, datasets}) on a canvas using the
+// bundled Chart.js ESM build — imported lazily so the chat carries no extra cost
+// until a tool actually returns a chart.
+async function aiRenderChart(canvasId, chartCfg, urlRoot) {
+    const el = document.getElementById(canvasId);
+    if (!el) return;
+    try {
+        const mod = await import(urlRoot + '/includes/nnnick/chartjs/dist/chart.esm.js');
+        const Chart = mod.Chart || mod.default;
+        if (!Chart) return;
+        el.parentElement.classList.add('chat-chart-ready');
+        new Chart(el, {
+            type: chartCfg.type || 'bar',
+            data: { labels: chartCfg.labels, datasets: chartCfg.datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: chartCfg.datasets.length > 1 } }
+            }
+        });
+    } catch (e) { /* chart is optional sugar: the table is already rendered */ }
 }
 
 // Auto-init for server-rendered containers (standalone page mode). The topbar
