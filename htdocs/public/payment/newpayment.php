@@ -2668,15 +2668,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			setEventMessages('Bad value for amount. Reported as a hack attempt.', null, 'errors');
 		}
 
+
+		$service = 'StripeLive';
+		$servicestatus = 1;
+		if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
+			$service = 'StripeTest';
+			$servicestatus = 0;
+		}
+
 		if ($checkamount && (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT'))) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-			$service = 'StripeLive';
-			$servicestatus = 1;
-			if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
-				$service = 'StripeTest';
-				$servicestatus = 0;
-			}
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
