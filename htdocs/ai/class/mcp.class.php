@@ -590,7 +590,9 @@ class McpHandler
 			'inputRequests' => array(
 				array(
 					'type' => 'confirmation',
-					'prompt' => $preview
+					// The chat shows the sentence as HTML, an MCP client as text:
+					// no "&rarr;" or "&euro;" there, and accented names as written.
+					'prompt' => ($this->toolcontext === self::CTX_MCP_SERVER) ? dol_html_entity_decode($preview, ENT_QUOTES | ENT_HTML5) : $preview
 				)
 			),
 			'requestState' => $issued
