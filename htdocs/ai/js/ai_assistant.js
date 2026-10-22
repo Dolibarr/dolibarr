@@ -89,6 +89,10 @@ export function initAiAssistant(container) {
     // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
     // the per-file/total size caps live server-side too.
     const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
+    // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
+    const HISTORY_KEY = config.historyKey || '';
+    const HISTORY_MAX_MSGS = 20;
+    let restoringHistory = false;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -234,6 +238,9 @@ export function initAiAssistant(container) {
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
             thirdpartyChoices = {};
+            if (HISTORY_KEY) {
+                try { sessionStorage.removeItem(HISTORY_KEY); } catch (e) { /* ignore */ }
+            }
             input.focus();
         }
     });
@@ -1344,6 +1351,56 @@ export function initAiAssistant(container) {
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
         if (div.dataset.aiRaw) refreshContext();
+        else saveChatHistory();
+    }
+
+    // Keep the user/bot bubbles in sessionStorage so the conversation survives a
+    // page change (popover -> full page, or any navigation) in the same tab.
+    // Action buttons and pending confirmations are not kept: they cannot be replayed.
+    function saveChatHistory() {
+        if (!HISTORY_KEY || restoringHistory) return;
+        const msgs = Array.from(chat.querySelectorAll('.msg.user, .msg.bot'))
+            .filter((m) => !m.classList.contains('typing-indicator'))
+            .slice(-HISTORY_MAX_MSGS)
+            .map((m) => {
+                const bubble = m.querySelector('.msg-bubble');
+                if (!bubble) return null;
+                const clone = bubble.cloneNode(true);
+                // Pins are rebuilt on restore; charts are canvases that cannot be serialized.
+                clone.querySelectorAll('.ctx-pin, .msg-actions, .chat-chart-wrap').forEach((n) => n.remove());
+                return {
+                    type: m.classList.contains('user') ? 'user' : 'bot',
+                    html: clone.innerHTML,
+                    raw: m.dataset.aiRaw || '',
+                    ctx: m.dataset.ctx || '',
+                    error: m.dataset.aiError ? 1 : 0
+                };
+            })
+            .filter(Boolean);
+        try {
+            if (msgs.length) sessionStorage.setItem(HISTORY_KEY, JSON.stringify(msgs));
+            else sessionStorage.removeItem(HISTORY_KEY);
+        } catch (e) { /* private mode or quota exceeded: the chat just won't survive a page change */ }
+    }
+
+    function restoreChatHistory() {
+        if (!HISTORY_KEY) return;
+        let msgs = [];
+        try { msgs = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) { msgs = []; }
+        if (!Array.isArray(msgs)) return;
+        // A question left without answer (page changed while waiting) is dropped.
+        while (msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
+        if (!msgs.length) return;
+        if (welcome) welcome.style.display = 'none';
+        restoringHistory = true;
+        msgs.forEach((m) => {
+            if (!m || (m.type !== 'user' && m.type !== 'bot')) return;
+            appendMsg(m.type, String(m.html || ''), null, m.raw || null, { error: !!m.error });
+            const div = chat.lastElementChild;
+            if (div && m.ctx) div.dataset.ctx = m.ctx;
+        });
+        restoringHistory = false;
+        refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1619,6 +1676,7 @@ export function initAiAssistant(container) {
             }
         });
         updateContextBar();
+        saveChatHistory();
     }
 
     // One click flips the bubble: inside the window it toggles between "follows
@@ -2014,6 +2072,7 @@ export function initAiAssistant(container) {
                     c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
+            saveChatHistory();
         } catch (e) { /* names stay as ids */ }
     }
 
@@ -2096,6 +2155,10 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+
+    // Restore the conversation kept by a previous page of this tab. Done last:
+    // the helpers rely on constants (AUTO_CONTEXT, ...) declared above.
+    restoreChatHistory();
 }
 
 // Renders a report chart payload ({type, labels, datasets}) on a canvas using the

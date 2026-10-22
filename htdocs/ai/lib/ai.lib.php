@@ -950,6 +950,9 @@ function getAiChatAssistantConfig()
 		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
 		'token' => newToken(),
 		'userInitial' => $userinitial,
+		// Key of the conversation kept in the browser sessionStorage, so the chat
+		// survives a page change (popover <-> full page) for this user and entity only.
+		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
 	);
 }
 
