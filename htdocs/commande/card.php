@@ -2043,7 +2043,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanvalidate) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercancancel) {
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
 		$qualified_for_stock_change = 0;
