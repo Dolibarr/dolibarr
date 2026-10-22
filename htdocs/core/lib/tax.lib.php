@@ -113,7 +113,7 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  'sell'|'buy' $direction     'sell' or 'buy'
  *  @param  int<0,12>	 $m				Month
  *  @param  int<0,4>	 $q           	Quarter
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],pstatus?:int[],pstatusbuy?:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],drate?:string[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],pstatus?:int[],pstatusbuy?:int[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
@@ -334,7 +334,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -504,7 +504,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['localtax2'] += (float) $assoc['total_localtax2'];
 			}
 			$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
-			$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
+			$list[$assoc['company_id']]['dtype'][] = (int) $assoc['dtype'];
 			$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 			$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
@@ -521,7 +521,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -637,7 +637,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['company_status'][] = 0;
 
 				$list[$assoc['company_id']]['user_id'][] = (int) $assoc['fk_user_author'];
-				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+				$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -686,7 +686,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  @param  int			 $modetax     	Not used
  *  @param  'sell'|'buy' $direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
  *  @param  int<0,12>	 $m           	Month
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
