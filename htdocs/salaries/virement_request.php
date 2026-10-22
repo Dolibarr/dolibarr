@@ -266,7 +266,7 @@ if (isModEnabled('project')) {
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);

@@ -1355,8 +1355,22 @@ if ($search_datelimit_endmonth) {
 if ($search_datelimit_endyear) {
 	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
+// The 4 date filters above are read by GETPOSTDATE from their day/month/year/hour/min parts, so the parts are what must be kept
+foreach (array('search_datec_start', 'search_datec_end', 'search_datem_start', 'search_datem_end') as $tmpprefix) {
+	foreach (array('day', 'month', 'year', 'hour', 'min') as $tmpsuffix) {
+		if (GETPOSTISSET($tmpprefix.$tmpsuffix)) {
+			$param .= '&'.$tmpprefix.$tmpsuffix.'='.urlencode((string) GETPOSTINT($tmpprefix.$tmpsuffix));
+		}
+	}
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_note_private) {
+	$param .= '&search_note_private='.urlencode($search_note_private);
+}
+if ($search_note_public) {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_refcustomer) {
 	$param .= '&search_refcustomer='.urlencode($search_refcustomer);
@@ -1387,6 +1401,9 @@ if ($search_town) {
 }
 if ($search_zip) {
 	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state) {
+	$param .= '&search_state='.urlencode($search_state);
 }
 if ($search_country) {
 	$param .= "&search_country=".urlencode($search_country);

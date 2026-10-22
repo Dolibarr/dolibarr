@@ -141,6 +141,10 @@ export function initAiAssistant(container) {
     // Initialize the model picker (presets + dynamic provider model list)
     initModelPicker();
 
+    // Apply the select2 look of the other Dolibarr combos on the model and mode lists
+    initSelect2Combo(modelSelect, true);
+    initSelect2Combo(engineSelect, false);
+
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
     container.addEventListener('triggerPdf', () => {
@@ -514,6 +518,7 @@ export function initAiAssistant(container) {
             if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
                 modelSelect.value = saved;
             }
+            refreshSelect2Combo(modelSelect);
         };
         applySaved();
 
@@ -548,6 +553,54 @@ export function initAiAssistant(container) {
         modelSelect.addEventListener('change', () => {
             try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
         });
+    }
+
+    /**
+     * Turn a native <select> into a select2 combo with the same options as ajax_combobox().
+     * Does nothing when select2 is not loaded (the native select keeps its own pill style).
+     *
+     * @param {HTMLSelectElement} sel        Select element
+     * @param {boolean}           withSearch Show the search field in the dropdown
+     */
+    function initSelect2Combo(sel, withSearch) {
+        if (!sel || !window.jQuery || !window.jQuery.fn.select2) return;
+        const $sel = window.jQuery(sel);
+        // Show the picto declared into the data-picto attribute of the option before its label
+        const withPicto = (data) => {
+            const picto = data.element ? data.element.getAttribute('data-picto') : '';
+            const experimental = data.element ? data.element.getAttribute('data-experimental') : '';
+            if (!picto) return data.text;
+            const span = window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+            if (experimental) {
+                span.append(window.jQuery('<span class="opacitymedium paddingleft"></span>').text('(' + t('VersionExperimental') + ')'));
+            }
+            return span;
+        };
+        $sel.select2({
+            dir: 'ltr',
+            width: 'resolve',
+            minimumResultsForSearch: withSearch ? 0 : Infinity,
+            language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+            theme: 'default',
+            dropdownCssClass: 'dol-dropdown-dialog dol-dropdown-dialogmono',
+            templateResult: withPicto,
+            templateSelection: withPicto,
+            // Keep the dropdown inside the chat, so a click into it is not seen as a click outside the popover
+            dropdownParent: window.jQuery(container)
+        });
+        // select2 fires a jQuery 'change' only, relay it to the native listeners of the select
+        $sel.on('select2:select', () => sel.dispatchEvent(new Event('change')));
+    }
+
+    /**
+     * Refresh the displayed value of a select2 combo after a programmatic change of the select.
+     *
+     * @param {HTMLSelectElement} sel Select element
+     */
+    function refreshSelect2Combo(sel) {
+        if (sel && window.jQuery && window.jQuery(sel).data('select2')) {
+            window.jQuery(sel).trigger('change.select2');
+        }
     }
 
     /**
@@ -972,6 +1025,7 @@ export function initAiAssistant(container) {
             } else {
                 alert(t('BrowserNotSupported'));
                 engineSelect.value = 'text';
+                refreshSelect2Combo(engineSelect);
                 updateInterfaceMode('text');
             }
         } else if (mode === 'whisper') {
@@ -1855,7 +1909,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1867,14 +1923,15 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.

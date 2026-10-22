@@ -68,7 +68,10 @@ function dolSessionOpen($save_path, $session_name)
 		$dolibarr_session_db_port = $dolibarr_main_db_port;
 	}
 
-	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
+	// Force a genuinely new connection: the parameters above fall back to the ones of the main
+	// database, so without this flag pg_connect() returns the handle already opened for $db, and
+	// the close() done by dolSessionClose() would close the connection still in use by the request.
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port, true);
 
 	return true;
 }

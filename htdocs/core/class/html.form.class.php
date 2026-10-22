@@ -4246,8 +4246,11 @@ class Form
 		}
 
 		// Sort by category
+		// The preselected product is put first so it is not cut by the limit (for example a product just created with the + button of the line form)
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+			$sql .= " ORDER BY".((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "")." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ((int) $selected > 0) {
+			$sql .= " ORDER BY CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END, p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -7032,9 +7035,11 @@ class Form
 	 * @param string 		$helpContent 		Optional help text to display in a collapsible block at the bottom left of the dialog.
 	 * 											If set, a standard '?' icon with the label "Help" will appear.
 	 * 											Clicking it expands the content provided here. Supports HTML.
+	 * @param string 		$labelbuttonother	Optional third button translation key (empty = no third button).
+	 * @param string 		$valuebuttonother	Value of confirm for the third button. Empty = close the dialog, or submit cancel=1 without confirm in HTML mode.
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '', $labelbuttonother = '', $valuebuttonother = 'other')
 	{
 		global $langs, $conf;
 
@@ -7293,8 +7298,9 @@ class Form
 					width: \'' . dol_escape_js($width) . '\',
 					modal: true,
 					closeOnEscape: false,
-					buttons: {
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\': function() {
+					buttons: [{
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7331,8 +7337,10 @@ class Form
 								console.log("after post ok");
 							}
 							$(this).dialog("close");
-						},
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\': function() {
+						}
+					}, {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7364,13 +7372,40 @@ class Form
 							}
 							$(this).dialog("close");
 						}
-					}
+					}';
+			if ($labelbuttonother !== '') {
+				$formconfirm .= ', {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonother)) . '\',
+						click: function() {';
+				if ($valuebuttonother !== '') {
+					$pageother = $page . (strpos($page, '?') === false ? '?' : '&') . 'action=' . urlencode($action) . '&confirm=' . urlencode($valuebuttonother);
+					$formconfirm .= '
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputok = ' . json_encode($inputok) . ';
+							var fields = $(this).find(":input");
+							$.each(inputok, function(i, inputname) {
+								var field = fields.filter(function() { return this.id === inputname || this.name === inputname; });
+								if (field.is(":radio, :checkbox")) { field = field.filter(":checked"); }
+								var inputvalue = field.val();
+								if (typeof inputvalue === "undefined") { inputvalue = ""; }
+								options += "&" + encodeURIComponent(inputname) + "=" + encodeURIComponent(inputvalue);
+							});
+							var pageother = \'' . dol_escape_js($pageother) . '\';
+							var urljump = pageother + "&" + options;
+							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
+				}
+				$formconfirm .= '
+							$(this).dialog("close");
+						}
+					}';
+			}
+			$formconfirm .= ']
 				}
 				);
 
 				var button = "' . $button . '";
 				if (button.length > 0) {
-					$( "#" + button ).click(function() {
+					$( "#" + button ).click(function(e) { e.preventDefault();
 						$("#' . $dialogconfirm . '").dialog("open");
 					});
 				}
@@ -7421,8 +7456,14 @@ class Form
 			$formconfirm .= '<div class="inline-block">' . $question . '</div>';
 
 			$formconfirm .= '<div class="inline-block">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
-			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			if ($labelbuttonother !== '') {
+				foreach (array(array('confirm', 'yes', $labelbuttonyes), array('confirm', 'no', $labelbuttonno), array($valuebuttonother === '' ? 'cancel' : 'confirm', $valuebuttonother === '' ? '1' : $valuebuttonother, $labelbuttonother)) as $confirmbutton) {
+					$formconfirm .= '<button class="button valignmiddle confirmvalidatebutton small" type="submit" name="' . $confirmbutton[0] . '" value="' . dol_escape_htmltag($confirmbutton[1]) . '"' . ($confirmbutton[0] === 'cancel' ? ' formnovalidate' : '') . '>' . dol_escape_htmltag($langs->transnoentities($confirmbutton[2])) . '</button>';
+				}
+			} else {
+				$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
+				$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			}
 			$formconfirm .= '</div>';
 
 			$formconfirm .= '</div>';
@@ -7437,12 +7478,24 @@ class Form
 				$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 				$formconfirm .= '
 				$(document).ready(function () {
-					$(".confirmvalidatebutton").on("click", function() {
+					$(".confirmvalidatebutton").off("click.formconfirm").on("click.formconfirm", function(event) {
+						event.preventDefault();
+						var form = $(this).closest("form");
+						if (form.data("formconfirm-submitting")) { return; }
 						console.log("We click on button confirmvalidatebutton");
+						if (this.name) {
+							if (!this.formNoValidate && !form[0].reportValidity()) { return; }
+							$("<input>").attr({type: "hidden", name: this.name, value: this.value, "data-formconfirm-choice": "1"}).appendTo(form);
+						}
+						form.data("formconfirm-submitting", true);
 						$(this).attr("disabled", "disabled");
-						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
+						setTimeout(function() {
+							form.removeData("formconfirm-submitting");
+							form.find(".confirmvalidatebutton").removeAttr("disabled");
+							form.find("[data-formconfirm-choice]").remove();
+						}, 3000);
 						//console.log($(this).closest("form"));
-						$(this).closest("form").submit();
+						form.submit();
 					});
 				});
 				';
@@ -11318,7 +11371,7 @@ class Form
 					$sfortag .= ' title="' . dolPrintHTMLForAttribute($titlestring) . '"';
 					$sfortag .= '>';
 					if ($rendermode == 1) {
-						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'">';
+						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'" tabindex="-1">';
 						$sfortag .= img_picto('', 'category', 'class="paddingright"');
 						if ($conf->dol_optimize_smallscreen) {
 							$sfortag .= dolPrintHTML(dol_trunc($c->label, 8));
@@ -13086,11 +13139,11 @@ class Form
 		$ret = '<!-- filterComponent -->';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
-		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
+		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor" tabindex="-1">';
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
-		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500 maxwidth300onsmartphone">';
+		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500">';
 
 		// Show select fields as tags.
 		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block">';
@@ -13168,7 +13221,7 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= '<script>
-		jQuery(".tagsearchdelete").click(function(e) {
+		jQuery("#divsearch_component_params").on("click", ".tagsearchdelete", function(e) {	/* Delegated, so it works also for tags added by JS */
 			var filterid = $(this).parents().attr("data-ufilterid");
 			console.log("We click to delete the criteria nb "+filterid);
 
@@ -13354,7 +13407,15 @@ class Form
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
 		$ret .= '   $(".operator-selector").select2({';
+		$ret .= '       dropdownCssClass: \'operator-selector-dropdown\',';	// To have a smaller height of options than other select2 (need full version of select2)
 		$ret .= '       placeholder: \'' . dol_escape_js($langs->transnoentitiesnoconv('Operator')) . '\'';
+		$ret .= '   });';
+		// Press the down or right arrow on the closed combo: open it (select2 opens it only with Enter, Space or Alt+Down)
+		$ret .= '   $(".operator-selector").next(".select2-container").find(".select2-selection").on("keydown", function(e) {';
+		$ret .= '       if ((e.key === "ArrowDown" || e.key === "ArrowRight") && !$(this).closest(".select2-container").hasClass("select2-container--open")) {';
+		$ret .= '           e.preventDefault();';
+		$ret .= '           $(".operator-selector").select2("open");';
+		$ret .= '       }';
 		$ret .= '   });';
 		$ret .= '});</script>';
 		$ret .= '</div>';
@@ -13387,7 +13448,7 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= '<div class="btn-div">';
-		$ret .= '<button class="button buttongen button-save add-filter-btn" type="button">' . $langs->trans("addToFilter") . '</button>';
+		$ret .= '<button class="butAction add-filter-btn" type="button">' . $langs->trans("addToFilter") . '</button>';
 		$ret .= '</div>';
 
 		$ret .= '</div>';
@@ -13416,6 +13477,30 @@ class Form
 						$(".search-component-assistance").hide();
 					}
 				});
+				// Press the down arrow (or the right arrow at the end of the text) into the field Filters to open the filter editor
+				$("#search_component_params_input").on("keydown", function(e) {
+					if (e.key !== "ArrowDown" && !(e.key === "ArrowRight" && this.selectionStart === this.value.length)) {
+						return;
+					}
+					if ($(".search-component-assistance").is(":visible")) {
+						return;
+					}
+					e.preventDefault();
+					$(this).trigger("click");	// Open the editor with the same code than a click into the zone of filters
+					$(".fieldcombo-toggle").trigger("focus");
+				});
+				// Press Escape to close the filter editor. We use the capture phase to know the state before the handlers of
+				// the sub-components: if one of them is open (combo of fields, select2, datepicker), Escape closes only this one.
+				document.addEventListener("keydown", function(e) {
+					if (e.key !== "Escape" || !$(".search-component-assistance").is(":visible")) {
+						return;
+					}
+					if ($(".fieldcombo-panel").is(":visible") || $(".select2-container--open").length || $("#ui-datepicker-div").is(":visible")) {
+						return;
+					}
+					$(".search-component-assistance").hide();
+					$("#search_component_params_input").trigger("focus");	// Keep the focus visible when the editor is closed
+				}, true);
 			});
 		</script>';
 
@@ -13452,6 +13537,33 @@ class Form
 					}
 				});
 
+				// Press the down or right arrow on the toggle button: open the panel (as a click)
+				$(".fieldcombo-toggle").on("keydown", function(e) {
+					if ((e.key === "ArrowDown" || e.key === "ArrowRight") && !$(this).closest(".fieldcombo").find(".fieldcombo-panel").is(":visible")) {
+						e.preventDefault();
+						$(this).trigger("click");
+					}
+				});
+
+				// Arrows into the panel: up moves on the previous visible row, down on the next one.
+				// From the search input, only the down arrow moves on the first row.
+				$(".fieldcombo-panel").on("keydown", function(e) {
+					const isnext = (e.key === "ArrowDown");
+					const isprev = (e.key === "ArrowUp");
+					const search = $(this).find(".fieldcombo-search");
+					if ((!isnext && !isprev) || (e.target === search[0] && e.key !== "ArrowDown")) {
+						return;
+					}
+					e.preventDefault();
+					const rows = $(this).find(".fieldcombo-elementheader:visible, .fieldcombo-field:visible");
+					const index = (e.target === search[0] ? -1 : rows.index(e.target)) + (isnext ? 1 : -1);
+					if (index < 0) {
+						search.trigger("focus");
+					} else if (index < rows.length) {
+						rows.eq(index).trigger("focus");
+					}
+				});
+
 				// Click on an element (a table): show the list of its sub-elements (indented) and the list of its fields.
 				// We close all the other elements before, except the parent elements of the clicked element (else it would be hidden)
 				$(".fieldcombo-elementheader").on("click", function(e) {
@@ -13477,6 +13589,7 @@ class Form
 					$(".fieldcombo-label").html(elementlabelhtml).removeClass("opacitymedium").append(document.createTextNode(": " + fieldlabel));
 					$("#search_filter_field").attr("data-type", $(this).attr("data-type")).val($(this).attr("data-field"));
 					$(".fieldcombo-panel").hide();
+					$(this).closest(".fieldcombo").find(".fieldcombo-toggle").trigger("focus");	// The selected row is now hidden, keep the focus on the combo
 					$("#search_filter_field").trigger("change");
 				});
 
@@ -13521,6 +13634,9 @@ class Form
 				// Press Escape to close the combo, press Enter on a row to activate it
 				$(document).on("keydown", function(e) {
 					if (e.which === 27) {
+						if ($(".fieldcombo-panel").is(":visible") && $(e.target).closest(".fieldcombo").length) {
+							$(e.target).closest(".fieldcombo").find(".fieldcombo-toggle").trigger("focus");	// Keep the focus visible on the combo
+						}
 						$(".fieldcombo-panel").hide();
 					}
 				});
@@ -13535,6 +13651,12 @@ class Form
 				$(document).on("click", function(e) {
 					if (!$(e.target).closest(".fieldcombo").length) {
 						$(".fieldcombo-panel").hide();
+					}
+				});
+				// Close the combo when the focus leaves it with the keyboard (Tab). A click outside is managed by the click handler.
+				$(".fieldcombo").on("focusout", function(e) {
+					if (e.relatedTarget && !$.contains(this, e.relatedTarget)) {
+						$(this).find(".fieldcombo-panel").hide();
 					}
 				});
 
@@ -13568,7 +13690,12 @@ class Form
 
 					// Populate operators
 					Object.entries(operators).forEach(function([operator, label]) {
-						operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
+						if (operator.indexOf("separator") === 0) {
+							// A non empty value is required, else select2 hides the option (it is considered as the placeholder)
+							operatorSelector.append("<option value=\'" + operator + "\' disabled>" + label + "</option>");
+						} else {
+							operatorSelector.append("<option value=\'" + operator + "\'>" + label + "</option>");
+						}
 					});
 
 					operatorSelector.trigger("change.select2");
@@ -13613,7 +13740,22 @@ class Form
 						$("#dateone").datepicker("option", "disabled", false);
 						$("#value-selector").prop("disabled", false);
 					}
-				});
+
+						// For the "in list" operators on a field with a list of predefined values, values are typed as a list
+						// into the free text input, so we show it instead of the single value selector
+						const selectedFieldForOperator = $("#search_filter_field").val();
+						if (arrayoffiltercriterias[selectedFieldForOperator] !== undefined && arrayoffiltercriterias[selectedFieldForOperator]["arrayofkeyval"] !== undefined) {
+							if (selectedOperator === "IsInList" || selectedOperator === "IsNotInList") {
+								$("#value-selector").hide();
+								$("#value-selector").next(".select2-container").hide();
+								$(".value-input").val("").show();
+							} else {
+								$(".value-input").val("").hide();
+								$("#value-selector").show();
+								$("#value-selector").next(".select2-container").show();
+							}
+						}
+					});
 
 				$(".add-filter-btn").on("click", function(event) {
 					console.log("We click on add-filter-btn");
@@ -13633,8 +13775,9 @@ class Form
 						console.log("value="+value);
 					}
 
-					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					// If the selected field has an array of values then take the selected value,
+					// except for the "in list" operators for which the values are typed into the free text input
+					if (operator !== "IsInList" && operator !== "IsNotInList" && arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 
@@ -13645,13 +13788,60 @@ class Form
 
 					const filterString = generateFilterString(field, operator, value, fieldType);
 
-					// Submit the form
+					// Add the criteria to the list of filters without submitting the form (it will be applied on next refresh of page)
 					if (filterString !== "" && field !== "" && field !== "-1" && field !== null && operator !== "" && operator !== null && value !== "" && value !== null) {
-						$("#search_component_params_input").val($("#search_component_params_input").val() + " " + filterString);
-						$("#search_component_params_input").closest("form").submit();
+						// Convert the filter string into the universal filter syntax: "t.ref like \'%a%\'" -> "(t.ref:like:\'%a%\')"
+						let ufilter = filterString;
+						const regufs = filterString.match(/^([a-zA-Z0-9_.]+) (like|notlike|=|!=|<|>|<=|>=) (.*)$/);
+						if (regufs) {
+							ufilter = "(" + regufs[1] + ":" + regufs[2] + ":" + regufs[3] + ")";
+						} else if (!/^\(.*\)$/.test(filterString)) {
+							ufilter = "(" + filterString + ")";
+						}
+						console.log("Add the criteria "+ufilter+" to search_component_params_hidden");
+
+						const hiddenfield = $("#search_component_params_hidden");
+						hiddenfield.val(hiddenfield.val() !== "" ? hiddenfield.val() + " AND " + ufilter : ufilter);
+
+						let newufilterid = 1;
+						$("#divsearch_component_params .tagsearch[data-ufilterid]").each(function() {
+							newufilterid = Math.max(newufilterid, parseInt($(this).attr("data-ufilterid")) + 1);
+						});
+						const newtag = $("<span class=\"marginleftonlyshort valignmiddle tagsearch\"></span>").attr("data-ufilterid", newufilterid).attr("data-ufilter", ufilter);
+						newtag.append($("<span class=\"tagsearchdelete select2-selection__choice__remove\">x</span>").attr("data-ufilterid", newufilterid), " ", document.createTextNode(ufilter.replace(/^\((.*)\)$/, "$1").replace(/^([a-zA-Z0-9_.]+):([a-zA-Z!<>=]+):/, "$1 $2 ")));
+						const lasttag = $("#divsearch_component_params .tagsearch").last();
+						if (lasttag.length) {
+							newtag.insertAfter(lasttag);
+						} else {
+							$("#divsearch_component_params").prepend(newtag);
+						}
+
+						// Reset the value so another criteria can be entered
+						$(".assistance-errors").hide();
+						$(".value-input").val("").trigger("focus");
 					} else {
 						$(".assistance-errors").show();
 					}
+				});
+
+				// Press Enter into the filter editor: add the filter (as a click on the button Add) instead of submitting the form
+				$(".search-component-assistance").on("keydown", function(e) {
+					if (e.which !== 13) {
+						return;
+					}
+					const target = $(e.target);
+					// Enter on a row of the combo of fields is managed by the combo, Enter on the button Add already clicks it
+					if (target.closest(".fieldcombo-elementheader, .fieldcombo-field, .add-filter-btn").length) {
+						return;
+					}
+					e.preventDefault();
+					// Enter into the search input of the combo of fields must not add the filter
+					if (target.hasClass("fieldcombo-search")) {
+						return;
+					}
+					// The change event updates the hidden fields of a date (dateoneday, dateonemonth, dateoneyear)
+					target.filter("input").trigger("change");
+					$(".add-filter-btn").trigger("click");
 				});
 			});
 		</script>';

@@ -46,7 +46,7 @@ function getListOfAIFeatures()
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
 		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
-		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+		'textrephraser' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
 
@@ -777,7 +777,7 @@ function getAiChatAssistantConfig()
 {
 	global $conf, $langs, $user;
 
-	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
+	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
@@ -797,6 +797,7 @@ function getAiChatAssistantConfig()
 		'HistoryCleared',
 		'Send',
 		'TypeYourQuestion',
+		'VersionExperimental',
 
 		// Placeholders & Status
 		'TypeOrSpeak',
@@ -913,8 +914,15 @@ function getAiChatAssistantConfig()
 		$userinitial = dol_strtoupper(dol_substr($namesource, 0, 1));
 	}
 
+	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	// The whisper option is not rendered without the experimental features: fall back
+	// to the default text mode so the JS never selects a value missing from the combo.
+	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
+		$defaultmode = '';
+	}
+
 	return array(
-		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
+		'mode' => $defaultmode,
 		'labels' => $ai_translations,
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
@@ -975,13 +983,21 @@ function getAiChatAssistantHtml($mode = 'page')
 		// In the popover the title links to the full standalone page
 		$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
 		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+		$out .= '<span class="chat-header-text">';
 		$out .= '<h2>'.$title.'</h2>';
+		// Provider in use under the title, as on the full page
+		$aiprovider = getAiAssistantProviderLabel();
+		if ($aiprovider !== '') {
+			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
+		}
+		$out .= '</span>';
 	} else {
 		// Full page: assistant identity (avatar + title + current LLM model)
 		$out .= '<div class="chat-header-id">';
-		$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
+		// Same picto as the title of the popover (no avatar box)
+		//$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
 		$out .= '<span class="chat-header-text">';
-		$out .= '<span class="chat-header-title">'.$langs->trans("AIAssistant").'</span>';
+		$out .= '<span class="chat-header-title">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
 		$aiprovider = getAiAssistantProviderLabel();
 		if ($aiprovider !== '') {
 			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
@@ -1003,15 +1019,19 @@ function getAiChatAssistantHtml($mode = 'page')
 	if ($defaultModel !== '') {
 		$autoLabel .= ' ('.$defaultModel.')';
 	}
-	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
+	$out .= '<option value="" data-picto="ai-picto-sparkle">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	//$out .= ajax_combobox("model-select");
 
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
-	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
-	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
-	$out .= '<option value="whisper">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
+	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
+	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
+		$out .= '<option value="whisper" data-picto="fa fa-microphone" data-experimental="1">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	}
 	// Note: the legacy 'local_docs'/'cloud_docs' selector modes are gone — documents
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).

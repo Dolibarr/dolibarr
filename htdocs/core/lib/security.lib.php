@@ -849,9 +849,14 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'shipping' => array('expedition', 'expedition'),
 		'reception' => array('reception', 'reception'),
 		'supplier_proposal' => array('supplier_proposal', 'supplier_proposal'),
+		'project' => array('project', 'project'),
+		'projet' => array('project', 'project'),
+		'project_task' => array('project', 'project'),
 	);
 	// For these moduleparts, the first subdirectory is the id of the object instead of its ref
 	$modulepartwithid = array('societe', 'company', 'thirdparty', 'contact', 'socpeople');
+	// For these moduleparts, the first subdirectory is the ref of the object (files of tasks are into the directory of their project)
+	$modulepartwithfirstdirasref = array('project', 'projet', 'project_task');
 
 	// Same fix than into dol_check_secure_access_document(): files of 'expedition' into 'receipt/' are delivery notes
 	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
@@ -880,6 +885,9 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (in_array($modulepart, $modulepartwithid)) {
 		$tmparray = explode('/', ltrim($original_file, '/'));
 		$object = fetchObjectByElement((int) $tmparray[0], $modulepartlinkedtothirdparty[$modulepart][0]);
+	} elseif (in_array($modulepart, $modulepartwithfirstdirasref)) {
+		$tmparray = explode('/', ltrim($original_file, '/'));
+		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], (count($tmparray) > 1 ? $tmparray[0] : ''));
 	} else {
 		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], $refname);
 	}
