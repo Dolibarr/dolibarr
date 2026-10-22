@@ -323,7 +323,7 @@ class ICal
 
 			case "VEVENT":
 				// @phan-suppress-next-line PhanTypeMismatchReturn
-				$this->cal[$type][$this->event_count][$key] = $value;
+				$this->cal[$type][$this->event_count][$key] = ($key == 'RRULE' ? $this->ical_rrule($value) : $value);	// RRULE of an event is decoded into an array
 				break;
 
 			case "VFREEBUSY":
@@ -377,8 +377,10 @@ class ICal
 		$result = array();
 		$rrule = explode(';', $value);
 		foreach ($rrule as $line) {
-			$rcontent = explode('=', $line);
-			$result[$rcontent[0]] = $rcontent[1];
+			$rcontent = explode('=', $line, 2);
+			if (count($rcontent) == 2) {
+				$result[strtoupper($rcontent[0])] = $rcontent[1];
+			}
 		}
 		return $result;
 	}
@@ -443,7 +445,7 @@ class ICal
 	/**
 	 * Return sorted eventlist as array or false if calendar is empty
 	 *
-	 * @return array<int,array<string,string>>|false
+	 * @return array<int,array<string,string|array<string,string>>>|false
 	 */
 	public function get_sort_event_list()
 	{
@@ -475,7 +477,7 @@ class ICal
 	/**
 	 * Return eventlist array (not sorted eventlist array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<string,string>>>
 	 */
 	public function get_event_list()
 	{
@@ -487,7 +489,7 @@ class ICal
 	/**
 	 * Return freebusy array (not sort eventlist array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<string,string>>>
 	 */
 	public function get_freebusy_list()
 	{
@@ -499,7 +501,7 @@ class ICal
 	/**
 	 * Return to do array (not sorted todo array)
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<string,string>>>
 	 */
 	public function get_todo_list()
 	{
@@ -511,7 +513,7 @@ class ICal
 	/**
 	 * Return base calendar data
 	 *
-	 * @return array<int,array<string,string>>
+	 * @return array<int,array<string,string|array<string,string>>>
 	 */
 	public function get_calender_data()
 	{

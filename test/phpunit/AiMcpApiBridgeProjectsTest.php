@@ -13,13 +13,18 @@
  * \brief Regression tests for discovery of project API tools.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once __DIR__.'/../../htdocs/ai/class/mcptool.class.php';
 require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 
 /**
  * Project metadata tests requiring neither a database nor an API credential.
  */
-class AiMcpApiBridgeProjectsTest extends PHPUnit\Framework\TestCase
+class AiMcpApiBridgeProjectsTest extends CommonClassTest
 {
 	/**
 	 * The discovery key comes from api_projects.class.php, not the module name.

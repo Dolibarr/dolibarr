@@ -176,9 +176,9 @@ class ToolApiBridge extends McpTool
 
 	/**
 	 * Product names given by the last normaliseWriteArgs() call that matched no
-	 * product, or several.
+	 * product, or several: name => close references found for it (may be empty).
 	 *
-	 * @var string[]
+	 * @var array<string,string[]>
 	 */
 	private $unresolvedProducts = [];
 
@@ -811,6 +811,51 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'timespent_list',
 					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
 					'params' => ['id' => "Rowid of the task."]
+				],
+				'put' => [
+					'suffix' => 'update',
+					'description' => "Update fields of an existing task: label, description, progress percent, planned workload, dates. Only the fields given are changed. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUpdateRecord',
+						'required' => ['id'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['id'],
+						'dates' => ['date_start', 'date_end'],
+						'hours' => ['planned_workload'],
+						'trim_fields' => ['label', 'description'],
+					],
+					'params' => [
+						'id' => "Rowid of the task to update (required).",
+						'label' => "New label.",
+						'description' => "New description.",
+						'progress' => "New progress percent 0-100.",
+						'planned_workload' => "New planned workload in hours.",
+						'date_start' => "New start date YYYY-MM-DD.",
+						'date_end' => "New end date YYYY-MM-DD."
+					]
+				],
+				'addTimeSpent' => [
+					'suffix' => 'add_timespent',
+					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTimespent',
+						'required' => ['id', 'date', 'duration'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['duration', 'date', 'id'],
+						// No 'dates' entry: the REST method parses the text
+						// itself — a timestamp would be re-parsed into garbage.
+						'hours' => ['duration'],
+					],
+					'params' => [
+						'id' => "Rowid of the task (required).",
+						'date' => "Date of the work YYYY-MM-DD or 'today' (required).",
+						'duration' => "Duration in hours, e.g. 1.5 (required).",
+						'note' => "Optional note for the record.",
+						'user_id' => "Rowid of the user who did the work, or 'me' for yourself. Omit to use the acting user.",
+						'progress' => "New task progress percent 0-100 (optional)."
+					]
 				]
 			]
 		];
@@ -2638,6 +2683,8 @@ class ToolApiBridge extends McpTool
 			$schema = $this->updateInputSchema($meta['write']);
 		}
 
+		$schema = self::normalizeInputSchema($schema);
+
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
 		// When an explicit description is given, it has priority on auto-generated description
 		if (!empty($meta['description'])) {
@@ -2655,7 +2702,8 @@ class ToolApiBridge extends McpTool
 	 * Lift Restler's inline validation tags out of a parameter description.
 	 *
 	 * The REST API documents constraints the way Restler reads them to build
-	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags}.
+	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags},
+	 * {@const value}.
 	 * Those carry exactly what JSON Schema calls minimum, maximum, enum and
 	 * pattern, so they are translated instead of being shown to the model as
 	 * part of the sentence. Tags with no JSON Schema equivalent ({@type} names a
@@ -2695,6 +2743,18 @@ class ToolApiBridge extends McpTool
 						}
 					}
 					$constraints['enum'] = array_values($choices);
+				} elseif (($name === 'const' || $name === 'constant') && $value !== '') {
+					$val = $value;
+					if ($ptype === 'integer' || $ptype === 'number') {
+						if (is_numeric($val)) {
+							$val = $this->tagValueToNumber($val);
+						}
+					} elseif ($ptype === 'boolean') {
+						$val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+					}
+					// JSON Schema const is rejected by Gemini and some LLM function-calling APIs;
+					// normalize to a single-element enum instead.
+					$constraints['enum'] = array($val);
 				} elseif ($name === 'pattern' && $value !== '') {
 					$pattern = $this->restlerPatternToJsonSchema($value);
 					if ($pattern !== '') {
@@ -3372,6 +3432,21 @@ class ToolApiBridge extends McpTool
 					$found = ($prod->fetch((int) $obj->rowid) > 0);
 				}
 			}
+			if (!$found && $buy && $socid > 0) {
+				// A supplier document carries the SUPPLIER's references - a delivery
+				// note almost never shows ours. Look the ref up in that supplier's
+				// catalogue, and only there, so another supplier's "33303" never fits.
+				$sql = "SELECT DISTINCT pfp.fk_product FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
+				$sql .= " AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn = '".$this->db->escape($wanted)."'";
+				$sql .= " LIMIT 2";
+				$resql = $this->db->query($sql);
+				if ($resql && $this->db->num_rows($resql) === 1) {
+					$obj = $this->db->fetch_object($resql);
+					$found = ($prod->fetch((int) $obj->fk_product) > 0);
+				}
+			}
 			if ($found) {
 				$line['fk_product'] = $prod->id;
 				if (empty($line['fk_unit']) && !isset($line['unit']) && !empty($prod->fk_unit)) {
@@ -3390,7 +3465,7 @@ class ToolApiBridge extends McpTool
 				$line['desc'] = $wanted;
 			}
 			if (!$found) {
-				$this->unresolvedProducts[] = $wanted;
+				$this->unresolvedProducts[$wanted] = $this->closeProductRefs($wanted, $buy ? $socid : 0);
 			}
 			unset($line['product_ref']);
 		}
@@ -3763,7 +3838,7 @@ class ToolApiBridge extends McpTool
 				return $langs->transnoentitiesnoconv('AIWriteNoLines');
 			}
 			if (!empty($this->unresolvedProducts)) {
-				return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product, or create it with api_products_create first.";
+				return $this->unresolvedProductsMessage();
 			}
 			if ($kind === 'reception') {
 				foreach ($lines as $line) {
@@ -3792,10 +3867,80 @@ class ToolApiBridge extends McpTool
 			return "Record ".$parent->ref." is not a draft (status ".((int) $parent->status)."): lines can only be added to a draft. Nothing was written.";
 		}
 		if (!empty($this->unresolvedProducts)) {
-			return "Product '".implode("', '", $this->unresolvedProducts)."' not found, or several products match it. Search it with api_products_list and give its rowid in fk_product.";
+			return $this->unresolvedProductsMessage();
 		}
 
 		return '';
+	}
+
+	/**
+	 * References close to one that matched no product, for the user to pick from:
+	 * the supplier's references when the document is a supplier one (the note
+	 * says "33303", the catalogue has "33303-6"), else our own references.
+	 *
+	 * @param  string   $wanted Reference as written on the document.
+	 * @param  int      $socid  Supplier whose catalogue is searched, 0 for a customer document.
+	 * @return string[]         Up to five "ref = our ref (label)" strings, closest first.
+	 */
+	private function closeProductRefs($wanted, $socid)
+	{
+		$wanted = trim((string) $wanted);
+		if (dol_strlen($wanted) < 3) {
+			return array();
+		}
+		// "5553-987" on the note, "5553-12" and "5553-14" in the catalogue (a size
+		// the note omits): try the stem before the last separator too. Then the
+		// stem before a trailing number ("SEAFXR20" -> the SEAFXR family), so a
+		// missing size still shows its siblings.
+		$stems = array($wanted);
+		if (preg_match('/^(.{3,})[-\/ .][^-\/ .]+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		if (preg_match('/^(.{3,}?)\d+$/', $wanted, $reg)) {
+			$stems[] = $reg[1];
+		}
+		$found = array();
+		foreach ($stems as $stem) {
+			if ($socid > 0) {
+				$sql = "SELECT DISTINCT pfp.ref_fourn, p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+				$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = pfp.fk_product";
+				$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').") AND pfp.fk_soc = ".((int) $socid);
+				$sql .= " AND pfp.ref_fourn LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY pfp.ref_fourn LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref_fourn] = $obj->ref_fourn.' = '.$obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (empty($found)) {
+				$sql = "SELECT ref, label FROM ".$this->db->prefix()."product";
+				$sql .= " WHERE entity IN (".getEntity('product').") AND ref LIKE '".$this->db->escape($this->db->escapeforlike($stem))."%' ORDER BY ref LIMIT 6";
+				$resql = $this->db->query($sql);
+				while ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$found[$obj->ref] = $obj->ref.' ('.dol_trunc((string) $obj->label, 30).')';
+				}
+			}
+			if (!empty($found)) {
+				break;
+			}
+		}
+
+		return array_slice(array_values($found), 0, 5);
+	}
+
+	/**
+	 * Message refusing a write whose products could not be resolved, with the
+	 * close references found for each, so the user (or the model) can pick one.
+	 *
+	 * @return string Message for the caller.
+	 */
+	private function unresolvedProductsMessage()
+	{
+		$parts = array();
+		foreach ($this->unresolvedProducts as $wanted => $close) {
+			$parts[] = "'".((string) $wanted)."'".(empty($close) ? '' : ' (close refs: '.implode(', ', $close).')');
+		}
+
+		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first.";
 	}
 
 	/**
@@ -4425,6 +4570,31 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Resolve 'me' sent as an argument value on user-referencing fields.
+	 *
+	 * The model may answer "assign this task to me" with
+	 * fk_user_assign: 'me' — the same sentinel the write defaults already
+	 * expand to the acting user. Only fields whose name references a user
+	 * are touched: a literal 'me' in a text field (subject, label, note)
+	 * is left alone.
+	 *
+	 * @param  array<string,mixed> $args Tool arguments as sent.
+	 * @return array<string,mixed>      Arguments with 'me' resolved on user fields.
+	 */
+	private function resolveUserSentinels(array $args)
+	{
+		foreach ($args as $name => $value) {
+			if ($value === 'me' && stripos((string) $name, 'user') !== false) {
+				$args[$name] = (int) $this->user->id;
+			} elseif (is_array($value)) {
+				$args[$name] = $this->resolveUserSentinels($value);
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
@@ -4602,6 +4772,8 @@ class ToolApiBridge extends McpTool
 				return ['error' => $e->getMessage()];
 			}
 		}
+
+		$args = $this->resolveUserSentinels($args);
 
 		$this->getDefinitions();	// ensure routes are built
 		if (empty($this->routes[$name])) {

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-
 # No errors
 NoErrorCommitIsDone=No error, we commit
 # Errors
@@ -9,6 +8,7 @@ ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. This generally happens when a translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
+ErrorSalaryAlreadyExistsForThisPeriod=A salary already exists for this employee and this period.
 ErrorTitleAlreadyExists=Title <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
@@ -35,6 +35,7 @@ ErrorProdIdIsMandatory=The %s is mandatory
 ErrorProdIdIsMandatoryForEuThirdparties=The %s is mandatory for customers in EEC
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
+ErrorNoFreeAccountancyCodeInRange=No free accounting code left in range %s - %s. Change the range in the setup of the accounting code model.
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. Maybe you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -491,4 +492,5 @@ ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: 
 ErrorFieldIsNotEditable = Error field is not editable
 FieldNotAllowedForEdit = Field not allowed for edit
 FieldNotFoundInObject = Field not found in object
+ErrorRecordModifiedSinceDisplay=This record was modified since it was displayed. Reload the page to get the last version.
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s) for product %s.
