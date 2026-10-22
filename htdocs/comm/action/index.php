@@ -978,6 +978,10 @@ if (count($listofextcals)) {
 					}
 					//print 'xx'.$datecurstart;exit;
 
+					// Days excluded from the recurrence (EXDATE). $exdateshift converts a start into the day as written in the file (a TZID date is a local time)
+					$exdates = (isset($icalevent['EXDATE']) && is_array($icalevent['EXDATE'])) ? $icalevent['EXDATE'] : [];
+					$exdateshift = (isset($icalevent['DTSTART']) && is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) ? ((int) $icalevent['DTSTART']['unixtime'] - (int) $datecurstart) : 0;
+
 					// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
 					$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
 					foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
@@ -1003,7 +1007,7 @@ if (count($listofextcals)) {
 
 					$numofevent = 0;
 					while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
-						if ($datecurend >= $firstdaytoshow) {    // We add event
+						if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
 							$newevent = $icalevent;
 							unset($newevent['RRULE']);
 							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {

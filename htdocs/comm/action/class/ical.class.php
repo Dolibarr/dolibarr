@@ -312,6 +312,19 @@ class ICal
 
 		//print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
+		// EXDATE (dates excluded from a recurrence). Only the days are kept, accumulated over all the EXDATE lines of the event.
+		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'EXDATE') {
+			$exdates = (isset($this->cal[$type][$this->event_count]['EXDATE']) && is_array($this->cal[$type][$this->event_count]['EXDATE'])) ? $this->cal[$type][$this->event_count]['EXDATE'] : [];
+			foreach (explode(',', $value) as $exdate) {
+				if (preg_match('/^\s*([0-9]{8})/', $exdate, $reg)) {
+					$exdates[] = $reg[1];
+				}
+			}
+			$this->cal[$type][$this->event_count]['EXDATE'] = $exdates;
+			$this->last_key = 'EXDATE';
+			return;
+		}
+
 		if (empty($key)) {
 			$key = $this->last_key;
 			switch ($type) {
@@ -480,7 +493,7 @@ class ICal
 	/**
 	 * Return sorted eventlist as array or false if calendar is empty
 	 *
-	 * @return array<int,array<string,string|array<string,string>>>|false
+	 * @return array<int,array<string,string|array<int|string,string>>>|false
 	 */
 	public function get_sort_event_list()
 	{
@@ -512,7 +525,7 @@ class ICal
 	/**
 	 * Return eventlist array (not sorted eventlist array)
 	 *
-	 * @return array<int,array<string,string|array<string,string>>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_event_list()
 	{
@@ -524,7 +537,7 @@ class ICal
 	/**
 	 * Return freebusy array (not sort eventlist array)
 	 *
-	 * @return array<int,array<string,string|array<string,string>>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_freebusy_list()
 	{
@@ -536,7 +549,7 @@ class ICal
 	/**
 	 * Return to do array (not sorted todo array)
 	 *
-	 * @return array<int,array<string,string|array<string,string>>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_todo_list()
 	{
@@ -548,7 +561,7 @@ class ICal
 	/**
 	 * Return base calendar data
 	 *
-	 * @return array<int,array<string,string|array<string,string>>>
+	 * @return array<int,array<string,string|array<int|string,string>>>
 	 */
 	public function get_calender_data()
 	{
