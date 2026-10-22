@@ -112,7 +112,8 @@ class ICal
 			$file_text = null;
 			$this->error = 'Error: '.$tmpresult['http_code'].' '.dol_trunc(trim((string) preg_replace('/\s+/', ' ', dol_string_nohtmltag((string) $tmpresult['content']))), 200);
 		} else {
-			$file_text = preg_replace("/[\r\n]{1,} /", "", $tmpresult['content']);
+			// Unfold long lines (RFC 5545: a CRLF followed by one space or one tab is a line continuation)
+			$file_text = preg_replace("/[\r\n]{1,}[ \t]/", "", $tmpresult['content']);
 		}
 		//var_dump($tmpresult);
 
@@ -363,7 +364,9 @@ class ICal
 			return;
 		}
 
+		$iscontinuation = false;
 		if (empty($key)) {
+			$iscontinuation = true;
 			$key = $this->last_key;
 			switch ($type) {
 				case 'VEVENT':
@@ -378,6 +381,17 @@ class ICal
 					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->todo_count][$key].$value;
 					break;
+			}
+		}
+
+		if (!$iscontinuation) {
+			// Remove the parameters of a property (SUMMARY;LANGUAGE=fr -> SUMMARY), except for dates that are managed below
+			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
+				$key = explode(';', $key, 2)[0];
+			}
+			// Decode escaped characters of TEXT values
+			if (in_array($key, ['SUMMARY', 'DESCRIPTION', 'LOCATION', 'COMMENT'])) {
+				$value = strtr($value, ['\\\\' => '\\', '\\,' => ',', '\\;' => ';', '\\n' => "\n", '\\N' => "\n"]);
 			}
 		}
 
