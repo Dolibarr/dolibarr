@@ -93,6 +93,8 @@ export function initAiAssistant(container) {
     const HISTORY_KEY = config.historyKey || '';
     const HISTORY_MAX_MSGS = 20;
     let restoringHistory = false;
+    // "All" mode of the context bar: every exchange, including the next ones, travels as context
+    let contextAllMode = false;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -224,24 +226,34 @@ export function initAiAssistant(container) {
         }
     }
 
+    // Start a new conversation: used by the Clear button and the "/new" command
+    function clearConversation() {
+        // Remove conversation messages; keep the welcome element so it can be
+        // shown again on the full page (the popover has no welcome screen).
+        chat.querySelectorAll('.msg').forEach((n) => n.remove());
+        if (welcome) {
+            welcome.style.display = '';
+        } else {
+            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+        }
+        lastResult = { data: null, tool: '', query: '' };
+        clarificationContext = null;
+        thirdpartyChoices = {};
+        contextAllMode = false;
+        if (HISTORY_KEY) {
+            try {
+                sessionStorage.removeItem(HISTORY_KEY);
+                sessionStorage.removeItem(HISTORY_KEY + '_all');
+            } catch (e) { /* ignore */ }
+        }
+        updateContextBar();
+        input.focus();
+    }
+
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            // Remove conversation messages; keep the welcome element so it can be
-            // shown again on the full page (the popover has no welcome screen).
-            chat.querySelectorAll('.msg').forEach((n) => n.remove());
-            if (welcome) {
-                welcome.style.display = '';
-            } else {
-                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
-            }
-            lastResult = { data: null, tool: '', query: '' };
-            clarificationContext = null;
-            thirdpartyChoices = {};
-            if (HISTORY_KEY) {
-                try { sessionStorage.removeItem(HISTORY_KEY); } catch (e) { /* ignore */ }
-            }
-            input.focus();
+            clearConversation();
         }
     });
 
@@ -1329,6 +1341,7 @@ export function initAiAssistant(container) {
             if (rawText) {
                 div.dataset.aiRaw = String(rawText).slice(0, 4000);
                 div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                if (contextAllMode && !restoringHistory && !div.dataset.aiError) div.dataset.ctx = 'on';
                 const pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
@@ -1380,6 +1393,8 @@ export function initAiAssistant(container) {
         try {
             if (msgs.length) sessionStorage.setItem(HISTORY_KEY, JSON.stringify(msgs));
             else sessionStorage.removeItem(HISTORY_KEY);
+            if (contextAllMode) sessionStorage.setItem(HISTORY_KEY + '_all', '1');
+            else sessionStorage.removeItem(HISTORY_KEY + '_all');
         } catch (e) { /* private mode or quota exceeded: the chat just won't survive a page change */ }
     }
 
@@ -1391,6 +1406,7 @@ export function initAiAssistant(container) {
         // A question left without answer (page changed while waiting) is dropped.
         while (msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
         if (!msgs.length) return;
+        try { contextAllMode = (sessionStorage.getItem(HISTORY_KEY + '_all') === '1'); } catch (e) { contextAllMode = false; }
         if (welcome) welcome.style.display = 'none';
         restoringHistory = true;
         msgs.forEach((m) => {
@@ -1715,17 +1731,18 @@ export function initAiAssistant(container) {
         }
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
-        const isDefault = past.every((m) => !m.dataset.ctx);
+        const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
         bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
             t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
-            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
             ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('AIContextClear') + '</a>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {
                 ev.preventDefault();
                 // Auto = back to the default: every bubble follows the window again.
+                contextAllMode = false;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
                 refreshContext();
             };
@@ -1735,6 +1752,8 @@ export function initAiAssistant(container) {
             all.onclick = (ev) => {
                 ev.preventDefault();
                 // All = every past exchange pinned for good (the bar shows the price).
+                // The next exchanges are pinned too, until Auto or Clear is chosen.
+                contextAllMode = true;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
                 refreshContext();
             };
@@ -1746,6 +1765,7 @@ export function initAiAssistant(container) {
                 // Clear = nothing goes back with the NEXT question: recent bubbles
                 // are excluded, older pins dropped. New exchanges re-enter the
                 // window on their own afterwards.
+                contextAllMode = false;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
                 refreshContext();
             };
@@ -1772,6 +1792,14 @@ export function initAiAssistant(container) {
         const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
         if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
+
+        // "/new" is handled locally (no AI call): same as the Clear button, without confirmation.
+        if (query.toLowerCase() === '/new' && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            clearConversation();
+            return;
+        }
 
         // "/status" is answered locally (no AI call): statistics of the whole
         // conversation (the bar above the input already shows the selected
