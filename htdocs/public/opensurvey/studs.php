@@ -286,10 +286,21 @@ if ($testmodifier) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
 
-	$idtomodify = GETPOST("idtomodify".$modifier);
+	// The vote must be a vote of this survey and of a voter of this session, as the interface only offers to save the votes of the voter
+	$idtomodify = GETPOSTINT("idtomodify".$modifier);
+	$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+	$sql .= " WHERE id_users = ".((int) $idtomodify);
+	$sql .= " AND id_sondage = '".$db->escape($object->id_sondage)."'";
+	$resql = $db->query($sql);
+	$objvote = ($resql ? $db->fetch_object($resql) : null);
+	if (!$objvote || !in_array($objvote->nom, $listofvoters)) {
+		httponly_accessforbidden('ErrorForbidden');
+	}
+
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
-	$sql .= " WHERE id_users = '".$db->escape($idtomodify)."'";
+	$sql .= " WHERE id_users = ".((int) $idtomodify);
+	$sql .= " AND id_sondage = '".$db->escape($object->id_sondage)."'";
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -301,6 +312,18 @@ if ($testmodifier) {
 $idcomment = GETPOSTINT('deletecomment');
 if ($idcomment) {
 	if (!$canbemodified) {
+		httponly_accessforbidden('ErrorForbidden');
+	}
+
+	// Only the author of a comment (a voter of this session) can delete it, as the interface only shows the link to him
+	$commentofvoter = false;
+	foreach ($object->getComments() as $commentline) {
+		if ($commentline->id_comment == $idcomment && in_array($commentline->usercomment, $listofvoters)) {
+			$commentofvoter = true;
+			break;
+		}
+	}
+	if (!$commentofvoter) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
 
