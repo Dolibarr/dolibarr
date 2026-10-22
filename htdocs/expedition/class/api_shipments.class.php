@@ -280,7 +280,7 @@ class Shipments extends DolibarrApi
 	/**
 	 * Create a standalone shipment (no source order) and its free lines
 	 *
-	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, entrepot_id, rang, array_options
 	 * @return  int              ID of shipment created
 	 * @throws  RestException
 	 */
@@ -334,10 +334,14 @@ class Shipments extends DolibarrApi
 
 			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
 			$rang = (int) ($line['rang'] ?? 0);
+			// Same field as the lines of a shipment created from an order. Without a warehouse, the line moves no stock.
+			$entrepot_id = (int) ($line['entrepot_id'] ?? 0);
 
-			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+			$addResult = $this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options, $entrepot_id);
+			if ($addResult <= 0) {
 				$this->db->rollback();
-				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
+				// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
+				throw new RestException(in_array($addResult, array(-1, -3, -4), true) ? 400 : 500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
 			}
 		}
 
