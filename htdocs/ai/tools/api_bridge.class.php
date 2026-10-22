@@ -113,7 +113,8 @@ class ToolApiBridge extends McpTool
 		'knowledgemanagement' => array('thirdparty', 'project'),
 		'memberstypes' => array('thirdparty', 'billing'),
 		'partnerships' => array('thirdparty', 'commercial'),
-		'multicurrencies' => array('billing', 'reporting')
+		'multicurrencies' => array('billing', 'reporting'),
+		'websites' => array('commercial')
 	);
 
 	/**
@@ -1502,6 +1503,58 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Websites of the website module, with their pages and blog posts. The page content is
+		// left out of the lists (it can be large): read one page with api_websites_page_get.
+		$this->enrichments['websites'] = array(
+			'label' => 'websites (website module)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
+					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost'
+				),
+				'get' => array('description' => "One website."),
+				'getByRef' => array(
+					'suffix' => 'get_by_ref',
+					'description' => "One website by its exact reference.",
+					'params' => array('ref' => "Exact website reference.")
+				),
+				'indexPages' => array(
+					'suffix' => 'pages_list',
+					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'other', 'header', 'footer'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
+					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
+					'params' => array('id' => "Rowid of the website.")
+				),
+				'getPage' => array(
+					'suffix' => 'page_get',
+					'description' => "One page of a website, with its HTML content.",
+					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
+				),
+				'postPage' => array(
+					'suffix' => 'page_create',
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'write' => array(
+						'preview' => 'AIPreviewCreateWebsitePage',
+						'required' => array('id', 'pageurl', 'title'),
+						'object' => 'WebsitePage',
+						'args' => array('title', 'pageurl', 'id'),
+						'right' => array('website', 'write')
+					),
+					'params' => array(
+						'id' => "Rowid of the website.",
+						'pageurl' => "Alias of the page, used in its URL: only a-z, 0-9, - and _.",
+						'title' => "Title of the page.",
+						'type_container' => "Kind of page: 'page' (default) or 'blogpost' for an article of a blog.",
+						'content' => "HTML content of the page, inside a <section> tag. No PHP code.",
+						'description' => "Short description (meta description), 255 characters max.",
+						'keywords' => "Keywords, separated by commas.",
+						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
+						'author_alias' => "Name of the author to show.",
+						'status' => "0 offline (default), 1 online."
+					)
+				)
+			)
+		);
+
 		// Contacts (people of third parties), read side.
 		$this->enrichments['contacts'] = array(
 			'label' => 'contacts (people of third parties)',
@@ -1869,6 +1922,19 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['invoices']['methods']['validate'] = $this->validateMethod('customer invoice', 'Facture', 'AIPreviewValidateInvoice', $advanced ? array('facture', 'invoice_advance', 'validate') : array('facture', 'creer'), array('force_number' => '', 'notrigger' => 0), 'STOCK_CALCULATE_ON_BILL');
 		$this->enrichments['orders']['methods']['validate'] = $this->validateMethod('sale order', 'Commande', 'AIPreviewValidateOrder', $advanced ? array('commande', 'order_advance', 'validate') : array('commande', 'creer'), array('notrigger' => 0), 'STOCK_CALCULATE_ON_VALIDATE_ORDER');
 		$this->enrichments['proposals']['methods']['validate'] = $this->validateMethod('commercial proposal', 'Propal', 'AIPreviewValidateProposal', $advanced ? array('propal', 'propal_advance', 'validate') : array('propal', 'creer'), array('notrigger' => 0), '');
+		// Logistic documents. Each line carries its own warehouse, so none is asked
+		// here; whether validating moves the stock is a setup choice of the instance
+		// (STOCK_CALCULATE_ON_RECEPTION / _SHIPMENT), and the confirmation says so.
+		$receptionMovesStock = isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION');
+		$shipmentMovesStock = isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT');
+		$this->enrichments['receptions']['methods']['validate'] = $this->validateMethod('supplier reception', 'Reception', $receptionMovesStock ? 'AIPreviewValidateReceptionStock' : 'AIPreviewValidateReception', $advanced ? array('reception', 'reception_advance', 'validate') : array('reception', 'creer'), array('notrigger' => 0), '');
+		$this->enrichments['shipments']['methods']['validate'] = $this->validateMethod('shipment', 'Expedition', $shipmentMovesStock ? 'AIPreviewValidateShipmentStock' : 'AIPreviewValidateShipment', $advanced ? array('expedition', 'shipping_advance', 'validate') : array('expedition', 'creer'), array('notrigger' => 0), '');
+		if ($receptionMovesStock) {
+			$this->enrichments['receptions']['methods']['validate']['description'] .= " On this Dolibarr, validating a reception brings the received goods into the stock of their warehouses.";
+		}
+		if ($shipmentMovesStock) {
+			$this->enrichments['shipments']['methods']['validate']['description'] .= " On this Dolibarr, validating a shipment takes the shipped goods out of stock.";
+		}
 
 		// A payment: the distributed method, the only one that takes an amount.
 		$this->enrichments['invoices']['methods']['addPaymentDistributed'] = array(
@@ -3956,7 +4022,10 @@ class ToolApiBridge extends McpTool
 			'Task' => '/projet/class/task.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php',
 			'Fichinter' => '/fichinter/class/fichinter.class.php',
-			'Contrat' => '/contrat/class/contrat.class.php'
+			'Contrat' => '/contrat/class/contrat.class.php',
+			'Reception' => '/reception/class/reception.class.php',
+			'Expedition' => '/expedition/class/expedition.class.php',
+			'WebsitePage' => '/website/class/websitepage.class.php'
 		);
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
@@ -3964,7 +4033,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {
@@ -4048,7 +4117,9 @@ class ToolApiBridge extends McpTool
 			'Societe' => array('societe', '', ''),
 			'Product' => array('product', '', ''),
 			'Contact' => array('contact', 'socpeople&societe', ''),
-			'Project' => array('project', '', '')
+			'Project' => array('project', '', ''),
+			'Reception' => array('reception', '', ''),
+			'Expedition' => array('expedition', '', '')
 		);
 		if (!isset($map[$class])) {
 			return true;

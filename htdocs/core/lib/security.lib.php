@@ -876,7 +876,13 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
 		if (is_object($object)) {
-			return restrictedArea($user, $modulepart, $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+			// Same than generic case of dol_check_secure_access_document(): file 'myobject/REF/file' may be protected by permission modulepart->myobject->read
+			$feature2 = '';
+			$tmparray = explode('/', ltrim($original_file, '/'));
+			if (count($tmparray) > 2 && ($user->hasRight($modulepart, $tmparray[0], $mode))) {
+				$feature2 = $tmparray[0];
+			}
+			restrictedArea($user, $modulepart, $object, '', $feature2, 'fk_soc', 'rowid', 0, 1, $mode);
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;

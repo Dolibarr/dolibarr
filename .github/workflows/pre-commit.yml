@@ -93,7 +93,7 @@ jobs:
       - uses: actions/cache/restore@v6
         with:
           path: ~/.cache/pre-commit/
-          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit-4-${{ env.pythonLocation }}-${{ hashFiles('.pre-commit-config.yaml') }}
 
       # Run all the precommit tools (defined in pre-commit-config.yaml).
       - name: Extract PHP version
@@ -182,7 +182,7 @@ jobs:
         if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/
-          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit-4-${{ env.pythonLocation }}-${{ hashFiles('.pre-commit-config.yaml') }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
         uses: actions/upload-artifact@v7

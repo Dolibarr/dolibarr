@@ -34,6 +34,8 @@ function dolSaveMasterFile($filemaster)
 	// Now generate the master.inc.php page
 	dol_syslog("We regenerate the master.inc.php file");
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 	dol_delete_file($filemaster);
 
 	$mastercontent = '<?php'."\n";
@@ -509,6 +511,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
 	global $db;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result1 = false;
 	$result2 = false;
