@@ -547,6 +547,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($socid > 0) {
+	$param .= '&socid='.((int) $socid);
+}
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
