@@ -1,6 +1,6 @@
 ---
 # Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)
-# and that the description of the PR does not contain the mention @eldy.
+# and that the description of the PR does not contain a mention of a maintainer (@eldy, @lvessiller or @rycks).
 # If this is not the case, the CI fails, so the PR is refused. If the description contains the mention, the PR is also closed.
 # If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
 # Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
@@ -67,10 +67,10 @@ jobs:
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if echo "$PR_BODY" | grep -Eiq '@eldy\b'; then
+          if echo "$PR_BODY" | grep -Eiq '@(eldy|lvessiller|rycks)\b'; then
             # Close the PR (a failure must not hide the CI error below)
-            gh pr close "$PR_NUMBER" --comment "PR closed automatically: its description must not contain the mention of the maintainer (@eldy), who is already notified of every PR. Please reopen it after removing the mention." || true
-            echo "::error::The description of the PR must not contain the mention of the maintener (@eldy). This is useless as the maintener is already watching and notified for PR."
+            gh pr close "$PR_NUMBER" --comment "PR closed automatically: its description must not contain the mention of a maintainer (@eldy, @lvessiller or @rycks), who is already notified of every PR. Please reopen it after removing the mention." || true
+            echo "::error::The description of the PR must not contain the mention of a maintainer (@eldy, @lvessiller or @rycks). This is useless as the maintainers are already watching and notified for PR."
             exit 1
           fi
 
