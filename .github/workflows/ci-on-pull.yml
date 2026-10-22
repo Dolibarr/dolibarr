@@ -21,7 +21,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-      MAX_WAIT_SECONDS: '60'
+      MAX_WAIT_SECONDS: '100'
     steps:
       - name: Wait for the check workflows to be green
         run: |
