@@ -777,7 +777,7 @@ function getAiChatAssistantConfig()
 {
 	global $conf, $langs, $user;
 
-	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
+	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
@@ -797,6 +797,7 @@ function getAiChatAssistantConfig()
 		'HistoryCleared',
 		'Send',
 		'TypeYourQuestion',
+		'VersionExperimental',
 
 		// Placeholders & Status
 		'TypeOrSpeak',
@@ -913,8 +914,15 @@ function getAiChatAssistantConfig()
 		$userinitial = dol_strtoupper(dol_substr($namesource, 0, 1));
 	}
 
+	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	// The whisper option is not rendered without the experimental features: fall back
+	// to the default text mode so the JS never selects a value missing from the combo.
+	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
+		$defaultmode = '';
+	}
+
 	return array(
-		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
+		'mode' => $defaultmode,
 		'labels' => $ai_translations,
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
@@ -942,6 +950,9 @@ function getAiChatAssistantConfig()
 		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
 		'token' => newToken(),
 		'userInitial' => $userinitial,
+		// Key of the conversation kept in the browser sessionStorage, so the chat
+		// survives a page change (popover <-> full page) for this user and entity only.
+		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
 	);
 }
 
@@ -1020,7 +1031,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
 	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
 	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
-	$out .= '<option value="whisper" data-picto="fa fa-microphone">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
+		$out .= '<option value="whisper" data-picto="fa fa-microphone" data-experimental="1">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	}
 	// Note: the legacy 'local_docs'/'cloud_docs' selector modes are gone — documents
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).

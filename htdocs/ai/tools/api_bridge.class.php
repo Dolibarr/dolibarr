@@ -113,7 +113,8 @@ class ToolApiBridge extends McpTool
 		'knowledgemanagement' => array('thirdparty', 'project'),
 		'memberstypes' => array('thirdparty', 'billing'),
 		'partnerships' => array('thirdparty', 'commercial'),
-		'multicurrencies' => array('billing', 'reporting')
+		'multicurrencies' => array('billing', 'reporting'),
+		'websites' => array('commercial')
 	);
 
 	/**
@@ -811,6 +812,51 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'timespent_list',
 					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
 					'params' => ['id' => "Rowid of the task."]
+				],
+				'put' => [
+					'suffix' => 'update',
+					'description' => "Update fields of an existing task: label, description, progress percent, planned workload, dates. Only the fields given are changed. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUpdateRecord',
+						'required' => ['id'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['id'],
+						'dates' => ['date_start', 'date_end'],
+						'hours' => ['planned_workload'],
+						'trim_fields' => ['label', 'description'],
+					],
+					'params' => [
+						'id' => "Rowid of the task to update (required).",
+						'label' => "New label.",
+						'description' => "New description.",
+						'progress' => "New progress percent 0-100.",
+						'planned_workload' => "New planned workload in hours.",
+						'date_start' => "New start date YYYY-MM-DD.",
+						'date_end' => "New end date YYYY-MM-DD."
+					]
+				],
+				'addTimeSpent' => [
+					'suffix' => 'add_timespent',
+					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewAddTimespent',
+						'required' => ['id', 'date', 'duration'],
+						'object' => 'Task',
+						'right' => ['projet', 'creer'],
+						'args' => ['duration', 'date', 'id'],
+						// No 'dates' entry: the REST method parses the text
+						// itself — a timestamp would be re-parsed into garbage.
+						'hours' => ['duration'],
+					],
+					'params' => [
+						'id' => "Rowid of the task (required).",
+						'date' => "Date of the work YYYY-MM-DD or 'today' (required).",
+						'duration' => "Duration in hours, e.g. 1.5 (required).",
+						'note' => "Optional note for the record.",
+						'user_id' => "Rowid of the user who did the work, or 'me' for yourself. Omit to use the acting user.",
+						'progress' => "New task progress percent 0-100 (optional)."
+					]
 				]
 			]
 		];
@@ -1453,6 +1499,58 @@ class ToolApiBridge extends McpTool
 					'params' => array('id' => "Rowid of the currency."),
 					'max_items' => 30,
 					'keep' => 'first'
+				)
+			)
+		);
+
+		// Websites of the website module, with their pages and blog posts. The page content is
+		// left out of the lists (it can be large): read one page with api_websites_page_get.
+		$this->enrichments['websites'] = array(
+			'label' => 'websites (website module)',
+			'methods' => array(
+				'index' => array(
+					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
+					'default_properties' => 'id,ref,description,lang,otherlang,status,virtualhost'
+				),
+				'get' => array('description' => "One website."),
+				'getByRef' => array(
+					'suffix' => 'get_by_ref',
+					'description' => "One website by its exact reference.",
+					'params' => array('ref' => "Exact website reference.")
+				),
+				'indexPages' => array(
+					'suffix' => 'pages_list',
+					'description' => "Pages of one website: pageurl (alias), title, type_container ('page', 'blogpost', 'menu', 'banner', 'other'...), lang, status (0 offline, 1 online). Blog posts are the pages with type_container 'blogpost'. Search with sqlfilters \"(t.type_container:=:'blogpost')\".",
+					'default_properties' => 'id,pageurl,title,description,type_container,lang,status,date_creation,author_alias',
+					'params' => array('id' => "Rowid of the website.")
+				),
+				'getPage' => array(
+					'suffix' => 'page_get',
+					'description' => "One page of a website, with its HTML content.",
+					'params' => array('id' => "Rowid of the website.", 'pageid' => "Rowid of the page.")
+				),
+				'postPage' => array(
+					'suffix' => 'page_create',
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'write' => array(
+						'preview' => 'AIPreviewCreateWebsitePage',
+						'required' => array('id', 'pageurl', 'title'),
+						'object' => 'WebsitePage',
+						'args' => array('title', 'pageurl', 'id'),
+						'right' => array('website', 'write')
+					),
+					'params' => array(
+						'id' => "Rowid of the website.",
+						'pageurl' => "Alias of the page, used in its URL: only a-z, 0-9, - and _.",
+						'title' => "Title of the page.",
+						'type_container' => "Kind of page: 'page' (default) or 'blogpost' for an article of a blog.",
+						'content' => "HTML content of the page, inside a <section> tag. No PHP code.",
+						'description' => "Short description (meta description), 255 characters max.",
+						'keywords' => "Keywords, separated by commas.",
+						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
+						'author_alias' => "Name of the author to show.",
+						'status' => "0 offline (default), 1 online."
+					)
 				)
 			)
 		);
@@ -2625,6 +2723,8 @@ class ToolApiBridge extends McpTool
 			$schema = $this->updateInputSchema($meta['write']);
 		}
 
+		$schema = self::normalizeInputSchema($schema);
+
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
 		// When an explicit description is given, it has priority on auto-generated description
 		if (!empty($meta['description'])) {
@@ -2642,7 +2742,8 @@ class ToolApiBridge extends McpTool
 	 * Lift Restler's inline validation tags out of a parameter description.
 	 *
 	 * The REST API documents constraints the way Restler reads them to build
-	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags}.
+	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags},
+	 * {@const value}.
 	 * Those carry exactly what JSON Schema calls minimum, maximum, enum and
 	 * pattern, so they are translated instead of being shown to the model as
 	 * part of the sentence. Tags with no JSON Schema equivalent ({@type} names a
@@ -2682,6 +2783,18 @@ class ToolApiBridge extends McpTool
 						}
 					}
 					$constraints['enum'] = array_values($choices);
+				} elseif (($name === 'const' || $name === 'constant') && $value !== '') {
+					$val = $value;
+					if ($ptype === 'integer' || $ptype === 'number') {
+						if (is_numeric($val)) {
+							$val = $this->tagValueToNumber($val);
+						}
+					} elseif ($ptype === 'boolean') {
+						$val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+					}
+					// JSON Schema const is rejected by Gemini and some LLM function-calling APIs;
+					// normalize to a single-element enum instead.
+					$constraints['enum'] = array($val);
 				} elseif ($name === 'pattern' && $value !== '') {
 					$pattern = $this->restlerPatternToJsonSchema($value);
 					if ($pattern !== '') {
@@ -3896,7 +4009,8 @@ class ToolApiBridge extends McpTool
 			'Task' => '/projet/class/task.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php',
 			'Fichinter' => '/fichinter/class/fichinter.class.php',
-			'Contrat' => '/contrat/class/contrat.class.php'
+			'Contrat' => '/contrat/class/contrat.class.php',
+			'WebsitePage' => '/website/class/websitepage.class.php'
 		);
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
@@ -3904,7 +4018,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|WebsitePage $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {

@@ -28,11 +28,10 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/defaultvalues.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -1597,7 +1596,7 @@ class CommonObjectTest extends CommonClassTest
 			define('ROWS_3', 3);
 		}
 		$input = $propal->ajaxInputField('note_public');
-		$this->assertMatchesRegularExpression('/<textarea[^>]*name="ajaxfield_note_public"/', $input, 'Note (visible = 0) has an input');
+		$this->assertSame(1, preg_match('/<textarea[^>]*name="ajaxfield_note_public"/', $input), 'Note (visible = 0) has an input');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 		$this->assertStringContainsString('Public note', $input);
 
 		print __METHOD__." OK\n";

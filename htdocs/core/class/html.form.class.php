@@ -4246,8 +4246,11 @@ class Form
 		}
 
 		// Sort by category
+		// The preselected product is put first so it is not cut by the limit (for example a product just created with the + button of the line form)
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+			$sql .= " ORDER BY".((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "")." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ((int) $selected > 0) {
+			$sql .= " ORDER BY CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END, p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -7024,7 +7027,7 @@ class Form
 	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int<0,1>|''|'no'|'yes'|'1'|'0'	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int<0,2>|string	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int|string 	$height 			Force height of box (0 = auto)
+	 * @param int|string 	$height 			Min height of box (0 = calculated automatically). Box grows if content is higher.
 	 * @param int 			$width 				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
 	 * @param string 		$labelbuttonyes 	Label for Yes
@@ -7032,9 +7035,11 @@ class Form
 	 * @param string 		$helpContent 		Optional help text to display in a collapsible block at the bottom left of the dialog.
 	 * 											If set, a standard '?' icon with the label "Help" will appear.
 	 * 											Clicking it expands the content provided here. Supports HTML.
+	 * @param string 		$labelbuttonother	Optional third button translation key (empty = no third button).
+	 * @param string 		$valuebuttonother	Value of confirm for the third button. Empty = close the dialog, or submit cancel=1 without confirm in HTML mode.
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '', $labelbuttonother = '', $valuebuttonother = 'other')
 	{
 		global $langs, $conf;
 
@@ -7287,14 +7292,18 @@ class Form
 			$postconfirmas = 'GET';
 			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
+			// Height is auto so content is never truncated. The $height provided or calculated is used as a min height.
 			$formconfirm .= '
 					resizable: false,
-					height: \'' . dol_escape_js($height) . '\',
+					height: \'auto\',' . (is_numeric($height) ? '
+					minHeight: ' . ((int) $height) . ',' : '') . '
+					maxHeight: Math.round($(window).height() * 0.9),
 					width: \'' . dol_escape_js($width) . '\',
 					modal: true,
 					closeOnEscape: false,
-					buttons: {
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\': function() {
+					buttons: [{
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7331,8 +7340,10 @@ class Form
 								console.log("after post ok");
 							}
 							$(this).dialog("close");
-						},
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\': function() {
+						}
+					}, {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7364,7 +7375,34 @@ class Form
 							}
 							$(this).dialog("close");
 						}
-					}
+					}';
+			if ($labelbuttonother !== '') {
+				$formconfirm .= ', {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonother)) . '\',
+						click: function() {';
+				if ($valuebuttonother !== '') {
+					$pageother = $page . (strpos($page, '?') === false ? '?' : '&') . 'action=' . urlencode($action) . '&confirm=' . urlencode($valuebuttonother);
+					$formconfirm .= '
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputok = ' . json_encode($inputok) . ';
+							var fields = $(this).find(":input");
+							$.each(inputok, function(i, inputname) {
+								var field = fields.filter(function() { return this.id === inputname || this.name === inputname; });
+								if (field.is(":radio, :checkbox")) { field = field.filter(":checked"); }
+								var inputvalue = field.val();
+								if (typeof inputvalue === "undefined") { inputvalue = ""; }
+								options += "&" + encodeURIComponent(inputname) + "=" + encodeURIComponent(inputvalue);
+							});
+							var pageother = \'' . dol_escape_js($pageother) . '\';
+							var urljump = pageother + "&" + options;
+							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
+				}
+				$formconfirm .= '
+							$(this).dialog("close");
+						}
+					}';
+			}
+			$formconfirm .= ']
 				}
 				);
 
@@ -7421,8 +7459,14 @@ class Form
 			$formconfirm .= '<div class="inline-block">' . $question . '</div>';
 
 			$formconfirm .= '<div class="inline-block">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
-			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			if ($labelbuttonother !== '') {
+				foreach (array(array('confirm', 'yes', $labelbuttonyes), array('confirm', 'no', $labelbuttonno), array($valuebuttonother === '' ? 'cancel' : 'confirm', $valuebuttonother === '' ? '1' : $valuebuttonother, $labelbuttonother)) as $confirmbutton) {
+					$formconfirm .= '<button class="button valignmiddle confirmvalidatebutton small" type="submit" name="' . $confirmbutton[0] . '" value="' . dol_escape_htmltag($confirmbutton[1]) . '"' . ($confirmbutton[0] === 'cancel' ? ' formnovalidate' : '') . '>' . dol_escape_htmltag($langs->transnoentities($confirmbutton[2])) . '</button>';
+				}
+			} else {
+				$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
+				$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			}
 			$formconfirm .= '</div>';
 
 			$formconfirm .= '</div>';
@@ -7437,12 +7481,24 @@ class Form
 				$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 				$formconfirm .= '
 				$(document).ready(function () {
-					$(".confirmvalidatebutton").on("click", function() {
+					$(".confirmvalidatebutton").off("click.formconfirm").on("click.formconfirm", function(event) {
+						event.preventDefault();
+						var form = $(this).closest("form");
+						if (form.data("formconfirm-submitting")) { return; }
 						console.log("We click on button confirmvalidatebutton");
+						if (this.name) {
+							if (!this.formNoValidate && !form[0].reportValidity()) { return; }
+							$("<input>").attr({type: "hidden", name: this.name, value: this.value, "data-formconfirm-choice": "1"}).appendTo(form);
+						}
+						form.data("formconfirm-submitting", true);
 						$(this).attr("disabled", "disabled");
-						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
+						setTimeout(function() {
+							form.removeData("formconfirm-submitting");
+							form.find(".confirmvalidatebutton").removeAttr("disabled");
+							form.find("[data-formconfirm-choice]").remove();
+						}, 3000);
 						//console.log($(this).closest("form"));
-						$(this).closest("form").submit();
+						form.submit();
 					});
 				});
 				';
@@ -13687,7 +13743,22 @@ class Form
 						$("#dateone").datepicker("option", "disabled", false);
 						$("#value-selector").prop("disabled", false);
 					}
-				});
+
+						// For the "in list" operators on a field with a list of predefined values, values are typed as a list
+						// into the free text input, so we show it instead of the single value selector
+						const selectedFieldForOperator = $("#search_filter_field").val();
+						if (arrayoffiltercriterias[selectedFieldForOperator] !== undefined && arrayoffiltercriterias[selectedFieldForOperator]["arrayofkeyval"] !== undefined) {
+							if (selectedOperator === "IsInList" || selectedOperator === "IsNotInList") {
+								$("#value-selector").hide();
+								$("#value-selector").next(".select2-container").hide();
+								$(".value-input").val("").show();
+							} else {
+								$(".value-input").val("").hide();
+								$("#value-selector").show();
+								$("#value-selector").next(".select2-container").show();
+							}
+						}
+					});
 
 				$(".add-filter-btn").on("click", function(event) {
 					console.log("We click on add-filter-btn");
@@ -13707,8 +13778,9 @@ class Form
 						console.log("value="+value);
 					}
 
-					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					// If the selected field has an array of values then take the selected value,
+					// except for the "in list" operators for which the values are typed into the free text input
+					if (operator !== "IsInList" && operator !== "IsNotInList" && arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 
