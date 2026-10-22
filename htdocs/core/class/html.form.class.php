@@ -7027,7 +7027,7 @@ class Form
 	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int<0,1>|''|'no'|'yes'|'1'|'0'	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int<0,2>|string	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int|string 	$height 			Force height of box (0 = auto)
+	 * @param int|string 	$height 			Min height of box (0 = calculated automatically). Box grows if content is higher.
 	 * @param int 			$width 				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
 	 * @param string 		$labelbuttonyes 	Label for Yes
@@ -7292,9 +7292,12 @@ class Form
 			$postconfirmas = 'GET';
 			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
+			// Height is auto so content is never truncated. The $height provided or calculated is used as a min height.
 			$formconfirm .= '
 					resizable: false,
-					height: \'' . dol_escape_js($height) . '\',
+					height: \'auto\',' . (is_numeric($height) ? '
+					minHeight: ' . ((int) $height) . ',' : '') . '
+					maxHeight: Math.round($(window).height() * 0.9),
 					width: \'' . dol_escape_js($width) . '\',
 					modal: true,
 					closeOnEscape: false,
