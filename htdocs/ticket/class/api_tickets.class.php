@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
- * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+/* Copyright (C) 2016		Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -361,7 +362,7 @@ class Tickets extends DolibarrApi
 		$this->_validate($request_data);
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -560,7 +561,7 @@ class Tickets extends DolibarrApi
 		}
 
 		// Check thirdparty validity
-		$socid = (int) $request_data['socid'];
+		$socid = (int) ($request_data['socid'] ?? 0);
 		if ($socid > 0) {
 			$thirdpartytmp = new Societe($this->db);
 			$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -597,6 +598,122 @@ class Tickets extends DolibarrApi
 		} else {
 			throw new RestException(500, $this->ticket->errorsToString());
 		}
+	}
+
+	/**
+	 * Close a ticket, or cancel it
+	 *
+	 * Same as the Close and Abandon buttons of the ticket card: the status, the
+	 * closing date and the progress are set by core, and the TICKET_CLOSE trigger
+	 * runs (notifications, linked interventions).
+	 *
+	 * @param	int		$id			Ticket ID
+	 * @param	int		$cancel		1 to cancel (abandon) the ticket instead of closing it
+	 * @return	Object				Ticket after the change
+	 *
+	 * @url POST {id}/close
+	 *
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	409 Ticket already closed or canceled
+	 * @throws	RestException	500 Error when closing
+	 */
+	public function close($id, $cancel = 0)
+	{
+		if (!$this->canManage()) {
+			throw new RestException(403);
+		}
+		if ($this->ticket->fetch((int) $id) <= 0) {
+			throw new RestException(404, 'Ticket not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is already closed or canceled');
+		}
+		if ($this->ticket->close(DolibarrApiAccess::$user, $cancel ? 1 : 0) <= 0) {
+			throw new RestException(500, 'Error when closing the ticket: '.$this->ticket->errorsToString());
+		}
+
+		return $this->get((int) $id);
+	}
+
+	/**
+	 * Assign a ticket to a user, or unassign it
+	 *
+	 * Same as the assignment of the ticket card: the status follows the
+	 * assignment, the TICKET_ASSIGNED trigger runs (notification of the user) and
+	 * the internal "SUPPORTTEC" contact of the ticket becomes the assigned user.
+	 *
+	 * @param	int		$id					Ticket ID
+	 * @param	int		$fk_user_assign		Rowid of an active user, 0 to unassign
+	 * @return	Object						Ticket after the change
+	 *
+	 * @url POST {id}/assign
+	 *
+	 * @throws	RestException	400 Unknown or inactive user
+	 * @throws	RestException	403 Not allowed
+	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	500 Error when assigning
+	 */
+	public function assign($id, $fk_user_assign = 0)
+	{
+		if (!$this->canManage()) {
+			throw new RestException(403);
+		}
+		if ($this->ticket->fetch((int) $id) <= 0) {
+			throw new RestException(404, 'Ticket not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$fk_user_assign = (int) $fk_user_assign;
+		if ($fk_user_assign > 0) {
+			$assignee = new User($this->db);
+			if ($assignee->fetch($fk_user_assign) <= 0 || (int) $assignee->status !== 1) {
+				throw new RestException(400, 'User '.$fk_user_assign.' not found or not active');
+			}
+		}
+
+		$previous = (int) $this->ticket->fk_user_assign;
+		$this->db->begin();
+		$error = 0;
+		if ($this->ticket->assignUser(DolibarrApiAccess::$user, $fk_user_assign) < 0) {
+			$error++;
+		}
+		// The internal support contact follows the assignment, as on the card.
+		if (!$error && $previous > 0) {
+			foreach ($this->ticket->listeContact(-1, 'internal', 0, 'SUPPORTTEC') as $contact) {
+				if ((int) $contact['id'] !== $fk_user_assign && $this->ticket->delete_contact($contact['rowid']) < 0) {
+					$error++;
+				}
+			}
+		}
+		if (!$error && $fk_user_assign > 0 && $fk_user_assign !== $previous && $this->ticket->add_contact($fk_user_assign, 'SUPPORTTEC', 'internal') < 0) {
+			$error++;
+		}
+		if ($error) {
+			$this->db->rollback();
+			throw new RestException(500, 'Error when assigning the ticket: '.$this->ticket->errorsToString());
+		}
+		$this->db->commit();
+
+		return $this->get((int) $id);
+	}
+
+	/**
+	 * Whether the API user may close and assign tickets, as on the ticket card.
+	 *
+	 * @return bool
+	 */
+	private function canManage()
+	{
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			return (bool) DolibarrApiAccess::$user->hasRight('ticket', 'manage_advance');
+		}
+
+		return (bool) DolibarrApiAccess::$user->hasRight('ticket', 'write');
 	}
 
 	/**
