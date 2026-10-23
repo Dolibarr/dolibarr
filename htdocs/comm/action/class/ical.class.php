@@ -370,6 +370,20 @@ class ICal
 
 		//print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
+		// RDATE (dates added to a recurrence). Values are kept as written (a PERIOD "start/end" is reduced to its start), accumulated over all the RDATE lines of the event.
+		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'RDATE') {
+			$rdates = (isset($this->cal[$type][$this->event_count]['RDATE']) && is_array($this->cal[$type][$this->event_count]['RDATE'])) ? $this->cal[$type][$this->event_count]['RDATE'] : [];
+			foreach (explode(',', $value) as $rdate) {
+				$rdate = trim(explode('/', $rdate)[0]);
+				if (preg_match('/^[0-9]{8}(T[0-9]{6}Z?)?$/', $rdate)) {
+					$rdates[] = $rdate;
+				}
+			}
+			$this->cal[$type][$this->event_count]['RDATE'] = $rdates;
+			$this->last_key = 'RDATE';
+			return;
+		}
+
 		// EXDATE (dates excluded from a recurrence). Only the days are kept, accumulated over all the EXDATE lines of the event.
 		if ($type == 'VEVENT' && !empty($key) && strtoupper(explode(';', $key, 2)[0]) == 'EXDATE') {
 			$exdates = (isset($this->cal[$type][$this->event_count]['EXDATE']) && is_array($this->cal[$type][$this->event_count]['EXDATE'])) ? $this->cal[$type][$this->event_count]['EXDATE'] : [];
@@ -527,9 +541,10 @@ class ICal
 	 * Return Unix time from ical date time format (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
 	 *
 	 * @param 	string		$ical_date		String date
+	 * @param 	bool		$floating		True if the date is a "floating" time (no Z and no TZID), so a local time of the user and not a GMT time
 	 * @return 	int
 	 */
-	public function ical_date_to_unix($ical_date)
+	public function ical_date_to_unix($ical_date, $floating = false)
 	{
 		// phpcs:enable
 		$ical_date = str_replace('T', '', $ical_date);
@@ -539,7 +554,7 @@ class ICal
 		// TIME LIMITED EVENT
 		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
-			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], true);
+			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], ($floating ? 'tzuserrel' : true));
 		}
 
 		//if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
@@ -564,7 +579,9 @@ class ICal
 		$temp = explode(";", $key);
 
 		if (empty($temp[1])) { // not TZID in key
-			$value = $this->ical_date_to_unix($value);
+			// A date time without Z (like 19970714T133000) is a "floating" time (RFC 5545): it is a local time, not a GMT time
+			$floating = (strpos($value, 'T') !== false && strtoupper(substr(trim($value), -1)) != 'Z');
+			$value = $this->ical_date_to_unix($value, $floating);
 			return array($key, $value);
 		}
 
