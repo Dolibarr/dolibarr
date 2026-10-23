@@ -9,6 +9,8 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Christos Kanotidis		<christoskanotidis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -141,12 +144,110 @@ if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
+// Export of the result table. Test on permission already done
+$exportaction = GETPOST('action', 'aZ09');
+$isexport = (in_array($exportaction, array('exportpdf', 'exportxlsx')) && in_array($modecompta, array('CREANCES-DETTES', 'RECETTES-DEPENSES', 'BOOKKEEPING')));
+
+
+/**
+ * Return the result table as shown on screen, for exports.
+ *
+ * @param	Translate				$outputlangs		Output language
+ * @param	string					$modecompta			Calculation mode
+ * @param	int						$year_start			First year
+ * @param	int						$year_end_for_table	Last year
+ * @param	array<string,float>		$encaiss			Income excl. tax by year-month
+ * @param	array<string,float>		$encaiss_ttc		Income incl. tax by year-month
+ * @param	array<string,float>		$decaiss			Expense excl. tax by year-month
+ * @param	array<string,float>		$decaiss_ttc		Expense incl. tax by year-month
+ * @return	array{years:array<int,string>,months:array<int,array{label:string,cells:array<int,array{out:?float,in:?float}>}>,totals:array<int,array{out:?float,in:?float}>,result:array<int,?float>}
+ */
+function resultatExportGrid($outputlangs, $modecompta, $year_start, $year_end_for_table, $encaiss, $encaiss_ttc, $decaiss, $decaiss_ttc)
+{
+	$ht = ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING');
+	$in = ($ht ? $encaiss : $encaiss_ttc);
+	$out = ($ht ? $decaiss : $decaiss_ttc);
+	$monthstart = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') : 1;
+
+	$grid = array('years' => array(), 'months' => array(), 'totals' => array(), 'result' => array());
+	$totin = array();
+	$totout = array();
+	for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
+		$grid['years'][$annee] = $annee.($monthstart > 1 ? '-'.($annee + 1) : '');
+	}
+
+	// Same rules as the table on screen: expense shown when not zero, income shown when set
+	for ($mois = $monthstart; $mois <= 11 + $monthstart; $mois++) {
+		$mois_modulo = ($mois > 12 ? $mois - 12 : $mois);
+		$cells = array();
+		for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
+			$case = dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, ($mois > 12 ? $annee + 1 : $annee)), "%Y-%m");
+			$cell = array('out' => null, 'in' => null);
+			if (isset($out[$case]) && $out[$case] != 0) {
+				$cell['out'] = (float) price2num($out[$case], 'MT');
+				$totout[$annee] = (isset($totout[$annee]) ? $totout[$annee] : 0) + $out[$case];
+			}
+			if (isset($in[$case])) {
+				$cell['in'] = (float) price2num($in[$case], 'MT');
+				$totin[$annee] = (isset($totin[$annee]) ? $totin[$annee] : 0) + $in[$case];
+			}
+			$cells[$annee] = $cell;
+		}
+		$grid['months'][] = array('label' => dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $year_start), "%B", 'tzserver', $outputlangs), 'cells' => $cells);
+	}
+
+	for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
+		$grid['totals'][$annee] = array(
+			'out' => (isset($totout[$annee]) ? (float) price2num($totout[$annee], 'MT') : null),
+			'in' => (isset($totin[$annee]) ? (float) price2num($totin[$annee], 'MT') : null)
+		);
+		$grid['result'][$annee] = null;
+		if (isset($totin[$annee]) || isset($totout[$annee])) {
+			$grid['result'][$annee] = (float) price2num((float) price2num(isset($totin[$annee]) ? $totin[$annee] : 0, 'MT') - (float) price2num(isset($totout[$annee]) ? $totout[$annee] : 0, 'MT'), 'MT');
+		}
+	}
+
+	return $grid;
+}
+
+/**
+ * Print the table header rows into the PDF.
+ *
+ * @param	TCPDF					$pdf			PDF instance
+ * @param	Translate				$outputlangs	Output language
+ * @param	array<int,string>		$years			Year labels
+ * @param	float					$wmonth			Width of month column
+ * @param	float					$wcol			Width of an amount column
+ * @param	int						$fontsize		Default font size
+ * @return	void
+ */
+function resultatPdfTableHeader($pdf, $outputlangs, $years, $wmonth, $wcol, $fontsize)
+{
+	$pdf->SetFont('', 'B', $fontsize - 1);
+	$pdf->SetFillColor(230, 230, 230);
+	$x = $pdf->GetX();
+	$pdf->Cell($wmonth, 12, $outputlangs->transnoentities("Month"), 1, 0, 'L', true);
+	foreach ($years as $yearlabel) {
+		$pdf->Cell(2 * $wcol, 6, $yearlabel, 1, 0, 'C', true);
+	}
+	$pdf->Ln();
+	$pdf->SetX($x + $wmonth);
+	foreach ($years as $yearlabel) {
+		$pdf->Cell($wcol, 6, $outputlangs->transnoentities("Expenses"), 1, 0, 'R', true, '', 1);
+		$pdf->Cell($wcol, 6, $outputlangs->transnoentities("Income"), 1, 0, 'R', true, '', 1);
+	}
+	$pdf->Ln();
+	$pdf->SetFont('', '', $fontsize - 1);
+}
+
 
 /*
  * View
  */
 
-llxHeader();
+if (!$isexport) {
+	llxHeader();
+}
 
 $form = new Form($db);
 
@@ -179,7 +280,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 	$builddate = dol_now();
-	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -187,7 +287,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$description = $langs->trans("RulesAmountWithTaxIncluded");
 	$description .= '<br>'.$langs->trans("RulesResultInOut");
 	$builddate = dol_now();
-	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -195,7 +294,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$description = $langs->trans("RulesAmountOnInOutBookkeepingRecord");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("Chartofaccounts")).')';
 	$builddate = dol_now();
-	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
 // Define $calcmode line
@@ -215,10 +313,20 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+// Export keeps the period and calculation mode shown
+$exportparam = '&modecompta='.urlencode($modecompta);
+$exportparam .= '&date_startday='.dol_print_date($date_start, '%d').'&date_startmonth='.dol_print_date($date_start, '%m').'&date_startyear='.dol_print_date($date_start, '%Y');
+$exportparam .= '&date_endday='.dol_print_date($date_end, '%d').'&date_endmonth='.dol_print_date($date_end, '%m').'&date_endyear='.dol_print_date($date_end, '%Y');
+if ($name !== '') {
+	$exportlink = reportExportButtons($exportparam, 'resultat');
+}
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
+if (!$isexport) {
+	report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+
+	if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
+	}
 }
 
 
@@ -744,7 +852,7 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 
 	$sql .= " GROUP BY dm";
 
-	dol_syslog("get expense report outcome");
+	dol_syslog("get expense report Expenses");
 	$result = $db->query($sql);
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
@@ -1037,6 +1145,178 @@ $totentrees = array();
 $totsorties = array();
 $year_end_for_table = ($year_end - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 1 : 0));
 
+if ($isexport) {
+	$outputlangs = $langs;
+	$grid = resultatExportGrid($outputlangs, $modecompta, $year_start, $year_end_for_table, $encaiss, $encaiss_ttc, $decaiss, $decaiss_ttc);
+	$ht = ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING');
+	$reporttitle = $outputlangs->transnoentities("ReportInOut").', '.$outputlangs->transnoentities("ByYear");
+	$modelabel = $outputlangs->transnoentities($modecompta == 'BOOKKEEPING' ? "CalcModeBookkeeping" : ($ht ? "CalcModeDebt" : "CalcModePayment"));
+	$periodlabel = reportPeriodLabel($outputlangs, $date_start, $date_end);
+	$totallabel = $outputlangs->transnoentities($ht ? "Total" : "TotalTTC");
+	$nbyears = count($grid['years']);
+
+	if ($exportaction == 'exportpdf') {
+		$pdfinit = reportPdfInit($outputlangs, $reporttitle, $reporttitle, 'L');
+		$pdf = $pdfinit['pdf'];
+		$margin = $pdfinit['margin'];
+		$pageheight = $pdfinit['pageheight'];
+		$usablewidth = $pdfinit['usablewidth'];
+		$fontsize = $pdfinit['fontsize'];
+		$wmonth = round($usablewidth * 0.15, 2);
+		$wcol = round(($usablewidth - $wmonth) / max(1, 2 * $nbyears), 2);
+
+		$posy = reportPdfCompanyHeader($pdf, $outputlangs, $mysoc, $margin, $fontsize);
+
+		// Title block
+		$pdf->SetXY($margin, $posy);
+		$pdf->SetFont('', 'B', $fontsize + 3);
+		$pdf->Cell($usablewidth, 8, $outputlangs->convToOutputCharset($reporttitle), 0, 1, 'L');
+		$pdf->SetFont('', '', $fontsize - 1);
+		$pdf->Cell($usablewidth, 5, $outputlangs->transnoentities("CalculationMode").': '.$outputlangs->convToOutputCharset($modelabel), 0, 1, 'L');
+		$pdf->Cell($usablewidth, 5, $outputlangs->transnoentities("ReportPeriod").': '.$outputlangs->convToOutputCharset($periodlabel), 0, 1, 'L');
+		$pdf->Cell($usablewidth, 5, $outputlangs->transnoentities("GeneratedOn").': '.dol_print_date(dol_now(), 'dayhour', 'tzuser', $outputlangs), 0, 1, 'L');
+		$pdf->Ln(3);
+
+		resultatPdfTableHeader($pdf, $outputlangs, $grid['years'], $wmonth, $wcol, $fontsize);
+
+		$rowheight = 5;
+		$pdfrows = $grid['months'];
+		$pdfrows[] = array('label' => $totallabel, 'cells' => $grid['totals'], 'bold' => 1);
+		foreach ($pdfrows as $pdfrow) {
+			if ($pdf->GetY() + $rowheight > $pageheight - $margin) {
+				$pdf->AddPage();
+				resultatPdfTableHeader($pdf, $outputlangs, $grid['years'], $wmonth, $wcol, $fontsize);
+			}
+			$pdf->SetFont('', (empty($pdfrow['bold']) ? '' : 'B'), $fontsize - 1);
+			$pdf->Cell($wmonth, $rowheight, $outputlangs->convToOutputCharset($pdfrow['label']), 1, 0, 'L', false, '', 1);
+			foreach ($pdfrow['cells'] as $cell) {
+				$pdf->Cell($wcol, $rowheight, ($cell['out'] !== null ? price($cell['out'], 0, $outputlangs) : ''), 1, 0, 'R');
+				$pdf->Cell($wcol, $rowheight, ($cell['in'] !== null ? price($cell['in'], 0, $outputlangs) : ''), 1, 0, 'R');
+			}
+			$pdf->Ln();
+		}
+
+		// Accounting result
+		if ($pdf->GetY() + $rowheight > $pageheight - $margin) {
+			$pdf->AddPage();
+		}
+		$pdf->SetFont('', 'B', $fontsize - 1);
+		$pdf->Cell($wmonth, $rowheight, $outputlangs->transnoentities("AccountingResult"), 1, 0, 'L', false, '', 1);
+		foreach ($grid['result'] as $result) {
+			$pdf->Cell(2 * $wcol, $rowheight, ($result !== null ? price($result, 0, $outputlangs) : ''), 1, 0, 'R');
+		}
+		$pdf->Ln();
+
+		$pdf->Output(reportFileName($reporttitle, '', 'pdf'), 'I');
+
+		$db->close();
+		exit;
+	}
+
+	if ($exportaction == 'exportxlsx') {
+		if (!class_exists('ZipArchive')) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorPHPNeedModule', 'zip'), null, 'errors');
+			header('Location: '.$_SERVER["PHP_SELF"].'?'.ltrim($exportparam, '&'));
+			exit;
+		}
+
+		$spreadsheet = reportXlsxInit($outputlangs, $reporttitle, $outputlangs->transnoentitiesnoconv("ReportInOut"));
+		$sheet = $spreadsheet->getActiveSheet();
+		$lastcol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(1 + 2 * $nbyears);
+
+		// Header: logo on the left, company info on the right (same as the PDF)
+		$headrows = reportXlsxCompanyHeader($sheet, $outputlangs, $mysoc, 'D', ($nbyears > 1 ? $lastcol : 'G'));
+
+		// Title block
+		$row = $headrows + 2;
+		$sheet->setCellValueExplicit('A'.$row, $reporttitle, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+		$sheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(14);
+		$row++;
+		foreach (array("CalculationMode" => $modelabel, "ReportPeriod" => $periodlabel, "GeneratedOn" => dol_print_date(dol_now(), 'dayhour', 'tzuser', $outputlangs)) as $key => $value) {
+			$sheet->setCellValueExplicit('A'.$row, $outputlangs->transnoentitiesnoconv($key).': '.$value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+			$row++;
+		}
+		$row++;
+
+		// Table header: years, then expense and income per year
+		$headrow = $row;
+		$sheet->setCellValue('A'.$headrow, $outputlangs->transnoentitiesnoconv("Month"));
+		$sheet->mergeCells('A'.$headrow.':A'.($headrow + 1));
+		$i = 0;
+		foreach ($grid['years'] as $yearlabel) {
+			$c0 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + 2 * $i);
+			$c1 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + 2 * $i);
+			$sheet->setCellValueExplicit($c0.$headrow, $yearlabel, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+			$sheet->mergeCells($c0.$headrow.':'.$c1.$headrow);
+			$sheet->getStyle($c0.$headrow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$sheet->setCellValue($c0.($headrow + 1), $outputlangs->transnoentitiesnoconv("Expenses"));
+			$sheet->setCellValue($c1.($headrow + 1), $outputlangs->transnoentitiesnoconv("Income"));
+			$sheet->getColumnDimension($c0)->setWidth(14);
+			$sheet->getColumnDimension($c1)->setWidth(14);
+			$i++;
+		}
+		$sheet->getColumnDimension('A')->setWidth(16);
+		$sheet->getStyle('A'.$headrow.':'.$lastcol.($headrow + 1))->getFont()->setBold(true);
+		$sheet->getStyle('B'.($headrow + 1).':'.$lastcol.($headrow + 1))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+		$sheet->freezePane('B'.($headrow + 2));
+
+		$firstrow = $headrow + 2;
+		$row = $firstrow;
+		foreach ($grid['months'] as $monthrow) {
+			$sheet->setCellValueExplicit('A'.$row, $monthrow['label'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+			$i = 0;
+			foreach ($monthrow['cells'] as $cell) {
+				if ($cell['out'] !== null) {
+					$sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + 2 * $i).$row, $cell['out']);
+				}
+				if ($cell['in'] !== null) {
+					$sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + 2 * $i).$row, $cell['in']);
+				}
+				$i++;
+			}
+			$row++;
+		}
+		$last = $row - 1;
+
+		// Totals and accounting result as formulas
+		$totalrow = $row;
+		$resultrow = $row + 1;
+		$sheet->setCellValueExplicit('A'.$totalrow, $totallabel, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+		$sheet->setCellValueExplicit('A'.$resultrow, $outputlangs->transnoentitiesnoconv("AccountingResult"), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+		$i = 0;
+		foreach ($grid['totals'] as $annee => $total) {
+			$c0 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + 2 * $i);
+			$c1 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + 2 * $i);
+			// Empty like on screen when there is nothing for the year
+			if ($total['out'] !== null) {
+				$sheet->setCellValue($c0.$totalrow, '=SUM('.$c0.$firstrow.':'.$c0.$last.')');
+			}
+			if ($total['in'] !== null) {
+				$sheet->setCellValue($c1.$totalrow, '=SUM('.$c1.$firstrow.':'.$c1.$last.')');
+			}
+			if ($grid['result'][$annee] !== null) {
+				$sheet->setCellValue($c0.$resultrow, '='.$c1.$totalrow.'-'.$c0.$totalrow);
+			}
+			$sheet->mergeCells($c0.$resultrow.':'.$c1.$resultrow);
+			$i++;
+		}
+		$sheet->getStyle('A'.$totalrow.':'.$lastcol.$resultrow)->getFont()->setBold(true);
+		$sheet->getStyle('B'.$firstrow.':'.$lastcol.$resultrow)->getNumberFormat()->setFormatCode('#,##0.00');
+
+		// Print landscape on one page width
+		$sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+		$sheet->getPageSetup()->setFitToPage(true);
+		$sheet->getPageSetup()->setFitToWidth(1);
+		$sheet->getPageSetup()->setFitToHeight(0);
+
+		reportXlsxOutput($spreadsheet, reportFileName($reporttitle, '', 'xlsx'));
+
+		$db->close();
+		exit;
+	}
+}
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste">'."\n";
 
@@ -1058,7 +1338,7 @@ for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
-	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
+	print $form->textwithpicto($langs->trans("Expenses"), $htmlhelp);
 	print '</td>';
 	print '<td class="liste_titre" align="center" class="borderrightlight">';
 	$htmlhelp = '';
