@@ -224,8 +224,8 @@ class Societe extends CommonObject
 		'euid' => array('type' => 'varchar(20)', 'label' => 'EUIDShort', 'enabled' => 1, 'visible' => -1, 'position' => 213),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225, 'uieditable' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230, 'uieditable' => 1),
 		'client' => array('type' => 'tinyint(4)', 'label' => 'Customer', 'enabled' => 1, 'visible' => -1, 'position' => 240),
 		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Supplier', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
@@ -4258,6 +4258,10 @@ class Societe extends CommonObject
 
 				// Set code count in $mod->code
 				$result = $mod->get_code($this->db, $this, $type);
+				if ($result < 0) {
+					$this->error = $mod->error;
+					$this->errors = $mod->errors;
+				}
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
@@ -5479,6 +5483,52 @@ class Societe extends CommonObject
 		} else {
 			return array();
 		}
+	}
+
+	/**
+	 * Remain to pay for one invoice if it counts in getOutstandingBills() "opened" (same rules as tiles).
+	 *
+	 * @param	Facture|FactureFournisseur	$invoice	Invoice with id set (and fetched fields)
+	 * @param	'customer'|'supplier'		$mode		'customer' or 'supplier'
+	 * @param	int<0,1>					$late		0 all outstanding, 1 only past due date
+	 * @return	float						Remain to pay in scope, 0 if invoice is out of scope
+	 */
+	public function getInvoiceRemainToPayInOutstanding($invoice, $mode = 'customer', $late = 0)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if ($invoice->paye != 0
+			|| $invoice->statut == $invoice::STATUS_DRAFT
+			|| $invoice->statut == $invoice::STATUS_ABANDONED
+			|| $invoice->statut == $invoice::STATUS_CLOSED) {
+			return 0;
+		}
+
+		$paiement = $invoice->getSommePaiement();
+		$creditnotes = $invoice->getSumCreditNotesUsed();
+		$deposits = $invoice->getSumDepositsUsed();
+
+		$remaintopay = (float) price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+
+		if ($mode == 'supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE && $invoice->isCreditNoteUsed()) {
+				$remaintopay -= (float) $invoice->getSumFromThisCreditNotesNotUsed();
+			}
+		}
+
+		if ($remaintopay <= 0) {
+			return 0;
+		}
+
+		if (!empty($late)) {
+			$today = dol_get_first_hour(dol_now('tzuser'));
+			if (empty($invoice->date_lim_reglement) || $invoice->date_lim_reglement >= $today) {
+				return 0;
+			}
+		}
+
+		return $remaintopay;
 	}
 
 	/**

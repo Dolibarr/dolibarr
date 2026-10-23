@@ -211,6 +211,21 @@ body.ai-fullpage {
     background-color: var(--ai-surface-2);
 }
 
+/* Sparkle picto of the 'Auto' model, same as the one of the native select pill */
+.ai-picto-sparkle {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    background: no-repeat center / 14px 14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c5cff'%3E%3Cpath d='M12 2l2.2 6.3L20.5 11l-6.3 2.2L12 20l-2.2-6.3L3.5 11l6.3-2.2z'/%3E%3C/svg%3E");
+}
+
+/* Same width limits when the selects are rendered with select2 */
+.header-controls .select2-container {
+    max-width: 200px;
+    min-width: 0;
+}
+
 /* Header buttons (Clear, and popover window controls) */
 .icon-btn {
     background: transparent;
@@ -348,6 +363,10 @@ body.ai-fullpage {
     border-top-left-radius: 4px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     max-width: calc(100% - 40px);
+}
+
+.msg.bot .msg-bubble.msg-bubble-wide {
+    flex: 1 1 auto;
 }
 
 .msg.system {
@@ -777,9 +796,22 @@ body.ai-fullpage {
 }
 
 /* Tables in chat */
+.chat-chart-wrap {
+	position: relative;
+	height: 220px;
+	margin: 8px 0;
+}
+
+.chat-chart-wrap canvas {
+	max-width: 100%;
+}
+
 .chat-table-wrap {
     overflow-x: auto;
     margin-top: 8px;
+    /* A wide table must scroll here, not widen the page: on the full page, the chat lives into a table-cell sized on its content */
+    width: 0;
+    min-width: 100%;
 }
 
 .chat-table {
@@ -1058,11 +1090,13 @@ a.msg-action-btn.primary span {
     display: none;
 }
 
-.ai-in-popover .engine-select {
+.ai-in-popover .engine-select,
+.ai-in-popover .header-controls .select2-container {
     max-width: 110px;
 }
 
-.ai-popover.expanded .engine-select {
+.ai-popover.expanded .engine-select,
+.ai-popover.expanded .header-controls .select2-container {
     max-width: 160px;
 }
 

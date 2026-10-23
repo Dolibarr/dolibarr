@@ -105,6 +105,14 @@ $search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month')
 $search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
 $search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
 $search_datem_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datem_end_month'), GETPOSTINT('search_datem_end_day'), GETPOSTINT('search_datem_end_year'));
+$search_datefin_start = '';
+if (checkdate(GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'))) {
+	$search_datefin_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datefin_start_month'), GETPOSTINT('search_datefin_start_day'), GETPOSTINT('search_datefin_start_year'));
+}
+$search_datefin_end = '';
+if (checkdate(GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'))) {
+	$search_datefin_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datefin_end_month'), GETPOSTINT('search_datefin_end_day'), GETPOSTINT('search_datefin_end_year'));
+}
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -303,6 +311,8 @@ if (empty($reshook)) {
 		$search_datec_end = '';
 		$search_datem_start = '';
 		$search_datem_end = '';
+		$search_datefin_start = '';
+		$search_datefin_end = '';
 		$search_array_options = array();
 	}
 
@@ -368,14 +378,16 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Create external user
+	// create subscription
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'cotisation', 'creer')) {	// Same permission as the subscription form of a member
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$label = GETPOST("label");
+		$note = GETPOST('note', 'restricthtml');
+
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
+		$error_array = array();
 		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
 		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
 		// single subscription form (adherents/subscription.php), otherwise
@@ -403,9 +415,10 @@ if (empty($reshook)) {
 						$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($now, $delay, $delayunit), -1, 'd');
 					}
 				}
-				$result = $tmpmember->subscription($now, (float) $amount, 0, '', '', '', '', '', $datesubendthismember);
+				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $note, '', '', '', $datesubendthismember);
 				if ($result < 0) {
 					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
 				}
@@ -418,7 +431,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), $error_array, 'errors');
 			$db->rollback();
 		}
 	}
@@ -638,6 +651,12 @@ if ($search_datem_start) {
 if ($search_datem_end) {
 	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
 }
+if ($search_datefin_start) {
+	$sql .= " AND d.datefin >= '".$db->idate($search_datefin_start)."'";
+}
+if ($search_datefin_end) {
+	$sql .= " AND d.datefin <= '".$db->idate($search_datefin_end)."'";
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -814,6 +833,21 @@ if ($search_datem_end) {
 	];
 }
 
+if ($search_datefin_start) {
+	$query += [
+		'search_datefin_start_day' => dol_print_date($search_datefin_start, '%d'),
+		'search_datefin_start_month' => dol_print_date($search_datefin_start, '%m'),
+		'search_datefin_start_year' => dol_print_date($search_datefin_start, '%Y'),
+	];
+}
+if ($search_datefin_end) {
+	$query += [
+		'search_datefin_end_day' => dol_print_date($search_datefin_end, '%d'),
+		'search_datefin_end_month' => dol_print_date($search_datefin_end, '%m'),
+		'search_datefin_end_year' => dol_print_date($search_datefin_end, '%Y'),
+	];
+}
+
 // Add $query from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -903,7 +937,7 @@ if ($massaction == 'createsubscription') {
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
-		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
+		array('label' => $langs->trans("Note"), 'type' => 'text', 'value' => '', 'name' => 'note'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);
@@ -1156,9 +1190,18 @@ if (!empty($arrayfields['d.import_key']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
-	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
-	$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
-	print $form->selectarray('search_filter', $selectarray, $search_filter);
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_start ? $search_datefin_start : -1, 'search_datefin_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datefin_end ? $search_datefin_end : -1, 'search_datefin_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	// The combo is also shown when a filter is already set (for example by a link from the menu or the members dashboard)
+	if (getDolGlobalString('MEMBER_SHOW_COMBO_OF_STATUS_FOR_END_DATE_FILTER') || ($search_filter && $search_filter != '-1')) {
+		//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+		$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
+		print $form->selectarray('search_filter', $selectarray, $search_filter);
+	}
 	print '</td>';
 }
 

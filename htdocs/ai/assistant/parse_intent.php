@@ -716,6 +716,10 @@ try {
 			}
 			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
 		}
+		// The acting user's identity: the rowid alone lets the model resolve
+		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
+		// write calls — no personal data sent to the provider for this.
+		$systemPrompt .= "Current user rowid: ".((int) $user->id)."\n";
 		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration
@@ -825,6 +829,50 @@ try {
 				}
 			}
 
+			// Cross-conversation memory (opt-in, off by default): recent turns of
+			// this same user in OTHER chats, so "the invoice I asked about on
+			// Friday" resolves on Monday. Admin enables it with the constant
+			// AI_CHAT_MEMORY_CROSS_CONVERSATIONS; per-turn privacy masking and a
+			// hard budget apply exactly like for pinned history above.
+			if (getDolGlobalInt('AI_CHAT_MEMORY_CROSS_CONVERSATIONS')) {
+				$memSql = "SELECT m.role, m.content_raw FROM ".$db->prefix()."ai_chat_message AS m JOIN ".$db->prefix()."ai_chat_conversation AS c ON c.rowid = m.fk_conversation WHERE c.entity IN (".getEntity('ai_chat_conversation').") AND c.fk_user = ".((int) $user->id)." AND m.is_error = 0 AND m.content_raw <> ''";
+				$memConvId = !empty($data['conversation_id']) ? (int) $data['conversation_id'] : 0;
+				if ($memConvId > 0) {
+					$memSql .= " AND c.rowid <> ".((int) $memConvId);
+				}
+				$memSql .= " ORDER BY m.rowid DESC LIMIT 24";
+				$memRes = $db->query($memSql);
+				if ($memRes) {
+					$memTurns = array();
+					$memHistory = array();
+					while ($mobj = $db->fetch_object($memRes)) {
+						$memTurns[] = $mobj;
+					}
+					$memBudget = 3000;
+					foreach (array_reverse($memTurns) as $mobj) {
+						$mtext = trim((string) $mobj->content_raw);
+						if ($mtext === '') {
+							continue;
+						}
+						if ($guard) {
+							$mtext = $guard->maskNames($mtext, $aiNamesToMask);
+							$mtext = $guard->mask($mtext);
+						}
+						if (dol_strlen($mtext) > 800) {
+							$mtext = dol_substr($mtext, 0, 800).' ...';
+						}
+						$memBudget -= dol_strlen($mtext);
+						if ($memBudget < 0) {
+							break;
+						}
+						$memHistory[] = array('role' => ((string) $mobj->role === 'assistant' ? 'assistant' : 'user'), 'text' => '[earlier conversation] '.$mtext);
+					}
+					// Older context goes first: cross-conversation turns before pinned.
+					$history = array_merge($memHistory, $history);
+					$db->free($memRes);
+				}
+			}
+
 			// With past turns in the payload, the model must know what they are
 			// for. Two consecutive user turns (a request whose action the user
 			// cancelled, then a new one) read as "two things to do", and with a
@@ -913,6 +961,15 @@ try {
 					dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 
 					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user') {
+						// Some models put the text under 'answer', 'response', 'text'... instead of 'message'
+						if (empty($intentJSON['arguments']['message']) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) {
+							foreach (array('content', 'answer', 'response', 'text', 'reply', 'output') as $altkey) {
+								if (!empty($intentJSON['arguments'][$altkey]) && is_string($intentJSON['arguments'][$altkey])) {
+									$intentJSON['arguments']['message'] = $intentJSON['arguments'][$altkey];
+									break;
+								}
+							}
+						}
 						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
 							// If answer is tool=respond_to_user but without message
 							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');

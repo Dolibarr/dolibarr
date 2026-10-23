@@ -58,7 +58,7 @@ thirdparty_id: jsonpath "$[0]['id']"
 POST http://{{hostnport}}/api/index.php/proposals
 { "socid" : "{{ thirdparty_id }}"}
 HTTP 500
-{"error":{"code":500,"message":"Internal Server Error: Error creating order","0":"Date of proposal is required"}}
+{"error":{"code":500,"message":"Internal Server Error: Error creating proposal","0":"Date of proposal is required"}}
 # this output should be adjusted for the real output when the check is done for required fields
 
 # DELETE
