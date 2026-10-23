@@ -121,7 +121,6 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
 
 

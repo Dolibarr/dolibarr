@@ -245,7 +245,6 @@ llxHeader('', $title, $help_url);
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden($langs->trans('NotEnoughPermissions'), 0, 1);
-		exit;
 	}
 
 	print load_fiche_titre($langs->trans("NewAvailabilities"), '', '', 'object_'.$object->picto);
