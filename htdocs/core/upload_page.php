@@ -793,7 +793,9 @@ if ($action == 'uploadfile') {
 				error: function(jqXHR, textStatus, errorThrown) {
 					// Display error
 					console.log("We received an error");
-					$("#ajax-result-message").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					// Show the messages of the JSON answer {"errors": [...]} as text, or the raw answer if it is not this format
+					var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
+					$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
 					$(".progress-bar").css("width", "100%");
 				}
 			});

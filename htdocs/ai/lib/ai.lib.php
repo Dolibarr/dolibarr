@@ -524,6 +524,23 @@ function getListForAIRephraseStyle()
 }
 
 /**
+ * Return a user-friendly error message from the error array returned by Ai::generateContent()
+ *
+ * @param	array{error:bool,message:string,curl_error_no?:int,service?:string,model?:string}	$result		Error array returned by generateContent()
+ * @return	string																		Error message
+ */
+function getAIErrorMessage($result)
+{
+	global $langs;
+
+	if (!empty($result['curl_error_no']) && $result['curl_error_no'] == 28) {	// CURLE_OPERATION_TIMEDOUT
+		$langs->load("errors");
+		return $langs->transnoentitiesnoconv("ErrorAIServiceTimeout", (empty($result['model']) ? (empty($result['service']) ? '?' : $result['service']) : $result['model']));
+	}
+	return (empty($result['message']) ? 'Unknown error from AI service' : $result['message']);
+}
+
+/**
  * Prepare admin pages header
  *
  * @return array<array{0:string,1:string,2:string}>

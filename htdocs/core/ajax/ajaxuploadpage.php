@@ -346,14 +346,8 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'converttotext': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		} else {
 			$answer = (string) $result;
 
@@ -393,14 +387,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 		if (getDolGlobalString("AI_DEBUG")) {
 			dol_syslog("ajaxuploadpage.php AI service returned an error for step 'send file': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 		}
-		if ($result['error']) {
-			$error++;
-			$errors[] = $result['error'];
-		}
-		if ($result['curl_error_no']) {
-			$error++;
-			$errors[] = $result['curl_error_no'];
-		}
+		$error++;
+		$errors[] = getAIErrorMessage($result);
 	} else {
 		$fileId = json_decode($result, true)['id'];
 	}
@@ -425,14 +413,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'create assistant': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		} else {
 			$assistantId = json_decode($result, true)['id'];
 		}
@@ -452,14 +434,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'create thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		} else {
 			$threadId = json_decode($result, true)['id'];
 		}
@@ -494,14 +470,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'add file to thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		}
 	}
 
@@ -522,14 +492,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'run thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		} else {
 			$runId = json_decode($result, true)['id'];
 		}
@@ -553,14 +517,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("ajaxuploadpage.php AI service returned an error for step 'poll run status': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 				}
-				if ($result['error']) {
-					$error++;
-					$errors[] = $result['error'];
-				}
-				if ($result['curl_error_no']) {
-					$error++;
-					$errors[] = $result['curl_error_no'];
-				}
+				$error++;
+				$errors[] = getAIErrorMessage($result);
 
 				$status = 'completed';
 			} else {
@@ -584,14 +542,8 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'get answer': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
 			}
-			if ($result['error']) {
-				$error++;
-				$errors[] = $result['error'];
-			}
-			if ($result['curl_error_no']) {
-				$error++;
-				$errors[] = $result['curl_error_no'];
-			}
+			$error++;
+			$errors[] = getAIErrorMessage($result);
 		} else {
 			$answer = $result;
 		}

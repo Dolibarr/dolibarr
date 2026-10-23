@@ -104,7 +104,7 @@ class Ai
 	 * @param	string						$format			Format for output ('', 'html', ...)
 	 * @param	array<string,string>		$moreheaders	More headers
 	 * @param	string						$moreendpoint	Add a part to endpoint url
-	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,model?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
@@ -140,7 +140,7 @@ class Ai
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
 			} elseif ($function == 'assistant') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistants';
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
@@ -380,7 +380,13 @@ class Ai
 			global $dolibarr_ai_allow_local_endpoints;
 			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
+			// Parsing a document is long, so we use a response timeout of at least 60 seconds for this case
+			$timeoutresponse = 0;
+			if ($function == 'docparsing') {
+				$timeoutresponse = max(60, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			}
+
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
 
 			if (empty($response['http_code'])) {
 				throw new Exception('API request failed. No http received'.(empty($response['curl_error_no']) ? '' : ' (curl error '.$response['curl_error_no'].': '.$response['curl_error_msg'].')'));
@@ -396,6 +402,7 @@ class Ai
 							'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 							'format' => $format,
 							'service' => $this->apiService,
+							'model' => $model,
 							'function' => $function
 						);
 					}
@@ -517,6 +524,7 @@ class Ai
 				'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 				'format' => $format,
 				'service' => $this->apiService,
+				'model' => $model,
 				'function' => $function
 			);
 		}

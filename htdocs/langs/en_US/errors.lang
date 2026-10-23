@@ -398,6 +398,7 @@ ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed o
 ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
 ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
 ErrorFailedToConvertFileInText=Failed to convert file in text.
+ErrorAIServiceTimeout=The AI service (%s) did not answer in time. The document may be too large or the service may be overloaded. Please try again later (an administrator can also increase the timeout with the constant MAIN_USE_RESPONSE_TIMEOUT).
 ErrorCantSignDocument=Error, can't sign the document. May be the link has expired or the document was modified since the link was sent.
 ErrorProposalValidityDatePassed=Error, this proposal can no longer be signed: its validity date was %s. Please ask for an up to date proposal.
 
