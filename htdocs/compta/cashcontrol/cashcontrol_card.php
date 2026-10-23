@@ -247,9 +247,9 @@ if ($action == "start" && $permissiontoadd) {
 
 	if (!$error) {
 		if (GETPOSTINT('closeday')) {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'gmt');
 		} else {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'gmt');
 		}
 		dol_syslog('The closing date will be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
 
