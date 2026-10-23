@@ -8845,7 +8845,13 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						// This branch holds plain text, so it contains no tag: escape the angle brackets
+						// before the DOMDocument round trip. Left as they are, loadHTML() reads '<' as the
+						// start of an element and drops everything up to the next '>', so a description
+						// like "temperature < 10 degrees" is stored as "temperature", and a word in angle
+						// brackets like "<Natuur>" is turned into a lowercased tag plus a closing one.
+						$plainout = str_replace(array('<', '>'), array('&lt;', '&gt;'), $out);
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($plainout).'</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
