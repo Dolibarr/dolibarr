@@ -1552,6 +1552,47 @@ if ($action == 'showsummary') {
 			console.log('A file was selected, we submit the form');
 			$('#uploadform').submit();
 		});
+
+		// Drag and drop of a file on an upload zone. A counter is used because dragenter/dragleave are also fired by child elements.
+		var modulepartforzone = {'supplierinvoice': 'invoice_supplier', 'userexpensereport': 'expensereport', 'userpayroll': 'salaries', 'socialcontribution': 'chargesociales'};
+		jQuery('.flex-item-uploadfile').each(function() {
+			var zone = $(this);
+			var dragcounter = 0;
+			zone.on('dragenter', function(ev) {
+				var dataTypes = ev.originalEvent.dataTransfer.types;
+				if (!dataTypes || $.inArray('Files', dataTypes) === -1) {
+					return;
+				}
+				ev.preventDefault();
+				dragcounter++;
+				zone.addClass('highlightDragDropArea');
+			});
+			zone.on('dragover', function(ev) {
+				ev.preventDefault();
+			});
+			zone.on('dragleave', function(ev) {
+				dragcounter--;
+				if (dragcounter <= 0) {
+					dragcounter = 0;
+					zone.removeClass('highlightDragDropArea');
+				}
+			});
+			zone.on('drop', function(ev) {
+				ev.preventDefault();
+				dragcounter = 0;
+				zone.removeClass('highlightDragDropArea');
+				var files = ev.originalEvent.dataTransfer.files;
+				if (!files || !files.length || !modulepartforzone[zone.attr('id')]) {
+					return;
+				}
+				console.log('A file was dropped on '+zone.attr('id')+', we submit the form');
+				var dt = new DataTransfer();
+				dt.items.add(files[0]);
+				$('#fileInput')[0].files = dt.files;
+				$('#modulepart').val(modulepartforzone[zone.attr('id')]);
+				$('#uploadform').submit();
+			});
+		});
 	});
 	</script>";
 
