@@ -112,12 +112,56 @@ class ICal
 			$file_text = null;
 			$this->error = 'Error: '.$tmpresult['http_code'].' '.dol_trunc(trim((string) preg_replace('/\s+/', ' ', dol_string_nohtmltag((string) $tmpresult['content']))), 200);
 		} else {
+			// RFC 5545 requires UTF-8, but some calendars are in another charset (declared by the HTTP header, or not declared)
+			$content = $this->convertToUtf8((string) $tmpresult['content'], (string) ($tmpresult['content_type'] ?? ''));
 			// Unfold long lines (RFC 5545: a CRLF followed by one space or one tab is a line continuation)
-			$file_text = preg_replace("/[\r\n]{1,}[ \t]/", "", $tmpresult['content']);
+			$file_text = preg_replace("/[\r\n]{1,}[ \t]/", "", $content);
 		}
 		//var_dump($tmpresult);
 
 		return $file_text; // return all text
+	}
+
+	/**
+	 * Convert a text to UTF-8. A text that is already valid UTF-8 is returned unchanged.
+	 * The source charset is, in this order: the BOM of a UTF-16 file, the charset of the Content-Type (or "charset=xxx"), Windows-1252
+	 * (a superset of ISO-8859-1, the most common encoding of old calendars).
+	 *
+	 * @param 	string 	$text			Text
+	 * @param 	string 	$contenttype	Content-Type of the HTTP answer (for example 'text/calendar; charset=ISO-8859-1') or 'charset=xxx'
+	 * @return 	string					Text in UTF-8
+	 */
+	public function convertToUtf8($text, $contenttype = '')
+	{
+		if (!function_exists('mb_check_encoding')) {
+			return $text;
+		}
+		if (strncmp($text, "\xFF\xFE", 2) == 0 || strncmp($text, "\xFE\xFF", 2) == 0) {
+			return mb_convert_encoding(substr($text, 2), 'UTF-8', (strncmp($text, "\xFF\xFE", 2) == 0 ? 'UTF-16LE' : 'UTF-16BE'));
+		}
+		if (mb_check_encoding($text, 'UTF-8')) {
+			return $text;
+		}
+		$charset = 'Windows-1252';
+		$reg = array();
+		if (preg_match('/charset="?([A-Za-z0-9_.:-]+)"?/i', $contenttype, $reg)) {
+			$found = false;
+			foreach (mb_list_encodings() as $encoding) {
+				if (strtolower($encoding) == strtolower($reg[1]) && strtoupper($encoding) != 'UTF-8') {
+					$charset = $encoding;
+					$found = true;
+					break;
+				}
+			}
+			if (!$found && function_exists('iconv')) {
+				// Charset not known by mbstring (Windows-1250...): we try iconv
+				$converted = @iconv($reg[1], 'UTF-8//IGNORE', $text);
+				if ($converted !== false) {
+					return $converted;
+				}
+			}
+		}
+		return mb_convert_encoding($text, 'UTF-8', $charset);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -418,6 +462,15 @@ class ICal
 		}
 
 		if (!$iscontinuation) {
+			// Value in a legacy encoding (vCalendar 1.0 style: ENCODING=QUOTED-PRINTABLE and/or CHARSET=ISO-8859-1 as parameters of the property)
+			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
+				if (preg_match('/;ENCODING=(QUOTED-PRINTABLE|Q)(;|$)/i', $key)) {
+					$value = quotedPrintDecode($value);
+				}
+				if ($value !== '' && function_exists('mb_check_encoding') && !mb_check_encoding($value, 'UTF-8')) {
+					$value = $this->convertToUtf8($value, (preg_match('/;CHARSET=([^;]+)/i', $key, $reg) ? 'charset='.trim($reg[1], '"') : ''));
+				}
+			}
 			// Remove the parameters of a property (SUMMARY;LANGUAGE=fr -> SUMMARY), except for dates that are managed below
 			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
 				$key = explode(';', $key, 2)[0];
