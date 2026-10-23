@@ -530,13 +530,13 @@ script:
 
   - |
     echo "Unit testing"
-    # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
-    set -e
+    # Note: We do not use set -e here because it stops the Travis shell, so after_failure is never run and we can't see dolibarr.log.
+    # The step still fails because the last command returns the phpunit result.
+    set +e
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
-    set +e
-    echo
+    [ "$phpunitresult" = "0" ]
 
 after_script:
   - |
