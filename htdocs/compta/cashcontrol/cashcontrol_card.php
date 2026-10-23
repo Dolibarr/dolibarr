@@ -884,11 +884,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip = '';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzuserrel').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzuserrel');
-		$htmltooltip .= '<br><span class="small opacitymedium">UTC : ';
+		$htmltooltip .= '<br><span class="small opacitymedium">';
+		$htmltooltip .= '<div class="width100 inline-block">Server TZ :</div>';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzserver').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzserver');
+		$htmltooltip .= '<br><div class="width100 inline-block">UTC :</div>';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
-		print $form->textwithpicto('', $htmltooltip);
+		print $form->textwithpicto('', $htmltooltip, 1, 'help', '');
 		print '</td></tr>';
 
 		if ($object->lifetime_start) {
