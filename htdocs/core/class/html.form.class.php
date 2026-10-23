@@ -1413,6 +1413,26 @@ class Form
 	}
 
 	/**
+	 *  Flag the link definitions returned by the showLinkToObjectBlock hook, so we know their SQL was not written here.
+	 *
+	 *  We never append an ORDER BY to a query we do not own unless it tells us which column to sort on, because we
+	 *  cannot know the table aliases it uses.
+	 *
+	 * @param 	array<string,array<string,mixed>>	$linksfromhook	Link definitions returned by a hook
+	 * @return  array<string,array<string,mixed>>					Same definitions, each flagged with 'fromhook'
+	 */
+	private function flagLinksFromHook($linksfromhook)
+	{
+		foreach ($linksfromhook as $key => $val) {
+			if (is_array($val)) {
+				$linksfromhook[$key]['fromhook'] = 1;
+			}
+		}
+
+		return $linksfromhook;
+	}
+
+	/**
 	 *  Generate HTML table rows for standard object linking (invoices, orders, proposals, etc.).
 	 *
 	 *  This method creates the table body rows with checkboxes for selecting objects to link.
@@ -11577,6 +11597,12 @@ class Form
 
 		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
 
+		// Maximum number of candidate objects fetched and rendered per link type.
+		// The candidate lists are built on every object card load, so without a ceiling a thirdparty with a large
+		// history makes this function run unbounded queries and serialize all of their rows into hidden HTML.
+		// 0 = no limit (restores the historical unbounded behaviour).
+		$maxcandidates = getDolGlobalInt('MAIN_LINKTOOBJECT_MAX_CANDIDATES', 100);
+
 		if (!empty($thirdparty_id) && $thirdparty_id > 0) {
 			$listofidcompanytoscan = (int) $thirdparty_id;
 			if (is_object($object->thirdparty) && ($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
@@ -11618,6 +11644,7 @@ class Form
 					'label' => 'LinkToMemberSubscription',
 					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
 					'linkname' => 'subscription',
+					'orderby' => 'sub.rowid DESC',		// This query does not use the 't' alias
 				),
 				'conferenceorboothattendee' => array(
 					'enabled' => isModEnabled('eventorganization'),
@@ -11628,7 +11655,8 @@ class Form
 						.$this->db->prefix()."eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN ("
 						.$this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')'
 						. (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
-					'linkname' => 'attendee'
+					'linkname' => 'attendee',
+					'orderby' => 'a.rowid DESC',		// This query does not use the 't' alias
 				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),
@@ -11704,11 +11732,11 @@ class Form
 
 		if (empty($reshook)) {
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
-				$possiblelinks = array_merge($possiblelinks, $hookmanager->resArray);
+				$possiblelinks = array_merge($possiblelinks, $this->flagLinksFromHook($hookmanager->resArray));
 			}
 		} elseif ($reshook > 0) {
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
-				$possiblelinks = $hookmanager->resArray;
+				$possiblelinks = $this->flagLinksFromHook($hookmanager->resArray);
 			}
 		}
 
@@ -11759,15 +11787,43 @@ class Form
 
 				$sql = $possiblelink['sql'];
 
+				// Bound the candidate list. We fetch one row more than the ceiling: if we get it, we know the list is
+				// truncated without having to run a separate COUNT(*) for each link type.
+				// An ORDER BY is mandatory here, otherwise the rows kept by the LIMIT would be an arbitrary subset.
+				// We skip a query that is already limited or that comes from a hook without a known sort column, so a
+				// query provided by an external module is never rewritten.
+				$truncated = false;
+				$applylimit = ($maxcandidates > 0 && !preg_match('/\bLIMIT\b/i', $sql));
+				if ($applylimit && !empty($possiblelink['fromhook']) && empty($possiblelink['orderby'])) {
+					$applylimit = false;
+				}
+				if ($applylimit) {
+					// Note: the 4th parameter of sanitize() keeps the spaces, needed for a "field DESC" expression
+					$sql .= ' ORDER BY '.$this->db->sanitize(empty($possiblelink['orderby']) ? 't.rowid DESC' : $possiblelink['orderby'], 0, 0, 1);
+					$sql .= $this->db->plimit($maxcandidates + 1, 0);
+				}
+
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
+
+					if ($applylimit && $num > $maxcandidates) {
+						$truncated = true;
+						$num = $maxcandidates;		// Render the ceiling only, the extra row was fetched to detect truncation
+					}
 
 					if ($num > 0) {
 						// Section for free predefined list
 						if (getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 							$htmltoenteralink .= '<br>';
 						}
+						// Tell the user the list is not complete, so a missing candidate is never silently hidden
+						if ($truncated) {
+							$htmltoenteralink .= '<div class="opacitymedium small paddingtopbottom">';
+							$htmltoenteralink .= img_warning().' '.$langs->trans("LinkToObjectListTruncated", $maxcandidates);
+							$htmltoenteralink .= '</div>';
+						}
+
 						$htmltoenteralink .= '<!-- form to add a link from object to same thirdparty -->'."\n";
 						$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -11809,8 +11865,10 @@ class Form
 
 
 				// Complete the list for the combo box
+				// When the list was truncated, $num is the ceiling and not the real total, so we show it as "100+"
+				$nbtoshow = ($truncated ? $num.'+' : (string) $num);
 				if ($num > 0 || !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
-					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
+					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $nbtoshow . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {
 					$linktoelemlist .= '<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
