@@ -1249,13 +1249,8 @@ if (count($listofextcals)) {
 					$maxrepeat = 0;
 
 					if ($hasrrule) {
-						// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
-						$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
-						foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
-							if (strpos($rulekey, 'BY') === 0 && !($rulekey == 'BYDAY' && $icalevent['RRULE']['FREQ'] == 'WEEKLY' && $rulevalue === strtoupper(substr(gmdate('D', $datecurstart), 0, 2)))) {
-								$unsupportedrule = true;
-							}
-						}
+						// We can expand a rule with FREQ and, as BYxxx parts, only BYDAY, BYMONTHDAY, BYMONTH. For the others (BYSETPOS...), we keep the first occurrence only.
+						$unsupportedrule = !$ical->isRRuleSupported($icalevent['RRULE']);
 						if ($unsupportedrule) {
 							dol_syslog("Found a repeatable record with a rule not managed by dolibarr code (".json_encode($icalevent['RRULE'])."). Only first occurrence is shown.", LOG_WARNING);
 							unset($icalevents[$icalkey]['RRULE']);
@@ -1275,7 +1270,28 @@ if (count($listofextcals)) {
 						}
 					}
 
-					if ($hasrrule) {
+					if ($hasrrule && count(array_filter(array_keys($icalevent['RRULE']), function (string $rulekey): bool {
+						return strpos($rulekey, 'BY') === 0;
+					})) > 0) {
+						// Rule with BYDAY, BYMONTHDAY or BYMONTH: we compute the occurrences from the dates as written in the file
+						foreach ($ical->expandRRule($icalevent['RRULE'], (int) $datecurstart + $exdateshift, (int) $lastdaytoshow + $exdateshift, ($until ? (int) $until + $exdateshift : 0)) as $occurrencewall) {
+							$occurrencestart = $occurrencewall - $exdateshift;
+							$occurrenceend = $occurrencestart + $occurrenceduration;
+							if ($occurrenceend < $firstdaytoshow || in_array(gmdate('Ymd', $occurrencewall), $exdates)) {
+								continue;
+							}
+							$newevent = $icalevent;
+							unset($newevent['RRULE']);
+							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
+								$newevent['DTSTART;VALUE=DATE'] = dol_print_date($occurrencestart, '%Y%m%d');
+								$newevent['DTEND;VALUE=DATE'] = dol_print_date($occurrenceend + 1, '%Y%m%d');
+							} else {
+								$newevent['DTSTART'] = $occurrencestart;
+								$newevent['DTEND'] = $occurrenceend;
+							}
+							$moreicalevents[] = $newevent;
+						}
+					} elseif ($hasrrule) {
 						$numofevent = 0;
 						while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
 							if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
