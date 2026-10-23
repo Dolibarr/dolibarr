@@ -771,7 +771,9 @@ function aiSuggestClosestModel($missing, array $models)
 	$bestScore = -1.0;
 	foreach ($models as $cand) {
 		$pct = 0.0;
-		similar_text(strtolower($missing), strtolower($cand), $pct);
+		if (similar_text(strtolower($missing), strtolower($cand), $pct) === 0) {
+			$pct = 0.0;	// nothing in common
+		}
 		$score = $pct;
 		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
 			$score += 15.0;	// same family beats a slightly closer string of another family
