@@ -557,6 +557,8 @@ class Ai
 				$tmparray['supplierref'] = $json['document_info']['reference'];
 			} elseif (!empty($json['document_info']['invoice_number'])) {
 				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			} elseif (!empty($json['document_info']['document_ref'])) {
+				$tmparray['supplierref'] = $json['document_info']['document_ref'];
 			}
 
 			if (!empty($json['document_info']['title'])) {
@@ -570,6 +572,8 @@ class Ai
 			// Issue date
 			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['invoice_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['invoice_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['invoice_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {

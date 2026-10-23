@@ -955,6 +955,11 @@ if ($action == 'showsummary') {
 		// Parse JSON to get information for an invoice
 		$invoiceindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'supplier_invoice');
 
+		// If the document has a due date but no invoice date, we use the due date as invoice date
+		if (empty($invoiceindoc['issue_date']) && !empty($invoiceindoc['due_date'])) {
+			$invoiceindoc['issue_date'] = $invoiceindoc['due_date'];
+		}
+
 		//var_dump($json, $invoiceindoc);
 
 		print "\n\n";
