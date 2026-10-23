@@ -541,3 +541,7 @@ ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER forc
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
+
+-- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);

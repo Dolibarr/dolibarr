@@ -917,6 +917,15 @@ try {
 					dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 
 					if (is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'respond_to_user') {
+						// Some models put the text under 'answer', 'response', 'text'... instead of 'message'
+						if (empty($intentJSON['arguments']['message']) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) {
+							foreach (array('content', 'answer', 'response', 'text', 'reply', 'output') as $altkey) {
+								if (!empty($intentJSON['arguments'][$altkey]) && is_string($intentJSON['arguments'][$altkey])) {
+									$intentJSON['arguments']['message'] = $intentJSON['arguments'][$altkey];
+									break;
+								}
+							}
+						}
 						if (empty($intentJSON['arguments']['message']) && empty($intentJSON['arguments']['content'])) {
 							// If answer is tool=respond_to_user but without message
 							dol_syslog('parse_intent.php clean response is "respond_to_user" with a message', LOG_DEBUG, 0, '_ai');
