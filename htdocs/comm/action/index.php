@@ -948,17 +948,22 @@ if (count($listofextcals)) {
 			// Duplicate all repeatable events into new entries
 			$moreicalevents = array();
 			foreach ($icalevents as $icalkey => $icalevent) {
+				if (!$ical->hasStartDate($icalevent)) {
+					dol_syslog("Skip external calendar component without a valid DTSTART", LOG_WARNING);
+					continue;
+				}
+
 				$hasrrule = (isset($icalevent['RRULE']) && is_array($icalevent['RRULE']));
 				if ($hasrrule || !empty($icalevent['RDATE'])) { //repeatable event
 					//if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
 					//if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
-					if (!empty($icalevent['DTSTART;VALUE=DATE'])) { //fullday event
+					if (isset($icalevent['DTSTART;VALUE=DATE'])) { //fullday event
 						$datecurstart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 						$datecurend = (empty($icalevent['DTEND;VALUE=DATE']) ? $datecurstart + 86400 : dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1)) - 1; // We remove one second to get last second of day
-					} elseif (!empty($icalevent['DTSTART']) && !is_array($icalevent['DTSTART'])) {	// Date in GMT (like 19970714T173000Z)
+					} elseif (isset($icalevent['DTSTART']) && !is_array($icalevent['DTSTART'])) {	// Date in GMT (like 19970714T173000Z)
 						$datecurstart = $icalevent['DTSTART'];
 						$datecurend = empty($icalevent['DTEND']) ? $datecurstart : $icalevent['DTEND'];
-					} elseif (is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) {
+					} elseif (is_array($icalevent['DTSTART']) && isset($icalevent['DTSTART']['unixtime']) && $icalevent['DTSTART']['unixtime'] !== '') {
 						$datecurstart = $icalevent['DTSTART']['unixtime'];
 						$datecurend = empty($icalevent['DTEND']['unixtime']) ? $datecurstart : $icalevent['DTEND']['unixtime'];
 						if (!empty($ical->cal['DAYLIGHT']['DTSTART']) && $datecurstart) {
@@ -1114,6 +1119,10 @@ if (count($listofextcals)) {
 			// Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
 			foreach ($icalevents as $icalevent) {
 				//var_dump($icalevent);
+
+				if (!$ical->hasStartDate($icalevent)) {
+					continue;
+				}
 
 				//print $icalevent['SUMMARY'].'->';
 				//var_dump($icalevent);exit;
