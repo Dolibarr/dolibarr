@@ -945,7 +945,8 @@ if (count($listofextcals)) {
 			// Duplicate all repeatable events into new entries
 			$moreicalevents = array();
 			foreach ($icalevents as $icalkey => $icalevent) {
-				if (isset($icalevent['RRULE']) && is_array($icalevent['RRULE'])) { //repeatable event
+				$hasrrule = (isset($icalevent['RRULE']) && is_array($icalevent['RRULE']));
+				if ($hasrrule || !empty($icalevent['RDATE'])) { //repeatable event
 					//if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
 					//if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
 					if (!empty($icalevent['DTSTART;VALUE=DATE'])) { //fullday event
@@ -988,66 +989,103 @@ if (count($listofextcals)) {
 					// Days excluded from the recurrence (EXDATE). $exdateshift converts a start into the day as written in the file (a TZID date is a local time)
 					$exdates = (isset($icalevent['EXDATE']) && is_array($icalevent['EXDATE'])) ? $icalevent['EXDATE'] : [];
 					$exdateshift = (isset($icalevent['DTSTART']) && is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) ? ((int) $icalevent['DTSTART']['unixtime'] - (int) $datecurstart) : 0;
+					$firstdatecurstart = $datecurstart;
+					$occurrenceduration = $datecurend - $datecurstart;
 
-					// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
-					$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
-					foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
-						if (strpos($rulekey, 'BY') === 0 && !($rulekey == 'BYDAY' && $icalevent['RRULE']['FREQ'] == 'WEEKLY' && $rulevalue === strtoupper(substr(gmdate('D', $datecurstart), 0, 2)))) {
-							$unsupportedrule = true;
+					$interval = 1;
+					$until = 0;
+					$maxrepeat = 0;
+
+					if ($hasrrule) {
+						// We can expand only simple rules. For the others (BYMONTHDAY, BYSETPOS, BYDAY with several days...), we keep the first occurrence only.
+						$unsupportedrule = !in_array($icalevent['RRULE']['FREQ'] ?? '', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
+						foreach ($icalevent['RRULE'] as $rulekey => $rulevalue) {
+							if (strpos($rulekey, 'BY') === 0 && !($rulekey == 'BYDAY' && $icalevent['RRULE']['FREQ'] == 'WEEKLY' && $rulevalue === strtoupper(substr(gmdate('D', $datecurstart), 0, 2)))) {
+								$unsupportedrule = true;
+							}
+						}
+						if ($unsupportedrule) {
+							dol_syslog("Found a repeatable record with a rule not managed by dolibarr code (".json_encode($icalevent['RRULE'])."). Only first occurrence is shown.", LOG_WARNING);
+							unset($icalevents[$icalkey]['RRULE']);
+							$hasrrule = false;
 						}
 					}
-					if ($unsupportedrule) {
-						dol_syslog("Found a repeatable record with a rule not managed by dolibarr code (".json_encode($icalevent['RRULE'])."). Only first occurrence is shown.", LOG_WARNING);
-						unset($icalevents[$icalkey]['RRULE']);
-						continue;
+
+					if ($hasrrule) {
+						$interval = (empty($icalevent['RRULE']['INTERVAL']) ? 1 : $icalevent['RRULE']['INTERVAL']);
+						$until = empty($icalevent['RRULE']['UNTIL']) ? 0 : dol_stringtotime($icalevent['RRULE']['UNTIL'], 1);
+						$maxrepeat = empty($icalevent['RRULE']['COUNT']) ? 0 : $icalevent['RRULE']['COUNT'];
+						if ($until && ($until + ($datecurend - $datecurstart)) < $firstdaytoshow) {
+							$hasrrule = false; // We discard repeatable event that end before start date to show
+						}
+						if ($datecurstart >= $lastdaytoshow) {
+							$hasrrule = false; // We discard repeatable event that start after end date to show
+						}
 					}
 
-					$interval = (empty($icalevent['RRULE']['INTERVAL']) ? 1 : $icalevent['RRULE']['INTERVAL']);
-					$until = empty($icalevent['RRULE']['UNTIL']) ? 0 : dol_stringtotime($icalevent['RRULE']['UNTIL'], 1);
-					$maxrepeat = empty($icalevent['RRULE']['COUNT']) ? 0 : $icalevent['RRULE']['COUNT'];
-					if ($until && ($until + ($datecurend - $datecurstart)) < $firstdaytoshow) {
-						continue; // We discard repeatable event that end before start date to show
-					}
-					if ($datecurstart >= $lastdaytoshow) {
-						continue; // We discard repeatable event that start after end date to show
+					if ($hasrrule) {
+						$numofevent = 0;
+						while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
+							if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
+								$newevent = $icalevent;
+								unset($newevent['RRULE']);
+								if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
+									$newevent['DTSTART;VALUE=DATE'] = dol_print_date($datecurstart, '%Y%m%d');
+									$newevent['DTEND;VALUE=DATE'] = dol_print_date($datecurend + 1, '%Y%m%d');
+								} else {
+									$newevent['DTSTART'] = $datecurstart;
+									$newevent['DTEND'] = $datecurend;
+								}
+								$moreicalevents[] = $newevent;
+							}
+							// Jump on next occurrence
+							$numofevent++;
+							$savdatecurstart = $datecurstart;
+							if ($icalevent['RRULE']['FREQ'] == 'DAILY') {
+								$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'd');
+								$datecurend = dol_time_plus_duree($datecurend, $interval, 'd');
+							}
+							if ($icalevent['RRULE']['FREQ'] == 'WEEKLY') {
+								$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'w');
+								$datecurend = dol_time_plus_duree($datecurend, $interval, 'w');
+							} elseif ($icalevent['RRULE']['FREQ'] == 'MONTHLY') {
+								$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'm');
+								$datecurend = dol_time_plus_duree($datecurend, $interval, 'm');
+							} elseif ($icalevent['RRULE']['FREQ'] == 'YEARLY') {
+								$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'y');
+								$datecurend = dol_time_plus_duree($datecurend, $interval, 'y');
+							}
+							// Test to avoid infinite loop ($datecurstart must increase)
+							if ($savdatecurstart >= $datecurstart) {
+								dol_syslog("Found a rule freq ".$icalevent['RRULE']['FREQ']." not managed by dolibarr code. Assume 1 week frequency.", LOG_ERR);
+								$datecurstart += 3600 * 24 * 7;
+								$datecurend += 3600 * 24 * 7;
+							}
+						}
 					}
 
-					$numofevent = 0;
-					while (($datecurstart < $lastdaytoshow) && (empty($maxrepeat) || ($numofevent < $maxrepeat)) && (empty($until) || $datecurstart <= $until)) {
-						if ($datecurend >= $firstdaytoshow && !in_array(gmdate('Ymd', (int) $datecurstart + $exdateshift), $exdates)) {    // We add event (if not excluded)
-							$newevent = $icalevent;
-							unset($newevent['RRULE']);
+					// Dates added to the recurrence (RDATE), with the duration of the first occurrence
+					if (!empty($icalevent['RDATE']) && is_array($icalevent['RDATE'])) {
+						foreach ($icalevent['RDATE'] as $rdate) {
 							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
-								$newevent['DTSTART;VALUE=DATE'] = dol_print_date($datecurstart, '%Y%m%d');
-								$newevent['DTEND;VALUE=DATE'] = dol_print_date($datecurend + 1, '%Y%m%d');
+								$rdatestart = dol_stringtotime(substr($rdate, 0, 8), 1);
 							} else {
-								$newevent['DTSTART'] = $datecurstart;
-								$newevent['DTEND'] = $datecurend;
+								$rdatestart = $ical->ical_date_to_unix($rdate) - $exdateshift;
+							}
+							$rdateend = $rdatestart + $occurrenceduration;
+							if ($rdatestart == $firstdatecurstart || $rdateend < $firstdaytoshow || $rdatestart >= $lastdaytoshow || in_array(gmdate('Ymd', $rdatestart + $exdateshift), $exdates)) {
+								continue;
+							}
+							$newevent = $icalevent;
+							unset($newevent['RRULE'], $newevent['RDATE']);
+							if (!empty($icalevent['DTSTART;VALUE=DATE'])) {
+								$newevent['DTSTART;VALUE=DATE'] = dol_print_date($rdatestart, '%Y%m%d');
+								$newevent['DTEND;VALUE=DATE'] = dol_print_date($rdateend + 1, '%Y%m%d');
+							} else {
+								$newevent['DTSTART'] = $rdatestart;
+								$newevent['DTEND'] = $rdateend;
 							}
 							$moreicalevents[] = $newevent;
-						}
-						// Jump on next occurrence
-						$numofevent++;
-						$savdatecurstart = $datecurstart;
-						if ($icalevent['RRULE']['FREQ'] == 'DAILY') {
-							$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'd');
-							$datecurend = dol_time_plus_duree($datecurend, $interval, 'd');
-						}
-						if ($icalevent['RRULE']['FREQ'] == 'WEEKLY') {
-							$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'w');
-							$datecurend = dol_time_plus_duree($datecurend, $interval, 'w');
-						} elseif ($icalevent['RRULE']['FREQ'] == 'MONTHLY') {
-							$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'm');
-							$datecurend = dol_time_plus_duree($datecurend, $interval, 'm');
-						} elseif ($icalevent['RRULE']['FREQ'] == 'YEARLY') {
-							$datecurstart = dol_time_plus_duree($datecurstart, $interval, 'y');
-							$datecurend = dol_time_plus_duree($datecurend, $interval, 'y');
-						}
-						// Test to avoid infinite loop ($datecurstart must increase)
-						if ($savdatecurstart >= $datecurstart) {
-							dol_syslog("Found a rule freq ".$icalevent['RRULE']['FREQ']." not managed by dolibarr code. Assume 1 week frequency.", LOG_ERR);
-							$datecurstart += 3600 * 24 * 7;
-							$datecurend += 3600 * 24 * 7;
 						}
 					}
 				}
