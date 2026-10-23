@@ -1474,6 +1474,19 @@ if (count($listofextcals)) {
 						$event->location = $icalevent['LOCATION'];
 					}
 
+					// More details, shown into the tooltip of the event (not for a private event)
+					$event->icaldetails = array();
+					if (!$isprivate) {
+						foreach (array('DESCRIPTION' => 'description', 'ORGANIZER' => 'organizer', 'URL' => 'url', 'CATEGORIES' => 'categories', 'GEO' => 'geo') as $icalproperty => $detailkey) {
+							if (!empty($icalevent[$icalproperty]) && is_string($icalevent[$icalproperty])) {
+								$event->icaldetails[$detailkey] = $icalevent[$icalproperty];
+							}
+						}
+						if (!empty($icalevent['ATTENDEE']) && is_array($icalevent['ATTENDEE'])) {
+							$event->icaldetails['attendees'] = $icalevent['ATTENDEE'];
+						}
+					}
+
 					$event->date_start_in_calendar = $event->datep;
 
 					if ((int) $event->datef != 0 && $event->datef >= $event->datep) {
