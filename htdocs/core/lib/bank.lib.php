@@ -478,7 +478,7 @@ function checkBanForAccount($account)
 	}
 	*/
 
-	if ($country_code == 'DZ') { // Algerian rules (Instruction n° 06-2004 Banque d'Algérie)
+	if ($country_code == 'DZ') { // Algerian rules (Instruction n° 06-2004 Bank of Algeria)
 		$code_banque = trim((string) $account->code_banque);
 		$code_guichet = trim((string) $account->code_guichet);
 		$number = trim((string) $account->number);
