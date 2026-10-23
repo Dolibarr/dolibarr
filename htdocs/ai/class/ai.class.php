@@ -383,7 +383,7 @@ class Ai
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
 
 			if (empty($response['http_code'])) {
-				throw new Exception('API request failed. No http received');
+				throw new Exception('API request failed. No http received'.(empty($response['curl_error_no']) ? '' : ' (curl error '.$response['curl_error_no'].': '.$response['curl_error_msg'].')'));
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
 				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
