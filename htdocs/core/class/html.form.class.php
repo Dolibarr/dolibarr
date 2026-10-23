@@ -13962,9 +13962,11 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			// Add onclick to disable submit buttons (except cancel) after first click to prevent duplicate form submissions on slow connections
-			$onclick = ($button['name'] !== 'cancel') ? ' onclick="if(this.form && this.form.checkValidity && !this.form.checkValidity()) { return true; } this.disabled=true; this.form.submit();"' : '';
-			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '"' . $onclick . '>';
+			// Add class to disable submit buttons (except cancel) once form is submitted to prevent duplicate form submissions on slow connections (see lib_foot.js.php)
+			if ($button['name'] !== 'cancel') {
+				$addclass .= ($addclass ? ' ' : '').'disableonsubmit';
+			}
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 
