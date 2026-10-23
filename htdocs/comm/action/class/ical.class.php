@@ -67,6 +67,11 @@ class ICal
 	public $freebusy_count;
 
 	/**
+	 * @var int Number of Journals
+	 */
+	public $journal_count;
+
+	/**
 	 * @var string Help variable save last key (multiline string)
 	 */
 	public $last_key;
@@ -164,6 +169,54 @@ class ICal
 		return mb_convert_encoding($text, 'UTF-8', $charset);
 	}
 
+	/**
+	 * Return the to do (VTODO) and the journal entries (VJOURNAL) as events, so they can be shown in an agenda.
+	 * A to do is an event from its DTSTART (or its due date) to its due date, a journal entry is an event on its date.
+	 * A to do or journal entry without date, or cancelled, is not returned. The title starts with a symbol (to do, done, journal).
+	 *
+	 * @return array<int,array<string,string|int|array<string,int|string>>>
+	 */
+	public function getTodoAndJournalAsEvents()
+	{
+		$result = array();
+		foreach (array('VTODO', 'VJOURNAL') as $component) {
+			if (empty($this->cal[$component]) || !is_array($this->cal[$component])) {
+				continue;
+			}
+			foreach ($this->cal[$component] as $item) {
+				if (!is_array($item) || (isset($item['STATUS']) && strtoupper(trim((string) $item['STATUS'])) == 'CANCELLED')) {
+					continue;
+				}
+				$event = $item;
+				unset($event['DUE'], $event['DUE;VALUE=DATE']);
+				if ($component == 'VTODO') {
+					// The end of a to do is its due date. Without start, the start is the due date.
+					if (isset($item['DUE;VALUE=DATE'])) {
+						$event['DTEND;VALUE=DATE'] = $item['DUE;VALUE=DATE'];
+						if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+							$event['DTSTART;VALUE=DATE'] = $item['DUE;VALUE=DATE'];
+							$event['DTEND;VALUE=DATE'] = gmdate('Ymd', gmmktime(0, 0, 0, (int) substr($item['DUE;VALUE=DATE'], 4, 2), (int) substr($item['DUE;VALUE=DATE'], 6, 2), (int) substr($item['DUE;VALUE=DATE'], 0, 4)) + 86400);
+						}
+					} elseif (isset($item['DUE'])) {
+						$event['DTEND'] = $item['DUE'];
+						if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+							$event['DTSTART'] = $item['DUE'];
+						}
+					}
+				}
+				if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+					continue;
+				}
+				$done = ($component == 'VTODO' && ((isset($item['STATUS']) && strtoupper(trim((string) $item['STATUS'])) == 'COMPLETED') || isset($item['COMPLETED'])));
+				$symbol = ($component == 'VJOURNAL' ? "\u{270E} " : ($done ? "\u{2611} " : "\u{2610} "));
+				$title = (isset($item['SUMMARY']) && $item['SUMMARY'] !== '') ? (string) $item['SUMMARY'] : trim(strtok((string) ($item['DESCRIPTION'] ?? ''), "\n"));
+				$event['SUMMARY'] = $symbol.$title;
+				$result[] = $event;
+			}
+		}
+		return $result;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns the number of calendar events
@@ -214,6 +267,9 @@ class ICal
 		$this->event_count = -1;
 		$this->file_text = '';
 
+		$stalecachetext = '';	// Content of an expired cache file, used if the download fails
+		$datefile = 0;
+
 		// Save file into a cache
 		if ($usecachefile) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -225,6 +281,12 @@ class ICal
 				$this->file_text = file_get_contents($usecachefile);
 				if (!$this->isIcalText($this->file_text)) {
 					$this->file_text = '';	// Not an iCal file (for example a HTML page cached by an old version), so we download it again
+				}
+			} elseif ($datefile) {
+				// The cache is too old: we download it again, but we keep the old content to use it if the download fails
+				$oldtext = (string) file_get_contents($usecachefile);
+				if ($this->isIcalText($oldtext)) {
+					$stalecachetext = $oldtext;
 				}
 			}
 		}
@@ -264,6 +326,12 @@ class ICal
 			}
 		}
 
+		if (is_null($this->file_text) && $stalecachetext !== '') {
+			// The download failed: we use the last copy we have (the cache file is not rewritten, so we will try again later)
+			$this->file_text = $stalecachetext;
+			$this->error .= ' (the copy downloaded on '.dol_print_date((int) $datefile, 'dayhour', 'gmt').' UTC is used)';
+		}
+
 		$file_text_array = preg_split("[\n]", ltrim((string) $this->file_text, "\xEF\xBB\xBF \t\r\n"));	// Ignore a BOM and the blank lines before BEGIN:VCALENDAR
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
@@ -298,6 +366,11 @@ class ICal
 						$type = "VFREEBUSY";
 						break;
 
+					case "BEGIN:VJOURNAL":
+						$this->journal_count += 1; // new journal begin
+						$type = "VJOURNAL";
+						break;
+
 					case "BEGIN:VCALENDAR": // all other special string
 					case "BEGIN:DAYLIGHT":
 					case "BEGIN:VTIMEZONE":
@@ -308,6 +381,7 @@ class ICal
 					case "END:VTODO": // end special text - goto VCALENDAR key
 					case "END:VEVENT":
 					case "END:VFREEBUSY":
+					case "END:VJOURNAL":
 					case "END:VCALENDAR":
 					case "END:DAYLIGHT":
 					case "END:VTIMEZONE":
@@ -458,6 +532,10 @@ class ICal
 					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->todo_count][$key].$value;
 					break;
+				case 'VJOURNAL':
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch
+					$value = $this->cal[$type][$this->journal_count][$key].$value;
+					break;
 			}
 		}
 
@@ -488,7 +566,7 @@ class ICal
 				}
 			}
 			// Remove the parameters of a property (SUMMARY;LANGUAGE=fr -> SUMMARY), except for dates that are managed below
-			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
+			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND") && !stristr($key, "DUE")) {
 				$key = explode(';', $key, 2)[0];
 			}
 			// Decode escaped characters of TEXT values
@@ -502,8 +580,8 @@ class ICal
 		}
 		//if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
-			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
+		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DUE") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
+			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE") || stristr($key, "DUE;VALUE=DATE")) {
 				list($key, $value) = array($key, $value);
 			} else {
 				list($key, $value) = $this->ical_dt_date($key, $value);
@@ -514,6 +592,11 @@ class ICal
 			case "VTODO":
 				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->todo_count][$key] = $value;
+				break;
+
+			case "VJOURNAL":
+				// @phan-suppress-next-line PhanTypeMismatchReturn
+				$this->cal[$type][$this->journal_count][$key] = $value;
 				break;
 
 			case "VEVENT":
@@ -582,6 +665,242 @@ class ICal
 			$rcontent = explode('=', $line, 2);
 			if (count($rcontent) == 2) {
 				$result[strtoupper($rcontent[0])] = $rcontent[1];
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Decode a BYDAY value ("MO,TU", "2MO", "-1FR"...)
+	 *
+	 * @param 	string 	$value	Value of BYDAY
+	 * @return 	array<int,array{0:int,1:int}>|null	List of array(ordinal (0 if none), day of week (0=Sunday...6=Saturday)), or null if the value is not valid
+	 */
+	private function parseByDay($value)
+	{
+		$daysofweek = array('SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6);
+		$result = array();
+		foreach (explode(',', strtoupper($value)) as $item) {
+			$reg = array();
+			if (!preg_match('/^([+-]?[0-9]{1,2})?(SU|MO|TU|WE|TH|FR|SA)$/', trim($item), $reg)) {
+				return null;
+			}
+			$ordinal = ($reg[1] === '' ? 0 : (int) $reg[1]);
+			if (abs($ordinal) > 5) {
+				return null;
+			}
+			$result[] = array($ordinal, $daysofweek[$reg[2]]);
+		}
+		return $result;
+	}
+
+	/**
+	 * Return if a recurrence rule can be expanded by expandRRule(): FREQ DAILY, WEEKLY, MONTHLY or YEARLY with, as BYxxx parts, only BYDAY, BYMONTHDAY and BYMONTH.
+	 *
+	 * @param 	array<string,string>	$rrule	Rule decoded by ical_rrule()
+	 * @return 	bool					True if the rule can be expanded
+	 */
+	public function isRRuleSupported($rrule)
+	{
+		$freq = ($rrule['FREQ'] ?? '');
+		if (!in_array($freq, array('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'))) {
+			return false;
+		}
+		foreach (array_keys($rrule) as $key) {
+			if (strpos($key, 'BY') === 0 && !in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH'))) {
+				return false;
+			}
+		}
+		if (isset($rrule['BYDAY'])) {
+			$byday = $this->parseByDay($rrule['BYDAY']);
+			if ($byday === null) {
+				return false;
+			}
+			foreach ($byday as $item) {
+				if ($item[0] != 0 && !in_array($freq, array('MONTHLY', 'YEARLY'))) {
+					return false;	// An ordinal (2MO, -1FR) has a meaning only for a monthly or yearly rule
+				}
+			}
+		}
+		foreach (array('BYMONTHDAY' => 31, 'BYMONTH' => 12) as $key => $max) {
+			if (isset($rrule[$key])) {
+				foreach (explode(',', $rrule[$key]) as $item) {
+					if (!preg_match('/^-?[0-9]{1,2}$/', trim($item)) || (int) $item == 0 || abs((int) $item) > $max || ($key == 'BYMONTH' && (int) $item < 0)) {
+						return false;
+					}
+				}
+			}
+		}
+		if (isset($rrule['BYMONTHDAY']) && $freq == 'WEEKLY') {
+			return false;
+		}
+		if ($freq == 'YEARLY' && empty($rrule['BYMONTH']) && (isset($rrule['BYDAY']) || isset($rrule['BYMONTHDAY']))) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Return the days (midnight, as GMT timestamps) of a month that match BYDAY and BYMONTHDAY.
+	 *
+	 * @param 	int									$year			Year
+	 * @param 	int									$month			Month (1-12)
+	 * @param 	array<int,array{0:int,1:int}>		$byday			Decoded BYDAY
+	 * @param 	array<int,int>						$bymonthday		BYMONTHDAY (negative values count from the end of the month)
+	 * @param 	int									$defaultday		Day to use when there is no BYDAY and no BYMONTHDAY (day of the start)
+	 * @return 	array<int,int>									Timestamps of the days, sorted
+	 */
+	private function getDaysOfMonth($year, $month, $byday, $bymonthday, $defaultday)
+	{
+		$nbdays = (int) gmdate('t', gmmktime(0, 0, 0, $month, 1, $year));
+		$fromdayofmonth = array();
+		foreach ($bymonthday as $monthday) {
+			$day = ($monthday > 0 ? $monthday : $nbdays + $monthday + 1);
+			if ($day >= 1 && $day <= $nbdays) {
+				$fromdayofmonth[$day] = $day;
+			}
+		}
+		$fromdayofweek = array();
+		foreach ($byday as $item) {
+			$matches = array();
+			for ($day = 1; $day <= $nbdays; $day++) {
+				if ((int) gmdate('w', gmmktime(0, 0, 0, $month, $day, $year)) == $item[1]) {
+					$matches[] = $day;
+				}
+			}
+			if ($item[0] == 0) {
+				foreach ($matches as $day) {
+					$fromdayofweek[$day] = $day;
+				}
+			} else {
+				$index = ($item[0] > 0 ? $item[0] - 1 : count($matches) + $item[0]);
+				if (isset($matches[$index])) {
+					$fromdayofweek[$matches[$index]] = $matches[$index];
+				}
+			}
+		}
+		if (!empty($bymonthday) && !empty($byday)) {
+			$days = array_intersect($fromdayofmonth, $fromdayofweek);
+		} elseif (!empty($bymonthday)) {
+			$days = $fromdayofmonth;
+		} elseif (!empty($byday)) {
+			$days = $fromdayofweek;
+		} else {
+			$days = ($defaultday <= $nbdays ? array($defaultday => $defaultday) : array());
+		}
+		sort($days);
+		$result = array();
+		foreach ($days as $day) {
+			$result[] = gmmktime(0, 0, 0, $month, $day, $year);
+		}
+		return $result;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule with BYDAY, BYMONTHDAY or BYMONTH (see isRRuleSupported()).
+	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
+	 *
+	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
+	 * @param 	int						$dtstart	Start of the first occurrence
+	 * @param 	int						$to			Occurrences starting from this date are not returned
+	 * @param 	int						$until		Occurrences starting after this date are not returned (0 = no limit)
+	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
+	 */
+	public function expandRRule($rrule, $dtstart, $to, $until = 0)
+	{
+		$freq = ($rrule['FREQ'] ?? '');
+		$interval = max(1, (int) ($rrule['INTERVAL'] ?? 1));
+		$maxcount = (int) ($rrule['COUNT'] ?? 0);
+		$byday = (isset($rrule['BYDAY']) ? (array) $this->parseByDay($rrule['BYDAY']) : array());
+		$bymonthday = (isset($rrule['BYMONTHDAY']) ? array_map('intval', explode(',', $rrule['BYMONTHDAY'])) : array());
+		$bymonth = (isset($rrule['BYMONTH']) ? array_map('intval', explode(',', $rrule['BYMONTH'])) : array());
+
+		$timeofday = (($dtstart % 86400) + 86400) % 86400;
+		$firstday = $dtstart - $timeofday;
+		$year0 = (int) gmdate('Y', $firstday);
+		$month0 = (int) gmdate('n', $firstday);
+		$day0 = (int) gmdate('j', $firstday);
+		$dayofweek0 = (int) gmdate('w', $firstday);
+
+		$result = array();
+		$count = 0;
+		for ($i = 0; $i < 20000; $i++) {
+			$days = array();
+			if ($freq == 'DAILY') {
+				$days[] = $firstday + $i * $interval * 86400;
+				$periodstart = $days[0];
+			} elseif ($freq == 'WEEKLY') {
+				// Weeks start on monday
+				$periodstart = $firstday - ((($dayofweek0 + 6) % 7) * 86400) + $i * $interval * 7 * 86400;
+				$daysofweek = array();
+				foreach ($byday as $item) {
+					$daysofweek[] = $item[1];
+				}
+				if (empty($daysofweek)) {
+					$daysofweek[] = $dayofweek0;
+				}
+				foreach ($daysofweek as $dayofweek) {
+					$days[] = $periodstart + (($dayofweek + 6) % 7) * 86400;
+				}
+				sort($days);
+			} elseif ($freq == 'MONTHLY') {
+				$monthindex = $month0 - 1 + $i * $interval;
+				$year = $year0 + intdiv($monthindex, 12);
+				$month = $monthindex % 12 + 1;
+				$periodstart = gmmktime(0, 0, 0, $month, 1, $year);
+				if (empty($bymonth) || in_array($month, $bymonth)) {
+					$days = $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0);
+				}
+			} else {
+				$year = $year0 + $i * $interval;
+				$periodstart = gmmktime(0, 0, 0, 1, 1, $year);
+				$months = (empty($bymonth) ? array($month0) : $bymonth);
+				sort($months);
+				foreach ($months as $month) {
+					$days = array_merge($days, $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0));
+				}
+			}
+			if ($periodstart >= $to) {
+				break;
+			}
+
+			foreach ($days as $day) {
+				if ($day < $firstday) {
+					continue;
+				}
+				if ($freq == 'DAILY' || $freq == 'WEEKLY') {
+					// BYMONTH, and for a daily rule BYMONTHDAY and BYDAY, only filter the days
+					if (!empty($bymonth) && !in_array((int) gmdate('n', $day), $bymonth)) {
+						continue;
+					}
+					if ($freq == 'DAILY' && !empty($bymonthday)) {
+						$nbdays = (int) gmdate('t', $day);
+						$dayofmonth = (int) gmdate('j', $day);
+						if (!in_array($dayofmonth, $bymonthday) && !in_array($dayofmonth - $nbdays - 1, $bymonthday)) {
+							continue;
+						}
+					}
+					if ($freq == 'DAILY' && !empty($byday)) {
+						$found = false;
+						foreach ($byday as $item) {
+							if ($item[1] == (int) gmdate('w', $day)) {
+								$found = true;
+							}
+						}
+						if (!$found) {
+							continue;
+						}
+					}
+				}
+				$start = $day + $timeofday;
+				if ($start >= $to || ($until && $start > $until)) {
+					return $result;
+				}
+				$result[] = $start;
+				$count++;
+				if ($maxcount && $count >= $maxcount) {
+					return $result;
+				}
 			}
 		}
 		return $result;
