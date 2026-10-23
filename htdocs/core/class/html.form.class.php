@@ -7059,7 +7059,14 @@ class Form
 		if (empty($height)) {
 			$height = 185;
 			if (is_array($formquestion)) {
-				$height += (count($formquestion) * 40);
+				$nbofquestions = 0;
+				foreach ($formquestion as $input) {
+					// Hidden fields are not visible so they must not be counted into the height
+					if (is_array($input) && (!isset($input['type']) || $input['type'] != 'hidden')) {
+						$nbofquestions++;
+					}
+				}
+				$height += ($nbofquestions * 40);
 			}
 			if ($question) {
 				$height += dol_nboflines_bis($question, 80) * 40;
