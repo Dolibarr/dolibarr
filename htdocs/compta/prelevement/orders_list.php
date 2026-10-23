@@ -214,7 +214,7 @@ if ($type == 'bank-transfer') {
 $help_url = '';
 
 
-$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.type, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -461,6 +461,7 @@ while ($i < $imaxinloop) {
 	$directdebitorder->date_credit = $db->jdate($obj->date_credit);
 	$directdebitorder->amount = $obj->amount;
 	$directdebitorder->status = $obj->status;
+	$directdebitorder->type = $obj->type;
 
 	$object = $directdebitorder;
 
