@@ -7059,7 +7059,14 @@ class Form
 		if (empty($height)) {
 			$height = 185;
 			if (is_array($formquestion)) {
-				$height += (count($formquestion) * 40);
+				$nbofquestions = 0;
+				foreach ($formquestion as $input) {
+					// Hidden fields are not visible so they must not be counted into the height
+					if (is_array($input) && (!isset($input['type']) || $input['type'] != 'hidden')) {
+						$nbofquestions++;
+					}
+				}
+				$height += ($nbofquestions * 40);
 			}
 			if ($question) {
 				$height += dol_nboflines_bis($question, 80) * 40;
@@ -13955,9 +13962,11 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			// Add onclick to disable submit buttons (except cancel) after first click to prevent duplicate form submissions on slow connections
-			$onclick = ($button['name'] !== 'cancel') ? ' onclick="if(this.form && this.form.checkValidity && !this.form.checkValidity()) { return true; } this.disabled=true; this.form.submit();"' : '';
-			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '"' . $onclick . '>';
+			// Add class to disable submit buttons (except cancel) once form is submitted to prevent duplicate form submissions on slow connections (see lib_foot.js.php)
+			if ($button['name'] !== 'cancel') {
+				$addclass .= ($addclass ? ' ' : '').'disableonsubmit';
+			}
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 

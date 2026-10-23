@@ -202,7 +202,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
-print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("AgendaExtSitesDesc")."</div><br>\n";
 print "<br>\n";
 
 
@@ -216,7 +216,7 @@ print "<td>".$langs->trans("ExtSiteUrlAgenda");
 print '<br><span class="hideonsmartphone opacitymedium">('.$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</span></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
 print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
-print '<td class="right">'.$langs->trans("Color").'</td>';
+print '<td class="center">'.$langs->trans("Color").'</td>';
 print '<td class="center">'.$langs->trans("Enabled").'</td>';
 print '<td class="center">'.$langs->trans("ActiveByDefault").'</td>';
 print "</tr>";
