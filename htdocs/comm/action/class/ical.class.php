@@ -539,6 +539,22 @@ class ICal
 			}
 		}
 
+		if (!$iscontinuation && $type == 'VEVENT' && preg_match('/^(ATTENDEE|ORGANIZER)(;|$)/i', $key, $reg)) {
+			// Organizer or attendee: "Name <email>" (the name is the parameter CN, the value is mailto:email). There can be several attendees.
+			$name = (preg_match('/;CN=("[^"]*"|[^;]*)/i', $key, $regcn) ? trim($regcn[1], '"') : '');
+			$email = (string) preg_replace('/^mailto:/i', '', trim($value));
+			$person = (($name !== '' && $name != $email) ? $name.' <'.$email.'>' : $email);
+			if (strtoupper($reg[1]) == 'ATTENDEE') {
+				$attendees = (isset($this->cal[$type][$this->event_count]['ATTENDEE']) && is_array($this->cal[$type][$this->event_count]['ATTENDEE'])) ? $this->cal[$type][$this->event_count]['ATTENDEE'] : [];
+				$attendees[] = $person;
+				$this->cal[$type][$this->event_count]['ATTENDEE'] = $attendees;
+				$this->last_key = 'ATTENDEE';
+				return;
+			}
+			$key = 'ORGANIZER';
+			$value = $person;
+		}
+
 		if (!$iscontinuation) {
 			// Value in a legacy encoding (vCalendar 1.0 style: ENCODING=QUOTED-PRINTABLE and/or CHARSET=ISO-8859-1 as parameters of the property)
 			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
@@ -554,7 +570,7 @@ class ICal
 				$key = explode(';', $key, 2)[0];
 			}
 			// Decode escaped characters of TEXT values
-			if (in_array($key, ['SUMMARY', 'DESCRIPTION', 'LOCATION', 'COMMENT'])) {
+			if (in_array($key, ['SUMMARY', 'DESCRIPTION', 'LOCATION', 'COMMENT', 'CATEGORIES'])) {
 				$value = strtr($value, ['\\\\' => '\\', '\\,' => ',', '\\;' => ';', '\\n' => "\n", '\\N' => "\n"]);
 			}
 		}
