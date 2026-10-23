@@ -4580,7 +4580,23 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
+		$curcode = $currency_code;
+		if ($curcode === 'auto') {
+			$curcode = $conf->currency;
+		}
+
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		$rounding = min($max_decimals_unit, $max_decimals_tot);
 	}
 	$nbdecimal = $rounding;
 
@@ -4626,11 +4642,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$nbdecimal = dol_strlen($decpart);
 	}
 
+	$curcode = $currency_code;
+	if ($curcode === 'auto') {
+		$curcode = $conf->currency;
+	}
+
+	$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN');
+	if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode) && getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode) !== '') {
+		$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode);
+	}
+
 	// If nbdecimal is higher than max to show
-	$nbdecimalmaxshown = (int) str_replace('...', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'));
+	$nbdecimalmaxshown = (int) str_replace('...', '', $max_decimals_shown);
 	if ($trunc && $nbdecimal > $nbdecimalmaxshown) {
 		$nbdecimal = $nbdecimalmaxshown;
-		if (preg_match('/\.\.\./i', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'))) {
+		if (preg_match('/\.\.\./i', $max_decimals_shown)) {
 			// If output is truncated, we show ...
 			$end = '...';
 		}
@@ -4638,10 +4664,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// If force rounding
 	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
-		if ($forcerounding === 'MU') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
-		} elseif ($forcerounding === 'MT') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		if ($forcerounding === 'MU' || $forcerounding === 'CU') {
+			$nbdecimal = $max_decimals_unit;
+		} elseif ($forcerounding === 'MT' || $forcerounding === 'CT') {
+			$nbdecimal = $max_decimals_tot;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = (int) $forcerounding;
 		}
@@ -4702,7 +4739,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *
  *	@see    price()							Opposite function of price2num
  */
-function price2num($amount, $rounding = '', $option = 0)
+function price2num($amount, $rounding = '', $option = 0, $currencycode = '')
 {
 	global $langs;
 
@@ -4796,18 +4833,39 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			}
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			}
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
-		} elseif ($rounding == 'CU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
-		} elseif ($rounding == 'CT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
-		} elseif ($rounding == 'CR') {
-			$currencycode = (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') ? getDolCurrency() : '';
-			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . ($currencycode ? '_' . $currencycode : '');
+		} elseif ($rounding == 'CU' || preg_match('/^CU_([a-zA-Z]+)$/', $rounding, $regscu)) {
+			$cur = !empty($regscu[1]) ? $regscu[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
+			}
+		} elseif ($rounding == 'CT' || preg_match('/^CT_([a-zA-Z]+)$/', $rounding, $regsct)) {
+			$cur = !empty($regsct[1]) ? $regsct[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));
+			}
+		} elseif ($rounding == 'CR' || preg_match('/^CR_([a-zA-Z]+)$/', $rounding, $regscr)) {
+			$cur = !empty($regscr[1]) ? $regscr[1] : $currencycode;
+			if (empty($cur) && (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+				$cur = getDolCurrency();
+			}
+			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . (!empty($cur) ? '_' . $cur : '');
 			$nbofdectoround = getDolGlobalInt($rounding_const, getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_RATE', 8));
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
