@@ -1170,12 +1170,24 @@ try {
 		if (strpos($errorDetails, 'Error:') === 0) {
 			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
 			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
-			if (UniversalLLMAdapter::isModelUnavailableError($reason)) {
+			// The request carried a document and the provider refused it: say what to
+			// do (many OpenAI compatible gateways do not read PDF files). Checked first:
+			// "file parts are not supported by this model" is no unknown model.
+			$hasPdf = false;
+			foreach ($attachments as $att) {
+				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
+			}
+			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
+			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
+			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing
 				// will not help, choosing another model will.
 				$message = $langs->transnoentitiesnoconv('AIModelNotAvailableAtProvider', (isset($model) ? $model : ''), getAiAssistantProviderLabel(), $reason);
 			} elseif (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
 				$message = $langs->transnoentitiesnoconv('AIProviderBusy', $reason);
+			} elseif (!empty($attachments) && preg_match('/HTTP (?:400|415|422)/', $errorDetails)) {
+				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} else {
 				$message = $langs->transnoentitiesnoconv('AIProviderError', $reason);
 			}
