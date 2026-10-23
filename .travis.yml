@@ -575,7 +575,6 @@ script:
     echo "Content of end of apache error.log"
     sudo tail -n 200 /var/log/apache2/travis_error_log
     [ "$phpunitresult" = "0" ]
-    echo
 
 after_script:
   - |
