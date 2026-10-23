@@ -438,7 +438,8 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input type="text" class="flat width100" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	$tmpref = (GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref);
+	print '<td><input type="text" class="flat width100" name="ref" value="'.dol_escape_htmltag($tmpref).'" maxlength="12"'.(empty($tmpref) ? ' autofocus' : '').'></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -997,7 +998,8 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+		$tmpref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref);
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag($tmpref).'" maxlength="12"'.(empty($tmpref) ? ' autofocus' : '').'></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
