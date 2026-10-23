@@ -432,6 +432,11 @@ class Websites extends DolibarrApi
 		// Clean data: remove head section from content (same as web interface)
 		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', (string) $this->websitepage->content);
 
+		// A blog post gets the header and footer containers of its language, and its structured data
+		if ($this->websitepage->type_container == 'blogpost') {
+			$this->_addBlogpostWrappers($this->website, $this->websitepage);
+		}
+
 		// Create the page in database
 		$pageid = $this->websitepage->create(DolibarrApiAccess::$user);
 		if ($pageid <= 0) {
@@ -670,6 +675,44 @@ class Websites extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->website);
+	}
+
+	/**
+	 * Wrap the content of a blog post with the header and footer containers and the structured data.
+	 * A container is included only if the website has exactly one container of this type in the language of the post.
+	 *
+	 * @param	Website		$website		Website
+	 * @param	WebsitePage	$websitepage	Blog post to complete (its content is modified)
+	 * @return	void
+	 */
+	private function _addBlogpostWrappers($website, $websitepage)
+	{
+		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
+
+		$websitepagetemp = new WebsitePage($this->db);
+		$containers = $websitepagetemp->fetchAll($website->id, '', '', 0, 0, "((t.type_container:=:'header') OR (t.type_container:=:'footer'))");
+		if (!is_array($containers)) {
+			throw new RestException(500, $websitepagetemp->errorsToString());
+		}
+
+		// Keep the containers of the language of the post (an empty language is the main language of the website)
+		$found = array('header' => array(), 'footer' => array());
+		foreach ($containers as $container) {
+			$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
+			if ($containerlang == $pagelang) {
+				$found[$container->type_container][] = $container->pageurl;
+			}
+		}
+
+		$content = (string) $websitepage->content;
+		if (count($found['header']) == 1 && strpos($content, "includeContainer('".$found['header'][0]."')") === false) {
+			$content = "<?php includeContainer('".$found['header'][0]."'); ?>\n".$content;
+		}
+		if (count($found['footer']) == 1 && strpos($content, "includeContainer('".$found['footer'][0]."')") === false) {
+			$content .= "\n<?php includeContainer('".$found['footer'][0]."'); ?>\n";
+		}
+
+		$websitepage->content = $content;
 	}
 
 	/**

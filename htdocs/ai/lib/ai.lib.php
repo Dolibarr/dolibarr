@@ -844,9 +844,12 @@ function getAiChatAssistantConfig()
 		'AIContextPinOn',
 		'AIContextPinOff',
 		'AIContextCounter',
+		'AIContextLabel',
+		'AIContextTokens',
 		'AIContextAuto',
 		'AIContextAutoTitle',
 		'AIContextClear',
+		'None',
 		'AIContextClearTitle',
 		'AIContextAll',
 		'AIContextAllTitle',
@@ -860,6 +863,7 @@ function getAiChatAssistantConfig()
 		'ExecutingTool',
 		'FetchingData',
 		'AISearchDoneNowPreparingAction',
+		'AIRetry',
 		'GeneratingLink',
 		'Found',
 		'File',
@@ -897,6 +901,7 @@ function getAiChatAssistantConfig()
 	// keep the placeholders intact for the JS .replace() calls.
 	$ai_translations['AIContextCounter'] = $langs->transnoentitiesnoconv('AIContextCounter', '%s', '%s', '%s');
 	$ai_translations['AIContextAuto'] = $langs->transnoentitiesnoconv('AIContextAuto', '%s');
+	$ai_translations['AIContextTokens'] = $langs->transnoentitiesnoconv('AIContextTokens', '%s');
 	$ai_translations['AIContextAutoTitle'] = $langs->transnoentitiesnoconv('AIContextAutoTitle', '%s');
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
@@ -934,7 +939,7 @@ function getAiChatAssistantConfig()
 		// Off (0) until an administrator decides otherwise: past answers carry
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
 		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
 		// model list by a name heuristic that is not reliable, so hidden by default.
 		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
@@ -950,6 +955,9 @@ function getAiChatAssistantConfig()
 		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
 		'token' => newToken(),
 		'userInitial' => $userinitial,
+		// Key of the conversation kept in the browser sessionStorage, so the chat
+		// survives a page change (popover <-> full page) for this user and entity only.
+		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
 	);
 }
 

@@ -584,6 +584,7 @@ if (empty($reshook)) {
 		} elseif ($confirm == 'no') {
 			$status = SupplierProposal::STATUS_NOTSIGNED;
 		}
+		// Only the 2 values of the form are accepted (like for a customer proposal), not any status
 		if (!in_array($status, array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED), true)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
