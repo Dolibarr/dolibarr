@@ -4577,7 +4577,7 @@ abstract class CommonObject
 				if (empty($reshook) && $forcedroundingmode == '0') {	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 					// This part of code is to fix data. We should not call it too often.
 					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
-					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
+					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx, (isset($obj->multicurrency_subprice) ? $obj->multicurrency_subprice : 0), (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 					$diff_when_using_price_ht = price2num((float) $tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price and unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
 					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
@@ -4734,6 +4734,9 @@ abstract class CommonObject
 			$this->total_localtax1 = (float) price2num($this->total_localtax1);
 			$this->total_localtax2 = (float) price2num($this->total_localtax2);
 			$this->total_ttc = (float) price2num($this->total_ttc);
+			$this->multicurrency_total_ht = (float) price2num($this->multicurrency_total_ht, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_tva, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_ttc = (float) price2num($this->multicurrency_total_ttc, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 			$this->db->free($resql);
 
@@ -4755,9 +4758,9 @@ abstract class CommonObject
 				$sql .= " ".$this->db->sanitize($fieldlocaltax1)." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldlocaltax2)." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldttc)." = ".((float) price2num($this->total_ttc, 'MT', 1));
-				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
-				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
-				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
+				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
 				$sql .= " WHERE rowid = ".((int) $this->id);
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
