@@ -76,11 +76,13 @@ class UniversalLLMAdapter
 	 * (with thinking models, the reasoning tokens count inside this limit)
 	 *
 	 * @param int $maxTokens Maximum number of tokens, 0 = default of each provider
-	 * @return void
+	 * @return bool Always true
 	 */
-	public function setMaxTokens(int $maxTokens): void
+	public function setMaxTokens(int $maxTokens): bool
 	{
 		$this->maxTokens = max(0, $maxTokens);
+
+		return true;
 	}
 
 	/**

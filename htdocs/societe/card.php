@@ -1654,7 +1654,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td>';
 			print '<td colspan="3">';
 			print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-			print dolPrintHTMLForTextArea($object->address);
+			print dolPrintText($object->address);
 			print '</textarea>';
 			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 			print '</td></tr>';
@@ -2549,7 +2549,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 				print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft" spellcheck="false">';
-				print dolPrintHTMLForTextArea($object->address);
+				print dolPrintText($object->address);
 				print '</textarea>';
 				print $form->widgetForTranslation("address", $object, (int) $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 				print '</td></tr>';
