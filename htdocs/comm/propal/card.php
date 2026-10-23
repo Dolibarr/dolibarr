@@ -2202,7 +2202,8 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				$db->commit();
 
-				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// nodocumentbuild: line edited in ajax, the document is generated once after the last change (Dolibarr.tools.card.lines)
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && !GETPOSTINT('nodocumentbuild')) {
 					// Define output language
 					$outputlangs = $langs;
 					if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -3205,9 +3206,10 @@ if ($action == 'create') {
 		if ($usercancreate) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+				$morehtmlref .= '<a class="editfielda"'.$form->getAjaxFieldEditAttributes($object, 'fk_projet', (int) $usercancreate).' href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= '<span'.$form->getAjaxFieldValueAttributes($object, 'fk_projet', (int) $usercancreate).'>'.
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300').'</span>';
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -3272,8 +3274,8 @@ if ($action == 'create') {
 
 		// print '</tr></table>';
 		$editenable = $usercancreate && $caneditfield && $object->status == Propal::STATUS_DRAFT;
-		print $form->editfieldkey("DatePropal", 'date', '', $object, (int) $editenable);
-		print '</td><td class="valuefield">';
+		print $form->editfieldkey("DatePropal", 'date', '', $object, (int) $editenable, 'string', '', 0, 0, 'id', '', 'datep');
+		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'datep', $editenable) . '>';
 		if ($action == 'editdate' && $usercancreate && $caneditfield) {
 			print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -3298,10 +3300,10 @@ if ($action == 'create') {
 		print $langs->trans('DateEndPropal');
 		print '</td>';
 		if ($action != 'editecheance' && $usercancreate && $caneditfield) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fin_validite', $usercancreate && $caneditfield) . '>' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td class="valuefield">';
+		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fin_validite', $usercancreate && $caneditfield) . '>';
 		if ($action == 'editecheance' && $usercancreate && $caneditfield) {
 			print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -3329,10 +3331,10 @@ if ($action == 'create') {
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $usercancreate && $caneditfield) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_cond_reglement', $usercancreate && $caneditfield) . '>' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td class="valuefield">';
+		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_cond_reglement', $usercancreate && $caneditfield) . '>';
 		if ($action == 'editconditions' && $usercancreate && $caneditfield) {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 0, '', 1, $object->deposit_percent);
 		} else {
@@ -3348,10 +3350,10 @@ if ($action == 'create') {
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $usercancreate && $caneditfield) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_mode_reglement', $usercancreate && $caneditfield) . '>' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td class="valuefieldcreate">';
+		print '</td><td class="valuefieldcreate"' . $form->getAjaxFieldValueAttributes($object, 'fk_mode_reglement', $usercancreate && $caneditfield) . '>';
 		if ($action == 'editmode' && $usercancreate && $caneditfield) {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		} else {
@@ -3369,10 +3371,10 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		if ($action != 'editavailability' && $usercancreate && $caneditfield) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_availability', $usercancreate && $caneditfield) . '>' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td class="valuefield">';
+		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_availability', $usercancreate && $caneditfield) . '>';
 		if ($action == 'editavailability' && $usercancreate && $caneditfield) {
 			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->availability_id, 'availability_id', $langs->trans("Delay"));
 		} else {
@@ -3397,10 +3399,10 @@ if ($action == 'create') {
 			print $langs->trans('SendingMethod');
 			print '</td>';
 			if ($action != 'editshippingmethod' && $usercancreate && $caneditfield) {
-				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editshippingmethod&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetShippingMode'), 1) . '</a></td>';
+				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editshippingmethod&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_shipping_method', $usercancreate && $caneditfield) . '>' . img_edit($langs->trans('SetShippingMode'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td class="valuefield">';
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_shipping_method', $usercancreate && $caneditfield) . '>';
 			if ($action == 'editshippingmethod' && $usercancreate && $caneditfield) {
 				$form->formSelectShippingMethod($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->shipping_method_id, 'shipping_method_id', 1);
 			} else {
@@ -3434,10 +3436,10 @@ if ($action == 'create') {
 		print $langs->trans('Source');
 		print '</td>';
 		if ($action != 'editdemandreason' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_input_reason', $usercancreate) . '>' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td class="valuefield">';
+		print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_input_reason', $usercancreate) . '>';
 		if ($action == 'editdemandreason' && $usercancreate) {
 			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->demand_reason_id, 'demand_reason_id', 1);
 		} else {
@@ -3466,10 +3468,10 @@ if ($action == 'create') {
 			print $langs->trans('BankAccount');
 			print '</td>';
 			if ($action != 'editbankaccount' && $usercancreate) {
-				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccount&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetBankAccount'), 1) . '</a></td>';
+				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccount&token=' . newToken() . '&id=' . $object->id . '"' . $form->getAjaxFieldEditAttributes($object, 'fk_account', $usercancreate) . '>' . img_edit($langs->trans('SetBankAccount'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td class="valuefield">';
+			print '</td><td class="valuefield"' . $form->getAjaxFieldValueAttributes($object, 'fk_account', $usercancreate) . '>';
 			if ($action == 'editbankaccount') {
 				$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->fk_account, 'fk_account', 1);
 			} else {
@@ -3638,10 +3640,8 @@ if ($action == 'create') {
 		// Get object lines
 		$result = $object->getLinesArray();
 
-		// Add products/services form
-		//$forceall = 1;
-		global $inputalsopricewithtax;
-		$inputalsopricewithtax = 1;
+		// Display context of lines, also sets the global variables used by the line templates
+		$linesContext = $object->initObjectLinesDisplay();
 
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">
@@ -3665,8 +3665,9 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
 
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 1);
+		// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+		if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 		}
 
 		// Form to add new line
@@ -3678,7 +3679,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 				}
 			} else {
 				$parameters = array();
