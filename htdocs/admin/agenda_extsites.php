@@ -154,9 +154,11 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if (!($res > 0)) {
 			$error++;
 		}
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
+		if (GETPOSTISSET('AGENDA_EXT_ENABLED'.$i)) {
+			$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
+			if (!($res > 0)) {
+				$error++;
+			}
 		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_CACHE'.$i, $cachedelay, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {

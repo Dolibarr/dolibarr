@@ -4730,6 +4730,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
  * 					                        Default 0 if unknown.
+ *  @param	string			$currencycode	Currency code
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9c', '', 0)   => '9c', price2num('W9c', '', 1)   => 'W9c', price2num('W9c', '', 2)   => '9c'
@@ -4846,21 +4847,21 @@ function price2num($amount, $rounding = '', $option = 0, $currencycode = '')
 			}
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
-		} elseif ($rounding == 'CU' || preg_match('/^CU_([a-zA-Z]+)$/', $rounding, $regscu)) {
+		} elseif ($rounding == 'CU' || preg_match('/^CU_([a-zA-Z]+)$/', (string) $rounding, $regscu)) {
 			$cur = !empty($regscu[1]) ? $regscu[1] : $currencycode;
 			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$cur) !== '') {
 				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$cur);
 			} else {
 				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
 			}
-		} elseif ($rounding == 'CT' || preg_match('/^CT_([a-zA-Z]+)$/', $rounding, $regsct)) {
+		} elseif ($rounding == 'CT' || preg_match('/^CT_([a-zA-Z]+)$/', (string) $rounding, $regsct)) {
 			$cur = !empty($regsct[1]) ? $regsct[1] : $currencycode;
 			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$cur) !== '') {
 				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$cur);
 			} else {
 				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));
 			}
-		} elseif ($rounding == 'CR' || preg_match('/^CR_([a-zA-Z]+)$/', $rounding, $regscr)) {
+		} elseif ($rounding == 'CR' || preg_match('/^CR_([a-zA-Z]+)$/', (string) $rounding, $regscr)) {
 			$cur = !empty($regscr[1]) ? $regscr[1] : $currencycode;
 			if (empty($cur) && (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 				$cur = getDolCurrency();
