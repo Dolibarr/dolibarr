@@ -444,6 +444,15 @@ if ($result) {
 		print "\n";
 		$i++;
 	}
+
+	// Show a line when there is no record found
+	if ($num == 0) {
+		$colspan = 5;	// 4 fields + action column
+		if (isModEnabled('multicompany') && !$user->entity) {
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 }
 
 

@@ -2816,8 +2816,13 @@ function top_menu_ai()
 	if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || empty($conf->use_javascript_ajax)) {
 		return $html;
 	}
-	// Per-user gate: same right as the assistant page and its endpoints
+	// Per-user gate: same right as the assistant page and its endpoints.
+	// Without the right, show a greyed non clickable icon so the user knows the feature exists.
 	if (!$user->hasRight('ai', 'assistant', 'use')) {
+		$html .= '<!-- div for AI Assistant link (disabled, no permission) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a class="login-dropdown-a nofocusvisible opacitymedium cursornotallowed classfortooltip" title="'.dol_escape_htmltag($langs->trans('AIAssistant').' - '.$langs->trans('NotEnoughPermissions')).'"><i class="fa fa-magic"></i></a>
+	</div>';
 		return $html;
 	}
 

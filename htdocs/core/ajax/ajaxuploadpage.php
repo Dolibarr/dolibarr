@@ -337,9 +337,15 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	if ($fileContent) {
 		$prompt = 'This is the content of the document:'."\n\n".dol_substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'converttotext' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
 		// $result is an array of error messages or a string with answer
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'converttotext': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -378,9 +384,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 		"file" => new CURLFile($fullpathoffile)
 	);
 
+	if (getDolGlobalString("AI_DEBUG")) {
+		dol_syslog("ajaxuploadpage.php Call AI service for step 'send file' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+	}
 	$result = $ai->generateContent($payload, 'auto', 'file', '');
 
 	if (is_array($result)) {	// If array, there is an error
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php AI service returned an error for step 'send file': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+		}
 		if ($result['error']) {
 			$error++;
 			$errors[] = $result['error'];
@@ -404,9 +416,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			]
 		];
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'create assistant' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($payload, 'auto', 'assistant', '', array('OpenAI-Beta', 'assistants=v2'));
 
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'create assistant': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -425,9 +443,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 	if (!$error) {
 		$payload = '{}';
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'create thread' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'));
 
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'create thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -461,9 +485,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 		);
 		$moreendpoint = $threadId.'/messages';
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'add file to thread' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'add file to thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -483,9 +513,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 		);
 		$moreendpoint = $threadId.'/runs';
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'run thread' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'run thread': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -508,9 +544,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 			$payload = '';
 			$moreendpoint = $threadId.'/runs/'.$runId;
 
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php Call AI service for step 'poll run status' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+			}
 			$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
 			if (is_array($result)) {	// If array, there is an error
+				if (getDolGlobalString("AI_DEBUG")) {
+					dol_syslog("ajaxuploadpage.php AI service returned an error for step 'poll run status': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+				}
 				if ($result['error']) {
 					$error++;
 					$errors[] = $result['error'];
@@ -533,9 +575,15 @@ if ($METHOD == 'thread') { // @phpstan-ignore-line
 		$payload = '';
 		$moreendpoint = $threadId.'/messages';
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Call AI service for step 'get answer' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
+		}
 		$result = $ai->generateContent($prompt, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'));
 
 		if (is_array($result)) {	// If array, there is an error
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'get answer': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+			}
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -566,6 +614,10 @@ if (!empty($errors)) {
 	if ($data == null) {
 		http_response_code(500);
 
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("ajaxuploadpage.php Failed to decode the answer of the AI service as JSON: ".dol_trunc((string) $answer, 500), LOG_WARNING, 0, '_ai');
+		}
+
 		$error++;
 		$errors[] = 'Failed to decode answer';
 		print 'Failed to decode answer';
@@ -575,6 +627,9 @@ if (!empty($errors)) {
 			$result = file_put_contents($fullpathoffile.'.json', $answer);
 			if ($result === false) {
 				dol_syslog("Failed to write the json file ".$fullpathoffile.'.json', LOG_WARNING);
+				if (getDolGlobalString("AI_DEBUG")) {
+					dol_syslog("Failed to write the json file ".$fullpathoffile.'.json', LOG_WARNING, 0, '_ai');
+				}
 			} else {
 				dolChmod($fullpathoffile.'.json');
 			}
