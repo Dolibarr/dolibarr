@@ -159,8 +159,7 @@ print '<input type="hidden" name="action" value="update">';
 
 print dol_get_fiche_head($head, 'handler', '', -1);
 
-print '<div class="opacitymedium justify hideonsmartphone">'.$langs->trans("MenusDesc")."</div>\n";
-print '<br class="hideonsmartphone">';
+print '<div class="info justify hideonsmartphone">'.$langs->trans("MenusDesc")."</div>\n";
 print "<br>\n";
 
 

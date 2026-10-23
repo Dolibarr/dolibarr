@@ -879,6 +879,7 @@ LinkToContract=Link to contract
 LinkToIntervention=Link to intervention
 LinkToTicket=Link to ticket
 LinkToMo=Link to Mo
+LinkToObjectListTruncated=Only the %s most recent records are listed. Use the reference field above to link an older record.
 CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit

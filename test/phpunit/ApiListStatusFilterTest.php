@@ -26,7 +26,6 @@
 use Luracast\Restler\RestException;
 
 global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 // Restler unregisters existing loaders; keep PHPUnit's Composer loader available.
