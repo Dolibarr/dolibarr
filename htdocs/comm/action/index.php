@@ -938,6 +938,9 @@ if (count($listofextcals)) {
 		if (is_array($tmparray)) {
 			$icalevents = array_merge($icalevents, $tmparray); // Add $ical->cal['VFREEBUSY']
 		}
+		if (getDolGlobalString('AGENDA_EXT_SHOW_TODO')) {
+			$icalevents = array_merge($icalevents, $ical->getTodoAndJournalAsEvents()); // Add $ical->cal['VTODO'] and $ical->cal['VJOURNAL']
+		}
 
 		$nbevents += count($icalevents);
 

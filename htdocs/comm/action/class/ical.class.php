@@ -67,6 +67,11 @@ class ICal
 	public $freebusy_count;
 
 	/**
+	 * @var int Number of Journals
+	 */
+	public $journal_count;
+
+	/**
 	 * @var string Help variable save last key (multiline string)
 	 */
 	public $last_key;
@@ -162,6 +167,54 @@ class ICal
 			}
 		}
 		return mb_convert_encoding($text, 'UTF-8', $charset);
+	}
+
+	/**
+	 * Return the to do (VTODO) and the journal entries (VJOURNAL) as events, so they can be shown in an agenda.
+	 * A to do is an event from its DTSTART (or its due date) to its due date, a journal entry is an event on its date.
+	 * A to do or journal entry without date, or cancelled, is not returned. The title starts with a symbol (to do, done, journal).
+	 *
+	 * @return array<int,array<string,string|int|array<string,int|string>>>
+	 */
+	public function getTodoAndJournalAsEvents()
+	{
+		$result = array();
+		foreach (array('VTODO', 'VJOURNAL') as $component) {
+			if (empty($this->cal[$component]) || !is_array($this->cal[$component])) {
+				continue;
+			}
+			foreach ($this->cal[$component] as $item) {
+				if (!is_array($item) || (isset($item['STATUS']) && strtoupper(trim((string) $item['STATUS'])) == 'CANCELLED')) {
+					continue;
+				}
+				$event = $item;
+				unset($event['DUE'], $event['DUE;VALUE=DATE']);
+				if ($component == 'VTODO') {
+					// The end of a to do is its due date. Without start, the start is the due date.
+					if (isset($item['DUE;VALUE=DATE'])) {
+						$event['DTEND;VALUE=DATE'] = $item['DUE;VALUE=DATE'];
+						if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+							$event['DTSTART;VALUE=DATE'] = $item['DUE;VALUE=DATE'];
+							$event['DTEND;VALUE=DATE'] = gmdate('Ymd', gmmktime(0, 0, 0, (int) substr($item['DUE;VALUE=DATE'], 4, 2), (int) substr($item['DUE;VALUE=DATE'], 6, 2), (int) substr($item['DUE;VALUE=DATE'], 0, 4)) + 86400);
+						}
+					} elseif (isset($item['DUE'])) {
+						$event['DTEND'] = $item['DUE'];
+						if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+							$event['DTSTART'] = $item['DUE'];
+						}
+					}
+				}
+				if (!isset($event['DTSTART']) && !isset($event['DTSTART;VALUE=DATE'])) {
+					continue;
+				}
+				$done = ($component == 'VTODO' && ((isset($item['STATUS']) && strtoupper(trim((string) $item['STATUS'])) == 'COMPLETED') || isset($item['COMPLETED'])));
+				$symbol = ($component == 'VJOURNAL' ? "\u{270E} " : ($done ? "\u{2611} " : "\u{2610} "));
+				$title = (isset($item['SUMMARY']) && $item['SUMMARY'] !== '') ? (string) $item['SUMMARY'] : trim(strtok((string) ($item['DESCRIPTION'] ?? ''), "\n"));
+				$event['SUMMARY'] = $symbol.$title;
+				$result[] = $event;
+			}
+		}
+		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -298,6 +351,11 @@ class ICal
 						$type = "VFREEBUSY";
 						break;
 
+					case "BEGIN:VJOURNAL":
+						$this->journal_count += 1; // new journal begin
+						$type = "VJOURNAL";
+						break;
+
 					case "BEGIN:VCALENDAR": // all other special string
 					case "BEGIN:DAYLIGHT":
 					case "BEGIN:VTIMEZONE":
@@ -308,6 +366,7 @@ class ICal
 					case "END:VTODO": // end special text - goto VCALENDAR key
 					case "END:VEVENT":
 					case "END:VFREEBUSY":
+					case "END:VJOURNAL":
 					case "END:VCALENDAR":
 					case "END:DAYLIGHT":
 					case "END:VTIMEZONE":
@@ -458,6 +517,10 @@ class ICal
 					// @phan-suppress-next-line PhanTypeMismatchDimFetch
 					$value = $this->cal[$type][$this->todo_count][$key].$value;
 					break;
+				case 'VJOURNAL':
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch
+					$value = $this->cal[$type][$this->journal_count][$key].$value;
+					break;
 			}
 		}
 
@@ -472,7 +535,7 @@ class ICal
 				}
 			}
 			// Remove the parameters of a property (SUMMARY;LANGUAGE=fr -> SUMMARY), except for dates that are managed below
-			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
+			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND") && !stristr($key, "DUE")) {
 				$key = explode(';', $key, 2)[0];
 			}
 			// Decode escaped characters of TEXT values
@@ -486,8 +549,8 @@ class ICal
 		}
 		//if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
-			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
+		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DUE") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
+			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE") || stristr($key, "DUE;VALUE=DATE")) {
 				list($key, $value) = array($key, $value);
 			} else {
 				list($key, $value) = $this->ical_dt_date($key, $value);
@@ -498,6 +561,11 @@ class ICal
 			case "VTODO":
 				// @phan-suppress-next-line PhanTypeMismatchReturn
 				$this->cal[$type][$this->todo_count][$key] = $value;
+				break;
+
+			case "VJOURNAL":
+				// @phan-suppress-next-line PhanTypeMismatchReturn
+				$this->cal[$type][$this->journal_count][$key] = $value;
 				break;
 
 			case "VEVENT":

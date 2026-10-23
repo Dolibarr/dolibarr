@@ -1192,6 +1192,9 @@ if (count($listofextcals)) {
 		if (is_array($ical->get_freebusy_list())) {
 			$icalevents = array_merge($icalevents, $ical->get_freebusy_list()); // Add $ical->cal['VFREEBUSY']
 		}
+		if (getDolGlobalString('AGENDA_EXT_SHOW_TODO')) {
+			$icalevents = array_merge($icalevents, $ical->getTodoAndJournalAsEvents()); // Add $ical->cal['VTODO'] and $ical->cal['VJOURNAL']
+		}
 
 		if (count($icalevents) > 0) {
 			// Duplicate all repeatable events into new entries
