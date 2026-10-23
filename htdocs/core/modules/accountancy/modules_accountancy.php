@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025	   Jean-Rémi TAPONIER   <jean-remi@netlogic.fr>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne                 <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani            <acianfa@free.fr>
+ * Copyright (C) 2012       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Jean-Rémi TAPONIER          <jean-remi@netlogic.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,15 +179,19 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 */
 	protected function printTitleContent($pdf, $curY, $colKey, $columnText)
 	{
-		$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set current position
 		$colDef = $this->cols[$colKey];
+		$xStart = isset($colDef['xStartPos']) ? $colDef['xStartPos'] : $this->marge_gauche;
+		// Title spans the full line: width goes from the column start to the right margin
+		$titleWidth = $this->page_largeur - $this->marge_droite - $xStart;
+
+		$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set current position
 		// save current cell padding
 		$curentCellPaddinds = $pdf->getCellPaddings();
 		// set cell padding with column content definition
 		$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-		// The second argument is a width, not an x coordinate: passing the right edge of the page made
-		// the cell start at the column x and overflow the margin, truncating long labels (#40790).
-		$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
+		// The first argument is a width, not an x coordinate (#40790): use the space left between
+		// the column start and the right margin, so the title spans the line without overflowing.
+		$pdf->writeHTMLCell($titleWidth, 2, $xStart, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
 		$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 		// restore cell padding
