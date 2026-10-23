@@ -2497,7 +2497,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		// only 1 event in first quarter
 		$ref1 = 'ref';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) == 1) {
-			$output = array_slice($cases1[$h], 0, 1);
+			$output = array_values(array_slice($cases1[$h], 0, 1));
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref1 = 'holiday';
 				$title1 = $langs->trans("Holiday");
@@ -2518,7 +2518,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		// only 1 event in second quarter
 		$ref2 = 'ref';
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) == 1) {
-			$output = array_slice($cases2[$h], 0, 1);
+			$output = array_values(array_slice($cases2[$h], 0, 1));
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref2 = 'holiday';
 				$title2 = $langs->trans("Holiday");
@@ -2539,7 +2539,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		// only 1 event in third quarter
 		$ref3 = 'ref';
 		if (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) == 1) {
-			$output = array_slice($cases3[$h], 0, 1);
+			$output = array_values(array_slice($cases3[$h], 0, 1));
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref3 = 'holiday';
 				$title3 = $langs->trans("Holiday");
@@ -2560,7 +2560,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		// only 1 event in fourth quarter
 		$ref4 = 'ref';
 		if (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) == 1) {
-			$output = array_slice($cases4[$h], 0, 1);
+			$output = array_values(array_slice($cases4[$h], 0, 1));
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref4 = 'holiday';
 				$title4 = $langs->trans("Holiday");
