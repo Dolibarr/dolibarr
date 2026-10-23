@@ -28,6 +28,7 @@
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3830,6 +3831,14 @@ class Facture extends CommonInvoice
 				return -12;
 			}
 
+			// Check that source invoice is not already transferred into accounting: its entries would remain and the
+			// replacement invoice would be transferred too.
+			if ($facreplaced->getVentilExportCompta() > 0) {
+				$this->error = $langs->trans("ErrorInvoiceReplacedAlreadyInAccountancy", $facreplaced->ref);
+				$this->db->rollback();
+				return -14;
+			}
+
 			$result = $facreplaced->setCanceled($user, self::CLOSECODE_REPLACED, '');
 			if ($result < 0) {
 				$this->error = $facreplaced->error;
@@ -5581,6 +5590,7 @@ class Facture extends CommonInvoice
 		$sql .= " AND f.paye = 0"; // Not paid completely
 		$sql .= " AND pf.fk_paiement IS NULL"; // No payment already done
 		$sql .= " AND ff.fk_statut IS NULL"; // Return true if it is not a replacement invoice
+		$sql .= " AND NOT EXISTS (SELECT ab.rowid FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid)"; // Not already transferred into accounting
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
