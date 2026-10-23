@@ -236,11 +236,11 @@ class PrivacyGuard
 		// address only when a postcode and a town follow (ΦΟΡΜΙΩΝΟΣ 101, 115 28 Athens).
 		// No i flag on the shapes that start with a word: with it, \p{Lu} also
 		// takes lowercase letters and a match grows leftwards over the sentence.
-		$address_keywords = 'Street|Road|Avenue|Lane|Boulevard|Drive|Court|Way|Plaza|Square|Rue|Allée|Impasse|Chemin|Place|Quai|Via|Viale|Piazza|Corso|Calle|Avenida|Paseo|Camino|Strasse|Straße|Platz|Gasse|Weg|Οδός|Οδ\.|Λεωφόρος|Λεωφ\.|Πλατεία';
+		$address_keywords = 'Street|Road|Avenue|Lane|Boulevard|Drive|Court|Way|Plaza|Square|Rue|Allée|Impasse|Chemin|Place|Quai|Via|Viale|Piazza|Corso|Avenida|Paseo|Camino|Strasse|Straße|Platz|Gasse|Weg|Οδός|Οδ\.|Λεωφόρος|Λεωφ\.|Πλατεία';
 		$address_abbreviations = 'St|Rd|Ave|Ln|Blvd|Dr|Ct|Sq|Str';
 		// Written in lowercase after the number, as French, Spanish and Italian
 		// addresses do ("12 rue de Rivoli"); English street words are capitalised.
-		$address_keywords_lower = 'rue|avenue|boulevard|chemin|place|allée|impasse|quai|calle|avenida|paseo|camino|via|viale|piazza|corso';
+		$address_keywords_lower = 'rue|avenue|boulevard|chemin|place|allée|impasse|quai|avenida|paseo|camino|via|viale|piazza|corso';
 		$address_suffixes = 'strasse|straße|weg|platz|gasse|allee|ring|damm|ufer|laan|straat|gracht|vej|gatan|gade';
 		$word = '\p{Lu}[\p{L}\p{N}\.\'\-]*';
 		$particle = '\p{Ll}{1,3}\b';	// de, la, du, del, di, von, der
