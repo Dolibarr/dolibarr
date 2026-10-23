@@ -813,29 +813,7 @@ class ToolApiBridge extends McpTool
 					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
 					'params' => ['id' => "Rowid of the task."]
 				],
-				'put' => [
-					'suffix' => 'update',
-					'description' => "Update fields of an existing task: label, description, progress percent, planned workload, dates. Only the fields given are changed. The user confirms before anything is written.",
-					'write' => [
-						'preview' => 'AIPreviewUpdateRecord',
-						'required' => ['id'],
-						'object' => 'Task',
-						'right' => ['projet', 'creer'],
-						'args' => ['id'],
-						'dates' => ['date_start', 'date_end'],
-						'hours' => ['planned_workload'],
-						'trim_fields' => ['label', 'description'],
-					],
-					'params' => [
-						'id' => "Rowid of the task to update (required).",
-						'label' => "New label.",
-						'description' => "New description.",
-						'progress' => "New progress percent 0-100.",
-						'planned_workload' => "New planned workload in hours.",
-						'date_start' => "New start date YYYY-MM-DD.",
-						'date_end' => "New end date YYYY-MM-DD."
-					]
-				],
+				'put' => $this->taskUpdateMethod(),
 				'addTimeSpent' => [
 					'suffix' => 'add_timespent',
 					'description' => "Log a time-spent record on a task: date, duration in hours, optional note and a new progress percent. The user confirms before anything is written.",
@@ -2218,6 +2196,37 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Describe bounded planning edits of an existing task.
+	 *
+	 * @return array<string,mixed> Method enrichment
+	 */
+	private function taskUpdateMethod()
+	{
+		return [
+			'suffix' => 'update',
+			'description' => 'Partially update a task by exactly one positive id or exact ref, in a draft or open project. Omitted fields stay unchanged; empty text clears it, null clears dates or workload. Dates retain time; planned workload is in seconds. No status, progress, hierarchy, project, assignments or time-spent changes. Unavailable while automatic project closure is enabled.',
+			'write' => [
+				'preview' => 'AIPreviewUpdateTask',
+				'right' => ['projet', 'creer'], 'read_right' => ['projet', 'lire'],
+				'parent' => 'id', 'ref' => 'ref', 'object' => 'Task',
+				'access' => ['task', '', ''], 'task_update' => true,
+				'trim_fields' => ['label', 'description', 'note_public', 'note_private'],
+				'sanitize_fields' => ['label' => 'alphanohtml', 'description' => 'restricthtml', 'note_public' => 'restricthtml', 'note_private' => 'restricthtml'],
+				'preview_labels' => ['label' => 'Label', 'description' => 'Description', 'note_public' => 'NotePublic', 'note_private' => 'NotePrivate', 'date_start' => 'DateStart', 'date_end' => 'DateEnd', 'planned_workload' => 'AIPlannedWorkloadSeconds'],
+				'preview_dates' => ['date_start', 'date_end'],
+				'compact_result' => true,
+				'update' => [
+					'label' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
+					'description' => ['type' => 'string'], 'note_public' => ['type' => 'string'], 'note_private' => ['type' => 'string'],
+					'date_start' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Time is preserved.'],
+					'date_end' => ['type' => ['integer', 'null'], 'minimum' => 1, 'description' => 'Unix timestamp, or null to clear. Must not precede the resulting start date.'],
+					'planned_workload' => ['type' => ['integer', 'null'], 'minimum' => 0, 'maximum' => 2147483647, 'description' => 'Planned duration in SECONDS, not hours. Null clears it; zero is allowed.']
+				]
+			]
+		];
+	}
+
+	/**
 	 * Load the REST API runtime (Restler autoloader + DolibarrApi base classes),
 	 * mirroring the bootstrap sequence of htdocs/api/index.php, so that the
 	 * endpoint classes (which extend DolibarrApi and throw RestException) can be
@@ -2982,7 +2991,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string $class Business class declared by the write.
 	 * @param  int    $id    Rowid of the record.
 	 * @param  string $ref   Exact reference when no rowid was supplied.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|null Record, or null when it cannot be read.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|Task|null Record, or null when it cannot be read.
 	 */
 	protected function fetchBusinessObject($class, $id, $ref = '')
 	{
@@ -2998,14 +3007,15 @@ class ToolApiBridge extends McpTool
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php',
-			'Project' => '/projet/class/project.class.php'
+			'Project' => '/projet/class/project.class.php',
+			'Task' => '/projet/class/task.class.php'
 		);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|Task $obj';
 		$result = $ref === '' ? $obj->fetch((int) $id) : $obj->fetch((int) $id, $ref);
 		if ($result > 0) {
 			return $obj;
@@ -3033,7 +3043,7 @@ class ToolApiBridge extends McpTool
 	 *
 	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
 	 * @param  array<string,mixed> $args  Arguments of the call.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Project|null Record, or null when not found.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Project|Task|null Record, or null when not found.
 	 */
 	private function fetchWriteParent(array $write, array $args)
 	{
@@ -3118,6 +3128,33 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Check task dates, parent project write access and automatic closure settings.
+	 *
+	 * @param array<string,mixed> $args Normalized update arguments
+	 * @param Task $parent Existing task
+	 * @return void
+	 * @throws InvalidArgumentException When the edit is not safe
+	 */
+	private function validateTaskUpdate(array $args, $parent)
+	{
+		if (getDolGlobalString('PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE')) {
+			throw new InvalidArgumentException('Task updates are unavailable while automatic project closure is enabled');
+		}
+		$project = $this->fetchBusinessObject('Project', (int) $parent->fk_project);
+		if (!$project || !$this->canAccessWriteObject(['project', '', ''], (int) $project->id) || !$this->canWriteProject($project)) {
+			throw new InvalidArgumentException('Access denied to project');
+		}
+		if (!in_array($project->status ?? null, [0, 1, '0', '1'], true)) {
+			throw new InvalidArgumentException('Only draft or open projects can be edited by this tool');
+		}
+		$start = array_key_exists('date_start', $args) ? $args['date_start'] : $parent->date_start;
+		$end = array_key_exists('date_end', $args) ? $args['date_end'] : $parent->date_end;
+		if ($start && $end && $end < $start) {
+			throw new InvalidArgumentException('End date must not precede start date');
+		}
+	}
+
+	/**
 	 * Normalise and validate partial updates without creation defaults.
 	 *
 	 * @param array<string,mixed> $args Incoming arguments
@@ -3169,7 +3206,7 @@ class ToolApiBridge extends McpTool
 			$types = (array) $write['update'][$field]['type'];
 			$valid = ($value === null && in_array('null', $types, true))
 				|| (is_string($value) && in_array('string', $types, true))
-				|| (is_int($value) && in_array('integer', $types, true) && $value >= ($write['update'][$field]['minimum'] ?? 0))
+				|| (is_int($value) && in_array('integer', $types, true) && $value >= ($write['update'][$field]['minimum'] ?? 0) && $value <= ($write['update'][$field]['maximum'] ?? PHP_INT_MAX))
 				|| (is_array($value) && in_array('object', $types, true) && !array_filter(array_keys($value), 'is_int'));
 			$definition = $write['update'][$field];
 			if (is_string($value)) {
@@ -3193,6 +3230,9 @@ class ToolApiBridge extends McpTool
 		}
 		if (!empty($write['project_update'])) {
 			$this->validateProjectUpdate($args, $parent);
+		}
+		if (!empty($write['task_update'])) {
+			$this->validateTaskUpdate($args, $parent);
 		}
 		foreach (($write['references'] ?? []) as $field => $access) {
 			if (!empty($changes[$field]) && !$this->canAccessWriteObject($access, (int) $changes[$field])) {
@@ -3676,6 +3716,12 @@ class ToolApiBridge extends McpTool
 			}
 			if (!empty($write['project_update'])) {
 				$context = (string) $parent->title;
+			} elseif (!empty($write['task_update'])) {
+				$project = $this->fetchBusinessObject('Project', (int) $parent->fk_project);
+				if (!$project) {
+					return 'Record not found';
+				}
+				$context = $parent->label.' - '.$project->ref.' - '.$project->title;
 			} else {
 				$supplier = $this->fetchBusinessObject('Societe', (int) $parent->socid);
 				$context = $supplier ? $supplier->name : '';
