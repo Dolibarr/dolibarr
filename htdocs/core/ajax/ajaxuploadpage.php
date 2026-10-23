@@ -567,12 +567,13 @@ if (!empty($errors)) {
 		http_response_code(500);
 
 		if (getDolGlobalString("AI_DEBUG")) {
-			dol_syslog("ajaxuploadpage.php Failed to decode the answer of the AI service as JSON: ".dol_trunc((string) $answer, 500), LOG_WARNING, 0, '_ai');
+			dol_syslog("ajaxuploadpage.php Failed to decode the answer of the AI service as JSON (".json_last_error_msg()."): ".dol_trunc((string) $answer, 500), LOG_WARNING, 0, '_ai');
 		}
 
+		$langs->load("errors");
 		$error++;
-		$errors[] = 'Failed to decode answer';
-		print 'Failed to decode answer';
+		$errors[] = $langs->transnoentitiesnoconv("ErrorAIAnswerIsNotValidJSON", json_last_error_msg());
+		print json_encode(array('errors' => $errors));
 	} else {
 		// Save the JSON answer into a cache file next to the uploaded file (only if file name has no path part)
 		if (dol_sanitizeFileName($file) === $file && dol_is_file($fullpathoffile)) {

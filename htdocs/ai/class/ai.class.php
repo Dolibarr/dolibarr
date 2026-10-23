@@ -68,7 +68,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment. The JSON must be valid: values must be literals, never expressions or calculations, and no comments.';
 
 
 	/**
@@ -315,6 +315,15 @@ class Ai
 					if ($prePrompt) {
 						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 					}
+				}
+			}
+
+			// For document parsing, ask the services that support it to return only a valid JSON
+			if ($function == 'docparsing' && !is_array($instructions)) {
+				if ($this->apiService == 'google') {
+					$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
+				} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
+					$arrayforpayload['response_format'] = array('type' => 'json_object');
 				}
 			}
 

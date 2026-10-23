@@ -950,6 +950,8 @@ if ($action == 'showsummary') {
 	}
 
 	if ($modulepart == 'invoice_supplier') {
+		$langs->loadLangs(array("bills", "companies", "products"));
+
 		// Parse JSON to get information for an invoice
 		$invoiceindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'supplier_invoice');
 
