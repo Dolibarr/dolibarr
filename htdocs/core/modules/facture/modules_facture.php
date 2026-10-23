@@ -225,7 +225,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// This is what you will need to identify incoming payments.
 		$qrBill->setPaymentReference(
 			SwissQrBill\DataGroup\Element\PaymentReference::create(
-				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON
+				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON // @phpstan-ignore-line
 			)
 		);
 

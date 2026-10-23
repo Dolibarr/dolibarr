@@ -882,7 +882,7 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 			if (count($tmparray) > 2 && ($user->hasRight($modulepart, $tmparray[0], $mode))) {
 				$feature2 = $tmparray[0];
 			}
-			restrictedArea($user, $modulepart, $object, '', $feature2, 'fk_soc', 'rowid', 0, 1, $mode);
+			restrictedArea($user, $modulepart, $object, '', $feature2, 'fk_soc', 'rowid', 0, 1, $mode); // @phpstan-ignore-line
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;
@@ -899,7 +899,7 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode); // @phpstan-ignore-line
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties
