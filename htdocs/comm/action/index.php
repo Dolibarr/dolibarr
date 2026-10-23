@@ -1021,11 +1021,11 @@ if (count($listofextcals)) {
 						}
 					}
 
-					if ($hasrrule && count(array_filter(array_keys($icalevent['RRULE']), function (string $rulekey): bool {
+					if ($hasrrule && (in_array($icalevent['RRULE']['FREQ'] ?? '', ['MINUTELY', 'HOURLY']) || count(array_filter(array_keys($icalevent['RRULE']), function (string $rulekey): bool {
 						return strpos($rulekey, 'BY') === 0;
-					})) > 0) {
-						// Rule with BYDAY, BYMONTHDAY or BYMONTH: we compute the occurrences from the dates as written in the file
-						foreach ($ical->expandRRule($icalevent['RRULE'], (int) $datecurstart + $exdateshift, (int) $lastdaytoshow + $exdateshift, ($until ? (int) $until + $exdateshift : 0)) as $occurrencewall) {
+					})) > 0)) {
+						// Rule with a BYxxx part, or hourly or by minute: we compute the occurrences from the dates as written in the file
+						foreach ($ical->expandRRule($icalevent['RRULE'], (int) $datecurstart + $exdateshift, (int) $lastdaytoshow + $exdateshift, ($until ? (int) $until + $exdateshift : 0), (int) $firstdaytoshow + $exdateshift - $occurrenceduration - 86400) as $occurrencewall) {
 							$occurrencestart = $occurrencewall - $exdateshift;
 							$occurrenceend = $occurrencestart + $occurrenceduration;
 							if ($occurrenceend < $firstdaytoshow || in_array(gmdate('Ymd', $occurrencewall), $exdates)) {

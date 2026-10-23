@@ -679,7 +679,8 @@ class ICal
 	}
 
 	/**
-	 * Return if a recurrence rule can be expanded by expandRRule(): FREQ DAILY, WEEKLY, MONTHLY or YEARLY with, as BYxxx parts, only BYDAY, BYMONTHDAY and BYMONTH.
+	 * Return if a recurrence rule can be expanded by expandRRule(): FREQ MINUTELY, HOURLY, DAILY, WEEKLY, MONTHLY or YEARLY with, as parts,
+	 * BYDAY, BYMONTHDAY, BYMONTH, BYYEARDAY, BYWEEKNO, BYSETPOS, BYHOUR, WKST (some of them only for some FREQ).
 	 *
 	 * @param 	array<string,string>	$rrule	Rule decoded by ical_rrule()
 	 * @return 	bool					True if the rule can be expanded
@@ -687,14 +688,23 @@ class ICal
 	public function isRRuleSupported($rrule)
 	{
 		$freq = ($rrule['FREQ'] ?? '');
-		if (!in_array($freq, array('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'))) {
+		if (!in_array($freq, array('MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'))) {
 			return false;
 		}
+		$byparts = array();
 		foreach (array_keys($rrule) as $key) {
-			if (strpos($key, 'BY') === 0 && !in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH'))) {
-				return false;
+			if (strpos($key, 'BY') === 0) {
+				if (!in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO', 'BYSETPOS', 'BYHOUR'))) {
+					return false;
+				}
+				$byparts[$key] = $key;
 			}
 		}
+		if (isset($rrule['WKST']) && !in_array(strtoupper($rrule['WKST']), array('SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'))) {
+			return false;
+		}
+		$isshort = in_array($freq, array('MINUTELY', 'HOURLY'));
+
 		if (isset($rrule['BYDAY'])) {
 			$byday = $this->parseByDay($rrule['BYDAY']);
 			if ($byday === null) {
@@ -704,21 +714,38 @@ class ICal
 				if ($item[0] != 0 && !in_array($freq, array('MONTHLY', 'YEARLY'))) {
 					return false;	// An ordinal (2MO, -1FR) has a meaning only for a monthly or yearly rule
 				}
+				if ($item[0] != 0 && $freq == 'YEARLY' && empty($rrule['BYMONTH'])) {
+					return false;
+				}
 			}
 		}
-		foreach (array('BYMONTHDAY' => 31, 'BYMONTH' => 12) as $key => $max) {
+		$limits = array('BYMONTHDAY' => array(31, false), 'BYMONTH' => array(12, true), 'BYYEARDAY' => array(366, false), 'BYWEEKNO' => array(53, false), 'BYSETPOS' => array(366, false), 'BYHOUR' => array(23, true));
+		foreach ($limits as $key => $limit) {
 			if (isset($rrule[$key])) {
 				foreach (explode(',', $rrule[$key]) as $item) {
-					if (!preg_match('/^-?[0-9]{1,2}$/', trim($item)) || (int) $item == 0 || abs((int) $item) > $max || ($key == 'BYMONTH' && (int) $item < 0)) {
+					$value = (int) $item;
+					if (!preg_match('/^-?[0-9]{1,3}$/', trim($item)) || abs($value) > $limit[0] || ($limit[1] && $value < 0) || ($key != 'BYHOUR' && $value == 0)) {
 						return false;
 					}
 				}
 			}
 		}
-		if (isset($rrule['BYMONTHDAY']) && $freq == 'WEEKLY') {
+		if (isset($byparts['BYSETPOS']) && count($byparts) < 2) {
+			return false;	// BYSETPOS selects among the occurrences made by the other BYxxx parts
+		}
+		if ($isshort && (isset($byparts['BYYEARDAY']) || isset($byparts['BYWEEKNO']) || isset($byparts['BYSETPOS']))) {
 			return false;
 		}
-		if ($freq == 'YEARLY' && empty($rrule['BYMONTH']) && (isset($rrule['BYDAY']) || isset($rrule['BYMONTHDAY']))) {
+		if (isset($byparts['BYWEEKNO']) && ($freq != 'YEARLY' || isset($byparts['BYMONTH']) || isset($byparts['BYMONTHDAY']) || isset($byparts['BYYEARDAY']))) {
+			return false;
+		}
+		if (isset($byparts['BYYEARDAY']) && ($freq != 'YEARLY' || isset($byparts['BYMONTH']) || isset($byparts['BYMONTHDAY']) || isset($byparts['BYDAY']))) {
+			return false;
+		}
+		if (isset($byparts['BYMONTHDAY']) && $freq == 'WEEKLY') {
+			return false;
+		}
+		if ($freq == 'YEARLY' && empty($rrule['BYMONTH']) && !isset($byparts['BYWEEKNO']) && !isset($byparts['BYYEARDAY']) && (isset($byparts['BYDAY']) || isset($byparts['BYMONTHDAY']))) {
 			return false;
 		}
 		return true;
@@ -781,23 +808,48 @@ class ICal
 	}
 
 	/**
-	 * Return the starts of the occurrences of a recurrence rule with BYDAY, BYMONTHDAY or BYMONTH (see isRRuleSupported()).
+	 * Return the start (as GMT timestamp of the date and time written in the file) of the first week of a year.
+	 *
+	 * @param 	int		$year	Year
+	 * @param 	int		$wkst	First day of the week (0=Sunday...6=Saturday)
+	 * @return 	int				Timestamp of the first day of the week number 1 (the first week with at least 4 days in the year)
+	 */
+	private function getFirstWeekOfYear($year, $wkst)
+	{
+		$jan1 = gmmktime(0, 0, 0, 1, 1, $year);
+		$offset = (((int) gmdate('w', $jan1)) - $wkst + 7) % 7;
+		$start = $jan1 - $offset * 86400;
+		if ((7 - $offset) < 4) {
+			$start += 7 * 86400;
+		}
+		return $start;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()).
 	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
 	 *
 	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
 	 * @param 	int						$dtstart	Start of the first occurrence
 	 * @param 	int						$to			Occurrences starting from this date are not returned
 	 * @param 	int						$until		Occurrences starting after this date are not returned (0 = no limit)
+	 * @param 	int						$from		Date from which the occurrences are needed: when the rule has no COUNT, the periods before are skipped
 	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
 	 */
-	public function expandRRule($rrule, $dtstart, $to, $until = 0)
+	public function expandRRule($rrule, $dtstart, $to, $until = 0, $from = 0)
 	{
+		$daysofweek = array('SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6);
 		$freq = ($rrule['FREQ'] ?? '');
 		$interval = max(1, (int) ($rrule['INTERVAL'] ?? 1));
 		$maxcount = (int) ($rrule['COUNT'] ?? 0);
+		$wkst = $daysofweek[strtoupper($rrule['WKST'] ?? 'MO')] ?? 1;
 		$byday = (isset($rrule['BYDAY']) ? (array) $this->parseByDay($rrule['BYDAY']) : array());
 		$bymonthday = (isset($rrule['BYMONTHDAY']) ? array_map('intval', explode(',', $rrule['BYMONTHDAY'])) : array());
 		$bymonth = (isset($rrule['BYMONTH']) ? array_map('intval', explode(',', $rrule['BYMONTH'])) : array());
+		$byyearday = (isset($rrule['BYYEARDAY']) ? array_map('intval', explode(',', $rrule['BYYEARDAY'])) : array());
+		$byweekno = (isset($rrule['BYWEEKNO']) ? array_map('intval', explode(',', $rrule['BYWEEKNO'])) : array());
+		$bysetpos = (isset($rrule['BYSETPOS']) ? array_map('intval', explode(',', $rrule['BYSETPOS'])) : array());
+		$byhour = (isset($rrule['BYHOUR']) ? array_map('intval', explode(',', $rrule['BYHOUR'])) : array());
 
 		$timeofday = (($dtstart % 86400) + 86400) % 86400;
 		$firstday = $dtstart - $timeofday;
@@ -805,78 +857,165 @@ class ICal
 		$month0 = (int) gmdate('n', $firstday);
 		$day0 = (int) gmdate('j', $firstday);
 		$dayofweek0 = (int) gmdate('w', $firstday);
+		$minutesecond = $timeofday % 3600;
+		$hour0 = intdiv($timeofday, 3600);
+		// Times of the day of an occurrence, for the rules that can have several by day (BYHOUR)
+		$times = array();
+		foreach ((empty($byhour) ? array($hour0) : $byhour) as $hour) {
+			$times[] = $hour * 3600 + $minutesecond;
+		}
+		sort($times);
+		$skip = ($maxcount == 0 && $from > $dtstart);
 
 		$result = array();
 		$count = 0;
 		for ($i = 0; $i < 20000; $i++) {
-			$days = array();
-			if ($freq == 'DAILY') {
-				$days[] = $firstday + $i * $interval * 86400;
-				$periodstart = $days[0];
-			} elseif ($freq == 'WEEKLY') {
-				// Weeks start on monday
-				$periodstart = $firstday - ((($dayofweek0 + 6) % 7) * 86400) + $i * $interval * 7 * 86400;
-				$daysofweek = array();
-				foreach ($byday as $item) {
-					$daysofweek[] = $item[1];
+			$candidates = array();
+			if ($freq == 'MINUTELY' || $freq == 'HOURLY') {
+				$step = ($freq == 'HOURLY' ? 3600 : 60) * $interval;
+				$index = $i + ($skip ? max(0, intdiv($from - $dtstart, $step) - 1) : 0);
+				$time = $dtstart + $index * $step;
+				$periodstart = $time;
+				$day = $time - ((($time % 86400) + 86400) % 86400);
+				$ok = (empty($bymonth) || in_array((int) gmdate('n', $day), $bymonth));
+				if ($ok && !empty($bymonthday)) {
+					$nbdays = (int) gmdate('t', $day);
+					$dayofmonth = (int) gmdate('j', $day);
+					$ok = (in_array($dayofmonth, $bymonthday) || in_array($dayofmonth - $nbdays - 1, $bymonthday));
 				}
-				if (empty($daysofweek)) {
-					$daysofweek[] = $dayofweek0;
+				if ($ok && !empty($byday)) {
+					$ok = false;
+					foreach ($byday as $item) {
+						if ($item[1] == (int) gmdate('w', $day)) {
+							$ok = true;
+						}
+					}
 				}
-				foreach ($daysofweek as $dayofweek) {
-					$days[] = $periodstart + (($dayofweek + 6) % 7) * 86400;
+				if ($ok && !empty($byhour)) {
+					$ok = in_array((int) gmdate('G', $time), $byhour);
 				}
-				sort($days);
-			} elseif ($freq == 'MONTHLY') {
-				$monthindex = $month0 - 1 + $i * $interval;
-				$year = $year0 + intdiv($monthindex, 12);
-				$month = $monthindex % 12 + 1;
-				$periodstart = gmmktime(0, 0, 0, $month, 1, $year);
-				if (empty($bymonth) || in_array($month, $bymonth)) {
-					$days = $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0);
+				if ($ok) {
+					$candidates[] = $time;
 				}
 			} else {
-				$year = $year0 + $i * $interval;
-				$periodstart = gmmktime(0, 0, 0, 1, 1, $year);
-				$months = (empty($bymonth) ? array($month0) : $bymonth);
-				sort($months);
-				foreach ($months as $month) {
-					$days = array_merge($days, $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0));
+				$days = array();
+				if ($freq == 'DAILY') {
+					$index = $i + ($skip ? max(0, intdiv($from - $firstday, $interval * 86400) - 1) : 0);
+					$day = $firstday + $index * $interval * 86400;
+					$periodstart = $day;
+					$ok = (empty($bymonth) || in_array((int) gmdate('n', $day), $bymonth));
+					if ($ok && !empty($bymonthday)) {
+						$nbdays = (int) gmdate('t', $day);
+						$dayofmonth = (int) gmdate('j', $day);
+						$ok = (in_array($dayofmonth, $bymonthday) || in_array($dayofmonth - $nbdays - 1, $bymonthday));
+					}
+					if ($ok && !empty($byday)) {
+						$ok = false;
+						foreach ($byday as $item) {
+							if ($item[1] == (int) gmdate('w', $day)) {
+								$ok = true;
+							}
+						}
+					}
+					if ($ok) {
+						$days[] = $day;
+					}
+				} elseif ($freq == 'WEEKLY') {
+					$weekstart0 = $firstday - ((($dayofweek0 - $wkst + 7) % 7) * 86400);
+					$index = $i + ($skip ? max(0, intdiv($from - $weekstart0, $interval * 7 * 86400) - 1) : 0);
+					$periodstart = $weekstart0 + $index * $interval * 7 * 86400;
+					$weekdays = array();
+					foreach ($byday as $item) {
+						$weekdays[] = $item[1];
+					}
+					if (empty($weekdays)) {
+						$weekdays[] = $dayofweek0;
+					}
+					foreach ($weekdays as $weekday) {
+						$day = $periodstart + ((($weekday - $wkst + 7) % 7) * 86400);
+						if (empty($bymonth) || in_array((int) gmdate('n', $day), $bymonth)) {
+							$days[] = $day;
+						}
+					}
+				} elseif ($freq == 'MONTHLY') {
+					$monthindex = $month0 - 1 + $i * $interval;
+					if ($skip) {
+						$monthsfrom = ((int) gmdate('Y', $from) - $year0) * 12 + ((int) gmdate('n', $from)) - $month0;
+						$monthindex += max(0, intdiv($monthsfrom, $interval) - 1) * $interval;
+					}
+					$year = $year0 + intdiv($monthindex, 12);
+					$month = $monthindex % 12 + 1;
+					$periodstart = gmmktime(0, 0, 0, $month, 1, $year);
+					if (empty($bymonth) || in_array($month, $bymonth)) {
+						$days = $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0);
+					}
+				} else {
+					$index = $i + ($skip ? max(0, intdiv((int) gmdate('Y', $from) - $year0, $interval) - 1) : 0);
+					$year = $year0 + $index * $interval;
+					$periodstart = gmmktime(0, 0, 0, 1, 1, $year);
+					$nbdaysofyear = (int) gmdate('z', gmmktime(0, 0, 0, 12, 31, $year)) + 1;
+					if (!empty($byweekno)) {
+						$firstweek = $this->getFirstWeekOfYear($year, $wkst);
+						$nbweeks = intdiv($this->getFirstWeekOfYear($year + 1, $wkst) - $firstweek, 7 * 86400);
+						$weekdays = array();
+						foreach ($byday as $item) {
+							$weekdays[] = $item[1];
+						}
+						if (empty($weekdays)) {
+							$weekdays[] = $dayofweek0;
+						}
+						foreach ($byweekno as $weekno) {
+							$number = ($weekno > 0 ? $weekno : $nbweeks + $weekno + 1);
+							if ($number < 1 || $number > $nbweeks) {
+								continue;
+							}
+							foreach ($weekdays as $weekday) {
+								$days[] = $firstweek + ($number - 1) * 7 * 86400 + ((($weekday - $wkst + 7) % 7) * 86400);
+							}
+						}
+					} elseif (!empty($byyearday)) {
+						foreach ($byyearday as $yearday) {
+							$number = ($yearday > 0 ? $yearday : $nbdaysofyear + $yearday + 1);
+							if ($number >= 1 && $number <= $nbdaysofyear) {
+								$days[] = $periodstart + ($number - 1) * 86400;
+							}
+						}
+					} else {
+						$months = (empty($bymonth) ? array($month0) : $bymonth);
+						sort($months);
+						foreach ($months as $month) {
+							$days = array_merge($days, $this->getDaysOfMonth($year, $month, $byday, $bymonthday, $day0));
+						}
+					}
+				}
+				foreach ($days as $day) {
+					foreach ($times as $timevalue) {
+						$candidates[] = $day + $timevalue;
+					}
 				}
 			}
 			if ($periodstart >= $to) {
 				break;
 			}
 
-			foreach ($days as $day) {
-				if ($day < $firstday) {
+			$candidates = array_values(array_unique($candidates));
+			sort($candidates);
+			if (!empty($bysetpos)) {
+				$selected = array();
+				foreach ($bysetpos as $position) {
+					$position = ($position > 0 ? $position - 1 : count($candidates) + $position);
+					if (isset($candidates[$position])) {
+						$selected[$candidates[$position]] = $candidates[$position];
+					}
+				}
+				sort($selected);
+				$candidates = $selected;
+			}
+
+			foreach ($candidates as $start) {
+				if ($start < $dtstart) {
 					continue;
 				}
-				if ($freq == 'DAILY' || $freq == 'WEEKLY') {
-					// BYMONTH, and for a daily rule BYMONTHDAY and BYDAY, only filter the days
-					if (!empty($bymonth) && !in_array((int) gmdate('n', $day), $bymonth)) {
-						continue;
-					}
-					if ($freq == 'DAILY' && !empty($bymonthday)) {
-						$nbdays = (int) gmdate('t', $day);
-						$dayofmonth = (int) gmdate('j', $day);
-						if (!in_array($dayofmonth, $bymonthday) && !in_array($dayofmonth - $nbdays - 1, $bymonthday)) {
-							continue;
-						}
-					}
-					if ($freq == 'DAILY' && !empty($byday)) {
-						$found = false;
-						foreach ($byday as $item) {
-							if ($item[1] == (int) gmdate('w', $day)) {
-								$found = true;
-							}
-						}
-						if (!$found) {
-							continue;
-						}
-					}
-				}
-				$start = $day + $timeofday;
 				if ($start >= $to || ($until && $start > $until)) {
 					return $result;
 				}
