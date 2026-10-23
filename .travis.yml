@@ -37,13 +37,13 @@ jobs:
     - stage: PHP 7.0-8.1
       if: type = push
       php: '7.1'
-      env: 
+      env:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.1
     - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
       php: '8.1'
-      env: 
+      env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.1
     #- stage: PHP Dev
@@ -118,12 +118,12 @@ install:
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
-  fi 
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
     sudo update-alternatives --set php /usr/bin/php8.1
-  fi 
+  fi
   php -i | head -
-  
+
 - |
   echo "Updating Composer config"
   curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -228,7 +228,7 @@ before_script:
       #sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa
       sudo mysqld_safe --skip-grant-tables --socket=/tmp/aaa &
       sleep 3
-      sudo ps fauxww 
+      sudo ps fauxww
       echo "MySQL set root password"
       sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
       echo "MySQL grant"
@@ -237,7 +237,7 @@ before_script:
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'use mysql; select * from user;'
       echo "List pid file"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e "show variables like '%pid%';"
-      
+
       #sudo kill `cat /var/lib/mysqld/mysqld.pid`
       #sudo systemctl start mariadb
 
@@ -245,7 +245,7 @@ before_script:
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       echo "MySQL flush"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES;'
-      
+
       echo "MySQL load sql"
       sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
@@ -383,12 +383,12 @@ script:
     echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
     echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
     #cat $INSTALL_FORCED_FILE
-  
+
   - |
     echo "Upgrading Dolibarr"
     # Ensure we catch errors with -e. Set this to +e if you want to go to the end to see log files.
     # Note: We keep +e because with pgsql, one of upgrade process fails even if migration seems ok, so
-    # I disable stop on error to be able to continue. 
+    # I disable stop on error to be able to continue.
     set +e
     cd htdocs/install
     php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
@@ -456,7 +456,7 @@ script:
   - |
     echo Result of migration scripts
     ls -alrt $TRAVIS_BUILD_DIR/
-        
+
     echo Show content of last file
     cat $TRAVIS_BUILD_DIR/"$(ls -rt $TRAVIS_BUILD_DIR/ | tail -n1)"
 
@@ -478,12 +478,13 @@ script:
 
   - |
     echo "Unit testing"
-    # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
-    set -e
+    # Note: We do not use set -e here because it stops the Travis shell, so after_failure is never run and we can't see dolibarr.log.
+    # The step still fails because the last command returns the phpunit result.
+    set +e
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
-    set +e
+    [ "$phpunitresult" = "0" ]
 
 after_script:
   - |
