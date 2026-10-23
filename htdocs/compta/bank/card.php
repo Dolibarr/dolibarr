@@ -696,7 +696,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateAccount");
+	print $form->buttonsSaveCancel("CreateAccount", 'Cancel', array(), false, 'reposition');
 
 	print '</form>';
 } else {
