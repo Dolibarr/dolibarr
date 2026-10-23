@@ -528,6 +528,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
 			print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
 			print '<input type="hidden" name="societe" value="'.$obj->name.'">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print dol_get_fiche_head([]);
 
@@ -981,7 +982,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 				print '<br><div class="center">';
 				print '<input type="checkbox"'.$closepaidinvoiceschecked.' id="closepaidinvoices" name="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
-				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print '<input type="submit" class="button reposition" value="'.$langs->trans('ToMakePayment').'">';
 				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}
