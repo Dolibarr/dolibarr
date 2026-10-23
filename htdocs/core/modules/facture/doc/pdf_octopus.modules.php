@@ -959,7 +959,7 @@ class pdf_octopus extends ModelePDFFactures
 						$localtax1_type = $object->lines[$i]->localtax1_type;
 						$localtax2_type = $object->lines[$i]->localtax2_type;
 
-						$vatrate = (string)$object->lines[$i]->tva_tx;
+						$vatrate = (string) $object->lines[$i]->tva_tx;
 
 						// Retrieve type from database for backward compatibility with old records
 						if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
