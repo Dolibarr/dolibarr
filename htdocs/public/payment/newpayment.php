@@ -137,6 +137,8 @@ if (!$action) {
 
 
 $thirdparty = null; // Init for static analysis
+$attendee = null; // Init for static analysis
+$invoice = null; // Init for static analysis
 $stripecu = null; // Init for static analysis
 $paymentintent = null; // Init for static analysis
 
@@ -429,6 +431,33 @@ dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, L
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	// Payment account information
+	$accountid = 0;
+	if ($paymentmethod == 'paybox') {
+		$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'paypal') {
+		$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'stripe') {
+		$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	// Get bank account for a specific paymentmedthod
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['bankaccountid'])) {
+			dol_syslog('accountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+			$accountid = $hookmanager->resArray['bankaccountid'];
+		}
+	}
+	if (isModEnabled('bank') && $accountid < 0) {
+		$mesg = 'Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
+		$action = '';
+	}
+
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
@@ -893,6 +922,18 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	} else {
 		$_SESSION['payerID'] = '';
+	}
+
+	// Save in database the data of the session (key = id of the charge or PaymentIntent), paymentok.php reads them from there first
+	if (!$error && !empty($_SESSION['TRANSACTIONID'])) {
+		onlinePaymentSessionSave(getDolGlobalString('STRIPE_LIVE') ? 'StripeLive' : 'StripeTest', $_SESSION['TRANSACTIONID'], array(
+			'fulltag' => $FULLTAG,
+			'FinalPaymentAmt' => $amount,
+			'currencyCodeType' => $currency,
+			'ipaddress' => $_SESSION['ipaddress'],
+			'payerID' => $_SESSION['payerID'],
+			'paymentType' => ''
+		));
 	}
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
@@ -1985,6 +2026,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		} else {
 			print '<input type="text" class="width75 amount" name="newamount" id="newamount" value="'.price($amount, 1, $langs, 1, -1, -1).'">';
 		}
+		print $langs->trans("Currency".$conf->currency);
 	} else {
 		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		if ($minimumamount > $amount) {
@@ -1993,7 +2035,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
-	print '<input type="hidden" name="currency" value="'.$currency.'">'.$langs->trans("Currency".$conf->currency);
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -2196,7 +2238,7 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
+if ($source == 'organizedeventregistration' && is_object($thirdparty) && is_object($attendee) && is_object($invoice)) {
 	dol_syslog("newpayment.php source=organizedeventregistration", LOG_DEBUG);
 
 	$found = true;
@@ -2288,7 +2330,7 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'boothlocation') {
+if ($source == 'boothlocation' && is_object($invoice)) {
 	dol_syslog("newpayment.php source=boothlocation", LOG_DEBUG);
 
 	$found = true;
@@ -2626,15 +2668,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			setEventMessages('Bad value for amount. Reported as a hack attempt.', null, 'errors');
 		}
 
+
+		$service = 'StripeLive';
+		$servicestatus = 1;
+		if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
+			$service = 'StripeTest';
+			$servicestatus = 0;
+		}
+
 		if ($checkamount && (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT'))) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-			$service = 'StripeLive';
-			$servicestatus = 1;
-			if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
-				$service = 'StripeTest';
-				$servicestatus = 0;
-			}
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
@@ -2654,6 +2697,21 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				//var_dump($paymentintent);
 				if ($stripe->error) {
 					setEventMessages($stripe->error, null, 'errors');
+				}
+
+				// Save the data needed by paymentok.php in database (key = PaymentIntent id), so they are found even if the session cookie is lost on the return from Stripe
+				if (is_object($paymentintent) && !empty($paymentintent->id)) {
+					$resultsave = onlinePaymentSessionSave($service, $paymentintent->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => getUserRemoteIP() ? getUserRemoteIP() : 'unknown',
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
+					if ($resultsave < 0) {
+						dol_syslog("Failed to save the data of the payment ".$paymentintent->id." into llx_onlinepayment_session", LOG_ERR, 0, '_payment');
+					}
 				}
 			}
 		}
@@ -2767,7 +2825,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 						)),
 						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
-						'success_url' => $urlok,
+						'success_url' => $urlok.'&session_id={CHECKOUT_SESSION_ID}',	// Stripe replaces the placeholder by the Checkout Session id, used by paymentok.php to find the session saved data
 						'cancel_url' => $urlko,
 						'payment_intent_data' => $arrayforpaymentintent
 					);
@@ -2793,6 +2851,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 					$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 					$_SESSION['payerID'] = is_object($stripecu) ? $stripecu->id : '';
 					$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
+
+					// Save the data needed by paymentok.php in database (key = Checkout Session id), so they are found even if the session cookie is lost
+					onlinePaymentSessionSave($service, $sessionstripe->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => ($remoteip ? $remoteip : 'unknown'),
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
 				} catch (Exception $e) {
 					print $e->getMessage();
 				} ?>

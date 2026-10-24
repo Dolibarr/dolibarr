@@ -1689,7 +1689,7 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
+				if (is_object($langs) && $langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {	// $langs may be null with NOREQUIRETRAN
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
 				} else {
 					$this->country = $obj->country;
@@ -2091,7 +2091,27 @@ class Adherent extends CommonObject
 				$vattouse = 0;
 				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				} elseif (getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS') > 0) {
+					$sql = "SELECT t.taux as vat_default_rate, t.code as vat_default_code, einvoice_vatex";
+					$sql .= " FROM " . $this->db->prefix() . "c_tva as t";
+					//$sql .= " INNER JOIN " . $this->db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
+					$sql .= " WHERE t.active > 0";
+					$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+					$sql .= " AND t.rowid = ".(getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS'));
+
+					$res = $this->db->query($sql);
+					if ($res) {
+						if ($this->db->num_rows($res)) {
+							$obj = $this->db->fetch_object($res);
+
+							$vattouse = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+						}
+						$this->db->free($res);
+					} else {
+						dol_print_error($this->db);
+					}
 				}
+
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
@@ -2610,7 +2630,7 @@ class Adherent extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ($withpictoimg != 2 ? 'class="pictofixedwidth"' : '').' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">';

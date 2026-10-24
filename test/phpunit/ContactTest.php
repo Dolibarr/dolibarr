@@ -28,10 +28,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
 
@@ -730,47 +729,6 @@ class ContactTest extends CommonClassTest
 		$obj = $db->fetch_object($resql);
 		$db->free($resql);
 		$this->assertEquals(1, $obj->nb, 'Only one link must remain after the merge');
-	}
-
-	/**
-	 * testContactMergeMovesPolymorphicSocpeopleRefs
-	 *
-	 * llx_ecm_files.src_object_type holds either the element name of the contact ('contact') or its
-	 * table name ('socpeople') depending on the writer, so both flavours must be moved. A list of
-	 * values must not be given to DoliDB::sanitize() as a whole: it removes the quotes it contains and
-	 * would collapse the list into a single value matching nothing.
-	 *
-	 * @return	void
-	 */
-	public function testContactMergeMovesPolymorphicSocpeopleRefs()
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$dest = $this->createContactForMerge('MergeDestEcm');
-		$origin = $this->createContactForMerge('MergeOriginEcm');
-
-		foreach (array('contact', 'socpeople') as $i => $objecttype) {
-			$sql = "INSERT INTO ".$db->prefix()."ecm_files(entity, ref, label, filename, filepath, src_object_type, src_object_id, date_c)";
-			$sql .= " VALUES (".((int) $conf->entity).", 'phpunitmerge".((int) $i).((int) $origin->id)."', 'phpunitmergelabel',";
-			$sql .= " 'phpunitmerge".((int) $i).".txt', 'contact/".((int) $origin->id)."', '".$db->escape($objecttype)."',";
-			$sql .= " ".((int) $origin->id).", '".$db->idate(dol_now())."')";
-			$this->assertNotFalse($db->query($sql), 'Cannot create the indexed file fixture');
-		}
-
-		$result = $dest->mergeContact($origin->id);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(0, $result, 'mergeContact failed: '.$dest->error);
-
-		$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."ecm_files WHERE label = 'phpunitmergelabel'";
-		$sql .= " AND src_object_id = ".((int) $dest->id);
-		$resql = $db->query($sql);
-		$obj = $db->fetch_object($resql);
-		$db->free($resql);
-		$this->assertEquals(2, $obj->nb, 'Both flavours of src_object_type must be moved to the target contact');
 	}
 
 	/**

@@ -410,3 +410,92 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 
 	return $out;
 }
+
+
+/**
+ * Save the data an online payment return page needs, in llx_onlinepayment_session instead of the PHP session
+ * (the session cookie can be lost on the return from the payment platform). Create the row or update it if it already exists.
+ *
+ * @param 	string		$ext_payment_site	Payment site ('StripeTest', 'StripeLive', 'Stancer', ...)
+ * @param 	string		$ext_payment_id		Id of the transaction on the payment platform (the one propagated in the return url) otherwise an uuid
+ * @param 	array<string,mixed>	$data		Data to save (stored in json)
+ * @return 	int								1 if saved, -1 if error
+ */
+function onlinePaymentSessionSave($ext_payment_site, $ext_payment_id, $data)
+{
+	global $db, $conf;
+
+	// Clean old rows each time a payment is started, so no cron is needed
+	onlinePaymentSessionPurge(dol_now() - (getDolGlobalInt('ONLINE_PAYMENT_SESSION_NB_DAY', 10) * 86400));
+
+	$encodeddata = json_encode($data);
+	if (onlinePaymentSessionFetch($ext_payment_site, $ext_payment_id) !== null) {
+		$sql = "UPDATE ".MAIN_DB_PREFIX."onlinepayment_session SET data = '".$db->escape($encodeddata)."'";
+		$sql .= " WHERE ext_payment_site = '".$db->escape($ext_payment_site)."' AND ext_payment_id = '".$db->escape($ext_payment_id)."'";
+		$sql .= " AND entity = ".((int) $conf->entity);
+	} else {
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."onlinepayment_session (ext_payment_site, ext_payment_id, data, date_creation, entity)";
+		$sql .= " VALUES ('".$db->escape($ext_payment_site)."', '".$db->escape($ext_payment_id)."', '".$db->escape($encodeddata)."', '".$db->idate(dol_now())."', ".((int) $conf->entity).")";
+	}
+	return $db->query($sql) ? 1 : -1;
+}
+
+/**
+ * Get the data saved by onlinePaymentSessionSave().
+ *
+ * @param 	string		$ext_payment_site	Payment site ('StripeTest', 'StripeLive', 'Stancer', ...)
+ * @param 	string		$ext_payment_id		Id of the transaction on the payment platform (the one propagated in the return url)
+ * @return 	stdClass|null					Saved data, or null if not found or error
+ */
+function onlinePaymentSessionFetch($ext_payment_site, $ext_payment_id)
+{
+	global $db, $conf;
+
+	$sql = "SELECT data FROM ".MAIN_DB_PREFIX."onlinepayment_session";
+	$sql .= " WHERE ext_payment_site = '".$db->escape($ext_payment_site)."' AND ext_payment_id = '".$db->escape($ext_payment_id)."'";
+	$sql .= " AND entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog(__FUNCTION__." SQL Error on SELECT: ".$db->lasterror(), LOG_ERR);
+		return null;
+	}
+	$obj = $db->fetch_object($resql);
+	if (!$obj) {
+		return null;
+	}
+	$json = json_decode($obj->data);
+	return is_object($json) ? $json : null;
+}
+
+/**
+ * Delete the saved data so the payment can't be replayed. Only the call that really deletes the row returns 1.
+ *
+ * @param 	string		$ext_payment_site	Payment site ('StripeTest', 'StripeLive', 'Stancer', ...)
+ * @param 	string		$ext_payment_id		Id of the transaction on the payment platform (the one propagated in the return url)
+ * @return 	int								1 if exactly one row was deleted, -1 if error or nothing deleted
+ */
+function onlinePaymentSessionConsume($ext_payment_site, $ext_payment_id)
+{
+	global $db, $conf;
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."onlinepayment_session";
+	$sql .= " WHERE ext_payment_site = '".$db->escape($ext_payment_site)."' AND ext_payment_id = '".$db->escape($ext_payment_id)."'";
+	$sql .= " AND entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	return ($resql && $db->affected_rows($resql) == 1) ? 1 : -1;
+}
+
+/**
+ * Delete the old saved data.
+ *
+ * @param 	int			$datelimit			Rows created before this date (timestamp) are deleted
+ * @return 	int								1 if OK, -1 if error
+ */
+function onlinePaymentSessionPurge($datelimit)
+{
+	global $db, $conf;
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."onlinepayment_session";
+	$sql .= " WHERE entity = ".((int) $conf->entity)." AND date_creation <= '".$db->idate($datelimit)."'";
+	return $db->query($sql) ? 1 : -1;
+}

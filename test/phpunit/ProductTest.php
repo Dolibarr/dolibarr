@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -166,6 +165,46 @@ class ProductTest extends CommonClassTest
 	}
 
 	/**
+	 * testLoadStatsWithoutRightToSeeAllThirdparties
+	 *
+	 * Statistics of a product must not generate an SQL error for a user who is not allowed to see all thirdparties.
+	 *
+	 * @param   int $id     Id of product
+	 * @return  void
+	 *
+	 * @depends testProductOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testLoadStatsWithoutRightToSeeAllThirdparties($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Product($db);
+		$localobject->fetch($id);
+
+		$limiteduser = new User($db);
+		$limiteduser->id = 999999;
+		$this->assertEquals(0, $limiteduser->hasRight('societe', 'client', 'voir'));
+
+		$adminuser = $user;
+		$user = $limiteduser;
+		try {
+			foreach (array('propale', 'proposal_supplier', 'commande', 'commande_fournisseur', 'sending', 'reception', 'inproduction', 'contrat', 'facture', 'facturerec', 'facture_fournisseur') as $stat) {
+				$method = 'load_stats_'.$stat;
+				$result = $localobject->$method();
+				print __METHOD__." ".$method." result=".$result."\n";
+				$this->assertGreaterThanOrEqual(0, $result, $method." failed: ".$localobject->error);
+			}
+		} finally {
+			$user = $adminuser;
+		}
+	}
+
+	/**
 	 * testProductDelete
 	 *
 	 * @param       int $id     Id of product
@@ -190,5 +229,58 @@ class ProductTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testProductMerge
+	 * Merge an origin product into a target one: empty fields of target are filled, notes are concatenated and origin is deleted.
+	 *
+	 * @return      void
+	 */
+	public function testProductMerge()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$target = new Product($db);
+		$target->initAsSpecimen();
+		$target->ref = 'PRODUCT_SPEC_MERGE_TARGET';
+		$target->barcode = '';
+		$target->description = '';
+		$target->note_private = 'Note target';
+		$targetid = $target->create($user);
+		$this->assertGreaterThan(0, $targetid, "Creation of target product: ".$target->error);
+
+		$origin = new Product($db);
+		$origin->initAsSpecimen();
+		$origin->ref = 'PRODUCT_SPEC_MERGE_ORIGIN';
+		$origin->barcode = '';
+		$origin->description = 'Description origin';
+		$origin->note_private = 'Note origin';
+		$originid = $origin->create($user);
+		$this->assertGreaterThan(0, $originid, "Creation of origin product: ".$origin->error);
+
+		$target = new Product($db);
+		$target->fetch($targetid);
+		$result = $target->mergeProduct($originid);
+		print __METHOD__." targetid=".$targetid." originid=".$originid." result=".$result."\n";
+		$this->assertEquals(0, $result, "Merge of products: ".$target->error);
+
+		// Origin product must be deleted
+		$check = new Product($db);
+		$this->assertEquals(0, $check->fetch($originid), "Origin product must be deleted");
+
+		// Empty fields of target are filled with origin values and notes are concatenated
+		$check = new Product($db);
+		$check->fetch($targetid);
+		$this->assertEquals('PRODUCT_SPEC_MERGE_TARGET', $check->ref);
+		$this->assertEquals('Description origin', $check->description);
+		$this->assertEquals(1, preg_match('/Note target.*Note origin/s', $check->note_private), "Notes must be concatenated");
+
+		$result = $check->delete($user);
+		$this->assertGreaterThan(0, $result, "Deletion of target product: ".$check->error);
 	}
 }

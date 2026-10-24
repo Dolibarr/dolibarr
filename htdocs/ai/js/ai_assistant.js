@@ -78,12 +78,23 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Third parties the user picked when a name fitted several: phrase -> id,
+    // 0 = none of them. They answer the request they were asked for only, the next
+    // question asks again.
+    let thirdpartyChoices = {};
+    let lastSent = null;          // { sentQuery, query } of the last request, resent once a choice is made
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
     // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
     // the per-file/total size caps live server-side too.
     const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
+    // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
+    const HISTORY_KEY = config.historyKey || '';
+    const HISTORY_MAX_MSGS = 20;
+    let restoringHistory = false;
+    // "All" mode of the context bar: every exchange, including the next ones, travels as context
+    let contextAllMode = false;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -135,6 +146,10 @@ export function initAiAssistant(container) {
 
     // Initialize the model picker (presets + dynamic provider model list)
     initModelPicker();
+
+    // Apply the select2 look of the other Dolibarr combos on the model and mode lists
+    initSelect2Combo(modelSelect, true);
+    initSelect2Combo(engineSelect, false);
 
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
@@ -211,20 +226,41 @@ export function initAiAssistant(container) {
         }
     }
 
+    // Start a new conversation: used by the Clear button and the "/new" command
+    function clearConversation(fromOtherInstance = false) {
+        // Remove conversation messages; keep the welcome element so it can be
+        // shown again on the full page (the popover has no welcome screen).
+        chat.querySelectorAll('.msg').forEach((n) => n.remove());
+        if (welcome) {
+            welcome.style.display = '';
+        } else {
+            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+        }
+        lastResult = { data: null, tool: '', query: '' };
+        clarificationContext = null;
+        thirdpartyChoices = {};
+        contextAllMode = false;
+        if (HISTORY_KEY) {
+            try {
+                sessionStorage.removeItem(HISTORY_KEY);
+                sessionStorage.removeItem(HISTORY_KEY + '_all');
+            } catch (e) { /* ignore */ }
+        }
+        updateContextBar();
+        if (fromOtherInstance) return;
+        // The other chat of the page (popover over the full page) shows the same conversation: clear it too.
+        document.dispatchEvent(new CustomEvent('aiChatCleared', { detail: { key: HISTORY_KEY, source: container } }));
+        input.focus();
+    }
+
+    document.addEventListener('aiChatCleared', (ev) => {
+        if (ev.detail && ev.detail.source !== container && ev.detail.key === HISTORY_KEY) clearConversation(true);
+    });
+
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            // Remove conversation messages; keep the welcome element so it can be
-            // shown again on the full page (the popover has no welcome screen).
-            chat.querySelectorAll('.msg').forEach((n) => n.remove());
-            if (welcome) {
-                welcome.style.display = '';
-            } else {
-                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
-            }
-            lastResult = { data: null, tool: '', query: '' };
-            clarificationContext = null;
-            input.focus();
+            clearConversation();
         }
     });
 
@@ -491,11 +527,13 @@ export function initAiAssistant(container) {
         let saved = '';
         try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
 
-        const presets = [
+        // Presets rely on a name heuristic (see resolveModel): only offered when
+        // AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY is on.
+        const presets = parseInt(config.modelPresets || 0, 10) ? [
             ['preset:fast', '⚡ ' + t('AIModelFast')],
             ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
             ['preset:deep', '🧠 ' + t('AIModelDeep')]
-        ];
+        ] : [];
         presets.forEach(([val, label]) => {
             const o = document.createElement('option');
             o.value = val; o.textContent = label;
@@ -506,6 +544,7 @@ export function initAiAssistant(container) {
             if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
                 modelSelect.value = saved;
             }
+            refreshSelect2Combo(modelSelect);
         };
         applySaved();
 
@@ -514,14 +553,16 @@ export function initAiAssistant(container) {
             .then((j) => {
                 modelList = (j && j.models) || [];
                 if (modelList.length) {
-                    const grp = document.createElement('optgroup');
-                    grp.label = '──';
+                    // Disabled separator line rather than an <optgroup>: browsers
+                    // indent optgroup entries, keep models aligned with 'Auto'.
+                    const sep = document.createElement('option');
+                    sep.disabled = true; sep.textContent = '──────────';
+                    modelSelect.appendChild(sep);
                     modelList.forEach((id) => {
                         const o = document.createElement('option');
                         o.value = id; o.textContent = id;
-                        grp.appendChild(o);
+                        modelSelect.appendChild(o);
                     });
-                    modelSelect.appendChild(grp);
                     // Saved model no longer offered by the provider: fall back to
                     // Auto, forget the stale choice, and tell the user ONCE (so the
                     // picker never looks silently ignored, cf. review on #39878).
@@ -538,6 +579,54 @@ export function initAiAssistant(container) {
         modelSelect.addEventListener('change', () => {
             try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
         });
+    }
+
+    /**
+     * Turn a native <select> into a select2 combo with the same options as ajax_combobox().
+     * Does nothing when select2 is not loaded (the native select keeps its own pill style).
+     *
+     * @param {HTMLSelectElement} sel        Select element
+     * @param {boolean}           withSearch Show the search field in the dropdown
+     */
+    function initSelect2Combo(sel, withSearch) {
+        if (!sel || !window.jQuery || !window.jQuery.fn.select2) return;
+        const $sel = window.jQuery(sel);
+        // Show the picto declared into the data-picto attribute of the option before its label
+        const withPicto = (data) => {
+            const picto = data.element ? data.element.getAttribute('data-picto') : '';
+            const experimental = data.element ? data.element.getAttribute('data-experimental') : '';
+            if (!picto) return data.text;
+            const span = window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+            if (experimental) {
+                span.append(window.jQuery('<span class="opacitymedium paddingleft"></span>').text('(' + t('VersionExperimental') + ')'));
+            }
+            return span;
+        };
+        $sel.select2({
+            dir: 'ltr',
+            width: 'resolve',
+            minimumResultsForSearch: withSearch ? 0 : Infinity,
+            language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+            theme: 'default',
+            dropdownCssClass: 'dol-dropdown-dialog dol-dropdown-dialogmono',
+            templateResult: withPicto,
+            templateSelection: withPicto,
+            // Keep the dropdown inside the chat, so a click into it is not seen as a click outside the popover
+            dropdownParent: window.jQuery(container)
+        });
+        // select2 fires a jQuery 'change' only, relay it to the native listeners of the select
+        $sel.on('select2:select', () => sel.dispatchEvent(new Event('change')));
+    }
+
+    /**
+     * Refresh the displayed value of a select2 combo after a programmatic change of the select.
+     *
+     * @param {HTMLSelectElement} sel Select element
+     */
+    function refreshSelect2Combo(sel) {
+        if (sel && window.jQuery && window.jQuery(sel).data('select2')) {
+            window.jQuery(sel).trigger('change.select2');
+        }
     }
 
     /**
@@ -962,6 +1051,7 @@ export function initAiAssistant(container) {
             } else {
                 alert(t('BrowserNotSupported'));
                 engineSelect.value = 'text';
+                refreshSelect2Combo(engineSelect);
                 updateInterfaceMode('text');
             }
         } else if (mode === 'whisper') {
@@ -1239,6 +1329,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
+    // A server failure (HTTP 5xx) may be transient: offer a button that runs the same request again.
+    function retryActionsFor(result, onRetry) {
+        if (!result || !result.error || !(parseInt(result.http_status, 10) >= 500)) return null;
+        return [{ text: t('AIRetry'), icon: 'fa-redo', onclick: (ev) => { ev.currentTarget.closest('.msg-actions').remove(); onRetry(); } }];
+    }
+
     function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
@@ -1251,6 +1347,8 @@ export function initAiAssistant(container) {
             const bubble = document.createElement('div');
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
+            // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
+            if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
             // Context pin: the last AUTO_CONTEXT exchanges follow the model by
             // default (sliding window), the user pins older ones explicitly or
@@ -1258,6 +1356,7 @@ export function initAiAssistant(container) {
             if (rawText) {
                 div.dataset.aiRaw = String(rawText).slice(0, 4000);
                 div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                if (contextAllMode && !restoringHistory && !div.dataset.aiError) div.dataset.ctx = 'on';
                 const pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
@@ -1280,6 +1379,59 @@ export function initAiAssistant(container) {
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
         if (div.dataset.aiRaw) refreshContext();
+        else saveChatHistory();
+    }
+
+    // Keep the user/bot bubbles in sessionStorage so the conversation survives a
+    // page change (popover -> full page, or any navigation) in the same tab.
+    // Action buttons and pending confirmations are not kept: they cannot be replayed.
+    function saveChatHistory() {
+        if (!HISTORY_KEY || restoringHistory) return;
+        const msgs = Array.from(chat.querySelectorAll('.msg.user, .msg.bot'))
+            .filter((m) => !m.classList.contains('typing-indicator'))
+            .slice(-HISTORY_MAX_MSGS)
+            .map((m) => {
+                const bubble = m.querySelector('.msg-bubble');
+                if (!bubble) return null;
+                const clone = bubble.cloneNode(true);
+                // Pins are rebuilt on restore; charts are canvases that cannot be serialized.
+                clone.querySelectorAll('.ctx-pin, .msg-actions, .chat-chart-wrap').forEach((n) => n.remove());
+                return {
+                    type: m.classList.contains('user') ? 'user' : 'bot',
+                    html: clone.innerHTML,
+                    raw: m.dataset.aiRaw || '',
+                    ctx: m.dataset.ctx || '',
+                    error: m.dataset.aiError ? 1 : 0
+                };
+            })
+            .filter(Boolean);
+        try {
+            if (msgs.length) sessionStorage.setItem(HISTORY_KEY, JSON.stringify(msgs));
+            else sessionStorage.removeItem(HISTORY_KEY);
+            if (contextAllMode) sessionStorage.setItem(HISTORY_KEY + '_all', '1');
+            else sessionStorage.removeItem(HISTORY_KEY + '_all');
+        } catch (e) { /* private mode or quota exceeded: the chat just won't survive a page change */ }
+    }
+
+    function restoreChatHistory() {
+        if (!HISTORY_KEY) return;
+        let msgs = [];
+        try { msgs = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) { msgs = []; }
+        if (!Array.isArray(msgs)) return;
+        // A question left without answer (page changed while waiting) is dropped.
+        while (msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
+        if (!msgs.length) return;
+        try { contextAllMode = (sessionStorage.getItem(HISTORY_KEY + '_all') === '1'); } catch (e) { contextAllMode = false; }
+        if (welcome) welcome.style.display = 'none';
+        restoringHistory = true;
+        msgs.forEach((m) => {
+            if (!m || (m.type !== 'user' && m.type !== 'bot')) return;
+            appendMsg(m.type, String(m.html || ''), null, m.raw || null, { error: !!m.error });
+            const div = chat.lastElementChild;
+            if (div && m.ctx) div.dataset.ctx = m.ctx;
+        });
+        restoringHistory = false;
+        refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1326,6 +1478,21 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
+    // Several third parties fit a name the user wrote, and the privacy guard
+    // keeps names away from the provider: the server asked before sending
+    // anything. The same request goes again with the choice.
+    function handleThirdpartyChoice(question, choice) {
+        const pick = (id) => {
+            const msg = chat.lastElementChild;
+            if (msg && msg.classList.contains('clarification')) msg.remove();
+            thirdpartyChoices[choice.phrase] = id;
+            if (lastSent) handleQuery(lastSent);
+        };
+        const actions = (choice.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-building', onclick: () => pick(o.id) }));
+        actions.push({ text: t('AINoneOfThese'), icon: 'fa-times', onclick: () => pick(0) });
+        appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(question)}</div>`, actions);
+    }
+
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
@@ -1343,8 +1510,9 @@ export function initAiAssistant(container) {
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
         // A write tool sends a full sentence describing what it would write; it
-        // is the question itself, not a verb to slot into another sentence.
-        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        // is the question itself, not a verb to slot into another sentence. More
+        // than 2 words is a sentence too: a label may follow its final dot.
+        const isSentence = typeof action === 'string' && (/[.!?]\s*$/.test(action.trim()) || action.trim().split(/\s+/).length > 2);
         let messageHtml;
         if (isSentence) {
             messageHtml = `<strong>${action}</strong>`;
@@ -1466,7 +1634,9 @@ export function initAiAssistant(container) {
             }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
+            const failedIntent = pendingIntent;
+            const retry = retryActionsFor(result, () => { pendingIntent = failedIntent; executePendingIntent(); });
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), retry, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
@@ -1539,6 +1709,7 @@ export function initAiAssistant(container) {
             }
         });
         updateContextBar();
+        saveChatHistory();
     }
 
     // One click flips the bubble: inside the window it toggles between "follows
@@ -1577,17 +1748,18 @@ export function initAiAssistant(container) {
         }
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
-        const isDefault = past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
-            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+        const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
-            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+            ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
+            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {
                 ev.preventDefault();
                 // Auto = back to the default: every bubble follows the window again.
+                contextAllMode = false;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
                 refreshContext();
             };
@@ -1597,6 +1769,8 @@ export function initAiAssistant(container) {
             all.onclick = (ev) => {
                 ev.preventDefault();
                 // All = every past exchange pinned for good (the bar shows the price).
+                // The next exchanges are pinned too, until Auto or Clear is chosen.
+                contextAllMode = true;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
                 refreshContext();
             };
@@ -1608,6 +1782,7 @@ export function initAiAssistant(container) {
                 // Clear = nothing goes back with the NEXT question: recent bubbles
                 // are excluded, older pins dropped. New exchanges re-enter the
                 // window on their own afterwards.
+                contextAllMode = false;
                 pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
                 refreshContext();
             };
@@ -1626,14 +1801,42 @@ export function initAiAssistant(container) {
         }
     }
 
-    async function handleQuery() {
-        const query = input.value.trim();
-        const readyDocs = attachedDocs.filter((d) => !d.error);
-        if (!query && !readyDocs.length) return;
+    async function handleQuery(resend) {
+        // A resend (after the user picked a third party) posts the same request
+        // again, without a second bubble.
+        const isResend = !!(resend && typeof resend.sentQuery === 'string');
+        const query = isResend ? resend.query : input.value.trim();
+        const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
+        // "/new" is handled locally (no AI call): same as the Clear button, without confirmation.
+        if (query.toLowerCase() === '/new' && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            clearConversation();
+            return;
+        }
+
+        // "/status" is answered locally (no AI call): statistics of the whole
+        // conversation (the bar above the input already shows the selected
+        // context). Both bubbles have no raw text so they never travel as context.
+        if (query.toLowerCase() === '/status' && !readyDocs.length) {
+            const whole = pastContextBubbles().map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }));
+            const stats = t('AIContextCounter')
+                .replace('%s', String(whole.filter((p) => p.role === 'user').length))
+                .replace('%s', String(whole.length))
+                .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
+            appendMsg('user', escapeHtml(query));
+            appendMsg('bot', escapeHtml(stats));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
+
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
-        let sentQuery = query;
+        let sentQuery = isResend ? resend.sentQuery : query;
         let displayHtml = escapeHtml(query);
         if (readyDocs.length) {
             // One wrapped context block per document, so each keeps its own
@@ -1646,79 +1849,128 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
-        clearChip();
+        if (!isResend) {
+            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            clearChip();
+        }
+        lastSent = { sentQuery: sentQuery, query: query };
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
-        const loadingMsg = chat.lastElementChild;
+        let loadingMsg = chat.lastElementChild;
         try {
             const chosenModel = resolveModel();
-            const intentRes = await fetch(epUrl('parse_intent.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                // Page context (set by the printCommonFooter hook on card pages)
-                // lets the server resolve "this invoice" - it re-validates the
-                // ids against the user's rights before trusting them.
-                body: JSON.stringify(Object.assign(
-                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
-                    (function () {
-                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
-                        return pinned.length ? { history: pinned } : {};
-                    })(),
-                    (function () {
-                        const ctx = window.aiPageContext;
-                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
-                        // On list pages, the mass-action checkboxes carry the row
-                        // ids: checked ones are the user's live selection.
-                        if (ctx.list) {
-                            // The mass-action checkboxes carry rowids by core
-                            // convention on every list - a uniform source that
-                            // sidesteps the per-list SQL alias zoo server-side.
-                            const all = Array.from(document.querySelectorAll('.checkforselect'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
-                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
-                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
-                            if (sel.length) ctx.selected = sel;
-                        }
-                        return { context: ctx };
-                    })()
-                ))
-            });
-            const intent = await aiJson(intentRes);
-            loadingMsg.remove();
-            if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+            // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+            const pinned = collectPinnedContext();
+            // Result of the read flagged needs_followup, sent back on the second round.
+            let followupSnippet = null;
+            let followupResult = null;
+            // The third parties the user picked, for every round of this request.
+            const sentChoices = Object.assign({}, thirdpartyChoices);
+            // Two rounds at most: the server never flags a followup round itself.
+            for (let round = 0; round < 2; round++) {
+                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                const intentRes = await fetch(epUrl('parse_intent.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    // Page context (set by the printCommonFooter hook on card pages)
+                    // lets the server resolve "this invoice" - it re-validates the
+                    // ids against the user's rights before trusting them.
+                    body: JSON.stringify(Object.assign(
+                        chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                        (function () {
+                            // followup_result: only to name the object in the confirmation, never sent to the model.
+                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            return pinned.length ? { history: pinned } : {};
+                        })(),
+                        (function () {
+                            const ctx = window.aiPageContext;
+                            if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                            // On list pages, the mass-action checkboxes carry the row
+                            // ids: checked ones are the user's live selection.
+                            if (ctx.list) {
+                                // The mass-action checkboxes carry rowids by core
+                                // convention on every list - a uniform source that
+                                // sidesteps the per-list SQL alias zoo server-side.
+                                const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                                if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                                const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                                if (sel.length) ctx.selected = sel;
+                            }
+                            return { context: ctx };
+                        })()
+                    ))
+                });
+                const intent = await aiJson(intentRes);
+                loadingMsg.remove();
+                // Choices answer this request only: once it went through, the next question asks again.
+                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
+                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+                    // Debug output of /tools, built and escaped server side: shown as is,
+                    // never sent back as context. Only for that query: an 'html' argument
+                    // coming from the model is never trusted.
+                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
+                }
+                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'generate_navigation_url') {
+                    appendMsg('system', t('GeneratingLink'));
+                    const loadingNav = chat.lastElementChild;
+                    const navRes = await fetch(epUrl('execute_tool.php'), {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(intent)
+                    });
+                    const nav = await aiJson(navRes);
+                    loadingNav.remove();
+                    if (nav.error) { appendMsg('error', nav.error); }
+                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                    input.disabled = false; input.focus(); return;
+                }
 
-            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'generate_navigation_url') {
-                appendMsg('system', t('GeneratingLink'));
-                const loadingNav = chat.lastElementChild;
-                const navRes = await fetch(epUrl('execute_tool.php'), {
+                appendMsg('system', t('FetchingData'));
+                const loadingData = chat.lastElementChild;
+                const toolRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await aiJson(navRes);
-                loadingNav.remove();
-                if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                input.disabled = false; input.focus(); return;
+                const result = await aiJson(toolRes);
+                loadingData.remove();
+                // The read only fetched the ids the asked action needs: hand its result
+                // back to the model instead of showing it, and let it perform the action.
+                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                    appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
+                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupResult = result;
+                    continue;
+                }
+                // A write tool does not write on its first call: it answers with the
+                // sentence to confirm and a requestState. Ask the user, the write runs
+                // when executePendingIntent() sends the state back.
+                if (result && result.resultType === 'input_required' && result.requestState) {
+                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+                    const confirmed = Object.assign({}, intent, {
+                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+                    });
+                    delete confirmed.needs_followup;
+                    delete confirmed.resolved_label;
+                    // The id came from a search the user never saw: say which object it is.
+                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
+                    input.disabled = false; input.focus(); return;
+                }
+                lastResult = { data: result, tool: intent.tool, query: query };
+                const failedRequest = lastSent;
+                const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
+                appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
+                resolveThirdpartyNames(chat.lastElementChild);
+                break;
             }
-
-            appendMsg('system', t('FetchingData'));
-            const loadingData = chat.lastElementChild;
-            const toolRes = await fetch(epUrl('execute_tool.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(intent)
-            });
-            const result = await aiJson(toolRes);
-            loadingData.remove();
-            lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
-            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
@@ -1762,7 +2014,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1774,14 +2028,15 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.
@@ -1864,6 +2119,7 @@ export function initAiAssistant(container) {
                     c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
+            saveChatHistory();
         } catch (e) { /* names stay as ids */ }
     }
 
@@ -1916,7 +2172,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url') continue;
+                if (key === 'url' || key === 'chart') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the
@@ -1927,13 +2183,18 @@ export function initAiAssistant(container) {
             }
             content += '</ul></div>';
             content += nested;
+            if (data.chart && Array.isArray(data.chart.labels) && Array.isArray(data.chart.datasets)) {
+                const cid = 'ai-chart-' + Math.random().toString(36).slice(2, 10);
+                content += `<div class="chat-chart-wrap"><canvas id="${cid}"></canvas></div>`;
+                setTimeout(() => aiRenderChart(cid, data.chart, config.urlRoot || config.baseUrl || ''), 0);
+            }
         }
         else { return String(data); }
 
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fas fa-file-pdf"></span> ${t('DownloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('AIPdfReport')}"><span class="fas fa-file-pdf"></span> ${t('AIPdfReport')}</button>`;
             } else if (isObject && objectUrl) {
                 toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fas fa-external-link-alt"></span> ${t('OpenVerb')}</a>`;
             }
@@ -1941,6 +2202,33 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+
+    // Restore the conversation kept by a previous page of this tab. Done last:
+    // the helpers rely on constants (AUTO_CONTEXT, ...) declared above.
+    restoreChatHistory();
+}
+
+// Renders a report chart payload ({type, labels, datasets}) on a canvas using the
+// bundled Chart.js ESM build — imported lazily so the chat carries no extra cost
+// until a tool actually returns a chart.
+async function aiRenderChart(canvasId, chartCfg, urlRoot) {
+    const el = document.getElementById(canvasId);
+    if (!el) return;
+    try {
+        const mod = await import(urlRoot + '/includes/nnnick/chartjs/dist/chart.esm.js');
+        const Chart = mod.Chart || mod.default;
+        if (!Chart) return;
+        el.parentElement.classList.add('chat-chart-ready');
+        new Chart(el, {
+            type: chartCfg.type || 'bar',
+            data: { labels: chartCfg.labels, datasets: chartCfg.datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: chartCfg.datasets.length > 1 } }
+            }
+        });
+    } catch (e) { /* chart is optional sugar: the table is already rendered */ }
 }
 
 // Auto-init for server-rendered containers (standalone page mode). The topbar

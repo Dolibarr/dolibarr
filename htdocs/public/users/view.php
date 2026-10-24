@@ -142,9 +142,6 @@ if (getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 	$object->email = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
-	$object->job = '';
-}
 if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
 	$object->office_phone = '';
 }
@@ -216,9 +213,7 @@ if ($mode == 'vcard') {
 	// We create VCard
 	$output = $v->buildVCardString($object, $company, $langs, $urllogofull);
 
-	$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
-	$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
-	//$filename = dol_sanitizeFileName($filename);
+	$filename = $v->getFileName(); // "Nom prenom.vcf", already sanitized
 
 	top_httphead('text/vcard; name="'.$filename.'"');
 

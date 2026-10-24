@@ -113,10 +113,11 @@ $formbarcode = null;
 // Get parameters
 $id  = GETPOSTINT('id');
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
+	$security_check = 'nohtml';
 } else {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', $security_check) : null);
 $type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
@@ -269,7 +270,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	// merge products
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $usercandelete) {
 		$error = 0;
 		$productOriginId = GETPOSTINT('product_origin');
 		$productOrigin = new Product($db);
@@ -283,170 +284,19 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			// The origin product will be deleted, so user must also have delete permission on its type
+			if (!$error && !(($productOrigin->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($productOrigin->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')))) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+			}
+
 			if (!$error) {
-				// TODO Move the merge function into class of object.
-				$db->begin();
-
-				// Recopy some data
-				$listofproperties = array(
-					'ref',
-					'ref_ext',
-					'label',
-					'description',
-					'url',
-					'barcode',
-					'fk_barcode_type',
-					'import_key',
-					'mandatory_period',
-					'accountancy_code_buy',
-					'accountancy_code_buy_intra',
-					'accountancy_code_buy_export',
-					'accountancy_code_sell',
-					'accountancy_code_sell_intra',
-					'accountancy_code_sell_export'
-				);
-				foreach ($listofproperties as $property) {
-					if (empty($object->$property)) {
-						$object->$property = $productOrigin->$property;
-					}
-				}
-				// Concat some data
-				$listofproperties = array(
-					'note_public', 'note_private'
-				);
-				foreach ($listofproperties as $property) {
-					$object->$property = dol_concatdesc($object->$property, $productOrigin->$property);
-				}
-
-				// Merge extrafields
-				if (is_array($productOrigin->array_options)) {
-					foreach ($productOrigin->array_options as $key => $val) {
-						if (empty($object->array_options[$key])) {
-							$object->array_options[$key] = $val;
-						}
-					}
-				}
-
-				// Merge categories
-				$static_cat = new Categorie($db);
-				$custcats_ori = $static_cat->containing($productOrigin->id, 'product', 'id');
-				$custcats = $static_cat->containing($object->id, 'product', 'id');
-				$custcats = array_merge($custcats, $custcats_ori);
-				$object->setCategories($custcats);
-
-				// If product has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
-				if ($productOrigin->barcode == $object->barcode) {
-					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
-					$productOrigin->barcode = '';
-					//$productOrigin->update($productOrigin->id, $user, 0, 'merge');
-				}
-
-				// Update
-				$result = $object->update($object->id, $user, 0, 'merge');
-				if ($result <= 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->mergeProduct($productOriginId);
+				if ($result < 0) {
 					$error++;
-				}
-
-				// Move links
-				if (!$error) {
-					// TODO add this functionality into the api_products.class.php
-					// TODO Mutualise the list into object product.class.php
-					$objects = array(
-						'ActionComm' => '/comm/action/class/actioncomm.class.php',
-						'Bom' => '/bom/class/bom.class.php',
-						// do not use Categorie, it cause foreign key error, merge is done before
-						//'Categorie' => '/categories/class/categorie.class.php',
-						'Commande' => '/commande/class/commande.class.php',
-						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
-						'Contrat' => '/contrat/class/contrat.class.php',
-						'Delivery' => '/delivery/class/delivery.class.php',
-						'Facture' => '/compta/facture/class/facture.class.php',
-						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
-						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
-						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Propal' => '/comm/propal/class/propal.class.php',
-						'Reception' => '/reception/class/reception.class.php',
-						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-					);
-
-					// First, all core objects must update their tables
-					foreach ($objects as $object_name => $object_file) {
-						require_once DOL_DOCUMENT_ROOT.$object_file;
-
-						if (!$error && !$object_name::replaceProduct($db, $productOrigin->id, $object->id)) {
-							$error++;
-							setEventMessages($db->lasterror(), null, 'errors');
-							break;
-						}
-					}
-				}
-
-				// External modules should update their ones too
-				if (!$error) {
-					$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $object->id);
-					$reshook = $hookmanager->executeHooks(
-						'replaceProduct',
-						$parameters,
-						$object,
-						$action
-					);
-
-					if ($reshook < 0) {
-						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						$error++;
-					}
-				}
-
-
-				if (!$error) {
-					$object->context = array(
-						'merge' => 1,
-						'mergefromid' => $productOrigin->id,
-					);
-
-					// Call trigger
-					$result = $object->call_trigger('PRODUCT_MODIFY', $user);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					// Move files from the dir of the product being deleted into the dir of the product kept.
-					// This must happen on success only: the filesystem is not part of the transaction, so
-					// moving the files on the failing path stripped the origin product of its documents
-					// while the database was rolled back, and left them orphaned on the successful one.
-					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? $conf->entity])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? $conf->entity]."/".$productOrigin->ref;
-						$destdir = $conf->product->multidir_output[$object->entity ?? $conf->entity]."/".$object->ref;
-
-						if (dol_is_dir($srcdir)) {
-							$dirlist = dol_dir_list($srcdir, 'files', 1);
-							foreach ($dirlist as $filetomove) {
-								$destfile = $destdir.'/'.$filetomove['relativename'];
-								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
-							}
-							//exit;
-						}
-					}
-
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if (!$error) {
-					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
-					$db->commit();
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					$langs->load("errors");
-					setEventMessages($langs->trans('ErrorsProductsMerge'), null, 'errors');
-					$db->rollback();
+					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
 				}
 			}
 		}
@@ -546,6 +396,10 @@ if (empty($reshook)) {
 			$error++;
 		}
 		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
+		// If the stockable_product checkbox was shown in the form, use the submitted value
+		if (isModEnabled('stock') && ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES'))) {
+			$stockable_product = GETPOSTISSET('stockable_product') ? 1 : 0;
+		}
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
 			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
@@ -945,6 +799,18 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				// The lot/serial fields are not in the form when module productbatch is disabled: keep their values,
+				// an empty status_batch would switch the product to "no lot" and move all its stock out of its lots.
+				if (!GETPOSTISSET('status_batch')) {
+					$object->status_batch = $object->oldcopy->status_batch;
+				}
+				if (!GETPOSTISSET('sell_or_eat_by_mandatory')) {
+					$object->sell_or_eat_by_mandatory = $object->oldcopy->sell_or_eat_by_mandatory;
+				}
+				if (!GETPOSTISSET('batch_mask')) {
+					$object->batch_mask = $object->oldcopy->batch_mask;
+				}
+
 				if (!$error && $object->check()) {
 					if ($object->update($object->id, $user) > 0) {
 						// Category association
@@ -1026,6 +892,15 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && GETPOST('clone_supplier_prices')) {
+							$result = $clone->clone_fournisseurs($object->id, $id);
+							if ($result < 1) {
+								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
+							}
+						}
+
 						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 							$defbomidac = 0; // to avoid cloning same BOM twice
 							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
@@ -1063,7 +938,6 @@ if (empty($reshook)) {
 								}
 							}
 						}
-						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
 							$refalreadyexists++;
@@ -1494,6 +1368,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -1665,8 +1542,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if (($type != 1 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+				// Stockable product
+				if (isModEnabled('productbatch') && GETPOSTINT('status_batch')) {
+					print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
+					$checked_stockable = 'checked';
+				} else {
+					$checked_stockable = ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) ? 'checked' : '';
+					print '<tr><td><label for="stockable_product">' . $langs->trans("StockableProduct") . '</label></td>';
+					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked_stockable . ' /></td></tr>';
+				}
 				// Default warehouse
-				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print '<tr class="showifstockable' . (empty($checked_stockable) ? ' hidden' : '') . '"><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses(GETPOSTINT('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOSTINT('type')).'">';
@@ -2025,6 +1911,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 			print '</table>';
+		}
+
+		if (!empty($conf->use_javascript_ajax) && isModEnabled('stock')) {
+			print '<script>';
+			print '$(document).ready(function() {
+				$("#stockable_product").change(function() {
+					$(".showifstockable").toggle(this.checked);
+				});
+			});';
+			print '</script>';
 		}
 
 		print dol_get_fiche_end();
@@ -3138,6 +3034,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPricesAndCustomerPerPrices").')', 'value' => 0);
 	}
+	$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_supplier_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("SupplierPrices").')', 'value' => 0);
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
@@ -3170,7 +3067,7 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
-	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone'], true);
+	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'clone'], true);
 	$cloneButtonId = 'action-clone-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
@@ -3188,7 +3085,6 @@ if ($action != 'create' && $action != 'edit') {
 
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
 				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate, array('attr' => array('class' => 'reposition')));
@@ -3208,8 +3104,8 @@ if ($action != 'create' && $action != 'edit') {
 			} else {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
 			}
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);
