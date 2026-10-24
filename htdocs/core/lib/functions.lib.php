@@ -4393,15 +4393,16 @@ function dolGetFirstLetters($s, $nbofchar = 1)
  *
  * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
+ * @param	int			$binarycount		Do a binary count (count number of bytes in string, not number of human characters)
  * @return  int								Length of string
  */
-function dol_strlen($string, $stringencoding = 'UTF-8')
+function dol_strlen($string, $stringencoding = 'UTF-8', $binarycount = 0)
 {
 	if (is_null($string)) {
 		return 0;
 	}
 
-	if (function_exists('mb_strlen')) {
+	if (function_exists('mb_strlen') && empty($binarycount)) {
 		return mb_strlen($string, $stringencoding);
 	} else {
 		return strlen($string);
