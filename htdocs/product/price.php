@@ -569,11 +569,8 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (!$error) {
-			// Calcul du prix HT et du prix unitaire
-			if ($object->price_base_type == 'TTC') {
-				$price = (float) price2num($newprice) / (1 + ($object->tva_tx / 100));
-			}
-
+			// A price by quantity is always a price excluding tax: the price_base_type of the line is never set and
+			// stays 'HT', and the unit price is used as a price excluding tax when the line is added on a document.
 			$price = price2num($newprice, 'MU');
 			$unitPrice = price2num((float) $price / (float) $quantity, 'MU');
 
@@ -1147,7 +1144,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 							print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 							print '<tr class="'.($ii % 2 == 0 ? 'pair' : 'impair').'">';
 							print '<td><input size="5" type="text" value="'.$prices['quantity'].'" name="quantity"></td>';
-							print '<td class="right" colspan="2"><input size="10" type="text" value="'.price2num($prices['price'], 'MU').'" name="price">&nbsp;'.$object->price_base_type.'</td>';
+							print '<td class="right" colspan="2"><input size="10" type="text" value="'.price2num($prices['price'], 'MU').'" name="price">&nbsp;'.$langs->trans("HT").'</td>';
 							print '<td class="right nowraponall"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent"> %</td>';
 							print '<td class="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 							print '</tr>';
@@ -1179,7 +1176,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 						print '<input type="hidden" value="0" name="rowid">'; // id in product_price
 						print '<tr class="'.($ii % 2 == 0 ? 'pair' : 'impair').'">';
 						print '<td><input size="5" type="text" value="1" name="quantity"></td>';
-						print '<td class="right" class="nowrap"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
+						print '<td class="right" class="nowrap"><input size="10" type="text" value="0" name="price">&nbsp;'.$langs->trans("HT").'</td>';
 						print '<td class="right">&nbsp;</td>';
 						print '<td class="right" class="nowraponall"><input size="5" type="text" value="0" name="remise_percent"> %</td>';
 						print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
