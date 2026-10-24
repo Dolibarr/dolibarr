@@ -101,6 +101,11 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 	}
 }
 
+// A numbering model where the barcode is entered by the user (no automatic generation) can not be used to init barcodes
+if (is_object($modBarCodeThirdparty) && empty($modBarCodeThirdparty->code_auto)) {
+	$modBarCodeThirdparty = '';
+}
+
 if ($action == 'initbarcodethirdparties' && $user->hasRight('societe', 'lire')) {
 	if (!is_object($modBarCodeThirdparty)) {
 		$error++;
@@ -206,6 +211,11 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 			closedir($handle);
 		}
 	}
+}
+
+// A numbering model where the barcode is entered by the user (no automatic generation) can not be used to init barcodes
+if (is_object($modBarCodeProduct) && empty($modBarCodeProduct->code_auto)) {
+	$modBarCodeProduct = '';
 }
 
 if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
