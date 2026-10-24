@@ -102,7 +102,7 @@ function getListOfAIServices()
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => array('default' => 'mistral-small-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'textgeneration' => array('default' => 'mistral-medium-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
 			'imagegeneration' => array('default' => 'na'),
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
