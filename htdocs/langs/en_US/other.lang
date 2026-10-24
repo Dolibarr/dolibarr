@@ -362,6 +362,7 @@ EmailContent=Email content
 Pre-Prompt=Pre-prompt
 Post-Prompt=Post-prompt
 AIProcessingPleaseWait=AI (%s) is processing your document, please wait...
+AIProcessingDocumentPleaseWait=AI (%s) is processing your document (%s), please wait...
 AIProcessingDone=AI (%s) processing your document is complete.
 KeyDataFoundInDocument=Key data found in document
 NotFoundInDatabase=This thirdparty was not found in database

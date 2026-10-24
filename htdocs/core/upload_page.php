@@ -111,6 +111,7 @@ $error = 0;
 $ai = new Ai($db);
 $ajaxFileUrl = '';
 $fullnewname = '';
+$uploadedfilename = '';
 
 
 /*
@@ -183,6 +184,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 
 	if (!empty($_FILES['userfile']['name'])) {
+		$uploadedfilename = $_FILES['userfile']['name'];
 		$fullnewname = $fileprefix.'-'.$_FILES['userfile']['name'];
 		$_FILES['userfile']['name'] = $fullnewname;
 
@@ -742,7 +744,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	if ($action == 'showsummary') {
 		print $langs->trans("AIProcessingDone", $ai->getApiService());
 	} else {
-		print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
+		print $langs->trans("AIProcessingDocumentPleaseWait", $ai->getApiService(), dol_trunc($uploadedfilename, 32, 'middle'));
 	}
 	print '</div>';
 	print '<br>';
