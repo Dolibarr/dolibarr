@@ -179,10 +179,23 @@ export function initAiAssistant(container) {
     // Attach the auto-resize listener to the input
     if (input) {
         input.addEventListener('input', autoResizeInput);
+        // "/" at the start of the input opens the tool palette, filtered as the user types.
+        input.addEventListener('input', () => {
+            const v = input.value;
+            const mention = mentionTarget();
+            if (mention) {
+                mentionSuggest(mention);    // "@" or "#" being typed, in a command or a question
+            } else if (paletteWanted(v)) {
+                paletteOpen(v.slice(1));
+            } else if (container.querySelector('.ai-palette-list')) {
+                paletteClose();
+            }
+        });
     }
 
     // Handle Submit (Enter) vs New Line (Shift+Enter)
     input.addEventListener('keydown', (e) => {
+        if (paletteKey(e)) return;
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 // Shift+Enter: Allow new line (default behavior), just ensure resize happens
@@ -1481,10 +1494,14 @@ export function initAiAssistant(container) {
     // Several third parties fit a name the user wrote, and the privacy guard
     // keeps names away from the provider: the server asked before sending
     // anything. The same request goes again with the choice.
-    function handleThirdpartyChoice(question, choice) {
+    function handleThirdpartyChoice(question, choice, onPick) {
         const pick = (id) => {
             const msg = chat.lastElementChild;
             if (msg && msg.classList.contains('clarification')) msg.remove();
+            if (onPick) {
+                onPick(choice.phrase, id);   // a palette command runs again with the choice
+                return;
+            }
             thirdpartyChoices[choice.phrase] = id;
             if (lastSent) handleQuery(lastSent);
         };
@@ -1496,6 +1513,666 @@ export function initAiAssistant(container) {
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
+    }
+
+    // =========================================================================
+    // TOOL PALETTE ("/")
+    // =========================================================================
+    // "/" at the start of the input lists the tools this user may run (the same
+    // list the model gets, from list_tools.php), filtered as the user types.
+    // Picking one opens a form built from the tool's own schema, filled in from
+    // the page being viewed. Run calls the tool directly: no AI provider is
+    // involved. A write still stops at the confirmation, as in the chat.
+
+    // Tool family (api_<family>_...) and documents module part of each page element.
+    const PALETTE_FAMILY = {
+        facture: 'invoices', societe: 'thirdparties', product: 'products', propal: 'proposals', commande: 'orders',
+        project: 'projects', contrat: 'contracts', ticket: 'tickets', invoice_supplier: 'supplier_invoices',
+        order_supplier: 'supplier_orders', supplier_proposal: 'supplier_proposals', shipping: 'shipments',
+        reception: 'receptions', fichinter: 'interventions', expensereport: 'expensereports', stock: 'warehouses',
+        categorie: 'categories', action: 'agendaevents'
+    };
+    const PALETTE_MODULEPART = {
+        facture: 'invoice', invoice_supplier: 'supplier_invoice', commande: 'order', order_supplier: 'supplier_order',
+        propal: 'propal', supplier_proposal: 'supplier_proposal', shipping: 'shipment', societe: 'societe',
+        product: 'product', contrat: 'contract', fichinter: 'ficheinter', project: 'project', ticket: 'ticket'
+    };
+    // A module dashboard (index page, see actions_ai printCommonFooter): the
+    // API families of that module.
+    const PALETTE_DASHBOARD = {
+        'thirdparties': ['thirdparties', 'contacts'], 'customer invoices': ['invoices'], 'supplier invoices': ['supplier_invoices'],
+        'sales orders': ['orders'], 'supplier orders': ['supplier_orders'], 'commercial proposals': ['proposals'],
+        'supplier proposals': ['supplier_proposals'], 'products and services': ['products'],
+        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'tasks'], 'contracts': ['contracts'],
+        'interventions': ['interventions'], 'tickets': ['tickets'], 'shipments': ['shipments'], 'receptions': ['receptions'],
+        'members': ['members', 'subscriptions'], 'donations': ['donations'], 'expense reports': ['expensereports'],
+        'agenda': ['agendaevents'], 'manufacturing': ['mos', 'boms']
+    };
+    let paletteTools = null;
+
+    // "/tools" stays the debug command of the chat; any other "/..." line is the palette.
+    // Commands the chat answers by itself (sendMessage): never caught by the palette.
+    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/status'];
+
+    function paletteWanted(v) {
+        if (!config.palette) return false;   // switched off in the setup: everything goes to the AI
+        return typeof v === 'string' && v.indexOf('/') === 0 && v.indexOf('\n') === -1
+            && CHAT_LOCAL_COMMANDS.indexOf(v.trim().toLowerCase()) === -1;
+    }
+
+    // The page being viewed, as the page footer emitted it (window.aiPageContext):
+    // a card gives its record; a list gives its kind of record, and the row the
+    // user ticked when exactly one is ticked (read now: ticks change after load).
+    function paletteContext() {
+        const c = window.aiPageContext;
+        if (c && !c.element && PALETTE_DASHBOARD[c.dashboard]) {
+            return { element: '', id: 0, ref: '', socid: 0, family: '', families: PALETTE_DASHBOARD[c.dashboard], dashboard: true };
+        }
+        if (!c || !c.element) return null;
+        let id = parseInt(c.id, 10) || 0;
+        let ref = String(c.ref || '');
+        let socid = (c.element === 'societe') ? id : (parseInt(c.socid, 10) || 0);
+        if (c.list) {
+            const ticked = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                .map((cb) => parseInt(cb.value, 10)).filter((n) => n > 0);
+            id = (ticked.length === 1) ? ticked[0] : 0;
+            ref = '';
+            socid = (c.element === 'societe') ? id : 0;   // a ticked invoice's customer is not on the page data
+        }
+        const family = PALETTE_FAMILY[c.element] || '';
+        return { element: String(c.element), id: id, ref: ref, socid: socid, family: family, families: family ? [family] : [], dashboard: false };
+    }
+
+    // 0 = a tool of this card (or of this dashboard's module), 1 = its files,
+    // 2 = takes this card's third party, 3 = anything else.
+    function paletteRank(tool, ctx) {
+        if (!ctx) return 3;
+        if (ctx.families.some((f) => tool.name.indexOf('api_' + f + '_') === 0)) return 0;
+        if (tool.name === 'api_documents_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
+        const p = tool.properties || {};
+        if (ctx.socid && (p.socid || p.thirdparty_ids)) return 2;
+        return 3;
+    }
+
+    // How well a tool fits the words typed: 0 = its plain name or API name starts
+    // with them, 1 = they are inside its plain name or API name, 2 = only in its
+    // description, 3 = not at all. Every word typed must be found.
+    function paletteMatch(tool, f) {
+        const title = (tool.title || '').toLowerCase();
+        const name = tool.name.toLowerCase();
+        const short = name.replace(/^api_/, '');
+        const desc = (tool.description || '').toLowerCase();
+        let worst = 0;
+        for (const w of f.split(/\s+/).filter(Boolean)) {
+            let m = 3;
+            if (title.indexOf(w) === 0 || short.indexOf(w) === 0 || name.indexOf(w) === 0) m = 0;
+            else if (title.indexOf(w) !== -1 || name.indexOf(w) !== -1) m = 1;
+            else if (desc.indexOf(w) !== -1) m = 2;
+            worst = Math.max(worst, m);
+        }
+        return worst;
+    }
+
+    // Reading one record first, then other reads, writes last.
+    // On a dashboard there is no record yet: the module's main family first, and
+    // in each family creating a record, then the list of them, then the other
+    // lists and reads, the other writes last.
+    function paletteKind(tool, ctx) {
+        if (ctx && ctx.dashboard) {
+            const fi = ctx.families.findIndex((f) => tool.name.indexOf('api_' + f + '_') === 0);
+            if (fi === -1) return 100;
+            const fam = ctx.families[fi];
+            let k = 3;
+            if (tool.name === 'api_' + fam + '_create') k = 0;
+            else if (tool.name === 'api_' + fam + '_list') k = 1;
+            else if (/_list$/.test(tool.name)) k = 2;
+            else if (/_(create|update|delete|add|remove|validate|pay|send)(_|$)/.test(tool.name)) k = 4;
+            return fi * 10 + k;
+        }
+        if (/_(create|update|delete|add|remove|validate|pay|send)(_|$)/.test(tool.name)) return 2;
+        return /_get$/.test(tool.name) ? 0 : 1;
+    }
+
+    let paletteCommands = null;
+
+    // The commands this user may run (command.php), then the raw API tools only
+    // when the administrator shows them (AI_PALETTE_API_TOOLS: testing, advanced use).
+    let paletteLoading = null;
+    function paletteLoad() {
+        // One load for every caller: typing, Enter and Send may all ask at once.
+        if (!paletteLoading) {
+            paletteLoading = (async () => {
+                let cmds = [];
+                let tools = [];
+                try {
+                    const r = await fetch(epUrl('command.php') + '&action=list', { credentials: 'same-origin' });
+                    const j = await aiJson(r);
+                    cmds = (j && Array.isArray(j.commands)) ? j.commands : [];
+                } catch (e) { /* no commands: the list stays empty */ }
+                if (config.paletteApiTools) {
+                    try {
+                        const r = await fetch(epUrl('list_tools.php'), { credentials: 'same-origin' });
+                        const j = await aiJson(r);
+                        tools = (j && Array.isArray(j.tools)) ? j.tools : [];
+                    } catch (e) { /* idem */ }
+                }
+                paletteCommands = cmds;
+                paletteTools = tools;
+                return tools;
+            })();
+        }
+        return paletteLoading;
+    }
+
+    // "/invoice AI SOLUTION 4 popularpt 10" -> { cmd, text } when "invoice" is a command.
+    function paletteParseCommand(v) {
+        const m = /^\/(\S+)(?:\s+([\s\S]*))?$/.exec(String(v || '').trim());
+        if (!m || !paletteCommands) return null;
+        const cmd = paletteCommands.find((c) => c.name === m[1].toLowerCase());
+        return cmd ? { cmd: cmd, text: (m[2] || '').trim(), typedSpace: /\s/.test(String(v).replace(/^\s+/, '')) } : null;
+    }
+
+    // What the page says, with the rows ticked right now.
+    function paletteCommandContext() {
+        const c = window.aiPageContext || {};
+        const out = { element: c.element || '', id: parseInt(c.id, 10) || 0, socid: parseInt(c.socid, 10) || 0 };
+        if (c.list) {
+            out.list = 1;
+            out.ids = Array.isArray(c.ids) ? c.ids : [];
+            out.selected = Array.from(document.querySelectorAll('.checkforselect:checked')).map((cb) => parseInt(cb.value, 10)).filter((n) => n > 0);
+        }
+        return out;
+    }
+
+    // Run a command: no AI provider. A draft stops at the same confirmation as
+    // the chat; a name that fits several third parties brings the choice card.
+    async function runCommand(cmd, text, choices, productChoices) {
+        paletteClose();
+        input.value = '';
+        autoResizeInput();
+        if (welcome) welcome.style.display = 'none';
+        if (!choices && !productChoices) appendMsg('user', escapeHtml('/' + cmd + (text ? ' ' + text : '')), null, '/' + cmd + (text ? ' ' + text : ''));
+        appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} /${escapeHtml(cmd)}...`);
+        const loadingMsg = chat.lastElementChild;
+        input.disabled = true;
+        try {
+            const res = await fetch(epUrl('command.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: cmd, text: text, context: paletteCommandContext(), thirdparty_choices: choices || {}, product_choices: productChoices || {} })
+            });
+            const r = await aiJson(res);
+            loadingMsg.remove();
+            if (r && r.arguments && r.arguments.thirdparty_choice) {
+                handleThirdpartyChoice(r.arguments.question || '', r.arguments.thirdparty_choice, (phrase, id) => {
+                    if (!id) { appendMsg('system', t('ActionCancelled')); return; }
+                    runCommand(cmd, text, Object.assign({}, choices || {}, { [phrase]: id }), productChoices);
+                });
+            } else if (r && r.arguments && r.arguments.product_choice) {
+                // A product the line does not name uniquely: pick it, or keep the words as free text.
+                const pc = r.arguments.product_choice;
+                const again = (id) => {
+                    const msg = chat.lastElementChild;
+                    if (msg && msg.classList.contains('clarification')) msg.remove();
+                    runCommand(cmd, text, choices || {}, Object.assign({}, productChoices || {}, { [pc.key]: id }));
+                };
+                const actions = (pc.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-cube', onclick: () => again(o.id) }));
+                actions.push({ text: escapeHtml(t('AICmdFreeText')), icon: 'fa-font', onclick: () => again(0) });
+                actions.push({ text: escapeHtml(t('Cancel')), icon: 'fa-times', onclick: () => {
+                    const msg = chat.lastElementChild;
+                    if (msg && msg.classList.contains('clarification')) msg.remove();
+                    appendMsg('system', t('ActionCancelled'));
+                } });
+                appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(r.arguments.question || '')}</div>`, actions);
+            } else if (r && r.error) {
+                appendMsg('error', escapeHtml(String(r.error)));
+            } else if (r && r.totals) {
+                const rows = (r.totals.rows || []).map((row) => `<tr><td>${escapeHtml(row[0])}</td><td class="right"><strong>${escapeHtml(row[1])}</strong></td></tr>`).join('');
+                appendMsg('bot', `<div style="font-weight:600">${escapeHtml(r.totals.title || '')}</div><table class="ai-cmd-totals">${rows}</table>`, null, (r.totals.title || '') + ': ' + (r.totals.rows || []).map((row) => row[0] + ' ' + row[1]).join(', '));
+            } else if (r && r.result && r.result.resultType === 'input_required' && r.result.requestState) {
+                const prompt = (r.result.inputRequests && r.result.inputRequests[0] && r.result.inputRequests[0].prompt) || '';
+                const held = { tool: r.tool, arguments: Object.assign({}, r.arguments || {}, { requestState: r.result.requestState }) };
+                handleConfirmation(prompt, '', { tool: 'ask_for_confirmation', arguments: { action: prompt, original_intent: held } });
+            } else if (r && r.result) {
+                appendMsg('bot', formatResult(r.result, false, r.tool || ''), null, contextSnippetOf(r.result, r.tool || ''));
+            }
+        } catch (e) {
+            loadingMsg.remove();
+            appendMsg('error', t('NetworkError') + ': ' + e.message);
+        }
+        input.disabled = false;
+        input.focus();
+    }
+
+    function paletteClose() {
+        container.querySelectorAll('.ai-palette').forEach((el) => el.remove());
+    }
+
+    function paletteMount(box) {
+        paletteClose();
+        const pill = container.querySelector('.chat-input-pill');
+        if (pill && pill.parentNode) pill.parentNode.insertBefore(box, pill);
+    }
+
+    async function paletteOpen(filter) {
+        const tools = await paletteLoad();
+        if (!paletteWanted(input.value) && input.value !== '') return;   // the user moved on meanwhile
+        const typed = paletteParseCommand(input.value);
+        if (typed && typed.typedSpace) {
+            // A command and its words: how to write it, and what fits the word
+            // being typed (the third party, then each product). Enter runs it.
+            paletteSuggest(typed);
+            return;
+        }
+        const ctx = paletteContext();
+        const f = (filter || '').toLowerCase().trim();
+        const cmds = (paletteCommands || []).filter((c) => !f || c.name.indexOf(f) === 0 || c.label.toLowerCase().indexOf(f) !== -1);
+        // Nothing typed: only the tools of the page being viewed, never the first
+        // ones of the alphabet. Typed: the best matches first.
+        const list = tools
+            .filter((tl) => (f ? paletteMatch(tl, f) < 3 : paletteRank(tl, ctx) < 3))
+            .sort((a, b) => {
+                const ra = paletteRank(a, ctx);
+                const rb = paletteRank(b, ctx);
+                // Reads before writes only among the page's own tools; the rest stays alphabetical.
+                return (ra - rb) || (f ? paletteMatch(a, f) - paletteMatch(b, f) : 0) || (ra <= 1 ? paletteKind(a, ctx) - paletteKind(b, ctx) : 0) || a.name.localeCompare(b.name);
+            })
+            .slice(0, 12);
+        const hidden = f ? 0 : tools.length - list.length;
+        const box = document.createElement('div');
+        box.className = 'ai-palette ai-palette-list';
+        let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteHint'))}</div>`;
+        if (hidden > 0) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteTypeToSearch').replace('%s', String(hidden)))}</div>`;
+        const items = cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
+            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`));
+        html += items.length ? items.join('').replace('class="ai-palette-item', 'class="ai-palette-item selected') : `<div class="ai-palette-empty opacitymedium">${escapeHtml(t('NoResults'))}</div>`;
+        box.innerHTML = html;
+        paletteMount(box);
+        // mousedown, not click: the input keeps its focus.
+        box.querySelectorAll('.ai-palette-item').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); palettePick(el); }));
+    }
+
+    // A command: write its name in the input (and run it when it needs no words);
+    // an API tool: its form.
+    function palettePick(el) {
+        if (el.dataset.cmd) {
+            if (el.dataset.cmd === 'total') {
+                runCommand('total', '');
+                return;
+            }
+            input.value = '/' + el.dataset.cmd + ' ';
+            input.focus();
+            paletteOpen(el.dataset.cmd);
+            return;
+        }
+        paletteForm(el.dataset.tool);
+    }
+
+    // "@" then a name suggests third parties (customers and suppliers), "#" then a
+    // ref or a label suggests products, in a command or in a question to the AI.
+    // Only at the start of a word, so an email address (nick@example.com) or a
+    // number sign inside a word never opens it.
+    function mentionTarget() {
+        if (!input) return null;   // also with the palette off: suggestions only, nothing runs
+        const pos = input.selectionStart;
+        if (pos !== input.selectionEnd) return null;
+        const before = String(input.value).slice(0, pos);
+        const m = /(^|\s)([@#])([^@#\n]*)$/.exec(before);
+        if (!m) return null;
+        const q = m[3];
+        if (/\s{2,}$/.test(q) || q.split(/\s+/).length > 6) return null;   // the user went on writing
+        return { kind: m[2] === '@' ? 'thirdparty' : 'product', start: pos - q.length - 1, end: pos, q: q };
+    }
+
+    let mentionTimer = null;
+    let mentionState = null;
+    function mentionSuggest(target) {
+        const typed = paletteWanted(input.value) ? paletteParseCommand(input.value) : null;
+        const hint = t(target.kind === 'thirdparty' ? 'AIMentionThirdpartyHint' : 'AIMentionProductHint');
+        const render = (items) => {
+            const box = document.createElement('div');
+            box.className = 'ai-palette ai-palette-list ai-palette-mention';
+            let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(hint)}</div>`;
+            html += (items || []).map((it, i) => `<div class="ai-palette-item ai-palette-sugg${i === 0 ? ' selected' : ''}" data-value="${escapeHtml(it.value)}" data-ref="${escapeHtml(it.ref || it.value)}"><strong>${escapeHtml(it.label)}</strong> <span class="opacitymedium">${escapeHtml(it.detail || '')}</span></div>`).join('');
+            box.innerHTML = html;
+            mentionState = { target: target, inCommand: !!typed, count: (items || []).length };
+            paletteMount(box);
+            box.querySelectorAll('.ai-palette-sugg').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); mentionPick(el); }));
+        };
+        clearTimeout(mentionTimer);   // a pending request must never draw over a newer state
+        if (target.q.trim().length < 2) {
+            render([]);
+            return;
+        }
+        mentionTimer = setTimeout(async () => {
+            const url = epUrl('command.php') + '&action=suggest&kind=' + target.kind + '&q=' + encodeURIComponent(target.q.trim())
+                + '&cmd=' + encodeURIComponent(typed ? typed.cmd.name : '') + '&name=&socid=0';
+            const asked = input.value;
+            try {
+                const r = await aiJson(await fetch(url, { credentials: 'same-origin' }));
+                if (input.value !== asked) return;   // the user kept typing: a newer request follows
+                render(r.items || []);
+            } catch (e) {
+                render([]);
+            }
+        }, 180);
+    }
+
+    // The picked name or product in place of "@..." / "#...". A command line
+    // takes what its parser reads (a product with a numeric ref as #id); a
+    // question takes the ref as the user would write it.
+    function mentionPick(el) {
+        const st = mentionState;
+        if (!st) return;
+        const value = st.inCommand ? el.dataset.value : el.dataset.ref;
+        const v = input.value;
+        const after = v.slice(st.target.end).replace(/^\s+/, '');
+        const head = v.slice(0, st.target.start) + value + ' ';
+        input.value = head + after;
+        input.focus();
+        input.setSelectionRange(head.length, head.length);
+        mentionState = null;
+        paletteClose();
+        if (paletteWanted(input.value)) paletteOpen(input.value.slice(1));
+        autoResizeInput();
+    }
+
+    // Keys while suggestions for "@" or "#" are shown. Returns true when handled.
+    function mentionKey(e) {
+        const box = container.querySelector('.ai-palette-mention');
+        if (!box) return false;
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            mentionState = null;
+            paletteClose();
+            return true;
+        }
+        const items = Array.from(box.querySelectorAll('.ai-palette-sugg'));
+        const idx = items.findIndex((el) => el.classList.contains('selected'));
+        if ((e.key === 'Enter' || e.key === 'Tab') && !e.shiftKey && idx >= 0) {
+            e.preventDefault();
+            mentionPick(items[idx]);
+            return true;
+        }
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && items.length) {
+            e.preventDefault();
+            if (idx >= 0) items[idx].classList.remove('selected');
+            const next = idx < 0 ? 0 : (idx + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+            items[next].classList.add('selected');
+            items[next].scrollIntoView({ block: 'nearest' });
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey) paletteClose();   // nothing to pick: Enter sends as usual
+        return false;
+    }
+
+    // Where the cursor is in a document command, and what to suggest there:
+    // before the first number the third party, after a quantity the product.
+    function paletteSuggestTarget(typed) {
+        if (typed.cmd.name === 'total') return null;
+        const text = String(input.value).replace(/^\s*\/\S+\s+/, '');
+        if (input.selectionStart !== input.value.length) return null;   // only while typing at the end
+        const firstNum = /(^|\s)\d+(?:[.,]\d+)?(?=\s|$)/.exec(text);
+        if (!firstNum) {
+            return text.trim().length >= 2 ? { kind: 'thirdparty', q: text.trim(), name: '' } : null;
+        }
+        const name = text.slice(0, firstNum.index).trim();
+        const groups = text.slice(firstNum.index).split(/\s*;\s*|,\s+(?=\d)/);
+        const group = groups[groups.length - 1];
+        const m = /^\s*\d+(?:[.,]\d+)?(\s+[\s\S]*)?$/.exec(group);
+        if (!m) return null;
+        const rest = m[1] || '';
+        if (rest === '') return null;                                  // the quantity is still being typed
+        if (/^\s*#?"[^"]+"\s/.test(rest)) return null;                // a product already picked, in quotes
+        const words = rest.trim().split(/\s+/).filter((w) => w !== '');
+        if (words.length && /^\d+(?:[.,]\d+)?$/.test(words[words.length - 1])) return null;   // the price is being typed
+        return { kind: 'product', q: rest.replace(/^\s+/, ''), name: name };
+    }
+
+    let paletteSuggestTimer = null;
+    let paletteSuggestState = null;
+    function paletteSuggest(typed) {
+        const target = paletteSuggestTarget(typed);
+        const render = (items, consumed) => {
+            const box = document.createElement('div');
+            box.className = 'ai-palette ai-palette-list ai-palette-cmdhint';
+            let html = `<div class="ai-palette-hint opacitymedium"><strong>${escapeHtml(typed.cmd.syntax)}</strong> - ${escapeHtml(t('AIPaletteRunHint'))}</div>`;
+            html += (items || []).map((it, i) => `<div class="ai-palette-item ai-palette-sugg${i === 0 ? ' selected' : ''}" data-value="${escapeHtml(it.value)}"><strong>${escapeHtml(it.label)}</strong> <span class="opacitymedium">${escapeHtml(it.detail || '')}</span></div>`).join('');
+            box.innerHTML = html;
+            paletteSuggestState = { kind: target ? target.kind : '', consumed: consumed || '', count: (items || []).length };
+            paletteMount(box);
+            box.querySelectorAll('.ai-palette-sugg').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); paletteSuggestPick(el.dataset.value); }));
+        };
+        clearTimeout(paletteSuggestTimer);   // a pending request must never draw over a newer state
+        if (!target) {
+            render([], '');
+            return;
+        }
+        paletteSuggestTimer = setTimeout(async () => {
+            const ctx = paletteCommandContext();
+            const socid = (ctx.element === 'societe') ? ctx.id : ctx.socid;
+            const url = epUrl('command.php') + '&action=suggest&cmd=' + encodeURIComponent(typed.cmd.name) + '&kind=' + target.kind
+                + '&q=' + encodeURIComponent(target.q) + '&name=' + encodeURIComponent(target.name) + '&socid=' + (target.name ? 0 : (socid || 0));
+            const asked = input.value;
+            try {
+                const r = await aiJson(await fetch(url, { credentials: 'same-origin' }));
+                if (input.value !== asked) return;   // the user kept typing: a newer request follows
+                render(r.items || [], r.consumed || '');
+            } catch (e) {
+                render([], '');
+            }
+        }, 180);
+    }
+
+    // Put the picked suggestion in place of the words it stands for.
+    function paletteSuggestPick(value) {
+        const st = paletteSuggestState || { kind: '', consumed: '' };
+        let v = input.value;
+        if (st.kind === 'thirdparty') {
+            v = v.replace(/^(\s*\/\S+\s+)[\s\S]*$/, '$1' + value.replace(/\$/g, '$$$$') + ' ');
+        } else {
+            const tail = st.consumed;
+            const trimmed = v.replace(/\s+$/, '');
+            v = (tail && trimmed.toLowerCase().endsWith(tail.toLowerCase()))
+                ? trimmed.slice(0, trimmed.length - tail.length) + value + ' '
+                : trimmed + ' ' + value + ' ';
+        }
+        input.value = v;
+        input.focus();
+        input.setSelectionRange(v.length, v.length);
+        paletteOpen(v.slice(1));
+    }
+
+    // Keys while the palette is open. Returns true when the key was handled.
+    function paletteKey(e) {
+        if (mentionKey(e)) return true;
+        const list = container.querySelector('.ai-palette-list');
+        const form = container.querySelector('.ai-palette-form');
+        if (e.key === 'Escape' && (list || form)) {
+            e.preventDefault();
+            paletteClose();
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey && paletteWanted(input.value)) {
+            if (paletteCommands === null) {
+                // Typed faster than the command list arrived: decide once it is here.
+                e.preventDefault();
+                paletteLoad().then(() => {
+                    const later = paletteParseCommand(input.value);
+                    if (later && (later.text !== '' || later.cmd.name === 'total')) runCommand(later.cmd.name, later.text);
+                    else paletteOpen(input.value.slice(1));
+                });
+                return true;
+            }
+            const typed = paletteParseCommand(input.value);
+            const sel = container.querySelector('.ai-palette-sugg.selected');
+            if (sel && paletteSuggestState && sel.dataset.value.toLowerCase() !== String(paletteSuggestState.consumed).trim().toLowerCase()) {
+                e.preventDefault();
+                paletteSuggestPick(sel.dataset.value);
+                return true;
+            }
+            if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
+                e.preventDefault();
+                runCommand(typed.cmd.name, typed.text);
+                return true;
+            }
+        }
+        if (e.key === 'Tab' && !e.shiftKey) {
+            const sel = container.querySelector('.ai-palette-sugg.selected');
+            if (sel) {
+                e.preventDefault();
+                paletteSuggestPick(sel.dataset.value);
+                return true;
+            }
+        }
+        if (!list) {
+            if (e.key === 'Enter' && !e.shiftKey && paletteWanted(input.value)) {
+                e.preventDefault();   // never send "/something" to the model
+                paletteOpen(input.value.slice(1));
+                return true;
+            }
+            return false;
+        }
+        const items = Array.from(list.querySelectorAll('.ai-palette-item'));
+        let idx = items.findIndex((el) => el.classList.contains('selected'));
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!items.length) return true;
+            if (idx >= 0) items[idx].classList.remove('selected');
+            idx = (idx + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+            items[idx].classList.add('selected');
+            items[idx].scrollIntoView({ block: 'nearest' });
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (idx >= 0) palettePick(items[idx]);
+            return true;
+        }
+        return false;
+    }
+
+    // The value a field starts with, read from the card being viewed. Only what
+    // the page itself shows; the user can change it before running.
+    function palettePrefill(tool, pname, ctx) {
+        if (!ctx) return '';
+        const own = paletteRank(tool, ctx) <= 1;   // the card's own tools and its files
+        if (pname === 'id' && own && ctx.id) return String(ctx.id);
+        if (pname === 'ref' && own && ctx.ref) return ctx.ref;
+        if (pname === 'modulepart' && tool.name === 'api_documents_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
+        if ((pname === 'socid' || pname === 'thirdparty_ids') && ctx.socid) return String(ctx.socid);
+        return '';
+    }
+
+    function paletteForm(name) {
+        const tool = (paletteTools || []).find((tl) => tl.name === name);
+        if (!tool) return;
+        const ctx = paletteContext();
+        let rows = '';
+        for (const pname in (tool.properties || {})) {
+            const pdef = tool.properties[pname];
+            const req = (tool.required || []).indexOf(pname) !== -1;
+            const val = palettePrefill(tool, pname, ctx);
+            const nm = escapeHtml(pname);
+            const help = escapeHtml(pdef.description || '');
+            let field;
+            if (pdef.enum && pdef.enum.length) {
+                field = `<select name="${nm}" data-type="string">${req ? '' : '<option value=""></option>'}${pdef.enum.map((o) => `<option${String(o) === val ? ' selected' : ''}>${escapeHtml(String(o))}</option>`).join('')}</select>`;
+            } else if (pdef.type === 'boolean') {
+                field = `<select name="${nm}" data-type="boolean"><option value=""></option><option value="true">true</option><option value="false">false</option></select>`;
+            } else if (pdef.type === 'array' || pdef.type === 'object') {
+                // A list of records (invoice lines): JSON, with the record's fields as the example.
+                const example = (pdef.items && pdef.items.length) ? '[{' + pdef.items.map((k) => `"${k}": ""`).join(', ') + '}]' : (pdef.type === 'array' ? '[]' : '{}');
+                field = `<textarea name="${nm}" data-type="json" rows="2" placeholder="${escapeHtml(example)}" title="${help}"></textarea>`;
+            } else {
+                const num = (pdef.type === 'integer' || pdef.type === 'number');
+                field = `<input type="${num ? 'number' : 'text'}"${pdef.type === 'number' ? ' step="any"' : ''} name="${nm}" data-type="${escapeHtml(pdef.type || 'string')}" value="${escapeHtml(val)}" placeholder="${help}">`;
+            }
+            rows += `<label class="ai-palette-row" title="${help}"><span>${nm}${req ? ' *' : ''}</span>${field}</label>`;
+        }
+        const box = document.createElement('div');
+        box.className = 'ai-palette ai-palette-form';
+        box.innerHTML = `<div class="ai-palette-title"><strong>${escapeHtml(tool.title || tool.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tool.name)}</span> <span class="opacitymedium">${escapeHtml(tool.description || '')}</span></div>`
+            + rows
+            + `<div class="ai-palette-error ai-hidden"></div>`
+            + `<div class="ai-palette-actions"><button type="button" class="msg-action-btn primary ai-palette-run"><span class="fa fa-play"></span> ${escapeHtml(t('Run'))}</button> <button type="button" class="msg-action-btn ai-palette-cancel"><span class="fa fa-times"></span> ${escapeHtml(t('Cancel'))}</button></div>`;
+        paletteMount(box);
+        input.value = '';
+        autoResizeInput();
+        const first = box.querySelector('[name]');
+        if (first) first.focus();
+        box.querySelector('.ai-palette-cancel').addEventListener('click', () => { paletteClose(); input.focus(); });
+        box.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Escape') { ev.preventDefault(); paletteClose(); input.focus(); }
+            if (ev.key === 'Enter' && ev.target.tagName !== 'TEXTAREA') { ev.preventDefault(); box.querySelector('.ai-palette-run').click(); }
+        });
+        box.querySelector('.ai-palette-run').addEventListener('click', () => {
+            const errBox = box.querySelector('.ai-palette-error');
+            const args = {};
+            let problem = '';
+            box.querySelectorAll('[name]').forEach((el) => {
+                if (problem) return;
+                const v = el.value.trim();
+                const pname = el.getAttribute('name');
+                if (v === '') {
+                    if ((tool.required || []).indexOf(pname) !== -1) problem = t('ErrorFieldRequired').replace('%s', pname);
+                    return;
+                }
+                const type = el.dataset.type;
+                if (type === 'json') {
+                    try { args[pname] = JSON.parse(v); } catch (e) { problem = t('AIPaletteBadJson').replace('%s', pname); }
+                } else if (type === 'integer') {
+                    args[pname] = parseInt(v, 10);
+                } else if (type === 'number') {
+                    args[pname] = parseFloat(v);
+                } else if (type === 'boolean') {
+                    args[pname] = (v === 'true');
+                } else {
+                    args[pname] = v;
+                }
+            });
+            if (problem) {
+                errBox.textContent = problem;
+                errBox.classList.remove('ai-hidden');
+                return;
+            }
+            paletteClose();
+            runToolDirect(tool.name, args);
+        });
+    }
+
+    // Run a tool picked in the palette, with no model in the loop. A write answers
+    // input_required: the same confirmation as the chat's is shown, carrying the
+    // state that completes it, so the gate is never bypassed.
+    async function runToolDirect(name, args) {
+        if (welcome) welcome.style.display = 'none';
+        appendMsg('user', escapeHtml('/' + name), null, '/' + name + ' ' + JSON.stringify(args));
+        appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${escapeHtml(name)}...`);
+        const loadingMsg = chat.lastElementChild;
+        input.disabled = true;
+        try {
+            const res = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool: name, arguments: args })
+            });
+            const result = await aiJson(res);
+            loadingMsg.remove();
+            if (result && result.resultType === 'input_required' && result.requestState) {
+                const prompt = (result.inputRequests && result.inputRequests[0] && result.inputRequests[0].prompt) || '';
+                const held = { tool: name, arguments: Object.assign({}, args, { requestState: result.requestState }) };
+                handleConfirmation(prompt, '', { tool: 'ask_for_confirmation', arguments: { action: prompt, original_intent: held } });
+            } else if (result && result.error) {
+                appendMsg('error', escapeHtml(String(result.error)));
+            } else {
+                lastResult = { data: result, tool: name, query: '' };
+                appendMsg('bot', formatResult(result, false, name), null, contextSnippetOf(result, name));
+                resolveThirdpartyNames(chat.lastElementChild);
+            }
+        } catch (e) {
+            loadingMsg.remove();
+            appendMsg('error', t('NetworkError') + ': ' + e.message);
+        }
+        input.disabled = false;
+        input.focus();
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1806,6 +2483,18 @@ export function initAiAssistant(container) {
         // again, without a second bubble.
         const isResend = !!(resend && typeof resend.sentQuery === 'string');
         const query = isResend ? resend.query : input.value.trim();
+        if (!isResend && paletteWanted(query)) {
+            // A tool or a command, not a question for the model.
+            paletteLoad().then(() => {
+                const typed = paletteParseCommand(query);
+                if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
+                    runCommand(typed.cmd.name, typed.text);
+                } else {
+                    paletteOpen(query.slice(1));
+                }
+            });
+            return;
+        }
         const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
         if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
