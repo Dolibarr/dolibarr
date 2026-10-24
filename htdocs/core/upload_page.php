@@ -762,6 +762,10 @@ if ($action == 'uploadfile') {
 	if (!empty($ajaxFileUrl)) {
 		print '<script>
 		$(document).ready(function() {
+			$("#form-result-back").on("click", function() {
+				window.location.href = $(this).data("url");
+			});
+
 			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
 			$.ajax({
 				url: \''.dol_escape_js($ajaxFileUrl).'\',
@@ -911,8 +915,9 @@ if ($action == 'uploadfile') {
 	print '<div id="ajax-result-message"></div>';
 	if ($action == 'uploadfile') {
 		print '<br>';
-		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
-		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'" id="form-result-back" class="button hideobject">'.$langs->trans("GoBack").'</a>';	// Shown instead of Next if the AI service returns an error
+		// The buttons are hidden until the end of the ajax call: Next is shown on success, Go back on error
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button hideobject" value="'.$langs->trans("Next").'">';
+		print '<input type="button" name="form-result-back" id="form-result-back" class="button hideobject" value="'.$langs->trans("GoBack").'" data-url="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'">';
 	}
 	print '</form>'."\n";
 	print "\n";
