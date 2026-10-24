@@ -422,6 +422,11 @@ if (empty($reshook)) {
 			}
 		}
 
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $object->type != Facture::TYPE_DEPOSIT && empty($object->date_pointoftax)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+			$action = '';
+		}
+
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative

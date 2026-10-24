@@ -232,11 +232,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fac_rec;
 
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
-
 
 	/**
 	 * @var int Situation cycle reference number
@@ -2873,6 +2868,12 @@ class Facture extends CommonInvoice
 			$this->user_validation_id = $this->fk_user_valid;
 		}
 
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+
 		// Update request
 		// TODO Use the invoice->update() method.
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
@@ -3715,6 +3716,13 @@ class Facture extends CommonInvoice
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
 			}
+		}
+		// Point of tax date mandatory (not for a deposit invoice: nothing is supplied yet)
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $this->type != self::TYPE_DEPOSIT && empty($this->date_pointoftax)) {
+			$langs->loadLangs(array("errors", "bills"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')';
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
 		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
