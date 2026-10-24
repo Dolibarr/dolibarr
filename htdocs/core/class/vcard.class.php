@@ -28,12 +28,12 @@
 /**
  * Encode a string for vCard
  *
- * @param	string	$string		String to encode
+ * @param	?string	$string		String to encode
  * @return	string				String encoded
  */
 function encode($string)
 {
-	return str_replace(";", "\;", (dol_quoted_printable_encode($string)));
+	return str_replace(";", "\;", (dol_quoted_printable_encode((string) $string)));
 }
 
 
@@ -108,7 +108,7 @@ class vCard
 	/**
 	 *  Format phone number.
 	 *
-	 *  @param	string	$number		numero de telephone
+	 *  @param	?string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
@@ -129,7 +129,7 @@ class vCard
 	 *  warning NON TESTE !
 	 *
 	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
-	 *  @param  string  $photo			Photo
+	 *  @param  ?string  $photo			Photo
 	 *  @return	void
 	 */
 	public function setPhoto($type, $photo)
@@ -143,7 +143,7 @@ class vCard
 	/**
 	 *	Format name.
 	 *
-	 *	@param	string	$name			Name
+	 *	@param	?string	$name			Name
 	 *	@return	void
 	 */
 	public function setFormattedName($name)
@@ -175,7 +175,7 @@ class vCard
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 
-		$this->filename = "$first%20$family.vcf";
+		$this->filename = trim("$first $family").'.vcf';
 
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
@@ -198,13 +198,13 @@ class vCard
 	/**
 	 *	Address
 	 *
-	 *	@param	string	$postoffice		Postoffice
-	 *	@param	string	$extended		Extended
-	 *	@param	string	$street			Street
-	 *	@param	string	$city			City
-	 *	@param	string	$region			Region
-	 *	@param	string	$zip			Zip
-	 *	@param	string	$country		Country
+	 *	@param	?string	$postoffice		Postoffice
+	 *	@param	?string	$extended		Extended
+	 *	@param	?string	$street			Street
+	 *	@param	?string	$city			City
+	 *	@param	?string	$region			Region
+	 *	@param	?string	$zip			Zip
+	 *	@param	?string	$country		Country
 	 *	@param	string	$type			Type
 	 *  @param	string	$label			Label
 	 *	@return	void
@@ -237,13 +237,13 @@ class vCard
 	/**
 	 *  Address (old standard)
 	 *
-	 *  @param	string	$postoffice		Postoffice
-	 *  @param	string	$extended		Extended
-	 *  @param	string	$street			Street
-	 *  @param	string	$city			City
-	 *  @param	string	$region			Region
-	 *  @param	string	$zip			Zip
-	 *  @param	string	$country		Country
+	 *  @param	?string	$postoffice		Postoffice
+	 *  @param	?string	$extended		Extended
+	 *  @param	?string	$street			Street
+	 *  @param	?string	$city			City
+	 *  @param	?string	$region			Region
+	 *  @param	?string	$zip			Zip
+	 *  @param	?string	$country		Country
 	 *  @param	string	$type			Type
 	 *  @return	void
 	 *  @deprecated
@@ -279,7 +279,7 @@ class vCard
 	/**
 	 *	Add a e-mail address to this vCard
 	 *
-	 *	@param	string	$address		E-mail address
+	 *	@param	?string	$address		E-mail address
 	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF" or "INTERNET")
 	 *	@return	void
 	 */
@@ -301,7 +301,7 @@ class vCard
 	/**
 	 *	mise en forme de la note
 	 *
-	 *	@param	string	$note		Note
+	 *	@param	?string	$note		Note
 	 *	@return	void
 	 */
 	public function setNote($note)
@@ -312,7 +312,7 @@ class vCard
 	/**
 	 * 	mise en forme de la fonction
 	 *
-	 *	@param	string	$title		Title
+	 *	@param	?string	$title		Title
 	 *	@return	void
 	 */
 	public function setTitle($title)
@@ -324,7 +324,7 @@ class vCard
 	/**
 	 *  mise en forme de la societe
 	 *
-	 *  @param	string	$org		Org
+	 *  @param	?string	$org		Org
 	 *  @return	void
 	 */
 	public function setOrg($org)
@@ -360,7 +360,7 @@ class vCard
 	/**
 	 *  mise en forme de l'url
 	 *
-	 *	@param	string	$url		URL
+	 *	@param	?string	$url		URL
 	 *  @param	string	$type		Type
 	 *	@return	void
 	 */
@@ -396,13 +396,17 @@ class vCard
 	}
 
 	/**
-	 *  Return name of a file
+	 *  Return name of a file, safe to use in a HTTP header and as a file name (no accent, no quote, no slash)
 	 *
 	 *  @return	string		Filename
 	 */
 	public function getFileName()
 	{
-		return $this->filename;
+		$filename = trim(dol_sanitizeFileName(trim((string) $this->filename)));
+		if ($filename === '' || $filename === '.vcf') {
+			$filename = 'vcard.vcf';
+		}
+		return $filename;
 	}
 
 	/**
