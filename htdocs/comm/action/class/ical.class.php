@@ -1222,6 +1222,58 @@ class ICal
 		return $timezone;
 	}
 
+	/**
+	 * Return the name of the PHP time zone that matches the TZID of a date.
+	 * The TZID can be a name of the IANA database ('Europe/Paris'), written in any case, or a Windows name written by Outlook ('Romance Standard Time').
+	 *
+	 * @param 	string 	$tzid	TZID of a date
+	 * @return 	string			Name of a time zone known by PHP, or '' if the TZID is not known
+	 */
+	public function getPhpTimezone($tzid)
+	{
+		$tzid = trim($tzid, " \t\"");
+		if ($tzid === '') {
+			return '';
+		}
+		$identifiers = timezone_identifiers_list();
+		foreach ($identifiers as $identifier) {
+			if (strcasecmp($identifier, $tzid) == 0) {
+				return $identifier;
+			}
+		}
+		// Most common Windows names (written by Outlook and Exchange)
+		$windows = array(
+			'romance standard time' => 'Europe/Paris', 'w. europe standard time' => 'Europe/Berlin', 'central europe standard time' => 'Europe/Budapest',
+			'central european standard time' => 'Europe/Warsaw', 'gmt standard time' => 'Europe/London', 'greenwich standard time' => 'Atlantic/Reykjavik',
+			'e. europe standard time' => 'Europe/Chisinau', 'fle standard time' => 'Europe/Kiev', 'gtb standard time' => 'Europe/Bucharest', 'russian standard time' => 'Europe/Moscow',
+			'turkey standard time' => 'Europe/Istanbul', 'eastern standard time' => 'America/New_York', 'central standard time' => 'America/Chicago',
+			'mountain standard time' => 'America/Denver', 'pacific standard time' => 'America/Los_Angeles', 'us mountain standard time' => 'America/Phoenix',
+			'atlantic standard time' => 'America/Halifax', 'e. south america standard time' => 'America/Sao_Paulo', 'argentina standard time' => 'America/Buenos_Aires',
+			'china standard time' => 'Asia/Shanghai', 'tokyo standard time' => 'Asia/Tokyo', 'korea standard time' => 'Asia/Seoul', 'india standard time' => 'Asia/Kolkata',
+			'singapore standard time' => 'Asia/Singapore', 'arabian standard time' => 'Asia/Dubai', 'aus eastern standard time' => 'Australia/Sydney',
+			'new zealand standard time' => 'Pacific/Auckland', 'south africa standard time' => 'Africa/Johannesburg', 'egypt standard time' => 'Africa/Cairo',
+			'utc' => 'UTC', 'w. central africa standard time' => 'Africa/Lagos', 'morocco standard time' => 'Africa/Casablanca'
+		);
+		$key = strtolower($tzid);
+		return (isset($windows[$key]) ? $windows[$key] : '');
+	}
+
+	/**
+	 * Convert a local date and time of a time zone (TZID) into a real time, taking into account the daylight saving time of this date.
+	 *
+	 * @param 	int 	$localtime	Local date and time written as GMT timestamp (how ical_dt_date() returns a date with a TZID)
+	 * @param 	string 	$tzid		TZID of the date
+	 * @return 	int|null			Real timestamp, or null if the TZID is not known
+	 */
+	public function tzidToTimestamp($localtime, $tzid)
+	{
+		$timezone = $this->getPhpTimezone($tzid);
+		if ($timezone === '') {
+			return null;
+		}
+		return dol_mktime((int) gmdate('G', $localtime), (int) gmdate('i', $localtime), (int) gmdate('s', $localtime), (int) gmdate('n', $localtime), (int) gmdate('j', $localtime), (int) gmdate('Y', $localtime), 'tz,'.$timezone);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return unix date from iCal date format
