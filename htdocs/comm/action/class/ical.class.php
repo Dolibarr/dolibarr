@@ -580,10 +580,13 @@ class ICal
 		}
 		//if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DUE") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
-			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE") || stristr($key, "DUE;VALUE=DATE")) {
-				list($key, $value) = array($key, $value);
+		if (preg_match('/^(DTSTART|DTEND|DUE)(;|$)/i', $key, $reg)) {
+			$params = $this->getKeyParams($key);
+			if (isset($params['VALUE']) && strtoupper($params['VALUE']) == 'DATE') {
+				// All day date. The key is always 'DTSTART;VALUE=DATE' or 'DTEND;VALUE=DATE'
+				$key = strtoupper($reg[1]).';VALUE=DATE';
 			} else {
+				// Date and time (the parameter VALUE=DATE-TIME, if any, is the default type and is ignored)
 				list($key, $value) = $this->ical_dt_date($key, $value);
 			}
 		}
@@ -1102,10 +1105,11 @@ class ICal
 		// phpcs:enable
 		$return_value = array();
 
-		// Analyse TZID
-		$temp = explode(";", $key);
+		// Analyse the parameters of the key (TZID...)
+		$params = $this->getKeyParams($key);
+		$key = strtoupper(explode(';', $key, 2)[0]);
 
-		if (empty($temp[1])) { // not TZID in key
+		if (empty($params['TZID'])) { // not TZID in key
 			// A date time without Z (like 19970714T133000) is a "floating" time (RFC 5545): it is a local time, not a GMT time
 			$floating = (strpos($value, 'T') !== false && strtoupper(substr(trim($value), -1)) != 'Z');
 			$value = ($value === '' ? '' : $this->ical_date_to_unix($value, $floating));
@@ -1114,9 +1118,7 @@ class ICal
 
 		$value = str_replace('T', '', $value);
 
-		$key = $temp[0];
-		$temp = explode("=", $temp[1]);
-		$return_value[$temp[0]] = trim($temp[1], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
+		$return_value['TZID'] = trim($params['TZID'], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
 		$return_value['unixtime'] = ($value === '' ? '' : $this->ical_date_to_unix($value));	// Local time as GMT timestamp; TZ correction is done by caller (AGENDA_EXT_BUGGEDFILEx)
 
 		return array($key, $return_value);
@@ -1143,6 +1145,26 @@ class ICal
 		}
 
 		return $event['DTSTART'] !== '' && $event['DTSTART'] !== null;
+	}
+
+	/**
+	 * Return the parameters of a property key (for 'DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris', array('VALUE' => 'DATE-TIME', 'TZID' => 'Europe/Paris')).
+	 *
+	 * @param 	string 				$key	Key of the property, with its parameters
+	 * @return 	array<string,string>		Parameters (names in upper case)
+	 */
+	public function getKeyParams($key)
+	{
+		$params = array();
+		$parts = explode(';', $key);
+		array_shift($parts);
+		foreach ($parts as $part) {
+			$item = explode('=', $part, 2);
+			if (isset($item[1]) && $item[0] !== '') {
+				$params[strtoupper(trim($item[0]))] = trim($item[1]);
+			}
+		}
+		return $params;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
