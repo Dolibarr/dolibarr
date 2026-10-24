@@ -12161,9 +12161,9 @@ function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 
 			// Prepare redirection URL
 			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
-			$queryString = http_build_query($postData);
-			if ($queryString !== '') {
-				$newLocationUrl .= '?' . $queryString;
+			$urlParams = http_build_query($postData);
+			if ($urlParams !== '') {
+				$newLocationUrl .= '?' . $urlParams;
 			}
 
 			// Make a GET redirection if URL is not too long
