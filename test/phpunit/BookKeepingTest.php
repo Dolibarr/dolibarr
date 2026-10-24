@@ -152,7 +152,7 @@ class BookKeepingTest extends CommonClassTest
 	}
 
 	/**
-	 * Changes of a whole transaction call the bookkeeping triggers for each line, and a trigger can refuse them,
+	 * Changes of a whole transaction call the bookkeeping trigger once for the transaction, and a trigger can refuse them,
 	 * for example a module that locks closed periods: date, journal or reference changed, transaction validated
 	 * from draft, transaction cloned.
 	 * The test runs inside one transaction, so a refused change is not rolled back here: the test checks the error.
@@ -180,17 +180,18 @@ class BookKeepingTest extends CommonClassTest
 			$newdate = dol_mktime(0, 0, 0, 4, 20, 2094);
 			$piecenum = $this->createTransaction($olddate, '');
 
-			// Change of the date: one BOOKKEEPING_MODIFY per line, with the old date in oldcopy
+			// Change of the date: one BOOKKEEPING_MODIFY with the lines, the transaction before the change in oldcopy and its lines in context
 			InterfacePhpunitBookKeeping::$calls = array();
 			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_date', $db->idate($newdate));
 			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
-			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
-			foreach (InterfacePhpunitBookKeeping::$calls as $call) {
-				$this->assertEquals('BOOKKEEPING_MODIFY', $call['action']);
-				$this->assertGreaterThan(0, $call['id']);
-				$this->assertEquals($newdate, $call['doc_date']);
-				$this->assertEquals($olddate, $call['old_doc_date']);
-			}
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
+			$call = InterfacePhpunitBookKeeping::$calls[0];
+			$this->assertEquals('BOOKKEEPING_MODIFY', $call['action']);
+			$this->assertEquals($piecenum, $call['piece_num']);
+			$this->assertEquals($newdate, $call['doc_date']);
+			$this->assertEquals(2, $call['nblines']);
+			$this->assertEquals($olddate, $call['old_doc_date']);
+			$this->assertEquals(2, $call['nboldlines']);
 
 			// A trigger that refuses the change: error
 			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_MODIFY';
@@ -199,14 +200,16 @@ class BookKeepingTest extends CommonClassTest
 			$this->assertStringContainsString('Refused by test trigger', $bookkeeping->errorsToString());
 			InterfacePhpunitBookKeeping::$refuse = '';
 
-			// Clone: one BOOKKEEPING_CREATE per new line, error if refused
+			// Clone: one BOOKKEEPING_CREATE for the new transaction, error if refused
 			InterfacePhpunitBookKeeping::$calls = array();
 			$nextpiecenum = $bookkeeping->getNextNumMvt();
 			$result = $bookkeeping->newClone((string) $piecenum, 'OD', $newdate);
 			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
-			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
 			$this->assertEquals('BOOKKEEPING_CREATE', InterfacePhpunitBookKeeping::$calls[0]['action']);
+			$this->assertEquals($nextpiecenum, InterfacePhpunitBookKeeping::$calls[0]['piece_num']);
 			$this->assertEquals($newdate, InterfacePhpunitBookKeeping::$calls[0]['doc_date']);
+			$this->assertEquals(2, InterfacePhpunitBookKeeping::$calls[0]['nblines']);
 			$this->assertEquals(2, $this->countLines($nextpiecenum, ''));
 
 			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_CREATE';
@@ -216,23 +219,25 @@ class BookKeepingTest extends CommonClassTest
 			InterfacePhpunitBookKeeping::$calls = array();
 			$result = $bookkeeping->newCloneMass(array_keys($this->getLineIds($piecenum)), 'OD', $newdate);
 			$this->assertLessThan(0, $result, 'A refused mass clone must return an error');
-			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls, 'The first refused line must stop the mass clone');
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls, 'The mass clone of one transaction calls the trigger once');
 			InterfacePhpunitBookKeeping::$refuse = '';
 
-			// Validation of a draft transaction: one BOOKKEEPING_CREATE per line in the ledger, refused validation keeps the draft
+			// Validation of a draft transaction: one BOOKKEEPING_CREATE for the transaction in the ledger, error if refused
 			$draftpiecenum = $this->createTransaction($olddate, '_tmp');
 			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_CREATE';
 			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
 			$this->assertLessThan(0, $result, 'A refused validation must return an error');
-			$this->assertEquals(2, $this->countLines($draftpiecenum, '_tmp'), 'A refused validation must keep the draft');
 			InterfacePhpunitBookKeeping::$refuse = '';
 
+			$draftpiecenum = $this->createTransaction($olddate, '_tmp');
 			InterfacePhpunitBookKeeping::$calls = array();
 			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
 			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
-			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
 			$this->assertEquals('BOOKKEEPING_CREATE', InterfacePhpunitBookKeeping::$calls[0]['action']);
+			$this->assertEquals($bookkeeping->piece_num, InterfacePhpunitBookKeeping::$calls[0]['piece_num']);
 			$this->assertEquals($olddate, InterfacePhpunitBookKeeping::$calls[0]['doc_date']);
+			$this->assertEquals(2, InterfacePhpunitBookKeeping::$calls[0]['nblines']);
 			$this->assertEquals(2, $this->countLines($bookkeeping->piece_num, ''));
 			$this->assertEquals(0, $this->countLines($draftpiecenum, '_tmp'));
 
