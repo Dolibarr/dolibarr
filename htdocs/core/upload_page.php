@@ -1032,7 +1032,7 @@ if ($action == 'showsummary') {
 				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
 			}
 			print $langs->trans("ChooseTheThirdPartyTouse").' ';
-			print $form->select_company($socid, 'socid', '(statut:=:0)', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
+			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen', '', '', 1, array(), false, array(), 1);
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
 		} else {
 			print '<span class="valignmiddle">'.$langs->trans("WillUse").'</span> ';
