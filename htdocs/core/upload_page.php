@@ -927,7 +927,7 @@ if ($action == 'showsummary') {
 	print '<div id="ajax-result-message"></div>';
 	//print '<br>';
 
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 
@@ -1157,7 +1157,7 @@ if ($action == 'showsummary') {
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("CreateBill").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'salaries') {
 		$langs->loadLangs(array("salaries", "hrm", "compta", "bills"));
@@ -1463,7 +1463,7 @@ if ($action == 'showsummary') {
 	print '</form>';
 	print "\n";
 } elseif ($action == 'objectcreated' && is_object($createdobject)) {
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 	print '<br>';
