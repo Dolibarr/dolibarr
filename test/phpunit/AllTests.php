@@ -250,6 +250,9 @@ class AllTests
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
 
+		require_once dirname(__FILE__).'/VCardTest.php';
+		$suite->addTestSuite('VCardTest');
+
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
 
