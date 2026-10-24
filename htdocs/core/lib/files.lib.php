@@ -3107,6 +3107,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$accessallowed = 0;
 	$sqlprotectagainstexternals = '';
 	$ret = array();
+	$checksecureaccesshook = false;
 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
@@ -3475,6 +3476,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('societe').")";
 	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
+		$checksecureaccesshook = true;
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3679,6 +3681,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
 		// Wrapping for products and services
+		$checksecureaccesshook = true;
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3834,6 +3837,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// If modulepart=module-abc			Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	} else {
 		// GENERIC Wrapping
+		$checksecureaccesshook = true;
 		//var_dump($modulepart);
 		//var_dump($original_file);
 		if (preg_match('/^specimen/i', $original_file)) {
@@ -3924,7 +3928,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
 			}
 		}
+	}
 
+	// Keep the session entity; modules must validate any requested shared entity themselves.
+	if ($checksecureaccesshook) {
 		$parameters = array(
 			'modulepart' => $modulepart,
 			'original_file' => $original_file,
@@ -3934,11 +3941,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			'mode' => $mode
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
-		if ($reshook > 0) {
+		if ($reshook < 0) {
+			$accessallowed = 0;
+		} elseif ($reshook > 0) {
 			if (!empty($hookmanager->resArray['original_file'])) {
 				$original_file = $hookmanager->resArray['original_file'];
 			}
-			if (!empty($hookmanager->resArray['accessallowed'])) {
+			if (array_key_exists('accessallowed', $hookmanager->resArray)) {
 				$accessallowed = $hookmanager->resArray['accessallowed'];
 			}
 			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
