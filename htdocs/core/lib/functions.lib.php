@@ -12208,7 +12208,7 @@ function dolRemoveDefaultParameters(array $parameters): array
 }
 
 /**
- * Function to redirect search list forms from POST to GET request
+ * Function to redirect search list forms from POST to GET request.
  * The redirection is done only for search list forms following these conditions :
  * - request parameter 'action' must be 'list'
  * - request parameter 'formfilteraction' must be 'list'
@@ -12217,8 +12217,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  * - string length of the redirection URL must be <= 2000
  * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
  *
- * The goal of this function is to be able to avoid browser warning when going back to a search list page result
- * when navigating in browser history.
+ * The goal of this function is to be able to avoid browser warning when going back to a search list page result when navigating in browser history.
  * Typical case :
  * - go to a search list page (propal list)
  * - click on a propal item
@@ -12227,6 +12226,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * By redirecting POST request to a GET one, there will be not problem to go back to
  * the search list page (because browser is going back to a GET page)
+ * Need to set the experimental conf MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE to 2000 (or to the max value allowed for GET string by the web server)
  *
  * @param string $context The current page context name
  *
@@ -12234,7 +12234,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {
-	if (getDolGlobalBool("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+	if (getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
 		preg_match('/list$/', $context) &&
 		GETPOST('action') == 'list' &&
 		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
@@ -12259,7 +12259,7 @@ function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 			}
 
 			// Make a GET redirection if URL is not too long
-			$maxUrlLength = 2000;
+			$maxUrlLength = getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE");
 			if (strlen($newLocationUrl) <= $maxUrlLength) {
 				header('Location: ' . $newLocationUrl);
 				exit();
