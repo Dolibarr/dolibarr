@@ -563,6 +563,9 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
+-- Allow modules to lock definition of extrafields they need
+ALTER TABLE llx_extrafields ADD COLUMN locked integer DEFAULT 0;
+
 
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
