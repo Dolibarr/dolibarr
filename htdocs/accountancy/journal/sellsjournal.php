@@ -254,7 +254,7 @@ if ($result) {
 
 		// Controls
 		$accountancy_code_customer_general = (!empty($obj->accountancy_code_customer_general) && $obj->accountancy_code_customer_general != '-1') ? $obj->accountancy_code_customer_general : $cptcli;
-		$compta_soc = (!empty($obj->code_compta_client)) ? $obj->code_compta_client : $cptcli;
+		$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_client, 'customer');
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
