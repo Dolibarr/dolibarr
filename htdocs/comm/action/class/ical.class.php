@@ -424,6 +424,29 @@ class ICal
 
 		$events = $this->get_event_list();
 		if (!empty($events)) {
+			// The same instance of an event written several times (same UID and same start, or same UID and RECURRENCE-ID): we keep the most recent version
+			// (SEQUENCE, then LAST-MODIFIED or DTSTAMP, then the last one of the file). Events with the same UID but another start are other events:
+			// some exporters reuse the same UID for the events of several years.
+			$keptevents = [];
+			foreach ($events as $evkey => $event) {
+				if (empty($event['UID'])) {
+					continue;
+				}
+				$eventstart = ($event['DTSTART'] ?? ($event['DTSTART;VALUE=DATE'] ?? ''));
+				// A modified occurrence is identified by its UID and its RECURRENCE-ID (its start can differ), another event by its UID and its start
+				$duplicatekey = $event['UID'].'|'.(empty($event['RECURRENCE-ID']) ? json_encode($eventstart) : 'RECURRENCE-ID='.$event['RECURRENCE-ID']);
+				$rank = [(int) ($event['SEQUENCE'] ?? 0), (int) ($event['LAST-MODIFIED'] ?? ($event['DTSTAMP'] ?? 0))];
+				if (isset($keptevents[$duplicatekey])) {
+					if ($rank >= $keptevents[$duplicatekey]['rank']) {
+						unset($events[$keptevents[$duplicatekey]['key']]);
+						$keptevents[$duplicatekey] = ['key' => $evkey, 'rank' => $rank];
+					} else {
+						unset($events[$evkey]);
+					}
+				} else {
+					$keptevents[$duplicatekey] = ['key' => $evkey, 'rank' => $rank];
+				}
+			}
 			// An occurrence of a recurring event that was modified or cancelled is an event with the same UID and a RECURRENCE-ID.
 			// We add its day to the excluded days (EXDATE) of the main event, so the original occurrence is not shown.
 			// The modified occurrence stays an event of its own.
