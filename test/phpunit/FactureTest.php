@@ -309,6 +309,65 @@ class FactureTest extends CommonClassTest
 	}
 
 	/**
+	 * testFactureValidPointOfTaxMandatory
+	 *
+	 * With option INVOICE_POINTOFTAX_DATE_MANDATORY, an invoice without point of tax date can't be validated,
+	 * a deposit invoice can.
+	 *
+	 * @return void
+	 */
+	public function testFactureValidPointOfTaxMandatory()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+		$conf->global->INVOICE_POINTOFTAX_DATE = 1;
+		$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 1;
+		$langs->loadLangs(array("main", "bills"));
+
+		try {
+			// Own thirdparty and free text lines, so the test doesn't depend on demo data
+			$soc = new Societe($db);
+			$soc->name = 'Test point of tax '.dol_print_date(dol_now(), 'dayhourlog');
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
+
+			$invoices = array();
+			foreach (array(Facture::TYPE_STANDARD, Facture::TYPE_DEPOSIT) as $type) {
+				$invoice = new Facture($db);
+				$invoice->socid = $soc->id;
+				$invoice->type = $type;
+				$invoice->date = dol_mktime(0, 0, 0, 10, 15, 2026);
+				$invoice->date_pointoftax = null;
+				$invoice->cond_reglement_id = 1;
+				$this->assertGreaterThan(0, $invoice->create($user), $invoice->errorsToString());
+				$this->assertGreaterThan(0, $invoice->addline('Service', 100, 1, 19), $invoice->errorsToString());
+				$invoices[$type] = $invoice;
+			}
+
+			$result = $invoices[Facture::TYPE_STANDARD]->validate($user);
+			print __METHOD__." result=".$result." error=".$invoices[Facture::TYPE_STANDARD]->error."\n";
+			$this->assertEquals(-1, $result);
+			$this->assertStringContainsString($langs->transnoentitiesnoconv("DatePointOfTax"), $invoices[Facture::TYPE_STANDARD]->errorsToString());
+
+			$invoices[Facture::TYPE_STANDARD]->date_pointoftax = dol_mktime(0, 0, 0, 9, 30, 2026);
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->validate($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
+
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->validate($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+		} finally {
+			$conf->global->INVOICE_POINTOFTAX_DATE = 0;
+			$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 0;
+		}
+	}
+
+	/**
 	 * testFactureOther
 	 *
 	 * @param   Facture $localobject Invoice
