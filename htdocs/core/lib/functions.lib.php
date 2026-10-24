@@ -6469,6 +6469,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					if (!$outishtml) {
 						$out = preg_replace('/&(?![a-zA-Z0-9#]+;)/', '__AMPINTEXT__', $out);
+						// Same protection for the '<' char: the content is known to be plain text here, so it holds no tag.
+						// Left as it is, loadHTML() reads it as the start of an element and drops everything up to the
+						// next '>', so a description like "temperature < 10 degrees" would be stored as "temperature".
+						$out = str_replace('<', '&lt;', $out);
 					}
 
 					$dom = new DOMDocument();
