@@ -790,7 +790,7 @@ function getGMTEasterDatetime($year)
  *  @return	int|string						Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1, $state_job_id=0)
 {
 	global $conf, $db, $mysoc;
 
@@ -829,8 +829,12 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0).")";
+		if ($state_job_id > 0) {
+            $sql .= " AND (fk_departement IS NULL OR fk_departement = null OR fk_departement = 0 OR fk_departement = ".((int) $state_job_id).")";
+        }else{
+ 			$sql .= " AND (fk_departement IS NULL OR fk_departement = null OR fk_departement = 0 )";
+		}
 		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
-
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_rows = $db->num_rows($resql);
@@ -1412,9 +1416,19 @@ function num_days_in_year($year)
  *	@return    	float|string					Number of days or hours or string if error
  *  @seealso num_between_day(), num_public_holiday()
  */
-function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '', $user_id = 0)
+function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '', $user = null)
 {
-	global $langs, $mysoc, $hookmanager;
+	global $langs, $mysoc, $hookmanager,$mysoc;
+
+	$countryCodeOrId = 0;
+    $user_state_job_id = 0;
+	$user_id=0;
+
+	if (is_object($user)) {
+        $countryCodeOrId = !empty($user->country_job_id) ? (int) $user->country_job_id : 0;
+        $user_state_job_id = !empty($user->state_job_id) ? (int) $user->state_job_id : 0;
+		$user_id=$user->id;
+    }
 
 	if (empty($countryCodeOrId) || $countryCodeOrId < 0) {
 		$countryCodeOrId = $mysoc->country_code;
@@ -1436,7 +1450,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		// --- 1. Calculate Gross Working Days ---
 		// Gross working days = total days in range - non-working days (weekends & public holidays).
 		$a = num_between_day($timestampStart, $timestampEnd, $lastday);
-		$b = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday);
+	
+		$b = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday,null,null,null,null,$user_state_job_id);
+
 		$nbOpenDay = $a - $b;
 
 		// --- 2. Apply Contextual Half-Day Deductions ---
@@ -1445,9 +1461,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		// Check if start/end days are working days just ONCE to optimize performance
 		// by avoiding redundant calls to the potentially slow num_public_holiday() function.
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $countryCodeOrId, 1) == 0);
+		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, 1,null,null,null,null,$user_state_job_id) == 0);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $countryCodeOrId, 1) == 0);
+		$isEndDayWorking   = (num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, 1,null,null,null,null,$user_state_job_id) == 0);
 
 		// Deduct 0.5 if the leave starts in the afternoon of a working day.
 		if (($halfday == -1 || $halfday == 2) && $isStartDayWorking) {
@@ -1461,7 +1477,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	} elseif ($timestampStart == $timestampEnd) {
 		$isSingleDayHoliday = false;
 		if ($lastday) {
-			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday);
+			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday,null,null,null,null,$user_state_job_id);
 			if ($numholidays == 1) {
 				$isSingleDayHoliday = true;
 			}
@@ -1497,6 +1513,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	if ($inhour == 1) {
 		return (int) ($nbOpenDay * 24);
 	}
+
 	return $nbOpenDay;
 }
 
