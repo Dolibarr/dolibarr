@@ -879,7 +879,7 @@ class Product extends CommonObject
 		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 11, 'csslist' => 'tdoverflowmax250'),
 		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
-		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61),
+		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'uieditable' => 1),
 		'note'          => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62),
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
 		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
@@ -5780,9 +5780,27 @@ class Product extends CommonObject
 		 }*/
 
 		// les prix de fournisseurs.
+		// All the columns describing the price must be copied, not only the five historical ones:
+		// unitprice defaults to 0 in the table and find_min_price_product_fournisseur() reads it
+		// directly, so a partial copy makes the best buying price of the new product evaluate to 0.
+		// entity defaults to 1 as well, which would move the rows out of their company.
+		// ref_fourn and barcode are deliberately left empty: the unique keys
+		// uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity) and
+		// uk_product_barcode (barcode, fk_barcode_type, entity) do not contain fk_product, so
+		// copying either value would collide with the row of the source product.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
+		$sql .= " datec, fk_product, entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -8163,7 +8181,7 @@ class Product extends CommonObject
 			$sql .= " INNER JOIN ".$this->db->prefix()."product_price AS newp ON newp.price_level = oldp.price_level";
 			$sql .= " WHERE oldp.fk_product =  ".((int) $fromId);
 			$sql .= " AND newp.fk_product =  ".((int) $toId);
-			$sql .= " ORDER BY oldp.date_price ASC";
+			$sql .= " ORDER BY oldp.date_price DESC";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();

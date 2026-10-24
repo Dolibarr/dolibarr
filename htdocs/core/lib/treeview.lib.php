@@ -108,8 +108,8 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  *	$arrayofcss=array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
  *  TODO Replace with jstree plugin instead of treeview plugin.
  *
- *  @param	array<array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}>	$tab    			Array of all elements
- *  @param  array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
+ *  @param	array<array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,type?:string,statut?:int,entry?:string,buttons?:string}>	$tab    			Array of all elements
+ *  @param  array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,type?:string,statut?:int,entry?:string,buttons?:string}   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
  *  @param  int	    $rang   					Level of element
  *  @param	string	$iddivjstree				Id to use for parent ul element
  *  @param  int<0,1>     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
@@ -185,7 +185,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			// And now we search all its sons of lower level
 			tree_recur($tab, $tab[$x], $rang + 1, 'iddivjstree', 0, $showfk);
 			print '</li>';
-		} elseif (!empty($tab[$x]['rowid']) && ((int) $tab[$x]['fk_menu']) == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu']) {
+		} elseif (!empty($tab[$x]['rowid']) && ((int) $tab[$x]['fk_menu']) == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'] && ($pere['leftmenu'] != '' || empty($pere['type']) || $pere['type'] == 'top')) {
+			// Note: a left menu entry with an empty leftmenu code can't be the parent of entries linked by code (fk_mainmenu/fk_leftmenu)
 			//print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
 			if (empty($ulprinted) && !empty($pere['rowid'])) {
 				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']])) {

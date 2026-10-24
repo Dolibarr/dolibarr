@@ -2871,6 +2871,18 @@ function top_menu_ai()
 	        });
 		});
 
+	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	document.addEventListener("click", function (event) {
+		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
+		if (!link) { return; }
+		try {
+			for (var i = sessionStorage.length - 1; i >= 0; i--) {
+				var key = sessionStorage.key(i);
+				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
+			}
+		} catch (e) { /* storage not available */ }
+	});
+
 	(function () {
 		var toggle = document.getElementById("topmenu-ai-toggle");
 		var popover = document.getElementById("topmenu-ai-popover");
@@ -3965,6 +3977,8 @@ if (!function_exists("llxFooter")) {
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
+				} elseif (!empty($_POST['button_removefilter']) || !empty($_POST['button_removefilter_x'])) {
+					unset($_SESSION['lastsearch_values_'.$key]);	// Filters were removed, so previously saved criteria must not be restored later
 				}
 			}
 		}

@@ -634,7 +634,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -864,7 +865,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
