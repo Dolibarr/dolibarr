@@ -456,9 +456,38 @@ class ICal
 					$mainkeys[$event['UID']] = $evkey;
 				}
 			}
-			foreach ($events as $event) {
+			foreach ($events as $evkeyoverride => $event) {
 				if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($mainkeys[$event['UID']])) {
 					$mainkey = $mainkeys[$event['UID']];
+					if (($event['X-RECURRENCE-RANGE'] ?? '') == 'THISANDFUTURE' && !empty($events[$mainkey]['RRULE']) && is_array($events[$mainkey]['RRULE'])) {
+						// This occurrence and the following ones are modified: the series of the main event stops the day before, and the modified
+						// event continues the series (same rule, with its own start and properties).
+						$rule = $events[$mainkey]['RRULE'];
+						$daystamp = gmmktime(0, 0, 0, (int) substr($event['RECURRENCE-ID'], 4, 2), (int) substr($event['RECURRENCE-ID'], 6, 2), (int) substr($event['RECURRENCE-ID'], 0, 4));
+						$newrule = $rule;
+						unset($newrule['UNTIL']);
+						if (!empty($rule['COUNT'])) {
+							// Remaining number of occurrences for the modified event
+							$mainstart = $this->getWallStart($events[$mainkey]);
+							unset($newrule['COUNT']);
+							if ($mainstart !== null && $this->isRRuleSupported($rule)) {
+								$remaining = (int) $rule['COUNT'] - count($this->expandRRule($rule, $mainstart, $daystamp));
+								if ($remaining > 0) {
+									$newrule['COUNT'] = (string) $remaining;
+								}
+							}
+						}
+						if (!empty($rule['UNTIL'])) {
+							$newrule['UNTIL'] = $rule['UNTIL'];
+						}
+						unset($events[$mainkey]['RRULE']['COUNT']);
+						$events[$mainkey]['RRULE']['UNTIL'] = gmdate('Ymd', $daystamp - 86400).'T235959Z';
+						if (empty($events[$evkeyoverride]['RRULE'])) {
+							$events[$evkeyoverride]['RRULE'] = $newrule;
+						}
+						unset($events[$evkeyoverride]['RECURRENCE-ID'], $events[$evkeyoverride]['X-RECURRENCE-RANGE']);
+						continue;
+					}
 					$exdates = (isset($events[$mainkey]['EXDATE']) && is_array($events[$mainkey]['EXDATE'])) ? $events[$mainkey]['EXDATE'] : [];
 					$exdates[] = $event['RECURRENCE-ID'];
 					$events[$mainkey]['EXDATE'] = $exdates;
@@ -579,6 +608,10 @@ class ICal
 		}
 
 		if (!$iscontinuation) {
+			// RECURRENCE-ID;RANGE=THISANDFUTURE: this occurrence and all the following ones are modified (the parameter is removed with the other ones below)
+			if ($type == 'VEVENT' && preg_match('/^RECURRENCE-ID;.*RANGE=THISANDFUTURE/i', $key)) {
+				$this->cal[$type][$this->event_count]['X-RECURRENCE-RANGE'] = 'THISANDFUTURE';
+			}
 			// Value in a legacy encoding (vCalendar 1.0 style: ENCODING=QUOTED-PRINTABLE and/or CHARSET=ISO-8859-1 as parameters of the property)
 			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
 				if (preg_match('/;ENCODING=(QUOTED-PRINTABLE|Q)(;|$)/i', $key)) {
@@ -868,7 +901,29 @@ class ICal
 	}
 
 	/**
-	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()).
+	 * Return the start of an event as GMT timestamp of the date and time written in the file.
+	 *
+	 * @param 	array<string,mixed>	$event	Event
+	 * @return 	int|null					Timestamp, or null if the event has no start
+	 */
+	private function getWallStart($event)
+	{
+		if (isset($event['DTSTART;VALUE=DATE']) && is_string($event['DTSTART;VALUE=DATE'])) {
+			return gmmktime(0, 0, 0, (int) substr($event['DTSTART;VALUE=DATE'], 4, 2), (int) substr($event['DTSTART;VALUE=DATE'], 6, 2), (int) substr($event['DTSTART;VALUE=DATE'], 0, 4));
+		}
+		if (isset($event['DTSTART']) && is_array($event['DTSTART']) && isset($event['DTSTART']['unixtime'])) {
+			return (int) $event['DTSTART']['unixtime'];
+		}
+		if (isset($event['DTSTART']) && !is_array($event['DTSTART'])) {
+			return (int) $event['DTSTART'];
+		}
+		return null;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()), the first one being always DTSTART:
+	 * RFC 5545 defines DTSTART as the first instance of the recurrence set, even if it does not match the rule (the event
+	 * is then still shown at its start date, and it counts for COUNT).
 	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
 	 *
 	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
@@ -879,6 +934,31 @@ class ICal
 	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
 	 */
 	public function expandRRule($rrule, $dtstart, $to, $until = 0, $from = 0)
+	{
+		$result = $this->expandRRuleOccurrences($rrule, $dtstart, $to, $until, $from);
+		if (!in_array($dtstart, $result) && $dtstart < $to && (!$until || $dtstart <= $until)) {
+			$result[] = $dtstart;
+			sort($result);
+			$maxcount = (int) ($rrule['COUNT'] ?? 0);
+			if ($maxcount) {
+				$result = array_slice($result, 0, $maxcount);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()).
+	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
+	 *
+	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
+	 * @param 	int						$dtstart	Start of the first occurrence
+	 * @param 	int						$to			Occurrences starting from this date are not returned
+	 * @param 	int						$until		Occurrences starting after this date are not returned (0 = no limit)
+	 * @param 	int						$from		Date from which the occurrences are needed: when the rule has no COUNT, the periods before are skipped
+	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
+	 */
+	private function expandRRuleOccurrences($rrule, $dtstart, $to, $until = 0, $from = 0)
 	{
 		$daysofweek = array('SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6);
 		$freq = ($rrule['FREQ'] ?? '');
