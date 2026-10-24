@@ -10,9 +10,11 @@
 # against the quota of the original author of the commits.
 # Commits with no GitHub account linked to the email of their author can not be attributed
 # to a user, so they are ignored.
-# The Dolibarr maintainers (the accounts listed in EXCLUDED_MAINTAINERS) are not counted,
+# The Dolibarr maintainers (the accounts listed in the MAINTENERS file) are not counted,
 # so they can pull the branch of a contributor and create the PR with their own login,
 # or add merge or fix commits on the PR of a contributor, without being blocked by this control.
+# If the author of the last commit of the PR is a maintainer listed into the MAINTENERS file
+# (read from the target branch), the check is bypassed.
 # If the quota is exceeded, the CI fails, so the PR is refused.
 # The check does not run at all on the PR targeting the branch 18.0 (end of life version).
 # The check runs when the PR is opened or reopened, and also each time commits are pushed
@@ -42,13 +44,13 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref != '18.0'
     env:
       MAX_PR_PER_USER_PER_DAY: 10
-      EXCLUDED_MAINTAINERS: '^(eldy|rycks|lvessiller-opendsi)$'
     steps:
       - name: Check the number of PR created by the author of the PR and by the authors of its commits during the last 24 hours
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
           REPO: ${{ github.repository }}
         run: |
           # The counting is a rolling window of 24 hours: only the PR created after this
@@ -59,6 +61,20 @@ jobs:
           echo "PR created after this datetime are counted: ${SINCE_24H}"
           echo "Author of the PR #${PR_NUMBER}: ${PR_AUTHOR}"
 
+          # If the author of the last commit of the PR is a maintainer (a github login found on a line
+          # "M: Name <email> / login" of the MAINTENERS file of the target branch, never read from the PR),
+          # the quota is bypassed: the maintainer has taken over the PR.
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${REPO}/contents/MAINTENERS?ref=${PR_TARGET_BRANCH}" \
+            | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+            | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u || true)
+          LAST_COMMIT_AUTHOR=$(gh api "repos/${REPO}/pulls/${PR_NUMBER}/commits" --paginate \
+            -q '.[] | (.author.login // "")' | tail -n 1)
+          echo "Author of the last commit of the PR: ${LAST_COMMIT_AUTHOR:-unknown}"
+          if [ -n "${LAST_COMMIT_AUTHOR}" ] && printf '%s\n' "${MAINTAINERS}" | grep -qixF -- "${LAST_COMMIT_AUTHOR}"; then
+            echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTENERS file. Check of the quota skipped. OK."
+            exit 0
+          fi
+
           # Get the authors of the commits of the PR (the GitHub accounts linked to the emails
           # of the commit authors), so the quota of the original author of the commits is also
           # checked even if the PR was opened by somebody else (for example a maintainer).
@@ -68,9 +84,9 @@ jobs:
             -q '.[].author.login | select(. != null)' | sort -u)
 
           # The quota is checked for the author of the PR and for each author of its commits,
-          # except the Dolibarr maintainers who are excluded from the quota.
+          # except the Dolibarr maintainers (from the MAINTENERS file) who are excluded from the quota.
           USERS_TO_CHECK=$(printf '%s\n' "${PR_AUTHOR}" "${COMMIT_AUTHORS}" | sed '/^$/d' | sort -u \
-            | grep -Ev "${EXCLUDED_MAINTAINERS}" || true)
+            | grep -vixF -f <(printf '%s\n' "${MAINTAINERS}") || true)
           echo "Users the quota is checked for: $(echo "${USERS_TO_CHECK}" | tr '\n' ' ')"
           echo "Maximum number of PR allowed per user and per day: ${MAX_PR_PER_USER_PER_DAY}"
 
