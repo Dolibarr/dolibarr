@@ -82,6 +82,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
 $confirm = GETPOST('confirm', 'alpha');
+$closingnote = GETPOSTISSET('closing_note') ? GETPOST('closing_note', 'restricthtml') : GETPOST('note', 'restricthtml');
 $lineid = GETPOSTINT('lineid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
@@ -577,14 +578,29 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Set accepted/refused
+		$status = GETPOSTINT('statut');
+		if ($confirm == 'yes') {
+			$status = SupplierProposal::STATUS_SIGNED;
+		} elseif ($confirm == 'no') {
+			$status = SupplierProposal::STATUS_NOTSIGNED;
+		}
 		// Only the 2 values of the form are accepted (like for a customer proposal), not any status
-		if (!in_array(GETPOSTINT('statut'), array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED))) {
+		if (!in_array($status, array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED), true)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->status == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOSTINT('statut'), GETPOST('note', 'restricthtml'));
+				$result = $object->cloture($user, $status, $closingnote);
+				if ($result > 0) {
+					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+					exit();
+				}
+				setEventMessages($object->error, $object->errors, 'errors');
+				$ret = $object->fetch($object->id);
+				if ($ret > 0) {
+					$action = 'statut';
+				}
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('updateallvatlinesblock', 'alpha') && GETPOST('vatforblocklines', 'alpha') !== '' && $usercancreate) {
@@ -1985,6 +2001,17 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 		}
 	}
+	// Form to set the supplier proposal accepted/refused
+	if ($action == 'statut' && $usercanclose && $object->status == SupplierProposal::STATUS_VALIDATED) {
+		$text = '';
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
+			$text = $langs->trans('SupplierProposalRefFournNotice'); // TODO Suggest a permanent checkbox instead of option
+		}
+		$formquestion = array(
+			array('type' => 'textarea', 'name' => 'closing_note', 'label' => $langs->trans('Note'), 'value' => dol_escape_htmltag(GETPOSTISSET('closing_note') || GETPOSTISSET('note') ? $closingnote : $object->note_private), 'morecss' => 'centpercent', 'moreattr' => 'rows="'.ROWS_3.'"', 'inputko' => 1),
+		);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, 'no', 2, 0, 600, 0, 'ToAccept', 'ToRefuse', '', 'Cancel', '');
+	}
 	// Subtotal line form
 	if ($action == 'add_title_line') {
 		$langs->load('subtotals');
@@ -2361,34 +2388,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	if ($action == 'statut') {
-		// Form to set proposal accepted/refused
-		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce paddingbottom paddingleft paddingright">';
-		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
-
-		if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {
-			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
-		}
-		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
-		$form_close .= '<tr><td>'.$langs->trans("CloseAs").'</td><td class="left">';
-		$form_close .= '<select id="statut" name="statut" class="flat">';
-		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">'.$langs->trans('SupplierProposalStatusSigned').'</option>';
-		$form_close .= '<option value="3">'.$langs->trans('SupplierProposalStatusNotSigned').'</option>';
-		$form_close .= '</select>';
-		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		$form_close .= $object->note_private;
-		$form_close .= '</textarea></td></tr>';
-		$form_close .= '</table>';
-		$form_close .= $form->buttonsSaveCancel();
-		$form_close .= '<a id="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</form>';
-
-		print $form_close;
-	}
-
 	/*
 	 * Boutons Actions
 	 */
@@ -2472,7 +2471,7 @@ if ($action == 'create') {
 
 				// Set accepted/refused
 				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut'.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 
