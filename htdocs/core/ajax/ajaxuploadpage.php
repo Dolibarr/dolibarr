@@ -158,15 +158,17 @@ if ($modulepart == 'invoice_supplier') {
 	5. **Ignore Background Noise:** Exclude background noise, decorative elements, and irrelevant symbols that do not contribute to the data content.
 	6. **Preserve Context:** If the image contains sections, headings, or grouping indicators, use them to create logical hierarchies in the JSON structure.
 	7. **General Usability:** Format the text to be suitable for further processing, analysis, or database import.
+	8. **Key information:** The invoice number, the invoice date, the due date, the title and the currency must always be inside "document_info" with exactly the key names of the example below. If a value is not found in the document, use null. Never guess or calculate a date that is not written in the document.
 
 	**Example JSON Structure:**
 
 	{
 	 "document_info": {
-	  "document_ref": "<document ref or number>",
-	  "date": "<date>",
+	  "invoice_number": "<invoice ref or number>",
+	  "issue_date": "<YYYY-MM-DD>",
+	  "due_date": "<YYYY-MM-DD>",
 	  "title": "<title>",
-	  "currency_code": "<currency_code>"
+	  "currency_code": "<ISO 4217 currency code>"
 	 },
 	 "vendor": {
 	  "name": "<name>",

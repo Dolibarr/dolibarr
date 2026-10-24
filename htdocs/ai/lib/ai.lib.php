@@ -108,7 +108,7 @@ function getListOfAIServices()
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'pixtral-12b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
