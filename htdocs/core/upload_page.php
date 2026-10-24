@@ -790,6 +790,9 @@ if ($action == 'uploadfile') {
 
 						// Display error if status is not 200
 						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+						// Replace the button Next by the button to go back to restart
+						$("#form-result-submit").hide();
+						$("#form-result-back").show();
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -799,6 +802,9 @@ if ($action == 'uploadfile') {
 					var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
 					$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
 					$(".progress-bar").css("width", "100%");
+					// Replace the button Next by the button to go back to restart
+					$("#form-result-submit").hide();
+					$("#form-result-back").show();
 				}
 			});
 		});
@@ -906,6 +912,7 @@ if ($action == 'uploadfile') {
 	if ($action == 'uploadfile') {
 		print '<br>';
 		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
+		print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'" id="form-result-back" class="button hideobject">'.$langs->trans("GoBack").'</a>';	// Shown instead of Next if the AI service returns an error
 	}
 	print '</form>'."\n";
 	print "\n";
