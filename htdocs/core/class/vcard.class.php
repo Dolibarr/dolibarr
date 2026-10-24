@@ -197,7 +197,7 @@ class vCard
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 
-		$this->filename = "$first%20$family.vcf";
+		$this->filename = trim("$first $family").'.vcf';
 
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim((string) preg_replace('/\s+/', ' ', "$prefix $first $additional $family $suffix")));
@@ -438,13 +438,17 @@ class vCard
 	}
 
 	/**
-	 *  Return name of a file
+	 *  Return name of a file, safe to use in a HTTP header and as a file name (no accent, no quote, no slash)
 	 *
 	 *  @return	string		Filename
 	 */
 	public function getFileName()
 	{
-		return $this->filename;
+		$filename = trim(dol_sanitizeFileName(trim((string) $this->filename)));
+		if ($filename === '' || $filename === '.vcf') {
+			$filename = 'vcard.vcf';
+		}
+		return $filename;
 	}
 
 	/**
