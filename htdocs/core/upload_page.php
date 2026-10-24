@@ -111,6 +111,7 @@ $error = 0;
 $ai = new Ai($db);
 $ajaxFileUrl = '';
 $fullnewname = '';
+$uploadedfilename = '';
 
 
 /*
@@ -183,6 +184,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 
 	if (!empty($_FILES['userfile']['name'])) {
+		$uploadedfilename = $_FILES['userfile']['name'];
 		$fullnewname = $fileprefix.'-'.$_FILES['userfile']['name'];
 		$_FILES['userfile']['name'] = $fullnewname;
 
@@ -742,7 +744,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	if ($action == 'showsummary') {
 		print $langs->trans("AIProcessingDone", $ai->getApiService());
 	} else {
-		print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
+		print $langs->trans("AIProcessingDocumentPleaseWait", $ai->getApiService(), dol_trunc($uploadedfilename, 32, 'middle'));
 	}
 	print '</div>';
 	print '<br>';
@@ -760,6 +762,10 @@ if ($action == 'uploadfile') {
 	if (!empty($ajaxFileUrl)) {
 		print '<script>
 		$(document).ready(function() {
+			$("#form-result-back").on("click", function() {
+				window.location.href = $(this).data("url");
+			});
+
 			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
 			$.ajax({
 				url: \''.dol_escape_js($ajaxFileUrl).'\',
@@ -788,6 +794,9 @@ if ($action == 'uploadfile') {
 
 						// Display error if status is not 200
 						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+						// Replace the button Next by the button to go back to restart
+						$("#form-result-submit").hide();
+						$("#form-result-back").show();
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -797,6 +806,9 @@ if ($action == 'uploadfile') {
 					var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
 					$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
 					$(".progress-bar").css("width", "100%");
+					// Replace the button Next by the button to go back to restart
+					$("#form-result-submit").hide();
+					$("#form-result-back").show();
 				}
 			});
 		});
@@ -903,7 +915,9 @@ if ($action == 'uploadfile') {
 	print '<div id="ajax-result-message"></div>';
 	if ($action == 'uploadfile') {
 		print '<br>';
-		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
+		// The buttons are hidden until the end of the ajax call: Next is shown on success, Go back on error
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button hideobject" value="'.$langs->trans("Next").'">';
+		print '<input type="button" name="form-result-back" id="form-result-back" class="button hideobject" value="'.$langs->trans("GoBack").'" data-url="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'">';
 	}
 	print '</form>'."\n";
 	print "\n";
@@ -918,7 +932,7 @@ if ($action == 'showsummary') {
 	print '<div id="ajax-result-message"></div>';
 	//print '<br>';
 
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 
@@ -1148,7 +1162,7 @@ if ($action == 'showsummary') {
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("CreateBill").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'salaries') {
 		$langs->loadLangs(array("salaries", "hrm", "compta", "bills"));
@@ -1454,7 +1468,7 @@ if ($action == 'showsummary') {
 	print '</form>';
 	print "\n";
 } elseif ($action == 'objectcreated' && is_object($createdobject)) {
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 	print '<br>';

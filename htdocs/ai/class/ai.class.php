@@ -552,6 +552,13 @@ class Ai
 
 		//var_dump($json['items']);
 		if ($type == 'supplier_invoice') {
+			// The AI service may put the invoice data into another section than document_info, so we complete document_info with them
+			foreach (array('invoice_details', 'invoice_info', 'invoice') as $keysection) {
+				if (!empty($json[$keysection]) && is_array($json[$keysection])) {
+					$json['document_info'] = array_merge($json[$keysection], (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array());
+				}
+			}
+
 			// Invoice info
 			if (!empty($json['document_info']['reference'])) {
 				$tmparray['supplierref'] = $json['document_info']['reference'];

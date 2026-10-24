@@ -430,6 +430,17 @@ try {
 	// A single word that is part of the whole name is asked about rather than wrongly resolved.
 	$aiNamesToMask = array();	// names masked in everything sent: query, history, tool results
 	$tpChoices = (!empty($data['thirdparty_choices']) && is_array($data['thirdparty_choices'])) ? $data['thirdparty_choices'] : array();
+	// An attached document is data, not the request: the third parties it names
+	// are not resolved to ids (that would rewrite the document the model is asked
+	// to read), and the offsets below are taken on the request alone. Under the
+	// privacy guard its names are still masked, like any other name.
+	$aiDocuments = aiExtractDocumentBlocks($query, $langs);
+	$query = $aiDocuments['text'];
+	if (!empty($doRedact)) {
+		foreach ($aiDocuments['blocks'] as $aiDocument) {
+			$aiNamesToMask = array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $aiDocument, $dynamicStopWords));
+		}
+	}
 	$tpFound = aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords);
 	$tpAsk = null;
 	$tpReplace = array();
@@ -504,7 +515,7 @@ try {
 		if (getDolGlobalString("AI_DEBUG")) {
 			dol_syslog("parse_intent.php ".count($options)." third parties fit '".$tpAsk['phrase']."': the user chooses before anything is sent", LOG_DEBUG, 0, '_ai');
 		}
-		ai_log_request($db, $user, $query, $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
+		ai_log_request($db, $user, aiRestoreDocumentBlocks($query, $aiDocuments['blocks']), $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
 		ob_end_clean();
 		echo json_encode($finalResponse);
 		exit;
@@ -523,6 +534,7 @@ try {
 	foreach ($tpReplace as $r) {
 		$query = substr($query, 0, $r[0]).$r[2].substr($query, $r[1]);
 	}
+	$query = aiRestoreDocumentBlocks($query, $aiDocuments['blocks']);
 
 	// Token usage of the LLM call, filled after the adapter answered.
 	$usageContext = array();
@@ -1170,12 +1182,24 @@ try {
 		if (strpos($errorDetails, 'Error:') === 0) {
 			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
 			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
-			if (UniversalLLMAdapter::isModelUnavailableError($reason)) {
+			// The request carried a document and the provider refused it: say what to
+			// do (many OpenAI compatible gateways do not read PDF files). Checked first:
+			// "file parts are not supported by this model" is no unknown model.
+			$hasPdf = false;
+			foreach ($attachments as $att) {
+				$hasPdf = $hasPdf || ($att['mime'] === 'application/pdf');
+			}
+			$attachmentWords = '/\b(?:file|files|pdf|document|image_url|image|attachment|content.?type|mime|multimodal|vision)\b/i';
+			if (!empty($attachments) && preg_match($attachmentWords, $reason)) {
+				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
+			} elseif (UniversalLLMAdapter::isModelUnavailableError($reason)) {
 				// The chosen model is unknown or retired at the provider: rephrasing
 				// will not help, choosing another model will.
 				$message = $langs->transnoentitiesnoconv('AIModelNotAvailableAtProvider', (isset($model) ? $model : ''), getAiAssistantProviderLabel(), $reason);
 			} elseif (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
 				$message = $langs->transnoentitiesnoconv('AIProviderBusy', $reason);
+			} elseif (!empty($attachments) && preg_match('/HTTP (?:400|415|422)/', $errorDetails)) {
+				$message = $langs->transnoentitiesnoconv($hasPdf ? 'AIProviderRejectedPdf' : 'AIProviderRejectedAttachment', getAiAssistantProviderLabel(), $reason);
 			} else {
 				$message = $langs->transnoentitiesnoconv('AIProviderError', $reason);
 			}

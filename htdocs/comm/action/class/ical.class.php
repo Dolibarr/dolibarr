@@ -580,10 +580,13 @@ class ICal
 		}
 		//if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DUE") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
-			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE") || stristr($key, "DUE;VALUE=DATE")) {
-				list($key, $value) = array($key, $value);
+		if (preg_match('/^(DTSTART|DTEND|DUE)(;|$)/i', $key, $reg)) {
+			$params = $this->getKeyParams($key);
+			if (isset($params['VALUE']) && strtoupper($params['VALUE']) == 'DATE') {
+				// All day date. The key is always 'DTSTART;VALUE=DATE' or 'DTEND;VALUE=DATE'
+				$key = strtoupper($reg[1]).';VALUE=DATE';
 			} else {
+				// Date and time (the parameter VALUE=DATE-TIME, if any, is the default type and is ignored)
 				list($key, $value) = $this->ical_dt_date($key, $value);
 			}
 		}
@@ -1068,10 +1071,11 @@ class ICal
 	 * Return Unix time from ical date time format (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
 	 *
 	 * @param 	string		$ical_date		String date
-	 * @param 	bool		$floating		True if the date is a "floating" time (no Z and no TZID), so a local time of the user and not a GMT time
+	 * @param 	bool		$floating		True if the date is a "floating" time (no Z and no TZID), so a local time and not a GMT time
+	 * @param 	string		$timezone		Time zone of a floating time (the one of the calendar). If empty, the time zone of the user is used.
 	 * @return 	int
 	 */
-	public function ical_date_to_unix($ical_date, $floating = false)
+	public function ical_date_to_unix($ical_date, $floating = false, $timezone = '')
 	{
 		// phpcs:enable
 		$ical_date = str_replace('T', '', $ical_date);
@@ -1081,12 +1085,38 @@ class ICal
 		// TIME LIMITED EVENT
 		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
-			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], ($floating ? 'tzuserrel' : true));
+			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], ($floating ? ($timezone ? 'tz,'.$timezone : 'tzuserrel') : true));
 		}
 
 		//if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
 		//print dol_print_date($ntime,'dayhour');exit;
 		return $ntime; // ntime is a GTM time
+	}
+
+	/**
+	 * Return the properties of the calendar itself (VCALENDAR: PRODID, X-WR-TIMEZONE...).
+	 *
+	 * @return array<string,mixed>
+	 */
+	private function getCalendarProperties()
+	{
+		return (isset($this->cal['VCALENDAR']) && is_array($this->cal['VCALENDAR'])) ? $this->cal['VCALENDAR'] : array();
+	}
+
+	/**
+	 * Return the time zone of the calendar, declared by the property X-WR-TIMEZONE (not standard but written by Google, Apple, Outlook...).
+	 * It is the time zone of the "floating" times (date and time with no Z and no TZID) of the file.
+	 *
+	 * @return string	Name of the time zone (for example 'Europe/Paris'), or '' if there is none or if it is not a valid time zone
+	 */
+	public function getCalendarTimezone()
+	{
+		$calendar = $this->getCalendarProperties();
+		$timezone = (isset($calendar['X-WR-TIMEZONE']) && is_string($calendar['X-WR-TIMEZONE'])) ? trim($calendar['X-WR-TIMEZONE'], " \t\"") : '';
+		if ($timezone === '' || !in_array($timezone, timezone_identifiers_list())) {
+			return '';
+		}
+		return $timezone;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1102,21 +1132,20 @@ class ICal
 		// phpcs:enable
 		$return_value = array();
 
-		// Analyse TZID
-		$temp = explode(";", $key);
+		// Analyse the parameters of the key (TZID...)
+		$params = $this->getKeyParams($key);
+		$key = strtoupper(explode(';', $key, 2)[0]);
 
-		if (empty($temp[1])) { // not TZID in key
+		if (empty($params['TZID'])) { // not TZID in key
 			// A date time without Z (like 19970714T133000) is a "floating" time (RFC 5545): it is a local time, not a GMT time
 			$floating = (strpos($value, 'T') !== false && strtoupper(substr(trim($value), -1)) != 'Z');
-			$value = ($value === '' ? '' : $this->ical_date_to_unix($value, $floating));
+			$value = ($value === '' ? '' : $this->ical_date_to_unix($value, $floating, ($floating ? $this->getCalendarTimezone() : '')));
 			return array($key, $value);
 		}
 
 		$value = str_replace('T', '', $value);
 
-		$key = $temp[0];
-		$temp = explode("=", $temp[1]);
-		$return_value[$temp[0]] = trim($temp[1], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
+		$return_value['TZID'] = trim($params['TZID'], '"');	// RFC 5545 allows quoted parameter values (TZID="Europe/Berlin")
 		$return_value['unixtime'] = ($value === '' ? '' : $this->ical_date_to_unix($value));	// Local time as GMT timestamp; TZ correction is done by caller (AGENDA_EXT_BUGGEDFILEx)
 
 		return array($key, $return_value);
@@ -1143,6 +1172,26 @@ class ICal
 		}
 
 		return $event['DTSTART'] !== '' && $event['DTSTART'] !== null;
+	}
+
+	/**
+	 * Return the parameters of a property key (for 'DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris', array('VALUE' => 'DATE-TIME', 'TZID' => 'Europe/Paris')).
+	 *
+	 * @param 	string 				$key	Key of the property, with its parameters
+	 * @return 	array<string,string>		Parameters (names in upper case)
+	 */
+	public function getKeyParams($key)
+	{
+		$params = array();
+		$parts = explode(';', $key);
+		array_shift($parts);
+		foreach ($parts as $part) {
+			$item = explode('=', $part, 2);
+			if (isset($item[1]) && $item[0] !== '') {
+				$params[strtoupper(trim($item[0]))] = trim($item[1]);
+			}
+		}
+		return $params;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
