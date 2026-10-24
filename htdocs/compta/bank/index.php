@@ -232,7 +232,18 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 			print '<td class="nowraponall">'.$accountlinestatic->getNomUrl(1).'</td>';
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			// Translate label when it is a translation key between parenthesis (e.g. '(SupplierInvoicePayment)')
+			$labeltoshow = $obj->label;
+			$reg = array();
+			if (preg_match('/^\((.+)\)$/i', (string) $obj->label, $reg)) {
+				if ($reg[1] == 'payment_salary') {
+					$reg[1] = 'SalaryPayment';
+				}
+				if ($langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
+					$labeltoshow = $langs->transnoentitiesnoconv($reg[1]);
+				}
+			}
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshow).'">'.dol_escape_htmltag($labeltoshow).'</td>';
 			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
 			print '<td class="nowraponall right amount">'.price($obj->amount, 0, $langs, 1, -1, -1, $obj->currency_code).'</td>';
 			print '</tr>';
