@@ -806,7 +806,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 /**
  * Check that a user can access the object a document is attached to. The permission on the module must have been checked
- * before with dol_check_secure_access_document().
+ * before with dol_check_secure_access_document() with $mode as parameter.
  * This function adds the check per object (thirdparties of a restricted sales representative, ...) by calling restrictedArea().
  *
  * @param	User		$user			User to check
