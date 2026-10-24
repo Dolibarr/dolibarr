@@ -916,8 +916,8 @@ if ($action == 'uploadfile') {
 	if ($action == 'uploadfile') {
 		print '<br>';
 		// The buttons are hidden until the end of the ajax call: Next is shown on success, Go back on error
-		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button hideobject" value="'.$langs->trans("Next").'">';
-		print '<input type="button" name="form-result-back" id="form-result-back" class="button hideobject" value="'.$langs->trans("GoBack").'" data-url="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'">';
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" style="display: none" value="'.$langs->trans("Next").'">';
+		print '<input type="button" name="form-result-back" id="form-result-back" class="button" style="display: none" value="'.$langs->trans("GoBack").'" data-url="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'">';
 	}
 	print '</form>'."\n";
 	print "\n";
