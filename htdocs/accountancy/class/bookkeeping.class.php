@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1620,11 +1621,12 @@ class BookKeeping extends CommonObject
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
 	 * @param  string  $mode           Mode ('' or _tmp')
+	 * @param  int     $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
+	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
@@ -1634,19 +1636,38 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
-		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
-		$sql .= " WHERE piece_num = ".((int) $piece_num);
-		$sql .= " AND entity = " . ((int) $conf->entity);
-		$sql .= $sql_filter;
+		$sqlwhere = " WHERE piece_num = ".((int) $piece_num);
+		$sqlwhere .= " AND entity = " . ((int) $conf->entity);
+		$sqlwhere .= $sql_filter;
 
-		$resql = $this->db->query($sql);
-
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+		// Keep the lines before the change, so triggers get them as oldcopy
+		$oldlines = array();
+		if (!$notrigger) {
+			$oldlines = $this->fetchLinesForTrigger("SELECT rowid FROM ".$this->db->prefix().$this->table_element.$mode.$sqlwhere, $mode);
+			if (!is_array($oldlines)) {
+				$error++;
+			}
 		}
+
+		if (!$error) {
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
+			$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+			$sql .= $sqlwhere;
+
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		// Call triggers, once per line as update() does
+		if (!$error && !$notrigger && $this->callTriggerPerLine('BOOKKEEPING_MODIFY', array_keys($oldlines), $user, $mode, $oldlines) < 0) {
+			$error++;
+		}
+
 		if ($error) {
 			$this->db->rollback();
 
@@ -1656,6 +1677,68 @@ class BookKeeping extends CommonObject
 
 			return 1;
 		}
+	}
+
+	/**
+	 * Load the lines found by a SQL request on rowid, to give them to triggers
+	 *
+	 * @param  string  $sql      SQL request that returns the rowid of the lines
+	 * @param  string  $mode     Mode ('' or '_tmp')
+	 * @return array<int,BookKeeping>|int<-1,-1>   Lines by id, or -1 if KO
+	 */
+	private function fetchLinesForTrigger($sql, $mode = '')
+	{
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
+		$lines = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $obj->rowid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			$lines[(int) $obj->rowid] = $line;
+		}
+		$this->db->free($resql);
+
+		return $lines;
+	}
+
+	/**
+	 * Call a trigger for each line of a transaction changed or created with SQL requests, so modules get
+	 * the same object as with create() or update(), for example to refuse a change in a closed period.
+	 *
+	 * @param  string                  $triggername  Trigger code, like 'BOOKKEEPING_CREATE' or 'BOOKKEEPING_MODIFY'
+	 * @param  int[]                   $lineids      Ids of the lines
+	 * @param  User                    $user         User that makes the change
+	 * @param  string                  $mode         Mode ('' or '_tmp')
+	 * @param  array<int,BookKeeping>  $oldlines     Lines before the change by id, given as oldcopy
+	 * @return int                                   Return integer <0 if KO, >0 if OK
+	 */
+	private function callTriggerPerLine($triggername, $lineids, User $user, $mode = '', $oldlines = array())
+	{
+		foreach ($lineids as $lineid) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $lineid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			if (isset($oldlines[$lineid])) {
+				$line->oldcopy = $oldlines[$lineid];
+			}
+			if ($line->call_trigger($triggername, $user) < 0) {
+				$this->error = $line->error;
+				$this->errors = array_merge($this->errors, $line->errors);
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -2241,11 +2324,12 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
+	 * @param  int      $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
-	public function transformTransaction($direction = 0, $piece_num = '')
+	public function transformTransaction($direction = 0, $piece_num = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$error = 0;
 
@@ -2302,6 +2386,14 @@ class BookKeeping extends CommonObject
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
 					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				}
+			}
+
+			// Call triggers for the lines now in the ledger, as create() does
+			if (!$error && !$notrigger) {
+				$newlines = $this->fetchLinesForTrigger('SELECT rowid FROM '.$this->db->prefix().$this->table_element.' WHERE piece_num = '.((int) $next_piecenum).' AND entity = '.((int) $conf->entity));
+				if (!is_array($newlines) || $this->callTriggerPerLine('BOOKKEEPING_CREATE', array_keys($newlines), $user) < 0) {
+					$error++;
 				}
 			}
 
@@ -3521,11 +3613,12 @@ class BookKeeping extends CommonObject
 	 * @param	string	$piecenum		Piece number to clone
 	 * @param	string	$code_journal	Accounting journal code
 	 * @param	int		$docdate		Date of the document
+	 * @param	int		$notrigger		0=launch triggers after, 1=disable triggers
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newClone($piecenum, $code_journal, $docdate)
+	public function newClone($piecenum, $code_journal, $docdate, $notrigger = 0)
 	{
-		global $langs;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -3553,6 +3646,7 @@ class BookKeeping extends CommonObject
 		$bookKeepingInstance = new BookKeeping($this->db);
 		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 
+		$newlineids = array();
 		$cloneId = [];
 		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $piecenum);
 		$resqlRowidClone = $this->db->query($sqlRowidClone);
@@ -3593,6 +3687,7 @@ class BookKeeping extends CommonObject
 							$resqlInsert = $this->db->query($sql_insert);
 
 							if ($resqlInsert) {
+								$newlineids[] = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 								setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 							} else {
 								$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
@@ -3603,6 +3698,11 @@ class BookKeeping extends CommonObject
 					}
 				}
 			}
+		}
+
+		// Call triggers for the new lines, as create() does
+		if (!$error && !$notrigger && $this->callTriggerPerLine('BOOKKEEPING_CREATE', $newlineids, $user) < 0) {
+			$error++;
 		}
 
 		if ($error) {
@@ -3620,13 +3720,15 @@ class BookKeeping extends CommonObject
 	 * @param 	int[]		$toselect		array of BookkeepingId
 	 * @param	string		$code_journal	Accounting journal code
 	 * @param	int			$docdate		Date of the document
+	 * @param	int			$notrigger		0=launch triggers after, 1=disable triggers
 	 * @return	int							Return integer -1 if KO, 1 if OK
 	 */
-	public function newCloneMass($toselect, $code_journal, $docdate)
+	public function newCloneMass($toselect, $code_journal, $docdate, $notrigger = 0)
 	{
 		global $langs, $user;
 
 		$error = 0;
+		$newlineids = array();
 		$this->db->begin();
 
 		$now = dol_now();
@@ -3737,6 +3839,7 @@ class BookKeeping extends CommonObject
 									$resqlInsert = $this->db->query($sql_insert);
 
 									if ($resqlInsert) {
+										$newlineids[] = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
 										$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
@@ -3749,6 +3852,11 @@ class BookKeeping extends CommonObject
 					}
 				}
 			}
+		}
+
+		// Call triggers for the new lines, as create() does
+		if (!$error && !$notrigger && $this->callTriggerPerLine('BOOKKEEPING_CREATE', $newlineids, $user) < 0) {
+			$error++;
 		}
 
 		if ($error) {
