@@ -1611,6 +1611,61 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 }
 
 /**
+ * Set aside the documents a chat message carries, so what is done to the request
+ * (third parties resolved to their ids) is never done to the document itself.
+ * The chat wraps each attached document between the DocContextIntro and
+ * DocContextOutro texts, in the language of the user: they are matched in that
+ * language and in English.
+ *
+ * @param	string		$text	Message as received
+ * @param	Translate	$langs	Language of the user
+ * @return	array{text:string, blocks:array<string,string>}	The message with a placeholder per document, and the documents by placeholder
+ */
+function aiExtractDocumentBlocks($text, $langs)
+{
+	$out = array('text' => (string) $text, 'blocks' => array());
+	$intros = array_unique(array($langs->transnoentitiesnoconv('DocContextIntro'), 'Document Content:'));
+	$outros = array_unique(array($langs->transnoentitiesnoconv('DocContextOutro'), 'End of document'));
+	$introRe = array();
+	foreach ($intros as $v) {
+		$introRe[] = preg_quote((string) $v, '/');
+	}
+	$outroRe = array();
+	foreach ($outros as $v) {
+		$outroRe[] = preg_quote((string) $v, '/');
+	}
+	$introRe = implode('|', $introRe);
+	$outroRe = implode('|', $outroRe);
+	$m = array();
+	if (!preg_match_all('/(?:'.$introRe.')\s.*?---\s*(?:'.$outroRe.')\s*---/su', $out['text'], $m)) {
+		return $out;
+	}
+	foreach ($m[0] as $i => $block) {
+		$mark = "\x02DOC".$i."\x02";
+		$pos = strpos($out['text'], $block);
+		if ($pos === false) {
+			continue;
+		}
+		$out['text'] = substr($out['text'], 0, $pos).$mark.substr($out['text'], $pos + strlen($block));
+		$out['blocks'][$mark] = $block;
+	}
+
+	return $out;
+}
+
+/**
+ * Put back, unchanged, the documents set aside by aiExtractDocumentBlocks().
+ *
+ * @param	string					$text	Message with placeholders
+ * @param	array<string,string>	$blocks	Documents by placeholder
+ * @return	string							Message with its documents
+ */
+function aiRestoreDocumentBlocks($text, array $blocks)
+{
+	return empty($blocks) ? (string) $text : strtr((string) $text, $blocks);
+}
+
+/**
  * Every form of the third party names found in a text or carried by a tool
  * result, to mask with PrivacyGuard::maskNames(): the words as written, the
  * names and trade names of the matching third parties, and the values of the

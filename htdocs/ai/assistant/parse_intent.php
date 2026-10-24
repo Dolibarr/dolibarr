@@ -430,6 +430,17 @@ try {
 	// A single word that is part of the whole name is asked about rather than wrongly resolved.
 	$aiNamesToMask = array();	// names masked in everything sent: query, history, tool results
 	$tpChoices = (!empty($data['thirdparty_choices']) && is_array($data['thirdparty_choices'])) ? $data['thirdparty_choices'] : array();
+	// An attached document is data, not the request: the third parties it names
+	// are not resolved to ids (that would rewrite the document the model is asked
+	// to read), and the offsets below are taken on the request alone. Under the
+	// privacy guard its names are still masked, like any other name.
+	$aiDocuments = aiExtractDocumentBlocks($query, $langs);
+	$query = $aiDocuments['text'];
+	if (!empty($doRedact)) {
+		foreach ($aiDocuments['blocks'] as $aiDocument) {
+			$aiNamesToMask = array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $aiDocument, $dynamicStopWords));
+		}
+	}
 	$tpFound = aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords);
 	$tpAsk = null;
 	$tpReplace = array();
@@ -504,7 +515,7 @@ try {
 		if (getDolGlobalString("AI_DEBUG")) {
 			dol_syslog("parse_intent.php ".count($options)." third parties fit '".$tpAsk['phrase']."': the user chooses before anything is sent", LOG_DEBUG, 0, '_ai');
 		}
-		ai_log_request($db, $user, $query, $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
+		ai_log_request($db, $user, aiRestoreDocumentBlocks($query, $aiDocuments['blocks']), $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
 		ob_end_clean();
 		echo json_encode($finalResponse);
 		exit;
@@ -523,6 +534,7 @@ try {
 	foreach ($tpReplace as $r) {
 		$query = substr($query, 0, $r[0]).$r[2].substr($query, $r[1]);
 	}
+	$query = aiRestoreDocumentBlocks($query, $aiDocuments['blocks']);
 
 	// Token usage of the LLM call, filled after the adapter answered.
 	$usageContext = array();
