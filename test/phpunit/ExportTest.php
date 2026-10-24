@@ -538,10 +538,17 @@ class ExportTest extends CommonClassTest
 			$this->assertEquals($valtotest, csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must not be quoted');
 		}
 
-		// A text that a spreadsheet may take for a formula is quoted
-		foreach (array('=1+1', '+cmd|x', '-cmd|x', '@SUM(1)', ' =1+1') as $valtotest) {
-			$this->assertEquals('"'.$valtotest.'"', csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must be quoted');
+		// A lone symbol is not a formula
+		foreach (array('-', '=', '+', '@', ' - ') as $valtotest) {
+			$this->assertEquals($valtotest, csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must not be changed');
 		}
+
+		// A text that a spreadsheet may take for a formula starts with a ' (quotes do not protect: the cell is evaluated after the CSV is read)
+		foreach (array('=1+1', '+cmd|x', '-cmd|x', '@SUM(1)', ' =1+1', "\tfoo") as $valtotest) {
+			$this->assertEquals("'".$valtotest, csvClean($valtotest, 'UTF-8', ','), 'Value '.$valtotest.' must start with a quote');
+		}
+		$this->assertEquals('"\'=HYPERLINK(""http://x"", ""y"")"', csvClean('=HYPERLINK("http://x", "y")', 'UTF-8', ','), 'The prefix and the CSV quotes are combined');
+		$this->assertEquals('"\'=1;2"', csvClean('=1;2', 'UTF-8', ';'));
 
 		// The separator is a text, not a regular expression
 		$this->assertEquals('abc', csvClean('abc', 'UTF-8', '|'));

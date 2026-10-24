@@ -3126,10 +3126,12 @@ function csvClean($newvalue, $charset = '', $separator = '')
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
-	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
-	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
-		$addquote = 1;
+	// Rule 4 CSV: If value is a text started with a char that triggers a formula in a spreadsheet software (= + - @ or a tab), we add a
+	// leading ' so the cell is read as a text (CSV injection). Quotes are not enough, the spreadsheet evaluates the cell once the CSV
+	// quotes are removed. A number (like -5) and a lone symbol (like -) are not formulas and are not changed.
+	// Note: in a character class, + - @ would be a range, so - is escaped.
+	if (preg_match('/^(\s*[=+\-@]|\t)/', $newvalue) && !is_numeric(trim($newvalue)) && dol_strlen(trim($newvalue)) > 1) {
+		$newvalue = "'".$newvalue;
 	}
 
 	return ($addquote ? '"' : '').$newvalue.($addquote ? '"' : '');
