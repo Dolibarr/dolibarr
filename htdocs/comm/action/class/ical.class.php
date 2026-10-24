@@ -1071,10 +1071,11 @@ class ICal
 	 * Return Unix time from ical date time format (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
 	 *
 	 * @param 	string		$ical_date		String date
-	 * @param 	bool		$floating		True if the date is a "floating" time (no Z and no TZID), so a local time of the user and not a GMT time
+	 * @param 	bool		$floating		True if the date is a "floating" time (no Z and no TZID), so a local time and not a GMT time
+	 * @param 	string		$timezone		Time zone of a floating time (the one of the calendar). If empty, the time zone of the user is used.
 	 * @return 	int
 	 */
-	public function ical_date_to_unix($ical_date, $floating = false)
+	public function ical_date_to_unix($ical_date, $floating = false, $timezone = '')
 	{
 		// phpcs:enable
 		$ical_date = str_replace('T', '', $ical_date);
@@ -1084,12 +1085,38 @@ class ICal
 		// TIME LIMITED EVENT
 		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
-			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], ($floating ? 'tzuserrel' : true));
+			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], ($floating ? ($timezone ? 'tz,'.$timezone : 'tzuserrel') : true));
 		}
 
 		//if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
 		//print dol_print_date($ntime,'dayhour');exit;
 		return $ntime; // ntime is a GTM time
+	}
+
+	/**
+	 * Return the properties of the calendar itself (VCALENDAR: PRODID, X-WR-TIMEZONE...).
+	 *
+	 * @return array<string,mixed>
+	 */
+	private function getCalendarProperties()
+	{
+		return (isset($this->cal['VCALENDAR']) && is_array($this->cal['VCALENDAR'])) ? $this->cal['VCALENDAR'] : array();
+	}
+
+	/**
+	 * Return the time zone of the calendar, declared by the property X-WR-TIMEZONE (not standard but written by Google, Apple, Outlook...).
+	 * It is the time zone of the "floating" times (date and time with no Z and no TZID) of the file.
+	 *
+	 * @return string	Name of the time zone (for example 'Europe/Paris'), or '' if there is none or if it is not a valid time zone
+	 */
+	public function getCalendarTimezone()
+	{
+		$calendar = $this->getCalendarProperties();
+		$timezone = (isset($calendar['X-WR-TIMEZONE']) && is_string($calendar['X-WR-TIMEZONE'])) ? trim($calendar['X-WR-TIMEZONE'], " \t\"") : '';
+		if ($timezone === '' || !in_array($timezone, timezone_identifiers_list())) {
+			return '';
+		}
+		return $timezone;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1112,7 +1139,7 @@ class ICal
 		if (empty($params['TZID'])) { // not TZID in key
 			// A date time without Z (like 19970714T133000) is a "floating" time (RFC 5545): it is a local time, not a GMT time
 			$floating = (strpos($value, 'T') !== false && strtoupper(substr(trim($value), -1)) != 'Z');
-			$value = ($value === '' ? '' : $this->ical_date_to_unix($value, $floating));
+			$value = ($value === '' ? '' : $this->ical_date_to_unix($value, $floating, ($floating ? $this->getCalendarTimezone() : '')));
 			return array($key, $value);
 		}
 
