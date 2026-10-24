@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026       Nick Fragoulis
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -836,6 +837,15 @@ print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 	print img_picto($langs->trans("PreviousOptionGuaranteeThatDateIsAlwaysHigher"), 'switch_off', 'class="opacitymedium"');
 }*/
 print '</td></tr>';
+
+// Point of tax date mandatory (only when the field is used, hidden option INVOICE_POINTOFTAX_DATE)
+if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("InvoicePointOfTaxDateMandatory").'&nbsp;';
+	print $form->textwithpicto('', $langs->trans("InvoicePointOfTaxDateMandatoryHelp"), 1, 'help').'</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('INVOICE_POINTOFTAX_DATE_MANDATORY');
+	print '</td></tr>';
+}
 
 // Allow external download
 print '<tr class="oddeven">';

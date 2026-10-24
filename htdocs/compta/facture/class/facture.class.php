@@ -3716,6 +3716,13 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 		}
+		// Point of tax date mandatory (not for a deposit invoice: nothing is supplied yet)
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $this->type != self::TYPE_DEPOSIT && empty($this->date_pointoftax)) {
+			$langs->loadLangs(array("errors", "bills"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')';
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
