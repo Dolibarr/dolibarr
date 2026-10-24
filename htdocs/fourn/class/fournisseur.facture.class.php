@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,11 +186,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @var integer
 	 */
 	public $date_echeance;
-
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
 
 	/**
 	 * @var float
@@ -1284,6 +1280,12 @@ class FactureFournisseur extends CommonInvoice
 
 		if (dol_strlen((string) $this->date_modification) == 0) {
 			$this->tms = dol_now();
+		}
+
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
 		}
 
 		// Update request

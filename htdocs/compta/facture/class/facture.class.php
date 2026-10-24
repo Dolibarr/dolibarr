@@ -232,11 +232,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fac_rec;
 
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
-
 
 	/**
 	 * @var int Situation cycle reference number
@@ -2871,6 +2866,12 @@ class Facture extends CommonInvoice
 		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
+		}
+
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
 		}
 
 		// Update request
