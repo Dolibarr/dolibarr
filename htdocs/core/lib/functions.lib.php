@@ -2431,7 +2431,9 @@ function dol_escape_all($stringtoescape)
  */
 function dol_escape_xml($stringtoescape)
 {
-	return $stringtoescape;
+	$stringtoescape = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stringtoescape);	// Characters not allowed in XML 1.0
+
+	return htmlspecialchars($stringtoescape, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 
