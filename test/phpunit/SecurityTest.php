@@ -432,6 +432,25 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolVerifyHash
+	 *
+	 * @return void
+	 */
+	public function testDolVerifyHash()
+	{
+		$hash = dol_hash('mypassword', '3');	// md5
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('', $hash, '3'));
+
+		// Two different strings whose md5 are "0e" followed by digits only: they are equal for a loose comparison (magic hashes)
+		$this->assertEquals('0e462097431906509019562988736854', md5('240610708'));
+		$this->assertEquals('0e830400451993494058024219903391', md5('QNKCDZO'));
+		$this->assertFalse(dol_verifyHash('QNKCDZO', md5('240610708'), '3'), 'Two magic hashes must not match');
+		$this->assertTrue(dol_verifyHash('240610708', md5('240610708'), '3'));
+	}
+
+	/**
 	 * testGetRandomPassword
 	 *
 	 * @return int
