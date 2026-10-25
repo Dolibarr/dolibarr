@@ -232,6 +232,24 @@ class Utils
 
 
 	/**
+	 *  Return the -p parameter of mysqldump with the password, escaped to be used in a shell command line.
+	 *
+	 *  @param	string	$password	Password of the database
+	 *  @return	string				Parameter, like -p"password" on Windows and -p'password' otherwise
+	 */
+	public function getShellPasswordParam($password)
+	{
+		if (preg_match('/^win/i', PHP_OS)) {
+			// Behavior kept as it was on Windows
+			return '-p"'.str_replace(array('"', '`', '$'), array('\\"', '\\`', '\\$'), $password).'"';
+		}
+
+		// Inside double quotes, a shell still interprets \, $ and ` so we use single quotes
+		return '-p'.escapeshellarg($password);
+	}
+
+
+	/**
 	 *  Make a backup of database
 	 *  CAN BE A CRON TASK
 	 *
@@ -420,7 +438,7 @@ class Utils
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
 				$paramcrypted .= ' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
-				$paramclear .= ' -p"'.str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass).'"';
+				$paramclear .= ' '.$this->getShellPasswordParam($dolibarr_main_db_pass);
 			}
 
 			$handle = '';
