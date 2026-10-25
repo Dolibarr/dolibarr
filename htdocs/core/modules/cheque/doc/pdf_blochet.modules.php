@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/cheque/doc/pdf_blochet.class.php
+ *	\file       htdocs/core/modules/cheque/doc/pdf_blochet.modules.php
  *	\ingroup    banque
  *	\brief      File to build cheque deposit receipts
  */
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 /**
  *	Class of file to build cheque deposit receipts
  */
-class BordereauChequeBlochet extends ModeleChequeReceipts
+class pdf_blochet extends ModeleChequeReceipts
 {
 	/**
 	 * @var int tab_top
@@ -58,7 +58,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	public $line_per_page;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	public $ref_ext;
 
@@ -114,14 +114,16 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
 	 *	@param	Translate		$outputlangs	Lang output object
-	 *	@param	string			$_dir			Directory
-	 *	@param	string			$number			Number
-	 *	@return	int<-1,1>						Return 1 if OK, <=0 if KO
+	 *	@param	string			$srctemplatepath	Full path of source template file when defined
+	 *	@param	int<0,1>		$hidedetails	Not used
+	 *	@param	int<0,1>		$hidedesc	Not used
+	 *	@param	int<0,1>		$hideref	Not used
+	 *	@return	int<-1,1>			Return 1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $_dir, $number)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $hookmanager;
+		global $user, $langs, $conf, $hookmanager;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -135,7 +137,46 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
-		$dir = $_dir."/".get_exdir($number, 0, 1, 0, $object, 'checkdeposits');
+		// Load data from cheque receipt object
+		$number = $object->ref;
+		$this->ref = $object->ref;
+		$this->ref_ext = $object->ref_ext;
+		$this->date = $object->date_bordereau;
+		$this->nbcheque = $object->nbcheque;
+		$this->amount = $object->amount;
+
+		$this->account = new Account($this->db);
+		$this->account->fetch($object->account_id);
+
+		$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND b.fk_bordereau = bc.rowid";
+		$sql .= " AND bc.rowid = ".((int) $object->id);
+		$sql .= " AND bc.entity = ".((int) $conf->entity);
+		$sql .= " ORDER BY b.dateo ASC, b.rowid ASC";
+
+		dol_syslog("pdf_blochet::write_file", LOG_DEBUG);
+		$this->lines = array();
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$i = 0;
+		while ($objp = $this->db->fetch_object($resql)) {
+			$this->lines[$i] = new stdClass();
+			$this->lines[$i]->bank_chq = $objp->banque;
+			$this->lines[$i]->emetteur_chq = $objp->emetteur;
+			$this->lines[$i]->amount_chq = $objp->amount;
+			$this->lines[$i]->num_chq = $objp->num_chq;
+			$i++;
+		}
+		$this->db->free($resql);
+
+		$dir = $conf->bank->multidir_output[empty($object->entity) ? $conf->entity : $object->entity]."/checkdeposits/".get_exdir($number, 0, 1, 0, $object, 'checkdeposits');
 
 		if (!is_dir($dir)) {
 			$result = dol_mkdir($dir);

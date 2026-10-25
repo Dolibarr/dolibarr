@@ -1050,9 +1050,11 @@ class SupplierProposal extends CommonObject
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
 
-		// Multicurrency
-		if (!empty($this->multicurrency_code)) {
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+		} elseif (!empty($this->multicurrency_code)) {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = getDolCurrency();

@@ -422,6 +422,11 @@ if (empty($reshook)) {
 			}
 		}
 
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $object->type != Facture::TYPE_DEPOSIT && empty($object->date_pointoftax)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+			$action = '';
+		}
+
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
@@ -3217,6 +3222,15 @@ if (empty($reshook)) {
 				}
 				*/
 
+				// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+				// addline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+				if ($price_ht === '' && $price_ttc === '' && $price_ht_devise === '' && $price_ttc_devise !== '') {
+					$pu_ht = 0;
+					$pu_ttc = 0;
+					$price_base_type = 'TTC';
+					$pu_ht_devise = price2num($price_ttc_devise, 'MU');
+				}
+
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
 
@@ -3486,7 +3500,7 @@ if (empty($reshook)) {
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -3597,6 +3611,14 @@ if (empty($reshook)) {
 					break;
 				}
 			}
+		}
+
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$pu = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = $pu_ttc_devise;
 		}
 
 		// Check minimum price

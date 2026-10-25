@@ -72,6 +72,11 @@ class ICal
 	public $journal_count;
 
 	/**
+	 * @var array<string,array{location:string,changes:array<int,array{start:int,before:int,after:int,rrule:array<string,string>,rdates:array<int,int>}>}>|null	Time zones (VTIMEZONE) declared in the file, by TZID. Null until they are read.
+	 */
+	private $vtimezones = null;
+
+	/**
 	 * @var string Help variable save last key (multiline string)
 	 */
 	public $last_key;
@@ -424,6 +429,29 @@ class ICal
 
 		$events = $this->get_event_list();
 		if (!empty($events)) {
+			// The same instance of an event written several times (same UID and same start, or same UID and RECURRENCE-ID): we keep the most recent version
+			// (SEQUENCE, then LAST-MODIFIED or DTSTAMP, then the last one of the file). Events with the same UID but another start are other events:
+			// some exporters reuse the same UID for the events of several years.
+			$keptevents = [];
+			foreach ($events as $evkey => $event) {
+				if (empty($event['UID'])) {
+					continue;
+				}
+				$eventstart = ($event['DTSTART'] ?? ($event['DTSTART;VALUE=DATE'] ?? ''));
+				// A modified occurrence is identified by its UID and its RECURRENCE-ID (its start can differ), another event by its UID and its start
+				$duplicatekey = $event['UID'].'|'.(empty($event['RECURRENCE-ID']) ? json_encode($eventstart) : 'RECURRENCE-ID='.$event['RECURRENCE-ID']);
+				$rank = [(int) ($event['SEQUENCE'] ?? 0), (int) ($event['LAST-MODIFIED'] ?? ($event['DTSTAMP'] ?? 0))];
+				if (isset($keptevents[$duplicatekey])) {
+					if ($rank >= $keptevents[$duplicatekey]['rank']) {
+						unset($events[$keptevents[$duplicatekey]['key']]);
+						$keptevents[$duplicatekey] = ['key' => $evkey, 'rank' => $rank];
+					} else {
+						unset($events[$evkey]);
+					}
+				} else {
+					$keptevents[$duplicatekey] = ['key' => $evkey, 'rank' => $rank];
+				}
+			}
 			// An occurrence of a recurring event that was modified or cancelled is an event with the same UID and a RECURRENCE-ID.
 			// We add its day to the excluded days (EXDATE) of the main event, so the original occurrence is not shown.
 			// The modified occurrence stays an event of its own.
@@ -433,9 +461,38 @@ class ICal
 					$mainkeys[$event['UID']] = $evkey;
 				}
 			}
-			foreach ($events as $event) {
+			foreach ($events as $evkeyoverride => $event) {
 				if (!empty($event['RECURRENCE-ID']) && !empty($event['UID']) && isset($mainkeys[$event['UID']])) {
 					$mainkey = $mainkeys[$event['UID']];
+					if (($event['X-RECURRENCE-RANGE'] ?? '') == 'THISANDFUTURE' && !empty($events[$mainkey]['RRULE']) && is_array($events[$mainkey]['RRULE'])) {
+						// This occurrence and the following ones are modified: the series of the main event stops the day before, and the modified
+						// event continues the series (same rule, with its own start and properties).
+						$rule = $events[$mainkey]['RRULE'];
+						$daystamp = gmmktime(0, 0, 0, (int) substr($event['RECURRENCE-ID'], 4, 2), (int) substr($event['RECURRENCE-ID'], 6, 2), (int) substr($event['RECURRENCE-ID'], 0, 4));
+						$newrule = $rule;
+						unset($newrule['UNTIL']);
+						if (!empty($rule['COUNT'])) {
+							// Remaining number of occurrences for the modified event
+							$mainstart = $this->getWallStart($events[$mainkey]);
+							unset($newrule['COUNT']);
+							if ($mainstart !== null && $this->isRRuleSupported($rule)) {
+								$remaining = (int) $rule['COUNT'] - count($this->expandRRule($rule, $mainstart, $daystamp));
+								if ($remaining > 0) {
+									$newrule['COUNT'] = (string) $remaining;
+								}
+							}
+						}
+						if (!empty($rule['UNTIL'])) {
+							$newrule['UNTIL'] = $rule['UNTIL'];
+						}
+						unset($events[$mainkey]['RRULE']['COUNT']);
+						$events[$mainkey]['RRULE']['UNTIL'] = gmdate('Ymd', $daystamp - 86400).'T235959Z';
+						if (empty($events[$evkeyoverride]['RRULE'])) {
+							$events[$evkeyoverride]['RRULE'] = $newrule;
+						}
+						unset($events[$evkeyoverride]['RECURRENCE-ID'], $events[$evkeyoverride]['X-RECURRENCE-RANGE']);
+						continue;
+					}
 					$exdates = (isset($events[$mainkey]['EXDATE']) && is_array($events[$mainkey]['EXDATE'])) ? $events[$mainkey]['EXDATE'] : [];
 					$exdates[] = $event['RECURRENCE-ID'];
 					$events[$mainkey]['EXDATE'] = $exdates;
@@ -556,6 +613,10 @@ class ICal
 		}
 
 		if (!$iscontinuation) {
+			// RECURRENCE-ID;RANGE=THISANDFUTURE: this occurrence and all the following ones are modified (the parameter is removed with the other ones below)
+			if ($type == 'VEVENT' && preg_match('/^RECURRENCE-ID;.*RANGE=THISANDFUTURE/i', $key)) {
+				$this->cal[$type][$this->event_count]['X-RECURRENCE-RANGE'] = 'THISANDFUTURE';
+			}
 			// Value in a legacy encoding (vCalendar 1.0 style: ENCODING=QUOTED-PRINTABLE and/or CHARSET=ISO-8859-1 as parameters of the property)
 			if (strpos($key, ';') !== false && !stristr($key, "DTSTART") && !stristr($key, "DTEND")) {
 				if (preg_match('/;ENCODING=(QUOTED-PRINTABLE|Q)(;|$)/i', $key)) {
@@ -699,7 +760,7 @@ class ICal
 
 	/**
 	 * Return if a recurrence rule can be expanded by expandRRule(): FREQ MINUTELY, HOURLY, DAILY, WEEKLY, MONTHLY or YEARLY with, as parts,
-	 * BYDAY, BYMONTHDAY, BYMONTH, BYYEARDAY, BYWEEKNO, BYSETPOS, BYHOUR, WKST (some of them only for some FREQ).
+	 * BYDAY, BYMONTHDAY, BYMONTH, BYYEARDAY, BYWEEKNO, BYSETPOS, BYHOUR, BYMINUTE, BYSECOND, WKST (some of them only for some FREQ).
 	 *
 	 * @param 	array<string,string>	$rrule	Rule decoded by ical_rrule()
 	 * @return 	bool					True if the rule can be expanded
@@ -713,7 +774,7 @@ class ICal
 		$byparts = array();
 		foreach (array_keys($rrule) as $key) {
 			if (strpos($key, 'BY') === 0) {
-				if (!in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO', 'BYSETPOS', 'BYHOUR'))) {
+				if (!in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO', 'BYSETPOS', 'BYHOUR', 'BYMINUTE', 'BYSECOND'))) {
 					return false;
 				}
 				$byparts[$key] = $key;
@@ -738,12 +799,12 @@ class ICal
 				}
 			}
 		}
-		$limits = array('BYMONTHDAY' => array(31, false), 'BYMONTH' => array(12, true), 'BYYEARDAY' => array(366, false), 'BYWEEKNO' => array(53, false), 'BYSETPOS' => array(366, false), 'BYHOUR' => array(23, true));
+		$limits = array('BYMONTHDAY' => array(31, false), 'BYMONTH' => array(12, true), 'BYYEARDAY' => array(366, false), 'BYWEEKNO' => array(53, false), 'BYSETPOS' => array(366, false), 'BYHOUR' => array(23, true), 'BYMINUTE' => array(59, true), 'BYSECOND' => array(59, true));
 		foreach ($limits as $key => $limit) {
 			if (isset($rrule[$key])) {
 				foreach (explode(',', $rrule[$key]) as $item) {
 					$value = (int) $item;
-					if (!preg_match('/^-?[0-9]{1,3}$/', trim($item)) || abs($value) > $limit[0] || ($limit[1] && $value < 0) || ($key != 'BYHOUR' && $value == 0)) {
+					if (!preg_match('/^-?[0-9]{1,3}$/', trim($item)) || abs($value) > $limit[0] || ($limit[1] && $value < 0) || (!in_array($key, array('BYHOUR', 'BYMINUTE', 'BYSECOND')) && $value == 0)) {
 						return false;
 					}
 				}
@@ -751,6 +812,9 @@ class ICal
 		}
 		if (isset($byparts['BYSETPOS']) && count($byparts) < 2) {
 			return false;	// BYSETPOS selects among the occurrences made by the other BYxxx parts
+		}
+		if ($isshort && (isset($byparts['BYMINUTE']) || isset($byparts['BYSECOND']))) {
+			return false;
 		}
 		if ($isshort && (isset($byparts['BYYEARDAY']) || isset($byparts['BYWEEKNO']) || isset($byparts['BYSETPOS']))) {
 			return false;
@@ -845,7 +909,29 @@ class ICal
 	}
 
 	/**
-	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()).
+	 * Return the start of an event as GMT timestamp of the date and time written in the file.
+	 *
+	 * @param 	array<string,mixed>	$event	Event
+	 * @return 	int|null					Timestamp, or null if the event has no start
+	 */
+	private function getWallStart($event)
+	{
+		if (isset($event['DTSTART;VALUE=DATE']) && is_string($event['DTSTART;VALUE=DATE'])) {
+			return gmmktime(0, 0, 0, (int) substr($event['DTSTART;VALUE=DATE'], 4, 2), (int) substr($event['DTSTART;VALUE=DATE'], 6, 2), (int) substr($event['DTSTART;VALUE=DATE'], 0, 4));
+		}
+		if (isset($event['DTSTART']) && is_array($event['DTSTART']) && isset($event['DTSTART']['unixtime'])) {
+			return (int) $event['DTSTART']['unixtime'];
+		}
+		if (isset($event['DTSTART']) && !is_array($event['DTSTART'])) {
+			return (int) $event['DTSTART'];
+		}
+		return null;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()), the first one being always DTSTART:
+	 * RFC 5545 defines DTSTART as the first instance of the recurrence set, even if it does not match the rule (the event
+	 * is then still shown at its start date, and it counts for COUNT).
 	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
 	 *
 	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
@@ -856,6 +942,31 @@ class ICal
 	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
 	 */
 	public function expandRRule($rrule, $dtstart, $to, $until = 0, $from = 0)
+	{
+		$result = $this->expandRRuleOccurrences($rrule, $dtstart, $to, $until, $from);
+		if (!in_array($dtstart, $result) && $dtstart < $to && (!$until || $dtstart <= $until)) {
+			$result[] = $dtstart;
+			sort($result);
+			$maxcount = (int) ($rrule['COUNT'] ?? 0);
+			if ($maxcount) {
+				$result = array_slice($result, 0, $maxcount);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Return the starts of the occurrences of a recurrence rule (see isRRuleSupported()).
+	 * The dates are handled as dates written in the file (GMT timestamps of the local date and time), the caller converts them.
+	 *
+	 * @param 	array<string,string>	$rrule		Rule decoded by ical_rrule()
+	 * @param 	int						$dtstart	Start of the first occurrence
+	 * @param 	int						$to			Occurrences starting from this date are not returned
+	 * @param 	int						$until		Occurrences starting after this date are not returned (0 = no limit)
+	 * @param 	int						$from		Date from which the occurrences are needed: when the rule has no COUNT, the periods before are skipped
+	 * @return 	array<int,int>						Start of the occurrences, in ascending order, from $dtstart
+	 */
+	private function expandRRuleOccurrences($rrule, $dtstart, $to, $until = 0, $from = 0)
 	{
 		$daysofweek = array('SU' => 0, 'MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6);
 		$freq = ($rrule['FREQ'] ?? '');
@@ -869,6 +980,8 @@ class ICal
 		$byweekno = (isset($rrule['BYWEEKNO']) ? array_map('intval', explode(',', $rrule['BYWEEKNO'])) : array());
 		$bysetpos = (isset($rrule['BYSETPOS']) ? array_map('intval', explode(',', $rrule['BYSETPOS'])) : array());
 		$byhour = (isset($rrule['BYHOUR']) ? array_map('intval', explode(',', $rrule['BYHOUR'])) : array());
+		$byminute = (isset($rrule['BYMINUTE']) ? array_map('intval', explode(',', $rrule['BYMINUTE'])) : array());
+		$bysecond = (isset($rrule['BYSECOND']) ? array_map('intval', explode(',', $rrule['BYSECOND'])) : array());
 
 		$timeofday = (($dtstart % 86400) + 86400) % 86400;
 		$firstday = $dtstart - $timeofday;
@@ -876,13 +989,19 @@ class ICal
 		$month0 = (int) gmdate('n', $firstday);
 		$day0 = (int) gmdate('j', $firstday);
 		$dayofweek0 = (int) gmdate('w', $firstday);
-		$minutesecond = $timeofday % 3600;
 		$hour0 = intdiv($timeofday, 3600);
-		// Times of the day of an occurrence, for the rules that can have several by day (BYHOUR)
+		$minute0 = intdiv($timeofday % 3600, 60);
+		$second0 = $timeofday % 60;
+		// Times of the day of an occurrence, for the rules that can have several by day (BYHOUR, BYMINUTE, BYSECOND)
 		$times = array();
 		foreach ((empty($byhour) ? array($hour0) : $byhour) as $hour) {
-			$times[] = $hour * 3600 + $minutesecond;
+			foreach ((empty($byminute) ? array($minute0) : $byminute) as $minute) {
+				foreach ((empty($bysecond) ? array($second0) : $bysecond) as $second) {
+					$times[] = $hour * 3600 + $minute * 60 + $second;
+				}
+			}
 		}
+		$times = array_values(array_unique($times));
 		sort($times);
 		$skip = ($maxcount == 0 && $from > $dtstart);
 
@@ -1117,6 +1236,216 @@ class ICal
 			return '';
 		}
 		return $timezone;
+	}
+
+	/**
+	 * Return the name of the PHP time zone that matches the TZID of a date.
+	 * The TZID can be a name of the IANA database ('Europe/Paris'), written in any case, or a Windows name written by Outlook ('Romance Standard Time').
+	 *
+	 * @param 	string 	$tzid	TZID of a date
+	 * @return 	string			Name of a time zone known by PHP, or '' if the TZID is not known
+	 */
+	public function getPhpTimezone($tzid)
+	{
+		$tzid = trim($tzid, " \t\"");
+		if ($tzid === '') {
+			return '';
+		}
+		$identifiers = timezone_identifiers_list();
+		foreach ($identifiers as $identifier) {
+			if (strcasecmp($identifier, $tzid) == 0) {
+				return $identifier;
+			}
+		}
+		// Most common Windows names (written by Outlook and Exchange)
+		$windows = array(
+			'romance standard time' => 'Europe/Paris', 'w. europe standard time' => 'Europe/Berlin', 'central europe standard time' => 'Europe/Budapest',
+			'central european standard time' => 'Europe/Warsaw', 'gmt standard time' => 'Europe/London', 'greenwich standard time' => 'Atlantic/Reykjavik',
+			'e. europe standard time' => 'Europe/Chisinau', 'fle standard time' => 'Europe/Kiev', 'gtb standard time' => 'Europe/Bucharest', 'russian standard time' => 'Europe/Moscow',
+			'turkey standard time' => 'Europe/Istanbul', 'eastern standard time' => 'America/New_York', 'central standard time' => 'America/Chicago',
+			'mountain standard time' => 'America/Denver', 'pacific standard time' => 'America/Los_Angeles', 'us mountain standard time' => 'America/Phoenix',
+			'atlantic standard time' => 'America/Halifax', 'e. south america standard time' => 'America/Sao_Paulo', 'argentina standard time' => 'America/Buenos_Aires',
+			'china standard time' => 'Asia/Shanghai', 'tokyo standard time' => 'Asia/Tokyo', 'korea standard time' => 'Asia/Seoul', 'india standard time' => 'Asia/Kolkata',
+			'singapore standard time' => 'Asia/Singapore', 'arabian standard time' => 'Asia/Dubai', 'aus eastern standard time' => 'Australia/Sydney',
+			'new zealand standard time' => 'Pacific/Auckland', 'south africa standard time' => 'Africa/Johannesburg', 'egypt standard time' => 'Africa/Cairo',
+			'utc' => 'UTC', 'w. central africa standard time' => 'Africa/Lagos', 'morocco standard time' => 'Africa/Casablanca'
+		);
+		$key = strtolower($tzid);
+		if (isset($windows[$key])) {
+			return $windows[$key];
+		}
+
+		// Unknown name: the file can say which time zone it is (X-LIC-LOCATION of its VTIMEZONE)
+		$vtimezones = $this->getVtimezones();
+		return (isset($vtimezones[$tzid]) ? $vtimezones[$tzid]['location'] : '');
+	}
+
+	/**
+	 * Return the time zones (VTIMEZONE) declared in the file, by TZID.
+	 * For each one: the name of the PHP time zone given by X-LIC-LOCATION ('' if none or unknown by PHP), and the changes of offset
+	 * of its STANDARD and DAYLIGHT parts (start as written in the file, offsets before and after in seconds, recurrence rule, RDATE).
+	 *
+	 * @return array<string,array{location:string,changes:array<int,array{start:int,before:int,after:int,rrule:array<string,string>,rdates:array<int,int>}>}>
+	 */
+	private function getVtimezones()
+	{
+		if ($this->vtimezones !== null) {
+			return $this->vtimezones;
+		}
+		$this->vtimezones = [];
+
+		$text = (string) preg_replace('/\r?\n[ \t]/', '', (string) $this->file_text);	// Unfold the lines
+		if (!preg_match_all('/^BEGIN:VTIMEZONE\s*$(.*?)^END:VTIMEZONE\s*$/ims', $text, $blocks)) {
+			return $this->vtimezones;
+		}
+		$identifiers = timezone_identifiers_list();
+		foreach ($blocks[1] as $block) {
+			if (!preg_match('/^TZID[^:\r\n]*:\s*"?([^"\r\n]+?)"?\s*$/im', $block, $reg)) {
+				continue;
+			}
+			$tzid = $reg[1];
+			$location = '';
+			if (preg_match('/^X-LIC-LOCATION[^:\r\n]*:\s*([^\r\n]+?)\s*$/im', $block, $reg)) {
+				foreach ($identifiers as $identifier) {
+					if (strcasecmp($identifier, $reg[1]) == 0) {
+						$location = $identifier;
+						break;
+					}
+				}
+			}
+			$changes = [];
+			if (preg_match_all('/^BEGIN:(STANDARD|DAYLIGHT)\s*$(.*?)^END:\1\s*$/ims', $block, $parts)) {
+				foreach ($parts[2] as $part) {
+					$props = [];
+					$offsets = [];
+					$rdates = [];
+					foreach (preg_split('/\r?\n/', $part) as $line) {
+						if (!preg_match('/^([A-Z-]+)[^:]*:(.*)$/i', trim($line), $reg)) {
+							continue;
+						}
+						$name = strtoupper($reg[1]);
+						if ($name == 'RDATE') {
+							foreach (explode(',', $reg[2]) as $rdate) {
+								if (preg_match('/^\s*(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/', $rdate, $d)) {
+									$rdates[] = (int) gmmktime((int) $d[4], (int) $d[5], (int) $d[6], (int) $d[2], (int) $d[3], (int) $d[1]);
+								}
+							}
+						} elseif ($name == 'TZOFFSETFROM') {
+							$offsets['before'] = $this->parseUtcOffset($reg[2]);
+						} elseif ($name == 'TZOFFSETTO') {
+							$offsets['after'] = $this->parseUtcOffset($reg[2]);
+						} else {
+							$props[$name] = trim($reg[2]);
+						}
+					}
+					if (empty($props['DTSTART']) || !preg_match('/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/', $props['DTSTART'], $d)
+						|| !isset($offsets['before']) || !isset($offsets['after'])) {
+						continue;
+					}
+					$rrule = !empty($props['RRULE']) ? $this->ical_rrule($props['RRULE']) : [];
+					$changes[] = [
+						'start' => (int) gmmktime((int) $d[4], (int) $d[5], (int) $d[6], (int) $d[2], (int) $d[3], (int) $d[1]),
+						'before' => $offsets['before'],
+						'after' => $offsets['after'],
+						'rrule' => ($rrule && $this->isRRuleSupported($rrule)) ? $rrule : [],
+						'rdates' => $rdates,
+					];
+				}
+			}
+			$this->vtimezones[$tzid] = ['location' => $location, 'changes' => $changes];
+		}
+		return $this->vtimezones;
+	}
+
+	/**
+	 * Convert an offset of a time zone written by iCal ('+0100', '-053000') into seconds.
+	 *
+	 * @param 	string 		$offset		Offset
+	 * @return 	int|null				Offset in seconds, or null if it is not valid
+	 */
+	private function parseUtcOffset($offset)
+	{
+		if (!preg_match('/^([+-])(\d{2})(\d{2})(\d{2})?$/', trim($offset), $reg)) {
+			return null;
+		}
+		return ($reg[1] == '-' ? -1 : 1) * ((int) $reg[2] * 3600 + (int) $reg[3] * 60 + (int) ($reg[4] ?? 0));
+	}
+
+	/**
+	 * Return the offset from UTC (in seconds) of a local date and time of a time zone declared in the file (VTIMEZONE), from its rules.
+	 *
+	 * @param 	int 	$localtime	Local date and time written as GMT timestamp
+	 * @param 	string 	$tzid		TZID of the date
+	 * @return 	int|null			Offset in seconds, or null if the file has no usable rules for this TZID
+	 */
+	private function getVtimezoneOffset($localtime, $tzid)
+	{
+		$vtimezones = $this->getVtimezones();
+		if (empty($vtimezones[$tzid]['changes'])) {
+			return null;
+		}
+		$offset = null;
+		$lastchange = null;
+		$firstchange = null;
+		$offsetbefore = null;
+		foreach ($vtimezones[$tzid]['changes'] as $change) {
+			$starts = [$change['start']];
+			if ($change['rrule']) {
+				$starts = $this->expandRRule($change['rrule'], $change['start'], $localtime + 2 * 86400, 0, $localtime - 400 * 86400);
+			}
+			foreach ($change['rdates'] as $rdate) {
+				$starts[] = $rdate;
+			}
+			foreach ($starts as $start) {
+				// A local time in the gap (spring forward) keeps the offset before, and a repeated local time (fall back) uses the first one
+				$effective = $start + max(0, $change['after'] - $change['before']);
+				if ($firstchange === null || $start < $firstchange) {
+					$firstchange = $start;
+					$offsetbefore = $change['before'];
+				}
+				if ($effective <= $localtime && ($lastchange === null || $start > $lastchange)) {
+					$lastchange = $start;
+					$offset = $change['after'];
+				}
+			}
+		}
+		if ($offset === null && $offsetbefore !== null) {
+			$offset = $offsetbefore;
+		}
+		return $offset;
+	}
+
+	/**
+	 * Tell if the dates of a TZID can be converted by tzidToTimestamp(): name known by PHP, or time zone with rules declared in the file.
+	 *
+	 * @param 	string 	$tzid	TZID of a date
+	 * @return 	bool			True if the TZID is known
+	 */
+	public function isTzidKnown($tzid)
+	{
+		if ($this->getPhpTimezone($tzid) !== '') {
+			return true;
+		}
+		$vtimezones = $this->getVtimezones();
+		return !empty($vtimezones[trim($tzid, " \t\"")]['changes']);
+	}
+
+	/**
+	 * Convert a local date and time of a time zone (TZID) into a real time, taking into account the daylight saving time of this date.
+	 *
+	 * @param 	int 	$localtime	Local date and time written as GMT timestamp (how ical_dt_date() returns a date with a TZID)
+	 * @param 	string 	$tzid		TZID of the date
+	 * @return 	int|null			Real timestamp, or null if the TZID is not known
+	 */
+	public function tzidToTimestamp($localtime, $tzid)
+	{
+		$timezone = $this->getPhpTimezone($tzid);
+		if ($timezone === '') {
+			// Not a name known by PHP: we use the rules of the time zone written in the file
+			$offset = $this->getVtimezoneOffset($localtime, trim($tzid, " \t\""));
+			return ($offset === null ? null : $localtime - $offset);
+		}
+		return dol_mktime((int) gmdate('G', $localtime), (int) gmdate('i', $localtime), (int) gmdate('s', $localtime), (int) gmdate('n', $localtime), (int) gmdate('j', $localtime), (int) gmdate('Y', $localtime), 'tz,'.$timezone);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

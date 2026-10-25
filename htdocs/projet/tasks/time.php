@@ -526,7 +526,7 @@ if ($massaction == 'exportlines' && !empty($toselect)) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 		$exportcsv->open_file('php://output', $langs);
-		$exportcsv->write_header($langs);
+		$exportcsv->write_header($langs);  // @phpstan-ignore-line
 		$exportcsv->write_title($array_fields, $array_selected, $langs, array());
 		while ($obj = $db->fetch_object($resql)) {
 			$record = new stdClass();
@@ -545,7 +545,7 @@ if ($massaction == 'exportlines' && !empty($toselect)) {
 			$record->invoice_ref = $obj->invoice_ref;
 			$exportcsv->write_record($array_selected, $record, $langs, array());
 		}
-		$exportcsv->write_footer($langs);
+		$exportcsv->write_footer($langs);  // @phpstan-ignore-line
 		$exportcsv->close_file();
 
 		$db->free($resql);
