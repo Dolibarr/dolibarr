@@ -43,7 +43,7 @@ if (empty($user->id)) {
 class VCardTest extends CommonClassTest
 {
 	/**
-	 * testLineBreaks: a line break of an address is one break, not two
+	 * testLineBreaks: a line break of an address or a note is one \n, the text is not quoted-printable
 	 *
 	 * @return  void
 	 */
@@ -54,9 +54,47 @@ class VCardTest extends CommonClassTest
 		$v->setNote("Line1\r\nLine2");
 		$text = $v->getVCard();
 
-		$this->assertStringContainsString('1 rue A=0D=0ABatiment B=0D=0AEntree 2', $text);
-		$this->assertStringContainsString('Line1=0D=0ALine2', $text);
-		$this->assertStringNotContainsString('=0D=0A=0D=0A', $text);
+		$this->assertStringContainsString('1 rue A\nBatiment B\nEntree 2', $text);
+		$this->assertStringContainsString("NOTE:Line1\\nLine2\r\n", $text);
+		$this->assertStringNotContainsString('=0D', $text);
+		$this->assertStringNotContainsString('ENCODING', $text);
+		$this->assertStringNotContainsString('CHARSET', $text);
+	}
+
+	/**
+	 * testTextEscaping: backslash, semicolon and comma of a text are escaped, accents stay UTF-8, the separator of the parts of N and ADR is not
+	 *
+	 * @return  void
+	 */
+	public function testTextEscaping()
+	{
+		$v = new vCard();
+		$v->setName("Dupont, Jr.", "José", "", "", "");
+		$v->setAddress("", "", "12, rue A; porte \\ 2", "Saint-Étienne", "", "42000", "France", "TYPE=WORK;POSTAL");
+		$text = $v->getVCard();
+
+		$this->assertStringContainsString("N:Dupont\\, Jr.;José;;;\r\n", $text);
+		$this->assertStringContainsString("ADR;TYPE=WORK,POSTAL:;;12\\, rue A\\; porte \\\\ 2;Saint-Étienne;;42000;France\r\n", $text);
+	}
+
+	/**
+	 * testFolding: no line is longer than 75 octets, a character is not cut, and unfolding gives back the value
+	 *
+	 * @return  void
+	 */
+	public function testFolding()
+	{
+		$note = str_repeat('Ça va très bien ', 20);
+		$v = new vCard();
+		$v->setNote($note);
+		$text = $v->getVCard();
+
+		$lines = explode("\r\n", $text);
+		foreach ($lines as $line) {
+			$this->assertLessThanOrEqual(75, strlen($line));
+			$this->assertSame(1, preg_match('//u', $line), 'A line is not valid UTF-8: '.$line);
+		}
+		$this->assertStringContainsString("NOTE:".$note, str_replace("\r\n ", '', $text));
 	}
 
 	/**
