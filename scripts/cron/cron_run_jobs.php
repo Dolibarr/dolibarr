@@ -111,7 +111,7 @@ $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check security key
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }

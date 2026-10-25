@@ -111,6 +111,7 @@ $error = 0;
 $ai = new Ai($db);
 $ajaxFileUrl = '';
 $fullnewname = '';
+$uploadedfilename = '';
 
 
 /*
@@ -183,6 +184,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 
 	if (!empty($_FILES['userfile']['name'])) {
+		$uploadedfilename = $_FILES['userfile']['name'];
 		$fullnewname = $fileprefix.'-'.$_FILES['userfile']['name'];
 		$_FILES['userfile']['name'] = $fullnewname;
 
@@ -210,8 +212,8 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 if ($action == 'addobject') {	// Test on permission done later
 	$mandatoryfieldsareko = 0;
 
-	if ($modulepart == 'invoice_supplier') {
-		// Check mandatory fields for supplier invoice
+	if ($modulepart == 'invoice_supplier' && GETPOSTINT('invoiceid') <= 0) {
+		// Check mandatory fields for supplier invoice (not needed when the invoice already exists, as we only attach the file to it)
 		if (GETPOSTINT('socid') <= 0 ) {
 			$langs->load("companies");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
@@ -229,11 +231,7 @@ if ($action == 'addobject') {	// Test on permission done later
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("RefSupplier")), null, 'errors');
 			$mandatoryfieldsareko = 1;
 		}
-		if (GETPOSTINT('invoiceid') > 0) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorRefAlreadyExists", GETPOST('supplierref', 'alphanohtml')), null, 'errors');
-			$mandatoryfieldsareko = 1;
-		} elseif (GETPOST('supplierref', 'alphanohtml') && GETPOSTINT('socid') > 0) {
+		if (GETPOST('supplierref', 'alphanohtml') && GETPOSTINT('socid') > 0) {
 			// Check the supplier ref entered by user is not already used by another invoice of the same supplier
 			$sql = "SELECT rowid FROM ".$db->prefix()."facture_fourn";
 			$sql .= " WHERE ref_supplier = '".$db->escape(trim(GETPOST('supplierref', 'alphanohtml')))."'";
@@ -250,6 +248,8 @@ if ($action == 'addobject') {	// Test on permission done later
 				$mandatoryfieldsareko = 1;
 			}
 		}
+	}
+	if ($modulepart == 'invoice_supplier') {
 		if (!$user->hasRight('fournisseur', 'facture', 'creer') && !$user->hasRight('supplier_invoice', 'creer')) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 			$mandatoryfieldsareko = 1;
@@ -368,12 +368,25 @@ $createdobject = null;
 $destdir = '';	// Directory where to move the uploaded file once object is created
 $destfilename = '';	// Name of the attached file once moved into $destdir
 $dateexpense = '';	// Date of expense, defined when adding a line into an expense report
+$attachtoexistinginvoice = 0;	// Set to 1 when the file is attached to an existing supplier invoice instead of creating a new one
 if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 'salaries', 'chargesociales', 'expensereport'))) {	// Test on permission already done
 	$error = 0;
 
 	$db->begin();
 }
-if ($action == 'addobject' && $modulepart == 'invoice_supplier') {	// Test on permission already done
+if ($action == 'addobject' && $modulepart == 'invoice_supplier' && GETPOSTINT('invoiceid') > 0) {	// Test on permission already done
+	// The invoice already exists, so we do not create a new one, we just attach the file to it
+	$createdobject = new FactureFournisseur($db);
+	$result = $createdobject->fetch(GETPOSTINT('invoiceid'));
+	if ($result <= 0 || !in_array($createdobject->entity, explode(',', getEntity('facture_fourn')))) {
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	} else {
+		$attachtoexistinginvoice = 1;
+		$destdir = getMultidirOutput($createdobject).'/'.get_exdir($createdobject->id, 2, 0, 0, $createdobject, 'invoice_supplier').dol_sanitizeFileName($createdobject->ref);
+	}
+} elseif ($action == 'addobject' && $modulepart == 'invoice_supplier') {	// Test on permission already done
 	$tmpthirdparty = new Societe($db);
 	$tmpthirdparty->fetch(GETPOSTINT('socid'));
 	$tmpproduct = new Product($db);
@@ -693,7 +706,7 @@ if (empty($action)) {
 
 	// Form to upload a salary document
 	if (isModEnabled('tax')) {
-		$langs->load("taxes");
+		$langs->loadLangs(array("taxes", "compta"));
 		$uploadform .= '
 		<div id="socialcontribution" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("SocialContribution").'<br><br>';
@@ -742,7 +755,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	if ($action == 'showsummary') {
 		print $langs->trans("AIProcessingDone", $ai->getApiService());
 	} else {
-		print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
+		print $langs->trans("AIProcessingDocumentPleaseWait", $ai->getApiService(), dol_trunc($uploadedfilename, 32, 'middle'));
 	}
 	print '</div>';
 	print '<br>';
@@ -752,6 +765,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	</div>';
 
 	print '</div>';
+	print '<br>';
 }
 
 if ($action == 'uploadfile') {
@@ -760,6 +774,10 @@ if ($action == 'uploadfile') {
 	if (!empty($ajaxFileUrl)) {
 		print '<script>
 		$(document).ready(function() {
+			$("#form-result-back").on("click", function() {
+				window.location.href = $(this).data("url");
+			});
+
 			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
 			$.ajax({
 				url: \''.dol_escape_js($ajaxFileUrl).'\',
@@ -788,13 +806,21 @@ if ($action == 'uploadfile') {
 
 						// Display error if status is not 200
 						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+						// Replace the button Next by the button to go back to restart
+						$("#form-result-submit").hide();
+						$("#form-result-back").show();
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					// Display error
 					console.log("We received an error");
-					$("#ajax-result-message").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					// Show the messages of the JSON answer {"errors": [...]} as text, or the raw answer if it is not this format
+					var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
+					$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
 					$(".progress-bar").css("width", "100%");
+					// Replace the button Next by the button to go back to restart
+					$("#form-result-submit").hide();
+					$("#form-result-back").show();
 				}
 			});
 		});
@@ -901,7 +927,9 @@ if ($action == 'uploadfile') {
 	print '<div id="ajax-result-message"></div>';
 	if ($action == 'uploadfile') {
 		print '<br>';
-		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
+		// The buttons are hidden until the end of the ajax call: Next is shown on success, Go back on error
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" style="display: none" value="'.$langs->trans("Next").'">';
+		print '<input type="button" name="form-result-back" id="form-result-back" class="button" style="display: none" value="'.$langs->trans("GoBack").'" data-url="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"]).'">';
 	}
 	print '</form>'."\n";
 	print "\n";
@@ -916,7 +944,7 @@ if ($action == 'showsummary') {
 	print '<div id="ajax-result-message"></div>';
 	//print '<br>';
 
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 
@@ -948,8 +976,15 @@ if ($action == 'showsummary') {
 	}
 
 	if ($modulepart == 'invoice_supplier') {
+		$langs->loadLangs(array("bills", "companies", "products"));
+
 		// Parse JSON to get information for an invoice
 		$invoiceindoc = $ai->decodeJsonIntoArray(is_array($json) ? $json : array(), 'supplier_invoice');
+
+		// If the document has a due date but no invoice date, we use the due date as invoice date
+		if (empty($invoiceindoc['issue_date']) && !empty($invoiceindoc['due_date'])) {
+			$invoiceindoc['issue_date'] = $invoiceindoc['due_date'];
+		}
 
 		//var_dump($json, $invoiceindoc);
 
@@ -997,7 +1032,7 @@ if ($action == 'showsummary') {
 				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
 			}
 			print $langs->trans("ChooseTheThirdPartyTouse").' ';
-			print $form->select_company($socid, 'socid', '(statut:=:0)', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
+			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen', '', '', 1, array(), false, array(), 1);
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
 		} else {
 			print '<span class="valignmiddle">'.$langs->trans("WillUse").'</span> ';
@@ -1130,7 +1165,8 @@ if ($action == 'showsummary') {
 			print '<input type="hidden" name="currency_code" value="'.$invoiceindoc['currency_code'].'">';
 			print '<input type="hidden" name="invoice_label" value="'.$invoiceindoc['invoice_label'].'">';
 		} else {
-			print $tmpinvoice->getNomUrl(1);
+			// The link is inserted after the translation, because trans() encodes the HTML of its parameters
+			print str_replace('__INVOICELINK__', $tmpinvoice->getNomUrl(1), $langs->trans("InvoiceSeemsToAlreadyExist", '__INVOICELINK__'));
 			print '<input type="hidden" name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
@@ -1139,7 +1175,7 @@ if ($action == 'showsummary') {
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans(empty($tmpinvoice->id) ? "CreateBill" : "AttachFileToExistingInvoice").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'salaries') {
 		$langs->loadLangs(array("salaries", "hrm", "compta", "bills"));
@@ -1445,7 +1481,7 @@ if ($action == 'showsummary') {
 	print '</form>';
 	print "\n";
 } elseif ($action == 'objectcreated' && is_object($createdobject)) {
-	print load_fiche_titre('Summary', '', 'upload');
+	//print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 	print '<br>';
@@ -1455,6 +1491,8 @@ if ($action == 'showsummary') {
 		print $langs->trans("SocialContributionCreatedFromFile").' ';
 	} elseif ($createdobject instanceof ExpenseReport) {
 		print $langs->trans("ExpenseAddedFromFile").' ';
+	} elseif ($attachtoexistinginvoice) {
+		print $langs->trans("FileAttachedToExistingInvoice").' ';
 	} else {
 		print $langs->trans("DraftInvoiceCreatedFromFile").' ';
 	}
@@ -1551,6 +1589,47 @@ if ($action == 'showsummary') {
 			console.log(event);
 			console.log('A file was selected, we submit the form');
 			$('#uploadform').submit();
+		});
+
+		// Drag and drop of a file on an upload zone. A counter is used because dragenter/dragleave are also fired by child elements.
+		var modulepartforzone = {'supplierinvoice': 'invoice_supplier', 'userexpensereport': 'expensereport', 'userpayroll': 'salaries', 'socialcontribution': 'chargesociales'};
+		jQuery('.flex-item-uploadfile').each(function() {
+			var zone = $(this);
+			var dragcounter = 0;
+			zone.on('dragenter', function(ev) {
+				var dataTypes = ev.originalEvent.dataTransfer.types;
+				if (!dataTypes || $.inArray('Files', dataTypes) === -1) {
+					return;
+				}
+				ev.preventDefault();
+				dragcounter++;
+				zone.addClass('highlightDragDropArea');
+			});
+			zone.on('dragover', function(ev) {
+				ev.preventDefault();
+			});
+			zone.on('dragleave', function(ev) {
+				dragcounter--;
+				if (dragcounter <= 0) {
+					dragcounter = 0;
+					zone.removeClass('highlightDragDropArea');
+				}
+			});
+			zone.on('drop', function(ev) {
+				ev.preventDefault();
+				dragcounter = 0;
+				zone.removeClass('highlightDragDropArea');
+				var files = ev.originalEvent.dataTransfer.files;
+				if (!files || !files.length || !modulepartforzone[zone.attr('id')]) {
+					return;
+				}
+				console.log('A file was dropped on '+zone.attr('id')+', we submit the form');
+				var dt = new DataTransfer();
+				dt.items.add(files[0]);
+				$('#fileInput')[0].files = dt.files;
+				$('#modulepart').val(modulepartforzone[zone.attr('id')]);
+				$('#uploadform').submit();
+			});
 		});
 	});
 	</script>";

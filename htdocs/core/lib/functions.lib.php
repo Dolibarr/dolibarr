@@ -2431,7 +2431,9 @@ function dol_escape_all($stringtoescape)
  */
 function dol_escape_xml($stringtoescape)
 {
-	return $stringtoescape;
+	$stringtoescape = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stringtoescape);	// Characters not allowed in XML 1.0
+
+	return htmlspecialchars($stringtoescape, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 
@@ -4391,15 +4393,16 @@ function dolGetFirstLetters($s, $nbofchar = 1)
  *
  * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
+ * @param	int			$binarycount		Do a binary count (count number of bytes in string, not number of human characters)
  * @return  int								Length of string
  */
-function dol_strlen($string, $stringencoding = 'UTF-8')
+function dol_strlen($string, $stringencoding = 'UTF-8', $binarycount = 0)
 {
 	if (is_null($string)) {
 		return 0;
 	}
 
-	if (function_exists('mb_strlen')) {
+	if (function_exists('mb_strlen') && empty($binarycount)) {
 		return mb_strlen($string, $stringencoding);
 	} else {
 		return strlen($string);
@@ -12183,6 +12186,86 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Function to remove parameters having their default value.
+ * By example, it could be useful to filter useless params from $_GET.
+ *
+ * @param array<string,string> $parameters An array containing a list of parameters to filter
+ *
+ * @return array<string,string> The filtered array cleaned from its default values.
+ */
+function dolRemoveDefaultParameters(array $parameters): array
+{
+	foreach ($parameters as $key => $value) {
+		if ($value == '' || $value == '-1') {
+			unset($parameters[$key]);
+		}
+	}
+
+	return $parameters;
+}
+
+/**
+ * Function to redirect search list forms from POST to GET request.
+ * The redirection is done only for search list forms following these conditions :
+ * - request parameter 'action' must be 'list'
+ * - request parameter 'formfilteraction' must be 'list'
+ * - request method must be 'POST'
+ * - request must not be a massaction request
+ * - string length of the redirection URL must be <= 2000
+ * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
+ *
+ * The goal of this function is to be able to avoid browser warning when going back to a search list page result when navigating in browser history.
+ * Typical case :
+ * - go to a search list page (propal list)
+ * - click on a propal item
+ * - go back in browser history
+ * - browser ask to resend post action (because search form list page return directly html content in the POST response)
+ *
+ * By redirecting POST request to a GET one, there will be not problem to go back to
+ * the search list page (because browser is going back to a GET page)
+ * Need to set the experimental conf MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE to 2000 (or to the max value allowed for GET string by the web server)
+ *
+ * @param string $context The current page context name
+ *
+ * @return void
+ */
+function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
+{
+	if (getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+		preg_match('/list$/', $context) &&
+		GETPOST('action') == 'list' &&
+		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
+		$_SERVER['REQUEST_METHOD'] == 'POST'
+	) {
+		// Detect if it is a simple search (not an massaction)
+		if (!GETPOST('massaction')) {
+			$postData = $_POST;
+
+			// Remove useless data for a simple search list request
+			unset($postData['massaction']);
+			unset($postData['confirmmassactioninvisible']);
+			unset($postData['token']);
+
+			$postData = dolRemoveDefaultParameters($postData);
+
+			// Prepare redirection URL
+			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
+			$urlParams = http_build_query($postData);
+			if ($urlParams !== '') {
+				$newLocationUrl .= '?' . $urlParams;
+			}
+
+			// Make a GET redirection if URL is not too long
+			$maxUrlLength = getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE");
+			if (strlen($newLocationUrl) <= $maxUrlLength) {
+				header('Location: ' . $newLocationUrl);
+				exit();
+			}
+		}
+	}
 }
 
 /**

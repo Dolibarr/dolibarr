@@ -102,13 +102,13 @@ function getListOfAIServices()
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => array('default' => 'mistral-small-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'textgeneration' => array('default' => 'mistral-medium-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
 			'imagegeneration' => array('default' => 'na'),
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'pixtral-12b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
@@ -524,6 +524,23 @@ function getListForAIRephraseStyle()
 }
 
 /**
+ * Return a user-friendly error message from the error array returned by Ai::generateContent()
+ *
+ * @param	array{error:bool,message:string,curl_error_no?:int,service?:string,model?:string}	$result		Error array returned by generateContent()
+ * @return	string																		Error message
+ */
+function getAIErrorMessage($result)
+{
+	global $langs;
+
+	if (!empty($result['curl_error_no']) && $result['curl_error_no'] == 28) {	// CURLE_OPERATION_TIMEDOUT
+		$langs->load("errors");
+		return $langs->transnoentitiesnoconv("ErrorAIServiceTimeout", (empty($result['model']) ? (empty($result['service']) ? '?' : $result['service']) : $result['model']));
+	}
+	return (empty($result['message']) ? 'Unknown error from AI service' : $result['message']);
+}
+
+/**
  * Prepare admin pages header
  *
  * @return array<array{0:string,1:string,2:string}>
@@ -754,7 +771,9 @@ function aiSuggestClosestModel($missing, array $models)
 	$bestScore = -1.0;
 	foreach ($models as $cand) {
 		$pct = 0.0;
-		similar_text(strtolower($missing), strtolower($cand), $pct);
+		if (similar_text(strtolower($missing), strtolower($cand), $pct) === 0) {
+			$pct = 0.0;	// nothing in common
+		}
 		$score = $pct;
 		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
 			$score += 15.0;	// same family beats a slightly closer string of another family
@@ -885,6 +904,13 @@ function getAiChatAssistantConfig()
 		'Preview',
 		'TypeResponse',
 		'AINoneOfThese',
+		'AICmdFreeText',
+		'Run',
+		'NoResults',
+		'AIPaletteHint',
+		'AIPaletteRunHint',
+		'AIMentionThirdpartyHint',
+		'AIMentionProductHint',
 		'OpenVerb',
 		'AIPdfReport',
 
@@ -919,6 +945,9 @@ function getAiChatAssistantConfig()
 	$ai_translations['AIContextTokens'] = $langs->transnoentitiesnoconv('AIContextTokens', '%s');
 	$ai_translations['AIContextAutoTitle'] = $langs->transnoentitiesnoconv('AIContextAutoTitle', '%s');
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
+	$ai_translations['ErrorFieldRequired'] = $langs->transnoentitiesnoconv('ErrorFieldRequired', '%s');
+	$ai_translations['AIPaletteBadJson'] = $langs->transnoentitiesnoconv('AIPaletteBadJson', '%s');
+	$ai_translations['AIPaletteTypeToSearch'] = $langs->transnoentitiesnoconv('AIPaletteTypeToSearch', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
 		"CloudVoiceRequiresSecureContext",
@@ -955,6 +984,10 @@ function getAiChatAssistantConfig()
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// The "/" palette of the chat input (the "@" / "#" suggestions do not depend on it).
+		'palette' => getDolGlobalString('AI_PALETTE_DISABLED') ? 0 : 1,
+		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
+		'paletteApiTools' => getDolGlobalInt('AI_PALETTE_API_TOOLS', 0),
 		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
 		// model list by a name heuristic that is not reliable, so hidden by default.
 		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
@@ -1025,7 +1058,7 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 		// Same picto as the title of the popover (no avatar box)
 		//$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
 		$out .= '<span class="chat-header-text">';
-		$out .= '<span class="chat-header-title">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
+		$out .= '<span class="chat-header-title hideonsmartphone">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
 		$aiprovider = getAiAssistantProviderLabel();
 		if ($aiprovider !== '') {
 			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
@@ -1638,6 +1671,61 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 }
 
 /**
+ * Set aside the documents a chat message carries, so what is done to the request
+ * (third parties resolved to their ids) is never done to the document itself.
+ * The chat wraps each attached document between the DocContextIntro and
+ * DocContextOutro texts, in the language of the user: they are matched in that
+ * language and in English.
+ *
+ * @param	string		$text	Message as received
+ * @param	Translate	$langs	Language of the user
+ * @return	array{text:string, blocks:array<string,string>}	The message with a placeholder per document, and the documents by placeholder
+ */
+function aiExtractDocumentBlocks($text, $langs)
+{
+	$out = array('text' => (string) $text, 'blocks' => array());
+	$intros = array_unique(array($langs->transnoentitiesnoconv('DocContextIntro'), 'Document Content:'));
+	$outros = array_unique(array($langs->transnoentitiesnoconv('DocContextOutro'), 'End of document'));
+	$introRe = array();
+	foreach ($intros as $v) {
+		$introRe[] = preg_quote((string) $v, '/');
+	}
+	$outroRe = array();
+	foreach ($outros as $v) {
+		$outroRe[] = preg_quote((string) $v, '/');
+	}
+	$introRe = implode('|', $introRe);
+	$outroRe = implode('|', $outroRe);
+	$m = array();
+	if (!preg_match_all('/(?:'.$introRe.')\s.*?---\s*(?:'.$outroRe.')\s*---/su', $out['text'], $m)) {
+		return $out;
+	}
+	foreach ($m[0] as $i => $block) {
+		$mark = "\x02DOC".$i."\x02";
+		$pos = strpos($out['text'], $block);
+		if ($pos === false) {
+			continue;
+		}
+		$out['text'] = substr($out['text'], 0, $pos).$mark.substr($out['text'], $pos + strlen($block));
+		$out['blocks'][$mark] = $block;
+	}
+
+	return $out;
+}
+
+/**
+ * Put back, unchanged, the documents set aside by aiExtractDocumentBlocks().
+ *
+ * @param	string					$text	Message with placeholders
+ * @param	array<string,string>	$blocks	Documents by placeholder
+ * @return	string							Message with its documents
+ */
+function aiRestoreDocumentBlocks($text, array $blocks)
+{
+	return empty($blocks) ? (string) $text : strtr((string) $text, $blocks);
+}
+
+/**
  * Every form of the third party names found in a text or carried by a tool
  * result, to mask with PrivacyGuard::maskNames(): the words as written, the
  * names and trade names of the matching third parties, and the values of the
@@ -1685,4 +1773,437 @@ function aiThirdpartyNamesToMask($db, $user, $text, $stopwords = array(), $data 
 			return $n !== '';
 		}
 	)));
+}
+
+/**
+ * Unit id from the word a user used for it: code, short label or label, in the
+ * user's language, singular or plural ("piece", "pieces", "pcs").
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	string	$name	Unit as written
+ * @return	int				Rowid of the unit, 0 when none or several match
+ */
+function aiUnitIdFromName($db, $name)
+{
+	global $langs;
+	static $unitNames = null;
+
+	$want = dol_strtolower(trim((string) $name));
+	if ($want === '') {
+		return 0;
+	}
+	if (is_numeric($want)) {
+		return (int) $want;
+	}
+	if ($unitNames === null) {
+		// Read the dictionary once per request, not once per line.
+		$langs->load('products');
+		$unitNames = array();
+		$resql = $db->query("SELECT rowid, code, label, short_label FROM ".$db->prefix()."c_units WHERE active = 1 LIMIT 500");
+		while ($resql && ($obj = $db->fetch_object($resql))) {
+			$names = array(dol_strtolower((string) $obj->code), dol_strtolower((string) $obj->short_label), dol_strtolower((string) $obj->label), dol_strtolower($langs->transnoentitiesnoconv((string) $obj->label)));
+			if ($obj->code === 'P') {
+				$names[] = 'pc';
+				$names[] = 'pcs';
+			}
+			$unitNames[(int) $obj->rowid] = $names;
+		}
+	}
+	$forms = array_unique(array($want, (string) preg_replace('/s$/', '', $want), (string) preg_replace('/es$/', '', $want)));
+	$ids = array();
+	foreach ($unitNames as $rowid => $names) {
+		if (array_intersect($forms, $names)) {
+			$ids[$rowid] = true;
+		}
+	}
+
+	return count($ids) === 1 ? (int) key($ids) : 0;
+}
+
+/**
+ * Read a one-line document command of the chat palette, e.g.
+ * "AI SOLUTION 4 pieces popularpt 10; 2 widget" or, on a card, "4 popularpt 10".
+ *
+ * Everything before the first number is the third party (empty = the one of
+ * the page). Then one line per group, groups separated by ";" or by ", "
+ * before a number: quantity, an optional unit ("pieces", "kg"), the product
+ * (ref or label, several words allowed), an optional unit price. Decimals may
+ * use a dot or a comma ("10,50"). "ref:XYZ" anywhere gives the supplier's own
+ * document number.
+ *
+ * With a user, lines written one after the other without ";" ("4 pieces
+ * popularpt 2 pieces widget") are told apart too, but only when the words do
+ * not name a product as a whole and each part names one.
+ *
+ * @param	DoliDB		$db		Database handler (units dictionary, products)
+ * @param	string		$text	Command text, without the command name
+ * @param	User|null	$user	User the products are searched for, null to split on ";" only
+ * @param	string		$side	'sell' (customer documents) or 'buy' (supplier documents)
+ * @return	array{name:string, ref:string, lines:array<int, array<string, mixed>>, error:string}
+ */
+function aiParseDocumentCommand($db, $text, $user = null, $side = 'sell')
+{
+	$out = array('name' => '', 'ref' => '', 'lines' => array(), 'error' => '');
+	$text = trim((string) $text);
+	$m = array();
+	if (preg_match('/(?:^|\s)ref:(\S+)/i', $text, $m)) {
+		$out['ref'] = $m[1];
+		$text = trim((string) preg_replace('/(?:^|\s)ref:\S+/i', ' ', $text));
+	}
+	// A product in quotes ("23", "Blue widget", as the suggestions write a ref
+	// that is a number or holds spaces) is one product: never a quantity, a
+	// price or two words.
+	$asName = array();
+	$asProduct = array();
+	if (preg_match_all('/"([^"]+)"/', $text, $m) > 0) {
+		foreach ($m[0] as $i => $whole) {
+			$mark = "\x01".$i."\x01";
+			$text = str_replace($whole, $mark, $text);
+			$asName[$mark] = trim($m[1][$i]);
+			$asProduct[$mark] = '"'.trim($m[1][$i]).'"';
+		}
+	}
+	$num = '\d+(?:[.,]\d+)?';
+	if (!preg_match('/(?:^|\s)('.$num.')(?=\s|$)/', $text, $m, PREG_OFFSET_CAPTURE)) {
+		$out['name'] = strtr($text, $asName);
+		$out['error'] = 'nolines';
+		return $out;
+	}
+	$start = (int) $m[1][1];
+	$out['name'] = trim(strtr(substr($text, 0, $start), $asName));
+	$rest = substr($text, $start);
+	foreach (preg_split('/\s*;\s*|,\s+(?=\d)/', $rest) ?: array() as $group) {
+		$tokens = preg_split('/\s+/', trim((string) $group), -1, PREG_SPLIT_NO_EMPTY) ?: array();
+		foreach (aiParseDocumentGroup($db, $tokens, $asProduct, $user, $side) as $line) {
+			$out['lines'][] = $line;
+		}
+	}
+	if (empty($out['lines'])) {
+		$out['error'] = 'nolines';
+	}
+
+	return $out;
+}
+
+/**
+ * Lines of one group of a document command: quantity, optional unit, product,
+ * optional unit price. Several lines written without ";" are split here when
+ * a user is given (see aiParseDocumentCommand()).
+ *
+ * @param	DoliDB					$db			Database handler
+ * @param	string[]				$tokens		Words of the group
+ * @param	array<string, string>	$asProduct	Quoted products set aside: mark => "name"
+ * @param	User|null				$user		User the products are searched for, null to never split
+ * @param	string					$side		'sell' or 'buy'
+ * @return	array<int, array<string, mixed>>	Lines, none when the group is not a line
+ */
+function aiParseDocumentGroup($db, array $tokens, array $asProduct, $user, $side)
+{
+	$num = '/^\d+(?:[.,]\d+)?$/';
+	if (empty($tokens) || !preg_match($num, $tokens[0])) {
+		return array();
+	}
+	$line = array('qty' => (float) str_replace(',', '.', array_shift($tokens)));
+	if (count($tokens) >= 2 && preg_match($num, (string) end($tokens))) {
+		$line['subprice'] = (float) str_replace(',', '.', (string) array_pop($tokens));
+	}
+	if (count($tokens) >= 2 && aiUnitIdFromName($db, $tokens[0]) > 0) {
+		$line['unit'] = array_shift($tokens);
+	}
+	if (empty($tokens)) {
+		return array();
+	}
+	$line['product_ref'] = strtr(implode(' ', $tokens), $asProduct);
+
+	// "4 popularpt 2 pieces widget": a number followed by a word, after the
+	// product, may start the next line. Only when the words are no product as
+	// a whole ("Widget 2 XL" stays one) and every part is one.
+	if ($user !== null && count($tokens) >= 3 && !aiDocumentProductExists($db, $user, $line['product_ref'], $side)) {
+		$n = count($tokens);
+		for ($i = 1; $i < $n - 1; $i++) {
+			if (!preg_match($num, $tokens[$i]) || preg_match($num, $tokens[$i + 1])) {
+				continue;
+			}
+			$left = array_slice($tokens, 0, $i);
+			$first = $line;
+			unset($first['subprice']);
+			if (count($left) >= 2 && preg_match($num, (string) end($left))) {
+				$first['subprice'] = (float) str_replace(',', '.', (string) array_pop($left));
+			}
+			$first['product_ref'] = strtr(implode(' ', $left), $asProduct);
+			if (!aiDocumentProductExists($db, $user, $first['product_ref'], $side)) {
+				continue;
+			}
+			$right = array_slice($tokens, $i);
+			if (isset($line['subprice'])) {
+				$right[] = (string) $line['subprice'];	// the price at the end belongs to the last line
+			}
+			$more = aiParseDocumentGroup($db, $right, $asProduct, $user, $side);
+			$allFound = !empty($more);
+			foreach ($more as $next) {
+				if (!aiDocumentProductExists($db, $user, (string) $next['product_ref'], $side)) {
+					$allFound = false;
+					break;
+				}
+			}
+			if ($allFound) {
+				return array_merge(array($first), $more);
+			}
+		}
+	}
+
+	return array($line);
+}
+
+/**
+ * Whether the words of a command line name at least one product the user may
+ * put on that kind of document.
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	User	$user	User
+ * @param	string	$typed	Product as typed ("#" and quotes allowed)
+ * @param	string	$side	'sell' or 'buy'
+ * @return	bool
+ */
+function aiDocumentProductExists($db, $user, $typed, $side)
+{
+	$search = trim(str_replace('"', ' ', ltrim((string) $typed, '#')));
+
+	return $search !== '' && !empty(aiFindProducts($db, $user, $search, $side, 1));
+}
+
+/**
+ * Products of the catalogue matching what a user typed: every word must be in
+ * the ref or the label, in any order. A product whose ref or label is exactly
+ * the text comes first. Only products the user may read, on sale (or on
+ * purchase for a supplier document).
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	User	$user		User
+ * @param	string	$text		What was typed
+ * @param	string	$side		'sell' (customer documents) or 'buy' (supplier documents)
+ * @param	int		$limit		Rows to return
+ * @return	array<int, array{id:int, ref:string, label:string, price:float, fk_unit:int, stock:float, exact:bool}>
+ */
+function aiFindProducts($db, $user, $text, $side = 'sell', $limit = 10)
+{
+	$types = array();
+	if ($user->hasRight('produit', 'lire')) {
+		$types[] = 0;
+	}
+	if ($user->hasRight('service', 'lire')) {
+		$types[] = 1;
+	}
+	$words = preg_split('/\s+/', trim((string) $text), -1, PREG_SPLIT_NO_EMPTY) ?: array();
+	if (empty($types) || empty($words)) {
+		return array();
+	}
+	$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock";
+	$sql .= " FROM ".$db->prefix()."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.fk_product_type IN (".$db->sanitize(implode(',', $types)).")";
+	$sql .= ($side === 'buy') ? " AND p.tobuy = 1" : " AND p.tosell = 1";
+	foreach (array_slice($words, 0, 6) as $w) {
+		$like = $db->escape($db->escapeforlike($w));
+		$sql .= " AND (p.ref LIKE '%".$like."%' OR p.label LIKE '%".$like."%')";
+	}
+	$sql .= " ORDER BY p.ref";
+	$sql .= " LIMIT 200";
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
+		return array();
+	}
+	$want = dol_strtolower(trim((string) $text));
+	$exact = array();
+	$other = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$row = array('id' => (int) $obj->rowid, 'ref' => (string) $obj->ref, 'label' => (string) $obj->label, 'price' => (float) $obj->price, 'fk_unit' => (int) $obj->fk_unit, 'stock' => (float) $obj->stock, 'exact' => false);
+		if (dol_strtolower($row['ref']) === $want || dol_strtolower($row['label']) === $want) {
+			$row['exact'] = true;
+			$exact[] = $row;
+		} else {
+			$other[] = $row;
+		}
+	}
+	$db->free($resql);
+
+	return array_slice(array_merge($exact, $other), 0, $limit);
+}
+
+/**
+ * Products of a third party's latest documents, newest first: what is most
+ * likely to be sold (or bought) again.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	User	$user		User
+ * @param	int		$socid		Third party
+ * @param	string	$side		'sell' (customer invoices) or 'buy' (supplier invoices)
+ * @param	int		$limit		Rows to return
+ * @return	array<int, array{id:int, ref:string, label:string, price:float, fk_unit:int, stock:float, exact:bool}>
+ */
+function aiRecentProducts($db, $user, $socid, $side = 'sell', $limit = 8)
+{
+	if ($socid <= 0 || !$user->hasRight($side === 'buy' ? 'fournisseur' : 'facture', $side === 'buy' ? 'facture' : 'lire', $side === 'buy' ? 'lire' : '')
+		|| (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
+		return array();
+	}
+	// What a third party bought is only told to a user who may see that third
+	// party: same check as the REST API (sales representative, external user).
+	if (!checkUserAccessToObject($user, array('societe'), (int) $socid, '', '', 'fk_soc', 'rowid')) {
+		return array();
+	}
+	$doc = ($side === 'buy') ? 'facture_fourn' : 'facture';
+	$det = ($side === 'buy') ? 'facture_fourn_det' : 'facturedet';
+	$link = ($side === 'buy') ? 'fk_facture_fourn' : 'fk_facture';
+	$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock, MAX(f.rowid) as lastdoc";
+	$sql .= " FROM ".$db->prefix().$db->sanitize($det)." as d";
+	$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($doc)." as f ON f.rowid = d.".$db->sanitize($link);
+	$sql .= " INNER JOIN ".$db->prefix()."product as p ON p.rowid = d.fk_product";
+	$sql .= " WHERE f.fk_soc = ".((int) $socid);
+	$sql .= " AND f.entity IN (".getEntity($side === 'buy' ? 'supplier_invoice' : 'invoice').")";
+	$sql .= ($side === 'buy') ? " AND p.tobuy = 1" : " AND p.tosell = 1";
+	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock";
+	$sql .= " ORDER BY lastdoc DESC";
+	$sql .= " LIMIT ".((int) $limit);
+	$resql = $db->query($sql);
+	$out = array();
+	while ($resql && ($obj = $db->fetch_object($resql))) {
+		$out[] = array('id' => (int) $obj->rowid, 'ref' => (string) $obj->ref, 'label' => (string) $obj->label, 'price' => (float) $obj->price, 'fk_unit' => (int) $obj->fk_unit, 'stock' => (float) $obj->stock, 'exact' => false);
+	}
+
+	return $out;
+}
+
+/**
+ * Plain name of a tool for the palette of the chat: "Get invoice" rather than
+ * api_invoices_get. A bridge tool is named from what it does (list, get,
+ * create...) and the record it works on, in the user's language when Dolibarr
+ * has a word for that record; any other tool from its own name.
+ *
+ * @param	Translate							$langs	Languages, in the user's language
+ * @param	string								$name	Tool name
+ * @param	array{endpoint:string,method:string,suffix:string,label:string}|null	$route	Route of a bridge tool, null for another tool
+ * @return	string									Plain name
+ */
+function aiPaletteToolTitle($langs, $name, $route)
+{
+	if (empty($route)) {
+		return dol_ucfirst(str_replace('_', ' ', (string) $name));
+	}
+
+	// The word Dolibarr already translates for the record: lang file, one, several.
+	$nouns = array(
+		'invoices' => array('bills', 'Invoice', 'Invoices'),
+		'supplier_invoices' => array('bills', 'SupplierInvoice', 'BillsSuppliers'),
+		'orders' => array('orders', 'Order', 'Orders'),
+		'supplier_orders' => array('orders', 'SupplierOrder', 'SuppliersOrders'),
+		'proposals' => array('propal', 'Proposal', 'Proposals'),
+		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
+		'products' => array('products', 'Product', 'Products'),
+		'projects' => array('main', 'Project', 'Projects'),
+		'tasks' => array('projects', 'Task', 'Tasks'),
+		'tickets' => array('ticket', 'Ticket', 'Tickets'),
+		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
+		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),
+		'categories' => array('main', 'Category', 'Categories'),
+		'interventions' => array('interventions', 'Intervention', 'Interventions'),
+		'contracts' => array('contracts', 'Contract', 'Contracts'),
+		'shipments' => array('sendings', 'Shipment', 'Shipments'),
+		'receptions' => array('receptions', 'Reception', 'Receptions'),
+		'members' => array('members', 'Member', 'Members'),
+		'expensereports' => array('main', 'ExpenseReport', 'ExpenseReports'),
+		'bankaccounts' => array('banks', 'BankAccount', 'BankAccounts'),
+		'donations' => array('donations', 'Donation', 'Donations'),
+		'agendaevents' => array('main', 'Event', 'Events'),
+		'holidays' => array('holiday', 'Holiday', 'Holidays'),
+		'users' => array('main', 'User', 'Users'),
+		'supplier_proposals' => array('supplier_proposal', 'SupplierProposalShort', 'SupplierProposalsShort'),
+		'boms' => array('mrp', 'BillOfMaterials', 'Bom'),
+		'mos' => array('mrp', 'ManufacturingOrder', 'MOs'),
+		'workstations' => array('mrp', 'Workstation', 'Workstations'),
+		'productlots' => array('productbatch', 'Batch', ''),
+		'memberstypes' => array('members', 'MemberType', 'MembersTypes'),
+		'subscriptions' => array('members', 'Subscription', 'Subscriptions'),
+		'partnerships' => array('partnership', 'Partnership', 'Partnerships'),
+		'multicurrencies' => array('main', 'Currency', ''),
+		'socialcontributions' => array('compta', 'SocialContribution', 'SocialContributions'),
+		'vatpayments' => array('compta', 'VATDeclaration', 'VATDeclarations'),
+		'variouspayments' => array('banks', 'VariousPayment', 'VariousPayments')
+	);
+	$endpoint = (string) $route['endpoint'];
+	// Otherwise the label of the whitelist entry, without its explanation in brackets.
+	$several = trim((string) preg_replace('/\s*\(.*\)\s*$/', '', (string) $route['label']));
+	$several = ($several !== '') ? $several : str_replace('_', ' ', $endpoint);
+	$one = (string) preg_replace(array('/ies$/', '/(?<!s)s$/'), array('y', ''), $several);
+	if (isset($nouns[$endpoint])) {
+		$langs->load($nouns[$endpoint][0]);
+		$one = $langs->transnoentitiesnoconv($nouns[$endpoint][1]);
+		if ($nouns[$endpoint][2] !== '') {
+			$several = $langs->transnoentitiesnoconv($nouns[$endpoint][2]);
+		}
+	}
+	$one = dol_strtolower($one);
+	$several = dol_strtolower($several);
+
+	$verbs = array(
+		'list' => array('AIToolTitleList', $several),
+		'get' => array('AIToolTitleGet', $one),
+		'get_by_ref' => array('AIToolTitleGetByRef', $one),
+		'get_by_email' => array('AIToolTitleGetByEmail', $one),
+		'get_by_barcode' => array('AIToolTitleGetByBarcode', $one),
+		'get_by_code' => array('AIToolTitleGetByCode', $one),
+		'get_by_track_id' => array('AIToolTitleGetByTrackId', $one),
+		'get_by_thirdparty' => array('AIToolTitleGetByThirdparty', $one),
+		'create' => array('AIToolTitleCreate', $one),
+		'update' => array('AIToolTitleUpdate', $one),
+		'delete' => array('AIToolTitleDelete', $one),
+		'validate' => array('AIToolTitleValidate', $one),
+		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'add_line' => array('AIToolTitleAddLine', $one)
+	);
+	$langs->load('other');
+	$suffix = (string) $route['suffix'];
+	if (isset($verbs[$suffix])) {
+		return dol_ucfirst($langs->transnoentitiesnoconv($verbs[$suffix][0], $verbs[$suffix][1]));
+	}
+
+	// Anything else ("payments_list", "lines"...): the record, then what is read,
+	// in the user's language when Dolibarr has the word.
+	$what = (string) preg_replace(array('/_list$/', '/^get_/'), '', $suffix);
+	$words = array(
+		'contacts' => array('companies', 'Contacts'),
+		'payments' => array('bills', 'Payments'),
+		'lines' => array('withdrawals', 'Lines'),
+		'categories' => array('main', 'Categories'),
+		'supplier_categories' => array('categories', 'SuppliersCategoriesShort'),
+		'stock' => array('stocks', 'Stock'),
+		'timespent' => array('projects', 'TimeSpent'),
+		'discounts' => array('bills', 'Discounts'),
+		'sales_representatives' => array('commercial', 'SalesRepresentatives'),
+		'shipments' => array('sendings', 'Shipments'),
+		'subscriptions' => array('members', 'Subscriptions')
+	);
+	if (isset($words[$what])) {
+		$langs->load($words[$what][0]);
+		$what = dol_strtolower($langs->transnoentitiesnoconv($words[$what][1]));
+	} else {
+		$what = str_replace('_', ' ', $what);
+	}
+
+	return dol_ucfirst($langs->transnoentitiesnoconv('AIToolTitleOther', $one, $what));
+}
+
+/**
+ * Description of a tool for the palette: without the sentence every generated
+ * bridge tool repeats, which says nothing to the person choosing.
+ *
+ * @param	string	$description	Description the model gets
+ * @return	string					Description to show
+ */
+function aiPaletteToolDescription($description)
+{
+	$text = (string) preg_replace('/\s*through the Dolibarr REST API \(auto-generated tool\)\.?/i', '', (string) $description);
+
+	return trim((string) preg_replace('/\s{2,}/', ' ', $text));
 }

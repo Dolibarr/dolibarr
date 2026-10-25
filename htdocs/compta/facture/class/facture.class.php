@@ -232,11 +232,6 @@ class Facture extends CommonInvoice
 	 */
 	public $fac_rec;
 
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
-
 
 	/**
 	 * @var int Situation cycle reference number
@@ -573,6 +568,17 @@ class Facture extends CommonInvoice
 			$this->error = "Failed to fetch company: ".$soc->error;
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
+		}
+
+		// A replacement invoice can't replace an invoice already transferred into accounting (checked again on validation)
+		if ($this->type == self::TYPE_REPLACEMENT && $this->fk_facture_source > 0) {
+			$facreplaced = new Facture($this->db);
+			if ($facreplaced->fetch($this->fk_facture_source) > 0 && $facreplaced->getVentilExportCompta() > 0) {
+				$langs->load('bills');
+				$this->error = $langs->trans("ErrorInvoiceReplacedAlreadyInAccountancy", $facreplaced->ref);
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				return -5;
+			}
 		}
 
 		$now = dol_now();
@@ -2862,6 +2868,12 @@ class Facture extends CommonInvoice
 			$this->user_validation_id = $this->fk_user_valid;
 		}
 
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+
 		// Update request
 		// TODO Use the invoice->update() method.
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
@@ -3705,6 +3717,13 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 		}
+		// Point of tax date mandatory (not for a deposit invoice: nothing is supplied yet)
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $this->type != self::TYPE_DEPOSIT && empty($this->date_pointoftax)) {
+			$langs->loadLangs(array("errors", "bills"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')';
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
@@ -4098,13 +4117,13 @@ class Facture extends CommonInvoice
 					while (($i < $nboflines) && $final) {
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
-						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+							$final = ($line->situation_percent == 100);
+						} else {
 							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
-						} else {
-							$final = ($line->situation_percent == 100);
 						}
 						$i++;
 					}
@@ -4884,7 +4903,7 @@ class Facture extends CommonInvoice
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				// INVOICE_USE_SITUATION = 2 - If there is no progress on a line, percent must not be 100% (No cumulative)
-				if ($this->type == Facture::TYPE_SITUATION && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
@@ -5154,14 +5173,14 @@ class Facture extends CommonInvoice
 		if ($percent > 100) {
 			$percent = 100;
 		}
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$line->situation_percent = $percent;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
+		} else {
 			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
-		} else {
-			$line->situation_percent = $percent;
-			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
 		}
 		$line->total_ht = (float) $tabprice[0];
 		$line->total_tva = (float) $tabprice[1];
