@@ -1025,7 +1025,7 @@ if ($step == 3 && $datatoimport) {
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button smallpaddingimp reposition" id="applyprofile" name="applyprofile" value="'.$langs->trans("Apply").'">';
+	print '<input type="submit" class="button smallpaddingimp reposition nomargintop nomarginbottom" id="applyprofile" name="applyprofile" value="'.$langs->trans("Apply").'">';
 	// Add js to show button
 	if (!empty($conf->use_javascript_ajax)) {
 		print '<script>

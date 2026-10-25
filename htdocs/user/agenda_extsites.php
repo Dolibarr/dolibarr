@@ -114,6 +114,7 @@ if (empty($reshook)) {
 				$color = '';
 			}
 			$enabled = trim(GETPOST('AGENDA_EXT_ENABLED_'.$id.'_'.$i, 'alpha'));
+			$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$i) : '');
 
 			if (!empty($src) && !dol_is_url($src)) {
 				setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
@@ -127,6 +128,7 @@ if (empty($reshook)) {
 			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i] = $offsettz;
 			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i] = $color;
 			$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i] = $enabled;
+			$tabparam['AGENDA_EXT_CACHE_'.$id.'_'.$i] = $cachedelay;
 
 			$i++;
 		}
@@ -234,6 +236,7 @@ print '<td class="center">'.$langs->trans("AgendaExtNb", "")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone opacitymedium">'." (".$langs->trans("Example").': https://externalcalendar/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
+print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
 print '<td class="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
@@ -244,6 +247,7 @@ while ($i <= $MAXAGENDA) {
 	$src = 'AGENDA_EXT_SRC_'.$id.'_'.$key;
 	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key;
 	$color = 'AGENDA_EXT_COLOR_'.$id.'_'.$key;
+	$cachedelay = 'AGENDA_EXT_CACHE_'.$id.'_'.$key;
 
 	print '<tr class="oddeven">';
 	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -260,6 +264,9 @@ while ($i <= $MAXAGENDA) {
 	// Offset TZ
 	$offsettz_value = (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) : (empty($object->conf->$offsettz) ? '' : $object->conf->$offsettz));
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
+	// Cache duration
+	$cachedelay_value = (GETPOSTISSET('AGENDA_EXT_CACHE_'.$id.'_'.$key) ? GETPOSTINT('AGENDA_EXT_CACHE_'.$id.'_'.$key) : (empty($object->conf->$cachedelay) ? '' : (int) $object->conf->$cachedelay));
+	print '<td><input type="number" min="0" class="flat hideifnotset width75" name="AGENDA_EXT_CACHE_'.$id.'_'.$key.'" value="'.$cachedelay_value.'" placeholder="300"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
 	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));

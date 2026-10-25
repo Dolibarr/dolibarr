@@ -117,3 +117,8 @@ docs/superpowers/
 /cookies.txt
 /post_login.html
 /AGENTS.md
+
+.bash_history
+.zed_server/
+.ssh/
+.local/

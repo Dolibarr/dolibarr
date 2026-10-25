@@ -190,10 +190,10 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		}
 
 		// Create a new instance of SwissQrBill, containing default headers with fixed values
-		$qrBill = SwissQrBill\QrBill::create();
+		$qrBill = SwissQrBill\QrBill::create(); // @phpstan-ignore-line
 
 		// First, set creditor address
-		$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
+		$address = SwissQrBill\DataGroup\Element\CombinedAddress::create( // @phpstan-ignore-line
 			$this->emetteur->name,
 			$this->emetteur->address,
 			$this->emetteur->zip . " " . $this->emetteur->town,

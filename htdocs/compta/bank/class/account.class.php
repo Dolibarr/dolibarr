@@ -1907,7 +1907,7 @@ class Account extends CommonObject
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC', 'DZ'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
 		if ($country_code == 'CA') {
@@ -2924,6 +2924,7 @@ class AccountLine extends CommonObjectLine
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 				$this->user_rappro = $obj->fk_user_rappro;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

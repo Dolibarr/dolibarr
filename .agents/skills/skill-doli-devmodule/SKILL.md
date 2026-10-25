@@ -173,6 +173,8 @@ This section contains detailed standards and constants for reference only. Do no
 ### Core Dolibarr Patterns
 *   **Hooks:** The standard pattern remains: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`
 *   **Language Keys:** Use PascalCase (e.g., `MyModuleLabel`) for consistency across all locales.
+*   **Functions instead of closures:** To factorize code, declare a normal named function (in a `lib/*.lib.php` file of the module, with its PHPDoc) and call it. Do not use closures (`$myfunc = function (...) use (...) {...}`) or arrow functions for this; use `global $langs, $db, ...` inside the function when needed.
+*   **Lazy loading of lang files:** Load a lang file that is needed only to show an error (for example `errors`) only in the code path that builds the error message (`$langs->load("errors");` just before `$langs->trans("ErrorXxx")`), not at the top of the page.
 
 ### Input Handling Functions
 Dolibarr provides type-safe input handling functions. **Always use these instead of `$_GET`/`$_POST` directly:**

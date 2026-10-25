@@ -31,6 +31,8 @@
  *  \ingroup    Advanced accountancy
  *  \brief      Page with bank journal
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
  * @var Conf $conf
