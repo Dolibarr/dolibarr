@@ -298,6 +298,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
+			$timespentoldowner = $object->timespent_fk_user;	// Owner of the line, before the value of the form is set
 
 			$result = 0;
 
@@ -320,7 +321,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
 
 			$result = 0;
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if ((in_array($timespentoldowner, $childids) || $user->hasRight('projet', 'all', 'creer')) && (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer'))) {
 				$result = $object->updateTimeSpent($user);
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -333,6 +334,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
+			$timespentoldowner = $object->timespent_fk_user;	// Owner of the line, before the value of the form is set
 
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
 			$object->timespent_old_duration = GETPOSTINT("old_duration");
@@ -353,7 +355,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
 			$result = 0;
 
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if ((in_array($timespentoldowner, $childids) || $user->hasRight('projet', 'all', 'creer')) && (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer'))) {
 				$result = $object->updateTimeSpent($user);
 
 				if ($result >= 0) {
