@@ -219,7 +219,7 @@ if ($manageCustomerDepositInInvoice) {
 	// Same condition as $sql2: only discounts coming from a down payment invoice.
 	$sql .= " AND COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
 	$sql .= " INNER JOIN ".$db->prefix()."facture as fs ON fs.rowid = re.fk_facture_source";
-	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description = '(DEPOSIT)')";
+	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description LIKE '(DEPOSIT)%')";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -340,7 +340,7 @@ if ($result) {
 			$sql2 = "SELECT re.rowid";
 			$sql2 .= " FROM " . $db->prefix() . "societe_remise_except as re";
 			$sql2 .= " INNER JOIN " . $db->prefix() . "facture as fs ON fs.rowid = re.fk_facture_source";
-			$sql2 .= " WHERE fs.type = " . Facture::TYPE_DEPOSIT . " AND re.description = '(DEPOSIT)'";
+			$sql2 .= " WHERE fs.type = " . Facture::TYPE_DEPOSIT . " AND re.description LIKE '(DEPOSIT)%'";
 			$sql2 .= " AND (re.fk_facture = " . ((int) $obj->rowid);
 			$sql2 .= "  OR re.fk_facture_line IN (SELECT rowid FROM " . $db->prefix() . "facturedet WHERE fk_facture = " . ((int) $obj->rowid) . ")";
 			$sql2 .= ")";
