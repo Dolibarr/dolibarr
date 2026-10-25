@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfacePhpunitBookKeeping extends DolibarrTriggers
 {
 	/**
-	 * @var array<int,array{action:string,piece_num:int,doc_date:mixed,nblines:int,old_doc_date:mixed,nboldlines:int}>	Calls received
+	 * @var array<int,array{action:string,id:int,doc_date:mixed,old_doc_date:mixed}>	Calls received
 	 */
 	public static $calls = array();
 
@@ -71,11 +71,9 @@ class InterfacePhpunitBookKeeping extends DolibarrTriggers
 
 		self::$calls[] = array(
 			'action' => $action,
-			'piece_num' => (int) $object->piece_num,
+			'id' => (int) $object->id,
 			'doc_date' => $object->doc_date,
-			'nblines' => (isset($object->linesmvt) && is_array($object->linesmvt) ? count($object->linesmvt) : 0),
 			'old_doc_date' => (is_object($object->oldcopy) ? $object->oldcopy->doc_date : null),
-			'nboldlines' => (isset($object->context['oldlines']) && is_array($object->context['oldlines']) ? count($object->context['oldlines']) : 0),
 		);
 
 		if ($action === self::$refuse) {

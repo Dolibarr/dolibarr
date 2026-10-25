@@ -1640,11 +1640,11 @@ class BookKeeping extends CommonObject
 		$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 		$sqlwhere .= $sql_filter;
 
-		// Keep the transaction before the change for the trigger
-		$oldtransaction = null;
+		// Keep the lines before the change, so triggers get them as oldcopy
+		$oldlines = array();
 		if (!$notrigger) {
-			$oldtransaction = $this->fetchTransactionForTrigger((int) $piece_num, $mode);
-			if ($oldtransaction === null) {
+			$oldlines = $this->fetchLinesForTrigger("SELECT rowid FROM ".$this->db->prefix().$this->table_element.$mode.$sqlwhere, $mode);
+			if (!is_array($oldlines)) {
 				$error++;
 			}
 		}
@@ -1663,8 +1663,8 @@ class BookKeeping extends CommonObject
 			}
 		}
 
-		// Call trigger, once for the transaction
-		if (!$error && !$notrigger && $this->callTriggerForTransaction('BOOKKEEPING_MODIFY', (int) $piece_num, $user, $mode, $oldtransaction) < 0) {
+		// Call triggers, once per line as update() does
+		if (!$error && !$notrigger && $this->callTriggerPerLine('BOOKKEEPING_MODIFY', array_keys($oldlines), $user, $mode, $oldlines) < 0) {
 			$error++;
 		}
 
@@ -1680,52 +1680,62 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load a transaction with all its lines, as given to the bookkeeping triggers
+	 * Load the lines found by a SQL request on rowid, to give them to triggers
 	 *
-	 * @param  int     $piecenum  Piece num of the transaction
-	 * @param  string  $mode      Mode ('' or '_tmp')
-	 * @return ?BookKeeping       Transaction with its lines in linesmvt, or null if KO
+	 * @param  string  $sql      SQL request that returns the rowid of the lines
+	 * @param  string  $mode     Mode ('' or '_tmp')
+	 * @return array<int,BookKeeping>|int<-1,-1>   Lines by id, or -1 if KO
 	 */
-	private function fetchTransactionForTrigger($piecenum, $mode = '')
+	private function fetchLinesForTrigger($sql, $mode = '')
 	{
-		$transaction = new BookKeeping($this->db);
-		if ($transaction->fetchPerMvt($piecenum, $mode) < 0 || $transaction->fetchAllPerMvt($piecenum, $mode) < 0) {
-			$this->error = $transaction->error;
-			$this->errors[] = $transaction->error;
-			return null;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
-		return $transaction;
+		$lines = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $obj->rowid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			$lines[(int) $obj->rowid] = $line;
+		}
+		$this->db->free($resql);
+
+		return $lines;
 	}
 
 	/**
-	 * Call a bookkeeping trigger once for a transaction changed or created with SQL requests, at the end of the
-	 * change, so a module can check it like a business object, for example to refuse a change in a closed period.
-	 * The object is the transaction with all its lines in linesmvt. On a change, the transaction before the change
-	 * is in oldcopy and its lines in context['oldlines'].
+	 * Call a trigger for each line of a transaction changed or created with SQL requests, so modules get
+	 * the same object as with create() or update(), for example to refuse a change in a closed period.
 	 *
-	 * @param  string        $triggername     Trigger code, like 'BOOKKEEPING_CREATE' or 'BOOKKEEPING_MODIFY'
-	 * @param  int           $piecenum        Piece num of the transaction
-	 * @param  User          $user            User that makes the change
-	 * @param  string        $mode            Mode ('' or '_tmp')
-	 * @param  ?BookKeeping  $oldtransaction  Transaction before the change
-	 * @return int                            Return integer <0 if KO, >0 if OK
+	 * @param  string                  $triggername  Trigger code, like 'BOOKKEEPING_CREATE' or 'BOOKKEEPING_MODIFY'
+	 * @param  int[]                   $lineids      Ids of the lines
+	 * @param  User                    $user         User that makes the change
+	 * @param  string                  $mode         Mode ('' or '_tmp')
+	 * @param  array<int,BookKeeping>  $oldlines     Lines before the change by id, given as oldcopy
+	 * @return int                                   Return integer <0 if KO, >0 if OK
 	 */
-	private function callTriggerForTransaction($triggername, $piecenum, User $user, $mode = '', $oldtransaction = null)
+	private function callTriggerPerLine($triggername, $lineids, User $user, $mode = '', $oldlines = array())
 	{
-		$transaction = $this->fetchTransactionForTrigger($piecenum, $mode);
-		if ($transaction === null) {
-			return -1;
-		}
-		if ($oldtransaction !== null) {
-			$transaction->oldcopy = $oldtransaction;
-			$transaction->context['oldlines'] = $oldtransaction->linesmvt;
-		}
-
-		if ($transaction->call_trigger($triggername, $user) < 0) {
-			$this->error = $transaction->error;
-			$this->errors = array_merge($this->errors, $transaction->errors);
-			return -1;
+		foreach ($lineids as $lineid) {
+			$line = new BookKeeping($this->db);
+			if ($line->fetch((int) $lineid, null, $mode) <= 0) {
+				$this->errors[] = $line->error;
+				return -1;
+			}
+			if (isset($oldlines[$lineid])) {
+				$line->oldcopy = $oldlines[$lineid];
+			}
+			if ($line->call_trigger($triggername, $user) < 0) {
+				$this->error = $line->error;
+				$this->errors = array_merge($this->errors, $line->errors);
+				return -1;
+			}
 		}
 
 		return 1;
@@ -2314,12 +2324,11 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
-	 * @param  int      $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
-	public function transformTransaction($direction = 0, $piece_num = '', $notrigger = 0)
+	public function transformTransaction($direction = 0, $piece_num = '')
 	{
-		global $conf, $user;
+		global $conf;
 
 		$error = 0;
 
@@ -2387,11 +2396,6 @@ class BookKeeping extends CommonObject
 					$this->errors[] = 'Error '.$this->db->lasterror();
 					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
-			}
-
-			// Call trigger, once for the transaction now in the ledger
-			if (!$error && !$notrigger && $this->callTriggerForTransaction('BOOKKEEPING_CREATE', (int) $next_piecenum, $user) < 0) {
-				$error++;
 			}
 		} elseif ($direction == 1) {
 			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
