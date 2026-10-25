@@ -4357,7 +4357,7 @@ abstract class CommonObject
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
 									$object = new $className($this->db);
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
