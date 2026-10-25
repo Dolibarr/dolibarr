@@ -82,3 +82,12 @@ TCPDF et Restler présentent également des versions différentes entre les docu
 - Installation ou test en base de données.
 
 Cette passe ne permet pas de déclarer l'application vulnérable ou exempte de vulnérabilités. Elle identifie d'abord une lacune de traçabilité et de reproductibilité à résoudre avant de faire des mises à niveau de dépendances.
+
+
+## Point d'attention confirmé par la documentation éditeur : CKEditor 4
+
+CKEditor 4 a atteint sa fin de vie publique le 30 juin 2023. Selon l'éditeur, la version open source ne reçoit plus de correctifs de sécurité ; une offre LTS commerciale est distincte. Il faut donc traiter la version réellement embarquée comme une priorité de revue et planifier soit une migration vers CKEditor 5, soit une solution LTS contractuellement prise en charge. La migration vers CKEditor 5 est un changement fonctionnel majeur, pas une simple substitution de fichiers.
+
+Références éditeur : [support CKEditor 4](https://ckeditor.com/docs/ckeditor4/latest/support/index.html), [page CKEditor 4 et options après EOL](https://ckeditor.com/ckeditor-4/).
+
+Pour Composer, la commande `composer audit` est prévue pour examiner les paquets installés ou verrouillés, mais elle ne peut pas être considérée comme exécutée dans cette passe faute de manifeste actif/lockfile et d'environnement d'installation. Voir la [documentation officielle de la commande audit](https://getcomposer.org/doc/03-cli.md#audit).
