@@ -72,6 +72,19 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 -- v25 migration
 
+-- Add the 11 Algerian wilayas created by Law 26-06 and numbered by Decree 26-206.
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '59', '', 0, '', 'Aflou' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '59');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '60', '', 0, '', 'Barika' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '60');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '61', '', 0, '', 'El Kantara' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '61');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '62', '', 0, '', 'Bir El Ater' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '62');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '63', '', 0, '', 'El Aricha' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '63');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '64', '', 0, '', 'Ksar Chellala' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '64');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '65', '', 0, '', 'Aïn Ouessara' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '65');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '66', '', 0, '', 'Messaad' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '66');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '67', '', 0, '', 'Ksar El Boukhari' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '67');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '68', '', 0, '', 'Bou Saâda' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '68');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '69', '', 0, '', 'El Abiodh Sidi Cheikh' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '69');
+
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
