@@ -498,6 +498,14 @@ body.ai-fullpage {
     }
 }
 
+/* Short small screens: drop the avatar and subtitle so the 4 cards still fit */
+@media (max-width: 560px) and (max-height: 700px) {
+    .chat-welcome-avatar,
+    .chat-welcome-subtitle {
+        display: none;
+    }
+}
+
 .msg.error {
     background: #ffebee;
     color: #c62828;

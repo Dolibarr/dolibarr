@@ -2217,7 +2217,8 @@ async function aiRenderChart(canvasId, chartCfg, urlRoot) {
     const el = document.getElementById(canvasId);
     if (!el) return;
     try {
-        const mod = await import(urlRoot + '/includes/nnnick/chartjs/dist/chart.esm.js');
+        // Resolved against location.origin so the URL never inherits user:pass@ from the page (e.g. DoliDroid)
+        const mod = await import(new URL(urlRoot + '/includes/nnnick/chartjs/dist/chart.esm.js', window.location.origin).href);
         const Chart = mod.Chart || mod.default;
         if (!Chart) return;
         el.parentElement.classList.add('chat-chart-ready');
