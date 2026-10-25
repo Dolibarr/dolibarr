@@ -153,7 +153,8 @@ class BookKeepingTest extends CommonClassTest
 
 	/**
 	 * Changes of a whole transaction call the bookkeeping trigger once for the transaction, and a trigger can refuse them,
-	 * for example a module that locks closed periods: date, journal or reference changed.
+	 * for example a module that locks closed periods: date, journal or reference changed, transaction validated
+	 * from draft.
 	 * The test runs inside one transaction, so a refused change is not rolled back here: the test checks the error.
 	 *
 	 * @return	void
@@ -199,6 +200,25 @@ class BookKeepingTest extends CommonClassTest
 			$this->assertStringContainsString('Refused by test trigger', $bookkeeping->errorsToString());
 			InterfacePhpunitBookKeeping::$refuse = '';
 
+			// Validation of a draft transaction: one BOOKKEEPING_CREATE for the transaction in the ledger, error if refused
+			$draftpiecenum = $this->createTransaction($olddate, '_tmp');
+			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_CREATE';
+			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
+			$this->assertLessThan(0, $result, 'A refused validation must return an error');
+			InterfacePhpunitBookKeeping::$refuse = '';
+
+			$draftpiecenum = $this->createTransaction($olddate, '_tmp');
+			InterfacePhpunitBookKeeping::$calls = array();
+			$result = $bookkeeping->transformTransaction(0, (string) $draftpiecenum);
+			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
+			$this->assertEquals('BOOKKEEPING_CREATE', InterfacePhpunitBookKeeping::$calls[0]['action']);
+			$this->assertEquals($bookkeeping->piece_num, InterfacePhpunitBookKeeping::$calls[0]['piece_num']);
+			$this->assertEquals($olddate, InterfacePhpunitBookKeeping::$calls[0]['doc_date']);
+			$this->assertEquals(2, InterfacePhpunitBookKeeping::$calls[0]['nblines']);
+			$this->assertEquals(2, $this->countLines($bookkeeping->piece_num, ''));
+			$this->assertEquals(0, $this->countLines($draftpiecenum, '_tmp'));
+
 			// notrigger: no trigger called
 			InterfacePhpunitBookKeeping::$calls = array();
 			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_ref', 'PHPUNIT-NOTRIGGER', '', 1);
@@ -242,6 +262,23 @@ class BookKeepingTest extends CommonClassTest
 		}
 
 		return $piecenum;
+	}
+
+	/**
+	 * Count the lines of a transaction
+	 *
+	 * @param	int		$piecenum	Piece num
+	 * @param	string	$mode		'' for the ledger, '_tmp' for a draft
+	 * @return	int
+	 */
+	private function countLines($piecenum, $mode)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping".$mode." WHERE piece_num = ".((int) $piecenum));
+		$obj = $db->fetch_object($resql);
+
+		return (int) $obj->nb;
 	}
 
 	/**
