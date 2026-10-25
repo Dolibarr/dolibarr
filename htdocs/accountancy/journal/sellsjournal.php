@@ -99,8 +99,7 @@ $tabCustomerDiscountHT = array();
 $tabCustomerDiscountVAT = array();
 $tabCustomerDiscountTTC = array();
 
-// When down payments are just payments, they are not journalized, so there is nothing to reverse from the down payment accounts
-$manageCustomerDepositInInvoice = (getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DEPOSIT_IN_INVOICE') && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS'));
+$manageCustomerDepositInInvoice = getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DEPOSIT_IN_INVOICE');
 $labelCustomerDiscountExtension = ' (AC)';
 
 $cptcli = 'NotDefined';
@@ -217,10 +216,10 @@ if ($in_bookkeeping == 'notyet') {
 }
 if ($manageCustomerDepositInInvoice) {
 	// Exclude the lines that consume a down payment, they are replaced by the reversal of the down payment (see $sql2).
-	// Same conditions as $sql2: only standard invoices and only discounts coming from a down payment invoice.
-	$sql .= " AND NOT (f.type = ".Facture::TYPE_STANDARD." AND COALESCE(fd.fk_remise_except, 0) IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
+	// Same condition as $sql2: only discounts coming from a down payment invoice.
+	$sql .= " AND COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
 	$sql .= " INNER JOIN ".$db->prefix()."facture as fs ON fs.rowid = re.fk_facture_source";
-	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description = '(DEPOSIT)'))";
+	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description = '(DEPOSIT)')";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
