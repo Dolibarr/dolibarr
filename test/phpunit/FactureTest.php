@@ -361,6 +361,10 @@ class FactureTest extends CommonClassTest
 			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->validate($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 
 			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->validate($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+
+			// Delete the validated invoices, so the invoice of testFactureValid is again the last one for testFactureDelete
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->delete($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->delete($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 		} finally {
 			$conf->global->INVOICE_POINTOFTAX_DATE = 0;
 			$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 0;
