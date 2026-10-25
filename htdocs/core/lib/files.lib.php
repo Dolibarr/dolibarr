@@ -2181,7 +2181,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 				// We also exclude '/temp/' dir and 'documents/admin/documents'
 				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta ".escapeshellarg($filetoprocess)." - ";
 				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 				if (!$result['error']) {
