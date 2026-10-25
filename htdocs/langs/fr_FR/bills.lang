@@ -453,10 +453,6 @@ DepositGenerationPermittedByThePaymentTermsSelected=Ceci est autorisé par les c
 GenerateDeposit=Générer une facture d'acompte de %s%%
 ValidateGeneratedDeposit=Valider l'acompte généré
 DepositGenerated=Acompte généré
-DepositLineDescriptionPercentProposal=Acompte à la commande de %s%% suivant notre devis N° %s
-DepositLineDescriptionPercentOrder=Acompte à la commande de %s%% suivant notre commande N° %s
-DepositLineDescriptionAmountProposal=Acompte à la commande de %s suivant notre devis N° %s
-DepositLineDescriptionAmountOrder=Acompte à la commande de %s suivant notre commande N° %s
 ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=Vous ne pouvez générer automatiquement un acompte qu'à partir d'une proposition ou d'une commande
 ErrorPaymentConditionsNotEligibleToDepositCreation=Les conditions de paiement choisies ne sont pas éligibles à la génération automatique de virements
 # PaymentType
