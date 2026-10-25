@@ -1566,19 +1566,25 @@ if (empty($reshook)) {
 									continue;
 								}
 
-								$arraylist = array(
-									'amount' => 'FixAmount',
-									'variable' => 'VarAmount'
-								);
-								$descline = '(DEPOSIT)';
-								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
-								if ($typeamount == 'amount') {
-									$descline .= ' ('.price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
-								} elseif ($typeamount == 'variable') {
-									$descline .= ' ('.$valuedeposit.'%)';
+								if ($typeamount == 'variable') {
+									if ($srcobject->element == 'propal') {
+										$descline = $langs->trans('DepositLineDescriptionPercentProposal', $valuedeposit, $srcobject->ref);
+									} else {
+										$descline = $langs->trans('DepositLineDescriptionPercentOrder', $valuedeposit, $srcobject->ref);
+									}
+								} elseif ($typeamount == 'amount') {
+									$amount_formatted = price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency));
+									if ($srcobject->element == 'propal') {
+										$descline = $langs->trans('DepositLineDescriptionAmountProposal', $amount_formatted, $srcobject->ref);
+									} else {
+										$descline = $langs->trans('DepositLineDescriptionAmountOrder', $amount_formatted, $srcobject->ref);
+									}
+								} else {
+									$langs->load('propal');
+									$langs->load('orders');
+									$origin_type_label = ($srcobject->element == 'propal') ? $langs->trans('ProposalShort') : $langs->trans('Order');
+									$descline = $langs->trans('Deposit').' - '.$origin_type_label.' '.$srcobject->ref;
 								}
-
-								$descline .= ' - '.$srcobject->ref;
 								$result = $object->addline(
 									$descline,
 									$amount, // subprice
@@ -1591,13 +1597,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$lines[$i]->info_bits, // info_bits
+									0, // info_bits (default for deposit line)
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$lines[$i]->special_code,
+									0, // special_code (default for deposit line)
 									$object->origin,
 									0,
 									0,

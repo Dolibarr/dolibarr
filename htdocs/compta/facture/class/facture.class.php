@@ -1822,7 +1822,11 @@ class Facture extends CommonInvoice
 				continue;
 			}
 
-			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
+			if ($origin->element == 'propal') {
+				$descline = $langs->trans('DepositLineDescriptionPercentProposal', $origin->deposit_percent, $origin->ref);
+			} else {
+				$descline = $langs->trans('DepositLineDescriptionPercentOrder', $origin->deposit_percent, $origin->ref);
+			}
 
 			// Hidden conf
 			if (!empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && !empty($descriptions[$tva])) {
