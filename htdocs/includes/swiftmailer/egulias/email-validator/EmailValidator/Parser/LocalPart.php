@@ -5,7 +5,6 @@ namespace Egulias\EmailValidator\Parser;
 use Egulias\EmailValidator\Exception\DotAtEnd;
 use Egulias\EmailValidator\Exception\DotAtStart;
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Exception\ExpectingAT;
 use Egulias\EmailValidator\Exception\ExpectingATEXT;
 use Egulias\EmailValidator\Exception\UnclosedQuotedString;
@@ -20,9 +19,10 @@ class LocalPart extends Parser
         $parseDQuote = true;
         $closingQuote = false;
         $openedParenthesis = 0;
+        $totalLength = 0;
 
-        while ($this->lexer->token['type'] !== EmailLexer::S_AT && $this->lexer->token) {
-            if ($this->lexer->token['type'] === EmailLexer::S_DOT && !$this->lexer->getPrevious()) {
+        while ($this->lexer->token['type'] !== EmailLexer::S_AT && null !== $this->lexer->token['type']) {
+            if ($this->lexer->token['type'] === EmailLexer::S_DOT && null === $this->lexer->getPrevious()['type']) {
                 throw new DotAtStart();
             }
 
@@ -35,12 +35,13 @@ class LocalPart extends Parser
                 $this->parseComments();
                 $openedParenthesis += $this->getOpenedParenthesis();
             }
+
             if ($this->lexer->token['type'] === EmailLexer::S_CLOSEPARENTHESIS) {
                 if ($openedParenthesis === 0) {
                     throw new UnopenedComment();
-                } else {
-                    $openedParenthesis--;
                 }
+
+                $openedParenthesis--;
             }
 
             $this->checkConsecutiveDots();
@@ -58,15 +59,18 @@ class LocalPart extends Parser
                 $this->parseFWS();
             }
 
+            $totalLength += strlen($this->lexer->token['value']);
             $this->lexer->moveNext();
         }
 
-        $prev = $this->lexer->getPrevious();
-        if (strlen($prev['value']) > LocalTooLong::LOCAL_PART_LENGTH) {
+        if ($totalLength > LocalTooLong::LOCAL_PART_LENGTH) {
             $this->warnings[LocalTooLong::CODE] = new LocalTooLong();
         }
     }
 
+    /**
+     * @return bool
+     */
     protected function parseDoubleQuote()
     {
         $parseAgain = true;
@@ -86,7 +90,7 @@ class LocalPart extends Parser
 
         $this->lexer->moveNext();
 
-        while ($this->lexer->token['type'] !== EmailLexer::S_DQUOTE && $this->lexer->token) {
+        while ($this->lexer->token['type'] !== EmailLexer::S_DQUOTE && null !== $this->lexer->token['type']) {
             $parseAgain = false;
             if (isset($special[$this->lexer->token['type']]) && $setSpecialsWarning) {
                 $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
@@ -118,7 +122,10 @@ class LocalPart extends Parser
         return $parseAgain;
     }
 
-    protected function isInvalidToken($token, $closingQuote)
+    /**
+     * @param bool $closingQuote
+     */
+    protected function isInvalidToken(array $token, $closingQuote)
     {
         $forbidden = array(
             EmailLexer::S_COMMA,

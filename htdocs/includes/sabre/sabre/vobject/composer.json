@@ -32,14 +32,15 @@
     "homepage" : "http://sabre.io/vobject/",
     "license" : "BSD-3-Clause",
     "require" : {
-        "php"          : ">=5.5",
+        "php"          : "^7.1 || ^8.0",
         "ext-mbstring" : "*",
-        "sabre/xml"    : ">=1.5 <3.0"
+        "sabre/xml"    : "^2.1 || ^3.0 || ^4.0"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "*",
-        "sabre/cs"        : "^1.0.0"
-
+        "friendsofphp/php-cs-fixer": "~2.17.1",
+        "phpunit/phpunit" : "^7.5 || ^8.5 || ^9.0",
+        "phpunit/php-invoker" : "^2.0 || ^3.1",
+        "phpstan/phpstan": "^0.12"
     },
     "suggest" : {
         "hoa/bench"       : "If you would like to run the benchmark scripts"
@@ -73,6 +74,11 @@
             "Sabre\\VObject\\" : "lib/"
         }
     },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Sabre\\VObject\\" : "tests/VObject"
+        }
+    },
     "bin" : [
         "bin/vobject",
         "bin/generate_vcards"
@@ -82,7 +88,20 @@
             "dev-master" : "4.0.x-dev"
         }
     },
-    "config" : {
-        "bin-dir" : "bin"
+    "scripts": {
+        "phpstan": [
+            "phpstan analyse lib tests"
+        ],
+        "cs-fixer": [
+            "php-cs-fixer fix"
+        ],
+        "phpunit": [
+            "phpunit --configuration tests/phpunit.xml"
+        ],
+        "test": [
+            "composer phpstan",
+            "composer cs-fixer",
+            "composer phpunit"
+        ]
     }
 }

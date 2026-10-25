@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +26,52 @@
  *		\brief      Tab payment info
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'trips'));
 
-$id = GETPOST('id');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$object = new PaymentExpenseReport($db);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
+}
+
+// Security check
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
+}
+
+// Load the parent expense report so restrictedArea() can also check the user hierarchy
+$expensereport = new ExpenseReport($db);
+if ($object->fk_expensereport > 0) {
+	if ($expensereport->fetch($object->fk_expensereport) <= 0) {
+		accessforbidden();
+	}
+}
+
+$result = restrictedArea($user, 'expensereport', ($expensereport->id > 0 ? $expensereport : 0), 'expensereport');
+
 
 /*
  * Actions
@@ -50,16 +86,14 @@ $confirm = GETPOST('confirm', 'alpha');
 
 llxHeader('', $langs->trans("Payment"));
 
-$object = new PaymentExpenseReport($db);
-$object->fetch($id, $ref);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 
-//$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 
@@ -75,7 +109,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=የአጋርነት አስተዳደር
+PartnershipDescription=ሞጁል አጋርነት አስተዳደር
+PartnershipDescriptionLong= ሞጁል አጋርነት አስተዳደር
+Partnership=አጋርነት
+Partnerships=ሽርክናዎች
+AddPartnership=ሽርክና ጨምር
+CancelPartnershipForExpiredMembers=ሽርክና፡ ጊዜው ያለፈባቸው የደንበኝነት ምዝገባዎች የአባላት ሽርክና ሰርዝ
+PartnershipCheckBacklink=ሽርክና፡ የጀርባ ማገናኛን አጣራ
+# Menu
+NewPartnership=አዲስ አጋርነት
+NewPartnershipbyWeb=የአጋርነት ጥያቄዎ በተሳካ ሁኔታ ታክሏል። በቅርቡ ልናገኝህ እንችላለን...
+ListOfPartnerships=የአጋርነት ዝርዝር
+# Admin page
+PartnershipSetup=አጋርነት ማዋቀር
+PartnershipAbout=ስለ አጋርነት
+PartnershipAboutPage=ስለ ገጽ አጋርነት
+partnershipforthirdpartyormember=የአጋር ሁኔታ በ'ሶስተኛ ወገን' ወይም 'አባል' ላይ መቀናበር አለበት
+PARTNERSHIP_IS_MANAGED_FOR=አጋርነት የሚተዳደረው ለ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ለመፈተሽ የኋላ አገናኞች
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=የደንበኝነት ምዝገባው ሲያልቅ የሽርክና ሁኔታን ከመሰረዝ ጥቂት ቀናት በፊት
+ReferingWebsiteCheck=የድር ጣቢያ ማመሳከሪያን ያረጋግጡ
+ReferingWebsiteCheckDesc=አጋሮችዎ በራሳቸው ድረ-ገጽ ላይ ወደ ድር ጣቢያዎ ጎራዎች የጀርባ ማገናኛ እንዳከሉ ለማረጋገጥ አንድ ባህሪን ማንቃት ይችላሉ።
+PublicFormRegistrationPartnerDesc=ዶሊባርር የውጪ ጎብኚዎች የአጋርነት ፕሮግራሙ አካል ለመሆን እንዲጠይቁ ለማድረግ ይፋዊ ዩአርኤል/ድረ-ገጽ ሊያቀርብልዎ ይችላል።
+# Object
+DeletePartnership=ሽርክና ሰርዝ
+PartnershipDedicatedToThisThirdParty=ለዚህ ሶስተኛ ወገን የተሰጠ አጋርነት
+PartnershipDedicatedToThisMember=ለዚህ አባል የተሰጠ አጋርነት
+DatePartnershipStart=የመጀመሪያ ቀን
+DatePartnershipEnd=የመጨረሻ ቀን
+ReasonDecline=ምክንያት አትቀበል
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=አጋርነት አስቀድሞ አለ።
+ManagePartnership=ሽርክና አስተዳድር
+BacklinkNotFoundOnPartnerWebsite=የጀርባ ማገናኛ በአጋር ድር ጣቢያ ላይ አልተገኘም።
+ConfirmClosePartnershipAsk=እርግጠኛ ነዎት ይህን አጋርነት መሰረዝ ይፈልጋሉ?
+PartnershipType=የአጋርነት አይነት
+PartnershipRefApproved=ሽርክና %s ጸድቋል
+KeywordToCheckInWebsite=የተሰጠው ቁልፍ ቃል በእያንዳንዱ አጋር ድህረ ገጽ ላይ መኖሩን ማረጋገጥ ከፈለጉ ይህን ቁልፍ ቃል እዚህ ይግለጹ
+PartnershipDraft=ረቂቅ
+PartnershipAccepted=ተቀባይነት አግኝቷል
+PartnershipRefused=እምቢ አለ።
+PartnershipCanceled=ተሰርዟል።
+PartnershipManagedFor=አጋሮች ናቸው።
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=ሽርክና በቅርቡ ይሰረዛል
+SendingEmailOnPartnershipRefused=አጋርነት ውድቅ አደረገ
+SendingEmailOnPartnershipAccepted=አጋርነት ተቀባይነት አግኝቷል
+SendingEmailOnPartnershipCanceled=ሽርክና ተሰርዟል።
+YourPartnershipWillSoonBeCanceledTopic=ሽርክና በቅርቡ ይሰረዛል
+YourPartnershipRefusedTopic=አጋርነት ውድቅ አደረገ
+YourPartnershipAcceptedTopic=አጋርነት ተቀባይነት አግኝቷል
+YourPartnershipCanceledTopic=ሽርክና ተሰርዟል።
+YourPartnershipWillSoonBeCanceledContent=አጋርነታችን በቅርቡ እንደሚሰረዝ (እድሳት አላገኘንም ወይም ለትብብራችን ቅድመ ሁኔታ ያልተሟላ) መሆኑን ለማሳወቅ እንወዳለን። በስህተት ይህ ከተቀበሉ እባክዎ ያነጋግሩን።
+YourPartnershipRefusedContent=የአጋርነት ጥያቄዎ ውድቅ መደረጉን ለማሳወቅ እንወዳለን። ቅድመ-ሁኔታዎች አልተሟሉም። ተጨማሪ መረጃ ከፈለጉ እባክዎን ያነጋግሩን።
+YourPartnershipAcceptedContent=የአጋርነት ጥያቄዎ ተቀባይነት ማግኘቱን ለማሳወቅ እንወዳለን።
+YourPartnershipCanceledContent=አጋርነታችን መሰረዙን ለማሳወቅ እንወዳለን። ተጨማሪ መረጃ ከፈለጉ እባክዎን ያነጋግሩን።
+CountLastUrlCheckError=ለመጨረሻው የዩአርኤል ፍተሻ የስህተት ብዛት
+LastCheckBacklink=የመጨረሻው የዩአርኤል ፍተሻ ቀን
+NewPartnershipRequest=አዲስ የአጋርነት ጥያቄ
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=ይህ ገጽ ከሚከተሉት ጎራዎች ወደ አንዱ ቢያንስ አንድ አገናኝ መያዝ አለበት፡ %s
+IPOfApplicant=የአመልካች አይፒ
+PartnershipToReopen=To reopen
+PartnershipConfirmReOpenAsk=Are you sure you want to reopen this partnership <b> %s</b>?

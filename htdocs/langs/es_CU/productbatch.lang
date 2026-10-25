@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ManageLotSerial=Usar número de lote/serie
+ProductStatusOnBatch=Sí (se requiere lote)
+ProductStatusOnSerial=Sí (se requiere número de serie único)
+ProductStatusNotOnBatch=No (lote/serie no utilizado)
+ProductStatusOnSerialShort=De serie
+atleast1batchfield=Fecha de caducidad o Fecha de caducidad o Número de lote/serie
+batch_number=Número de lote/serie
+SellByDate=Fecha de caducidad
+DetailBatchNumber=Detalles de lote/serie
+printBatch=Lote/Serie: %s
+printEatby=Comer por: %s
+printSellby=Vender por: %s
+printQty=Cantidad: %d
+AddDispatchBatchLine=Agregue una línea para el envío de vida útil
+ProductDoesNotUseBatchSerial=Este producto no utiliza número de lote/serie
+ProductLotSetup=Configuración del lote/serie del módulo
+ShowCurrentStockOfLot=Mostrar stock actual para un par de productos/lote
+ShowLogOfMovementIfLot=Mostrar registro de movimientos por pareja producto/lote
+SerialNumberAlreadyInUse=El número de serie %s ya se usa para el producto %s
+BatchLotNumberingModules=Regla de numeración para la generación automática del número de lote
+BatchSerialNumberingModules=Regla de numeración para generación automática de número de serie (para productos con propiedad 1 lote/serie único para cada producto)
+QtyToAddAfterBarcodeScan=Cant. a %s por cada código de barras/lote/serie escaneado
+EndOfLife=Fin de la vida

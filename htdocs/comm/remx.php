@@ -1,8 +1,11 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019      Frédéric France             <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,170 +27,246 @@
  *		\brief      Page to edit absolute discounts for a customer
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}		// Force use of CSRF protection with tokens even for GET
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills', 'companies'));
+if (isModEnabled('multicurrency')) {
+	$langs->load('multicurrency');
+}
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$splitamounts = GETPOST('splitamounts', 'array');
 
 // Security check
-$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
-if ($user->socid > 0)
-{
+$socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
+/** @var User $user */
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+$permissiontocreate = ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer'));
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-{
-     header("Location: ".$backtopage);
-     exit;
+if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
+	header("Location: ".$backtopage);
+	exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes')
-{
-	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
-
-	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
-	$amount_ttc_1 = price2num($amount_ttc_1);
-	$amount_ttc_2 = GETPOST('amount_ttc_2', 'alpha');
-	$amount_ttc_2 = price2num($amount_ttc_2);
-
+if ($action == 'confirm_split_more' && $permissiontocreate) {
 	$error = 0;
-	$remid = (GETPOST("remid", 'int') ? GETPOST("remid", 'int') : 0);
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
-	if (!$res > 0)
-	{
+	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
-	}
-	if (!$error && price2num($amount_ttc_1 + $amount_ttc_2) != $discount->amount_ttc)
-	{
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
 		$error++;
-		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
-	if (!$error && $discount->fk_facture_line)
-	{
+	if (empty($splitamounts)) {
 		$error++;
-		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
+		setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
 	}
-	if (!$error)
-	{
-		$newdiscount1 = new DiscountAbsolute($db);
-		$newdiscount2 = new DiscountAbsolute($db);
-		$newdiscount1->fk_facture_source = $discount->fk_facture_source;
-		$newdiscount2->fk_facture_source = $discount->fk_facture_source;
-		$newdiscount1->fk_facture = $discount->fk_facture;
-		$newdiscount2->fk_facture = $discount->fk_facture;
-		$newdiscount1->fk_facture_line = $discount->fk_facture_line;
-		$newdiscount2->fk_facture_line = $discount->fk_facture_line;
-		$newdiscount1->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
-		$newdiscount2->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
-		$newdiscount1->fk_invoice_supplier = $discount->fk_invoice_supplier;
-		$newdiscount2->fk_invoice_supplier = $discount->fk_invoice_supplier;
-		$newdiscount1->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
-		$newdiscount2->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
-		if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)')
-		{
-			$newdiscount1->description = $discount->description;
-			$newdiscount2->description = $discount->description;
-		} else {
-			$newdiscount1->description = $discount->description.' (1)';
-			$newdiscount2->description = $discount->description.' (2)';
+	if (!$error) {
+		$totalsplitted = 0;
+		foreach ($splitamounts as $key => $value) {
+			$totalsplitted += (float) $value;
+		}
+		if ($totalsplitted != (float) $discount->amount_ttc) {
+			$error++;
+			setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
+		}
+	}
+
+	if (!$error) {
+		$db->begin();
+
+		$discountnumber = 0;
+		foreach ($splitamounts as $key => $value) {
+			if ((float) $value == 0) {
+				continue;
+			}
+			$discountnumber++;
+			//
+			$newdiscount = new DiscountAbsolute($db);
+			$newdiscount->fk_facture_source = $discount->fk_facture_source;
+			$newdiscount->fk_facture = $discount->fk_facture;
+			$newdiscount->fk_facture_line = $discount->fk_facture_line;
+			$newdiscount->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
+			$newdiscount->fk_invoice_supplier = $discount->fk_invoice_supplier;
+			$newdiscount->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
+			if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)') {
+				$newdiscount->description = $discount->description;
+			} else {
+				$newdiscount->description = $discount->description.' ('.$discountnumber.')';
+			}
+			$newdiscount->fk_user = $discount->fk_user;
+			$newdiscount->fk_soc = $discount->fk_soc;
+			$newdiscount->socid = $discount->socid;
+			$newdiscount->discount_type = $discount->discount_type;
+			$newdiscount->datec = $discount->datec;
+			$newdiscount->tva_tx = $discount->tva_tx;
+			$newdiscount->localtax1_tx = $discount->localtax1_tx;
+			$newdiscount->localtax1_type = $discount->localtax1_type;
+			$newdiscount->localtax2_tx = $discount->localtax2_tx;
+			$newdiscount->localtax2_type = $discount->localtax2_type;
+			$newdiscount->vat_src_code = $discount->vat_src_code;
+			$newdiscount->amount_ttc = price2num($value);
+
+			// Calculate localtaxes and VAT amounts
+			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx, $newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $newdiscount->localtax1_type, $newdiscount->localtax2_type);
+
+			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
+			$newdiscount->multicurrency_amount_tva = price2num($newdiscount->multicurrency_amount_ttc - $newdiscount->multicurrency_amount_ht);
+
+			$newdiscountID = $newdiscount->create($user);
+			if (!$newdiscountID) {
+				$error++;
+			}
 		}
 
-		$newdiscount1->fk_user = $discount->fk_user;
-		$newdiscount2->fk_user = $discount->fk_user;
-		$newdiscount1->fk_soc = $discount->fk_soc;
-		$newdiscount2->fk_soc = $discount->fk_soc;
-		$newdiscount1->discount_type = $discount->discount_type;
-		$newdiscount2->discount_type = $discount->discount_type;
-		$newdiscount1->datec = $discount->datec;
-		$newdiscount2->datec = $discount->datec;
-		$newdiscount1->tva_tx = $discount->tva_tx;
-		$newdiscount2->tva_tx = $discount->tva_tx;
-		$newdiscount1->vat_src_code = $discount->vat_src_code;
-		$newdiscount2->vat_src_code = $discount->vat_src_code;
-		$newdiscount1->amount_ttc = $amount_ttc_1;
-		$newdiscount2->amount_ttc = price2num($discount->amount_ttc - $newdiscount1->amount_ttc);
-		$newdiscount1->amount_ht = price2num($newdiscount1->amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
-		$newdiscount2->amount_ht = price2num($newdiscount2->amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
-		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
-		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
-
-		$newdiscount1->multicurrency_amount_ttc = $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
-		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
-		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
-		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
-		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
-		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
-
-		$db->begin();
-		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
-        // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
-        $discount->fk_invoice_supplier_source = 0;
-		$res = $discount->delete($user);
-		$newid1 = $newdiscount1->create($user);
-		$newid2 = $newdiscount2->create($user);
-		if ($res > 0 && $newid1 > 0 && $newid2 > 0)
-		{
-			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb whith back
-			exit;
+		if (!$error) {
+			$discount->fk_facture_source = 0;
+			$discount->fk_invoice_supplier_source = 0;
+			$res = $discount->delete($user);
+			if ($res > 0) {
+				$db->commit();
+				$query = ['id' => $id, 'backtopage' => $backtopage];
+				header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], $query)); // To avoid pb with backtopage
+				exit;
+			} else {
+				$db->rollback();
+				setEventMessages($discount->error, $discount->errors, 'errors');
+			}
 		} else {
 			$db->rollback();
 		}
 	}
 }
 
-if ($action == 'setremise' && $user->rights->societe->creer)
-{
-	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
+	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
+	$amount_ttc_1 = price2num($amount_ttc_1);
+	$amount_ttc_2 = GETPOST('amount_ttc_2', 'alpha');
+	$amount_ttc_2 = price2num($amount_ttc_2);
 
-	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
+	$error = 0;
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
+	$discount = new DiscountAbsolute($db);
+	$res = $discount->fetch($remid);
+	if (!($res > 0)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	} elseif ($discount->fk_soc != $socid) {
+		// The discount must belong to the thirdparty of the page
+		$error++;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
+	// A part larger than the original discount would force the other part to be negative so the sum still matches.
+	if (!$error && ((float) $amount_ttc_1 <= 0 || (float) $amount_ttc_2 <= 0)) {
+		$error++;
+		setEventMessages($langs->trans("AmountMustBePositive"), null, 'errors');
+	}
+	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
+		$error++;
+		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
+	}
+	if (!$error && $discount->fk_facture_line) {
+		$error++;
+		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
+	}
+	if (!$error) {
+		// Split a discount in two
+		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);	// Note: splitting this way will result of a total ttc similar to original but total ht and total taxes may differ.
+		$newdiscount1 = $newDiscounts[0];
+		$newdiscount2 = $newDiscounts[1];
+
+		$db->begin();
+
+		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+		// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
+		$discount->fk_invoice_supplier_source = 0;
+		$res = $discount->delete($user);
+		$newid1 = $newdiscount1->create($user);
+		$newid2 = $newdiscount2->create($user);
+		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
+			$db->commit();
+			$query = ['id' => $id, 'backtopage' => $backtopage];
+			header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], $query)); // To avoid pb with back
+			exit;
+		} else {
+			$db->rollback();
+			if ($res <= 0) {
+				setEventMessages($discount->error, $discount->errors, 'errors');
+			} elseif ($newid1 <= 0) {
+				setEventMessages($newdiscount1->error, $newdiscount1->errors, 'errors');
+			} else {
+				setEventMessages($newdiscount2->error, $newdiscount2->errors, 'errors');
+			}
+		}
+	}
+}
+
+if ($action == 'setremise' && $permissiontocreate) {
+	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
-	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
+	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
+	$price_base_type = GETPOST('price_base_type', 'alpha');
 
-	if ($amount_ht > 0)
-	{
+	if ($amount > 0) {
 		$error = 0;
-		if (empty($desc))
-		{
+		if (empty($desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$soc = new Societe($db);
 			$soc->fetch($id);
-			$discountid = $soc->set_remise_except($amount_ht, $user, $desc, $tva_tx, $discount_type);
+			$discountid = $soc->set_remise_except((float) $amount, $user, $desc, $tva_tx, $discount_type, $price_base_type);
 
-			if ($discountid > 0)
-			{
-			    if (!empty($backtopage))
-			    {
-			        header("Location: ".$backtopage.'&discountid='.$discountid);
-			        exit;
-			    } else {
-				    header("Location: remx.php?id=".$id);
-				    exit;
+			if ($discountid > 0) {
+				if (!empty($backtopage)) {
+					header("Location: ".$backtopage.'&discountid='.((int) $discountid));
+					exit;
+				} else {
+					header("Location: remx.php?id=".((int) $id));
+					exit;
 				}
 			} else {
 				$error++;
@@ -199,20 +278,21 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes')
-{
-	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
-
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch(GETPOST("remid"));
-	$result = $discount->delete($user);
-	if ($result > 0)
-	{
+	$result = $discount->fetch(GETPOSTINT("remid"));
+	if ($result > 0 && $discount->fk_soc == $socid) {
+		$result = $discount->delete($user);
+	} else {
+		// The discount must belong to the thirdparty of the page
+		$result = -1;
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
+	if ($result > 0) {
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb whith back
+		header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id])); // To avoid pb with back
 		exit;
 	} else {
 		setEventMessages($discount->error, $discount->errors, 'errors');
@@ -228,175 +308,83 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 $form = new Form($db);
 $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
+$tmpuser = new User($db);
 
 llxHeader('', $langs->trans("GlobalDiscount"));
 
-if ($socid > 0)
-{
-	// On recupere les donnees societes par l'objet
+if ($socid > 0) {
+	// Retrieve third-party data via the object
 	$object = new Societe($db);
 	$object->fetch($socid);
 
 	$isCustomer = $object->client == 1 || $object->client == 3;
 	$isSupplier = $object->fournisseur == 1;
 
-	/*
-	 * Display tabs
-	 */
+	// Display tabs
+
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), -1, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    print '<div class="fichecenter">';
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
-    if (!$isCustomer && !$isSupplier) {
-    	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
+	if (!$isCustomer && !$isSupplier) {
+		print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
-    	dol_fiche_end();
+		print dol_get_fiche_end();
 
-    	print '</form>';
+		print '</form>';
 
-    	llxFooter();
-    	$db->close();
-    	exit;
-    }
+		llxFooter();
+		$db->close();
+		exit;
+	}
+
+	print dol_get_fiche_end();
 
 
-	print '<table class="border centpercent tableforfield borderbottom">';
+	if ($action == 'create_remise') {
+		if ($user->hasRight('societe', 'creer')) {
+			$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
+			if ($isCustomer && $isSupplier) {
+				$discounttypelabel = $discount_type == 1 ? 'NewSupplierGlobalDiscount' : 'NewClientGlobalDiscount';
+			} else {
+				$discounttypelabel = 'NewGlobalDiscount';
+			}
 
-	if ($isCustomer) {	// Calcul avoirs client en cours
-		$remise_all = $remise_user = 0;
-		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
-		$sql .= " AND discount_type = 0"; // Exclude supplier discounts
-		$sql .= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
-		$sql .= " GROUP BY rc.fk_user";
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			$remise_all += $obj->amount;
-			if ($obj->fk_user == $user->id) $remise_user += $obj->amount;
-		} else {
-			dol_print_error($db);
-		}
+			/*if ($isCustomer && $isSupplier) {
+				print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
+				print '<td><input type="radio" name="discount_type" id="discount_type_0" '.($discount_type != 1 ? 'checked="checked" ' : '').'value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+				print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" '.($discount_type == 1 ? 'checked="checked" ' : '').'value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+				print '</td></tr>';
+			}*/
 
-		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			// Show the new global discount input form into a popup dialog
+			$formquestion = array(
+				0 => array('type' => 'text', 'name' => 'amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("Amount").' ('.$langs->transnoentitiesnoconv("Currency".$conf->currency).')', 'value' => price2num(GETPOST("amount")), 'morecss' => 'minwidth100'),
+				1 => array('type' => 'other', 'name' => 'price_base_type', 'label' => $langs->trans("PriceBase"), 'value' => $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type")),
+				2 => array('type' => 'other', 'name' => 'tva_tx', 'label' => $langs->trans("VAT"), 'value' => $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', false, 1)),
+				3 => array('type' => 'text', 'name' => 'desc', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("NoteReason"), 'value' => GETPOST('desc', 'alphanohtml'), 'morecss' => 'minwidth300'),
+				4 => array('type' => 'hidden', 'name' => 'discount_type', 'value' => (($isSupplier && $discount_type == 1) ? 1 : 0))
+			);
 
-		if (!empty($user->fk_soc))    // No need to show this for external users
-		{
-			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-	    	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans($discounttypelabel), '', 'setremise', $formquestion, '', 1, 0, 600, 0, 'Add', 'Cancel');
 		}
 	}
 
-	if ($isSupplier) {
-		// Calcul avoirs fournisseur en cours
-		$remise_all = $remise_user = 0;
-		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
-		$sql .= " AND discount_type = 1"; // Exclude customer discounts
-		$sql .= " AND (fk_invoice_supplier_line IS NULL AND fk_invoice_supplier IS NULL)";
-		$sql .= " GROUP BY rc.fk_user";
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			$remise_all += $obj->amount;
-			if ($obj->fk_user == $user->id) $remise_user += $obj->amount;
-		} else {
-			dol_print_error($db);
-		}
-
-		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
-
-		if (!empty($user->fk_soc))    // No need to show this for external users
-		{
-			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
-		}
-	}
-
-	print '</table>';
-
-	print '</div>';
-
-	dol_fiche_end();
+	print '</form>';
 
 
-	if ($user->rights->societe->creer)
-	{
-    	print '<br>';
-
-    	print load_fiche_titre($langs->trans("NewGlobalDiscount"), '', '');
-
-
-    	if ($isCustomer && !$isSupplier) {
-    		print '<input type="hidden" name="discount_type" value="0" />';
-    	}
-
-    	if (!$isCustomer && $isSupplier) {
-    		print '<input type="hidden" name="discount_type" value="1" />';
-    	}
-
-    	dol_fiche_head();
-
-    	print '<table class="border centpercent">';
-		if ($isCustomer && $isSupplier) {
-			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-			print '<td><input type="radio" name="discount_type" id="discount_type_0" checked="checked" value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-			print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
-			print '</td></tr>';
-		}
-    	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-    	print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
-    	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-    	print '<tr><td>'.$langs->trans("VAT").'</td>';
-    	print '<td>';
-    	print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
-    	print '</td></tr>';
-    	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
-
-    	print "</table>";
-
-    	dol_fiche_end();
-	}
-
-	if ($user->rights->societe->creer)
-	{
-        print '<div class="center">';
-    	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
-        if (!empty($backtopage))
-        {
-            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        }
-    	print '</div>';
-    }
-
-    print '</form>';
-
-
-	print '<br>';
-
-	if ($_GET['action'] == 'remove')
-	{
+	if ($action == 'remove') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.GETPOST('remid'), $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
@@ -405,146 +393,331 @@ if ($socid > 0)
 	 * List not consumed available credits (= linked to no invoice and no invoice line)
 	 */
 
-	print load_fiche_titre($langs->trans("DiscountStillRemaining"));
+	if ($isCustomer && !$isSupplier) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'&token='.newToken());
+	} elseif (!$isCustomer && $isSupplier) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'&token='.newToken());
+	} else {
+		$newcardbutton = '';
+	}
+
+	print load_fiche_titre($langs->trans("DiscountStillRemaining"), $newcardbutton);
 
 	if ($isCustomer) {
+		$newcardbutton = dolGetButtonTitle($langs->trans("NewClientGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'&token='.newToken());
 		if ($isSupplier) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft fichehalfleft-lg">';
-			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
+			print load_fiche_titre($langs->trans("CustomerDiscounts"), $newcardbutton, '');
 		}
 
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_facture_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " fa.ref as ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
 		$sql .= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
 		$sql .= " ORDER BY rc.datec DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" class="noborder">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>'; // Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-                print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
-			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicurrency')) {
+				print '<td><br><br></td>';
 			}
-			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
 			$showconfirminfo = array();
 
 			$i = 0;
+			$total_amount_ht = 0;
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-	    		while ($i < $num)
-	    		{
-	    			$obj = $db->fetch_object($resql);
+			if ($num > 0) {
+				while ($i < $num) {
+					$obj = $db->fetch_object($resql);
 
-	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
-	    			if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} else {
-	    				print '<td class="minwidth100">';
-	    				print $obj->description;
-	    				print '</td>';
-	    			}
-	    			print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
-	    			if (!empty($conf->multicurrency->enabled))
-	    			{
-	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
-	    			}
-	    			print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
-	    			if (!empty($conf->multicurrency->enabled))
-	    			{
-	    			    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
-	    			}
-	    			print '<td class="center">';
-	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
-	    			print '</td>';
-	    			if ($user->rights->societe->creer || $user->rights->facture->creer)
-	    			{
-	    				print '<td class="center nowrap">';
-	    				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-	    				print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
-	    				print '</td>';
-	    			} else print '<td>&nbsp;</td>';
-	    			print '</tr>';
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
 
-	    			if ($_GET["action"] == 'split' && GETPOST('remid') == $obj->rowid)
-	    			{
-	    				$showconfirminfo['rowid'] = $obj->rowid;
-	    				$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
-	    			}
-	    			$i++;
-	    		}
+					print '<tr class="oddeven">';
+
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhourreduceformat', 'tzuserrel').'</td>';
+
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} else {
+						print '<td class="tdoverflowmax150 tdlineheightsmall" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
+						print '</td>';
+					}
+
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
+
+					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicurrency')) {
+						$discounttooltip = $langs->trans("DiscountOfferedBy").': '.$tmpuser->getNomUrl(-1, 'nolink');
+						$discounttooltip .= '<br>'.$langs->trans("AmountHT").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ht, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						$discounttooltip .= '<br>'.$langs->trans("AmountTTC").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						print '<td class="center nowraponall">'.$form->textwithpicto('', $discounttooltip, 1, 'info').'</td>';
+					}
+
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+						print '<td class="center nowraponall">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
+						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+						print '</td>';
+					} else {
+						print '<td>&nbsp;</td>';
+					}
+					print '</tr>';
+
+					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
+						$showconfirminfo['rowid'] = $obj->rowid;
+						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
+					}
+
+					$total_amount_ht += (float) $obj->amount_ht;
+					$i++;
+				}
+
+				if ($num > 0) {
+					print '<tr class="liste_total">';
+					print '<td colspan="3">'.$langs->trans("Total").'</td>';
+					print '<td class="right nowraponall amount">'.price($total_amount_ht).'</td>';
+					print '<td class="right"></td>';
+					print '<td class="right"></td>';
+					if (isModEnabled('multicurrency')) {
+						print '<td></td>';
+					}
+					print '<td></td>';
+					print '</tr>';
+				}
 			} else {
-				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
-			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				$colspan = 7;
+				if (isModEnabled('multicurrency')) {
+					$colspan += 1;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
 			print '</div>';
 
-			if (count($showconfirminfo))
-			{
-				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - $amount1);
-				$formquestion = array(
-					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-					array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
-					array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
-				);
-				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 0);
+			if (count($showconfirminfo)) {
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT') && !empty($conf->use_javascript_ajax)) {
+					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
+
+					//
+					print '<input type="hidden" name="action" value="confirm_split_more">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="centpercent">';
+					print '<tbody>';
+
+					print '<tr>';
+					print '<td class="" colspan="4">'.$langs->trans('TypeAmountOfEachNewDiscountSplit').'</td>';
+					print '</tr>';
+
+					//
+					if (empty($splitamounts)) {
+						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
+
+						print '<tr class="splitline" id="splitline-1">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[1]" value="'.$amount1.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+
+						print '<tr class="splitline" id="splitline-2">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 2:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[2]" value="'.$amount2.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+					} else {
+						$nbSplitLines = count($splitamounts);
+						$remaintosplit = $showconfirminfo['amount_ttc'];
+						foreach ($splitamounts as $numero => $value) {
+							$remaintosplit -= (float) $value;
+							print '<tr class="splitline" id="splitline-'.$numero.'">';
+							print '<td class="right bold">'.$langs->trans('AmountTTC').' '.$numero.':</td>';
+							print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['.$numero.']" value="'.$splitamounts[$numero].'"></td>';
+							print '<td class="right delsplitline"></td>';
+							print '<td class="right"></td>';
+							print '</tr>';
+						}
+					}
+
+					print '<tr>';
+					print '<td class="right"></td>';
+					print '<td class="right"><span class="fas fa-plus-circle" id="splitaddline" style="cursor:pointer;"></span></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr>';
+					print '<td colspan="3">&nbsp;</td>';
+					print '</tr>';
+
+					//
+					print '<tr>';
+					print '<td class="right bold">'.$langs->trans('RemainToSplit').':</td>';
+					print '<td class="right"><span id="remaintosplit">'.price($remaintosplit).'</span> '.$conf->currency.'</td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '</tbody>';
+					print '</table>';
+					print '</div>';
+					print '</form>';
+					?>
+					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
+						$(document).ready(function () {
+
+							let formsplit = $('#formsplit');
+							let totaltosplit = formsplit.data('totaltosplit');
+
+							// Open the split form into a dialog (same popup as the split in two parts)
+							formsplit.dialog({
+								title: '<?php print dol_escape_js($langs->transnoentities('SplitDiscountTitle')); ?>',
+								autoOpen: true,
+								modal: true,
+								resizable: false,
+								width: 'auto',
+								buttons: [
+									{
+										text: '<?php print dol_escape_js($langs->transnoentities('Split')); ?>',
+										class: 'ui-split-confirm',
+										click: function() {
+											$(this).trigger('submit');
+										}
+									},
+									{
+										text: '<?php print dol_escape_js($langs->transnoentities('Cancel')); ?>',
+										click: function() {
+											$(this).dialog('close');
+										}
+									}
+								]
+							});
+
+							let splitconfirmbutton = formsplit.closest('.ui-dialog').find('.ui-split-confirm');
+							calcRemainToPay();
+
+							function calcRemainToPay(){
+								let items = formsplit.find('.splitinput');
+								let remaintosplit = totaltosplit;
+
+								items.each(function(e){
+									var itemvalue = parseFloat($(this).val().replace(',', '.'));
+									if (isNaN(itemvalue)) {
+										itemvalue = 0;
+									}
+									remaintosplit -= itemvalue;
+								});
+
+								let remaintosplitval = remaintosplit.toFixed(2);
+								console.log(remaintosplitval);
+								formsplit.data('remaintosplit', remaintosplitval);
+								formsplit.find('#remaintosplit').html(remaintosplitval.replace('.',','));
+								splitconfirmbutton.prop('disabled', true);
+								if (remaintosplit == 0) {
+									splitconfirmbutton.prop('disabled', false);
+								}
+							}
+
+							// Addline
+							$(document).on('click', '#splitaddline', function(){
+								let splitlines = formsplit.find('.splitline');
+								let numlines = splitlines.length;
+								let nextNum = numlines + 1;
+								let newInputValue = formsplit.data('remaintosplit');
+								$('#splitline-'+numlines).find('.delsplitline').html('');
+								var splitTemplate = '<tr class="splitline" id="splitline-'+ nextNum +'">';
+								splitTemplate += '<td class="right bold"><?php echo $langs->trans('AmountTTC'); ?> '+ nextNum +':</td>';
+								splitTemplate += '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['+ nextNum +']" value="'+ parseFloat(newInputValue) +'"></td>';
+								splitTemplate += '<td class="right delsplitline"><span class="fas fa-trash icon-delsplitline" data-splitline="'+ nextNum +'" style="cursor:pointer;"></span></td>';
+								splitTemplate += '<td class="right"></td>';
+								splitTemplate += '</tr>';
+								$('#splitline-'+numlines).after(splitTemplate);
+								calcRemainToPay();
+							});
+
+							// Update line
+							$(document).on('change', '.splitinput', function(){
+								calcRemainToPay();
+							});
+
+							// Delete line
+							$(document).on('click', '.icon-delsplitline', function(){
+								let num = parseInt($(this).data('splitline'));
+								let numBefore = num - 1;
+								if (numBefore > 2) {
+									$('#splitline-'+numBefore).find('.delsplitline').html('<span class="fas fa-trash icon-delsplitline" data-splitline="'+ numBefore +'"></span>');
+								}
+								$('#splitline-'+num).remove();
+								calcRemainToPay();
+							});
+						});
+					</script>
+					<?php
+				} else {
+					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$splittotalattr = 'data-total="'.dol_escape_htmltag(price2num($showconfirminfo['amount_ttc'])).'" data-decimals="'.((int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 2)).'"';
+					$formquestion = array(
+						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5', 'moreattr' => $splittotalattr),
+						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+					);
+					$langs->load("dict");
+					print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 1, 0, 600, 0, 'Split', 'Cancel');
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -553,162 +726,332 @@ if ($socid > 0)
 
 	if ($isSupplier) {
 		if ($isCustomer) {
+			$newcardbutton = dolGetButtonTitle($langs->trans("NewSupplierGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'&token='.newToken());
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
-			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
+			print load_fiche_titre($langs->trans("SupplierDiscounts"), $newcardbutton, '');
 		}
 
 		/*
-		 * Liste remises fixes fournisseur restant en cours (= liees a aucune facture ni ligne de facture)
+		 * List of fixed supplier discounts still available (=not linked to any invoice nor invoice line)
 		 */
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_invoice_supplier_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " fa.ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 1"; // Eliminate customer discounts
 		$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)";
 		$sql .= " ORDER BY rc.datec DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" class="noborder">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>'; // Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
-			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicurrency')) {
+				print '<td><br><br></td>';
 			}
-			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
 			$showconfirminfo = array();
 
 			$i = 0;
+			$total_amount_ht = 0;
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-				while ($i < $num)
-				{
+			if ($num > 0) {
+				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
-					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhourreduceformat', 'tzuserrel').'</td>';
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
-					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
-					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax150 tdlineheightsmall" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled))
-					{
-					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
-					}
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled))
-					{
-					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicurrency')) {
+						$discounttooltip = $langs->trans("DiscountOfferedBy").': '.$tmpuser->getNomUrl(-1, 'nolink');
+						$discounttooltip .= '<br>'.$langs->trans("AmountHT").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ht, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						$discounttooltip .= '<br>'.$langs->trans("AmountTTC").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						print '<td class="center nowraponall">'.$form->textwithpicto('', $discounttooltip, 1, 'info').'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
-					print '</td>';
-					if ($user->rights->societe->creer || $user->rights->facture->creer)
-					{
-						print '<td class="center nowrap">';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+						print '<td class="center nowraponall">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
+						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
-					} else print '<td>&nbsp;</td>';
+					} else {
+						print '<td>&nbsp;</td>';
+					}
 					print '</tr>';
 
-					if ($_GET["action"] == 'split' && GETPOST('remid') == $obj->rowid)
-					{
+					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo['rowid'] = $obj->rowid;
 						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
 					}
+
+					$total_amount_ht += (float) $obj->amount_ht;
 					$i++;
 				}
+
+				if ($num > 0) {
+					print '<tr class="liste_total">';
+					print '<td colspan="3">'.$langs->trans("Total").'</td>';
+					print '<td class="right nowraponall amount">'.price($total_amount_ht).'</td>';
+					print '<td class="right"></td>';
+					print '<td class="right"></td>';
+					if (isModEnabled('multicurrency')) {
+						print '<td></td>';
+					}
+					print '<td></td>';
+					print '</tr>';
+				}
 			} else {
-				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				$colspan = 7;
+				if (isModEnabled('multicurrency')) {
+					$colspan += 1;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
 			print '</div>';
 
-			if (count($showconfirminfo))
-			{
-				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - $amount1);
-				$formquestion = array(
-					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-					array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
-					array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
-				);
-				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+			if (count($showconfirminfo)) {
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT') && !empty($conf->use_javascript_ajax)) {
+					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
+
+					//
+					print '<input type="hidden" name="action" value="confirm_split_more">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="centpercent">';
+					print '<tbody>';
+
+					print '<tr>';
+					print '<td class="" colspan="4">'.$langs->trans('TypeAmountOfEachNewDiscountSplit').'</td>';
+					print '</tr>';
+
+					//
+					if (empty($splitamounts)) {
+						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
+
+						print '<tr class="splitline" id="splitline-1">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[1]" value="'.$amount1.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+
+						print '<tr class="splitline" id="splitline-2">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 2:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[2]" value="'.$amount2.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+					} else {
+						$nbSplitLines = count($splitamounts);
+						$remaintosplit = $showconfirminfo['amount_ttc'];
+						foreach ($splitamounts as $numero => $value) {
+							$remaintosplit -= (float) $value;
+							print '<tr class="splitline" id="splitline-'.$numero.'">';
+							print '<td class="right bold">'.$langs->trans('AmountTTC').' '.$numero.':</td>';
+							print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['.$numero.']" value="'.$splitamounts[$numero].'"></td>';
+							print '<td class="right delsplitline"></td>';
+							print '<td class="right"></td>';
+							print '</tr>';
+						}
+					}
+
+					print '<tr>';
+					print '<td class="right"></td>';
+					print '<td class="right"><span class="fas fa-plus-circle" id="splitaddline" style="cursor:pointer;"></span></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr>';
+					print '<td colspan="3">&nbsp;</td>';
+					print '</tr>';
+
+					//
+					print '<tr>';
+					print '<td class="right bold">'.$langs->trans('RemainToSplit').':</td>';
+					print '<td class="right"><span id="remaintosplit">'.price($remaintosplit).'</span> '.$conf->currency.'</td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '</tbody>';
+					print '</table>';
+					print '</div>';
+					print '</form>';
+					?>
+					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
+						$(document).ready(function () {
+
+							let formsplit = $('#formsplit');
+							let totaltosplit = formsplit.data('totaltosplit');
+
+							// Open the split form into a dialog (same popup as the split in two parts)
+							formsplit.dialog({
+								title: '<?php print dol_escape_js($langs->transnoentities('SplitDiscountTitle')); ?>',
+								autoOpen: true,
+								modal: true,
+								resizable: false,
+								width: 'auto',
+								buttons: [
+									{
+										text: '<?php print dol_escape_js($langs->transnoentities('Split')); ?>',
+										class: 'ui-split-confirm',
+										click: function() {
+											$(this).trigger('submit');
+										}
+									},
+									{
+										text: '<?php print dol_escape_js($langs->transnoentities('Cancel')); ?>',
+										click: function() {
+											$(this).dialog('close');
+										}
+									}
+								]
+							});
+
+							let splitconfirmbutton = formsplit.closest('.ui-dialog').find('.ui-split-confirm');
+							calcRemainToPay();
+
+							function calcRemainToPay(){
+								let items = formsplit.find('.splitinput');
+								let remaintosplit = totaltosplit;
+
+								items.each(function(e){
+									var itemvalue = parseFloat($(this).val().replace(',', '.'));
+									if (isNaN(itemvalue)) {
+										itemvalue = 0;
+									}
+									remaintosplit -= itemvalue;
+								});
+
+								let remaintosplitval = remaintosplit.toFixed(2);
+								console.log(remaintosplitval);
+								formsplit.data('remaintosplit', remaintosplitval);
+								formsplit.find('#remaintosplit').html(remaintosplitval.replace('.',','));
+								splitconfirmbutton.prop('disabled', true);
+								if (remaintosplit == 0) {
+									splitconfirmbutton.prop('disabled', false);
+								}
+							}
+
+							// Addline
+							$(document).on('click', '#splitaddline', function(){
+								let splitlines = formsplit.find('.splitline');
+								let numlines = splitlines.length;
+								let nextNum = numlines + 1;
+								let newInputValue = formsplit.data('remaintosplit');
+								$('#splitline-'+numlines).find('.delsplitline').html('');
+								var splitTemplate = '<tr class="splitline" id="splitline-'+ nextNum +'">';
+								splitTemplate += '<td class="right bold"><?php echo $langs->trans('AmountTTC'); ?> '+ nextNum +':</td>';
+								splitTemplate += '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['+ nextNum +']" value="'+ parseFloat(newInputValue) +'"></td>';
+								splitTemplate += '<td class="right delsplitline"><span class="fas fa-trash icon-delsplitline" data-splitline="'+ nextNum +'" style="cursor:pointer;"></span></td>';
+								splitTemplate += '<td class="right"></td>';
+								splitTemplate += '</tr>';
+								$('#splitline-'+numlines).after(splitTemplate);
+								calcRemainToPay();
+							});
+
+							// Update line
+							$(document).on('change', '.splitinput', function(){
+								calcRemainToPay();
+							});
+
+							// Delete line
+							$(document).on('click', '.icon-delsplitline', function(){
+								let num = parseInt($(this).data('splitline'));
+								let numBefore = num - 1;
+								if (numBefore > 2) {
+									$('#splitline-'+numBefore).find('.delsplitline').html('<span class="fas fa-trash icon-delsplitline" data-splitline="'+ numBefore +'"></span>');
+								}
+								$('#splitline-'+num).remove();
+								calcRemainToPay();
+							});
+						});
+					</script>
+					<?php
+				} else {
+					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$splittotalattr = 'data-total="'.dol_escape_htmltag(price2num($showconfirminfo['amount_ttc'])).'" data-decimals="'.((int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 2)).'"';
+					$formquestion = array(
+						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5', 'moreattr' => $splittotalattr),
+						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+					);
+					$langs->load("dict");
+					print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 1, 0, 600, 0, 'Split', 'Cancel');
+				}
 			}
 		} else {
 			dol_print_error($db);
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
 	}
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	/*
-	 * List discount consumed (=liees a une ligne de facture ou facture)
+	 * List discount consumed (=linked to an invoice line or invoice)
 	 */
 
 	print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
@@ -722,9 +1065,9 @@ if ($socid > 0)
 
 		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " f.rowid as invoiceid, f.ref,";
 		$sql .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -732,7 +1075,7 @@ if ($socid > 0)
 		$sql .= " , ".MAIN_DB_PREFIX."facturedet as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_facture_line = fc.rowid";
 		$sql .= " AND fc.fk_facture = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -741,16 +1084,16 @@ if ($socid > 0)
 		//$sql.= " UNION ";
 		// Discount linked to invoices
 		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
-		$sql2 .= " rc.fk_facture_source,";
-		$sql2 .= " u.login, u.rowid as user_id,";
+		$sql2 .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture, rc.fk_facture_source,";
+		$sql2 .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql2 .= " f.rowid as invoiceid, f.ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2 .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_facture = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
@@ -758,9 +1101,10 @@ if ($socid > 0)
 
 		$resql = $db->query($sql);
 		$resql2 = null;
-		if ($resql) $resql2 = $db->query($sql2);
-		if ($resql2)
-		{
+		if ($resql) {
+			$resql2 = $db->query($sql2);
+		}
+		if ($resql2) {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
@@ -768,110 +1112,102 @@ if ($socid > 0)
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
-			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicurrency')) {
+				print '<td><br><br></td>';
 			}
-			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
 			$tab_sqlobj = array();
 			$tab_sqlobjOrder = array();
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-	    		for ($i = 0; $i < $num; $i++)
-	    		{
-	    			$sqlobj = $db->fetch_object($resql);
-	    			$tab_sqlobj[] = $sqlobj;
-	    			$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
-	    		}
+			if ($num > 0) {
+				for ($i = 0; $i < $num; $i++) {
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
+				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
-			for ($i = 0; $i < $num; $i++)
-			{
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+			for ($i = 0; $i < $num; $i++) {
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
-			if ($num > 0)
-			{
-			    $i = 0;
-	    		while ($i < $num)
-	    		{
-	    			$obj = array_shift($tab_sqlobj);
-	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
-	    			if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->invoice_source_ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->invoice_source_ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description))
-	    			{
-	    				print '<td class="minwidth100">';
-	    				$facturestatic->id = $obj->fk_facture_source;
-	    				$facturestatic->ref = $obj->invoice_source_ref;
-	    				$facturestatic->type = $obj->type;
-	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
-	    				print '</td>';
-	    			} else {
-	    				print '<td class="minwidth100">';
-	    				print $obj->description;
-	    				print '</td>';
-	    			}
-	    			print '<td class="left nowrap">';
-	    			if ($obj->invoiceid)
-	    			{
-	    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
-	    			}
-	    			print '</td>';
-	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
-	    			if (!empty($conf->multicurrency->enabled))
-	    			{
-	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
-	    			}
-	    			print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
-	    			if (!empty($conf->multicurrency->enabled))
-	    			{
-	    			    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
-	    			}
-	    			print '<td class="center">';
-	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
-	    			print '</td>';
-	    			print '<td>&nbsp;</td>';
-	    			print '</tr>';
-	    			$i++;
-	    		}
+			if ($num > 0) {
+				$i = 0;
+				while ($i < $num) {
+					$obj = array_shift($tab_sqlobj);
+
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
+					print '<tr class="oddeven">';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhourreduceformat').'</td>';
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->invoice_source_ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->invoice_source_ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
+						$facturestatic->id = $obj->fk_facture_source;
+						$facturestatic->ref = $obj->invoice_source_ref;
+						$facturestatic->type = $obj->type;
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
+						print '</td>';
+					} else {
+						print '<td class="tdoverflowmax150 tdlineheightsmall" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
+						print '</td>';
+					}
+					print '<td class="left nowrap">';
+					if ($obj->invoiceid) {
+						print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
+					}
+					print '</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
+					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicurrency')) {
+						$discounttooltip = $langs->trans("DiscountOfferedBy").': '.$tmpuser->getNomUrl(-1, 'nolink');
+						$discounttooltip .= '<br>'.$langs->trans("AmountHT").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ht, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						$discounttooltip .= '<br>'.$langs->trans("AmountTTC").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						print '<td class="center nowraponall">'.$form->textwithpicto('', $discounttooltip, 1, 'info').'</td>';
+					}
+
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+					$i++;
+				}
 			} else {
-				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
-			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				$colspan = 7;
+				if (isModEnabled('multicurrency')) {
+					$colspan += 1;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>";
@@ -885,16 +1221,15 @@ if ($socid > 0)
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
 		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
-		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
+		$sql .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line,";
 		$sql .= " rc.fk_invoice_supplier_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -902,7 +1237,7 @@ if ($socid > 0)
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn_det as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_invoice_supplier_line = fc.rowid";
 		$sql .= " AND fc.fk_facture_fourn = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -911,16 +1246,17 @@ if ($socid > 0)
 		//$sql.= " UNION ";
 		// Discount linked to invoices
 		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
+		$sql2 .= " rc.multicurrency_code, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier,";
 		$sql2 .= " rc.fk_invoice_supplier_source,";
-		$sql2 .= " u.login, u.rowid as user_id,";
+		$sql2 .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql2 .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_invoice_supplier = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 1"; // Eliminate customer discounts
@@ -928,9 +1264,10 @@ if ($socid > 0)
 
 		$resql = $db->query($sql);
 		$resql2 = null;
-		if ($resql) $resql2 = $db->query($sql2);
-		if ($resql2)
-		{
+		if ($resql) {
+			$resql2 = $db->query($sql2);
+		}
+		if ($resql2) {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
@@ -938,80 +1275,75 @@ if ($socid > 0)
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
-			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled))
-			{
-			    print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicurrency')) {
+				print '<td><br><br></td>';
 			}
-			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
 
 			$tab_sqlobj = array();
 			$tab_sqlobjOrder = array();
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-				for ($i = 0; $i < $num; $i++)
-				{
-					$sqlobj = $db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
-					$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+			if ($num > 0) {
+				for ($i = 0; $i < $num; $i++) {
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
-			for ($i = 0; $i < $num; $i++)
-			{
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+			for ($i = 0; $i < $num; $i++) {
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = array_shift($tab_sqlobj);
+
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
-					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhourreduceformat').'</td>';
+					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
-					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
-					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description))
-					{
-						print '<td class="minwidth100">';
+					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
+						print '<td class="tdoverflowmax150 tdlineheightsmall">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
-						print '<td class="minwidth100">';
-						print $obj->description;
+						print '<td class="tdoverflowmax150 tdlineheightsmall" title="'.dol_escape_htmltag($obj->description).'">';
+						print dol_escape_htmltag($obj->description);
 						print '</td>';
 					}
 					print '<td class="left nowrap">';
@@ -1019,28 +1351,27 @@ if ($socid > 0)
 						print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->invoiceid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a>';
 					}
 					print '</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled))
-					{
-					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
-					}
+					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled))
-					{
-					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicurrency')) {
+						$discounttooltip = $langs->trans("DiscountOfferedBy").': '.$tmpuser->getNomUrl(-1, 'nolink');
+						$discounttooltip .= '<br>'.$langs->trans("AmountHT").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ht, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						$discounttooltip .= '<br>'.$langs->trans("AmountTTC").' ('.$langs->trans("MulticurrencyOriginalCurrency").'): '.price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						print '<td class="center nowraponall">'.$form->textwithpicto('', $discounttooltip, 1, 'info').'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
-					print '</td>';
+
 					print '<td>&nbsp;</td>';
+
 					print '</tr>';
 					$i++;
 				}
 			} else {
-				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
-				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				$colspan = 7;
+				if (isModEnabled('multicurrency')) {
+					$colspan += 1;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>";
@@ -1050,11 +1381,73 @@ if ($socid > 0)
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
 	}
+}
+
+// Keep the two split amounts complementary. The other field shows the remaining amount, negative if the part exceeds the original total.
+if ($action == 'split' && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT') && !empty($conf->use_javascript_ajax)) {
+	print '<script nonce="'.dol_escape_htmltag(getNonce()).'" type="text/javascript">'."\n";
+	print <<<'JS'
+jQuery(function () {
+	var input1 = jQuery('#amount_ttc_1');
+	var input2 = jQuery('#amount_ttc_2');
+	if (!input1.length || !input2.length) {
+		return;
+	}
+	var total = parseFloat(String(input1.attr('data-total')).replace(',', '.'));
+	var decimals = parseInt(input1.attr('data-decimals'), 10);
+	if (!isFinite(total) || !(total > 0)) {
+		return;
+	}
+	if (!isFinite(decimals) || decimals < 0) {
+		decimals = 2;
+	}
+	var factor = Math.pow(10, decimals);
+
+	function readAmount(raw) {
+		if (raw === null || raw === undefined) {
+			return null;
+		}
+		raw = String(raw).trim().replace(',', '.');
+		if (raw === '' || raw === '-' || raw === '.' || raw === '-.') {
+			return null;
+		}
+		var value = parseFloat(raw);
+		if (!isFinite(value)) {
+			return null;
+		}
+		return value;
+	}
+
+	function formatAmount(value) {
+		var text = value.toFixed(decimals);
+		if (decimals > 0) {
+			text = text.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+		}
+		return text;
+	}
+
+	function updateSibling(source, target) {
+		var value = readAmount(source.val());
+		if (value === null) {
+			return;
+		}
+		var remain = Math.round((total - value) * factor) / factor;
+		target.val(formatAmount(remain));
+	}
+
+	input1.on('input', function () {
+		updateSibling(input1, input2);
+	});
+	input2.on('input', function () {
+		updateSibling(input2, input1);
+	});
+});
+JS;
+	print "\n</script>\n";
 }
 
 // End of page

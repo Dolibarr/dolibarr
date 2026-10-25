@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml;
 
 /**
- * XML service for WebDAV
+ * XML service for WebDAV.
  *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Service extends \Sabre\Xml\Service {
-
+class Service extends \Sabre\Xml\Service
+{
     /**
      * This is a list of XML elements that we automatically map to PHP classes.
      *
@@ -19,16 +21,15 @@ class Service extends \Sabre\Xml\Service {
      */
     public $elementMap = [
         '{DAV:}multistatus' => 'Sabre\\DAV\\Xml\\Response\\MultiStatus',
-        '{DAV:}response'    => 'Sabre\\DAV\\Xml\\Element\\Response',
+        '{DAV:}response' => 'Sabre\\DAV\\Xml\\Element\\Response',
 
         // Requests
-        '{DAV:}propfind'       => 'Sabre\\DAV\\Xml\\Request\\PropFind',
+        '{DAV:}propfind' => 'Sabre\\DAV\\Xml\\Request\\PropFind',
         '{DAV:}propertyupdate' => 'Sabre\\DAV\\Xml\\Request\\PropPatch',
-        '{DAV:}mkcol'          => 'Sabre\\DAV\\Xml\\Request\\MkCol',
+        '{DAV:}mkcol' => 'Sabre\\DAV\\Xml\\Request\\MkCol',
 
         // Properties
         '{DAV:}resourcetype' => 'Sabre\\DAV\\Xml\\Property\\ResourceType',
-
     ];
 
     /**
@@ -40,8 +41,7 @@ class Service extends \Sabre\Xml\Service {
      * @var array
      */
     public $namespaceMap = [
-        'DAV:'                   => 'd',
+        'DAV:' => 'd',
         'http://sabredav.org/ns' => 's',
     ];
-
 }

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2013-23 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
+
+-- This table is deprecated. Still updated but no more read.
+
 CREATE TABLE llx_oauth_state (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     service varchar(36),
@@ -22,4 +25,4 @@ CREATE TABLE llx_oauth_state (
     fk_user integer,
     fk_adherent integer,
     entity integer DEFAULT 1
-)ENGINE=InnoDB;
+)ENGINE=innodb;

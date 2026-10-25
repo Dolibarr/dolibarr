@@ -23,9 +23,12 @@ AddLoan=ساخت وام
 FinancialCommitment=تعهد مالی
 InterestAmount=سود
 CapitalRemain=سرمایۀ مانده
+TermPaidAllreadyPaid = این قسط قبلاً پرداخت شده است
+CantUseScheduleWithLoanStartedToPaid = امکان ایجاد جدول زمان‌بندی برای وامی که پرداخت آن آغاز شده است وجود ندارد
+CantModifyInterestIfScheduleIsUsed = نمی‌توانید نرخ بهره را تغییر دهید اگر از برنامه زمان‌بندی استفاده کنید.
 # Admin
 ConfigLoan=پیکربندی واحد وام
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=حساب‌حساب‌داری سرمایۀ پیش‌فرض
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=حساب‌حساب‌داری سود پیش‌فرض
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=حساب‌حساب‌داری بیمۀ پیش‌فرض
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=حساب (از جدول حساب‌ها) که به‌صورت پیش‌فرض برای سرمایه استفاده می‌شود. (ماژول وام)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=حساب (از جدول حساب‌ها) که به‌صورت پیش‌فرض برای بهره استفاده می‌شود. (ماژول وام)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=حساب (از جدول حساب‌ها) که به‌صورت پیش‌فرض برای بیمه استفاده می‌شود. (ماژول وام)
 CreateCalcSchedule=ویرایش تعهد مالی

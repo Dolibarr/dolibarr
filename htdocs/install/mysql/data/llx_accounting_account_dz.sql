@@ -24,7 +24,7 @@
 -- ID 15000 - 15811
 -- ADD 1300000 to rowid # Do no remove this comment --
 
-INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (17000,'NSCF','CAPIT','1',0,'Comptes de capitaux','1');
+INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (15000,'NSCF','CAPIT','1',0,'Comptes de capitaux','1');
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (15001,'NSCF','CAPIT','10',17000,'Capital, réserves et assimilés','1');
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (15002,'NSCF','CAPIT','101',15001,'Capital émis','1');
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (15003,'NSCF','CAPIT','1011',15002,'Capital souscrit, non appelé','1');

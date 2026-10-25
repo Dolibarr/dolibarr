@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Xml\Serializer;
 
 use InvalidArgumentException;
@@ -34,12 +36,10 @@ use Sabre\Xml\XmlSerializable;
  * <s:elem4>content</s:elem4>
  * <s:elem5 attr="val" />
  *
- * @param Writer $writer
  * @param string[] $values
- * @return void
  */
-function enum(Writer $writer, array $values) {
-
+function enum(Writer $writer, array $values)
+{
     foreach ($values as $value) {
         $writer->writeElement($value);
     }
@@ -54,29 +54,26 @@ function enum(Writer $writer, array $values) {
  * Values that are set to null or an empty array are not serialized. To
  * serialize empty properties, you must specify them as an empty string.
  *
- * @param Writer $writer
  * @param object $valueObject
- * @param string $namespace
  */
-function valueObject(Writer $writer, $valueObject, $namespace) {
+function valueObject(Writer $writer, $valueObject, string $namespace)
+{
     foreach (get_object_vars($valueObject) as $key => $val) {
         if (is_array($val)) {
             // If $val is an array, it has a special meaning. We need to
             // generate one child element for each item in $val
             foreach ($val as $child) {
-                $writer->writeElement('{' . $namespace . '}' . $key, $child);
+                $writer->writeElement('{'.$namespace.'}'.$key, $child);
             }
-
-        } elseif ($val !== null) {
-            $writer->writeElement('{' . $namespace . '}' . $key, $val);
+        } elseif (null !== $val) {
+            $writer->writeElement('{'.$namespace.'}'.$key, $val);
         }
     }
 }
 
-
 /**
  * This serializer helps you serialize xml structures that look like
- * this:
+ * this:.
  *
  * <collection>
  *    <item>...</item>
@@ -88,18 +85,12 @@ function valueObject(Writer $writer, $valueObject, $namespace) {
  * and this could be called like this:
  *
  * repeatingElements($writer, $items, '{}item');
- *
- * @param Writer $writer
- * @param array $items A list of items sabre/xml can serialize.
- * @param string $childElementName Element name in clark-notation
- * @return void
  */
-function repeatingElements(Writer $writer, array $items, $childElementName) {
-
+function repeatingElements(Writer $writer, array $items, string $childElementName)
+{
     foreach ($items as $item) {
         $writer->writeElement($childElementName, $item);
     }
-
 }
 
 /**
@@ -157,38 +148,23 @@ function repeatingElements(Writer $writer, array $items, $childElementName) {
  *
  * You can even mix the two array syntaxes.
  *
- * @param Writer $writer
- * @param string|int|float|bool|array|object
- * @return void
+ * @param string|int|float|bool|array|object $value
  */
-function standardSerializer(Writer $writer, $value) {
-
+function standardSerializer(Writer $writer, $value)
+{
     if (is_scalar($value)) {
-
         // String, integer, float, boolean
-        $writer->text($value);
-
+        $writer->text((string) $value);
     } elseif ($value instanceof XmlSerializable) {
-
         // XmlSerializable classes or Element classes.
         $value->xmlSerialize($writer);
-
     } elseif (is_object($value) && isset($writer->classMap[get_class($value)])) {
-
         // It's an object which class appears in the classmap.
         $writer->classMap[get_class($value)]($writer, $value);
-
     } elseif (is_callable($value)) {
-
         // A callback
         $value($writer);
-
-    } elseif (is_null($value)) {
-
-        // nothing!
-
     } elseif (is_array($value) && array_key_exists('name', $value)) {
-
         // if the array had a 'name' element, we assume that this array
         // describes a 'name' and optionally 'attributes' and 'value'.
 
@@ -200,19 +176,13 @@ function standardSerializer(Writer $writer, $value) {
         $writer->writeAttributes($attributes);
         $writer->write($value);
         $writer->endElement();
-
     } elseif (is_array($value)) {
-
         foreach ($value as $name => $item) {
-
             if (is_int($name)) {
-
                 // This item has a numeric index. We just loop through the
                 // array and throw it back in the writer.
                 standardSerializer($writer, $item);
-
             } elseif (is_string($name) && is_array($item) && isset($item['attributes'])) {
-
                 // The key is used for a name, but $item has 'attributes' and
                 // possibly 'value'
                 $writer->startElement($name);
@@ -221,29 +191,18 @@ function standardSerializer(Writer $writer, $value) {
                     $writer->write($item['value']);
                 }
                 $writer->endElement();
-
             } elseif (is_string($name)) {
-
                 // This was a plain key-value array.
                 $writer->startElement($name);
                 $writer->write($item);
                 $writer->endElement();
-
             } else {
-
-                throw new InvalidArgumentException('The writer does not know how to serialize arrays with keys of type: ' . gettype($name));
-
+                throw new InvalidArgumentException('The writer does not know how to serialize arrays with keys of type: '.gettype($name));
             }
         }
-
     } elseif (is_object($value)) {
-
-        throw new InvalidArgumentException('The writer cannot serialize objects of class: ' . get_class($value));
-
-    } else {
-
-        throw new InvalidArgumentException('The writer cannot serialize values of type: ' . gettype($value));
-
+        throw new InvalidArgumentException('The writer cannot serialize objects of class: '.get_class($value));
+    } elseif (!is_null($value)) {
+        throw new InvalidArgumentException('The writer cannot serialize values of type: '.gettype($value));
     }
-
 }

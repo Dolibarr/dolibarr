@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = ज्ञान प्रबंधन प्रणाली
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=ज्ञान प्रबंधन (KM) या सहायता-डेस्क आधार का प्रबंधन करें
+# Admin page
+KnowledgeManagementSetup = ज्ञान प्रबंधन प्रणाली सेटअप
+KnowledgeManagementSetupPage = ज्ञान प्रबंधन प्रणाली सेटअप पृष्ठ
+# About page
+KnowledgeManagementAbout = ज्ञान प्रबंधन के बारे में
+KnowledgeManagementAboutPage = ज्ञान प्रबंधन के बारे में पृष्ठ
+KnowledgeManagementArea = ज्ञान प्रबंधन
+MenuKnowledgeRecord = ज्ञानधार
+MenuKnowledgeRecordShort = ज्ञानधार
+ListKnowledgeRecord = लेखों की सूची
+NewKnowledgeRecord = नया लेख
+ValidateReply = समाधान मान्य करें
+KnowledgeRecords = सामग्री
+KnowledgeRecord = लेख
+KnowledgeRecordExtraFields = लेख के लिए अतिरिक्त फ़ील्ड
+GroupOfTicket=टिकटों का समूह
+YouCanLinkArticleToATicketCategory=आप लेख को टिकट समूह से लिंक कर सकते हैं (ताकि लेख इस समूह के किसी भी टिकट पर हाइलाइट हो जाए)
+SuggestedForTicketsInGroup=टिकट निर्माण पर सुझाव
+SetObsolete=अप्रचलित के रूप में सेट करें
+ConfirmCloseKM=क्या आप इस लेख को अप्रचलित मानकर बंद करने की पुष्टि करते हैं?
+ConfirmReopenKM=क्या आप इस आलेख को "मान्य" स्थिति पर पुनर्स्थापित करना चाहते हैं?
+BoxLastKnowledgerecordDescription=अंतिम %s लेख
+BoxLastKnowledgerecord=अंतिम लेख
+BoxLastKnowledgerecordContent=अंतिम लेख
+BoxLastKnowledgerecordModifiedContent=अंतिम संशोधित लेख
+BoxLastModifiedKnowledgerecordDescription=अंतिम %s संशोधित लेख
+BoxLastModifiedKnowledgerecord=अंतिम संशोधित लेख

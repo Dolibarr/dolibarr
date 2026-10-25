@@ -1,0 +1,6 @@
+dolibarr (__VERSION__) UNRELEASED; urgency=low
+
+  [ Laurent Destailleur (eldy) ]
+  * New upstream release.
+
+ -- Laurent Destailleur (eldy) <eldy@users.sourceforge.net>  Tue, 12 May 2015 12:00:00 +0100

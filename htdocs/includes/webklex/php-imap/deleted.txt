@@ -1,0 +1,17 @@
+./vendor/carbon
+./vendor/nesbot/carbon/bin
+./vendor/phpunit
+./vendor/sebastian
+./vendor/psr
+./vendor/webmozart
+./vendor/symfony/http-foundation
+./vendor/symfony/translation
+./vendor/symfony/translation-contracts
+./vendor/symfony/yaml
+./vendor/voku
+./vendor/phpspec
+./vendor/phpdocumentor
+./vendor/nesbot/carbon/src/Carbon/Lang
+./vendor/doctrine
+./vendor/bin
+./tests

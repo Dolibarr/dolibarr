@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Delsummor
+SubTotalModuleDesc=Delsumma och titelrader för vissa dokument
+#
+# Admin
+#
+SubtotalSetup=Inställning av delsummesmodulen
+MaxSubtotalLevel=Maximal nivå
+SubtotalLineBackColor=Bakgrundsfärg för nivå %s linjer
+NotSupportedByAllPDF=Fungerar med nyare PDF men inte med gamla %s
+
+#
+# Card
+#
+AddTitleLine=Lägg till titelrad
+AddSubtotalLine=Lägg till delsumma rad
+TitleNeedDesc=Du måste ange en giltig beskrivning för att skapa en titel.
+TitleAddedLevelTooHigh=Titelnivån är för hög (tillagd med nivå %s istället).
+TitleEditedLevelTooHigh=Redigerad titelnivå för hög (redigerad med nivå %s istället).
+DeleteSubtotalLine=Ta bort delsummaraden
+ConfirmDeleteSubtotalLine=Är du säker på att du vill ta bort den här delsummeraden?
+DeleteTitleLine=Ta bort titelrad
+ConfirmDeleteTitleLine=Är du säker på att du vill ta bort den här titelraden?
+DeleteCorrespondingSubtotalLine=Ta bort motsvarande delsummarad?
+SubtotalLevel=Nivå %s
+SubtotalLineDesc=Radbeskrivning
+SubtotalLineLevel=Radnivå
+ShowUPOnPDF=Visa enhetspris på PDF
+ShowTotalExludingVATOnPDF=Visa total utan moms på PDF
+ForcePageBreak=Forcera sidbrytning före titel
+NoTitleError=Du har ingen titelrad eller har redan blivit satt av delsummerad
+CorrespondingTitleLine=Motsvarande titelrad
+SelectVATRate=Välj momsnivå
+EnterRemisePercent=Ange rabatt i procent
+ApplyVATForBlock=Ange moms för dessa rader
+ApplyDiscountForBlock=Ange rabatt för dessa rader
+TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
+TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
+TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
+PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
+STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
+STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
+STLineUnderTitle=Delsumma måste vara under sin titel
+UnsupportedModuleError=You can't add a subtotals line in unsupported module
+CorrespondingTitleNotFound=Motsvarande titel hittades inte
+
+#
+# PDF
+#
+SubtotalOf=Delsumma för %s

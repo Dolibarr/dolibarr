@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Principal;
 
 use Sabre\DAVACL;
 
 /**
- * ProxyWrite principal interface
+ * ProxyWrite principal interface.
  *
  * Any principal node implementing this interface will be picked up as a 'proxy
  * principal group'.
@@ -14,6 +16,6 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IProxyWrite extends DAVACL\IPrincipal {
-
+interface IProxyWrite extends DAVACL\IPrincipal
+{
 }

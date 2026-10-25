@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CardDAV\Xml\Request;
 
 use Sabre\CardDAV\Plugin;
@@ -19,8 +21,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookMultiGetReport implements XmlDeserializable {
-
+class AddressBookMultiGetReport implements XmlDeserializable
+{
     /**
      * An array with requested properties.
      *
@@ -36,7 +38,7 @@ class AddressBookMultiGetReport implements XmlDeserializable {
     public $hrefs;
 
     /**
-     * The mimetype of the content that should be returend. Usually
+     * The mimetype of the content that should be returned. Usually
      * text/vcard.
      *
      * @var string
@@ -50,6 +52,13 @@ class AddressBookMultiGetReport implements XmlDeserializable {
      * @var string
      */
     public $version = null;
+
+    /**
+     * An array with requested vcard properties.
+     *
+     * @var array
+     */
+    public $addressDataProperties;
 
     /**
      * The deserialize method is called during xml parsing.
@@ -69,45 +78,39 @@ class AddressBookMultiGetReport implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree([
             '{urn:ietf:params:xml:ns:carddav}address-data' => 'Sabre\\CardDAV\\Xml\\Filter\\AddressData',
-            '{DAV:}prop'                                   => 'Sabre\\Xml\\Element\\KeyValue',
+            '{DAV:}prop' => 'Sabre\\Xml\\Element\\KeyValue',
         ]);
 
         $newProps = [
-            'hrefs'      => [],
-            'properties' => []
+            'hrefs' => [],
+            'properties' => [],
         ];
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
-
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $newProps['properties'] = array_keys($elem['value']);
-                    if (isset($elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'])) {
-                        $newProps += $elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'];
+                    if (isset($elem['value']['{'.Plugin::NS_CARDDAV.'}address-data'])) {
+                        $newProps += $elem['value']['{'.Plugin::NS_CARDDAV.'}address-data'];
                     }
                     break;
-                case '{DAV:}href' :
+                case '{DAV:}href':
                     $newProps['hrefs'][] = Uri\resolve($reader->contextUri, $elem['value']);
                     break;
-
             }
-
         }
 
         $obj = new self();
         foreach ($newProps as $key => $value) {
             $obj->$key = $value;
         }
+
         return $obj;
-
     }
-
 }

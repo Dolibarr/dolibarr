@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\DAV\Browser\HtmlOutput;
@@ -8,7 +10,7 @@ use Sabre\Xml\Element;
 use Sabre\Xml\Reader;
 
 /**
- * {DAV:}resourcetype property
+ * {DAV:}resourcetype property.
  *
  * This class represents the {DAV:}resourcetype property, as defined in:
  *
@@ -18,10 +20,10 @@ use Sabre\Xml\Reader;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ResourceType extends Element\Elements implements HtmlOutput {
-
+class ResourceType extends Element\Elements implements HtmlOutput
+{
     /**
-     * Constructor
+     * Constructor.
      *
      * You can either pass null (for no resourcetype), a string (for a single
      * resourcetype) or an array (for multiple).
@@ -30,48 +32,44 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      *
      * @param array|string|null $resourceTypes
      */
-    function __construct($resourceTypes = null) {
-
-        parent::__construct((array)$resourceTypes);
-
+    public function __construct($resourceTypes = null)
+    {
+        parent::__construct((array) $resourceTypes);
     }
 
     /**
-     * Returns the values in clark-notation
+     * Returns the values in clark-notation.
      *
      * For example array('{DAV:}collection')
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->value;
-
     }
 
     /**
-     * Checks if the principal contains a certain value
+     * Checks if the principal contains a certain value.
      *
      * @param string $type
+     *
      * @return bool
      */
-    function is($type) {
-
+    public function is($type)
+    {
         return in_array($type, $this->value);
-
     }
 
     /**
-     * Adds a resourcetype value to this property
+     * Adds a resourcetype value to this property.
      *
      * @param string $type
-     * @return void
      */
-    function add($type) {
-
+    public function add($type)
+    {
         $this->value[] = $type;
         $this->value = array_unique($this->value);
-
     }
 
     /**
@@ -92,14 +90,11 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
-        return
-            new self(parent::xmlDeserialize($reader));
-
+    public static function xmlDeserialize(Reader $reader)
+    {
+        return new self(parent::xmlDeserialize($reader));
     }
 
     /**
@@ -113,16 +108,13 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
      *
-     * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'xmlName'], $this->getValue())
         );
-
     }
-
 }

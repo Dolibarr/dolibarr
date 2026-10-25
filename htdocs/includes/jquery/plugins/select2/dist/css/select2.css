@@ -121,7 +121,7 @@
   -webkit-clip-path: inset(50%) !important;
   clip-path: inset(50%) !important;
   height: 1px !important;
-  margin: -1px !important;
+  margin: -10000px !important;
   overflow: hidden !important;
   padding: 0 !important;
   position: absolute !important;

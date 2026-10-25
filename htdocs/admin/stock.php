@@ -5,6 +5,9 @@
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez               <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +26,16 @@
 /**
  *	\file       htdocs/admin/stock.php
  *	\ingroup    stock
- *	\brief      Page d'administration/configuration du module gestion de stock
+ *	\brief      Page to setup module stock
  */
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -33,48 +43,180 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
-// Securit check
-if (!$user->admin) accessforbidden();
+// Security check
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+$type = 'stock';
+$page_y = GETPOST('page_y');
 
 
 /*
  * Action
  */
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $code = $reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+$error = 0;
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+$reg = array();
+
+if ($action == 'update' || preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
+	if ($action == 'update') {
+		$arrayofcode = array(
+			'STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE',
+			'STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER',
+			'STOCK_DISALLOW_NEGATIVE_TRANSFER',	'STOCK_MUST_BE_ENOUGH_FOR_INVOICE', 'STOCK_MUST_BE_ENOUGH_FOR_ORDER', 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT',
+			'STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT'
+		);
+	} else {
+		$arrayofcode = array($reg[1]);
+	}
+
+	$result = 1;
+	foreach ($arrayofcode as $code) {
+		$value = 1;
+		if (GETPOSTISSET($code)) {	// For the case of nojs=1
+			$value = GETPOST($code);
+		}
+
+		if ($value == 1) {
+			if (in_array($code, array('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE'))) {
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_BILL', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_VALIDATE_ORDER', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE', $conf->entity);
+			}
+			if (in_array($code, array('STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'))) {
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
+			}
+		}
+
+		// If constant is for a unique choice, delete other choices
+		$result = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	}
+
+	if ($result) {
+		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $code = $reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+if ($action == 'update' || preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
+	if ($action == 'update') {
+		$arrayofcode = array(
+			'STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE',
+			'STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER',
+		);
+	} else {
+		$arrayofcode = array($reg[1]);
+	}
+
+	$result = 1;
+	foreach ($arrayofcode as $code) {
+		$result = dolibarr_del_const($db, $code, $conf->entity);
+	}
+	if ($result > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
-if ($action == 'warehouse')
-{
+if ($action == 'warehouse') {
 	$value = GETPOST('default_warehouse', 'alpha');
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
-	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)){
+	if ($value == -1 || empty($value) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (GETPOSTISSET('STOCK_VIRTUAL_HORIZON_IN_DAYS')) {
+		$value = GETPOST('STOCK_VIRTUAL_HORIZON_IN_DAYS', 'alphanohtml');
+		if ($value === '') {	// An empty field disables the horizon. A 0 is a valid value, so it must be kept.
+			$res = dolibarr_del_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $conf->entity);
+		} else {
+			$res = dolibarr_set_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", max(0, (int) $value), 'chaine', 0, '', $conf->entity);
+		}
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
+if ($action == 'specimen') {
+	$modele = GETPOST('module', 'alpha');
+
+	$object = new Entrepot($db);
+	$object->initAsSpecimen();
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/stock/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFStock $module';
+
+		if ($module->write_file($object, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=stock&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, null, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set') {
+	// Activate a model
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		if (getDolGlobalString('STOCK_ADDON_PDF') == "$value") {
+			dolibarr_del_const($db, 'STOCK_ADDON_PDF', $conf->entity);
+		}
+	}
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "STOCK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
+		$conf->global->STOCK_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
 
@@ -82,40 +224,74 @@ if ($action == 'warehouse')
  * View
  */
 
-llxHeader('', $langs->trans("StockSetup"));
+$form = new Form($db);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-stock');
+
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
+print dol_get_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
 
+$disableStockCalculateOn = array();
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	// If option virtual stock is enabled, we disable some mode for inc/dec stock change
+	// Why this ? As i don't see why, i comment this code by a hidden option
+	if (getDolGlobalString('PRODUIT_RESTRICT_STOCK_INCDEC_IF_SUBPRODUCTS_ENABLED')) {
+		$disableStockCalculateOn[] = 'BILL';
+		$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+		// STOCK_CALCULATE_ON_SHIPMENT is ok so not disable
+		// STOCK_CALCULATE_ON_SHIPMENT_CLOSE is ok so not disabled
 
-$disabled = '';
-if (!empty($conf->productbatch->enabled))
-{
+		$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+		$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+
+		print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+	}
+}
+if (isModEnabled('productbatch')) {
+	// If module lot/serial enabled, we disable some mode for inc/dec stock change
 	$langs->load("productbatch");
-	$disabled = ' disabled';
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+	$disableStockCalculateOn[] = 'BILL';
+	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	// STOCK_CALCULATE_ON_SHIPMENT is ok so not disable
+	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE is ok so not disabled
+
+	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+
+	$descmode = ""; $incmode = "";
+	/* $descmode = $langs->trans('DeStockOnShipmentOnClosing');
+	if (!isModEnabled('reception')) {
+		// STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER
+		$incmode = $langs->trans('ReStockOnDispatchOrder');
+	} else {
+		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
+		$incmode = $langs->trans('StockOnReceptionOnClosing');
+	} */
+	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
-//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-//{
+
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
-//}
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="warehouse">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
 // Title rule for stock decrease
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
@@ -124,92 +300,103 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->facture->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_BILL');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_BILL);
-    }
+if (isModEnabled('invoice')) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('BILL', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_BILL'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 
+print '<!-- STOCK_CALCULATE_ON_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->commande->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER);
-    }
+if (isModEnabled('order')) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('VALIDATE_ORDER', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-//if (! empty($conf->expedition->enabled))
+//if (isModEnabled('shipping'))
 //{
 
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
-    }
+if (isModEnabled("shipping")) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('SHIPMENT', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT_CLOSE -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
-    }
+if (isModEnabled("shipping")) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('SHIPMENT_CLOSE', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-/*if (! $found)
-{
-
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
-	print "</tr>\n";
-}*/
-
 print '</table>';
+print '</div>';
+
 
 print '<br>';
 
+
 // Title rule for stock increase
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
@@ -218,94 +405,116 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL);
-    }
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('SUPPLIER_BILL', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 
-
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-{
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER);
-    }
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if ($conf->use_javascript_ajax) {
+		if (in_array('SUPPLIER_VALIDATE_ORDER', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'));
+	}
 } else {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-if (!empty($conf->reception->enabled))
-{
+if (isModEnabled("reception")) {
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
-    print '<td class="right">';
+	print '<td class="right">';
 
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION);
-    }
+	if ($conf->use_javascript_ajax) {
+		if (in_array('RECEPTION', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION'));
+	}
 
 	print "</td>\n</tr>\n";
 	$found++;
 
-
-    print '<tr class="oddeven">';
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReceptionOnClosing").'</td>';
-    print '<td class="right">';
+	print '<td class="right">';
 
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE);
-    }
+	if ($conf->use_javascript_ajax) {
+		if (in_array('RECEPTION_CLOSE', $disableStockCalculateOn)) {
+			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+		} else {
+			print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+		}
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE'));
+	}
 	print "</td>\n</tr>\n";
 	$found++;
 } else {
+	// When module Reception is not enabled, option to increase real stocks on manual dispatching into warehouse, after purchase order receipt of goods
+	print '<!-- STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
-    print '<td class="right">';
-	if (!empty($conf->fournisseur->enabled))
-	{
-        if ($conf->use_javascript_ajax) {
-            print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER');
-        } else {
-            $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-            print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);
-        }
+	print '<td class="right">';
+	if (isModEnabled("supplier_order")) {
+		if ($conf->use_javascript_ajax) {
+			if (in_array('SUPPLIER_DISPATCH_ORDER', $disableStockCalculateOn)) {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			} else {
+				print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
+			}
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'));
+		}
 	} else {
-		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 	}
 	print "</td>\n</tr>\n";
 	$found++;
 }
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
@@ -317,126 +526,184 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STOCK_ALLOW_NEGATIVE_TRANSFER');
+	print ajax_constantonoff('STOCK_DISALLOW_NEGATIVE_TRANSFER', array(), null, 1);
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STOCK_ALLOW_NEGATIVE_TRANSFER", $arrval, $conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER);
+	$arrval = array('1' => $langs->trans("No"), '0' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_DISALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER'));
 }
 print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if ($conf->invoice->enabled)
-{
+if (isModEnabled('invoice')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
-    print '<td class="right">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_INVOICE');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_INVOICE", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE);
-    }
-    print "</td>\n";
-    print "</tr>\n";
-}
-
-if ($conf->order->enabled)
-{
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
-    print '<td class="right">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_ORDER');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_ORDER", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER);
-    }
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_INVOICE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_INVOICE", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE'));
+	}
 	print "</td>\n";
 	print "</tr>\n";
 }
 
-if ($conf->expedition->enabled)
-{
+if (isModEnabled('order')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_ORDER');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_ORDER", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER'));
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
+
+if (isModEnabled("shipping")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
-    print '<td class="right">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT);
-    }
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT'));
+	}
 	print "</td>\n";
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled))
-{
-    $virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
+if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')
+	|| isModEnabled('mrp')) {
+	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-if ($virtualdiffersfromphysical)
-{
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
-    print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+if ($virtualdiffersfromphysical) {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help(1, $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
-    print '<td class="right">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STOCK_USE_VIRTUAL_STOCK", $arrval, $conf->global->STOCK_USE_VIRTUAL_STOCK);
-    }
+	print '<td>';
+	print $form->textwithpicto($langs->trans("UseRealStockByDefault"), $langs->trans("ReplenishmentCalculation"));
+	print '</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT'));
+	}
 	print "</td>\n";
 	print "</tr>\n";
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 }
 
+if (empty($conf->use_javascript_ajax)) {
+	print '<center>';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Save").'">';
+	print '<center>';
+	print '<br>';
+}
+
+print '</form>';
+
+
+/*
+ * Document templates generators
+ */
+
+printDocumentModelList($type, 'stock', 'STOCK_ADDON_PDF', $langs->trans("WarehouseModelModules"), array(
+	'Logo' => 'option_logo',
+	'MultiLanguage' => 'option_multilang',
+));
+
+
+// Other
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="warehouse">';
+print '<input type="hidden" name="page_y" value="">';
+
+print load_fiche_titre($langs->trans("Other"), '', '');
+
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Other")."</td>\n";
-print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print $formproduct->selectWarehouses(getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE', -1), 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
+print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
+
+// The horizon setup stays hidden by default until the feature is applied by every virtual stock
+// consumer (see review): it only shows up on experimental installs (MAIN_FEATURES_LEVEL >= 2) or
+// when the constant is already set (via Home - Setup - Other), so it can be inspected and cleared.
+// The save handler above is GETPOSTISSET-guarded, so hiding the field cannot wipe the value.
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS') !== '') {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizon"), $langs->trans("VirtualStockHorizonHelp")).'</td>';
+	print '<td class="right">';
+	print '<input type="number" min="0" step="1" class="width50 right" name="STOCK_VIRTUAL_HORIZON_IN_DAYS" value="'.dol_escape_htmltag(getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS')).'"> '.$langs->trans("days").' ';
+	print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+	print "</tr>\n";
+
+	if (getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS') !== '') {
+		print '<tr class="oddeven">';
+		print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizonKeepUndatedOrders"), $langs->trans("VirtualStockHorizonKeepUndatedOrdersHelp")).'</td>';
+		print '<td class="right">';
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS", $arrval, getDolGlobalString('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS'));
+		}
+		print "</td>\n";
+		print "</tr>\n";
+	}
+}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null,  0, 0, 1);
+	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, $conf->global->MAIN_DEFAULT_WAREHOUSE_USER);
+	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER'));
 }
 print "</td>\n";
 print "</tr>\n";
 
-if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 	print '<td class="right">';
@@ -444,11 +711,35 @@ if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 		print ajax_constantonoff('STOCK_USERSTOCK_AUTOCREATE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USERSTOCK_AUTOCREATE", $arrval, $conf->global->STOCK_USERSTOCK_AUTOCREATE);
+		print $form->selectarray("STOCK_USERSTOCK_AUTOCREATE", $arrval, getDolGlobalString('STOCK_USERSTOCK_AUTOCREATE'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
 }
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseOnThirparty").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('SOCIETE_ASK_FOR_WAREHOUSE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE'));
+}
+print "</td>";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL'));
+}
+print "</td>";
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
@@ -457,11 +748,24 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER);
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER'));
 }
-print "</td>";
 print '</td>';
 print "</tr>\n";
+
+/*
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringProject").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT'));
+}
+print '</td>';
+print "</tr>\n";
+*/
 
 print '<tr class="oddeven">';
 print '<td>';
@@ -469,22 +773,23 @@ print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans(
 print '</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
+	print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, $conf->global->STOCK_SUPPORTS_SERVICES);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
 }
 print "</td>\n";
 print "</tr>\n";
 
+// Add option to allow a "Limit for warning" and a "Desired stock" per warehouse.
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
+	print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE", $arrval, $conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE", $arrval, getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE'));
 }
 print "</td>\n";
 print "</tr>\n";
@@ -493,86 +798,18 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AlwaysShowFullArbo").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STOCK_ALWAYS_SHOW_FULL_ARBO');
+	print ajax_constantonoff('STOCK_ALWAYS_SHOW_FULL_ARBO');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STOCK_ALWAYS_SHOW_FULL_ARBO", $arrval, $conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_ALWAYS_SHOW_FULL_ARBO", $arrval, getDolGlobalString('STOCK_ALWAYS_SHOW_FULL_ARBO'));
 }
 print "</td>\n";
 print "</tr>\n";
+
 print '</table>';
+print '</div>';
 
 print '</form>';
-
-/*
-print '<br>';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
-	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
-	print '</tr>'."\n";
-
-	// Example with a yes / no select
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
-	print '<td class="center">';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVENTORY_DISABLE_VIRTUAL", $arrval, $conf->global->INVENTORY_DISABLE_VIRTUAL);
-	}
-	print '</td></tr>';
-
-
-	// Example with a yes / no select
-    print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
-	print '<td class="center">';
-  	if ($conf->use_javascript_ajax) {
-  		print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
-  	} else {
-  		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  		print $form->selectarray("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA", $arrval, $conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA);
-  	}
-  	print '</td></tr>';
-
-
-  	// Example with a yes / no select
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT").'</td>';
-	print '<td class="right">';
-	if ($conf->use_javascript_ajax) {
-    	print ajax_constantonoff('INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT');
-	} else {
-    	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    	print $form->selectarray("INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT", $arrval, $conf->global->INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT);
-	}
-	print '</td></tr>';
-
-	print '</table>';
-}
-*/
-
-/* I keep the option/feature, but hidden to end users for the moment. If feature is used by module, no need to have users see it.
-If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
-if ($conf->global->PRODUIT_SOUSPRODUITS)
-{
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
-	print '<td class="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
-	print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
-}
-*/
 
 // End of page
 llxFooter();

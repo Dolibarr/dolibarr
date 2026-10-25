@@ -21,7 +21,7 @@ create table llx_paiementcharge
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_charge       integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,
@@ -29,6 +29,7 @@ create table llx_paiementcharge
   note            text,
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,            -- creation user
-  fk_user_modif   integer             -- last modification user
+  fk_user_modif   integer,            -- last modification user
+  import_key      varchar(14)         -- import key
 
 )ENGINE=innodb;

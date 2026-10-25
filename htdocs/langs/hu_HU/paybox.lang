@@ -1,30 +1,15 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modul beállítás
-PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
-FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dollibar objektumok kifizetéséhez
-PaymentForm=Fizetési ürlap
-WelcomeOnPaymentPage=Üdvözöljük online fizetési szolgáltatásunkban
-ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.
-ThisIsInformationOnPayment=Ez az információ a fizetendő tételről
-ToComplete=Befejezni
-YourEMail=Email a fizetés teljesítéséről
-Creditor=Hitelező
-PaymentCode=Fizetési kód
-PayBoxDoPayment=Fizessen a Paybox segítségével
+PayBoxDesc=Ez a modul oldalakat kínál, amelyek lehetővé teszik az ügyfelek számára, hogy a <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Payboxon</a> fizessenek. Ez felhasználható ingyenes fizetésre vagy egy adott Dolibarr objektum fizetésére (számla, rendelés, ...)
+PayBoxDoPayment=Fizetés Paybox segítségével
 YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
-Continue=Következő
-SetupPayBoxToHavePaymentCreatedAutomatically=Állítsa be a Paybox-ot a(z) <b>%s</b> linken, hogy a fizetés automatikusan teljesülhessen amikor a Paybox érvényesíti.
+SetupPayBoxToHavePaymentCreatedAutomatically=Állítsa be Paybox-ját a(z) <b>%s</b> URL-lel, hogy a fizetés automatikusan létrejöjjön, amikor a Paybox jóváhagyja.
 YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
-YourPaymentHasNotBeenRecorded=Fizetés NEM lett rögzítve, a tranzakció törölve lett. Köszönjük.
-AccountParameter=Számla paraméterek
-UsageParameter=Használat paraméterek
-InformationToFindParameters=Segíts, hogy megtaláld a %s fiókadatokat
+YourPaymentHasNotBeenRecorded=A fizetését NEM rögzítették, és a tranzakciót törölték. Köszönöm.
 PAYBOX_CGI_URL_V2=Url Paybox CGI modul fizetés
-VendorName=Neve eladó
-CSSUrlForPaymentForm=CSS stíluslapot url fizetési forma
 NewPayboxPaymentReceived=Új Paybox fizetés érkezett
 NewPayboxPaymentFailed=Új Paybox fizetést próbált, de nem sikerült
-PAYBOX_PAYONLINE_SENDEMAIL=E-mail értesítés a fizetési kísérlet után (siker vagy kudarc)
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail értesítés fizetési kísérlet után (siker vagy sikertelen)
 PAYBOX_PBX_SITE=Érték erre: PBX SITE
 PAYBOX_PBX_RANG=Érték erre: PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Érték erre: PBX ID

@@ -566,7 +566,7 @@
             s,
             v,
             changeEvents = new Array(),
-            fireChangeEvents = 
+            fireChangeEvents =
               function(context)
               {
                 for (var i = 0; i < changeEvents.length; i++) changeEvents[i].call($this, $this, context);

@@ -2,6 +2,8 @@
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
 
 /**
  *  \file       htdocs/core/modules/fichinter/mod_pacific.php
- *  \ingroup    fiche intervention
+ *  \ingroup    Intervention card
  *  \brief      File with Pacific numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -30,12 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    /**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'FI';
 
 	/**
@@ -44,11 +49,16 @@ class mod_pacific extends ModeleNumRefFicheinter
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
+	 * @var string Name of model
+	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'pacific';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
 
 	/**
 	 * @var string model name
@@ -59,13 +69,14 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 *  Return description of numbering module
 	 *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
+	 */
+	public function info($langs)
+	{
+		global $langs;
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 	/**
 	 *  Return an example of numbering
@@ -81,30 +92,33 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs, $conf, $db;
 
 		$langs->load("bills");
 
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-		{
+		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -116,35 +130,42 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
+		$max = 0;
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			}
 		}
 
 		//$date=time();
-		$date = $object->datec;
-		$yymm = strftime("%y%m", $date);
+		$date = '';
+		if (!empty($object->datec)) {
+			$date = $object->datec;
+		}
+		$yymm = dol_print_date($date, "%y%m");
 
-    	if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04d", $max + 1);
+		}
 
 		return $this->prefix.$yymm."-".$num;
 	}
@@ -152,9 +173,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe	$objsoc     Object third party
-	 * 	@param	Object	$objforref	Object for number to search
-	 *  @return string      		Next free value
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Fichinter	$objforref	Object for number to search
+	 *  @return string      			Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

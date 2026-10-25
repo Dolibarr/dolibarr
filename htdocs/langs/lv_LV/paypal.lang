@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduļa iestatīšana
-PaypalDesc=Šis modulis ļauj klientiem veikt maksājumus, izmantojot <a href="http://www.paypal.com" target="_blank"> PayPal </a>. To var izmantot īpašam maksājumam vai maksājumam, kas saistīts ar Dolibarr objektu (rēķins, pasūtījums, ...)
+PaypalDesc=Šis modulis ļauj klientiem veikt maksājumus, izmantojot <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. To var izmantot ad hoc maksājumam vai maksājumam, kas saistīts ar Dolibarr objektu (rēķins, pasūtījums, ...)
 PaypalOrCBDoPayment=Maksājiet ar PayPal (karti vai PayPal)
 PaypalDoPayment=Maksāt ar PayPal
-PAYPAL_API_SANDBOX=Mode tests / sandbox
+PAYPAL_API_SANDBOX=Režīma pārbaude/smilšu kaste
 PAYPAL_API_USER=API lietotājvārds
 PAYPAL_API_PASSWORD=API parole
 PAYPAL_API_SIGNATURE=API paraksts
@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Piedāvāt tikai "integrālo" maksājumu (kred
 PaypalModeIntegral=Integrālis
 PaypalModeOnlyPaypal=PayPal tikai
 ONLINE_PAYMENT_CSS_URL=CSS stilu lapas izvēles URL, izmantojot tiešsaistes maksājuma lapu
-ThisIsTransactionId=Tas ir id darījuma: <b>%s</b>
+ThisIsTransactionId=This is id of transaction
 PAYPAL_ADD_PAYMENT_URL=Iesniedzot dokumentu pa e-pastu, iekļaujiet PayPal maksājumu URL
 NewOnlinePaymentReceived=Saņemts jauns tiešsaistes maksājums
 NewOnlinePaymentFailed=Jauns tiešsaistes maksājums tika izmēģināts, bet neizdevās
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Atkārtojums tika veikts visos Post darbībā
 ValidationOfPaymentFailed=Maksājuma apstiprināšana nav izdevies
 CardOwner=Kartes turētājs
 PayPalBalance=Paypal kredīts
+OnlineSubscriptionPaymentLine=Tiešsaistes abonements reģistrēts %s <br> Apmaksāts, izmantojot %s <br> Sākotnējā IP adrese: %s<br>Transakcijas ID: %s

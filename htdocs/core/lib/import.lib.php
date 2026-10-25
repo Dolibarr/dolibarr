@@ -3,7 +3,8 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,28 +23,34 @@
 
 /**
  *  \file       htdocs/core/lib/import.lib.php
- *  \brief      Ensemble de fonctions de base pour le module import
+ *  \brief      basic set of functions for the import module
  *  \ingroup    import
+ */
 
 /**
  * Function to return list of tabs for import pages
  *
  * @param	string		$param		Params to add on url links
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
- * @return	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function import_prepare_head($param, $maxstep = 0)
 {
 	global $langs;
 
-	if (empty($maxstep)) $maxstep = 6;
+	if (empty($maxstep)) {
+		$maxstep = 6;
+	}
 
 	$h = 0;
 	$head = array();
 	$i = 1;
-	while ($i <= $maxstep)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
+	while ($i <= $maxstep) {
+		if ($i < 6) {
+			$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
+		} else {
+			$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param; // For step6, link is to step 5
+		}
 		$head[$h][1] = $langs->trans("Step")." ".$i;
 		$head[$h][2] = 'step'.$i;
 		$h++;

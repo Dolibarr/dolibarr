@@ -1,9 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-CronMethodDoesNotExists=Klasse %s hat keine %s Methode
-EnabledAndDisabled=Aktiviert und deaktiviert
-CronDtStart=Nicht vor
-CronDtEnd=Nicht nach
+KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
+CronList=Geplante Aufträge
+CronDelete=cronjobs löschen
+CronPriority=Rang
 JobFinished=Job gestarted und beendet
-UseMenuModuleToolsToAddCronJobs=Öffnen Sie das Menü "Start - Module Werkzeuge - Cronjob Liste" um geplante Skript-Aufgaben zu sehen und zu verändern.
-JobDisabled=Job deaktiviert
+CronStatusInactiveBtn=Deaktivieren
 MakeLocalDatabaseDumpShort=Lokale Datenbanksicherung

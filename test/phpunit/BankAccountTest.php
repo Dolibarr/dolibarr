@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +25,19 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/bank.lib.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -46,189 +49,184 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BankAccountTest extends PHPUnit\Framework\TestCase
+class BankAccountTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * Test country-specific bank account fields and labels.
+	 *
+	 * @return void
+	 */
+	public function testNorthAmericanBankAccountFieldsAndLabels()
+	{
+		global $db;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return BankAccountTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+		$account = new Account($db);
+		$account->country_code = 'CA';
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		$this->assertSame(3, $account->useDetailedBBAN());
+		$this->assertSame(array('BankCode', 'DeskCode', 'BankAccountNumber'), $account->getFieldsToShow());
+		$this->assertSame('InstitutionNumber', $account->getBankFieldLabel('BankCode'));
+		$this->assertSame('TransitNumber', $account->getBankFieldLabel('DeskCode'));
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		$account->country_code = 'FR';
+		$this->assertSame(1, $account->useDetailedBBAN());
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		$account->country_code = 'US';
+		$this->assertSame(2, $account->useDetailedBBAN());
+		$this->assertSame(array('BankCode', 'BankAccountNumber'), $account->getFieldsToShow());
+		$this->assertSame('ABARoutingNumber', $account->getBankFieldLabel('BankCode'));
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testBankAccountCreate
+	 *
+	 * @return  int
+	 */
+	public function testBankAccountCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		$localobject = new Account($db);
+		$localobject->initAsSpecimen();
+		$localobject->date_solde = dol_now();
+		$result = $localobject->create($user);
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return $result;
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testBankAccountFetch
+	 *
+	 * @param   int $id     Id of contract
+	 * @return  int
+	 *
+	 * @depends testBankAccountCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBankAccountFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		$localobject = new Account($db);
+		$result = $localobject->fetch($id);
 
-    /**
-     * testBankAccountCreate
-     *
-     * @return  int
-     */
-    public function testBankAccountCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        $localobject=new Account($this->savdb);
-        $localobject->initAsSpecimen();
-        $localobject->date_solde=dol_now();
-        $result=$localobject->create($user);
+		return $localobject;
+	}
 
-        print __METHOD__." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+	/**
+	 * testBankAccountOther
+	 *
+	 * @param   Account  $localobject    Account
+	 * @return  int
+	 *
+	 * @depends testBankAccountFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBankAccountOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        return $result;
-    }
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
 
-    /**
-     * testBankAccountFetch
-     *
-     * @param   int $id     Id of contract
-     * @return  int
-     *
-     * @depends testBankAccountCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testBankAccountFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject->info($localobject->id);
 
-        $localobject=new Account($this->savdb);
-        $result=$localobject->fetch($id);
+		$result = $localobject->needIBAN();
+		//print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertEquals(1, $result);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		// Test checkIbanForAccount for FR account
+		$result = checkIbanForAccount($localobject);
+		print __METHOD__." checkIbanForAccount(".$localobject->iban.") = ".$result."\n";
+		$this->assertTrue($result);
 
-        return $localobject;
-    }
+		// Test checkIbanForAccount for CI account
+		$localobject2 = new Account($db);
+		$localobject2->country = 'CI';
+		$localobject2->iban = 'CI77A12312341234123412341234';
+		$result = checkIbanForAccount($localobject2);
+		print __METHOD__." checkIbanForAccount(".$localobject2->iban.") = ".$result."\n";
+		$this->assertTrue($result);
 
-    /**
-     * testBankAccountOther
-     *
-     * @param   Object  $localobject    Object contract
-     * @return  int
-     *
-     * @depends testBankAccountFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testBankAccountOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return $localobject;
+	}
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+	/**
+	 * testCheckSwiftForAccount
+	 *
+	 * @param   Account  $localobject    Account
+	 * @return  int
+	 *
+	 * @depends testBankAccountOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCheckSwiftForAccount($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $localobject->info($localobject->id);
-        //print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        //$this->assertNotEquals($localobject->date_creation, '');
+		$localobject->bic = 'PSSTFRPPMARBIDON';
 
-        return $localobject->id;
-    }
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertFalse($result);
 
-    /**
-     * testBankAccountDelete
-     *
-     * @param   int $id     Id of contract
-     * @return  int
-     *
-     * @depends testBankAccountOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testBankAccountDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
 
-        $localobject=new Account($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
+		$localobject->bic = 'PSSTFRPPMAR';
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $result;
-    }
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertTrue($result);
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testBankAccountDelete
+	 *
+	 * @param   int $id     Id of contract
+	 * @return  int
+	 *
+	 * @depends testCheckSwiftForAccount
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBankAccountDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Account($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

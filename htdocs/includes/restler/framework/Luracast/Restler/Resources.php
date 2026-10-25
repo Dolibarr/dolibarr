@@ -15,7 +15,7 @@ use stdClass;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class Resources implements iUseAuthentication, iProvideMultiVersionApi
 {
@@ -923,7 +923,7 @@ class Resources implements iUseAuthentication, iProvideMultiVersionApi
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Accept:application/json',
         ));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);        
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         $result = json_decode(curl_exec($ch));
         $http_status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
         return array($http_status, $result);

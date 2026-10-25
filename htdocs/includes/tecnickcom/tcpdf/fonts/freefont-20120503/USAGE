@@ -33,10 +33,10 @@ Language-specific features
 ==========================
 
 Some OpenType font features are activated only when the text is specified to
-be of a certain language. 
+be of a certain language.
 
 This is done in HTML by enclosing the text with a tag whose 'lang' attribute
-is set to the appropriate ISO 632.2 language code.  In a word processor, 
+is set to the appropriate ISO 632.2 language code.  In a word processor,
 any block of text can be given a language setting.
 
 Latin

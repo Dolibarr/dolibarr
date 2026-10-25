@@ -1,0 +1,155 @@
+span.phpdebugbar-widgets-value {
+    white-space: pre;
+}
+
+dl.phpdebugbar-widgets-kvlist.phpdebugbar-widgets-hooklist dt {
+    float: left;
+    width: 230px;
+    padding: 5px;
+    border-top: 1px solid #eee;
+    font-weight: bold;
+    clear: both;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+dl.phpdebugbar-widgets-kvlist.phpdebugbar-widgets-hooklist dt span {
+    font-weight: bold;
+}
+dl.phpdebugbar-widgets-kvlist dd {
+    margin-left: 240px;
+    padding: 5px;
+    border-top: 1px solid #eee;
+    cursor: pointer;
+    min-height: 17px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span {
+    display: inline-block;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span strong{
+    font-weight: bold;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(1) {
+    min-width: 550px;
+    margin-right: 20px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(2) {
+    min-width: 90px;
+    margin-right: 20px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(3) {
+    min-width: 80px;
+    margin-right: 20px;
+}
+
+/*
+ * Additions for the SQL widget
+ */
+
+/* Lightweight tracing icon toggle */
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon {
+  float: right;
+  margin-left: 8px;
+  color: #888;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon:before {
+  font-family: "Font Awesome 5 Free" !important;
+  font-weight: 900;
+  margin-right: 4px;
+  font-size: 12px;
+  content: "\f070";
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon.phpdebugbar-widgets-tracing-enabled:before {
+  content: "\f06e";
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon.phpdebugbar-widgets-tracing-enabled {
+  color: #f0ad4e;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon:hover {
+  color: #333;
+}
+
+/* Show backtrace button */
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-show-backtrace,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard {
+  float: right;
+  margin-left: 8px;
+  color: #888;
+}
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-tracing-icon,
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-show-backtrace,
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-copy-clipboard {
+  color: #555;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-tracing-icon:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-show-backtrace:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before {
+  font-family: "Font Awesome 5 Free" !important;
+  font-weight: 900;
+  margin-right: 4px;
+  font-size: 12px;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-show-backtrace:before {
+  content: "\f0cb";
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-show-backtrace.active {
+  color: #d9534f;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-show-backtrace:hover {
+  color: #333;
+}
+
+/* Backtrace styling */
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-backtrace-container {
+  margin: 10px 0;
+  padding: 8px;
+  background: #f9f9f9;
+  border-left: 3px solid #d9534f;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-backtrace-header {
+  font-weight: bold;
+  color: #d9534f;
+  margin-bottom: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-backtrace-toggle {
+  font-weight: normal;
+  color: #666;
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-backtrace-list {
+  margin-top: 8px;
+}
+
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-backtrace-frame {
+  padding: 4px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-backtrace-frame:last-child {
+  border-bottom: none;
+}
+
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-backtrace-function {
+  font-weight: 600;
+  color: #333;
+  margin-right: 10px;
+}
+
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-backtrace-filename {
+  color: #888;
+  font-style: italic;
+  font-size: 11px;
+}

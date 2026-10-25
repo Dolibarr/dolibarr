@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Request;
 
 use Sabre\Xml\Reader;
@@ -16,8 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MkCol implements XmlDeserializable {
-
+class MkCol implements XmlDeserializable
+{
     /**
      * The list of properties that will be set.
      *
@@ -31,10 +33,9 @@ class MkCol implements XmlDeserializable {
      *
      * @return array
      */
-    function getProperties() {
-
+    public function getProperties()
+    {
         return $this->properties;
-
     }
 
     /**
@@ -55,11 +56,10 @@ class MkCol implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $self = new self();
 
         $elementMap = $reader->elementMap;
@@ -70,13 +70,11 @@ class MkCol implements XmlDeserializable {
         $elems = $reader->parseInnerTree($elementMap);
 
         foreach ($elems as $elem) {
-            if ($elem['name'] === '{DAV:}set') {
+            if ('{DAV:}set' === $elem['name']) {
                 $self->properties = array_merge($self->properties, $elem['value']['{DAV:}prop']);
             }
         }
 
         return $self;
-
     }
-
 }

@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=إدارة الشراكات
+PartnershipDescription=وحدة إدارة الشراكات
+PartnershipDescriptionLong= وحدة إدارة الشراكات
+Partnership=شراكة
+Partnerships=الشراكات
+AddPartnership=إضافة شراكة
+CancelPartnershipForExpiredMembers=الشراكات: إلغاء شراكات الأعضاء ذوي الاشتراكات المنتهية
+PartnershipCheckBacklink=الشراكات: التحقق من الرابط الخلفي المُحيل
+# Menu
+NewPartnership=شراكة جديدة
+NewPartnershipbyWeb=تمت إضافة طلب الشراكة بنجاح. قد نتواصل معك قريبًا...
+ListOfPartnerships=قائمة الشراكات
+# Admin page
+PartnershipSetup=إعدادات الشراكات
+PartnershipAbout=حول وحدة الشراكات
+PartnershipAboutPage=صفحة حول وحدة الشراكات
+partnershipforthirdpartyormember=يجب تعيين حالة الشريك لطرف ثالث أو عضو
+PARTNERSHIP_IS_MANAGED_FOR=إدارة الشراكة لصالح
+PARTNERSHIP_BACKLINKS_TO_CHECK=الروابط الخلفية المطلوب التحقق منها
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد الأيام قبل إلغاء حالة الشراكة بعد انتهاء الاشتراك
+ReferingWebsiteCheck=التحقق من الموقع المُحيل
+ReferingWebsiteCheckDesc=يمكن تفعيل ميزة للتحقق من أن شركاءك أضافوا إلى مواقعهم رابطًا خلفيًا يؤدي إلى نطاقات موقعك الإلكتروني.
+PublicFormRegistrationPartnerDesc=يمكن لـ Dolibarr توفير عنوان URL أو موقع عام يسمح للزوار الخارجيين بطلب الانضمام إلى برنامج الشراكة.
+# Object
+DeletePartnership=حذف شراكة
+PartnershipDedicatedToThisThirdParty=الشراكة المخصصة لهذا الطرف الثالث
+PartnershipDedicatedToThisMember=الشراكة المخصصة لهذا العضو
+DatePartnershipStart=تاريخ بدء الشراكة
+DatePartnershipEnd=تاريخ انتهاء الشراكة
+ReasonDecline=سبب الرفض
+ReasonDeclineOrCancel=سبب الرفض أو الإلغاء
+PartnershipAlreadyExist=الشراكة موجودة بالفعل
+ManagePartnership=إدارة الشراكة
+BacklinkNotFoundOnPartnerWebsite=لم يُعثر على الرابط الخلفي في موقع الشريك
+ConfirmClosePartnershipAsk=هل أنت متأكد من إلغاء هذه الشراكة؟
+PartnershipType=نوع الشراكة
+PartnershipRefApproved=تمت الموافقة على الشراكة %s
+KeywordToCheckInWebsite=لتتحقق من وجود كلمة مفتاحية محددة في موقع كل شريك، عرّف الكلمة المفتاحية هنا
+PartnershipDraft=مسودة
+PartnershipAccepted=مقبولة
+PartnershipRefused=مرفوضة
+PartnershipCanceled=ملغاة
+PartnershipManagedFor=الشركاء هم
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=ستُلغى الشراكة قريبًا
+SendingEmailOnPartnershipRefused=الشراكة مرفوضة
+SendingEmailOnPartnershipAccepted=الشراكة مقبولة
+SendingEmailOnPartnershipCanceled=أُلغيت الشراكة
+YourPartnershipWillSoonBeCanceledTopic=ستُلغى الشراكة قريبًا
+YourPartnershipRefusedTopic=طلب الشراكة مرفوض
+YourPartnershipAcceptedTopic=طلب الشراكة مقبول
+YourPartnershipCanceledTopic=أُلغيت الشراكة
+YourPartnershipWillSoonBeCanceledContent=نود إعلامك بأن شراكتنا ستُلغى قريبًا، لأننا لم نتلقَّ التجديد أو لأن أحد متطلبات الشراكة لم يعد مستوفى. يُرجى التواصل معنا إذا وصلتك هذه الرسالة عن طريق الخطأ.
+YourPartnershipRefusedContent=نود إعلامك بأن طلب الشراكة الخاص بك قد رُفض لعدم استيفاء المتطلبات اللازمة. يُرجى التواصل معنا للحصول على مزيد من المعلومات.
+YourPartnershipAcceptedContent=نود إعلامك بأن طلب الشراكة الخاص بك قد قُبل.
+YourPartnershipCanceledContent=نود إعلامك بأن شراكتنا قد أُلغيت. يُرجى التواصل معنا للحصول على مزيد من المعلومات.
+CountLastUrlCheckError=عدد أخطاء التحقق من عناوين URL
+LastCheckBacklink=تاريخ آخر تحقق من الرابط الخلفي
+NewPartnershipRequest=طلب شراكة جديد
+NewPartnershipRequestDesc=يتيح لك هذا النموذج طلب الانضمام إلى أحد برامج الشراكة لدينا. للحصول على مساعدة في تعبئة النموذج، يُرجى التواصل عبر البريد الإلكتروني <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=يجب أن تتضمن هذه الصفحة رابطًا واحدًا على الأقل يؤدي إلى أحد النطاقات الآتية: %s
+IPOfApplicant=عنوان IP لمقدم الطلب
+PartnershipToReopen=إعادة الفتح
+PartnershipConfirmReOpenAsk=هل أنت متأكد من إعادة فتح الشراكة <b>%s</b>؟

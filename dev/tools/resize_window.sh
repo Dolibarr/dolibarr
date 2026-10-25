@@ -4,6 +4,7 @@
 # be able to make size fixed screenshots using
 # ALT+Print screen.
 #----------------------------------------------------
+# shellcheck disable=2086,2166,2268
 
 # Syntax
 if [ "x$1" = "x" ]
@@ -35,4 +36,3 @@ then
 	wmctrl -i -r $1 -e 0,0,0,$width,$height
 	echo Size of windows $1 modified to $width x $height
 fi
-

@@ -11,7 +11,7 @@ namespace Luracast\Restler\Data;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class Obj
 {
@@ -154,4 +154,3 @@ class Obj
         unset(self::$fix[$name]);
     }
 }
-

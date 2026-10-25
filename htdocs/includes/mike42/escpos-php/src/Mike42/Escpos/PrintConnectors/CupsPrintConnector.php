@@ -21,20 +21,20 @@ use BadMethodCallException;
  */
 class CupsPrintConnector implements PrintConnector
 {
-    
+
     /**
      * @var array $buffer
      *  Buffer of accumilated data.
      */
     private $buffer;
-    
+
     /**
      *
      * @var string $printerName
      *  The name of the target printer.
      */
     private $printerName;
-    
+
     /**
      * Construct new CUPS print connector.
      *
@@ -49,7 +49,7 @@ class CupsPrintConnector implements PrintConnector
             throw new BadMethodCallException("You do not have any printers installed on " .
                 "this system via CUPS. Check 'lpr -a'.");
         }
-        
+
         if (array_search($dest, $valid, true) === false) {
             throw new BadMethodCallException("'$dest' is not a printer on this system. " .
                 "Printers are: [" . implode(", ", $valid) . "]");
@@ -57,7 +57,7 @@ class CupsPrintConnector implements PrintConnector
         $this->buffer = array ();
         $this->printerName = $dest;
     }
-    
+
     /**
      * Cause a NOTICE if deconstructed before the job was printed.
      */
@@ -67,7 +67,7 @@ class CupsPrintConnector implements PrintConnector
             trigger_error("Print connector was not finalized. Did you forget to close the printer?", E_USER_NOTICE);
         }
     }
-    
+
     /**
      * Send job to printer.
      */
@@ -75,10 +75,12 @@ class CupsPrintConnector implements PrintConnector
     {
         $data = implode($this->buffer);
         $this->buffer = null;
-        
+
         // Build command to work on data
         $tmpfname = tempnam(sys_get_temp_dir(), 'print-');
-		if ($tmpfname==false) dol_syslog("CupsPrintConnector.php::Permission denied to write into target directory ".sys_get_temp_dir(), LOG_WARNING);
+        if ($tmpfname === false) {
+            throw new Exception("Failed to create temp file for printing.");
+        }
         file_put_contents($tmpfname, $data);
         $cmd = sprintf(
             "lp -d %s %s",
@@ -93,7 +95,7 @@ class CupsPrintConnector implements PrintConnector
         }
         unlink($tmpfname);
     }
-    
+
     /**
      * Run a command and throw an exception if it fails, or return the output if it works.
      * (Basically exec() with good error handling)
@@ -130,18 +132,18 @@ class CupsPrintConnector implements PrintConnector
         }
         return $outputStr;
     }
-    
+
     /**
      * Read data from the printer.
      *
      * @param string $len Length of data to read.
-     * @return Data read from the printer, or false where reading is not possible.
+     * @return string Data read from the printer, or false where reading is not possible.
      */
     public function read($len)
     {
         return false;
     }
-    
+
     /**
      * @param string $data
      */
@@ -149,7 +151,7 @@ class CupsPrintConnector implements PrintConnector
     {
         $this->buffer [] = $data;
     }
-    
+
     /**
      * Load a list of CUPS printers.
      *
@@ -165,7 +167,7 @@ class CupsPrintConnector implements PrintConnector
         }
         return $ret;
     }
-    
+
     /**
      * Get the item before the first space in a string
      *

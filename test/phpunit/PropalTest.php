@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +25,18 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -45,260 +46,284 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PropalTest extends PHPUnit\Framework\TestCase
+class PropalTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * testPropalCreate
 	 *
-	 * @return PropalTest
+	 * @return	void
 	 */
-	public function __construct()
+	public function testPropalCreate()
 	{
-		parent::__construct();
-
-		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
+		$localobject = new Propal($db);
+		$param = array('tosell' => 1);
+		$localobject->initAsSpecimen($param);
+		$result = $localobject->create($user);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
 	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * testPropalFetch
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	Propal
+	 *
+	 * @depends	testPropalCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        print __METHOD__."\n";
-    }
+		$localobject = new Propal($db);
+		$result = $localobject->fetch($id);
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
 
-		print __METHOD__."\n";
-    }
+		// Specimen lines are built from real products picked at random (see Propal::initAsSpecimen), so the
+		// exact line count is not stable (a kit/BOM product can expand into extra lines) - only check totals coherence.
+		$this->assertNotEmpty($localobject->lines);
+		$this->assertLineTotalsMatchHeader($localobject, 'after fetch');
+
+		return $localobject;
+	}
 
 	/**
-	 * Init phpunit tests
+	 * testPropalUpdate
 	 *
-	 * @return	void
+	 * @param	Propal		$localobject	Proposal
+	 * @return	Propal
+	 *
+	 * @depends	testPropalFetch
+	 * The depends says test is run only if previous is ok
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+	public function testPropalUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
-    }
+		$localobject->note_private = 'New note private after update';
+		$result = $localobject->update($user);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		return $localobject;
+	}
+
 	/**
-	 * End phpunit tests
+	 * testPropalAddLine
 	 *
-	 * @return	void
+	 * @param	Propal	$localobject	Proposal
+	 * @return	array{0:Propal,1:int}	Proposal and id of the line added
+	 *
+	 * @depends	testPropalUpdate
+	 * The depends says test is run only if previous is ok
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	public function testPropalAddLine($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testPropalCreate
-     *
-     * @return	void
-     */
-    public function testPropalCreate()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$localobject->fetch_thirdparty();
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-		$localobject=new Propal($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$lineid = $localobject->addline('PHPUnit addline test', 100, 2, 20);	// 2 x 100 HT at 20% VAT = 200 HT / 40 VAT / 240 TTC
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
-    }
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid."\n";
+		$this->assertGreaterThan(0, $lineid, $localobject->errorsToString());
 
-    /**
-     * testPropalFetch
-     *
-     * @param	int		$id		Id of object
-     * @return	Propal
-     *
-     * @depends	testPropalCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount + 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 200, (float) $localobject->total_ht, 0.01, 'total_ht not updated after addline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after addline');
 
-		$localobject=new Propal($this->savdb);
-    	$result=$localobject->fetch($id);
+		return array($localobject, $lineid);
+	}
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
-    }
+	/**
+	 * testPropalUpdateLine
+	 *
+	 * @param	array{0:Propal,1:int}	$params	Proposal and id of the line to update
+	 * @return	array{0:Propal,1:int}			Proposal and id of the line updated
+	 *
+	 * @depends	testPropalAddLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalUpdateLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testPropalUpdate
-     *
-     * @param	Propal		$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+		$result = $localobject->updateline($lineid, 100, 3, 0, 20, 0, 0, 'PHPUnit addline test');	// qty 2 -> 3, so +100 HT / +20 VAT / +120 TTC
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
-    }
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 
-    /**
-     * testPropalAddLine
-     *
-     * @param	Propal		$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalAddLine($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 100, (float) $localobject->total_ht, 0.01, 'total_ht not updated after updateline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after updateline');
 
-        $localobject->fetch_thirdparty();
-    	$result=$localobject->addline('Added line', 10, 2, 19.6);
+		return array($localobject, $lineid);
+	}
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
-    }
+	/**
+	 * testPropalDeleteLine
+	 *
+	 * @param	array{0:Propal,1:int}	$params	Proposal and id of the line to delete
+	 * @return	Propal
+	 *
+	 * @depends	testPropalUpdateLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalDeleteLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testPropalValid
-     *
-     * @param	Propal	$localobject	Proposal
-     * @return	Propal
-     *
-     * @depends	testPropalAddLine
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    	$result=$localobject->valid($user);
+		$result = $localobject->deleteLine($lineid);
 
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 
-    /**
-     * testPropalOther
-     *
-     * @param	Propal	$localobject	Proposal
-     * @return	int
-     *
-     * @depends testPropalValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject->fetch($localobject->id);
+		// Back to the original specimen lines, with the same totals
+		$this->assertCount($beforelinecount - 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht - 300, (float) $localobject->total_ht, 0.01, 'total_ht not updated after deleteLine');
+		$this->assertLineTotalsMatchHeader($localobject, 'after deleteLine');
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+		return $localobject;
+	}
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+	/**
+	 * testPropalValid
+	 *
+	 * @param	Propal	$localobject	Proposal
+	 * @return	Propal
+	 *
+	 * @depends	testPropalDeleteLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        return $localobject->id;
-    }
+		$result = $localobject->valid($user);
 
-    /**
-     * testPropalDelete
-     *
-     * @param	int		$id		Id of proposal
-     * @return	void
-     *
-     * @depends	testPropalOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testPropalDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-		$localobject=new Propal($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		// Test everything is still the same as a freshly built specimen with the same mutation applied
+		// (catches unwanted field changes introduced by update()/valid())
+		$this->assertMatchesFreshSpecimen(
+			$localobject,
+			function ($specimen) {
+				$specimen->note_private = 'New note private after update';
+			},
+			array(
+				'newref', 'oldcopy', 'oldref', 'id', 'entity', 'lines', 'line', 'client', 'thirdparty', 'brouillon', 'specimen',
+				'fk_user_author', 'user_author_id', 'user_creation_id', 'user_modification_id', 'user_validation_id',
+				'date', 'datec', 'datev', 'datep', 'date_creation', 'date_validation', 'date_lim_reglement', 'fin_validite', 'datem', 'date_modification',
+				'ref', 'statut', 'status', 'socid', 'billed', 'fk_incoterms', 'actiontypecode', 'actionmsg2', 'actionmsg',
+				'mode_reglement', 'cond_reglement', 'mode_reglement_code', 'cond_reglement_code', 'availability', 'availability_code', 'demand_reason', 'demand_reason_code',
+				'cond_reglement_doc', 'cond_reglement_label', 'modelpdf', 'total',
+				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
+				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
+				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+				'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx',
+				'trackid', 'user_creat', 'user_valid', 'note',
+			)
+		);
+
+		return $localobject;
+	}
+
+	/**
+	 * testPropalOther
+	 *
+	 * @param	Propal	$localobject	Proposal
+	 * @return	int
+	 *
+	 * @depends testPropalValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testPropalDelete
+	 *
+	 * @param	int		$id		Id of proposal
+	 * @return	void
+	 *
+	 * @depends	testPropalOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testPropalDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Propal($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

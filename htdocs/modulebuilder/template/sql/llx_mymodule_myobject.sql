@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) ---Replace with your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ CREATE TABLE llx_mymodule_myobject(
 	label VARCHAR(255),
 	qty INTEGER,
 	date_creation DATETIME NOT NULL,
-	tms TIMESTAMP,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_create INTEGER,
 	fk_user_modif INTEGER,
 	status INTEGER,

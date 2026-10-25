@@ -22,7 +22,7 @@ create table llx_paiementfourn
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   ref					varchar(30),
   entity				integer DEFAULT 1,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec					datetime,          -- date de creation de l'enregistrement
   datep					datetime,          -- date de paiement
   amount				double(24,8) DEFAULT 0,    -- montant
@@ -34,5 +34,6 @@ create table llx_paiementfourn
   note					text,
   fk_bank				integer NOT NULL,
   statut				smallint NOT NULL DEFAULT 0,
-  model_pdf				varchar(255)
+  model_pdf				varchar(255),
+  import_key			varchar(14)		-- import key
 )ENGINE=innodb;

@@ -1,0 +1,16 @@
+# htaccess file to clock
+# The virtual host must have AllowOverride FileInfo to have this file used.
+# You can achieve the same effect by adding a definition to
+#
+#<Directory /path/to/htdocs/includes>
+#RewriteRule \.php$ - [F,L]
+#</Directory>
+
+
+#RewriteRule \.php$ - [F,L]
+
+# If there is no directory with AllowOveride FileInfo, you will get error 500. But
+# we got what we want, php file into external libraries can't be executed directly.
+<FilesMatch "\.php$">
+    SetHandler !
+</FilesMatch>

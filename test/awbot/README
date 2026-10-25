@@ -1,7 +1,0 @@
-README (English)
---------------------------------
-This directory contains files for stress tests using AWBot.
-To run them:
-
-'/home/ldestailleur/git/awbot/bin/awbotlaunch.pl' -config=awbot.test.conf -nbsessions=1
-

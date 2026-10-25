@@ -5,3 +5,6 @@
 /conf.php.pgsql
 /conf.php.sqlite
 /conf.php.utf8
+/conf.php.nov*
+/.conf.php.swp
+/conf.sav

@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=PayBox module setup
-PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
-PaymentForm=Payment form
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=This screen allow you to make an online payment to %s.
-ThisIsInformationOnPayment=This is information on payment to do
-ToComplete=To complete
-YourEMail=Email to receive payment confirmation
-Creditor=Creditor
-PaymentCode=Payment code
-PayBoxDoPayment=Pay with Paybox
-YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
-Continue=Next
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
-YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Account parameters
-UsageParameter=Usage parameters
-InformationToFindParameters=Help to find your %s account information
-PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment
-VendorName=Name of vendor
-CSSUrlForPaymentForm=CSS style sheet url for payment form
-NewPayboxPaymentReceived=New Paybox payment received
-NewPayboxPaymentFailed=New Paybox payment tried but failed
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
-PAYBOX_PBX_SITE=Value for PBX SITE
-PAYBOX_PBX_RANG=Value for PBX Rang
-PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
-PAYBOX_HMAC_KEY=HMAC key
+PayBoxSetup=পেবক্স মডিউল সেটআপ
+PayBoxDesc=এই মডিউলটি গ্রাহকদের <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>-এ অর্থপ্রদানের অনুমতি দেওয়ার জন্য পেজ অফার করে। এটি বিনামূল্যে অর্থপ্রদানের জন্য বা একটি নির্দিষ্ট ডলিবার অবজেক্টে অর্থপ্রদানের জন্য ব্যবহার করা যেতে পারে (চালান, আদেশ, ...)
+PayBoxDoPayment=Paybox দিয়ে পেমেন্ট করুন
+YouWillBeRedirectedOnPayBox=আপনার ক্রেডিট কার্ডের তথ্য ইনপুট করার জন্য আপনাকে নিরাপদ পেবক্স পৃষ্ঠায় পুনঃনির্দেশিত করা হবে
+SetupPayBoxToHavePaymentCreatedAutomatically=স্বয়ংক্রিয়ভাবে অর্থপ্রদান তৈরি হওয়ার জন্য url <b>%s</b> দিয়ে আপনার পেবক্স সেটআপ করুন Paybox দ্বারা যাচাই করা হয়েছে।
+YourPaymentHasBeenRecorded=এই পৃষ্ঠাটি নিশ্চিত করে যে আপনার পেমেন্ট রেকর্ড করা হয়েছে। ধন্যবাদ.
+YourPaymentHasNotBeenRecorded=আপনার পেমেন্ট রেকর্ড করা হয়নি এবং লেনদেন বাতিল করা হয়েছে। ধন্যবাদ.
+PAYBOX_CGI_URL_V2=পেমেন্টের জন্য পেবক্স সিজিআই মডিউলের ইউআরএল
+NewPayboxPaymentReceived=নতুন পেবক্স পেমেন্ট গৃহীত হয়েছে
+NewPayboxPaymentFailed=নতুন পেবক্স পেমেন্ট চেষ্টা করা হয়েছে কিন্তু ব্যর্থ হয়েছে
+PAYBOX_PAYONLINE_SENDEMAIL=অর্থপ্রদানের প্রচেষ্টার পরে ইমেল বিজ্ঞপ্তি (সফল বা ব্যর্থ)
+PAYBOX_PBX_SITE=PBX সাইট এর জন্য মান
+PAYBOX_PBX_RANG=PBX Rang-এর মান
+PAYBOX_PBX_IDENTIFIANT=PBX আইডির মান
+PAYBOX_HMAC_KEY=HMAC কী

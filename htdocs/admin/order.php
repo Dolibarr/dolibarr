@@ -1,0 +1,603 @@
+<?php
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville	        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
+ * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
+ * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/admin/order.php
+ *	\ingroup    order
+ *	\brief      Setup page of module Order
+ */
+
+// Load Dolibarr environment
+require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'orders', 'other'));
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$action = GETPOST('action', 'aZ09');
+$value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+$type = 'order';
+
+
+/*
+ * Actions
+ */
+
+$error = 0;
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+if ($action == 'updateMask') {
+	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
+	$maskorder = GETPOST('maskorder', 'alpha');
+
+	$res = 0;
+
+	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
+		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'specimen') {
+	$modele = GETPOST('module', 'alpha');
+
+	$commande = new Commande($db);
+	$commande->initAsSpecimen();
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFCommandes $module';
+		/** @var ModelePDFCommandes $module */
+
+		if ($module->write_file($commande, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set') {
+	// Activate a model
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		if (getDolGlobalString('COMMANDE_ADDON_PDF') == (string) $value) {
+			dolibarr_del_const($db, 'COMMANDE_ADDON_PDF', $conf->entity);
+		}
+	}
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
+		$conf->global->COMMANDE_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+} elseif ($action == 'setmod') {
+	// TODO Check if numbering module chosen can be activated
+	// by calling method canBeActivated
+
+	dolibarr_set_const($db, "COMMANDE_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'set_COMMANDE_DRAFT_WATERMARK') {
+	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
+	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'set_ORDER_FREE_TEXT') {
+	$freetext = GETPOST("ORDER_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
+
+	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'setribchq') {
+	$rib = GETPOST('rib', 'alpha');
+	$chq = GETPOST('chq', 'alpha');
+
+	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+}
+/*elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER') {
+	// Activate ask for payment bank
+	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} */
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+llxHeader("", $langs->trans("OrdersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-order');
+
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
+print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
+
+$head = order_admin_prepare_head();
+
+print dol_get_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
+
+
+// Numbering module
+
+print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+$arrayofmodules = array();
+
+
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/commande/");
+
+	if (is_dir($dir)) {
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (dol_substr($file, 0, 13) == 'mod_commande_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
+
+					if (!class_exists($file)) {
+						require_once $dir.$file.'.php';
+
+						$module = new $file($db);
+						/** @var ModeleNumRefCommandes $module */
+						'@phan-var-force ModeleNumRefCommandes $module';
+
+						$arrayofmodules[] = $module;
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefCommandes[] $arrayofmodules */
+'@phan-var-force ModeleNumRefCommandes[] $arrayofmodules';
+
+foreach ($arrayofmodules as $module) {
+	$file = strtolower($module->getName($langs));
+	if (!preg_match('/^mod_commande_/', $file)) {
+		$file = 'mod_commande_'.$file;
+	}
+
+	// Show modules according to features level
+	if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+		continue;
+	}
+	if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+		continue;
+	}
+
+	if ($module->isEnabled()) {
+		print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+		print $module->info($langs);
+		print '</td>';
+
+		// Show example of numbering model
+		print '<td class="nowrap">';
+		$tmp = $module->getExample();
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') {
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+		} else {
+			print $tmp;
+		}
+		print '</td>'."\n";
+
+		print '<td class="center">';
+		if (getDolGlobalString('COMMANDE_ADDON') == $file) {
+			print img_picto($langs->trans("Activated"), 'switch_on');
+		} else {
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
+			print img_picto($langs->trans("Disabled"), 'switch_off');
+			print '</a>';
+		}
+		print '</td>';
+
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+
+		// Info
+		$htmltooltip = '';
+		$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+		$commande->type = 0;
+
+		$nextval = $module->getNextValue($mysoc, $commande);
+		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+			$htmltooltip .= ''.$langs->trans("NextValue").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval.'<br>';
+			} else {
+				$langs->load('errors');
+				$htmltooltip .= $langs->trans($module->error).'<br>';
+			}
+		}
+
+		print '<td class="center">';
+		print $form->textwithpicto('', $htmltooltip, 1, 'info');
+		print '</td>';
+
+		print "</tr>\n";
+	}
+}
+print "</table></div><br>\n";
+
+
+/*
+ * Document templates generators
+ */
+
+printDocumentModelList($type, 'commande', 'COMMANDE_ADDON_PDF', $langs->trans("OrdersModelModule"), array(
+	'Logo' => 'option_logo',
+	'PaymentMode' => 'option_modereg',
+	'PaymentConditions' => 'option_condreg',
+	'MultiLanguage' => 'option_multilang',
+	'WatermarkOnDraftOrders' => 'option_draft_watermark',
+));
+
+
+/*
+ *  Payment mode
+ */
+
+print '<br>';
+print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInOrder"), '', '');
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>';
+print '<input type="hidden" name="action" value="setribchq">';
+print $langs->trans("PaymentMode").'</td>';
+print '<td align="right">';
+if (!isModEnabled('invoice')) {
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+}
+print '</td>';
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
+print "<td>";
+if (!isModEnabled('invoice')) {
+	if (isModEnabled("bank")) {
+		$sql = "SELECT rowid, label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql .= " WHERE clos = 0";
+		$sql .= " AND courant = 1";
+		$sql .= " AND entity IN (".getEntity('bank_account').")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num > 0) {
+				print '<select name="rib" class="flat" id="rib">';
+				print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+				while ($i < $num) {
+					$row = $db->fetch_row($resql);
+
+					print '<option value="'.$row[0].'"';
+					print getDolGlobalString('FACTURE_RIB_NUMBER') == $row[0] ? ' selected' : '';
+					print '>'.$row[1].'</option>';
+
+					$i++;
+				}
+				print "</select>";
+			} else {
+				print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+			}
+		}
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("BankModuleNotActive").'</span>';
+	}
+} else {
+	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
+}
+print "</td></tr>";
+
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
+print "<td>";
+if (!isModEnabled('invoice')) {
+	print '<select class="flat" name="chq" id="chq">';
+	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
+
+	$sql = "SELECT rowid, label";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+	$sql .= " WHERE clos = 0";
+	$sql .= " AND courant = 1";
+	$sql .= " AND entity IN (".getEntity('bank_account').")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$row = $db->fetch_row($resql);
+
+			print '<option value="'.$row[0].'"';
+			print getDolGlobalString('FACTURE_CHQ_NUMBER') == $row[0] ? ' selected' : '';
+			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
+
+			$i++;
+		}
+	}
+	print "</select>";
+} else {
+	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
+}
+print "</td></tr>";
+print "</table>";
+print '</div>';
+
+print "</form>";
+
+
+print '<br>';
+
+/*
+ * Other options
+ */
+
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td class="center" width="60"></td>';
+print "<td>&nbsp;</td>\n";
+print "</tr>\n";
+
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
+$htmltext .= '</i>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename = 'ORDER_FREE_TEXT';
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+//Use draft Watermark
+
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_COMMANDE_DRAFT_WATERMARK">';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('COMMANDE_DRAFT_WATERMARK')).'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+print '</form>';
+
+// Disallow to classify billed an order without invoice, only if module invoice is enable
+if (isModEnabled('invoice')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoice"). '&nbsp;' ;
+	print $form->textwithpicto('', $langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER');
+	print '</td></tr>';
+}
+
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
+
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+
+// End of page
+llxFooter();
+$db->close();

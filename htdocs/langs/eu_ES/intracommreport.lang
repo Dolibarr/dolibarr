@@ -1,0 +1,38 @@
+IntraCommReport=Komunikazio barruko txostena
+IntraCommReports=Komunikazio barruko txostenak
+
+Module68000Name = Komunikazio barruko txostena
+Module68000Desc = Komunikazio barruko txostenen kudeaketa (Frantziako DEB/DES formatuaren laguntza)
+IntracommReportSetup = Barneko komunikazio txostenaren moduluaren konfigurazioa
+IntracommReportAbout = Barneko merkataritza-txostenari buruz
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Akordio-zenbakia
+INTRACOMMREPORT_TYPE_ACTEUR=Aktore mota
+INTRACOMMREPORT_ROLE_ACTEUR=Aktoreak jokatutako rola
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT="Frais de port" motako zerbitzuen kategoria
+INTRACOMMREPORT_NUM_DECLARATION=Deklaratzaile zenbakia
+# Menu
+MenuIntracommReport=Komunikazio barruko txostena
+MenuIntracommReportNew=Adierazpen berria
+MenuIntracommReportList=Zerrenda
+# View
+NewDeclaration=Adierazpen berria
+Declaration=Adierazpena
+AnalysisPeriod=Analisi-aldia
+TypeOfDeclaration=Deklarazio mota
+DEB=Salgaien truke-aitorpena (DEB)
+DES=Zerbitzuen truke-aitorpena (DES)
+# Export page
+IntracommReportTitle=ProDouane formatuan XML fitxategi baten prestaketa
+# List
+IntracommReportList=Sortutako deklarazioen zerrenda
+IntracommReportNumber=Deklarazio zenbakia.
+IntracommReportPeriod=Analisiaren aldia
+IntracommReportTypeDeclaration=Deklarazio mota
+IntracommReportDownload=deskargatu XML fitxategia
+# Invoice
+IntracommReportTransportMode=Garraio modua
+DeleteIntraCommReport=Ezabatu IntraComm txostena

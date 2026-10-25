@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\PropertyStorage\Backend;
 
 use Sabre\DAV\PropFind;
@@ -18,8 +20,8 @@ use Sabre\DAV\Xml\Property\Complex;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PDO implements BackendInterface {
-
+class PDO implements BackendInterface
+{
     /**
      * Value is stored as string.
      */
@@ -36,28 +38,25 @@ class PDO implements BackendInterface {
     const VT_OBJECT = 3;
 
     /**
-     * PDO
+     * PDO.
      *
      * @var \PDO
      */
     protected $pdo;
 
     /**
-     * PDO table name we'll be using
+     * PDO table name we'll be using.
      *
      * @var string
      */
     public $tableName = 'propertystorage';
 
     /**
-     * Creates the PDO property storage engine
-     *
-     * @param \PDO $pdo
+     * Creates the PDO property storage engine.
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -74,41 +73,38 @@ class PDO implements BackendInterface {
      * case, you should check for $propFind->isAllProps().
      *
      * @param string $path
-     * @param PropFind $propFind
-     * @return void
      */
-    function propFind($path, PropFind $propFind) {
-
-        if (!$propFind->isAllProps() && count($propFind->get404Properties()) === 0) {
+    public function propFind($path, PropFind $propFind)
+    {
+        if (!$propFind->isAllProps() && 0 === count($propFind->get404Properties())) {
             return;
         }
 
-        $query = 'SELECT name, value, valuetype FROM ' . $this->tableName . ' WHERE path = ?';
+        $query = 'SELECT name, value, valuetype FROM '.$this->tableName.' WHERE path = ?';
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([$path]);
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            if (gettype($row['value']) === 'resource') {
+            if ('resource' === gettype($row['value'])) {
                 $row['value'] = stream_get_contents($row['value']);
             }
             switch ($row['valuetype']) {
-                case null :
-                case self::VT_STRING :
+                case null:
+                case self::VT_STRING:
                     $propFind->set($row['name'], $row['value']);
                     break;
-                case self::VT_XML :
+                case self::VT_XML:
                     $propFind->set($row['name'], new Complex($row['value']));
                     break;
-                case self::VT_OBJECT :
+                case self::VT_OBJECT:
                     $propFind->set($row['name'], unserialize($row['value']));
                     break;
             }
         }
-
     }
 
     /**
-     * Updates properties for a path
+     * Updates properties for a path.
      *
      * This method received a PropPatch object, which contains all the
      * information about the update.
@@ -117,37 +113,28 @@ class PDO implements BackendInterface {
      * a list of all properties that need to be stored.
      *
      * @param string $path
-     * @param PropPatch $propPatch
-     * @return void
      */
-    function propPatch($path, PropPatch $propPatch) {
-
-        $propPatch->handleRemaining(function($properties) use ($path) {
-
-
-            if ($this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql') {
-
+    public function propPatch($path, PropPatch $propPatch)
+    {
+        $propPatch->handleRemaining(function ($properties) use ($path) {
+            if ('pgsql' === $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
                 $updateSql = <<<SQL
 INSERT INTO {$this->tableName} (path, name, valuetype, value)
 VALUES (:path, :name, :valuetype, :value)
 ON CONFLICT (path, name)
 DO UPDATE SET valuetype = :valuetype, value = :value
 SQL;
-
-
             } else {
                 $updateSql = <<<SQL
 REPLACE INTO {$this->tableName} (path, name, valuetype, value)
 VALUES (:path, :name, :valuetype, :value)
 SQL;
-
             }
 
             $updateStmt = $this->pdo->prepare($updateSql);
-            $deleteStmt = $this->pdo->prepare("DELETE FROM " . $this->tableName . " WHERE path = ? AND name = ?");
+            $deleteStmt = $this->pdo->prepare('DELETE FROM '.$this->tableName.' WHERE path = ? AND name = ?');
 
             foreach ($properties as $name => $value) {
-
                 if (!is_null($value)) {
                     if (is_scalar($value)) {
                         $valueType = self::VT_STRING;
@@ -165,17 +152,13 @@ SQL;
                     $updateStmt->bindParam('value', $value, \PDO::PARAM_LOB);
 
                     $updateStmt->execute();
-
                 } else {
                     $deleteStmt->execute([$path, $name]);
                 }
-
             }
 
             return true;
-
         });
-
     }
 
     /**
@@ -187,26 +170,24 @@ SQL;
      * tree.
      *
      * @param string $path
-     * @return void
      */
-    function delete($path) {
-
-        $stmt = $this->pdo->prepare("DELETE FROM " . $this->tableName . "  WHERE path = ? OR path LIKE ? ESCAPE '='");
+    public function delete($path)
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM '.$this->tableName."  WHERE path = ? OR path LIKE ? ESCAPE '='");
         $childPath = strtr(
             $path,
             [
                 '=' => '==',
                 '%' => '=%',
-                '_' => '=_'
+                '_' => '=_',
             ]
-        ) . '/%';
+        ).'/%';
 
         $stmt->execute([$path, $childPath]);
-
     }
 
     /**
-     * This method is called after a successful MOVE
+     * This method is called after a successful MOVE.
      *
      * This should be used to migrate all properties from one path to another.
      * Note that entire collections may be moved, so ensure that all properties
@@ -214,33 +195,30 @@ SQL;
      *
      * @param string $source
      * @param string $destination
-     * @return void
      */
-    function move($source, $destination) {
-
+    public function move($source, $destination)
+    {
         // I don't know a way to write this all in a single sql query that's
         // also compatible across db engines, so we're letting PHP do all the
         // updates. Much slower, but it should still be pretty fast in most
         // cases.
-        $select = $this->pdo->prepare('SELECT id, path FROM ' . $this->tableName . '  WHERE path = ? OR path LIKE ?');
-        $select->execute([$source, $source . '/%']);
+        $select = $this->pdo->prepare('SELECT id, path FROM '.$this->tableName.'  WHERE path = ? OR path LIKE ?');
+        $select->execute([$source, $source.'/%']);
 
-        $update = $this->pdo->prepare('UPDATE ' . $this->tableName . ' SET path = ? WHERE id = ?');
+        $update = $this->pdo->prepare('UPDATE '.$this->tableName.' SET path = ? WHERE id = ?');
         while ($row = $select->fetch(\PDO::FETCH_ASSOC)) {
-
             // Sanity check. SQL may select too many records, such as records
             // with different cases.
-            if ($row['path'] !== $source && strpos($row['path'], $source . '/') !== 0) continue;
+            if ($row['path'] !== $source && 0 !== strpos($row['path'], $source.'/')) {
+                continue;
+            }
 
             $trailingPart = substr($row['path'], strlen($source) + 1);
             $newPath = $destination;
             if ($trailingPart) {
-                $newPath .= '/' . $trailingPart;
+                $newPath .= '/'.$trailingPart;
             }
             $update->execute([$newPath, $row['id']]);
-
         }
-
     }
-
 }

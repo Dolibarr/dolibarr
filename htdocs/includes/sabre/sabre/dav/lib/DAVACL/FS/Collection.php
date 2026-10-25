@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\FS;
 
 use Sabre\DAV\Exception\Forbidden;
@@ -15,8 +17,8 @@ use Sabre\DAVACL\IACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends BaseCollection implements IACL {
-
+class Collection extends BaseCollection implements IACL
+{
     use ACLTrait;
 
     /**
@@ -34,60 +36,58 @@ class Collection extends BaseCollection implements IACL {
     protected $owner;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string $path on-disk path.
-     * @param array $acl ACL rules.
-     * @param string|null $owner principal owner string.
+     * @param string      $path  on-disk path
+     * @param array       $acl   ACL rules
+     * @param string|null $owner principal owner string
      */
-    function __construct($path, array $acl, $owner = null) {
-
+    public function __construct($path, array $acl, $owner = null)
+    {
         parent::__construct($path);
         $this->acl = $acl;
         $this->owner = $owner;
-
     }
 
     /**
-     * Returns a specific child node, referenced by its name
+     * Returns a specific child node, referenced by its name.
      *
      * This method must throw Sabre\DAV\Exception\NotFound if the node does not
      * exist.
      *
      * @param string $name
+     *
      * @throws NotFound
+     *
      * @return \Sabre\DAV\INode
      */
-    function getChild($name) {
+    public function getChild($name)
+    {
+        $path = $this->path.'/'.$name;
 
-        $path = $this->path . '/' . $name;
-
-        if (!file_exists($path)) throw new NotFound('File could not be located');
-        if ($name == '.' || $name == '..') throw new Forbidden('Permission denied to . and ..');
-
-        if (is_dir($path)) {
-
-            return new self($path, $this->acl, $this->owner);
-
-        } else {
-
-            return new File($path, $this->acl, $this->owner);
-
+        if (!file_exists($path)) {
+            throw new NotFound('File could not be located');
         }
-
+        if ('.' == $name || '..' == $name) {
+            throw new Forbidden('Permission denied to . and ..');
+        }
+        if (is_dir($path)) {
+            return new self($path, $this->acl, $this->owner);
+        } else {
+            return new File($path, $this->acl, $this->owner);
+        }
     }
 
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->owner;
-
     }
 
     /**
@@ -102,10 +102,8 @@ class Collection extends BaseCollection implements IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return $this->acl;
-
     }
-
 }

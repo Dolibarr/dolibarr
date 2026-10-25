@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@
 
 /**
  *  \defgroup   externalrss     Module externalrss
- *	\brief      Module pour inclure des informations externes RSS
+ *	\brief      Module pour inclure des information externes RSS
  *	\file       htdocs/core/modules/modExternalRss.class.php
  *	\ingroup    externalrss
- *	\brief      Fichier de description et activation du module externalrss
+ *	\brief      Description and activation file for the module externalrss
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modExternalRss extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -63,7 +63,7 @@ class modExternalRss extends DolibarrModules
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->phpmin = array(4, 2, 0);
+		$this->phpmin = array(7, 0);
 		$this->phpmax = array();
 
 		// Constants
@@ -83,7 +83,7 @@ class modExternalRss extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -96,14 +96,12 @@ class modExternalRss extends DolibarrModules
 		$this->boxes = array();
 		$sql = "select name, value from ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
-				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg))
-				{
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$reg = array();
+				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg)) {
 					// Definie la boite si on a trouvee une ancienne configuration
 					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
 					$this->boxes[$reg[1]]['file'] = "box_external_rss.php";
@@ -118,21 +116,21 @@ class modExternalRss extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 
-    /**
+	/**
 	 *		Function called when module is disabled.
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-     */
-    public function remove($options = '')
-    {
+	 */
+	public function remove($options = '')
+	{
 		$sql = array();
 
 		// Delete old declarations of RSS box
 		$this->boxes[0]['file'] = "box_external_rss.php";
 
 		return $this->_remove($sql, $options);
-    }
+	}
 }

@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Sistema de Gestão de Conhecimento
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Gerir uma «Gestão de Conhecimento» (KM) ou base do «Centro de Ajuda»
+# Admin page
+KnowledgeManagementSetup = Configurar Sistema de Gestão de Conhecimento
+KnowledgeManagementSetupPage = Página de configuração do Sistema de Gestão de Conhecimento
+# About page
+KnowledgeManagementAbout = Sobre Gestão de Conhecimento
+KnowledgeManagementAboutPage = Página de sobre a Gestão de Conhecimento
+KnowledgeManagementArea = Gestão de Conhecimento
+MenuKnowledgeRecord = Base conhecimento
+MenuKnowledgeRecordShort = Base conhecimento
+ListKnowledgeRecord = Lista de artigos
+NewKnowledgeRecord = Novo artigo
+ValidateReply = Validar solução
+KnowledgeRecords = Artigos
+KnowledgeRecord = Artigo
+KnowledgeRecordExtraFields = Campos extra para o Artigo
+GroupOfTicket=Grupo de ingressos
+YouCanLinkArticleToATicketCategory=Você pode hiperligação, conexão o artigo em um grupo de tickets (assim o artigo será destacado em todos os tickets deste grupo)
+SuggestedForTicketsInGroup=Sugerido na criação de tickets
+SetObsolete=Definir como obsoleto
+ConfirmCloseKM=Você confirma o fechamento deste artigo como obsoleto?
+ConfirmReopenKM=Deseja restaurar este artigo para o status "Validado"?
+BoxLastKnowledgerecordDescription=Últimos artigos %s
+BoxLastKnowledgerecord=Últimos artigos
+BoxLastKnowledgerecordContent=Últimos artigos
+BoxLastKnowledgerecordModifiedContent=Últimos artigos modificado
+BoxLastModifiedKnowledgerecordDescription=Últimos artigos %s modificado
+BoxLastModifiedKnowledgerecord=Últimos artigos modificado

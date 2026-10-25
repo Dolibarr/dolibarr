@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - partnership
+ModulePartnershipName=Gestión de alianzas
+PartnershipDescription=Módulo de gestión de asociaciones
+PartnershipDescriptionLong=Módulo de gestión de asociaciones
+Partnership=Sociedad (Partnership)
+NewPartnership=Nueva sociedad
+NewPartnershipbyWeb=Su solicitud de asociación se ha añadido correctamente. Es posible que nos pongamos en contacto con usted pronto...
+ListOfPartnerships=Lista de asociación
+PartnershipSetup=Configuración de la asociación
+PartnershipAbout=Acerca de la asociación
+PartnershipAboutPage=Página "acerca de" la asociación
+partnershipforthirdpartyormember=El estado de socio debe establecerse como 'tercero' o 'miembro'
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Número de días antes de cancelar el estado de una asociación cuando ha expirado una suscripción
+ReferingWebsiteCheck=Comprobación de la referencia del sitio web
+DatePartnershipEnd=Fecha final
+ReasonDeclineOrCancel=Motivo de la denegación o cancelación
+PartnershipCanceled=Cancelado
+PartnershipManagedFor=Socios son
+YourPartnershipWillSoonBeCanceledContent=Nos gustaría informarle que nuestra asociación se cancelará pronto (no hemos obtenido la renovación o no se ha cumplido un requisito previo para nuestra asociación). Comuníquese con nosotros si recibió esto debido a un error.
+YourPartnershipRefusedContent=Nos gustaría informarle que su solicitud de asociación ha sido rechazada. No se han cumplido los requisitos previos. Póngase en contacto con nosotros si necesita más información.
+YourPartnershipCanceledContent=Nos gustaría informarle que nuestra colaboración ha sido cancelada. Póngase en contacto con nosotros si necesita más información.
+NewPartnershipRequestDesc=Este formulario le permite solicitar ser parte de uno de nuestros programas de asociación. Si necesita ayuda para completar este formulario, comuníquese por correo electrónico <b>%s</b>.

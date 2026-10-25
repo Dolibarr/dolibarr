@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,54 +21,82 @@
  */
 
 /**
- *       \file       htdocs/product/ajax/products.php
+ *       \file       htdocs/projet/ajax/projects.php
  *       \brief      File to return Ajax response on product list request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$htmlname = GETPOST('htmlname', 'alpha');
-$socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
-$id = GETPOST('id', 'int');
-$discard_closed = GETPOST('discardclosed', 'int');
+$htmlname = GETPOST('htmlname', 'aZ09');
+$socid = GETPOSTINT('socid');
+$mode = GETPOST('mode', 'aZ09');
+$discard_closed = GETPOSTINT('discardclosed');
+
+// Security check
+restrictedArea($user, 'projet', 0, 'projet&project');
 
 
 /*
  * View
  */
 
-dol_syslog(join(',', $_GET));
+dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-// Load translation files required by the page
-$langs->load("main");
+// Mode to get list of projects
+if (empty($mode) || $mode != 'gettasks') {
+	top_httphead('application/json');
 
-top_httphead();
+	// When used from jQuery, the search term is added as GET param "term".
+	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
-if (empty($htmlname)) return;
+	$formproject = new FormProjets($db);
+	$arrayresult = $formproject->select_projects_list($socid, 0, '', 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
 
-$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
-sort($match);
-$idprod = (!empty($match[0]) ? $match[0] : '');
+	$db->close();
 
-if (!GETPOST($htmlname) && !GETPOST($idprod)) return;
+	print json_encode($arrayresult);
 
-// When used from jQuery, the search term is added as GET param "term".
-$searchkey = ((!empty($idprod) && GETPOST($idprod)) ?GETPOST($idprod) : (GETPOST($htmlname) ?GETPOST($htmlname) : ''));
+	return;
+}
 
-$form = new FormProjets($db);
-$arrayresult = $form->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
+// Mode to get list of tasks
+// THIS MODE RETURNS HTML NOT JSON - THE CALL SHOULD BE UPDATE IN THE FUTURE
+if ($mode == 'gettasks') {
+	top_httphead();
 
-$db->close();
+	$formproject = new FormProjets($db);
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 64, 1, '1', 1, 0, 0, 'maxwidth500', (string) GETPOSTINT('projectid'), '');
 
-print json_encode($arrayresult);
+	$db->close();
+
+	return;
+}

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +26,21 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
-if (empty($user->id))
-{
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+if (empty($user->id) && is_object($db)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -46,204 +50,423 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class GetUrlLibTest extends PHPUnit\Framework\TestCase
+class GetUrlLibTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * testResolveDNS
+	 *
+	 * @return	int
+	 */
+	public function testResolveDNS()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return FilesLibTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+		$modes = array('default', 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION');
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		foreach ($modes as $mode) {
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION = 1;
+			} else {	// default
+				unset($conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION);
+			}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+			$result = resolveDns('192.16.0.1');
+			print __METHOD__." 192.16.0.1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('192.16.0.1', $result, 'Test resolveDNS 1 mode '.$mode);
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+			$result = resolveDns('::1');
+			print __METHOD__." ::1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('::1', $result, 'Test resolveDNS 2 mode '.$mode);
 
-        print __METHOD__."\n";
-    }
+			$result = resolveDns('anamethatdoesnotexist123really');
+			print __METHOD__." anamethatdoesnotexist123really mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('anamethatdoesnotexist123really')), 'Test resolveDNS 4 mode '.$mode);
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+			// name if ip that resolve both on ipv4and ipv6
 
-        print __METHOD__."\n";
-    }
+			$result = resolveDns('www.dolimed.com');
+			print __METHOD__." www.dolimed.com mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('104.21.7.66', '172.67.187.137')), 'Test resolveDNS 3 mode '.$mode);
 
-    /**
-     * Init phpunit tests
-     *
-     * @return	void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+			// name if ipv4 resolution only
 
-        print __METHOD__."\n";
-    }
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+			$result = resolveDns('ipv4.dolicloud.com');
+			print __METHOD__." ipv4.dolicloud.com ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('147.135.135.36')), 'Test resolveDNS 5 mode '.$mode);
+
+			// name if ipv6 resolution only
+
+			$result = resolveDns('ipv6.dolicloud.com');
+			print __METHOD__." ipv6.dolicloud.com ".$mode." result=".$result."\n";
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$this->assertTrue(in_array($result, array('ipv6.dolicloud.com')), 'Test resolveDNS 6 mode '.$mode);
+			} else {
+				$this->assertTrue(in_array($result, array('2001:41d0:302:1000::4:1437')), 'Test resolveDNS 6 mode '.$mode);
+			}
+		}
+	}
 
 
-    /**
-     * testGetRootURLFromURL
-     *
-     * @return	int
-     */
-    public function testGetRootURLFromURL()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testGetRootURLFromURL
+	 *
+	 * @depends	testResolveDNS
+	 * @return	int
+	 */
+	public function testGetRootURLFromURL()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $result=getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
 
-        $result=getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
 
-        $result=getRootURLFromURL('http://www.dolimed.com/screenshots');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('http://www.dolimed.com', $result);
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
 
-        $result=getRootURLFromURL('https://www.dolimed.com/screenshots');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('https://www.dolimed.com', $result);
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
 
-        $result=getRootURLFromURL('http://www.dolimed.com/');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('http://www.dolimed.com', $result);
+		$result = getRootURLFromURL('http://www.dolimed.com/');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
 
-        $result=getRootURLFromURL('https://www.dolimed.com/');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('https://www.dolimed.com', $result);
+		$result = getRootURLFromURL('https://www.dolimed.com/');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
 
-        $result=getRootURLFromURL('http://www.dolimed.com');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('http://www.dolimed.com', $result);
+		$result = getRootURLFromURL('http://www.dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
 
-        $result=getRootURLFromURL('https://www.dolimed.com');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('https://www.dolimed.com', $result);
+		$result = getRootURLFromURL('https://www.dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
 
-        return 1;
-    }
+		return 1;
+	}
 
-    /**
-     * testGetDomainFromURL
-     *
-     * @return	int
-     */
-    public function testGetDomainFromURL()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+	/**
+	 * testGetDomainFromURL
+	 *
+	 * @depends	testGetRootURLFromURL
+	 * @return	int
+	 */
+	public function testGetDomainFromURL()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    	$result=getDomainFromURL('http://localhost');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('localhost', $result, 'Test 0a');
+		// Tests with param 0
 
-    	$result=getDomainFromURL('http://localhost', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('localhost', $result, 'Test 0b');
+		$result = getDomainFromURL('http://localhost');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('localhost', $result, 'Test localhost 0');
 
-    	$result=getDomainFromURL('https://dolimed.com');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 1');
+		$result = getDomainFromURL('http://localhost', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('localhost', $result, 'Test localhost 1');
 
-    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 2');
+		$result = getDomainFromURL('https://dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com 0');
 
-    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 3');
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com/... 0');
 
-    	$result=getDomainFromURL('https://dolimed.com', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 4');
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test ...dolimed.com/ 0');
 
-    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 5');
+		// Tests with param 1
 
-    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 6');
+		$result = getDomainFromURL('https://dolimed.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com 1');
 
-    	return 1;
-    }
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com/... 1');
 
-    /**
-     * testRemoveHtmlComment
-     *
-     * @return	int
-     */
-    public function testRemoveHtmlComment()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test .../dolimed.com 1');
 
-        $result=removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('abcdef', $result, 'Test 1');
+		// Tests with param 2
 
-        $result=removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('abcbbdef', $result, 'Test 1');
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com', $result, 'Test .../dolimed.com 2');
 
-        return 1;
-    }
+		// For domains with top domain on 2 levels
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com.mx 0');
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com.mx', $result, 'Test dolimed.com.mx 1');
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
+
+
+		// Test with url with login/pass
+
+		$result = getDomainFromURL('https://mylogin:mypass@aaa.abc.mydomain.com', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc.mydomain.com', $result, 'Test https://mylogin:mypass@mydomain.com');
+
+
+		// Test with email
+
+		$result = getDomainFromURL('myemail@mydomain.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('mydomain.com', $result, 'Test myemail@mydomain.com');
+
+
+		return 1;
+	}
+
+	/**
+	 * testRemoveHtmlComment
+	 *
+	 * @depends	testGetDomainFromURL
+	 * @return	int
+	 */
+	public function testRemoveHtmlComment()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcdef', $result, 'Test 1');
+
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcbbdef', $result, 'Test 1');
+
+		return 1;
+	}
+
+
+	/**
+	 * testGetURLContentHostParsing
+	 *
+	 * How getURLContent() reads the host of the URL before the anti SSRF check: numeric forms, host names that look numeric,
+	 * malformed URLs, IPv6.
+	 *
+	 * @return void
+	 */
+	public function testGetURLContentHostParsing()
+	{
+		$url = 'https://0X7F000001';	// Upper case hex integer
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", $tmp['curl_error_msg'], 'An upper case hex integer is a numeric address too');
+
+		// A single label host name made of hex letters is a host name, not a numeric address (it may or may not resolve here)
+		$url = 'http://db/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2, -1, 2, 3);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertStringNotContainsString('numeric address', $tmp['curl_error_msg'], 'db is a host name, not a numeric address');
+
+		// A malformed URL (parse_url() returns false) must be refused without any PHP warning
+		$url = 'http:///foo';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code']);
+		$this->assertStringStartsWith('Bad URL', $tmp['curl_error_msg']);
+
+		// An IPv6 target must reach curl with a valid CURLOPT_CONNECT_TO (error 49 was "No valid port number in connect to host string")
+		$url = 'http://[::1]:8/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 1, -1, 2, 3);		// Only local URL
+		print __METHOD__." url=".$url." curl_error_no=".$tmp['curl_error_no']." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertNotEquals(400, $tmp['http_code'], 'A local IPv6 URL must pass the anti SSRF check when local URLs are allowed');
+		$this->assertNotEquals(49, $tmp['curl_error_no'], 'CURLOPT_CONNECT_TO must be valid for an IPv6: '.$tmp['curl_error_msg']);
+	}
+
+
+	/**
+	 * testGetURLContent
+	 *
+	 * @return int
+	 */
+	public function testGetURLContent()
+	{
+		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+		$url = 'ftp://dolibarr.org';
+		$tmp = getURLContent($url);
+		print __METHOD__." url=".$url." ".$tmp['curl_error_msg']."\n";
+
+		$tmpvar = preg_match('/not supported|disabled/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported|disabled/ in getURLContent error message. We should.");
+
+		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
+
+		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
+
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		}
+
+		$url = 'http://localhost';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+		$url = 'http://127.0.0.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+
+		$url = 'http://127.0.2.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
+
+		$url = 'https://169.254.0.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'http://[::1]';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
+
+		/*$url = 'localtest.me';
+		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		 print __METHOD__." url=".$url."\n";
+		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		 */
+
+		$url = 'http://192.0.0.192';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
+		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
+		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
+
+		$url = 'https://2130706433';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'https://0x7f000001';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		$url = 'https://017700000001';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
+
+		// Cloud metadata servers must be refused even when local URLs are allowed (the reserved range check does not apply then)
+		$url = 'http://169.254.169.254/latest/meta-data/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);		// Local and external URL allowed
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the AWS/GCP/Azure metadata IP should be refused when local URLs are allowed');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// 168.63.129.16 (Azure) is in the public address space, so only the metadata list can catch it
+		$url = 'http://168.63.129.16/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the Azure metadata IP should be refused');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// The reserved host name check must not depend on the case
+		$url = 'http://METADATA.GOOGLE.INTERNAL/computeMetadata/v1/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to metadata.google.internal should be refused whatever the case of the host name');
+		$this->assertStringContainsString('Google metadata', $tmp['curl_error_msg']);
+
+		return 0;
+	}
+
+	/**
+	 * testRemoveCredentialHeaders
+	 *
+	 * @return	void
+	 */
+	public function testRemoveCredentialHeaders()
+	{
+		$headers = [
+			'Accept: application/json',
+			'Authorization: Bearer secret',
+			'authorization: Basic c2VjcmV0',
+			'Proxy-Authorization: Basic c2VjcmV0',
+			'Cookie: DOLSESSID_xxx=secret',
+			'X-Api-Key: secret',
+			'api-key: secret',
+			'DOLAPIKEY: secret',
+			'x-goog-api-key: secret',
+			'Client-Secret: secret',
+			'Client-Id: kept',
+			'X-Custom: kept',
+			'Content-Type: application/json',
+			'malformed header without colon',
+		];
+
+		$result = removeCredentialHeaders($headers);
+
+		$this->assertSame(['Accept: application/json', 'Client-Id: kept', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+
+		$this->assertSame([], removeCredentialHeaders([]));
+		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
+	}
+
+	/**
+	 * testMaskSecretsForLog
+	 *
+	 * @return	void
+	 */
+	public function testMaskSecretsForLog()
+	{
+		$result = maskSecretsForLog('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIzaSyABCDEF');
+		$this->assertSame('https://maps.googleapis.com/maps/api/geocode/json?address=Paris&key=AIz...', $result, 'The API key in the query string must be masked');
+
+		$result = maskSecretsForLog('https://example.com/api?api_key=abcdef&page=2&access_token=tok123#anchor');
+		$this->assertSame('https://example.com/api?api_key=abc...&page=2&access_token=tok...#anchor', $result, 'Each secret parameter must be masked, the other ones kept');
+
+		$result = maskSecretsForLog('https://example.com/page?address=keyboard&id=4');
+		$this->assertSame('https://example.com/page?address=keyboard&id=4', $result, 'An URL without secret must not be modified');
+
+		$request = "GET /api?key=AIzaSy123 HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer eyJhbGciOi\r\nAccept: */*\r\nCookie: DOLSESSID_xxx=secret\r\n\r\n";
+		$result = maskSecretsForLog($request);
+		$this->assertSame("GET /api?key=AIz... HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bea...\r\nAccept: */*\r\nCookie: DOL...\r\n\r\n", $result, 'Secrets in the request line and in the credential headers must be masked');
+	}
 }

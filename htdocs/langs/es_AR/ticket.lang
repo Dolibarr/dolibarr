@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
-Type=Tipo
+TicketTypeShortPROJET=Projecto
+Read=Leído
+Waiting=Esperando
 TicketSettings=Ajustes

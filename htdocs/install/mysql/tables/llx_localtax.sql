@@ -22,13 +22,13 @@ create table llx_localtax
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,
   localtaxtype    tinyint,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           date,								-- date of payment
   datev           date,								-- date of value
   amount          double,
-  label           varchar(255),	
+  label           varchar(255),
   note            text,
-  fk_bank         integer,  
-  fk_user_creat   integer,                 
-  fk_user_modif   integer 
+  fk_bank         integer,
+  fk_user_creat   integer,
+  fk_user_modif   integer
 )ENGINE=innodb;

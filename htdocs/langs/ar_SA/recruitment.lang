@@ -1,0 +1,71 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = التوظيف
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = إدارة حملات التوظيف ومتابعتها لشغل مناصب وظيفية جديدة
+# Admin page
+RecruitmentSetup = إعدادات التوظيف
+RecruitmentSetupPage = أدخل هنا إعدادات الخيارات الرئيسية لوحدة التوظيف
+RecruitmentArea=منطقة التوظيف
+PublicInterfaceRecruitmentDesc=صفحات الوظائف العامة هي عناوين URL عامة لعرض الوظائف الشاغرة والتقدم إليها. ويتوفر رابط مستقل لكل وظيفة شاغرة في سجلها.
+EnablePublicRecruitmentPages=تفعيل الصفحات العامة للوظائف الشاغرة
+
+NbOfEmployeesExpected=عدد الموظفين المتوقع
+JobLabel=مسمى المنصب الوظيفي
+WorkPlace=مكان العمل
+DateExpected=التاريخ المتوقع
+FutureManager=المدير المستقبلي
+ResponsibleOfRecruitement=مسؤول التوظيف
+IfJobIsLocatedAtAPartner=إذا كان مقر الوظيفة لدى شريك
+PositionToBeFilled=منصب وظيفي
+PositionsToBeFilled=المناصب الوظيفية
+ListOfPositionsToBeFilled=قائمة المناصب الوظيفية
+NewPositionToBeFilled=منصب وظيفي جديد
+JobOfferToBeFilled=المنصب الوظيفي المطلوب شغله
+ThisIsInformationOnJobPosition=معلومات المنصب الوظيفي المطلوب شغله
+ContactForRecruitment=جهة اتصال التوظيف
+EmailRecruiter=البريد الإلكتروني لمسؤول التوظيف
+ToUseAGenericEmail=لاستخدام بريد إلكتروني عام. إن لم يُحدد، فسيُستخدم البريد الإلكتروني لمسؤول التوظيف
+NewCandidature=طلب توظيف جديد
+ListOfCandidatures=قائمة طلبات التوظيف
+Remuneration=الراتب
+RequestedRemuneration=الراتب المطلوب
+ProposedRemuneration=الراتب المقترح
+ContractProposed=عقد مقترح
+ContractSigned=العقد موقّع
+ContractRefused=العقد مرفوض
+RecruitmentCandidature=طلب توظيف
+JobPositions=المناصب الوظيفية
+RecruitmentCandidatures=طلبات التوظيف
+InterviewToDo=جهات الاتصال المطلوب متابعتها
+AnswerCandidature=الرد على طلب التوظيف
+YourCandidature=طلب التوظيف الخاص بك
+YourCandidatureAnswerMessage=شكرًا لتقديم طلبك.<br>...
+JobClosedTextCandidateFound=أُغلق المنصب الوظيفي بعد شغله.
+JobClosedTextCanceled=أُغلق المنصب الوظيفي.
+ExtrafieldsJobPosition=السمات التكميلية (المناصب الوظيفية)
+ExtrafieldsApplication=السمات التكميلية (طلبات التوظيف)
+MakeOffer=تقديم عرض
+WeAreRecruiting=نحن نوظف. فيما يلي قائمة بالمناصب الشاغرة المطلوب شغلها...
+NoPositionOpen=لا توجد مناصب شاغرة حاليًا
+ConfirmClose=تأكيد الإلغاء
+ConfirmCloseAsk=هل أنت متأكد من إلغاء طلب التوظيف هذا؟
+Recruitment=التوظيف
+ApplyJobCandidature=التقدم لهذه الوظيفة
+ErrorRecruitmmentCandidatureAlreadyExists= يوجد بالفعل طلب توظيف لهذا البريد الإلكتروني %s
+RecruitmentCandidatureSaved=تم حفظ طلب التوظيف بنجاح
+NoOpenJobOffer=لا توجد عروض وظائف مفتوحة حاليًا
+ShowPositionToBeFilled=عرض المنصب الوظيفي المطلوب شغله

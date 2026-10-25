@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Property;
 
 use Sabre\DAV;
@@ -9,7 +11,7 @@ use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
 /**
- * Principal property
+ * Principal property.
  *
  * The principal property represents a principal from RFC3744 (ACL).
  * The property can be used to specify a principal or pseudo principals.
@@ -18,30 +20,30 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Principal extends DAV\Xml\Property\Href {
-
+class Principal extends DAV\Xml\Property\Href
+{
     /**
-     * To specify a not-logged-in user, use the UNAUTHENTICATED principal
+     * To specify a not-logged-in user, use the UNAUTHENTICATED principal.
      */
     const UNAUTHENTICATED = 1;
 
     /**
-     * To specify any principal that is logged in, use AUTHENTICATED
+     * To specify any principal that is logged in, use AUTHENTICATED.
      */
     const AUTHENTICATED = 2;
 
     /**
-     * Specific principals can be specified with the HREF
+     * Specific principals can be specified with the HREF.
      */
     const HREF = 3;
 
     /**
-     * Everybody, basically
+     * Everybody, basically.
      */
     const ALL = 4;
 
     /**
-     * Principal-type
+     * Principal-type.
      *
      * Must be one of the UNAUTHENTICATED, AUTHENTICATED or HREF constants.
      *
@@ -56,33 +58,30 @@ class Principal extends DAV\Xml\Property\Href {
      *
      * 'href' is only required for the HREF type.
      *
-     * @param int $type
+     * @param int         $type
      * @param string|null $href
      */
-    function __construct($type, $href = null) {
-
+    public function __construct($type, $href = null)
+    {
         $this->type = $type;
-        if ($type === self::HREF && is_null($href)) {
+        if (self::HREF === $type && is_null($href)) {
             throw new DAV\Exception('The href argument must be specified for the HREF principal type.');
         }
         if ($href) {
-            $href = rtrim($href, '/') . '/';
+            $href = rtrim($href, '/').'/';
             parent::__construct($href);
         }
-
     }
 
     /**
-     * Returns the principal type
+     * Returns the principal type.
      *
      * @return int
      */
-    function getType() {
-
+    public function getType()
+    {
         return $this->type;
-
     }
-
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -99,28 +98,23 @@ class Principal extends DAV\Xml\Property\Href {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->type) {
-
-            case self::UNAUTHENTICATED :
+            case self::UNAUTHENTICATED:
                 $writer->writeElement('{DAV:}unauthenticated');
                 break;
-            case self::AUTHENTICATED :
+            case self::AUTHENTICATED:
                 $writer->writeElement('{DAV:}authenticated');
                 break;
-            case self::HREF :
+            case self::HREF:
                 parent::xmlSerialize($writer);
                 break;
-            case self::ALL :
+            case self::ALL:
                 $writer->writeElement('{DAV:}all');
                 break;
         }
-
     }
 
     /**
@@ -134,23 +128,22 @@ class Principal extends DAV\Xml\Property\Href {
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
      *
-     * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         switch ($this->type) {
-
-            case self::UNAUTHENTICATED :
+            case self::UNAUTHENTICATED:
                 return '<em>unauthenticated</em>';
-            case self::AUTHENTICATED :
+            case self::AUTHENTICATED:
                 return '<em>authenticated</em>';
-            case self::HREF :
+            case self::HREF:
                 return parent::toHtml($html);
-            case self::ALL :
+            case self::ALL:
                 return '<em>all</em>';
         }
 
+        return '<em>unknown</em>';
     }
 
     /**
@@ -171,26 +164,23 @@ class Principal extends DAV\Xml\Property\Href {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $tree = $reader->parseInnerTree()[0];
 
         switch ($tree['name']) {
-            case '{DAV:}unauthenticated' :
+            case '{DAV:}unauthenticated':
                 return new self(self::UNAUTHENTICATED);
-            case '{DAV:}authenticated' :
+            case '{DAV:}authenticated':
                 return new self(self::AUTHENTICATED);
             case '{DAV:}href':
                 return new self(self::HREF, $tree['value']);
             case '{DAV:}all':
                 return new self(self::ALL);
-            default :
-                throw new BadRequest('Unknown or unsupported principal type: ' . $tree['name']);
+            default:
+                throw new BadRequest('Unknown or unsupported principal type: '.$tree['name']);
         }
-
     }
-
 }

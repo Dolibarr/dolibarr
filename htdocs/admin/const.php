@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,62 +26,98 @@
  *	\brief      Admin page to define miscellaneous constants
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
-	accessforbidden();
+$entity = GETPOSTINT('entity');
+$action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'aZ09');
+$toselect = GETPOST('toselect', 'array:int');
+$confirm = GETPOST('confirm', 'alpha');
 
-$rowid = GETPOST('rowid', 'int');
-$entity = GETPOST('entity', 'int');
-$action = GETPOST('action', 'alpha');
-$update = GETPOST('update', 'alpha');
-$delete = GETPOST('delete', 'none'); // Do not use alpha here
-$debug = GETPOST('debug', 'int');
+$debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
-$constname = GETPOST('constname', 'alphanohtml');
-$constvalue = GETPOST('constvalue', 'none'); // We shoul dbe able to send everything here
-$constnote = GETPOST('constnote', 'alpha');
+$constname = GETPOST('constname', 'aZ09');
+$constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
+$constnote = GETPOST('constnote', 'alphanohtml');
+
+// Search criteria
+$search_name = GETPOST('search_name', 'alpha');
+$search_value = GETPOST('search_value', 'alpha');
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
+	$search_name = '';
+	$search_value = '';
+}
+
+// True if the search or clear search button of the list of records was submitted
+$filterbuttonclicked = (bool) (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha')
+	|| GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (empty($sortfield)) $sortfield = 'entity,name';
-if (empty($sortorder)) $sortorder = 'ASC';
+if (empty($sortfield)) {
+	$sortfield = 'entity,name';
+}
+if (empty($sortorder)) {
+	$sortorder = 'ASC';
+}
+
+if ($action == 'add' && GETPOST('update')) {	// Click on button update must be used in priority before param $action
+	$action = 'update';
+}
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update'))
-{
+// Mass action
+if (!GETPOST('confirmmassaction', 'alpha')) {
+	$massaction = '';
+}
+
+// Add a new record (only when the zone to add a new record was submitted and no mass action is in progress)
+if ($action == 'add' && empty($massaction) && GETPOSTISSET('constname') && empty($filterbuttonclicked)) {
 	$error = 0;
 
-	if (empty($constname))
-	{
+	if (empty($constname)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 		$error++;
 	}
-	if ($constvalue == '')
-	{
+	if ($constvalue == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
-		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
-		{
+	if (!$error) {
+		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
 			$constname = "";
@@ -92,54 +130,42 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 }
 
 // Mass update
-if (!empty($consts) && $action == 'update')
-{
+if (!empty($consts) && $action == 'update') {
 	$nbmodified = 0;
-	foreach ($consts as $const)
-	{
-		if (!empty($const["check"]))
-		{
-			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0)
-			{
+	foreach ($consts as $const) {
+		if (!empty($const["rowid"]) && in_array((int) $const["rowid"], $toselect)) {	// Only records checked
+			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0) {
 				$nbmodified++;
 			} else {
 				dol_print_error($db);
 			}
 		}
 	}
-	if ($nbmodified > 0) setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	if ($nbmodified > 0) {
+		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	}
 	$action = '';
 }
 
-// Mass delete
-if (!empty($consts) && $action == 'delete')
-{
+// Mass delete (massaction = 'delete', or action = 'delete' after confirmation of massaction = 'predelete')
+if ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) {
 	$nbdeleted = 0;
-	foreach ($consts as $const)
-	{
-		if (!empty($const["check"]))	// Is checkbox checked
-		{
-			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0)
-			{
-				$nbdeleted++;
-			} else {
-				dol_print_error($db);
-			}
+	foreach ($toselect as $constrowid) {
+		if (dolibarr_del_const($db, $constrowid, -1) >= 0) {
+			$nbdeleted++;
+		} else {
+			dol_print_error($db);
 		}
 	}
-	if ($nbdeleted > 0) setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	$action = '';
-}
-
-// Delete line from delete picto
-if ($action == 'delete')
-{
-	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
-	{
+	if ($nbdeleted > 1) {
+		setEventMessages($langs->trans("RecordsDeleted", $nbdeleted), null, 'mesgs');
+	} elseif ($nbdeleted > 0) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	} else {
-		dol_print_error($db);
+		setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 	}
+	$action = '';
+	$massaction = '';
 }
 
 
@@ -150,85 +176,180 @@ if ($action == 'delete')
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-const');
 
 // Add logic to show/hide buttons
-if ($conf->use_javascript_ajax)
-{
-    ?>
+if ($conf->use_javascript_ajax) {
+	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
-	jQuery("#delconst").hide();
-	jQuery(".checkboxfordelete").click(function() {
-		jQuery("#delconst").show();
-		jQuery("#action").val('delete');
+	jQuery(".checkforselect").change(function() {
+		jQuery("#updateconst").show();
 	});
 	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
-		var field_id = jQuery(this).attr("id");
-		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
-		jQuery("#action").val('update');
-		jQuery("#check_" + row_num[1]).prop("checked",true);
+		jQuery("#action").val('update');			// so default action if we type enter will be update, but correct action is also detected correctly without that when clicking on "Update" button.
+		jQuery(this).closest("tr").find(".checkforselect").prop("checked", true);
+	});
+	jQuery("#add").click(function() {
+		jQuery("#action").val('add');		// so the add is forced even if we typed before into a field of a record
 	});
 });
 </script>
-    <?php
+	<?php
 }
 
-print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
+// List of mass actions available
+$arrayofmassactions = array(
+	'predelete' => img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete"),
+);
+if (GETPOSTINT('nomassaction') || $massaction == 'predelete') {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
-print "<br>\n";
+// Button to check all into the action column of title of list
+$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+// Button + to show/hide the zone to add a new record
+$addformvisible = (($action == 'create' || ($action == 'add' && GETPOSTISSET('constname'))) && empty($massaction) && empty($filterbuttonclicked));	// $action == 'add' keeps the zone visible if a field is missing
+$urlbuttonplus = $_SERVER['PHP_SELF'].($addformvisible ? '' : '?action=create');
+if (empty($user->entity) && $debug) {
+	$urlbuttonplus .= $addformvisible ? '?debug=1' : '&debug=1';
+}
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlbuttonplus, '', ($addformvisible ? 2 : 1));
 
 $param = '';
+if ($search_name !== '') {
+	$param .= '&search_name='.urlencode($search_name);
+}
+if ($search_value !== '') {
+	$param .= '&search_value='.urlencode($search_value);
+}
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
+// Unique form, so the combo of mass actions into the line of title can submit the selection of records
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+print load_fiche_titre($langs->trans("OtherSetup"), $newcardbutton, 'title_setup', 0, '', '', $massactionbutton);
+
+print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
+
+// Zone to add a new record (visible only when we click on the button +)
+if ($addformvisible) {
+	dol_set_focus('input[name="constname"]');
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	// Line of title
+	print '<tr class="liste_titre">';
+	print '<th>'.$langs->trans("Name").'</th>';
+	print '<th>'.$langs->trans("Value").'</th>';
+	print '<th>'.$langs->trans("Comment").'</th>';
+	print '<th class="center">'.$langs->trans("DateModificationShort").'</th>';
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print '<th class="center">'.$langs->trans("Entity").'</th>';
+	}
+	print '<th class="center"></th>';
+	print '</tr>'."\n";
+
+	// Line to add new record
+	print "\n";
+
+	print '<tr class="oddeven nohover"><td>';
+	print '<input type="text" class="flat minwidth300" name="constname" value="'.dolPrintHTMLForAttribute($constname).'" spellcheck="false">';
+	print '</td>'."\n";
+	print '<td>';
+	print '<input type="text" class="flat minwidth100" name="constvalue" value="'.dolPrintHTMLForAttribute($constvalue, 1).'" spellcheck="false">';
+	print '</td>';
+	print '<td>';
+	print '<input type="text" class="flat minwidth100" name="constnote" value="'.dolPrintHTMLForAttribute($constnote).'">';
+	print '</td>';
+	print '<td>';
+	print '</td>';
+	// Limit to superadmin
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print '<td class="center">';
+		print '<input type="text" class="width50" name="entity" value="' . $conf->entity . '">';
+		print '</td>';
+		print '<td class="center">';
+	} else {
+		print '<td class="center">';
+		print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
+	}
+	print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
+	print "</td>\n";
+	print '</tr>';
+
+	print '</table>';
+	print '</div>';
+	print '<br>';
+}
+
+// Code for pre mass action (confirmation of mass deletion)
+if ($massaction == 'predelete') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
+}
+
+// List of records
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
+
+// Line with search filters
+print '<tr class="liste_titre_filter">';
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	print $form->showFilterButtons();
+	print '</td>';
+}
+// Name
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+print '</td>';
+// Value
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100" name="search_value" value="'.dol_escape_htmltag($search_value).'">';
+print '</td>';
+// Comment
+print '<td class="liste_titre"></td>';
+// Date last change
+print '<td class="liste_titre"></td>';
+// Entity limit to superadmin
+if (isModEnabled('multicompany') && !$user->entity) {
+	print '<td class="liste_titre"></td>';
+}
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	print $form->showFilterButtons();
+	print '</td>';
+}
+print '</tr>'."\n";
+
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
+print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '') . "\n";
 print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-if (!empty($conf->multicompany->enabled) && !$user->entity)
-{
-	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
+if (isModEnabled('multicompany') && !$user->entity) {
+	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
 }
-print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
-
-
-// Line to add new record
-print "\n";
-
-print '<tr class="oddeven nohover"><td><input type="text" class="flat minwidth100" name="constname" value="'.$constname.'"></td>'."\n";
-print '<td>';
-print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
-print '</td><td>';
-print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
-print '</td>';
-print '<td>';
-print '</td>';
-// Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity)
-{
-	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
-	print '</td>';
-	print '<td class="center">';
-} else {
-	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-}
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
-print "</td>\n";
-print '</tr>';
 
 
 // Show constants
@@ -241,68 +362,96 @@ $sql .= ", note";
 $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
-elseif (!GETPOST('visible') || GETPOST('visible') != 'all') $sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
-if (GETPOST('name')) $sql .= natural_search("name", GETPOST('name'));
+$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
+if ((empty($user->entity)/*  || $user->admin */) && $debug) {
+	// empty
+} elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
+	// to force for superadmin to debug
+	$sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+}
+if ($search_name !== '') {
+	$sql .= natural_search($db->decrypt('name'), $search_name);
+}
+if ($search_value !== '') {
+	$sql .= natural_search($db->decrypt('value'), $search_value);
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
+
+		$value = dolDecrypt($obj->value);
+
+		// Content of the action column (checkbox to select record for mass actions)
+		$selected = 0;
+		if (in_array((int) $obj->rowid, $arrayofselected)) {
+			$selected = 1;
+		}
+		$actioncolumncontent = '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		print "\n";
 
-		print '<tr class="oddeven"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven">';
+
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="center">'.$actioncolumncontent.'</td>';
+		}
+
+		print '<td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		if (!isModEnabled('multicompany') || !empty($user->entity)) {	// If there is no input for entity, we save it into a hidden input
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
+		}
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'">';
 		print '</td>';
 
 		// Date last change
-		print '<td>';
+		print '<td class="nowraponall center">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (!empty($conf->multicompany->enabled) && !$user->entity)
-		{
-			print '<td>';
-			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+		if (isModEnabled('multicompany') && empty($user->entity)) {
+			print '<td class="center">';
+			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
-			print '<td class="center">';
-		} else {
-			print '<td class="center">';
-			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
-		if ($conf->use_javascript_ajax)
-		{
-			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td class="center">'.$actioncolumncontent.'</td>';
 		}
 
-		print "</td></tr>\n";
+		print "</tr>\n";
 
 		print "\n";
 		$i++;
+	}
+
+	// Show a line when there is no record found
+	if ($num == 0) {
+		$colspan = 5;	// 4 fields + action column
+		if (isModEnabled('multicompany') && !$user->entity) {
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 }
 
@@ -310,14 +459,10 @@ if ($result)
 print '</table>';
 print '</div>';
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
-	print '<input type="submit" name="update" class="button marginbottomonly" value="'.$langs->trans("Modify").'">';
-	print '</div>';
-	print '<div id="delconst" class="right">';
-	print '<input type="submit" name="delete" class="button marginbottomonly" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" class="button button-edit marginbottomonly" name="update" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 

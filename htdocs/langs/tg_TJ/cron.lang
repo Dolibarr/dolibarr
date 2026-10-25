@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Кори банақшагирифтаро хонед
+Permission23102 = Эҷод/навсозии кори ба нақша гирифташуда
+Permission23103 = Кори банақшагирифтаро нест кунед
+Permission23104 = Кори банақшагирифтаро иҷро кунед
+# Admin
+CronSetup=Танзими идоракунии кор ба нақша гирифта шудааст
+URLToLaunchCronJobs=URL барои тафтиш ва оғози ҷойҳои кории тахассусии cron аз браузер
+OrToLaunchASpecificJob=Ё барои тафтиш ва оғози кори мушаххас аз браузер
+KeyForCronAccess=Калиди амниятӣ барои URL барои оғози ҷойҳои корӣ
+FileToLaunchCronJobs=Хати фармон барои тафтиш ва оғози ҷойҳои кории тахассусии cron
+CronExplainHowToRunUnix=Дар муҳити Unix шумо бояд вуруди зерини crontab -ро барои иҷрои сатри фармон дар ҳар 5 дақиқа истифода баред
+CronExplainHowToRunWin=Дар муҳити Windows (tm) Windows шумо метавонед асбобҳои ба нақша гирифташудаи вазифаро барои ҳар 5 дақиқа иҷро кардани сатри фармон истифода баред
+CronMethodDoesNotExists=Синфи %s ягон усулро дар бар намегирад %s
+CronMethodNotAllowed=Усули %s аз синфи %s дар рӯйхати блокҳои усулҳои мамнӯъ ҷойгир аст
+CronJobDefDesc=Профилҳои кори Cron дар файли тавсифкунандаи модул муайян карда шудаанд. Вақте ки модул фаъол карда мешавад, онҳо бор карда мешаванд ва дастрасанд, то шумо метавонед корҳоро аз менюи асбобҳои администратор %s идора кунед.
+CronJobProfiles=Рӯйхати профилҳои пешакии кор cron
+# Menu
+EnabledAndDisabled=Фаъол ва ғайрифаъол
+# Page list
+CronLastOutput=Натиҷаи охирини иҷро
+CronLastResult=Рамзи натиҷаҳои охирин
+CronCommand=Фармон
+CronList=Корҳои ба нақша гирифташуда
+CronDelete=Корҳои ба нақша гирифташударо нест кунед
+CronConfirmDelete=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои ба нақша гирифташударо нест кунед?
+CronExecute=Ҳоло оғоз кунед
+CronConfirmExecute=Шумо мутмаин ҳастед, ки мехоҳед ин корҳои таъиншударо ҳозир иҷро кунед?
+CronInfo=Модули кории ба нақша гирифташуда имкон медиҳад, ки ҷойҳои корӣ ба таври худкор иҷро карда шаванд. Корҳоро инчунин дастӣ оғоз кардан мумкин аст.
+CronTask=Айюб
+CronNone=Давраи навбатии вазифаи ба нақша гирифташуда
+CronNotYetRan=Ҳеҷ гоҳ иҷро нашудааст
+CronDtStart=На пеш
+CronDtEnd=На пас аз
+CronDtNextLaunch=Иҷрои навбатӣ
+CronDtLastLaunch=Санаи оғози иҷрои охирин
+CronDtLastResult=Санаи анҷоми иҷрои охирин
+CronFrequency=Фосила
+CronClass=Синф
+CronMethod=Усул
+CronModule=Модул
+CronNoJobs=Ягон ҷои кор ба қайд гирифта нашудааст
+CronPriority=Афзалият
+CronLabel=Нишон
+CronNbRun=Шумораи партовҳо
+CronMaxRun=Шумораи ниҳоии партовҳо
+CronEach=Ҳар
+JobFinished=Айюб оғоз ва анҷом ёфт
+Scheduled=Ба нақша гирифта шудааст
+#Page card
+CronAdd=Иловаи ҷойҳои корӣ
+CronEvery=Ҳар як корро иҷро кунед
+CronObject=Мисол/Объект барои сохтан
+CronArgs=Параметрҳо
+CronSaveSucess=Бо муваффақият захира кунед
+CronNote=Шарҳ
+CronFieldMandatory=Майдонҳои %s ҳатмӣ мебошанд
+CronErrEndDateStartDt=Санаи анҷом наметавонад пеш аз санаи оғоз бошад
+StatusAtInstall=Ҳолати насби модул
+CronStatusActiveBtn=Банақшагириро фаъол созед
+CronStatusInactiveBtn=Хомӯш кардан
+CronTaskInactive=Ин кор ғайрифаъол аст (ба нақша гирифта нашудааст)
+CronId=Id
+CronClassFile=Номи файл бо синф
+CronModuleHelp=Номи феҳристи модули Dolibarr (инчунин бо модули беруни Dolibarr кор мекунад). <BR> Масалан, барои даъват кардани усули гирифтани объекти Dolibarr Маҳсулот /htdocs /<u> product </u> /class/product.class.php, арзиши модул a0342fccfda19zz8 a0494b98 аст
+CronClassFileHelp=Роҳи нисбӣ ва номи файл барои бор кардан (роҳ нисбат ба феҳристи решаи сервери веб аст). <BR> Масалан, барои даъват кардани усули гирифтани объекти Dolibarr Маҳсулот htdocs/product/class/<u> product.class.php </u>, арзиши файли синф a0342fccfda19bz8011
+CronObjectHelp=Номи объект барои бор кардан. <BR> Масалан, барои даъват кардани усули гирифтани объекти Dolibarr Product /htdocs/product/class/product.class.php, арзиши номи файли синф <br> <i> Маҳсулот </i> аст
+CronMethodHelp=Усули объекти оғоз. <BR> Масалан, барои даъват кардани усули гирифтани объекти Dolibarr Product /htdocs/product/class/product.class.php, арзиши усул <br> <i> гирифтани </i> аст
+CronArgsHelp=Усули далелҳо. <BR> Масалан, барои даъват кардани усули дарёфти объекти Маҳсулоти Dolibarr /htdocs/product/class/product.class.php, арзиши параметрҳо метавонад<br><i>0, ProductRef</i>
+CronCommandHelp=Хати фармони система барои иҷро.
+CronCreateJob=Эҷоди кори нави ба нақша гирифташуда
+CronFrom=Аз
+# Info
+# Common
+CronType=Навъи кор
+CronType_method=Усули занги синфи PHP
+CronType_command=Фармони Shell
+CronCannotLoadClass=Файли синфи %s бор карда намешавад (барои истифодаи синфи %s)
+CronModuleNotEnabledInThisEntity=Модули Cron дар ин объект фаъол нест (барои истифода бурдани усули %s объекти %s)
+CronCannotLoadObject=Файли синфи %s бор карда шуд, аммо объекти %s дар он ёфт нашуд
+UseMenuModuleToolsToAddCronJobs=Ба менюи "<a href="%s"> Home - Воситаҳои маъмурӣ - Ҷойҳои ба нақша гирифташуда </a>" ворид шавед, то ҷойҳои кориро бубинед ва таҳрир кунед.
+JobDisabled=Кор хомӯш карда шудааст
+MakeLocalDatabaseDumpShort=Захираи пойгоҳи додаҳои маҳаллӣ
+MakeLocalDatabaseDump=Як партовгоҳи пойгоҳи додаҳои маҳаллиро эҷод кунед. Параметрҳо инҳоянд: фишурдасозӣ ('gz' ё 'bz' ё 'ҳеҷ'), навъи нусхабардорӣ ('mysql', 'pgsql', 'auto'), 1, 'auto' ё номи файл барои сохтан, шумораи файлҳои захиравӣ барои нигоҳ доштан
+MakeSendLocalDatabaseDumpShort=Нусхаи захиравии пойгоҳи додаҳои маҳаллиро фиристед
+MakeSendLocalDatabaseDump=Нусхаи захиравии пойгоҳи додаҳои маҳаллиро тавассути почтаи электронӣ фиристед. Параметрҳо инҳоянд: ба, аз, мавзӯъ, паём, номи файл (Номи файли фиристодашуда), филтр ('sql' танҳо барои нусхабардории пойгоҳи додаҳо)
+BackupIsTooLargeSend=Бубахшед, файли охирини эҳтиётӣ хеле калон аст, ки тавассути почтаи электронӣ фиристода шавад
+CleanUnfinishedCronjobShort=Cronjob нотамомро тоза кунед
+CleanUnfinishedCronjob=Вақте ки ин раванд дигар иҷро намешавад, cronjob тоза дар коркард часпидааст
+WarningCronDelayed=Диққат, бо мақсади иҷроиш, кадом санаи навбатии иҷрои корҳои имконпазир бошад, ҷойҳои кории шумо то ҳадди аксар %s ба таъхир гузошта мешаванд.
+DATAPOLICYJob=Тозакунандаи маълумот ва анонимайзер
+JobXMustBeEnabled=Job %s бояд фаъол карда шавад
+EmailIfError=Почтаи электронӣ барои огоҳӣ дар бораи хато
+JobNotFound=Кори %s дар рӯйхати ҷойҳои корӣ ёфт нашуд (кӯшиш кунед, ки модулро ғайрифаъол/фаъол кунед)
+ErrorInBatch=Хатогӣ ҳангоми иҷро кардани кори %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Охирин кори ба нақша гирифташуда
+NextScheduledJobExecute=Кори навбатии ба нақша гирифташуда барои иҷро
+NumberScheduledJobError=Шумораи ҷойҳои кории ба нақша гирифташуда
+NumberScheduledJobNeverFinished=Миқдори корҳои пешбинишуда ҳеҷ гоҳ ба анҷом нарасидааст

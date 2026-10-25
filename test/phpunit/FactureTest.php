@@ -1,6 +1,9 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
+/* Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +27,22 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -45,343 +52,567 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureTest extends PHPUnit\Framework\TestCase
+class FactureTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
+		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
+		parent::setUpBeforeClass();
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return FactureTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+		// We disable module blocked log to avoid interference with tests
+		global $db;
+		$blockedlogmodule = new modBlockedLog($db);
+		$blockedlogmodule->remove();
+	}
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+	/**
+	 * testFactureCreate
+	 *
+	 * @return int
+	 */
+	public function testFactureCreate()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
+		$localobject = new Facture($db);
+		$localobject->initAsSpecimen();
+		$result = $localobject->create($user);
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-        if (empty($conf->facture->enabled)) { print __METHOD__." module customer invoice must be enabled.\n"; die(); }
-        if (! empty($conf->ecotaxdeee->enabled)) { print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(); }
+	/**
+	 * testFactureFetch
+	 *
+	 * @param   int $id     Id invoice
+	 * @return  int
+	 *
+	 * @depends testFactureCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureFetch($id)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		$localobject = new Facture($db);
+		$result = $localobject->fetch($id);
 
-        print __METHOD__."\n";
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		// Specimen lines are built from real products picked at random (see Facture::initAsSpecimen), so the
+		// exact line count is not stable (a kit/BOM product can expand into extra lines) - only check totals coherence.
+		$this->assertNotEmpty($localobject->lines);
+		$this->assertLineTotalsMatchHeader($localobject, 'after fetch');
 
-        print __METHOD__."\n";
-    }
+		return $localobject;
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFactureFetch
+	 *
+	 * @param   Facture $localobject Invoice
+	 * @return  int
+	 *
+	 * @depends testFactureFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        print __METHOD__."\n";
-    }
+		$this->changeProperties($localobject);
+		$result = $localobject->update($user);
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testFactureCreate
-     *
-     * @return int
-     */
-    public function testFactureCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFactureAddLine
+	 *
+	 * @param	Facture	$localobject	Invoice
+	 * @return	array{0:Facture,1:int}	Invoice and id of the line added
+	 *
+	 * @depends testFactureUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureAddLine($localobject)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        $localobject=new Facture($this->savdb);
-        $localobject->initAsSpecimen();
-        $result=$localobject->create($user);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-        return $result;
-    }
+		$localobject->fetch_thirdparty();
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    /**
-     * testFactureFetch
-     *
-     * @param   int $id     Id invoice
-     * @return  int
-     *
-     * @depends testFactureCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$lineid = $localobject->addline('PHPUnit addline test', 100, 2, 20);	// 2 x 100 HT at 20% VAT = 200 HT / 40 VAT / 240 TTC
 
-        $localobject=new Facture($this->savdb);
-        $result=$localobject->fetch($id);
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid."\n";
+		$this->assertGreaterThan(0, $lineid, $localobject->errorsToString());
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." id=".$id." result=".$result."\n";
-        return $localobject;
-    }
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount + 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 200, (float) $localobject->total_ht, 0.01, 'total_ht not updated after addline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after addline');
 
-    /**
-     * testFactureFetch
-     *
-     * @param   Object $localobject Invoice
-     * @return  int
-     *
-     * @depends testFactureFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureUpdate($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return array($localobject, $lineid);
+	}
 
-        $this->changeProperties($localobject);
-        $result=$localobject->update($user);
+	/**
+	 * testFactureUpdateLine
+	 *
+	 * @param	array{0:Facture,1:int}	$params	Invoice and id of the line to update
+	 * @return	array{0:Facture,1:int}			Invoice and id of the line updated
+	 *
+	 * @depends testFactureAddLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureUpdateLine($params)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    /**
-     * testFactureValid
-     *
-     * @param   Object $localobject Invoice
-     * @return  void
-     *
-     * @depends testFactureUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$result = $localobject->updateline($lineid, 'PHPUnit addline test', 100, 3, 0, '', '', 20);	// qty 2 -> 3, so +100 HT / +20 VAT / +120 TTC
 
-        $result=$localobject->validate($user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 
-        $this->assertLessThan($result, 0);
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 100, (float) $localobject->total_ht, 0.01, 'total_ht not updated after updateline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after updateline');
 
-        // Test everything are still same than specimen
-        $newlocalobject=new Facture($this->savdb);
-        $newlocalobject->initAsSpecimen();
-        $this->changeProperties($newlocalobject);
+		return array($localobject, $lineid);
+	}
 
-        // Hack to avoid test to be wrong when module sellyoursaas is on
-        unset($localobject->array_options['options_commission']);
-        unset($localobject->array_options['options_reseller']);
+	/**
+	 * testFactureDeleteLine
+	 *
+	 * @param	array{0:Facture,1:int}	$params	Invoice and id of the line to delete
+	 * @return	Facture
+	 *
+	 * @depends testFactureUpdateLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureDeleteLine($params)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        $arraywithdiff = $this->objCompare(
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
+
+		$result = $localobject->deleteLine($lineid);
+
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		// Back to the original specimen lines, with the same totals
+		$this->assertCount($beforelinecount - 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht - 300, (float) $localobject->total_ht, 0.01, 'total_ht not updated after deleteLine');
+		$this->assertLineTotalsMatchHeader($localobject, 'after deleteLine');
+
+		return $localobject;
+	}
+
+	/**
+	 * testFactureValid
+	 *
+	 * @param   Facture $localobject Invoice
+	 * @return  Facture
+	 *
+	 * @depends testFactureDeleteLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureValid($localobject)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		// Force to default setup
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+
+		$result = $localobject->validate($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
+		$this->assertLessThan($result, 0);
+
+		// Test everything is still the same as a freshly built specimen with the same mutation applied
+		// (catches unwanted field changes introduced by update()/validate())
+		$this->assertMatchesFreshSpecimen(
 			$localobject,
-			$newlocalobject,
-			true,
+			function ($specimen) {
+				$this->changeProperties($specimen);
+			},
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
-				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
-				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
-				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
-                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement'
+				'newref', 'oldcopy', 'oldref', 'id', 'lines', 'line', 'client', 'thirdparty', 'brouillon', 'fk_user_author', 'fk_user_modif', 'user_modification_id', 'date_creation', 'date_validation', 'datem', 'date_modification',
+				'ref', 'statut', 'status', 'paye', 'ref', 'actiontypecode', 'actionmsg2', 'actionmsg', 'mode_reglement', 'cond_reglement',
+				'cond_reglement_doc', 'cond_reglement_label', 'modelpdf',
+				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
+				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
+				'total_ht', 'total_tva', 'total_ttc',
+				'multicurrency_total_ht', 'multicurrency_total_tva',	'multicurrency_total_ttc', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx',
+				'retained_warranty', 'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
+				'trackid', 'user_creat', 'user_valid', 'note'
 			)
 		);
-        $this->assertEquals($arraywithdiff, array());    // Actual, Expected
 
-        return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testFactureOther
-     *
-     * @param   Object $localobject Invoice
-     * @return  int
-     *
-     * @depends testFactureValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFactureValidPointOfTaxMandatory
+	 *
+	 * With option INVOICE_POINTOFTAX_DATE_MANDATORY, an invoice without point of tax date can't be validated,
+	 * a deposit invoice can.
+	 *
+	 * @return void
+	 */
+	public function testFactureValidPointOfTaxMandatory()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+		$conf->global->INVOICE_POINTOFTAX_DATE = 1;
+		$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 1;
+		$langs->loadLangs(array("main", "bills"));
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+		try {
+			// Own thirdparty and free text lines, so the test doesn't depend on demo data
+			$soc = new Societe($db);
+			$soc->name = 'Test point of tax '.dol_print_date(dol_now(), 'dayhourlog');
+			$soc->client = 1;
+			$soc->code_client = -1;
+			$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
 
-        $result=$localobject->demande_prelevement($user);
-        print __METHOD__." result=".$result."\n";
-       	$this->assertLessThan($result, 0);
+			$invoices = array();
+			foreach (array(Facture::TYPE_STANDARD, Facture::TYPE_DEPOSIT) as $type) {
+				$invoice = new Facture($db);
+				$invoice->socid = $soc->id;
+				$invoice->type = $type;
+				$invoice->date = dol_mktime(0, 0, 0, 10, 15, 2026);
+				$invoice->date_pointoftax = null;
+				$invoice->cond_reglement_id = 1;
+				$this->assertGreaterThan(0, $invoice->create($user), $invoice->errorsToString());
+				$this->assertGreaterThan(0, $invoice->addline('Service', 100, 1, 19), $invoice->errorsToString());
+				$invoices[$type] = $invoice;
+			}
 
-        return $localobject->id;
-    }
+			$result = $invoices[Facture::TYPE_STANDARD]->validate($user);
+			print __METHOD__." result=".$result." error=".$invoices[Facture::TYPE_STANDARD]->error."\n";
+			$this->assertEquals(-1, $result);
+			$this->assertStringContainsString($langs->transnoentitiesnoconv("DatePointOfTax"), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 
-    /**
-     * testFactureDelete
-     *
-     * @param   int $id     Id of invoice
-     * @return  int
-     *
-     * @depends testFactureOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+			$invoices[Facture::TYPE_STANDARD]->date_pointoftax = dol_mktime(0, 0, 0, 9, 30, 2026);
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_STANDARD]->validate($user), $invoices[Facture::TYPE_STANDARD]->errorsToString());
 
-        // Force default setup
-        unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
-        unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
+			$this->assertGreaterThan(0, $invoices[Facture::TYPE_DEPOSIT]->validate($user), $invoices[Facture::TYPE_DEPOSIT]->errorsToString());
+		} finally {
+			$conf->global->INVOICE_POINTOFTAX_DATE = 0;
+			$conf->global->INVOICE_POINTOFTAX_DATE_MANDATORY = 0;
+		}
+	}
 
-        $localobject=new Facture($this->savdb);
-        $result=$localobject->fetch($id);
+	/**
+	 * testFactureOther
+	 *
+	 * @param   Facture $localobject Invoice
+	 * @return  int
+	 *
+	 * @depends testFactureValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureOther($localobject)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        // Create another invoice and validate it after $localobject
-        $localobject2=new Facture($this->savdb);
-        $result=$localobject2->initAsSpecimen();
-        $result=$localobject2->create($user);
-        $result=$localobject2->validate($user);
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
+
+		$result = $localobject->demande_prelevement($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testFactureDelete
+	 *
+	 * @param   int $id     Id of invoice
+	 * @return  int
+	 *
+	 * @depends testFactureOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureDelete($id)
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		// Force default setup
+		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
+		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
+
+		$localobject = new Facture($db);
+		$result = $localobject->fetch($id);
+
+		// Create another invoice and validate it after $localobject
+		$localobject2 = new Facture($db);
+		$result = $localobject2->initAsSpecimen();
+		$result = $localobject2->create($user);
+		$result = $localobject2->validate($user);
 		print 'Invoice $localobject ref = '.$localobject->ref."\n";
-        print 'Invoice $localobject2 created with ref = '.$localobject2->ref."\n";
+		print 'Invoice $localobject2 created with ref = '.$localobject2->ref."\n";
 
-        $conf->global->INVOICE_CAN_NEVER_BE_REMOVED = 1;
+		$conf->global->INVOICE_CAN_NEVER_BE_REMOVED = 1;
 
-        $result=$localobject2->delete($user);					// Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
-        print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
-        $this->assertEquals(0, $result, 'Deletion should fail, option INVOICE_CAN_NEVER_BE_REMOVED is on');
+		$result = $localobject2->delete($user);					// Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
+		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
+		$this->assertEquals(0, $result, 'Deletion should fail, option INVOICE_CAN_NEVER_BE_REMOVED is on');
 
-        unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
+		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-        $result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
-        print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
-        $this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
+		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
+		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
+		$this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
 
-        $result=$localobject2->delete($user);					// Deletion is OK, it is last invoice
-        print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
-        $this->assertGreaterThan(0, $result, 'Deletion should work, it is last invoice');
+		var_dump($localobject2->is_erasable());
 
-        $result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
-        print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
-        $this->assertGreaterThan(0, $result, 'Deletion should work, it is again last invoice');
+		$result = $localobject2->delete($user);					// Deletion is OK, it is last invoice
+		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Deletion should work, it is last invoice');
 
-        return $result;
-    }
+		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
+		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Deletion should work, it is again last invoice');
 
-    /**
-     * Edit an object to test updates
-     *
-     * @param   mixed $localobject        Object Facture
-     * @return  void
-     */
-    public function changeProperties(&$localobject)
-    {
-        $localobject->note_private='New note';
-        //$localobject->note='New note after update';
-    }
+		return $result;
+	}
 
-    /**
-     * Compare all public properties values of 2 objects
-     *
-     * @param   Object $oA                      Object operand 1
-     * @param   Object $oB                      Object operand 2
-     * @param   boolean $ignoretype             False will not report diff if type of value differs
-     * @param   array $fieldstoignorearray      Array of fields to ignore in diff
-     * @return  array                           Array with differences
-     */
-    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
-    {
-        $retAr=array();
+	/**
+	 * testFacturePointOfTaxLockedAfterValidation
+	 *
+	 * The point of tax date of a validated invoice can't be changed by update(), other updates still work,
+	 * and it can be changed again once the invoice is back to draft.
+	 *
+	 * @return void
+	 */
+	public function testFacturePointOfTaxLockedAfterValidation()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
-        if (get_class($oA) !== get_class($oB))
-        {
-            $retAr[]="Supplied objects are not of same class.";
-        } else {
-            $oVarsA=get_object_vars($oA);
-            $oVarsB=get_object_vars($oB);
-            $aKeys=array_keys($oVarsA);
-            foreach ($aKeys as $sKey)
-            {
-                if (in_array($sKey, $fieldstoignorearray)) continue;
-                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
-                {
-                    $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
-                }
-                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey])
-                {
-                    $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
-                }
-            }
-        }
-        return $retAr;
-    }
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+		$langs->loadLangs(array("main", "bills"));
+
+		// Own thirdparty and free text line, so the test doesn't depend on demo data
+		$soc = new Societe($db);
+		$soc->name = 'Test point of tax lock '.dol_print_date(dol_now(), 'dayhourlog');
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$this->assertGreaterThan(0, $soc->create($user), $soc->errorsToString());
+
+		$localobject = new Facture($db);
+		$localobject->socid = $soc->id;
+		$localobject->type = Facture::TYPE_STANDARD;
+		$localobject->date = dol_mktime(0, 0, 0, 10, 15, 2026);
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 9, 30, 2026);
+		$localobject->cond_reglement_id = 1;
+		$this->assertGreaterThan(0, $localobject->create($user), $localobject->errorsToString());
+		$this->assertGreaterThan(0, $localobject->addline('Service', 100, 1, 19), $localobject->errorsToString());
+
+		// Draft: the date can be changed
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 9, 29, 2026);
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+		$this->assertGreaterThan(0, $localobject->validate($user), $localobject->errorsToString());
+
+		// Validated: the date can't be changed nor removed, other fields can
+		$localobject->fetch($localobject->id);
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$result = $localobject->update($user);
+		print __METHOD__." result=".$result." error=".$localobject->error."\n";
+		$this->assertLessThan(0, $result);
+		$this->assertEquals($langs->trans("ErrorPointOfTaxOfValidatedInvoiceCantBeChanged", $localobject->ref), $localobject->error);
+
+		$localobject->fetch($localobject->id);
+		$localobject->date_pointoftax = null;
+		$this->assertLessThan(0, $localobject->update($user));
+
+		// Status set to draft only on the object (as a PUT on the API can do): still refused
+		$localobject->fetch($localobject->id);
+		$localobject->status = Facture::STATUS_DRAFT;
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$this->assertLessThan(0, $localobject->update($user));
+
+		$localobject->fetch($localobject->id);
+		$this->assertEquals('2026-09-29', dol_print_date($localobject->date_pointoftax, '%Y-%m-%d'));
+		$localobject->ref_customer = 'REF-POINTOFTAX';
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+
+		// Back to draft: the date can be changed again
+		$this->assertGreaterThan(0, $localobject->setDraft($user), $localobject->errorsToString());
+		$localobject->date_pointoftax = dol_mktime(0, 0, 0, 10, 31, 2026);
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+	}
+
+	/**
+	 * testFactureLoadBoard
+	 *
+	 * load_board() of customer and supplier invoices computes its count, total and number of late invoices with one aggregate
+	 * query. Check it against the reference rule applied row by row (hasDelay() on each unpaid validated invoice), on synthetic
+	 * invoices with due dates spread around the warning delay, some without due date. Inserted in a transaction that is rolled
+	 * back. Independent of the other tests of this class.
+	 *
+	 * @return void
+	 */
+	/*
+	public function testFactureLoadBoard()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		$now = dol_now();
+		$db->begin();
+
+		foreach (['facture', 'facture_fourn'] as $table) {
+			for ($i = 1; $i <= 60; $i++) {
+				// Due dates from 40 days ago to 19 days ahead, one invoice in ten without due date
+				$due = ($i % 10 == 0) ? 'NULL' : "'".$db->idate($now + (($i % 60) - 40) * 86400)."'";
+				if ($table == 'facture') {
+					$sql = "INSERT INTO ".$db->prefix()."facture (ref, entity, fk_soc, fk_statut, paye, type, datec, datef, date_lim_reglement, total_ht)";
+					$sql .= " VALUES ('(PROVBOARD".$i.")', ".((int) $conf->entity).", 1, ".Facture::STATUS_VALIDATED.", 0, 0, '".$db->idate($now)."', '".$db->idate($now)."', ".$due.", ".($i * 10).".5)";
+				} else {
+					$sql = "INSERT INTO ".$db->prefix()."facture_fourn (ref, ref_supplier, entity, fk_soc, fk_user_author, fk_statut, paye, type, datec, datef, date_lim_reglement, total_ht)";
+					$sql .= " VALUES ('(PROVBOARD".$i.")', 'BOARD".$i."', ".((int) $conf->entity).", 1, ".((int) $user->id).", ".FactureFournisseur::STATUS_VALIDATED.", 0, 0, '".$db->idate($now)."', '".$db->idate($now)."', ".$due.", ".($i * 10).".5)";
+				}
+				$this->assertTrue((bool) $db->query($sql), $table.' insert '.$db->lasterror());
+			}
+		}
+
+		foreach ([['facture', 'Facture', 'f', 'date_lim_reglement'], ['facture_fourn', 'FactureFournisseur', 'ff', 'date_echeance']] as [$table, $class, $alias, $property]) {
+			// Reference: the rule of hasDelay() applied to each unpaid validated invoice the user can see
+			$expected = ['nbtodo' => 0, 'nbtodolate' => 0, 'total' => 0.0];
+			$sql = "SELECT ".$alias.".date_lim_reglement as datefin, ".$alias.".fk_statut as status, ".$alias.".total_ht FROM ".$db->prefix().$table." as ".$alias;
+			// Same scope as load_board(): entities of the invoice element for customer invoices, current entity for supplier invoices
+			$sql .= " WHERE ".$alias.".paye = 0 AND ".$alias.".fk_statut = ".constant($class.'::STATUS_VALIDATED');
+			$sql .= ($table == 'facture' ? " AND f.entity IN (".getEntity('invoice').")" : " AND ff.entity = ".((int) $conf->entity));
+			$resql = $db->query($sql);
+			$this->assertNotFalse($resql, $db->lasterror());
+			$reference = new $class($db);
+			while ($obj = $db->fetch_object($resql)) {
+				$reference->$property = $db->jdate($obj->datefin);
+				$reference->status = $obj->status;
+				$reference->statut = $obj->status;
+				$expected['nbtodo']++;
+				$expected['total'] += (float) $obj->total_ht;
+				if ($reference->hasDelay()) {
+					$expected['nbtodolate']++;
+				}
+			}
+			$this->assertGreaterThanOrEqual(60, $expected['nbtodo'], $class.' the synthetic invoices must be counted');
+			$this->assertGreaterThan(0, $expected['nbtodolate'], $class.' some synthetic invoices must be late');
+			$this->assertLessThan($expected['nbtodo'], $expected['nbtodolate'], $class.' some synthetic invoices must not be late');
+
+			$invoice = new $class($db);
+			$board = $invoice->load_board($user);
+
+			print __METHOD__." ".$class." nbtodo=".$board->nbtodo." nbtodolate=".$board->nbtodolate." total=".$board->total."\n";
+
+			$this->assertInstanceOf('WorkboardResponse', $board);
+			$this->assertSame($expected['nbtodo'], $board->nbtodo, $class.' nbtodo');
+			$this->assertSame($expected['nbtodolate'], $board->nbtodolate, $class.' nbtodolate');
+			$this->assertEqualsWithDelta($expected['total'], $board->total, 0.001, $class.' total');
+			$this->assertNotEmpty($board->url_late, $class.' url_late must be set when there are late invoices');
+			$this->assertNotEmpty($board->url);
+		}
+
+		$db->rollback();
+	}
+	*/
+
+	/**
+	 * Edit an object to test updates
+	 *
+	 * @param   Facture $localobject        Object Facture
+	 * @return  void
+	 */
+	public function changeProperties(&$localobject)
+	{
+		$localobject->note_private = 'New note';
+		//$localobject->note='New note after update';
+	}
 }

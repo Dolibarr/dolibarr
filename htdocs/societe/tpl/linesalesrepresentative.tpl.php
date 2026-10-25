@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,38 +17,77 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $object
+ *
+ * @var string $action
+ */
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
+'
+@phan-var-force Societe $object
+';
+
+print '<!-- linesalesrepresentative.tpl.php -->';
+
 // Sale representative
-print '<tr><td class="titlefield">';
+print '<tr><td>';
+print '<table class="nobordernopadding centpercent"><tr><td>';
 print $langs->trans('SalesRepresentatives');
 print '</td>';
-print '<td>';
+if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
+	print '<td class="right">';
+	print '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editsalesrepresentatives', 'socid' => $object->id], true) . '">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+	print '</td>';
+}
+print '</tr></table>';
+print '</td><td>';
 
-$listsalesrepresentatives = $object->getSalesRepresentatives($user);
-$nbofsalesrepresentative = count($listsalesrepresentatives);
-if ($nbofsalesrepresentative > 0)
-{
-	$userstatic = new User($db);
-	foreach ($listsalesrepresentatives as $val)
-	{
-		$userstatic->id = $val['id'];
-		$userstatic->login = $val['login'];
-		$userstatic->lastname = $val['lastname'];
-		$userstatic->firstname = $val['firstname'];
-		$userstatic->statut = $val['statut'];
-		$userstatic->photo = $val['photo'];
-		$userstatic->email = $val['email'];
-		$userstatic->phone = $val['phone'];
-		$userstatic->job = $val['job'];
-		$userstatic->entity = $val['entity'];
-		print $userstatic->getNomUrl(-1);
-		print ' ';
+if ($action == 'editsalesrepresentatives') {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="action" value="set_salesrepresentatives" />';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
+	print '<input type="hidden" name="socid" value="'.$object->id.'" />';
+	$arrayselected = GETPOST('commercial', 'array');
+	if (empty($arrayselected)) {
+		$arrayselected = $object->getSalesRepresentatives($user, 1);
 	}
-} else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
-print '</td></tr>';
+	print $form->select_dolusers($arrayselected, 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'quatrevingtpercent widthcentpercentminusx', 1, 0, true);
+	print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'" />';
+	print '</form>';
+} else {
+	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
+
+	$nbofsalesrepresentative = is_array($listsalesrepresentatives) ? count($listsalesrepresentatives) : 0;
+	if ($nbofsalesrepresentative > 0) {
+		$userstatic = new User($db);
+		foreach ($listsalesrepresentatives as $val) {
+			$userstatic->id = $val['id'];
+			$userstatic->login = $val['login'];
+			$userstatic->lastname = $val['lastname'];
+			$userstatic->firstname = $val['firstname'];
+			$userstatic->status = $val['statut'];
+			$userstatic->photo = $val['photo'];
+			$userstatic->email = $val['email'];
+			$userstatic->office_phone = $val['office_phone'];
+			$userstatic->user_mobile = $val['user_mobile'];
+			$userstatic->job = $val['job'];
+			$userstatic->entity = $val['entity'];
+			$userstatic->gender = $val['gender'];
+			print $userstatic->getNomUrl(-1, '', 0, 0, ($nbofsalesrepresentative > 1 ? 16 : (empty($conf->dol_optimize_smallscreen) ? 24 : 20)));
+			print ' ';
+		}
+	} else {
+		//print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+	}
+	print '</td></tr>';
+}

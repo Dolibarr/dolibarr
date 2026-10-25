@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * 		\brief      Module to include loans management
  *      \file       htdocs/core/modules/modLoan.class.php
  *      \ingroup    loan
- *      \brief      File to activate module loan
+ *      \brief      Description and activation file for the module loan
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -31,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modLoan extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -39,8 +39,6 @@ class modLoan extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->numero = 520;
 
@@ -54,7 +52,7 @@ class modLoan extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'money-bill-alt';
+		$this->picto = 'loan';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/loan/temp");
@@ -67,26 +65,32 @@ class modLoan extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->langfiles = array("loan");
 
 		// Constants
-		$this->const = array();
-		$this->const[0] = array(
+		$this->const = [
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_CAPITAL",
 				"chaine",
-				"164"
-		);
-		$this->const[1] = array(
+				"164",
+				"",
+				0,
+			],
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_INTEREST",
 				"chaine",
-				"6611"
-		);
-		$this->const[1] = array(
+				"6611",
+				"",
+				0,
+			],
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_INSURANCE",
 				"chaine",
-				"6162"
-		);
+				"6162",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();
@@ -97,7 +101,7 @@ class modLoan extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 520;
+		$this->rights[$r][0] = 521;
 		$this->rights[$r][1] = 'Read loans';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -153,12 +157,15 @@ class modLoan extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		$result = $this->_load_tables('/install/mysql/', 'loan');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Clean before activation
 		$this->remove($options);

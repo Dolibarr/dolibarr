@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
+/* Copyright (C) 2017-2026 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      ATM Consulting           <contact@atm-consulting.fr>
+ * Copyright (C) 2024      Frédéric France		    <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +27,67 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
-$res = require '../../main.inc.php';
+require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');	// Can be DOC_PREVIEW or DOC_DOWNLOAD
+
+if (! in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+	accessforbidden('Bad value for action. Must be DOC_PREVIEW or DOC_DOWNLOAD');
+}
 
 if ($element === 'facture') {
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
+} else {
+	accessforbidden('Bad value for element');
+}
 
-	$facture = new Facture($db);
-	if ($facture->fetch($id) > 0) {
-		$facture->call_trigger($action, $user);
-	}
+
+/*
+ * Actions
+ */
+
+$facture = new Facture($db);
+if ($facture->fetch($id) > 0) {
+	//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
+
+	// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
+
+	// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
+	$facture->call_trigger($action, $user);
+}
+
+
+/*
+ * View
+ */
+
+top_httphead();
+
+
+if ($facture->errors) {
+	http_response_code(500);
+	print implode("\n", $facture->errors);
+} else {
+	print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
 }

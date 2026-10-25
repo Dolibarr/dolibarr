@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - banks
+BankAccounts=Contas bancárias
+StatusAccountClosed=Fechado
+BankLineNotReconciled=Não conciliada
+SocialContributionPayment=Pagamento de imposto social / fiscal

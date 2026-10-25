@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2016       Charlie Benke       <charlie@patas-monkey.com>
--- Copyright (C) 2016       Frederic France     <frederic.france@free.fr>
+-- Copyright (C) 2016       Frédéric France     <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

@@ -18,5 +18,4 @@
 -- Linked files
 -- ========================================================================
 
-ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
-
+ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype, label);

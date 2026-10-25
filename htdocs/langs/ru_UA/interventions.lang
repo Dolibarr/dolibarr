@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - interventions
-NewIntervention=Новые вмешательства
-ListOfInterventions=Список мероприятий
-LastInterventions=Последнее вмешательства %s
-CreateDraftIntervention=Создать проект
-ConfirmDeleteInterventionLine=Вы действительно хотите удалить этот вмешательства линии?
-DocumentModelStandard=Стандартная модель документа для вмешательства

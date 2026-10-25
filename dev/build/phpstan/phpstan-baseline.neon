@@ -1,0 +1,307 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../../htdocs/core/modules/facture/modules_facture.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\CreditorInformation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../../htdocs/core/modules/facture/modules_facture.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentAmountInformation\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../../htdocs/core/modules/facture/modules_facture.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../../htdocs/core/modules/facture/modules_facture.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 2
+			path: ../../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/admin/about.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/admin/myobject_extrafields.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/admin/setup.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/ajax/myobject.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/css/mymodule.css.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/js/mymodule.js.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/mymoduleindex.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/mymoduleindex.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_agenda.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_agenda.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_card.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_card.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_contact.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_contact.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_document.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_document.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_list.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_list.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_note.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/myobject_note.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./master\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/scripts/mymodule.php
+
+		-
+			message: '#^Path in include\(\) "\.\./master\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/scripts/mymodule.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/stats/myobject_index.php
+
+		-
+			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/modulebuilder/template/stats/myobject_index.php
+
+		-
+			message: '#^PHPDoc type array\<array\<string, int\|string\>\> of property Opensurveysondage\:\:\$lines is not covariant with PHPDoc type array\<CommonObject\|stdClass\> of overridden property CommonObject\:\:\$lines\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''0'' and ''0'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: ../../../htdocs/product/admin/price_rules.php
+
+		-
+			message: '#^Offset ''t\.duration_effective'' on array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''t\.planned_workload'' on array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''t\.progress'' on array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totalbilled'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totalbilledfield'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totalbudget'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totalbudget…'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totaldurationdeclar…'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totaldurationeffect…'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totalplannedworkload'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totaltobill'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''totaltobillfield'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Offset ''type'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
+			message: '#^Parameter \#1 \$array of function uasort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function uasort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
+
+		-
+			message: '#^Offset ''u\.salary'' on array\{u\.salary\: \(float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/user/list.php
+
+		-
+			message: '#^Offset ''val'' on array\{val\: array\{u\.salary\: \(float\|int\)\}, nbfield\: int\<0, max\>, pos\?\: non\-empty\-array\<int, ''u\.salary''\>\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/user/list.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: ../../../htdocs/webportal/class/webportalmember.class.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: ../../../htdocs/webportal/class/webportalorder.class.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: ../../../htdocs/webportal/class/webportalpropal.class.php

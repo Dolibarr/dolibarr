@@ -1,0 +1,71 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = ການຮັບສະໝັກງານ
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = ຈັດການ ແລະ ຕິດຕາມແຄມເປນການຮັບສະໝັກພະນັກງານ ສໍາລັບຕຳແໜ່ງງານໃໝ່
+# Admin page
+RecruitmentSetup = ການຕັ້ງຄ່າການຮັບສະໝັກງານ
+RecruitmentSetupPage = ປ້ອນການຕັ້ງຄ່າຕົວເລືອກຫຼັກສຳລັບໂມດູນການຮັບສະໝັກງານຢູ່ບ່ອນນີ້
+RecruitmentArea=ຂົງເຂດການຮັບສະໝັກງານ
+PublicInterfaceRecruitmentDesc=ໜ້າເວັບສາທາລະນະຂອງວຽກແມ່ນ URL ສາທາລະນະເພື່ອສະແດງ ແລະ ຕອບຮັບວຽກທີ່ເປີດຮັບ. ມີລິ້ງທີ່ແຕກຕ່າງກັນສຳລັບແຕ່ລະວຽກທີ່ເປີດຮັບ, ເຊິ່ງສາມາດເບິ່ງໄດ້ໃນແຕ່ລະບັນທຶກຂອງວຽກ.
+EnablePublicRecruitmentPages=ເປີດໃຊ້ໜ້າເວັບສາທາລະນະສຳລັບວຽກທີ່ເປີດຮັບ
+
+NbOfEmployeesExpected=ຈຳນວນພະນັກງານທີ່ຕ້ອງການ
+JobLabel=ຊື່ຕຳແໜ່ງງານ
+WorkPlace=ສະຖານທີ່ເຮັດວຽກ
+DateExpected=ວັນທີຄາດໝາຍ
+FutureManager=ຜູ້ຈັດການໃນອະນາຄົດ
+ResponsibleOfRecruitement=ຜູ້ຮັບຜິດຊອບການຮັບສະໝັກງານ
+IfJobIsLocatedAtAPartner=ຫາກຕຳແໜ່ງງານຕັ້ງຢູ່ບ່ອນຂອງຄູ່ຄ້າ
+PositionToBeFilled=ຕຳແໜ່ງງານ
+PositionsToBeFilled=ຕຳແໜ່ງງານ
+ListOfPositionsToBeFilled=ລາຍຊື່ຕຳແໜ່ງງານ
+NewPositionToBeFilled=ຕຳແໜ່ງງານໃໝ່
+JobOfferToBeFilled=ຕຳແໜ່ງງານທີ່ຕ້ອງການຮັບສະໝັກ
+ThisIsInformationOnJobPosition=ຂໍ້ມູນຂອງຕຳແໜ່ງງານທີ່ຕ້ອງການຮັບສະໝັກ
+ContactForRecruitment=ຂໍ້ມູນຕິດຕໍ່ສຳລັບການຮັບສະໝັກງານ
+EmailRecruiter=ອີເມວຜູ້ຮັບສະໝັກ
+ToUseAGenericEmail=ເພື່ອໃຊ້ອີເມວທົ່ວໄປ. ຫາກບໍ່ໄດ້ກຳນົດໄວ້, ຈະໃຊ້ອີເມວຂອງຜູ້ຮັບຜິດຊອບການຮັບສະໝັກງານແທນ
+NewCandidature=ໃບສະໝັກໃໝ່
+ListOfCandidatures=ລາຍຊື່ໃບສະໝັກ
+Remuneration=ເງິນເດືອນ
+RequestedRemuneration=ເງິນເດືອນທີ່ຕ້ອງການ
+ProposedRemuneration=ເງິນເດືອນທີ່ສະເໜີໃຫ້
+ContractProposed=ສັນຍາທີ່ສະເໜີໃຫ້
+ContractSigned=ເຊັນສັນຍາແລ້ວ
+ContractRefused=ປະຕິເສດສັນຍາ
+RecruitmentCandidature=ໃບສະໝັກງານ
+JobPositions=ຕຳແໜ່ງງານ
+RecruitmentCandidatures=ໃບສະໝັກງານ
+InterviewToDo=ລາຍຊື່ຕິດຕໍ່ທີ່ຕ້ອງຕິດຕາມ
+AnswerCandidature=ການຕອບກັບໃບສະໝັກ
+YourCandidature=ໃບສະໝັກຂອງທ່ານ
+YourCandidatureAnswerMessage=ຂໍຂອບໃຈສຳລັບໃບສະໝັກຂອງທ່ານ.<br>...
+JobClosedTextCandidateFound=ປິດຮັບສະໝັກຕຳແໜ່ງນີ້ແລ້ວ. ໄດ້ພະນັກງານຄົບຕາມຈຳນວນແລ້ວ.
+JobClosedTextCanceled=ປິດຮັບສະໝັກຕຳແໜ່ງນີ້ແລ້ວ.
+ExtrafieldsJobPosition=ຄຸນລັກສະນະເພີ່ມເຕີມ (ຕຳແໜ່ງງານ)
+ExtrafieldsApplication=ຄຸນລັກສະນະເພີ່ມເຕີມ (ໃບສະໝັກງານ)
+MakeOffer=ຍື່ນຂໍ້ສະເໜີ
+WeAreRecruiting=ພວກເຮົາກຳລັງຮັບສະໝັກພະນັກງານ. ນີ້ແມ່ນລາຍຊື່ຕຳແໜ່ງງານທີ່ເປີດຮັບ...
+NoPositionOpen=ບໍ່ມີຕຳແໜ່ງງານຫວ່າງໃນເວລານີ້
+ConfirmClose=ຢືນຢັນການຍົກເລີກ
+ConfirmCloseAsk=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍົກເລີກໃບສະໝັກງານນີ້
+Recruitment=ການຮັບສະໝັກງານ
+ApplyJobCandidature=ສະໝັກວຽກຕຳແໜ່ງນີ້
+ErrorRecruitmmentCandidatureAlreadyExists= ມີໃບສະໝັກງານທີ່ໃຊ້ ອີເມວ %s ໃນລະບົບແລ້ວ
+RecruitmentCandidatureSaved=ບັນທຶກໃບສະໝັກງານສຳເລັດແລ້ວ
+NoOpenJobOffer=ບໍ່ມີການເປີດຮັບສະໝັກງານໃນເວລານີ້
+ShowPositionToBeFilled=ສະແດງຕຳແໜ່ງງານທີ່ເປີດຮັບ

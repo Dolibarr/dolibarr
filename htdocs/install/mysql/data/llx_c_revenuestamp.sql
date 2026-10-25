@@ -1,4 +1,4 @@
--- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,14 +14,13 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
---
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
+-- Do not place a comment at the end of the line, this file is parsed
+-- during installation and lines with '--' are removed.
 --
 
 --
--- Valeur des timbres fiscaux
--- Source des taux: ...
+-- Value of tax stamps
+-- Source of rates: ...
 --
 
 delete from llx_c_revenuestamp;
@@ -29,8 +28,16 @@ delete from llx_c_revenuestamp;
 -- TUNISIA (id country=10) --
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (101, 10, 0.4, 'fixed', 'Revenue stamp tunisia', 1);
 
+-- GREECE (id country=102) --
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1021, 102, 1.2, 'percent', 'Συντελεστής 1,2 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1022, 102, 2.4, 'percent', 'Συντελεστής 2,4 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1023, 102, 3.6, 'percent', 'Συντελεστής 3,6 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
 
 -- MEXICO (id country=154) --
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1541, 154, 1.5, 'percent', 'Revenue stamp mexico', 1);
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1542, 154,   3, 'percent', 'Revenue stamp mexico', 1);
 
+-- Turkiye (Turkey) (id country=221) --
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (22101,221,0.00948,'percent','Mukavelenameler Damga Vergisi',1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (22102,221,0.00189,'percent','Kira mukavelenameleri Damga Vergisi',1);

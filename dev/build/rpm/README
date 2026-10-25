@@ -1,0 +1,65 @@
+README (English)
+##################################################
+RPM Package tools
+##################################################
+
+This directory contains files used by makepack-dolibarr.pl script to build a package,
+ready to be distributed with format RPM (https://rpm.org)
+for Linux Distributions like Redhat, Fedora, CentOS, OpenSuse, OpenMandriva, Mageia ...
+
+
+# This is standard command to work on RPM packaging:
+
+# To install all packagers tools:
+ - Fedora: yum -y install rpmlint fedora-packager mock koji hunspell-en hunspell-es hunspell-fr hunspell-it
+ - OpenSuse: yast --install update-desktop-files
+
+# rpmlint file.rpm				    Test a package
+# mock -r fedora-15-i386 --rebuild ../SRPMS/hello-2.7-1.fc15.src.rpm
+
+
+# On Fedora
+# =========
+# rpm -i --test dolibarr-...rpm                   to list dependencies of RPM
+# yum -v install dolibarr-...rpm                  to install package and dependencies
+# yum -v erase dolibarr                           to remove package
+# chcon -R -h -t httpd_sys_script_rw_t /file			to add temporary context rw for httpd on /file
+# restorecon -R -v /file			                    to restore values into files (cancel chcon, validate semanage)
+# semanage fcontext -a -t httpd_sys_script_rw_t "/dir/(.*)?" 	to add persistent context rw for httpd on /dir (this add file_contexts.local)
+
+
+# On OpenSuse
+# ===========
+# zypper install dolibarr-...rpm     to install package and dependencies
+# zypper remove  dolibarr            to remove package
+# zypper search  xxx                 to search a package
+
+
+# On Mageia (after su - root)
+# ===========================
+# urpmi dolibarr-...rpm              to install package and dependencies
+# urpme dolibarr                     to remove package
+#
+
+
+To submit a package to Fedora:
+- Create account on       https://bugzilla.redhat.com
+- Create account on       https://developer.fedoraproject.org/
+- Create SRPMS package
+- Upload package on       https://fedorapeople.org
+- Create a bug with form  https://bugzilla.redhat.com/bugzilla/enter_bug.cgi?product=Fedora&format=fedora-review
+
+This is example of content of review field (used for Bug 723326 - https://bugzilla.redhat.com/show_bug.cgi?id=723326):
+SRPMS URL: https://www.dolibarr.org/files/fedora/dolibarr-x.y.z-xxx.src.rpm
+Description:  Dolibarr ERP & CRM is an easy to use open source/free software
+for small and medium companies, foundations or freelances. It includes
+different features for Enterprise Resource Planning (ERP) and Customer
+Relationship Management (CRM) but also for different other activities.
+I am author of other already packaged OpenSources packages (awstats) but this
+is my first package to maintain myself. So i'm seeking a sponsor.
+- Edit field "Block" and add FE-NEEDSPONSOR
+- Check bug is into database by searching with id on https://bugzilla.redhat.com/
+- Install fedora packager tools: yum install fedora-packager
+- Setup fedora packagers tools: fedora-packager-setup
+- Send your package: koji build --scratch f16 path_to_source_RPM
+- Check if package is available:  https://koji.fedoraproject.org/koji/

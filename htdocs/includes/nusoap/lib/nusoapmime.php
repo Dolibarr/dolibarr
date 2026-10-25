@@ -1,5 +1,6 @@
 <?php
 /*
+$Id: nusoapmime.php,v 1.13 2010/04/26 20:15:08 snichol Exp $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -16,7 +17,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 The NuSOAP project home is:
 http://sourceforge.net/projects/nusoap/
@@ -41,13 +43,14 @@ require_once('Mail/mimeDecode.php');
 require_once('Mail/mimePart.php');
 
 /**
-* nusoap_client_mime client supporting MIME attachments defined at
-* http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
-*
-* @author   Scott Nichol <snichol@users.sourceforge.net>
-* @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
-* @access   public
-*/
+ * nusoap_client_mime client supporting MIME attachments defined at
+ * http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
+ *
+ * @author   Scott Nichol <snichol@users.sourceforge.net>
+ * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
+ * @version  $Id: nusoapmime.php,v 1.13 2010/04/26 20:15:08 snichol Exp $
+ * @access   public
+ */
 class nusoap_client_mime extends nusoap_client {
 	/**
 	 * @var array Each array element in the return is an associative array with keys
@@ -68,20 +71,20 @@ class nusoap_client_mime extends nusoap_client {
 	var $mimeContentType;
 
 	/**
-	* adds a MIME attachment to the current request.
-	*
-	* If the $data parameter contains an empty string, this method will read
-	* the contents of the file named by the $filename parameter.
-	*
-	* If the $cid parameter is false, this method will generate the cid.
-	*
-	* @param string $data The data of the attachment
-	* @param string $filename The filename of the attachment (default is empty string)
-	* @param string $contenttype The MIME Content-Type of the attachment (default is application/octet-stream)
-	* @param string $cid The content-id (cid) of the attachment (default is false)
-	* @return string The content-id (cid) of the attachment
-	* @access public
-	*/
+	 * adds a MIME attachment to the current request.
+	 *
+	 * If the $data parameter contains an empty string, this method will read
+	 * the contents of the file named by the $filename parameter.
+	 *
+	 * If the $cid parameter is false, this method will generate the cid.
+	 *
+	 * @param string $data The data of the attachment
+	 * @param string $filename The filename of the attachment (default is empty string)
+	 * @param string $contenttype The MIME Content-Type of the attachment (default is application/octet-stream)
+	 * @param string $cid The content-id (cid) of the attachment (default is false)
+	 * @return string The content-id (cid) of the attachment
+	 * @access public
+	 */
 	function addAttachment($data, $filename = '', $contenttype = 'application/octet-stream', $cid = false) {
 		if (! $cid) {
 			$cid = md5(uniqid(time()));
@@ -98,35 +101,35 @@ class nusoap_client_mime extends nusoap_client {
 	}
 
 	/**
-	* clears the MIME attachments for the current request.
-	*
-	* @access public
-	*/
+	 * clears the MIME attachments for the current request.
+	 *
+	 * @access public
+	 */
 	function clearAttachments() {
 		$this->requestAttachments = array();
 	}
 
 	/**
-	* gets the MIME attachments from the current response.
-	*
-	* Each array element in the return is an associative array with keys
-	* data, filename, contenttype, cid.  These keys correspond to the parameters
-	* for addAttachment.
-	*
-	* @return array The attachments.
-	* @access public
-	*/
+	 * gets the MIME attachments from the current response.
+	 *
+	 * Each array element in the return is an associative array with keys
+	 * data, filename, contenttype, cid.  These keys correspond to the parameters
+	 * for addAttachment.
+	 *
+	 * @return array The attachments.
+	 * @access public
+	 */
 	function getAttachments() {
 		return $this->responseAttachments;
 	}
 
 	/**
-	* gets the HTTP body for the current request.
-	*
-	* @param string $soapmsg The SOAP payload
-	* @return string The HTTP body, which includes the SOAP payload
-	* @access private
-	*/
+	 * gets the HTTP body for the current request.
+	 *
+	 * @param string $soapmsg The SOAP payload
+	 * @return string The HTTP body, which includes the SOAP payload
+	 * @access private
+	 */
 	function getHTTPBody($soapmsg) {
 		if (count($this->requestAttachments) > 0) {
 			$params['content_type'] = 'multipart/related; type="text/xml"';
@@ -179,13 +182,13 @@ class nusoap_client_mime extends nusoap_client {
 	}
 
 	/**
-	* gets the HTTP content type for the current request.
-	*
-	* Note: getHTTPBody must be called before this.
-	*
-	* @return string the HTTP content type for the current request.
-	* @access private
-	*/
+	 * gets the HTTP content type for the current request.
+	 *
+	 * Note: getHTTPBody must be called before this.
+	 *
+	 * @return string the HTTP content type for the current request.
+	 * @access private
+	 */
 	function getHTTPContentType() {
 		if (count($this->requestAttachments) > 0) {
 			return $this->mimeContentType;
@@ -194,14 +197,14 @@ class nusoap_client_mime extends nusoap_client {
 	}
 
 	/**
-	* gets the HTTP content type charset for the current request.
-	* returns false for non-text content types.
-	*
-	* Note: getHTTPBody must be called before this.
-	*
-	* @return string the HTTP content type charset for the current request.
-	* @access private
-	*/
+	 * gets the HTTP content type charset for the current request.
+	 * returns false for non-text content types.
+	 *
+	 * Note: getHTTPBody must be called before this.
+	 *
+	 * @return string the HTTP content type charset for the current request.
+	 * @access private
+	 */
 	function getHTTPContentTypeCharset() {
 		if (count($this->requestAttachments) > 0) {
 			return false;
@@ -210,14 +213,14 @@ class nusoap_client_mime extends nusoap_client {
 	}
 
 	/**
-	* processes SOAP message returned from server
-	*
-	* @param	array	$headers	The HTTP headers
-	* @param	string	$data		unprocessed response data from server
-	* @return	mixed	value of the message, decoded into a PHP type
-	* @access   private
-	*/
-    function parseResponse($headers, $data) {
+	 * processes SOAP message returned from server
+	 *
+	 * @param	array	$headers	The HTTP headers
+	 * @param	string	$data		unprocessed response data from server
+	 * @return	mixed	value of the message, decoded into a PHP type
+	 * @access   private
+	 */
+	function parseResponse($headers, $data) {
 		$this->debug('Entering parseResponse() for payload of length ' . strlen($data) . ' and type of ' . $headers['content-type']);
 		$this->responseAttachments = array();
 		if (strstr($headers['content-type'], 'multipart/related')) {
@@ -270,13 +273,14 @@ if (!extension_loaded('soap')) {
 }
 
 /**
-* nusoap_server_mime server supporting MIME attachments defined at
-* http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
-*
-* @author   Scott Nichol <snichol@users.sourceforge.net>
-* @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
-* @access   public
-*/
+ * nusoap_server_mime server supporting MIME attachments defined at
+ * http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
+ *
+ * @author   Scott Nichol <snichol@users.sourceforge.net>
+ * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
+ * @version  $Id: nusoapmime.php,v 1.13 2010/04/26 20:15:08 snichol Exp $
+ * @access   public
+ */
 class nusoap_server_mime extends nusoap_server {
 	/**
 	 * @var array Each array element in the return is an associative array with keys
@@ -297,20 +301,20 @@ class nusoap_server_mime extends nusoap_server {
 	var $mimeContentType;
 
 	/**
-	* adds a MIME attachment to the current response.
-	*
-	* If the $data parameter contains an empty string, this method will read
-	* the contents of the file named by the $filename parameter.
-	*
-	* If the $cid parameter is false, this method will generate the cid.
-	*
-	* @param string $data The data of the attachment
-	* @param string $filename The filename of the attachment (default is empty string)
-	* @param string $contenttype The MIME Content-Type of the attachment (default is application/octet-stream)
-	* @param string $cid The content-id (cid) of the attachment (default is false)
-	* @return string The content-id (cid) of the attachment
-	* @access public
-	*/
+	 * adds a MIME attachment to the current response.
+	 *
+	 * If the $data parameter contains an empty string, this method will read
+	 * the contents of the file named by the $filename parameter.
+	 *
+	 * If the $cid parameter is false, this method will generate the cid.
+	 *
+	 * @param string $data The data of the attachment
+	 * @param string $filename The filename of the attachment (default is empty string)
+	 * @param string $contenttype The MIME Content-Type of the attachment (default is application/octet-stream)
+	 * @param string $cid The content-id (cid) of the attachment (default is false)
+	 * @return string The content-id (cid) of the attachment
+	 * @access public
+	 */
 	function addAttachment($data, $filename = '', $contenttype = 'application/octet-stream', $cid = false) {
 		if (! $cid) {
 			$cid = md5(uniqid(time()));
@@ -327,35 +331,35 @@ class nusoap_server_mime extends nusoap_server {
 	}
 
 	/**
-	* clears the MIME attachments for the current response.
-	*
-	* @access public
-	*/
+	 * clears the MIME attachments for the current response.
+	 *
+	 * @access public
+	 */
 	function clearAttachments() {
 		$this->responseAttachments = array();
 	}
 
 	/**
-	* gets the MIME attachments from the current request.
-	*
-	* Each array element in the return is an associative array with keys
-	* data, filename, contenttype, cid.  These keys correspond to the parameters
-	* for addAttachment.
-	*
-	* @return array The attachments.
-	* @access public
-	*/
+	 * gets the MIME attachments from the current request.
+	 *
+	 * Each array element in the return is an associative array with keys
+	 * data, filename, contenttype, cid.  These keys correspond to the parameters
+	 * for addAttachment.
+	 *
+	 * @return array The attachments.
+	 * @access public
+	 */
 	function getAttachments() {
 		return $this->requestAttachments;
 	}
 
 	/**
-	* gets the HTTP body for the current response.
-	*
-	* @param string $soapmsg The SOAP payload
-	* @return string The HTTP body, which includes the SOAP payload
-	* @access private
-	*/
+	 * gets the HTTP body for the current response.
+	 *
+	 * @param string $soapmsg The SOAP payload
+	 * @return string The HTTP body, which includes the SOAP payload
+	 * @access private
+	 */
 	function getHTTPBody($soapmsg) {
 		if (count($this->responseAttachments) > 0) {
 			$params['content_type'] = 'multipart/related; type="text/xml"';
@@ -408,13 +412,13 @@ class nusoap_server_mime extends nusoap_server {
 	}
 
 	/**
-	* gets the HTTP content type for the current response.
-	*
-	* Note: getHTTPBody must be called before this.
-	*
-	* @return string the HTTP content type for the current response.
-	* @access private
-	*/
+	 * gets the HTTP content type for the current response.
+	 *
+	 * Note: getHTTPBody must be called before this.
+	 *
+	 * @return string the HTTP content type for the current response.
+	 * @access private
+	 */
 	function getHTTPContentType() {
 		if (count($this->responseAttachments) > 0) {
 			return $this->mimeContentType;
@@ -423,14 +427,14 @@ class nusoap_server_mime extends nusoap_server {
 	}
 
 	/**
-	* gets the HTTP content type charset for the current response.
-	* returns false for non-text content types.
-	*
-	* Note: getHTTPBody must be called before this.
-	*
-	* @return string the HTTP content type charset for the current response.
-	* @access private
-	*/
+	 * gets the HTTP content type charset for the current response.
+	 * returns false for non-text content types.
+	 *
+	 * Note: getHTTPBody must be called before this.
+	 *
+	 * @return string the HTTP content type charset for the current response.
+	 * @access private
+	 */
 	function getHTTPContentTypeCharset() {
 		if (count($this->responseAttachments) > 0) {
 			return false;
@@ -439,14 +443,14 @@ class nusoap_server_mime extends nusoap_server {
 	}
 
 	/**
-	* processes SOAP message received from client
-	*
-	* @param	array	$headers	The HTTP headers
-	* @param	string	$data		unprocessed request data from client
-	* @return	mixed	value of the message, decoded into a PHP type
-	* @access   private
-	*/
-    function parseRequest($headers, $data) {
+	 * processes SOAP message received from client
+	 *
+	 * @param	array	$headers	The HTTP headers
+	 * @param	string	$data		unprocessed request data from client
+	 * @return	mixed	value of the message, decoded into a PHP type
+	 * @access   private
+	 */
+	function parseRequest($headers, $data) {
 		$this->debug('Entering parseRequest() for payload of length ' . strlen($data) . ' and type of ' . $headers['content-type']);
 		$this->requestAttachments = array();
 		if (strstr($headers['content-type'], 'multipart/related')) {

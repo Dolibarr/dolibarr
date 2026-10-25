@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP\Auth;
 
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * HTTP Digest Authentication handler
+ * HTTP Digest Authentication handler.
  *
  * Use this class for easy http digest authentication.
  * Instructions:
@@ -27,10 +29,10 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Digest extends AbstractAuth {
-
+class Digest extends AbstractAuth
+{
     /**
-     * These constants are used in setQOP();
+     * These constants are used in setQOP();.
      */
     const QOP_AUTH = 1;
     const QOP_AUTHINT = 2;
@@ -42,28 +44,24 @@ class Digest extends AbstractAuth {
     protected $qop = self::QOP_AUTH;
 
     /**
-     * Initializes the object
+     * Initializes the object.
      */
-    function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response) {
-
+    public function __construct(string $realm, RequestInterface $request, ResponseInterface $response)
+    {
         $this->nonce = uniqid();
         $this->opaque = md5($realm);
         parent::__construct($realm, $request, $response);
-
     }
 
     /**
-     * Gathers all information from the headers
+     * Gathers all information from the headers.
      *
      * This method needs to be called prior to anything else.
-     *
-     * @return void
      */
-    function init() {
-
+    public function init()
+    {
         $digest = $this->getDigest();
-        $this->digestParts = $this->parseDigest($digest);
-
+        $this->digestParts = $this->parseDigest((string) $digest);
     }
 
     /**
@@ -78,141 +76,124 @@ class Digest extends AbstractAuth {
      * QOP_AUTHINT ensures integrity of the request body, but this is not
      * supported by most HTTP clients. QOP_AUTHINT also requires the entire
      * request body to be md5'ed, which can put strains on CPU and memory.
-     *
-     * @param int $qop
-     * @return void
      */
-    function setQOP($qop) {
-
+    public function setQOP(int $qop)
+    {
         $this->qop = $qop;
-
     }
 
     /**
      * Validates the user.
      *
      * The A1 parameter should be md5($username . ':' . $realm . ':' . $password);
-     *
-     * @param string $A1
-     * @return bool
      */
-    function validateA1($A1) {
-
+    public function validateA1(string $A1): bool
+    {
         $this->A1 = $A1;
-        return $this->validate();
 
+        return $this->validate();
     }
 
     /**
      * Validates authentication through a password. The actual password must be provided here.
      * It is strongly recommended not store the password in plain-text and use validateA1 instead.
-     *
-     * @param string $password
-     * @return bool
      */
-    function validatePassword($password) {
+    public function validatePassword(string $password): bool
+    {
+        $this->A1 = md5($this->digestParts['username'].':'.$this->realm.':'.$password);
 
-        $this->A1 = md5($this->digestParts['username'] . ':' . $this->realm . ':' . $password);
         return $this->validate();
-
     }
 
     /**
-     * Returns the username for the request
+     * Returns the username for the request.
+     * Returns null if there were none.
      *
-     * @return string
+     * @return string|null
      */
-    function getUsername() {
-
-        return $this->digestParts['username'];
-
+    public function getUsername()
+    {
+        return $this->digestParts['username'] ?? null;
     }
 
     /**
-     * Validates the digest challenge
-     *
-     * @return bool
+     * Validates the digest challenge.
      */
-    protected function validate() {
+    protected function validate(): bool
+    {
+        if (!is_array($this->digestParts)) {
+            return false;
+        }
 
-        $A2 = $this->request->getMethod() . ':' . $this->digestParts['uri'];
+        $A2 = $this->request->getMethod().':'.$this->digestParts['uri'];
 
-        if ($this->digestParts['qop'] == 'auth-int') {
+        if ('auth-int' === $this->digestParts['qop']) {
             // Making sure we support this qop value
-            if (!($this->qop & self::QOP_AUTHINT)) return false;
+            if (!($this->qop & self::QOP_AUTHINT)) {
+                return false;
+            }
             // We need to add an md5 of the entire request body to the A2 part of the hash
-            $body = $this->request->getBody($asString = true);
+            $body = $this->request->getBody();
             $this->request->setBody($body);
-            $A2 .= ':' . md5($body);
-        } else {
-
-            // We need to make sure we support this qop value
-            if (!($this->qop & self::QOP_AUTH)) return false;
+            $A2 .= ':'.md5($body);
+        } elseif (!($this->qop & self::QOP_AUTH)) {
+            return false;
         }
 
         $A2 = md5($A2);
 
         $validResponse = md5("{$this->A1}:{$this->digestParts['nonce']}:{$this->digestParts['nc']}:{$this->digestParts['cnonce']}:{$this->digestParts['qop']}:{$A2}");
 
-        return $this->digestParts['response'] == $validResponse;
-
-
+        return $this->digestParts['response'] === $validResponse;
     }
 
     /**
-     * Returns an HTTP 401 header, forcing login
+     * Returns an HTTP 401 header, forcing login.
      *
      * This should be called when username and password are incorrect, or not supplied at all
-     *
-     * @return void
      */
-    function requireLogin() {
-
+    public function requireLogin()
+    {
         $qop = '';
         switch ($this->qop) {
-            case self::QOP_AUTH    :
+            case self::QOP_AUTH:
                 $qop = 'auth';
                 break;
-            case self::QOP_AUTHINT :
+            case self::QOP_AUTHINT:
                 $qop = 'auth-int';
                 break;
-            case self::QOP_AUTH | self::QOP_AUTHINT :
+            case self::QOP_AUTH | self::QOP_AUTHINT:
                 $qop = 'auth,auth-int';
                 break;
         }
 
-        $this->response->addHeader('WWW-Authenticate', 'Digest realm="' . $this->realm . '",qop="' . $qop . '",nonce="' . $this->nonce . '",opaque="' . $this->opaque . '"');
+        $this->response->addHeader('WWW-Authenticate', 'Digest realm="'.$this->realm.'",qop="'.$qop.'",nonce="'.$this->nonce.'",opaque="'.$this->opaque.'"');
         $this->response->setStatus(401);
-
     }
-
 
     /**
      * This method returns the full digest string.
      *
-     * It should be compatibile with mod_php format and other webservers.
+     * It should be compatible with mod_php format and other webservers.
      *
      * If the header could not be found, null will be returned
      *
      * @return mixed
      */
-    function getDigest() {
-
+    public function getDigest()
+    {
         return $this->request->getHeader('Authorization');
-
     }
-
 
     /**
      * Parses the different pieces of the digest string into an array.
      *
      * This method returns false if an incomplete digest was supplied
      *
-     * @param string $digest
-     * @return mixed
+     * @return bool|array
      */
-    protected function parseDigest($digest) {
-
+    protected function parseDigest(string $digest)
+    {
         // protect against missing data
         $needed_parts = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
         $data = [];
@@ -220,12 +201,10 @@ class Digest extends AbstractAuth {
         preg_match_all('@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@', $digest, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $m) {
-            $data[$m[1]] = $m[2] ? $m[2] : $m[3];
+            $data[$m[1]] = $m[2] ?: $m[3];
             unset($needed_parts[$m[1]]);
         }
 
         return $needed_parts ? false : $data;
-
     }
-
 }

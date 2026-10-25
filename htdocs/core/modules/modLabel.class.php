@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *	\brief      Module pour gerer les formats d'impression des etiquettes
  *	\file       htdocs/core/modules/modLabel.class.php
  *	\ingroup    other
- *	\brief      Fichier de description et activation du module Label
+ *	\brief      Description and activation file for the module Labels
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modLabel extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -61,7 +61,7 @@ class modLabel extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Config pages
 		// $this->config_page_url = array("label.php");
@@ -76,19 +76,19 @@ class modLabel extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'label';
 
-		$this->rights[1][0] = 601; // id de la permission
+		$this->rights[1][0] = 601; // Permission id (must not be already used)
 		$this->rights[1][1] = 'Read stickers';
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[1][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 602; // id de la permission
+		$this->rights[2][0] = 602; // Permission id (must not be already used)
 		$this->rights[2][1] = 'Create/modify stickers';
-		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[2][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[2][4] = 'creer';
 
-		$this->rights[4][0] = 609; // id de la permission
+		$this->rights[4][0] = 609; // Permission id (must not be already used)
 		$this->rights[4][1] = 'Delete stickers';
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[4][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[4][4] = 'supprimer';
 	}
 
@@ -97,16 +97,16 @@ class modLabel extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-    public function init($options = '')
-    {
+	public function init($options = '')
+	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
 		return $this->_init($sql, $options);
-    }
+	}
 }

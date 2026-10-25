@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +25,47 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return array<array{string,string,string}>
  */
 function mymoduleAdminPrepareHead()
 {
 	global $langs, $conf;
+
+	// global $db;
+	// $extrafields = new ExtraFields($db);
+	// $extrafields->fetch_name_optionals_label('myobject');
 
 	$langs->load("mymodule@mymodule");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/mymodule/admin/setup.php", 1);
+	$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/admin/setup.php", 1));
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
-	$head[$h][0] = dol_buildpath("/mymodule/admin/about.php", 1);
+
+	/*
+	$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/admin/myobject_extrafields.php", 1));
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = (isset($extrafields->attributes['myobject']['label']) && is_countable($extrafields->attributes['myobject']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
+	$head[$h][2] = 'myobject_extrafields';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/admin/myobjectline_extrafields.php", 1));
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = (isset($extrafields->attributes['myobjectline']['label']) && is_countable($extrafields->attributes['myobjectline']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
+	$head[$h][2] = 'myobject_extrafieldsline';
+	$h++;
+	*/
+
+	$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/admin/about.php", 1));
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
 	$h++;
@@ -52,7 +78,9 @@ function mymoduleAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule', 'remove');
 
 	return $head;
 }

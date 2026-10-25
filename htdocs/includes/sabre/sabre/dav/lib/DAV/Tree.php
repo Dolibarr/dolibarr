@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
-use Sabre\HTTP\URLUtil;
+use Sabre\Uri;
 
 /**
  * The tree object is responsible for basic tree operations.
@@ -14,10 +16,10 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Tree {
-
+class Tree implements INodeByPath
+{
     /**
-     * The root node
+     * The root node.
      *
      * @var ICollection
      */
@@ -32,54 +34,59 @@ class Tree {
     protected $cache = [];
 
     /**
-     * Creates the object
+     * Creates the object.
      *
      * This method expects the rootObject to be passed as a parameter
-     *
-     * @param ICollection $rootNode
      */
-    function __construct(ICollection $rootNode) {
-
+    public function __construct(ICollection $rootNode)
+    {
         $this->rootNode = $rootNode;
-
     }
 
     /**
-     * Returns the INode object for the requested path
+     * Returns the INode object for the requested path.
      *
      * @param string $path
+     *
      * @return INode
      */
-    function getNodeForPath($path) {
-
+    public function getNodeForPath($path)
+    {
         $path = trim($path, '/');
-        if (isset($this->cache[$path])) return $this->cache[$path];
+        if (isset($this->cache[$path])) {
+            return $this->cache[$path];
+        }
 
         // Is it the root node?
         if (!strlen($path)) {
             return $this->rootNode;
         }
 
-        // Attempting to fetch its parent
-        list($parentName, $baseName) = URLUtil::splitPath($path);
+        $parts = explode('/', $path);
+        $node = $this->rootNode;
 
-        // If there was no parent, we must simply ask it from the root node.
-        if ($parentName === "") {
-            $node = $this->rootNode->getChild($baseName);
-        } else {
-            // Otherwise, we recursively grab the parent and ask him/her.
-            $parent = $this->getNodeForPath($parentName);
+        while (count($parts)) {
+            if (!($node instanceof ICollection)) {
+                throw new Exception\NotFound('Could not find node at path: '.$path);
+            }
 
-            if (!($parent instanceof ICollection))
-                throw new Exception\NotFound('Could not find node at path: ' . $path);
+            if ($node instanceof INodeByPath) {
+                $targetNode = $node->getNodeForPath(implode('/', $parts));
+                if ($targetNode instanceof Node) {
+                    $node = $targetNode;
+                    break;
+                }
+            }
 
-            $node = $parent->getChild($baseName);
-
+            $part = array_shift($parts);
+            if ('' !== $part) {
+                $node = $node->getChild($part);
+            }
         }
 
         $this->cache[$path] = $node;
-        return $node;
 
+        return $node;
     }
 
     /**
@@ -89,61 +96,62 @@ class Tree {
      * it cheaper.
      *
      * @param string $path
+     *
      * @return bool
      */
-    function nodeExists($path) {
-
+    public function nodeExists($path)
+    {
         try {
-
             // The root always exists
-            if ($path === '') return true;
+            if ('' === $path) {
+                return true;
+            }
 
-            list($parent, $base) = URLUtil::splitPath($path);
+            list($parent, $base) = Uri\split($path);
 
             $parentNode = $this->getNodeForPath($parent);
-            if (!$parentNode instanceof ICollection) return false;
+            if (!$parentNode instanceof ICollection) {
+                return false;
+            }
+
             return $parentNode->childExists($base);
-
         } catch (Exception\NotFound $e) {
-
             return false;
-
         }
-
     }
 
     /**
-     * Copies a file from path to another
+     * Copies a file from path to another.
      *
-     * @param string $sourcePath The source location
+     * @param string $sourcePath      The source location
      * @param string $destinationPath The full destination path
-     * @return void
      */
-    function copy($sourcePath, $destinationPath) {
-
+    public function copy($sourcePath, $destinationPath)
+    {
         $sourceNode = $this->getNodeForPath($sourcePath);
 
         // grab the dirname and basename components
-        list($destinationDir, $destinationName) = URLUtil::splitPath($destinationPath);
+        list($destinationDir, $destinationName) = Uri\split($destinationPath);
 
         $destinationParent = $this->getNodeForPath($destinationDir);
-        $this->copyNode($sourceNode, $destinationParent, $destinationName);
+        // Check if the target can handle the copy itself. If not, we do it ourselves.
+        if (!$destinationParent instanceof ICopyTarget || !$destinationParent->copyInto($destinationName, $sourcePath, $sourceNode)) {
+            $this->copyNode($sourceNode, $destinationParent, $destinationName);
+        }
 
         $this->markDirty($destinationDir);
-
     }
 
     /**
-     * Moves a file from one location to another
+     * Moves a file from one location to another.
      *
-     * @param string $sourcePath The path to the file which should be moved
+     * @param string $sourcePath      The path to the file which should be moved
      * @param string $destinationPath The full destination path, so not just the destination parent node
-     * @return int
      */
-    function move($sourcePath, $destinationPath) {
-
-        list($sourceDir) = URLUtil::splitPath($sourcePath);
-        list($destinationDir, $destinationName) = URLUtil::splitPath($destinationPath);
+    public function move($sourcePath, $destinationPath)
+    {
+        list($sourceDir) = Uri\split($sourcePath);
+        list($destinationDir, $destinationName) = Uri\split($destinationPath);
 
         if ($sourceDir === $destinationDir) {
             // If this is a 'local' rename, it means we can just trigger a rename.
@@ -164,49 +172,45 @@ class Tree {
         }
         $this->markDirty($sourceDir);
         $this->markDirty($destinationDir);
-
     }
 
     /**
-     * Deletes a node from the tree
+     * Deletes a node from the tree.
      *
      * @param string $path
-     * @return void
      */
-    function delete($path) {
-
+    public function delete($path)
+    {
         $node = $this->getNodeForPath($path);
         $node->delete();
 
-        list($parent) = URLUtil::splitPath($path);
+        list($parent) = Uri\split($path);
         $this->markDirty($parent);
-
     }
 
     /**
      * Returns a list of childnodes for a given path.
      *
      * @param string $path
-     * @return array
+     *
+     * @return \Traversable
      */
-    function getChildren($path) {
-
+    public function getChildren($path)
+    {
         $node = $this->getNodeForPath($path);
-        $children = $node->getChildren();
         $basePath = trim($path, '/');
-        if ($basePath !== '') $basePath .= '/';
-
-        foreach ($children as $child) {
-
-            $this->cache[$basePath . $child->getName()] = $child;
-
+        if ('' !== $basePath) {
+            $basePath .= '/';
         }
-        return $children;
 
+        foreach ($node->getChildren() as $child) {
+            $this->cache[$basePath.$child->getName()] = $child;
+            yield $child;
+        }
     }
 
     /**
-     * This method is called with every tree update
+     * This method is called with every tree update.
      *
      * Examples of tree updates are:
      *   * node deletions
@@ -221,19 +225,17 @@ class Tree {
      * If a path is passed, it is assumed that the entire subtree is dirty
      *
      * @param string $path
-     * @return void
      */
-    function markDirty($path) {
-
+    public function markDirty($path)
+    {
         // We don't care enough about sub-paths
         // flushing the entire cache
         $path = trim($path, '/');
         foreach ($this->cache as $nodePath => $node) {
-            if ($path === '' || $nodePath == $path || strpos($nodePath, $path . '/') === 0)
+            if ('' === $path || $nodePath == $path || 0 === strpos((string) $nodePath, $path.'/')) {
                 unset($this->cache[$nodePath]);
-
+            }
         }
-
     }
 
     /**
@@ -247,15 +249,16 @@ class Tree {
      * This method returns an array with the found nodes. It's keys are the
      * original paths. The result may be out of order.
      *
-     * @param array $paths List of nodes that must be fetched.
+     * @param array $paths list of nodes that must be fetched
+     *
      * @return array
      */
-    function getMultipleNodes($paths) {
-
+    public function getMultipleNodes($paths)
+    {
         // Finding common parents
         $parents = [];
         foreach ($paths as $path) {
-            list($parent, $node) = URLUtil::splitPath($path);
+            list($parent, $node) = Uri\split($path);
             if (!isset($parents[$parent])) {
                 $parents[$parent] = [$node];
             } else {
@@ -266,42 +269,38 @@ class Tree {
         $result = [];
 
         foreach ($parents as $parent => $children) {
-
             $parentNode = $this->getNodeForPath($parent);
             if ($parentNode instanceof IMultiGet) {
                 foreach ($parentNode->getMultipleChildren($children) as $childNode) {
-                    $fullPath = $parent . '/' . $childNode->getName();
+                    $fullPath = $parent.'/'.$childNode->getName();
                     $result[$fullPath] = $childNode;
                     $this->cache[$fullPath] = $childNode;
                 }
             } else {
                 foreach ($children as $child) {
-                    $fullPath = $parent . '/' . $child;
+                    $fullPath = $parent.'/'.$child;
                     $result[$fullPath] = $this->getNodeForPath($fullPath);
                 }
             }
-
         }
 
         return $result;
-
     }
 
-
     /**
-     * copyNode
+     * copyNode.
      *
-     * @param INode $source
-     * @param ICollection $destinationParent
      * @param string $destinationName
-     * @return void
      */
-    protected function copyNode(INode $source, ICollection $destinationParent, $destinationName = null) {
+    protected function copyNode(INode $source, ICollection $destinationParent, $destinationName = null)
+    {
+        if ('' === (string) $destinationName) {
+            $destinationName = $source->getName();
+        }
 
-        if (!$destinationName) $destinationName = $source->getName();
+        $destination = null;
 
         if ($source instanceof IFile) {
-
             $data = $source->get();
 
             // If the body was a string, we need to convert it to a stream
@@ -313,28 +312,19 @@ class Tree {
             }
             $destinationParent->createFile($destinationName, $data);
             $destination = $destinationParent->getChild($destinationName);
-
         } elseif ($source instanceof ICollection) {
-
             $destinationParent->createDirectory($destinationName);
 
             $destination = $destinationParent->getChild($destinationName);
             foreach ($source->getChildren() as $child) {
-
                 $this->copyNode($child, $destination);
-
             }
-
         }
         if ($source instanceof IProperties && $destination instanceof IProperties) {
-
             $props = $source->getProperties([]);
             $propPatch = new PropPatch($props);
             $destination->propPatch($propPatch);
             $propPatch->commit();
-
         }
-
     }
-
 }

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  *  \brief      Collab module descriptor.
  *  \file       htdocs/core/modules/modCollab.class.php
  *  \ingroup    collab
- *  \brief      Description and activation file for module Collab
+ *  \brief      Description and activation file for the module Collab
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -30,98 +31,96 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modCollab extends DolibarrModules
 {
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->numero = 30000;
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        global $langs, $conf;
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
+		// It is used to group modules in module setup page
+		$this->family = "ecm";
+		$this->module_position = '51';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+		$this->description = "Enable public collaboration features on documents, like shared pad, shared online sheets, etc...";
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'development';
+		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Name of image file used for this module.
+		$this->picto = 'collab';
 
-        $this->db = $db;
-        $this->numero = 30000;
+		// Data directories to create when module is enabled
+		$this->dirs = array("/collab/temp");
 
-        // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-        // It is used to group modules in module setup page
-        $this->family = "portal";
-        $this->module_position = '51';
-        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i', '', get_class($this));
-        $this->description = "Enable the public collaboration features, like shared pad, shared online sheets, etc...";
-        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'development';
-        // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Name of image file used for this module.
-        $this->picto = 'website';
+		// Config pages
+		//-------------
+		$this->config_page_url = array(/*'collab.php'*/);
 
-        // Data directories to create when module is enabled
-        $this->dirs = array("/collab/temp");
+		// Dependencies
+		//-------------
+		$this->hidden = getDolGlobalInt('MODULE_COLLAB_DISABLED'); // A condition to disable module
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array(); // List of modules id this module is in conflict with
+		$this->langfiles = array("collab");
 
-        // Config pages
-        //-------------
-        $this->config_page_url = array(/*'collab.php'*/);
+		// Constants
+		//-----------
+		$this->const = array();
 
-        // Dependancies
-        //-------------
-        $this->hidden = !empty($conf->global->MODULE_COLLAB_DISABLED); // A condition to disable module
-        $this->depends = array(); // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array(); // List of modules id to disable if this one is disabled
-        $this->conflictwith = array(); // List of modules id this module is in conflict with
-        $this->langfiles = array("collab");
+		// New pages on tabs
+		// -----------------
+		$this->tabs = array();
 
-        // Constants
-        //-----------
-           $this->const = array();
+		// Boxes
+		//------
+		$this->boxes = array();
 
-        // New pages on tabs
-        // -----------------
-        $this->tabs = array();
+		// Permissions
+		$this->rights = array(); // Permission array used by this module
+		$this->rights_class = 'collab';
+		$r = 0;
 
-        // Boxes
-        //------
-        $this->boxes = array();
+		/*$this->rights[$r][0] = 30001;
+		$this->rights[$r][1] = 'Read website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'read';
+		$r++;
 
-        // Permissions
-        $this->rights = array(); // Permission array used by this module
-        $this->rights_class = 'collab';
-        $r = 0;
+		$this->rights[$r][0] = 30002;
+		$this->rights[$r][1] = 'Create/modify website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'write';
+		$r++;
 
-        /*$this->rights[$r][0] = 30001;
-        $this->rights[$r][1] = 'Read website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'read';
-        $r++;
+		$this->rights[$r][0] = 30003;
+		$this->rights[$r][1] = 'Delete website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'delete';
+		$r++;*/
 
-        $this->rights[$r][0] = 30002;
-        $this->rights[$r][1] = 'Create/modify website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'write';
-        $r++;
-
-        $this->rights[$r][0] = 30003;
-        $this->rights[$r][1] = 'Delete website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'delete';
-        $r++;*/
-
-        // Main menu entries
-        $r = 0;
-        $this->menu[$r] = array(
-			'fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'top', // This is a Left menu entry
-            'titre'=>'Collab',
-            'mainmenu'=>'collab',
-            'url'=>'/collab/index.php',
-            'langs'=>'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'position'=>100,
-            'enabled'=>'$conf->collab->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'1', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-            'target'=>'',
-            'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
-        );
-        $r++;
-    }
+		// Main menu entries
+		$r = 0;
+		$this->menu[$r] = array(
+			'fk_menu' => '0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Left menu entry
+			'titre' => 'Collab',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'mainmenu' => 'collab',
+			'url' => '/collab/index.php',
+			'langs' => 'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 100,
+			'enabled' => 'isModEnabled("collab")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '1', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$r++;
+	}
 }

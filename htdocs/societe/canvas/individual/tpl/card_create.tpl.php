@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var CommonObject $this
+ * @var DoliDB $db
+ * @var FormFile $formfile
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $canvas
+ */
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -32,15 +43,15 @@ if (empty($conf) || !is_object($conf))
 <?php echo $this->control->tpl['error']; ?>
 
 <?php if ($conf->use_javascript_ajax) { ?>
-    <?php echo $this->control->tpl['ajax_selecttype']; ?>
+	<?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
-    <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
+	<?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
 <input type="radio" id="radiocompany" class="flat" name="private" value="0">
-    <?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
+	<?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
 <input type="radio" id="radioprivate" class="flat" name="private" value="1" checked> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
-    <?php echo $this->control->tpl['ajax_selectcountry']; ?>
+	<?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php } ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
@@ -57,11 +68,7 @@ if (empty($conf) || !is_object($conf))
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('LastName'); ?></span></td>
-	<td><input type="text" size="30" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
-	<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td><input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>"></td>
-	<?php } ?>
+	<td><input type="text" size="30" maxlength="60" name="name" value="<?php echo $this->control->tpl['name']; ?>"></td>
 </tr>
 
 <tr>
@@ -80,11 +87,11 @@ if (empty($conf) || !is_object($conf))
 	<td width="25%"><span class="fieldrequired"><?php echo $langs->trans('ProspectCustomer'); ?></span></td>
 	<td width="25%"><?php echo $this->control->tpl['select_customertype']; ?></td>
 
-    <td width="25%"><?php echo $langs->trans('CustomerCode'); ?></td>
-    <td width="25%">
+	<td width="25%"><?php echo $langs->trans('CustomerCode'); ?></td>
+	<td width="25%">
 		<table class="nobordernopadding">
 			<tr>
-				<td><input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15"></td>
+				<td><input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24"></td>
 				<td><?php echo $this->control->tpl['help_customercode']; ?></td>
 			</tr>
 		</table>
@@ -95,26 +102,26 @@ if (empty($conf) || !is_object($conf))
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Supplier'); ?></span></td>
 	<td><?php echo $this->control->tpl['yn_supplier']; ?></td>
-    <td><?php echo $langs->trans('SupplierCode'); ?></td>
-    <td>
-    	<table class="nobordernopadding">
-    		<tr>
-    			<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15"></td>
-    			<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
-    		</tr>
-    	</table>
+	<td><?php echo $langs->trans('SupplierCode'); ?></td>
+	<td>
+		<table class="nobordernopadding">
+			<tr>
+				<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24"></td>
+				<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
+			</tr>
+		</table>
 	</td>
 </tr>
 
-    <?php if (count($this->control->tpl['suppliercategory']) > 0) { ?>
+	<?php if (count($this->control->tpl['suppliercategory']) > 0) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-    <?php }
+	<?php }
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -123,7 +130,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -145,7 +152,9 @@ if (!empty($conf->barcode->enabled)) { ?>
 
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
-	<td><input type="text" name="tel" value="<?php echo $this->control->tpl['tel']; ?>"></td>
+	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>
@@ -157,7 +166,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
@@ -169,9 +178,11 @@ if (!empty($conf->barcode->enabled)) { ?>
 	<td colspan="3"><?php echo $this->control->tpl['yn_assujtva']; ?></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
-<?php if ($user->rights->societe->client->voir) { ?>
+<?php if ($user->hasRight('societe', 'client', 'voir')) { ?>
 <tr>
 	<td><?php echo $langs->trans("AllocateCommercial"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_users']; ?></td>

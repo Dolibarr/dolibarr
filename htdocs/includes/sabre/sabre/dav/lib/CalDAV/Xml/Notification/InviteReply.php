@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Notification;
 
 use Sabre\CalDAV;
@@ -14,19 +16,19 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InviteReply implements NotificationInterface {
-
+class InviteReply implements NotificationInterface
+{
     /**
-     * A unique id for the message
+     * A unique id for the message.
      *
      * @var string
      */
     protected $id;
 
     /**
-     * Timestamp of the notification
+     * Timestamp of the notification.
      *
-     * @var DateTime
+     * @var \DateTime
      */
     protected $dtStamp;
 
@@ -59,14 +61,14 @@ class InviteReply implements NotificationInterface {
     protected $hostUrl;
 
     /**
-     * A description of the share request
+     * A description of the share request.
      *
      * @var string
      */
     protected $summary;
 
     /**
-     * Notification Etag
+     * Notification Etag.
      *
      * @var string
      */
@@ -87,11 +89,9 @@ class InviteReply implements NotificationInterface {
      *   * hostUrl      - A url to the shared calendar.
      *   * summary      - Description of the share, can be the same as the
      *                    calendar, but may also be modified (optional).
-     *
-     * @param array $values
      */
-    function __construct(array $values) {
-
+    public function __construct(array $values)
+    {
         $required = [
             'id',
             'etag',
@@ -103,17 +103,16 @@ class InviteReply implements NotificationInterface {
         ];
         foreach ($required as $item) {
             if (!isset($values[$item])) {
-                throw new \InvalidArgumentException($item . ' is a required constructor option');
+                throw new \InvalidArgumentException($item.' is a required constructor option');
             }
         }
 
         foreach ($values as $key => $value) {
             if (!property_exists($this, $key)) {
-                throw new \InvalidArgumentException('Unknown option: ' . $key);
+                throw new \InvalidArgumentException('Unknown option: '.$key);
             }
             $this->$key = $value;
         }
-
     }
 
     /**
@@ -131,70 +130,59 @@ class InviteReply implements NotificationInterface {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
-        $writer->writeElement('{' . CalDAV\Plugin::NS_CALENDARSERVER . '}invite-reply');
-
+    public function xmlSerialize(Writer $writer)
+    {
+        $writer->writeElement('{'.CalDAV\Plugin::NS_CALENDARSERVER.'}invite-reply');
     }
 
     /**
      * This method serializes the entire notification, as it is used in the
      * response body.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerializeFull(Writer $writer) {
+    public function xmlSerializeFull(Writer $writer)
+    {
+        $cs = '{'.CalDAV\Plugin::NS_CALENDARSERVER.'}';
 
-        $cs = '{' . CalDAV\Plugin::NS_CALENDARSERVER . '}';
+        $this->dtStamp->setTimezone(new \DateTimeZone('GMT'));
+        $writer->writeElement($cs.'dtstamp', $this->dtStamp->format('Ymd\\THis\\Z'));
 
-        $this->dtStamp->setTimezone(new \DateTimezone('GMT'));
-        $writer->writeElement($cs . 'dtstamp', $this->dtStamp->format('Ymd\\THis\\Z'));
+        $writer->startElement($cs.'invite-reply');
 
-        $writer->startElement($cs . 'invite-reply');
-
-        $writer->writeElement($cs . 'uid', $this->id);
-        $writer->writeElement($cs . 'in-reply-to', $this->inReplyTo);
+        $writer->writeElement($cs.'uid', $this->id);
+        $writer->writeElement($cs.'in-reply-to', $this->inReplyTo);
         $writer->writeElement('{DAV:}href', $this->href);
 
         switch ($this->type) {
-
-            case DAV\Sharing\Plugin::INVITE_ACCEPTED :
-                $writer->writeElement($cs . 'invite-accepted');
+            case DAV\Sharing\Plugin::INVITE_ACCEPTED:
+                $writer->writeElement($cs.'invite-accepted');
                 break;
-            case DAV\Sharing\Plugin::INVITE_DECLINED :
-                $writer->writeElement($cs . 'invite-declined');
+            case DAV\Sharing\Plugin::INVITE_DECLINED:
+                $writer->writeElement($cs.'invite-declined');
                 break;
-
         }
 
-        $writer->writeElement($cs . 'hosturl', [
-            '{DAV:}href' => $writer->contextUri . $this->hostUrl
+        $writer->writeElement($cs.'hosturl', [
+            '{DAV:}href' => $writer->contextUri.$this->hostUrl,
             ]);
 
         if ($this->summary) {
-            $writer->writeElement($cs . 'summary', $this->summary);
+            $writer->writeElement($cs.'summary', $this->summary);
         }
         $writer->endElement(); // invite-reply
-
     }
 
     /**
-     * Returns a unique id for this notification
+     * Returns a unique id for this notification.
      *
      * This is just the base url. This should generally be some kind of unique
      * id.
      *
      * @return string
      */
-    function getId() {
-
+    public function getId()
+    {
         return $this->id;
-
     }
 
     /**
@@ -204,10 +192,8 @@ class InviteReply implements NotificationInterface {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->etag;
-
     }
-
 }

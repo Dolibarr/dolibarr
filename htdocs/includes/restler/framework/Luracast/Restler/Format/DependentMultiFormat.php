@@ -36,4 +36,4 @@ abstract class DependentMultiFormat extends MultiFormat
         $this->checkDependency();
     }
 
-} 
+}

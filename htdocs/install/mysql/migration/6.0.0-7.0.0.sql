@@ -93,7 +93,7 @@ ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) A
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
-ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
 
@@ -125,7 +125,7 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price_ttc	double(2
 
 ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
 
-  
+
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
 
 ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
@@ -226,7 +226,7 @@ ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
 ALTER TABLE llx_bookmark DROP COLUMN fk_soc;
- 
+
 ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
@@ -259,13 +259,13 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN fk_user integer NULL;
 
 
 ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
-ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
+ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100);
 
 
 CREATE TABLE llx_website_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -274,8 +274,8 @@ ALTER TABLE llx_website_extrafields ADD INDEX idx_website_extrafields (fk_object
 
 
 CREATE TABLE llx_website_account(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login             varchar(64) NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	login             varchar(64) NOT NULL,
 	pass_encoding     varchar(24) NOT NULL,
     pass_crypted      varchar(128),
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
@@ -284,12 +284,12 @@ CREATE TABLE llx_website_account(
 	note_private        text,
     date_last_login     datetime,
     date_previous_login datetime,
-	date_creation       datetime NOT NULL, 
-	tms                 timestamp, 
-	fk_user_creat       integer NOT NULL, 
-	fk_user_modif       integer, 
-	import_key          varchar(14), 
-	status integer 
+	date_creation       datetime NOT NULL,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat       integer NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14),
+	status integer
 ) ENGINE=innodb;
 
 
@@ -307,7 +307,7 @@ ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FO
 CREATE TABLE llx_website_account_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -326,7 +326,7 @@ alter table llx_user add column pass_encoding varchar(24) NULL;
 CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,
     datec           datetime  DEFAULT NULL,
-    tms             timestamp,
+    tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
@@ -380,16 +380,16 @@ INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoff
 INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (3,4, 3, 0.286, 0);
 INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (4,5, 4, 0.493, 0);
 INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (5,5, 5, 0.277, 1082);
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (6,5, 6, 0.332, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (7,6, 7, 0.543, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (8,6, 8, 0.305, 1180); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (9,6, 9, 0.364, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (10,7, 10, 0.568, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (11,7, 11, 0.32, 1244); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (12,7, 12, 0.382, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (13,8, 13, 0.595, 0); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (14,8, 14, 0.337, 1288); 
-INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (15,8, 15, 0.401, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (6,5, 6, 0.332, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (7,6, 7, 0.543, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (8,6, 8, 0.305, 1180);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (9,6, 9, 0.364, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (10,7, 10, 0.568, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (11,7, 11, 0.32, 1244);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (12,7, 12, 0.382, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (13,8, 13, 0.595, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (14,8, 14, 0.337, 1288);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (15,8, 15, 0.401, 0);
 
 
 INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (1,'ExpAutoCat', 1, 1);
@@ -441,7 +441,7 @@ INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active
 CREATE TABLE llx_expensereport_rules (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     dates datetime NOT NULL,
     datee datetime NOT NULL,
     amount numeric(24,8) NOT NULL,
@@ -464,13 +464,13 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN enabled varchar(255) DEFAULT '1';
-ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
+ALTER TABLE llx_extrafields ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
---VMYSQL4.1 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
---VMYSQL4.1 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list <> 3;		
---VPGSQL8.2 UPDATE llx_extrafields SET list = 1 WHERE list::integer = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
---VPGSQL8.2 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list::integer <> 3;		
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list <> 3;
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 1 WHERE list::integer = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list::integer <> 3;
 
 --VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
 --VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1 USING list::integer;
@@ -528,7 +528,7 @@ DROP TABLE llx_projet_task_comment;
 CREATE TABLE llx_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     description text NOT NULL,
     fk_user_author integer DEFAULT NULL,
     fk_element integer DEFAULT NULL,
@@ -540,7 +540,7 @@ CREATE TABLE llx_comment (
 DELETE FROM llx_const where name = __ENCRYPT('MAIN_SHOW_WORKBOARD')__;
 
 -- Adherent - Update old constants
-UPDATE llx_const SET value = REPLACE(value, '%', '__') WHERE name LIKE 'ADHERENT%'; 
+UPDATE llx_const SET value = REPLACE(value, '%', '__') WHERE name LIKE 'ADHERENT%';
 
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
@@ -572,7 +572,7 @@ create table llx_c_email_senderprofile
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   date_creation   datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(255),					  -- Label of predefined email
   email           varchar(255),					  -- Email
   signature		  text,                           -- Predefined signature
@@ -619,11 +619,11 @@ UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
 
 CREATE TABLE llx_actioncomm_reminder(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	dateremind datetime NOT NULL, 
-	typeremind varchar(32) NOT NULL, 
-	fk_user integer NOT NULL, 
-	offsetvalue integer NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	dateremind datetime NOT NULL,
+	typeremind varchar(32) NOT NULL,
+	fk_user integer NOT NULL,
+	offsetvalue integer NOT NULL,
 	offsetunit varchar(1) NOT NULL,
 	status integer NOT NULL DEFAULT 0
 	-- END MODULEBUILDER FIELDS
@@ -655,7 +655,7 @@ create table llx_onlinesignature
   object_type               varchar(32) NOT NULL,
   object_id					integer NOT NULL,
   datec                     datetime NOT NULL,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   name						varchar(255) NOT NULL,
   ip						varchar(128),
   pathoffile				varchar(255)
@@ -709,7 +709,7 @@ ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_c
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

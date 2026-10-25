@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=ການຈັດການການເປັນພັນທະມິດ
+PartnershipDescription=ໂມດູນ ການຈັດການການເປັນພັນທະມິດ
+PartnershipDescriptionLong= ໂມດູນ ການຈັດການການເປັນພັນທະມິດ
+Partnership=ການເປັນພັນທະມິດ
+Partnerships=ການເປັນພັນທະມິດ
+AddPartnership=ເພີ່ມການເປັນພັນທະມິດ
+CancelPartnershipForExpiredMembers=ການເປັນພັນທະມິດ: ຍົກເລີກການເປັນພັນທະມິດຂອງສະມາຊິກທີ່ໝົດອາຍຸການຕິດຕາມ
+PartnershipCheckBacklink=ການເປັນພັນທະມິດ: ກວດສອບລິ້ງກັບຄືນ (Backlink)
+# Menu
+NewPartnership=ການເປັນພັນທະມິດໃໝ່
+NewPartnershipbyWeb=ຄຳຮ້ອງຂໍເປັນພັນທະມິດຂອງທ່ານໄດ້ຖືກເພີ່ມສຳເລັດແລ້ວ. ພວກເຮົາຈະຕິດຕໍ່ຫາທ່ານໃນໄວໆນີ້...
+ListOfPartnerships=ລາຍຊື່ການເປັນພັນທະມິດ
+# Admin page
+PartnershipSetup=ຕັ້ງຄ່າການເປັນພັນທະມິດ
+PartnershipAbout=ກ່ຽວກັບການເປັນພັນທະມິດ
+PartnershipAboutPage=ໜ້າກ່ຽວກັບການເປັນພັນທະມິດ
+partnershipforthirdpartyormember=ສະຖານະພັນທະມິດຈະຕ້ອງຖືກກຳນົດໃຫ້ກັບ 'ບຸກຄົນທີສາມ' ຫຼື 'ສະມາຊິກ'
+PARTNERSHIP_IS_MANAGED_FOR=ການເປັນພັນທະມິດທີ່ຈັດການສຳລັບ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ລິ້ງກັບຄືນ (Backlinks) ທີ່ຈະກວດສອບ
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=ຈຳນວນມື້ກ່ອນຍົກເລີກສະຖານະການເປັນພັນທະມິດ ເມື່ອການຕິດຕາມໝົດອາຍຸ
+ReferingWebsiteCheck=ການກວດສອບເວັບໄຊອ້າງອີງ
+ReferingWebsiteCheckDesc=ທ່ານສາມາດເປີດໃຊ້ຄຸນສົມບັດເພື່ອຕົວກສອບວ່າພັນທະມິດຂອງທ່ານໄດ້ເພີ່ມລິ້ງກັບຄືນຫາໂດເມນເວັບໄຊຂອງທ່ານໃນເວັບໄຊຂອງພວກເຂົາຫຼືບໍ່.
+PublicFormRegistrationPartnerDesc=Dolibarr ສາມາດສະໜອງ URL/ເວັບໄຊສາທາລະນະ ເພື່ອອະນຸຍາດໃຫ້ບຸກຄົນພາຍນອກຮ້ອງຂໍເຂົ້າຮ່ວມໂຄງການພັນທະມິດໄດ້.
+# Object
+DeletePartnership=ລົບການເປັນພັນທະມິດ
+PartnershipDedicatedToThisThirdParty=ການເປັນພັນທະມິດສະເພາະສຳລັບບຸກຄົນທີສາມນີ້
+PartnershipDedicatedToThisMember=ການເປັນພັນທະມິດສະເພາະສຳລັບສະມາຊິກນີ້
+DatePartnershipStart=ວັນທີເລີ່ມຕົ້ນ
+DatePartnershipEnd=ວັນທີສິ້ນສຸດ
+ReasonDecline=ເຫດຜົນທີ່ປະຕິເສດ
+ReasonDeclineOrCancel=ເຫດຜົນທີ່ປະຕິເສດ ຫຼື ຍົກເລີກ
+PartnershipAlreadyExist=ການເປັນພັນທະມິດມີຢູ່ແລ້ວ
+ManagePartnership=ຈັດການການເປັນພັນທະມິດ
+BacklinkNotFoundOnPartnerWebsite=ບໍ່ພົບລິ້ງກັບຄືນໃນເວັບໄຊຂອງພັນທະມິດ
+ConfirmClosePartnershipAsk=ທ່ານແນ່ໃຈຫຼືບໍ່ວ່າຕ້ອງການຍົກເລີກການເປັນພັນທະມິດນີ້?
+PartnershipType=ປະເພດການເປັນພັນທະມິດ
+PartnershipRefApproved=ການເປັນພັນທະມິດ %s ໄດ້ຮັບການອະນຸມັດ
+KeywordToCheckInWebsite=ຫາກທ່ານຕ້ອງການກວດສອບວ່າຄຳສັບໃດໜຶ່ງມີຢູ່ໃນເວັບໄຊຂອງພັນທະມິດແຕ່ລະຄົນ, ໃຫ້ກຳນົດຄຳສັບນັ້ນຢູ່ບ່ອນນີ້
+PartnershipDraft=ຮ່າງ
+PartnershipAccepted=ຍອມຮັບແລ້ວ
+PartnershipRefused=ປະຕິເສດແລ້ວ
+PartnershipCanceled=ຍົກເລີກແລ້ວ
+PartnershipManagedFor=ພັນທະມິດແມ່ນ
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=ການເປັນພັນທະມິດຈະຖືກຍົກເລີກໃນໄວໆນີ້
+SendingEmailOnPartnershipRefused=ການເປັນພັນທະມິດຖືກປະຕິເສດ
+SendingEmailOnPartnershipAccepted=ການເປັນພັນທະມິດໄດ້ຮັບການຍອມຮັບ
+SendingEmailOnPartnershipCanceled=ການເປັນພັນທະມິດຖືກຍົກເລີກ
+YourPartnershipWillSoonBeCanceledTopic=ການເປັນພັນທະມິດຈະຖືກຍົກເລີກໃນໄວໆນີ້
+YourPartnershipRefusedTopic=ການເປັນພັນທະມິດຖືກປະຕິເສດ
+YourPartnershipAcceptedTopic=ການເປັນພັນທະມິດໄດ້ຮັບການຍອມຮັບ
+YourPartnershipCanceledTopic=ການເປັນພັນທະມິດຖືກຍົກເລີກ
+YourPartnershipWillSoonBeCanceledContent=ພວກເຮົາຂໍແຈ້ງໃຫ້ທ່ານຊາບວ່າ ການເປັນພັນທະມິດຂອງພວກເຮົາຈະຖືກຍົກເລີກໃນໄວໆນີ້ (ພວກເຮົາບໍ່ໄດ້ຮັບການຕໍ່ອາຍຸ ຫຼື ບໍ່ບັນລຸເງື່ອນໄຂເບື້ອງຕົ້ນສຳລັບການເປັນພັນທະມິດ). ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາ ຫາກທ່ານໄດ້ຮັບຂໍ້ຄວາມນີ້ຍ້ອນຄວາມຜິດພາດ.
+YourPartnershipRefusedContent=ພວກເຮົາຂໍແຈ້ງໃຫ້ທ່ານຊາບວ່າ ຄຳຮ້ອງຂໍເປັນພັນທະມິດຂອງທ່ານໄດ້ຖືກປະຕິເສດ. ເນື່ອງຈາກບໍ່ບັນລຸເງື່ອນໄຂເບື້ອງຕົ້ນ. ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາ ຫາກທ່ານຕ້ອງການຂໍ້ມູນເພີ່ມເຕີມ.
+YourPartnershipAcceptedContent=ພວກເຮົາຂໍແຈ້ງໃຫ້ທ່ານຊາບວ່າ ຄຳຮ້ອງຂໍເປັນພັນທະມິດຂອງທ່ານໄດ້ຮັບການຍອມຮັບແລ້ວ.
+YourPartnershipCanceledContent=ພວກເຮົາຂໍແຈ້ງໃຫ້ທ່ານຊາບວ່າ ການເປັນພັນທະມິດຂອງພວກເຮົາໄດ້ຖືກຍົກເລີກແລ້ວ. ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາ ຫາກທ່ານຕ້ອງການຂໍ້ມູນເພີ່ມເຕີມ.
+CountLastUrlCheckError=ຈຳນວນຄັ້ງທີ່ກວດສອບ URL ຜິດພາດ
+LastCheckBacklink=ວັນທີກວດສອບ URL ຄັ້ງລ່າສຸດ
+NewPartnershipRequest=ຄຳຮ້ອງຂໍເປັນພັນທະມິດໃໝ່
+NewPartnershipRequestDesc=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ທ່ານຮ້ອງຂໍເຂົ້າຮ່ວມໂຄງການພັນທະມິດຂອງພວກເຮົາ. ຫາກທ່ານຕ້ອງການຄວາມຊ່ວຍເຫຼືອໃນການຕື່ມແບບຟອມນີ້, ກະລຸນາຕິດຕໍ່ທາງອີເມວ <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=ໜ້ານີ້ຕ້ອງມີຢ່າງໜ້ອຍໜຶ່ງລິ້ງທີ່ເຊື່ອມຕໍ່ຫາໂດເມນດັ່ງຕໍ່ໄປນີ້: %s
+IPOfApplicant=ໝາຍເລກ IP ຂອງຜູ້ສະໝັກ
+PartnershipToReopen=ເພື່ອເປີດຄືນໃໝ່
+PartnershipConfirmReOpenAsk=ທ່ານແນ່ໃຈຫຼືບໍ່ວ່າຕ້ອງການເປີດການເປັນພັນທະມິດ <b>%s</b> ຄືນໃໝ່?

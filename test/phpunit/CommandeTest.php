@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +25,18 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -44,262 +46,363 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeTest extends PHPUnit\Framework\TestCase
+class CommandeTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return CommandeTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+		if (!isModEnabled('order')) {
+			print __METHOD__." module customer order must be enabled.\n";
+			die(1);
+		}
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		print __METHOD__."\n";
+	}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * testCommandeCreate
+	 *
+	 * @return  void
+	 */
+	public function testCommandeCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        if (empty($conf->commande->enabled)) { print __METHOD__." module customer order must be enabled.\n"; die(); }
+		$soc = new Societe($db);
+		$soc->name = "CommandeTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
-        print __METHOD__."\n";
-    }
+		$localobject = new Commande($db);
+		$param = array('tosell' => 1);
+		$localobject->initAsSpecimen($param);
+		// Persist a regular provisional order instead of keeping the specimen reference.
+		$localobject->ref = '';
+		$localobject->socid = $socid;
+		$result = $localobject->create($user);
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testCommandeFetch
+	 *
+	 * @param   int $id     Id order
+	 * @return  Commande
+	 *
+	 * @depends	testCommandeCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject = new Commande($db);
+		$result = $localobject->fetch($id);
 
-        print __METHOD__."\n";
-        //print $db->getVersion()."\n";
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		// Specimen lines are built from real products picked at random (see Commande::initAsSpecimen), so the
+		// exact line count is not stable (a kit/BOM product can expand into extra lines) - only check totals coherence.
+		$this->assertNotEmpty($localobject->lines);
+		$this->assertLineTotalsMatchHeader($localobject, 'after fetch');
 
-    /**
-     * testCommandeCreate
-     *
-     * @return  void
-     */
-    public function testCommandeCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return $localobject;
+	}
 
-        $localobject=new Commande($this->savdb);
-        $localobject->initAsSpecimen();
-        $result=$localobject->create($user);
+	/**
+	 * testCommandeUpdate
+	 *
+	 * @param	Commande		$localobject	Commande
+	 * @return	Commande
+	 *
+	 * @depends	testCommandeFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-        return $result;
-    }
+		$localobject->note_private = 'New note private after update';
+		$result = $localobject->update($user);
 
-    /**
-     * testCommandeFetch
-     *
-     * @param   int $id     Id order
-     * @return  Commande
-     *
-     * @depends	testCommandeCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		return $localobject;
+	}
 
-        $localobject=new Commande($this->savdb);
-        $result=$localobject->fetch($id);
+	/**
+	 * testCommandeAddLine
+	 *
+	 * @param	Commande	$localobject	Commande
+	 * @return	array{0:Commande,1:int}		Commande and id of the line added
+	 *
+	 * @depends	testCommandeUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeAddLine($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." id=".$id." result=".$result."\n";
-        return $localobject;
-    }
+		$localobject->fetch_thirdparty();
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    /**
-     * testCommandeUpdate
-     *
-     * @param	Object		$localobject	Commande
-     * @return	Commande
-     *
-     * @depends	testCommandeFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		$lineid = $localobject->addline('PHPUnit addline test', 100, 2, 20);	// 2 x 100 HT at 20% VAT = 200 HT / 40 VAT / 240 TTC
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid."\n";
+		$this->assertGreaterThan(0, $lineid, $localobject->errorsToString());
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
-    }
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount + 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 200, (float) $localobject->total_ht, 0.01, 'total_ht not updated after addline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after addline');
 
-    /**
-     * testCommandeValid
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends	testCommandeUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return array($localobject, $lineid);
+	}
 
-        $result=$localobject->valid($user);
+	/**
+	 * testCommandeUpdateLine
+	 *
+	 * @param	array{0:Commande,1:int}	$params	Commande and id of the line to update
+	 * @return	array{0:Commande,1:int}			Commande and id of the line updated
+	 *
+	 * @depends	testCommandeAddLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeUpdateLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-    /**
-     * testCommandeCancel
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends testCommandeValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeCancel($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$result = $localobject->updateline($lineid, 'PHPUnit addline test', 100, 3, 0, 20);	// qty 2 -> 3, so +100 HT / +20 VAT / +120 TTC
 
-        $result=$localobject->cancel();
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 100, (float) $localobject->total_ht, 0.01, 'total_ht not updated after updateline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after updateline');
 
-    /**
-     * testCommandeOther
-     *
-     * @param   Object  $localobject    Order
-     * @return  int						Order id
-     *
-     * @depends testCommandeCancel
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return array($localobject, $lineid);
+	}
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+	/**
+	 * testCommandeDeleteLine
+	 *
+	 * @param	array{0:Commande,1:int}	$params	Commande and id of the line to delete
+	 * @return	Commande
+	 *
+	 * @depends	testCommandeUpdateLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeDeleteLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
 
-        return $localobject->id;
-    }
+		$result = $localobject->deleteLine($user, $lineid);
 
-    /**
-     * testCommandeDelete
-     *
-     * @param   int $id         Id of order
-     * @return  void
-     *
-     * @depends testCommandeOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 
-        $localobject=new Commande($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
+		$localobject->fetch($localobject->id);
+		// Back to the original specimen lines, with the same totals
+		$this->assertCount($beforelinecount - 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht - 300, (float) $localobject->total_ht, 0.01, 'total_ht not updated after deleteLine');
+		$this->assertLineTotalsMatchHeader($localobject, 'after deleteLine');
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $result;
-    }
+		return $localobject;
+	}
+
+	/**
+	 * testCommandeValid
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  Commande
+	 *
+	 * @depends	testCommandeDeleteLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$oldref = dol_sanitizeFileName($localobject->ref);
+		$outputdir = getMultidirOutput($localobject);
+		$dirsource = $outputdir.'/'.$oldref;
+		$oldfile = $dirsource.'/'.$oldref.'.pdf';
+		$dirnew = '';
+		$newfile = '';
+
+		try {
+			$this->assertGreaterThanOrEqual(0, dol_mkdir($dirsource));
+			$this->assertNotFalse(file_put_contents($oldfile, 'Provisional order document'));
+
+			$result = $localobject->valid($user);
+
+			print __METHOD__." id=".$localobject->id." result=".$result."\n";
+			$this->assertLessThan($result, 0);
+
+			$newref = dol_sanitizeFileName($localobject->ref);
+			$dirnew = $outputdir.'/'.$newref;
+			$newfile = $dirnew.'/'.$newref.'.pdf';
+			$this->assertFileExists($newfile);
+			$this->assertFileNotExistsCompat($dirnew.'/'.$oldref.'.pdf');
+		} finally {
+			if ($newfile) {
+				@unlink($newfile);
+			}
+			@unlink($oldfile);
+			if ($dirnew) {
+				@rmdir($dirnew);
+			}
+			@rmdir($dirsource);
+		}
+
+		// Test everything is still the same as a freshly built specimen with the same mutation applied
+		// (catches unwanted field changes introduced by update()/valid())
+		$this->assertMatchesFreshSpecimen(
+			$localobject,
+			function ($specimen) {
+				$specimen->note_private = 'New note private after update';
+			},
+			array(
+				'newref', 'oldcopy', 'oldref', 'id', 'lines', 'line', 'client', 'thirdparty', 'brouillon', 'specimen',
+				'fk_user_author', 'user_author_id', 'user_creation_id', 'user_modification_id',
+				'date', 'date_commande', 'date_creation', 'date_validation', 'date_lim_reglement', 'datem', 'date_modification',
+				'ref', 'statut', 'status', 'socid', 'billed', 'fk_incoterms', 'actiontypecode', 'actionmsg2', 'actionmsg',
+				'mode_reglement', 'cond_reglement', 'mode_reglement_code', 'cond_reglement_code', 'availability_code', 'demand_reason_code',
+				'cond_reglement_doc', 'modelpdf',
+				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
+				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
+				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+				'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx',
+				'trackid', 'user_creat', 'user_valid', 'note',
+			),
+			array('tosell' => 1)
+		);
+
+		return $localobject;
+	}
+
+	/**
+	 * testCommandeCancel
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  Commande
+	 *
+	 * @depends testCommandeValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeCancel($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$result = $localobject->cancel($user);
+
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
+
+	/**
+	 * testCommandeOther
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  int						Order id
+	 *
+	 * @depends testCommandeCancel
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testCommandeDelete
+	 *
+	 * @param   int $id         Id of order
+	 * @return  void
+	 *
+	 * @depends testCommandeOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

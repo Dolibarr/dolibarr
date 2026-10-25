@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - eventorganization
+ModuleEventOrganizationName =Organización de Eventos
+EventOrganizationDescription =Organización de Eventos a través el Módulo de Proyectos
+EventOrganizationConferenceOrBoothMenuLeft =Conferencia o Puesto
+EventOrganizationSetup=Configuración de Organización de Evento
+EventOrganizationSetupPage =Página de organización de evento
+EVENTORGANIZATION_TASK_LABEL =Etiqueta de tareas para crear automáticamente cuando el proyecto sea validado
+EventOrganizationConfOrBooth=Conferencia o Puesto
+ConferenceOrBooth =Conferencia o Puesto
+ConferenceOrBoothTab =Conferencia o Puesto
+EvntOrgDone =Hecho
+EvntOrgCancelled =Cancelado

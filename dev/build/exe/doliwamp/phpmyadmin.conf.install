@@ -1,0 +1,29 @@
+Alias /phpmyadmin "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/"
+
+# NOTE FOR APACHE 2.2:
+# To grant access to dolibarr from outside set lines
+#
+#	Order Allow,Deny
+#	Allow from all
+#
+# instead of
+#
+#	Order Deny,Allow
+#	Deny from all
+#	Allow from 127.0.0.1
+#
+# NOTE FOR APACHE 2.3:
+# To grant access to dolibarr from outside set lines
+#
+#	Require all granted
+#
+# instead of
+#
+#	Require local
+#
+
+<Directory "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+    Require local
+</Directory>

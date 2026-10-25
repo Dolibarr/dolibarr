@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=نیا اثاثہ
+AccountancyCodeAsset=اکاؤنٹنگ کوڈ (اثاثہ)
+AccountancyCodeDepreciationAsset=اکاؤنٹنگ کوڈ (فرسودگی اثاثہ اکاؤنٹ)
+AccountancyCodeDepreciationExpense=اکاؤنٹنگ کوڈ (فرسودگی کے اخراجات کا اکاؤنٹ)
+AssetsLines=اثاثے
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
+DeleteType=حذف کریں۔
+DeleteAnAssetType=اثاثہ ماڈل کو حذف کریں۔
+ConfirmDeleteAssetType=کیا آپ واقعی اس اثاثہ ماڈل کو حذف کرنا چاہتے ہیں؟
+ShowTypeCard=ماڈل دکھائیں '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=اثاثے
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=اثاثوں کی تفصیل
+# Admin page
+AssetSetup=اثاثوں کا سیٹ اپ
+AssetSetupPage=اثاثوں کا سیٹ اپ صفحہ
+ExtraFieldsAssetModel=تکمیلی صفات (اثاثہ کا ماڈل)
+AssetsType=اثاثہ ماڈل
+AssetsTypeId=اثاثہ ماڈل کی شناخت
+AssetsTypeLabel=اثاثہ ماڈل لیبل
+AssetsTypes=اثاثوں کے ماڈل
+ASSET_ACCOUNTANCY_CATEGORY=فکسڈ اثاثہ اکاؤنٹنگ گروپ
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+# Menu
+MenuAssets=اثاثے
+MenuNewAsset=نیا اثاثہ
+MenuAssetModels=ماڈل اثاثے۔
+MenuListAssets=فہرست
+MenuNewAssetModel=نیا اثاثہ ماڈل
+MenuListAssetModels=فہرست
+# Module
+ConfirmDeleteAsset=کیا آپ واقعی اس اثاثہ کو ہٹانا چاہتے ہیں؟
+# Tab
+AssetDepreciationOptions=فرسودگی کے اختیارات
+AssetAccountancyCodes=اکاؤنٹنگ اکاؤنٹس
+AssetDepreciation=فرسودگی
+# Asset
+Asset=اثاثہ
+Assets=اثاثے
+AssetReversalAmountHT=معکوس رقم (بغیر ٹیکس کے)
+AssetAcquisitionValueHT=حصول کی رقم (بغیر ٹیکس)
+AssetRecoveredVAT=بازیافت شدہ VAT
+AssetReversalDate=واپسی کی تاریخ
+AssetDateAcquisition=حصول کی تاریخ
+AssetDateStart=آغاز کی تاریخ
+AssetAcquisitionType=حصول کی قسم
+AssetAcquisitionTypeNew=نئی
+AssetAcquisitionTypeOccasion=استعمال کیا جاتا ہے
+AssetType=اثاثہ کی قسم
+AssetTypeIntangible=غیر مادی
+AssetTypeTangible=ٹھوس
+AssetTypeInProgress=کام جاری ہے
+AssetTypeFinancial=مالیاتی
+AssetNotDepreciated=فرسودہ نہیں۔
+AssetDisposal=تصرف
+AssetConfirmDisposalAsk=کیا آپ واقعی اثاثہ <b> %s</b> کو ضائع کرنا چاہتے ہیں؟
+AssetConfirmReOpenAsk=کیا آپ واقعی اثاثہ <b> %s</b> کو دوبارہ کھولنا چاہتے ہیں؟
+# Asset status
+AssetInDraft=Draft
+AssetInProgress=کام جاری ہے
+AssetDisposed=تصرف
+AssetRecorded=حساب کتاب
+# Asset disposal
+AssetDisposalDate=تصرف کی تاریخ
+AssetDisposalAmount=ضائع کرنے کی قیمت
+AssetDisposalType=تصرف کی قسم
+AssetDisposalDepreciated=منتقلی کے سال کی قدر کم کریں۔
+AssetDisposalSubjectToVat=تصرف VAT کے تابع ہے۔
+# Asset model
+AssetModel=اثاثہ کا ماڈل
+AssetModels=اثاثہ کے ماڈلز
+# Asset depreciation options
+AssetDepreciationOptionEconomic=معاشی گراوٹ
+AssetDepreciationOptionAcceleratedDepreciation=تیز رفتار فرسودگی (ٹیکس)
+AssetDepreciationOptionDepreciationType=فرسودگی کی قسم
+AssetDepreciationOptionDepreciationTypeLinear=لکیری
+AssetDepreciationOptionDepreciationTypeDegressive=انحطاط پذیر
+AssetDepreciationOptionDepreciationTypeExceptional=غیر معمولی
+AssetDepreciationOptionDegressiveRate=تنزلی کی شرح
+AssetDepreciationOptionDuration=دورانیہ
+AssetDepreciationOptionDurationType=مدت کی قسم
+AssetDepreciationOptionDurationTypeAnnual=سالانہ
+AssetDepreciationOptionDurationTypeMonthly=ماہانہ
+AssetDepreciationOptionDurationTypeDaily=روزانہ
+AssetDepreciationOptionRate=شرح (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=فرسودگی کی بنیاد (ماسوائے VAT)
+AssetDepreciationOptionAmountBaseDeductibleHT=کٹوتی کی بنیاد (ماسوائے VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=کل رقم آخری فرسودگی (ماسوائے VAT)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=معاشی گراوٹ
+AssetAccountancyCodeAsset=اثاثہ
+AssetAccountancyCodeDepreciationAsset=فرسودگی
+AssetAccountancyCodeDepreciationExpense=فرسودگی کا خرچ
+AssetAccountancyCodeValueAssetSold=تصرف شدہ اثاثہ کی قیمت
+AssetAccountancyCodeReceivableOnAssignment=ضائع کرنے پر قابل وصول
+AssetAccountancyCodeProceedsFromSales=تصرف سے حاصل ہونے والی آمدنی
+AssetAccountancyCodeVatCollected=جمع شدہ VAT
+AssetAccountancyCodeVatDeductible=اثاثوں پر VAT وصول کیا۔
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=تیز رفتار فرسودگی (ٹیکس)
+AssetAccountancyCodeAcceleratedDepreciation=کھاتہ
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=فرسودگی کا خرچ
+AssetAccountancyCodeProvisionAcceleratedDepreciation=دوبارہ قبضہ / فراہمی
+# Asset depreciation
+AssetBaseDepreciationHT=فرسودگی کی بنیاد (ماسوائے VAT)
+AssetDepreciationBeginDate=پر فرسودگی کا آغاز
+AssetDepreciationDuration=دورانیہ
+AssetDepreciationRate=شرح (%%)
+AssetDepreciationDate=فرسودگی کی تاریخ
+AssetDepreciationHT=فرسودگی (ماسوائے VAT)
+AssetCumulativeDepreciationHT=مجموعی فرسودگی (ماسوائے VAT)
+AssetResidualHT=بقایا قیمت (ماسوائے VAT)
+AssetDispatchedInBookkeeping=فرسودگی ریکارڈ کی گئی۔
+AssetFutureDepreciationLine=مستقبل کی فرسودگی
+AssetDepreciationReversal=الٹ جانا
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=اثاثہ یا ماڈل کی شناخت فراہم نہیں کی گئی ہے۔
+AssetErrorFetchAccountancyCodesForMode='%s' فرسودگی موڈ کے اکاؤنٹنگ اکاؤنٹس کو بازیافت کرتے وقت خرابی
+AssetErrorDeleteAccountancyCodesForMode='%s' فرسودگی موڈ سے اکاؤنٹنگ اکاؤنٹس کو حذف کرتے وقت خرابی
+AssetErrorInsertAccountancyCodesForMode=فرسودگی وضع '%s' کے اکاؤنٹنگ اکاؤنٹس داخل کرتے وقت خرابی
+AssetErrorFetchDepreciationOptionsForMode='%s' فرسودگی موڈ کے اختیارات بازیافت کرتے وقت خرابی
+AssetErrorDeleteDepreciationOptionsForMode='%s' فرسودگی موڈ کے اختیارات کو حذف کرتے وقت خرابی
+AssetErrorInsertDepreciationOptionsForMode='%s' فرسودگی موڈ کے اختیارات داخل کرتے وقت خرابی
+AssetErrorFetchDepreciationLines=ریکارڈ شدہ فرسودگی لائنوں کو بازیافت کرتے وقت خرابی۔
+AssetErrorClearDepreciationLines=ریکارڈ شدہ فرسودگی لائنوں کو صاف کرتے وقت خرابی (الٹ اور مستقبل)
+AssetErrorAddDepreciationLine=فرسودگی لائن شامل کرتے وقت خرابی۔
+AssetErrorCalculationDepreciationLines=فرسودگی لائنوں کا حساب لگاتے وقت خرابی (بازیابی اور مستقبل)
+AssetErrorReversalDateNotProvidedForMode='%s' فرسودگی کے طریقہ کے لیے الٹنے کی تاریخ فراہم نہیں کی گئی ہے۔
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=واپسی کی تاریخ '%s' فرسودگی کے طریقہ کار کے لیے موجودہ مالی سال کے آغاز سے زیادہ یا اس کے برابر ہونی چاہیے۔
+AssetErrorReversalAmountNotProvidedForMode=ریورسل رقم فرسودگی وضع '%s' کے لیے فراہم نہیں کی گئی ہے۔
+AssetErrorFetchCumulativeDepreciation=فرسودگی لائن سے جمع شدہ فرسودگی کی رقم بازیافت کرتے وقت خرابی۔
+AssetErrorSetLastCumulativeDepreciation=آخری جمع شدہ فرسودگی کی رقم کو ریکارڈ کرتے وقت خرابی۔

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,24 @@
  *		\brief      Page with web server system information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -40,13 +52,13 @@ if (!$user->admin) accessforbidden();
  * View
  */
 
-llxHeader('', $langs->trans("InfoWebServer"));
+llxHeader('', $langs->trans("InfoWebServer"), '', '', 0, 0, '', '', '', 'mod-admin page-system_web');
 
 print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter")."</td><td></td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VirtualServerName")."</td><td>".$_SERVER["SERVER_NAME"]."</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
@@ -56,16 +68,27 @@ print '<tr><td>'.$langs->trans("DataRootServer")."</td><td>".DOL_DATA_ROOT."</td
 // Web user group by default
 $labeluser = dol_getwebuser('user');
 $labelgroup = dol_getwebuser('group');
-if ($labeluser && $labelgroup)
-{
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+if ($labeluser && $labelgroup) {
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.':'.$labelgroup;
+	if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+		$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
+		print ' <span class="opacitymedium">(POSIX '.$arrayofinfoofuser['name'].':'.$arrayofinfoofuser['gecos'].':'.$arrayofinfoofuser['dir'].':'.$arrayofinfoofuser['shell'].')</span>';
+	}
+	print "</td></tr>\n";
 }
 // Web user group real (detected by 'id' external command)
-$arrayout = array(); $varout = 0;
-exec('id', $arrayout, $varout);
-if (empty($varout))	// Test command is ok. Work only on Linux OS.
-{
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
+if (function_exists('exec')) {
+	$arrayout = array();
+	$varout = 0;
+	exec('id', $arrayout, $varout);
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
+	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
+		print implode(',', $arrayout);
+	} else {
+		$langs->load("errors");
+		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';
+	}
+	print "</td></tr>\n";
 }
 print '</table>';
 print '</div>';

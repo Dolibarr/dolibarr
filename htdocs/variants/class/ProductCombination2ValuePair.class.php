@@ -1,6 +1,7 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,26 @@
  */
 
 /**
+ *	\file       htdocs/variants/class/ProductCombination2ValuePair.class.php
+ *	\ingroup    variants
+ *	\brief      File of the ProductCombination2ValuePair class
+ */
+
+
+/**
  * Class ProductCombination2ValuePair
- * Used to represent the relation between a product combination, a product attribute and a product attribute value
+ * Used to represent the relation between a variant and its attributes.
+ *
+ * Example: a product "shirt" has a variant "shirt XL white" linked to the attributes "size: XL" and "color: white".
+ * This is represented with two ProductCombination2ValuePair objects:
+ * - One for "size: XL":
+ *     * $object->fk_prod_combination    ID of the ProductCombination object between product "shirt" and its variant "shirt XL white"
+ *     * $object->fk_prod_attr           ID of the ProductAttribute object "size"
+ *     * $object->fk_prod_attr_val       ID of the ProductAttributeValue object "XL"
+ * - Another for "color: white":
+ *     * $object->fk_prod_combination    ID of the ProductCombination object between product "shirt" and its variant "shirt XL white"
+ *     * $object->fk_prod_attr           ID of the ProductAttribute object "color"
+ *     * $object->fk_prod_attr_val       ID of the ProductAttributeValue object "white"
  */
 class ProductCombination2ValuePair
 {
@@ -29,38 +48,68 @@ class ProductCombination2ValuePair
 	private $db;
 
 	/**
-	 * Combination 2 value pair id
+	 * ID of this ProductCombination2ValuePair
 	 * @var int
 	 */
 	public $id;
 
 	/**
-	 * Product combination id
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
+	 * @var string	Key of the import run that created or updated the row
+	 */
+	public $import_key;
+
+	/**
+	 * @var array<string,mixed>	Context of the current operation, set by the import engine
+	 */
+	public $context = array();
+
+	/**
+	 * ID of the ProductCombination linked to this object
+	 * (ex: ID of the ProductCombination between product "shirt" and its variant "shirt XL white")
 	 * @var int
 	 */
 	public $fk_prod_combination;
 
 	/**
-	 * Product attribute id
+	 * ID of the ProductAttribute linked to this object
+	 * (ex: ID of the ProductAttribute "color")
 	 * @var int
 	 */
 	public $fk_prod_attr;
 
 	/**
-	 * Product attribute value id
+	 * ID of the ProductAttributeValue linked to this object
+	 * (ex: ID of the ProductAttributeValue "white")
 	 * @var int
 	 */
 	public $fk_prod_attr_val;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
-    public function __construct(DoliDB $db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Error message
+	 * @var string
+	 */
+	public $error;
+
+	/**
+	 * Array of error messages
+	 * @var string[]
+	 */
+	public $errors = array();
+
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 * Translates this class to a human-readable string
@@ -69,8 +118,8 @@ class ProductCombination2ValuePair
 	 */
 	public function __toString()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttributeValue.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttribute.class.php';
 
 		$prodattr = new ProductAttribute($this->db);
 		$prodattrval = new ProductAttributeValue($this->db);
@@ -78,23 +127,25 @@ class ProductCombination2ValuePair
 		$prodattr->fetch($this->fk_prod_attr);
 		$prodattrval->fetch($this->fk_prod_attr_val);
 
-		return $prodattr->label.': '.$prodattrval->value;
+		return $prodattr->label . ': ' . $prodattrval->value;
 	}
 
 	/**
-	 * Creates a product combination 2 value pair
-	 * @return int <0 KO, >0 OK
+	 * Create a ProductCombination2ValuePair
+	 *
+	 * @param	User		$user		User that creates		//not used
+	 * @return 	int						Return 1 if OK, -1 if KO
 	 */
-	public function create()
+	public function create($user)
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_combination2val
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_attribute_combination2val
 		(fk_prod_combination, fk_prod_attr, fk_prod_attr_val)
-		VALUES(".(int) $this->fk_prod_combination.", ".(int) $this->fk_prod_attr.", ".(int) $this->fk_prod_attr_val.")";
+		VALUES(" . (int) $this->fk_prod_combination . ", " . (int) $this->fk_prod_attr . ", " . (int) $this->fk_prod_attr_val . ")";
 
 		$query = $this->db->query($sql);
 
 		if ($query) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_combination2val');
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . 'product_attribute_combination2val');
 
 			return 1;
 		}
@@ -103,22 +154,60 @@ class ProductCombination2ValuePair
 	}
 
 	/**
-	 * Retrieves a product combination 2 value pair from its rowid
+	 * Retrieves a ProductCombination2ValuePair by its rowid
 	 *
-	 * @param int $fk_combination Fk combination to search
-	 * @return int|ProductCombination2ValuePair[] -1 if KO
+	 * Required by fetchObjectByElement(), which calls fetch() on the class resolved for the
+	 * element 'product_attribute_combination2val' without testing that the method exists.
+	 *
+	 * @param	int		$id		Rowid of the pair
+	 * @return	int<-1,1>		-1 if KO, 0 if not found, 1 if OK
+	 */
+	public function fetch($id)
+	{
+		$sql = "SELECT rowid, fk_prod_combination, fk_prod_attr, fk_prod_attr_val";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val";
+		$sql .= " WHERE rowid = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		if (!$this->db->num_rows($resql)) {
+			$this->db->free($resql);
+			return 0;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		$this->id = (int) $obj->rowid;
+		$this->fk_prod_combination = (int) $obj->fk_prod_combination;
+		$this->fk_prod_attr = (int) $obj->fk_prod_attr;
+		$this->fk_prod_attr_val = (int) $obj->fk_prod_attr_val;
+
+		return 1;
+	}
+
+	/**
+	 * Retrieve all ProductCombination2ValuePair linked to a given ProductCombination ID.
+	 *
+	 * @param   int          $fk_combination           ID of the ProductCombination
+	 * @return  -1|ProductCombination2ValuePair[]      Return <0 if KO, array of ProductCombination2ValuePair if OK
 	 */
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
-        c.rowid,
+        c2v.rowid,
         c2v.fk_prod_attr_val,
         c2v.fk_prod_attr,
         c2v.fk_prod_combination
-        FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
-        WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
+        FROM " . MAIN_DB_PREFIX . "product_attribute c LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
+        WHERE c2v.fk_prod_combination = " . (int) $fk_combination;
 
-		$sql .= $this->db->order('c.rang', 'asc');
+		$sql .= $this->db->order('c.position', 'asc');
 
 		$query = $this->db->query($sql);
 
@@ -142,14 +231,14 @@ class ProductCombination2ValuePair
 	}
 
 	/**
-	 * Deletes a product combination 2 value pair
+	 * Delete all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
-	 * @param int $fk_combination Rowid of the combination
-	 * @return int >0 OK <0 KO
+	 * @param       int					$fk_combination	ID of the ProductCombination
+	 * @return      int<-1,-1>|int<1,1>					-1 if KO, 1 if OK
 	 */
 	public function deleteByFkCombination($fk_combination)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_combination2val WHERE fk_prod_combination = ".(int) $fk_combination;
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val WHERE fk_prod_combination = " . (int) $fk_combination;
 
 		if ($this->db->query($sql)) {
 			return 1;

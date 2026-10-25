@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Uri;
 
 /**
@@ -16,31 +18,28 @@ namespace Sabre\Uri;
  * This function takes a basePath, which itself _may_ also be relative, and
  * then applies the relative path on top of it.
  *
- * @param string $basePath
- * @param string $newPath
- * @return string
+ * @throws InvalidUriException
  */
-function resolve($basePath, $newPath) {
-
-    $base = parse($basePath);
+function resolve(string $basePath, string $newPath): string
+{
     $delta = parse($newPath);
-
-    $pick = function($part) use ($base, $delta) {
-
-        if ($delta[$part]) {
-            return $delta[$part];
-        } elseif ($base[$part]) {
-            return $base[$part];
-        }
-        return null;
-
-    };
 
     // If the new path defines a scheme, it's absolute and we can just return
     // that.
     if ($delta['scheme']) {
         return build($delta);
     }
+
+    $base = parse($basePath);
+    $pick = function ($part) use ($base, $delta) {
+        if ($delta[$part]) {
+            return $delta[$part];
+        } elseif ($base[$part]) {
+            return $base[$part];
+        }
+
+        return null;
+    };
 
     $newParts = [];
 
@@ -49,17 +48,18 @@ function resolve($basePath, $newPath) {
     $newParts['port'] = $pick('port');
 
     $path = '';
-    if ($delta['path']) {
+    if (is_string($delta['path']) and strlen($delta['path']) > 0) {
         // If the path starts with a slash
-        if ($delta['path'][0] === '/') {
+        if ('/' === $delta['path'][0]) {
             $path = $delta['path'];
         } else {
             // Removing last component from base path.
             $path = $base['path'];
-            if (strpos($path, '/') !== false) {
-                $path = substr($path, 0, strrpos($path, '/'));
+            $length = strrpos((string) $path, '/');
+            if (false !== $length) {
+                $path = substr($path, 0, $length);
             }
-            $path .= '/' . $delta['path'];
+            $path .= '/'.$delta['path'];
         }
     } else {
         $path = $base['path'] ?: '/';
@@ -68,15 +68,14 @@ function resolve($basePath, $newPath) {
     $pathParts = explode('/', $path);
     $newPathParts = [];
     foreach ($pathParts as $pathPart) {
-
         switch ($pathPart) {
             //case '' :
-            case '.' :
+            case '.':
                 break;
-            case '..' :
+            case '..':
                 array_pop($newPathParts);
                 break;
-            default :
+            default:
                 $newPathParts[] = $pathPart;
                 break;
         }
@@ -85,7 +84,7 @@ function resolve($basePath, $newPath) {
     $path = implode('/', $newPathParts);
 
     // If the source url ended with a /, we want to preserve that.
-    $newParts['path'] = $path;
+    $newParts['path'] = 0 === strpos($path, '/') ? $path : '/'.$path;
     if ($delta['query']) {
         $newParts['query'] = $delta['query'];
     } elseif (!empty($base['query']) && empty($delta['host']) && empty($delta['path'])) {
@@ -95,8 +94,8 @@ function resolve($basePath, $newPath) {
     if ($delta['fragment']) {
         $newParts['fragment'] = $delta['fragment'];
     }
-    return build($newParts);
 
+    return build($newParts);
 }
 
 /**
@@ -108,11 +107,10 @@ function resolve($basePath, $newPath) {
  *
  * It will also change a %3a into a %3A.
  *
- * @param string $uri
- * @return string
+ * @throws InvalidUriException
  */
-function normalize($uri) {
-
+function normalize(string $uri): string
+{
     $parts = parse($uri);
 
     if (!empty($parts['path'])) {
@@ -123,23 +121,23 @@ function normalize($uri) {
                 case '.':
                     // skip
                     break;
-                case '..' :
+                case '..':
                     // One level up in the hierarchy
                     array_pop($newPathParts);
                     break;
-                default :
+                default:
                     // Ensuring that everything is correctly percent-encoded.
                     $newPathParts[] = rawurlencode(rawurldecode($pathPart));
                     break;
             }
         }
-        $parts['path'] = '/' . implode('/', $newPathParts);
+        $parts['path'] = '/'.implode('/', $newPathParts);
     }
 
     if ($parts['scheme']) {
         $parts['scheme'] = strtolower($parts['scheme']);
         $defaultPorts = [
-            'http'  => '80',
+            'http' => '80',
             'https' => '443',
         ];
 
@@ -149,8 +147,8 @@ function normalize($uri) {
         }
         // A few HTTP specific rules.
         switch ($parts['scheme']) {
-            case 'http' :
-            case 'https' :
+            case 'http':
+            case 'https':
                 if (empty($parts['path'])) {
                     // An empty path is equivalent to / in http.
                     $parts['path'] = '/';
@@ -159,10 +157,11 @@ function normalize($uri) {
         }
     }
 
-    if ($parts['host']) $parts['host'] = strtolower($parts['host']);
+    if ($parts['host']) {
+        $parts['host'] = strtolower($parts['host']);
+    }
 
     return build($parts);
-
 }
 
 /**
@@ -175,11 +174,12 @@ function normalize($uri) {
  * Unlike PHP's parse_url, it will also convert any non-ascii characters to
  * percent-encoded strings. PHP's parse_url corrupts these characters on OS X.
  *
- * @param string $uri
- * @return array
+ * @return array<string, string>
+ *
+ * @throws InvalidUriException
  */
-function parse($uri) {
-
+function parse(string $uri): array
+{
     // Normally a URI must be ASCII, however. However, often it's not and
     // parse_url might corrupt these strings.
     //
@@ -187,7 +187,7 @@ function parse($uri) {
     // uriencode them first.
     $uri = preg_replace_callback(
         '/[^[:ascii:]]/u',
-        function($matches) {
+        function ($matches) {
             return rawurlencode($matches[0]);
         },
         $uri
@@ -200,62 +200,57 @@ function parse($uri) {
 
     return
          $result + [
-            'scheme'   => null,
-            'host'     => null,
-            'path'     => null,
-            'port'     => null,
-            'user'     => null,
-            'query'    => null,
+            'scheme' => null,
+            'host' => null,
+            'path' => null,
+            'port' => null,
+            'user' => null,
+            'query' => null,
             'fragment' => null,
         ];
-
 }
 
 /**
  * This function takes the components returned from PHP's parse_url, and uses
  * it to generate a new uri.
  *
- * @param array $parts
- * @return string
+ * @param array<string, int|string|null> $parts
  */
-function build(array $parts) {
-
+function build(array $parts): string
+{
     $uri = '';
 
     $authority = '';
     if (!empty($parts['host'])) {
         $authority = $parts['host'];
         if (!empty($parts['user'])) {
-            $authority = $parts['user'] . '@' . $authority;
+            $authority = $parts['user'].'@'.$authority;
         }
         if (!empty($parts['port'])) {
-            $authority = $authority . ':' . $parts['port'];
+            $authority = $authority.':'.$parts['port'];
         }
     }
 
     if (!empty($parts['scheme'])) {
         // If there's a scheme, there's also a host.
-        $uri = $parts['scheme'] . ':';
-
+        $uri = $parts['scheme'].':';
     }
-    if ($authority || (!empty($parts['scheme']) && $parts['scheme'] === 'file')) {
+    if ($authority || (!empty($parts['scheme']) && 'file' === $parts['scheme'])) {
         // No scheme, but there is a host.
-        $uri .= '//' . $authority;
-
+        $uri .= '//'.$authority;
     }
 
     if (!empty($parts['path'])) {
         $uri .= $parts['path'];
     }
     if (!empty($parts['query'])) {
-        $uri .= '?' . $parts['query'];
+        $uri .= '?'.$parts['query'];
     }
     if (!empty($parts['fragment'])) {
-        $uri .= '#' . $parts['fragment'];
+        $uri .= '#'.$parts['fragment'];
     }
 
     return $uri;
-
 }
 
 /**
@@ -266,24 +261,23 @@ function build(array $parts) {
  * is used) and we need a method that just operates on UTF-8 characters.
  *
  * In addition basename and dirname are platform aware, and will treat
- * backslash (\) as a directory separator on windows.
+ * backslash (\) as a directory separator on Windows.
  *
  * This method returns the 2 components as an array.
  *
  * If there is no dirname, it will return an empty string. Any / appearing at
  * the end of the string is stripped off.
  *
- * @param string $path
- * @return array
+ * @return array<int, mixed>
  */
-function split($path) {
-
+function split(string $path): array
+{
     $matches = [];
     if (preg_match('/^(?:(?:(.*)(?:\/+))?([^\/]+))(?:\/?)$/u', $path, $matches)) {
         return [$matches[1], $matches[2]];
     }
-    return [null,null];
 
+    return [null, null];
 }
 
 /**
@@ -296,11 +290,12 @@ function split($path) {
  * This function is only called if the main parse method fails. It's pretty
  * crude and probably slow, so the original parse_url is usually preferred.
  *
- * @param string $uri
- * @return array
+ * @return array<string, mixed>
+ *
+ * @throws InvalidUriException
  */
-function _parse_fallback($uri) {
-
+function _parse_fallback(string $uri): array
+{
     // Normally a URI must be ASCII, however. However, often it's not and
     // parse_url might corrupt these strings.
     //
@@ -308,63 +303,69 @@ function _parse_fallback($uri) {
     // uriencode them first.
     $uri = preg_replace_callback(
         '/[^[:ascii:]]/u',
-        function($matches) {
+        function ($matches) {
             return rawurlencode($matches[0]);
         },
         $uri
     );
 
     $result = [
-        'scheme'   => null,
-        'host'     => null,
-        'port'     => null,
-        'user'     => null,
-        'path'     => null,
+        'scheme' => null,
+        'host' => null,
+        'port' => null,
+        'user' => null,
+        'path' => null,
         'fragment' => null,
-        'query'    => null,
+        'query' => null,
     ];
 
     if (preg_match('% ^([A-Za-z][A-Za-z0-9+-\.]+): %x', $uri, $matches)) {
-
         $result['scheme'] = $matches[1];
         // Take what's left.
         $uri = substr($uri, strlen($result['scheme']) + 1);
-
     }
 
     // Taking off a fragment part
-    if (strpos($uri, '#')) {
+    if (false !== strpos($uri, '#')) {
         list($uri, $result['fragment']) = explode('#', $uri, 2);
     }
     // Taking off the query part
-    if (strpos($uri, '?')) {
+    if (false !== strpos($uri, '?')) {
         list($uri, $result['query']) = explode('?', $uri, 2);
     }
 
-    if (substr($uri, 0, 3) === '///') {
-      // The triple slash uris are a bit unusual, but we have special handling
-      // for them.
-      $result['path'] = substr($uri, 2);
-      $result['host'] = '';
-    } elseif (substr($uri, 0, 2) === '//') {
+    if ('///' === substr($uri, 0, 3)) {
+        // The triple slash uris are a bit unusual, but we have special handling
+        // for them.
+        $result['path'] = substr($uri, 2);
+        $result['host'] = '';
+    } elseif ('//' === substr($uri, 0, 2)) {
         // Uris that have an authority part.
-        $regex = '
-          %^
+        $regex = '%^
             //
             (?: (?<user> [^:@]+) (: (?<pass> [^@]+)) @)?
             (?<host> ( [^:/]* | \[ [^\]]+ \] ))
             (?: : (?<port> [0-9]+))?
             (?<path> / .*)?
-          $%x
-        ';
+          $%x';
         if (!preg_match($regex, $uri, $matches)) {
             throw new InvalidUriException('Invalid, or could not parse URI');
         }
-        if ($matches['host']) $result['host'] = $matches['host'];
-        if ($matches['port']) $result['port'] = (int)$matches['port'];
-        if (isset($matches['path'])) $result['path'] = $matches['path'];
-        if ($matches['user']) $result['user'] = $matches['user'];
-        if ($matches['pass']) $result['pass'] = $matches['pass'];
+        if ($matches['host']) {
+            $result['host'] = $matches['host'];
+        }
+        if (isset($matches['port'])) {
+            $result['port'] = (int) $matches['port'];
+        }
+        if (isset($matches['path'])) {
+            $result['path'] = $matches['path'];
+        }
+        if ($matches['user']) {
+            $result['user'] = $matches['user'];
+        }
+        if ($matches['pass']) {
+            $result['pass'] = $matches['pass'];
+        }
     } else {
         $result['path'] = $uri;
     }
