@@ -1024,7 +1024,7 @@ function getAiChatAssistantHtml($mode = 'page')
 		// Same picto as the title of the popover (no avatar box)
 		//$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
 		$out .= '<span class="chat-header-text">';
-		$out .= '<span class="chat-header-title">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
+		$out .= '<span class="chat-header-title hideonsmartphone">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
 		$aiprovider = getAiAssistantProviderLabel();
 		if ($aiprovider !== '') {
 			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
