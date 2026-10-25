@@ -58,7 +58,7 @@ class pdf_blochet extends ModeleChequeReceipts
 	public $line_per_page;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	public $ref_ext;
 
