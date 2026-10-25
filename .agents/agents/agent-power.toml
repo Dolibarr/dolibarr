@@ -21,10 +21,6 @@ When running bash commands, keep them plain so they can be auto-approved:
 permission = "always"
 deny = ["rm -rf *", "sudo *"]
 
-[tools.grep]
-permission = "always"
-allowlist = ["/tmp/**"]
-
 [tools.read_file]
 permission = "always"
 allowlist = ["/tmp/**"]
