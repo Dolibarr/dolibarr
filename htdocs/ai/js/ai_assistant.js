@@ -46,7 +46,9 @@ export function initAiAssistant(container) {
 
     // Absolute endpoint URL: the chat may run injected into any Dolibarr page
     // (topbar popover), so relative URLs would resolve against the wrong path.
-    const epUrl = (file) => (config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : '');
+    // Resolved against location.origin (never contains user:pass@): fetch() rejects URLs
+    // with credentials, which a page loaded as http://user:pass@host/ (e.g. DoliDroid) would give.
+    const epUrl = (file) => new URL((config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : ''), window.location.origin).href;
 
     // 2. Select DOM Elements (scoped to the container so several chat instances
     // can coexist on the same page, e.g. popover opened over the standalone page)

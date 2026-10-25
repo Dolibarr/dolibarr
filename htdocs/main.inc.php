@@ -2828,6 +2828,15 @@ function top_menu_ai()
 
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
 
+	// On smartphone, no popover: the icon is a direct link to the standalone assistant page.
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$html .= '<!-- div for AI Assistant link (opens the AI assistant page) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a accesskey="a" href="'.DOL_URL_ROOT.'/ai/assistant/index.php?mainmenu=tools&amp;leftmenu=ai" id="topmenu-ai-toggle" class="login-dropdown-a nofocusvisible" title="'.dol_escape_htmltag($ailabel).'"><i class="fa fa-magic"></i></a>
+	</div>';
+		return $html;
+	}
+
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
 	// the standalone page ai/assistant/index.php uses the same pattern). Same
 	// filemtime cache-busting as the JS module below: a stylesheet cached for
@@ -2905,7 +2914,8 @@ function top_menu_ai()
 		function loadChat() {
 			if (loaded || loading) { return; }
 			loading = true;
-			fetch("'.DOL_URL_ROOT.'/ai/assistant/popover.php", { credentials: "same-origin" })
+			// Resolved against location.origin: fetch() rejects a URL inheriting user:pass@ from the page URL.
+			fetch(new URL("'.DOL_URL_ROOT.'/ai/assistant/popover.php", window.location.origin).href, { credentials: "same-origin" })
 				.then(function (resp) {
 					if (!resp.ok) { throw new Error("HTTP " + resp.status); }
 					return resp.text();
