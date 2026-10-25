@@ -296,6 +296,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data = array();
 		}
 
+		// Keep the previous values so triggers on BILL_SUPPLIER_MODIFY can see what changed
+		$this->invoice->oldcopy = dol_clone($this->invoice, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;

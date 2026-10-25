@@ -426,6 +426,8 @@ if (empty($reshook)) {
 
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $usercancreate) {
+		// Keep the previous values so triggers on BILL_SUPPLIER_MODIFY can see what changed
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
 		if ($object->update($user) < 0) {
