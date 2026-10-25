@@ -760,7 +760,7 @@ class ICal
 
 	/**
 	 * Return if a recurrence rule can be expanded by expandRRule(): FREQ MINUTELY, HOURLY, DAILY, WEEKLY, MONTHLY or YEARLY with, as parts,
-	 * BYDAY, BYMONTHDAY, BYMONTH, BYYEARDAY, BYWEEKNO, BYSETPOS, BYHOUR, WKST (some of them only for some FREQ).
+	 * BYDAY, BYMONTHDAY, BYMONTH, BYYEARDAY, BYWEEKNO, BYSETPOS, BYHOUR, BYMINUTE, BYSECOND, WKST (some of them only for some FREQ).
 	 *
 	 * @param 	array<string,string>	$rrule	Rule decoded by ical_rrule()
 	 * @return 	bool					True if the rule can be expanded
@@ -774,7 +774,7 @@ class ICal
 		$byparts = array();
 		foreach (array_keys($rrule) as $key) {
 			if (strpos($key, 'BY') === 0) {
-				if (!in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO', 'BYSETPOS', 'BYHOUR'))) {
+				if (!in_array($key, array('BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO', 'BYSETPOS', 'BYHOUR', 'BYMINUTE', 'BYSECOND'))) {
 					return false;
 				}
 				$byparts[$key] = $key;
@@ -799,12 +799,12 @@ class ICal
 				}
 			}
 		}
-		$limits = array('BYMONTHDAY' => array(31, false), 'BYMONTH' => array(12, true), 'BYYEARDAY' => array(366, false), 'BYWEEKNO' => array(53, false), 'BYSETPOS' => array(366, false), 'BYHOUR' => array(23, true));
+		$limits = array('BYMONTHDAY' => array(31, false), 'BYMONTH' => array(12, true), 'BYYEARDAY' => array(366, false), 'BYWEEKNO' => array(53, false), 'BYSETPOS' => array(366, false), 'BYHOUR' => array(23, true), 'BYMINUTE' => array(59, true), 'BYSECOND' => array(59, true));
 		foreach ($limits as $key => $limit) {
 			if (isset($rrule[$key])) {
 				foreach (explode(',', $rrule[$key]) as $item) {
 					$value = (int) $item;
-					if (!preg_match('/^-?[0-9]{1,3}$/', trim($item)) || abs($value) > $limit[0] || ($limit[1] && $value < 0) || ($key != 'BYHOUR' && $value == 0)) {
+					if (!preg_match('/^-?[0-9]{1,3}$/', trim($item)) || abs($value) > $limit[0] || ($limit[1] && $value < 0) || (!in_array($key, array('BYHOUR', 'BYMINUTE', 'BYSECOND')) && $value == 0)) {
 						return false;
 					}
 				}
@@ -812,6 +812,9 @@ class ICal
 		}
 		if (isset($byparts['BYSETPOS']) && count($byparts) < 2) {
 			return false;	// BYSETPOS selects among the occurrences made by the other BYxxx parts
+		}
+		if ($isshort && (isset($byparts['BYMINUTE']) || isset($byparts['BYSECOND']))) {
+			return false;
 		}
 		if ($isshort && (isset($byparts['BYYEARDAY']) || isset($byparts['BYWEEKNO']) || isset($byparts['BYSETPOS']))) {
 			return false;
@@ -977,6 +980,8 @@ class ICal
 		$byweekno = (isset($rrule['BYWEEKNO']) ? array_map('intval', explode(',', $rrule['BYWEEKNO'])) : array());
 		$bysetpos = (isset($rrule['BYSETPOS']) ? array_map('intval', explode(',', $rrule['BYSETPOS'])) : array());
 		$byhour = (isset($rrule['BYHOUR']) ? array_map('intval', explode(',', $rrule['BYHOUR'])) : array());
+		$byminute = (isset($rrule['BYMINUTE']) ? array_map('intval', explode(',', $rrule['BYMINUTE'])) : array());
+		$bysecond = (isset($rrule['BYSECOND']) ? array_map('intval', explode(',', $rrule['BYSECOND'])) : array());
 
 		$timeofday = (($dtstart % 86400) + 86400) % 86400;
 		$firstday = $dtstart - $timeofday;
@@ -984,13 +989,19 @@ class ICal
 		$month0 = (int) gmdate('n', $firstday);
 		$day0 = (int) gmdate('j', $firstday);
 		$dayofweek0 = (int) gmdate('w', $firstday);
-		$minutesecond = $timeofday % 3600;
 		$hour0 = intdiv($timeofday, 3600);
-		// Times of the day of an occurrence, for the rules that can have several by day (BYHOUR)
+		$minute0 = intdiv($timeofday % 3600, 60);
+		$second0 = $timeofday % 60;
+		// Times of the day of an occurrence, for the rules that can have several by day (BYHOUR, BYMINUTE, BYSECOND)
 		$times = array();
 		foreach ((empty($byhour) ? array($hour0) : $byhour) as $hour) {
-			$times[] = $hour * 3600 + $minutesecond;
+			foreach ((empty($byminute) ? array($minute0) : $byminute) as $minute) {
+				foreach ((empty($bysecond) ? array($second0) : $bysecond) as $second) {
+					$times[] = $hour * 3600 + $minute * 60 + $second;
+				}
+			}
 		}
+		$times = array_values(array_unique($times));
 		sort($times);
 		$skip = ($maxcount == 0 && $from > $dtstart);
 
