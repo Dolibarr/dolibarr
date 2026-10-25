@@ -1,3 +1,5 @@
+[![Runme](https://runme.io/static/button.svg)](https://runme.io/run?app_id=c5689a12-6ab5-4df0-84b6-4111fefe4bb9)
+
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)

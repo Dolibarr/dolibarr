@@ -1,0 +1,56 @@
+name: Dependency inventory (read-only)
+
+on:
+  push:
+    branches:
+      - audit/general-2026-10
+    paths:
+      - 'composer.json'
+      - 'composer.lock'
+      - 'composer.json.disabled'
+      - 'COPYRIGHT'
+      - 'htdocs/includes/**'
+      - 'htdocs/public/**'
+      - 'dev/build/ci/dependency_inventory.py'
+      - '.github/workflows/dependency-inventory.yml'
+  pull_request:
+    branches:
+      - audit/general-2026-10
+    paths:
+      - 'composer.json'
+      - 'composer.lock'
+      - 'composer.json.disabled'
+      - 'COPYRIGHT'
+      - 'htdocs/includes/**'
+      - 'htdocs/public/**'
+      - 'dev/build/ci/dependency_inventory.py'
+      - '.github/workflows/dependency-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    name: Inventory bundled dependency metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out fork branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate inventory report
+        run: python dev/build/ci/dependency_inventory.py --output dependency-inventory.json
+
+      - name: Upload inventory report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-inventory
+          path: dependency-inventory.json
+          if-no-files-found: error
+          retention-days: 14
