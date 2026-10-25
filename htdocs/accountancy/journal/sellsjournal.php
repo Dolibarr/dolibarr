@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +215,9 @@ if ($in_bookkeeping == 'notyet') {
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 if ($manageCustomerDepositInInvoice) {
-	$sql .= " AND (fd.description != '(DEPOSIT)' OR COALESCE(fd.fk_remise_except, 0) = 0)";
+	// Exclude the lines that consume a down payment, they are replaced by the reversal of the down payment (see $sql2).
+	// The reversal is only done for standard invoices, so the other types (replacement, situation...) keep the line.
+	$sql .= " AND (fd.description != '(DEPOSIT)' OR COALESCE(fd.fk_remise_except, 0) = 0 OR f.type <> ".Facture::TYPE_STANDARD.")";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
