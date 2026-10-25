@@ -1594,7 +1594,7 @@ class FormFile
 					if ($sizetoshow == $sizetoshowbytes) {
 						print $sizetoshow;
 					} else {
-						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+						print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 					}
 					print '</td>';
 
@@ -2228,7 +2228,7 @@ class FormFile
 				if ($sizetoshow == $sizetoshowbytes) {
 					print $sizetoshow;
 				} else {
-					print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+					print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 				}
 				print '</td>';
 

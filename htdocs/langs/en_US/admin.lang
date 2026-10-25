@@ -1414,6 +1414,7 @@ BackupDesc4=Backup the content of the key <b>%s</b> found into the file conf/con
 BackupDescApp=Backup the contents of the application directory (<b>%s</b>) containing all the program files of the application, including the external modules installed into the "custom" directory. This operation may last several minutes.
 BackupDescX=The archived directory should be stored in a secure place.
 NotAvailableCommandNotAllowed=Not available: command %s not allowed
+NotAvailablePHPModuleNotInstalled=Not available - PHP module not installed
 RestrictOsCommandsHelp=The parameter %s of conf.php restricts the OS commands Dolibarr can run. Add the missing commands to this list to enable these formats.
 BackupDescY=The generated dump file should be stored in a secure place.
 BackupPHPWarning=Backup cannot be guaranteed with this method. Previous one recommended.
