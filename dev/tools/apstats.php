@@ -147,7 +147,10 @@ if ($dirphpstan != 'disabled') {
 $phpstanversion = (empty($output_arrver) ? '' : $output_arrver[0]);
 
 $output_arrtd = array();
-if ($dirphpstan != 'disabled') {
+if ($dirphpstan != 'disabled' && !is_readable('phpstan_apstats.neon')) {
+	print "Error: PHPStan configuration file phpstan_apstats.neon not found in current dir ".getcwd().", technical debt is not calculated\n";
+}
+if ($dirphpstan != 'disabled' && is_readable('phpstan_apstats.neon')) {
 	// Clear the PHPStan result cache if not done for 14 days, so a stale cache can't report outdated warnings.
 	$markerclearcache = $outputdir.'/.phpstan_lastclearcache';
 	if (!file_exists($markerclearcache) || filemtime($markerclearcache) < (time() - 14 * 24 * 3600)) {
