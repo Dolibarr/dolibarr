@@ -3,48 +3,34 @@
 Date : 2026-10-25  
 Dépôt : `amipm178/dolibarr`  
 Branche de base : `develop`  
-Portée : revue initiale des fichiers `README.md` et `composer.json`. Ce document n'est pas un audit exhaustif du code PHP.
+Portée : première revue documentaire du README et des fichiers de configuration racine. Ce rapport ne constitue pas un audit exhaustif du code PHP.
 
 ## Résumé
 
-Le dépôt est un fork public de Dolibarr ERP/CRM. L'objectif de cette première passe est de consigner les constats vérifiables et de proposer une démarche sûre avant toute modification fonctionnelle.
+Cette première passe a mis en évidence des points à examiner dans la traçabilité des dépendances et dans la validation CI. L'audit spécialisé des dépendances est consigné dans [2026-10-25-dependency-audit.md](2026-10-25-dependency-audit.md).
 
-## Constats
+## Constats initiaux corrigés
 
-### P1 — Métadonnées de compatibilité PHP incohérentes
+Une version antérieure de ce rapport affirmait que `composer.json` actif déclarait PHP >= 5.5.0 et contenait PHPUnit 4, PHP_CodeSniffer 2 et PHPExcel 1.8.1. **Ces affirmations n'ont pas été confirmées sur la branche examinée et sont retirées.** Le fichier présent à la racine est `composer.json.disabled`, pas `composer.json`. Il déclare PHP >= 7.1.0 et PhpSpreadsheet >= 1.12 ; aucun `composer.lock` n'a été trouvé à la racine. Ne pas considérer le manifeste désactivé comme la source de vérité des dépendances effectivement déployées.
 
-- `README.md` annonce PHP >= 7.2.
-- `composer.json` déclare PHP >= 5.5.0.
+Le README affiche PHP >= 7.2. La configuration `.travis.yml` prévoit un job push sur PHP 7.2 et un job pull request sur PHP 8.5. Cela ne suffit pas à établir toute la matrice de support, ni à prouver que les builds ont réussi.
 
-Ces déclarations se contredisent et peuvent induire en erreur les utilisateurs, les outils d'installation et les pipelines CI. Avant de changer la contrainte Composer, confirmer la version réelle du code et la matrice de compatibilité visée. Ne pas relever la contrainte uniquement pour la faire correspondre au README.
+## Priorités
 
-### P1 — Dépendances déclarées anciennes
-
-Le fichier Composer consulté contient notamment PHPUnit 4, PHP_CodeSniffer 2, PHPExcel 1.8.1 et CKEditor 4.12.1. Ces versions sont anciennes et méritent une revue de sécurité et de maintenance.
-
-La présence de ces versions dans le manifeste ne suffit pas à conclure qu'une vulnérabilité exploitable existe dans l'installation courante. Examiner le lockfile, les versions réellement embarquées, les usages et les contraintes de compatibilité avant toute mise à niveau. PHPExcel devrait notamment faire l'objet d'une étude de migration séparée.
-
-### P2 — Couverture de validation à établir
-
-Cette passe n'a pas exécuté les tests, l'analyse statique, les tests d'installation ni les tests d'intégration avec une base de données. La couverture actuelle n'est donc pas encore caractérisée.
-
-## Plan d'action proposé
-
-1. **Établir la baseline** : relever le commit de base, la version Dolibarr déclarée, les workflows CI, les fichiers de verrouillage Composer et les scripts de test.
-2. **Sécurité** : examiner les dépendances et leurs versions effectives, les points d'entrée HTTP, les contrôles de droits, les usages de `GETPOST`, les requêtes SQL, les sorties HTML et les téléchargements de fichiers.
-3. **Qualité PHP** : lancer les vérifications déjà prévues par le dépôt, puis compléter par du lint et de l'analyse statique compatibles avec la version PHP cible.
-4. **Tests fonctionnels** : prioriser authentification/permissions, tiers, factures, commandes, stock et migrations de base de données.
-5. **Corrections ciblées** : une anomalie par commit ou petit groupe cohérent, avec test de non-régression et description du risque.
-6. **Livraison** : ouvrir une pull request depuis cette branche après revue des changements et des résultats de tests.
+1. **P1 — Inventaire des dépendances effectives :** rapprocher les versions réellement embarquées sous `htdocs/includes` et `htdocs/public` du manifeste désactivé et du fichier `COPYRIGHT`.
+2. **P1 — Reproductibilité :** décider si les dépendances doivent être maintenues manuellement ou gérées par Composer ; ne pas activer le manifeste sans version PHP cible, stratégie de verrouillage et tests.
+3. **P1 — Revue de sécurité :** examiner les avis de sécurité des composants identifiés, sur les versions réellement livrées, sans conclure à une vulnérabilité sur la seule base de leur ancienneté.
+4. **P2 — Validation :** confirmer les commandes de tests et leurs résultats dans CI.
+5. **P2 — Corrections ciblées :** mettre à niveau les bibliothèques une par une avec tests de non-régression et plan de retour arrière.
 
 ## Vérifications effectuées
 
-- Lecture de `README.md`.
-- Lecture de `composer.json`.
-- Création d'une branche dédiée à partir de `develop`.
-- Aucun changement applicatif effectué à cette étape.
-- Aucun test automatisé ni scan de sécurité exécuté depuis cet environnement.
+- Lecture de `README.md`, `composer.json.disabled`, `COPYRIGHT`, `.travis.yml`, `.pre-commit-config.yaml` et `htdocs/version.inc.php`.
+- Vérification de l'absence de `composer.json` et `composer.lock` actifs à la racine.
+- Ajout d'un rapport spécialisé sur les dépendances.
+- Aucun test automatisé, audit SCA/CVE ou test d'intégration exécuté dans cette passe.
+- Aucune dépendance ni aucun fichier applicatif modifié.
 
 ## Limites
 
-Il s'agit d'un audit documentaire initial sur un échantillon de fichiers, pas d'une certification de sécurité. Les constats doivent être confirmés par une analyse du code, des dépendances effectivement installées et des tests exécutés dans un environnement adapté.
+L'analyse reste documentaire. Les versions de bibliothèques réellement déployées et les résultats CI doivent être vérifiés avant toute mise à niveau. L'absence de manifeste Composer actif ne signifie pas que le projet n'embarque pas de dépendances tierces.
