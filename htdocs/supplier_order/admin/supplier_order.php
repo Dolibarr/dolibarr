@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Pierre Ardoin               <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,7 +250,7 @@ print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'compan
 $commande = new CommandeFournisseur($db);
 $commande->initAsSpecimen();
 
-printNumberingModuleList('supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("OrdersNumberingModules"), $commande);
+printNumberingModuleList('supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("SupplierOrdersNumberingModules"), $commande);
 
 print '<br>';
 
@@ -418,7 +419,7 @@ foreach ($substitutionarray as $key => $val) {
 $htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnSupplierOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_ORDER_FREE_TEXT';
 if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
