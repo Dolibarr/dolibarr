@@ -152,7 +152,7 @@ class BookKeepingTest extends CommonClassTest
 	}
 
 	/**
-	 * Changes of a whole transaction call the bookkeeping trigger once for the transaction, and a trigger can refuse them,
+	 * Changes of a whole transaction call the bookkeeping triggers for each line, and a trigger can refuse them,
 	 * for example a module that locks closed periods: date, journal or reference changed.
 	 * The test runs inside one transaction, so a refused change is not rolled back here: the test checks the error.
 	 *
@@ -179,18 +179,17 @@ class BookKeepingTest extends CommonClassTest
 			$newdate = dol_mktime(0, 0, 0, 4, 20, 2094);
 			$piecenum = $this->createTransaction($olddate, '');
 
-			// Change of the date: one BOOKKEEPING_MODIFY with the lines, the transaction before the change in oldcopy and its lines in context
+			// Change of the date: one BOOKKEEPING_MODIFY per line, with the old date in oldcopy
 			InterfacePhpunitBookKeeping::$calls = array();
 			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_date', $db->idate($newdate));
 			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
-			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
-			$call = InterfacePhpunitBookKeeping::$calls[0];
-			$this->assertEquals('BOOKKEEPING_MODIFY', $call['action']);
-			$this->assertEquals($piecenum, $call['piece_num']);
-			$this->assertEquals($newdate, $call['doc_date']);
-			$this->assertEquals(2, $call['nblines']);
-			$this->assertEquals($olddate, $call['old_doc_date']);
-			$this->assertEquals(2, $call['nboldlines']);
+			$this->assertCount(2, InterfacePhpunitBookKeeping::$calls);
+			foreach (InterfacePhpunitBookKeeping::$calls as $call) {
+				$this->assertEquals('BOOKKEEPING_MODIFY', $call['action']);
+				$this->assertGreaterThan(0, $call['id']);
+				$this->assertEquals($newdate, $call['doc_date']);
+				$this->assertEquals($olddate, $call['old_doc_date']);
+			}
 
 			// A trigger that refuses the change: error
 			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_MODIFY';
