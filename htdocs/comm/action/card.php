@@ -768,6 +768,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$dayoffset = 0;
 			$monthoffset = 0;
 			$yearoffset = 0;
+			$monthlyanchor = 0;
+			$monthlyoccurrence = 0;
 			// Timezone in which days, months and years are added to build the next occurrences. It must be the
 			// same as the one used by the dol_mktime() calls below. Without it, dol_time_plus_duree() adds the
 			// delay in UTC, so it keeps the elapsed time instead of the wall clock and a series that crosses a
@@ -793,7 +795,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				$monthoffset = 0;
 				$yearoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
-				$monthlyanchor = $object->datep;
+				$monthlyanchor = (int) $object->datep;
 				$monthlyoccurrence = 1;
 				$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
 				$dayoffset = 0;
@@ -907,7 +909,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				if ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
 					$monthlyoccurrence++;
 					$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
-					$datef = dol_time_plus_duree($datep, $deltatime, 'd', 0, $tzforrecurrence);
+					$datef = dol_time_plus_duree($datep, $deltatime, 'd', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 				} else {
 					$datep = dol_time_plus_duree($datep, $dayoffset, 'd', 0, $tzforrecurrence);
 					$datep = dol_time_plus_duree($datep, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder

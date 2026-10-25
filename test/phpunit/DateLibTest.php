@@ -526,9 +526,10 @@ class DateLibTest extends CommonClassTest
 			}
 		}
 
-		$timedanchor = dol_mktime(9, 0, 0, 3, 28, 2026, 'Europe/Paris');
+		// dol_mktime() needs 'tz,TimeZone' for a named timezone, and dol_print_date() does not support it, so we compare timestamps
+		$timedanchor = dol_mktime(9, 0, 0, 3, 28, 2026, 'tz,Europe/Paris');
 		$timedoccurrence = dol_time_plus_duree($timedanchor, 1, 'm', 1, 'Europe/Paris');
-		$this->assertSame('2026-04-28 09:00:00', dol_print_date($timedoccurrence, '%Y-%m-%d %H:%M:%S', 'Europe/Paris'));
+		$this->assertSame(dol_mktime(9, 0, 0, 4, 28, 2026, 'tz,Europe/Paris'), $timedoccurrence);
 	}
 
 	/**
