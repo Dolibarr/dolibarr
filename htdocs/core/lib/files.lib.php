@@ -3980,9 +3980,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			'refname' => '',
 			'mode' => $mode
 		);
-		// Load the context 'fileslib' like the other hooks of this file, so a module can use this hook on every page that
-		// checks access to a file (document.php, viewimage.php, the API...) and not only where the page loaded a context of its own.
-		$hookmanager->initHooks(array('fileslib'));
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
 		if ($reshook > 0) {
 			if (!empty($hookmanager->resArray['original_file'])) {

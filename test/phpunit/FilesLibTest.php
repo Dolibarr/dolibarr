@@ -531,7 +531,7 @@ class FilesLibTest extends CommonClassTest
 		$conf->mytestmodule->multidir_output = array(1 => DOL_DATA_ROOT.'/mytestmodule');
 		$filename = 'export/FA010101.zip';
 
-		// A hook of a module on the context 'fileslib', answering what the test sets in $answer
+		// A hook of a module on the context 'main' of the page, answering what the test sets in $answer
 		$hook = new class {
 			/** @var array<string,mixed> */
 			public $results = array();
@@ -550,9 +550,9 @@ class FilesLibTest extends CommonClassTest
 			}
 		};
 		$hookmanager = new HookManager($this->savdb);
-		$hookmanager->contextarray = array('fileslib');
-		$hookmanager->hooks['fileslib']['mytestmodule'] = $hook;
-		$hookmanager->hooksSorted['fileslib']['50:mytestmodule'] = $hook;
+		$hookmanager->contextarray = array('main');
+		$hookmanager->hooks['main']['mytestmodule'] = $hook;
+		$hookmanager->hooksSorted['main']['50:mytestmodule'] = $hook;
 
 		// Admin, hook without opinion (0): access allowed as without hook
 		$user->admin = 1;
