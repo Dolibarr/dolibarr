@@ -476,9 +476,25 @@ body.ai-fullpage {
     opacity: 0.6;
 }
 
+/* Small screens: compact 2x2 cards (title only) so the 4 examples stay visible above the input */
 @media (max-width: 560px) {
+    .chat-welcome {
+        gap: 10px;
+        padding: 12px 0;
+    }
+    .chat-welcome-title {
+        font-size: 1.2rem;
+    }
     .chat-welcome-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px;
+    }
+    .ai-quick-card {
+        gap: 8px;
+        padding: 10px;
+    }
+    .ai-quick-desc {
+        display: none;
     }
 }
 
