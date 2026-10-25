@@ -2324,11 +2324,12 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
+	 * @param  int      $notrigger      0=launch triggers after, 1=disable triggers
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
-	public function transformTransaction($direction = 0, $piece_num = '')
+	public function transformTransaction($direction = 0, $piece_num = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$error = 0;
 
@@ -2385,6 +2386,14 @@ class BookKeeping extends CommonObject
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
 					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				}
+			}
+
+			// Call triggers for the lines now in the ledger, as create() does
+			if (!$error && !$notrigger) {
+				$newlines = $this->fetchLinesForTrigger('SELECT rowid FROM '.$this->db->prefix().$this->table_element.' WHERE piece_num = '.((int) $next_piecenum).' AND entity = '.((int) $conf->entity));
+				if (!is_array($newlines) || $this->callTriggerPerLine('BOOKKEEPING_CREATE', array_keys($newlines), $user) < 0) {
+					$error++;
 				}
 			}
 

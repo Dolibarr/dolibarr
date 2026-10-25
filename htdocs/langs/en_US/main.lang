@@ -1391,6 +1391,7 @@ IsInList=Is in the list
 IsNotInList=Is not in the list
 addToFilter=Add
 FilterAssistance=Filter editor
+Fields=Fields
 Operator=Operator
 AllFieldsRequired=All fields are required.
 QuestionSendManualTrigger=Send all manual webhook targets for this triggercode ?

@@ -97,6 +97,7 @@ phpstan_custom.neon
 
 # IA setup
 /AGENTS.md
+/CLAUDE.md
 
 # Mistral Vibe
 .vibe

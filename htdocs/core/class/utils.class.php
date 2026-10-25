@@ -334,6 +334,15 @@ class Utils
 					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
 					return -1;
 				}
+				// In low memory mode, the output of the dump is piped into an OS compressor that must be allowed too
+				$compressorcommands = array('gz' => 'gzip', 'bz' => 'bzip2', 'zstd' => 'zstd');
+				if ($lowmemorydump && !empty($compressorcommands[$compression]) && !in_array($compressorcommands[$compression], $arrayofallowedcommand)) {
+					$langs->loadLangs(array("admin", "errors"));
+					dol_syslog("Compression command ".$compressorcommands[$compression]." is not inside the allowed commands", LOG_WARNING);
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('NotAvailableCommandNotAllowed', $compressorcommands[$compression]);
+					return -1;
+				}
 			}
 
 			// Parameters execution

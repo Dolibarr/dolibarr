@@ -148,14 +148,6 @@ class ToolApiBridge extends McpTool
 	private $endpoints = [];
 
 	/**
-	 * Active units of measure (c_units), rowid => names a user may say, loaded
-	 * on the first unit to resolve.
-	 *
-	 * @var array<int, string[]>|null
-	 */
-	private $unitNames = null;
-
-	/**
 	 * Endpoint map + method whitelist: endpoint key => module condition, api class
 	 * file/class, and the EXPLICIT list of exposed methods with their optional
 	 * hand-written enrichment. A method absent from 'methods' is never exposed.
@@ -3326,38 +3318,9 @@ class ToolApiBridge extends McpTool
 	 */
 	private function unitIdFromName($name)
 	{
-		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
 
-		$want = dol_strtolower(trim($name));
-		if ($want === '') {
-			return 0;
-		}
-		if (is_numeric($want)) {
-			return (int) $want;
-		}
-		if ($this->unitNames === null) {
-			// Read the dictionary once per request, not once per line.
-			$langs->load('products');
-			$this->unitNames = array();
-			$resql = $this->db->query("SELECT rowid, code, label, short_label FROM ".$this->db->prefix()."c_units WHERE active = 1 LIMIT 500");
-			while ($resql && ($obj = $this->db->fetch_object($resql))) {
-				$names = array(dol_strtolower((string) $obj->code), dol_strtolower((string) $obj->short_label), dol_strtolower((string) $obj->label), dol_strtolower($langs->transnoentitiesnoconv((string) $obj->label)));
-				if ($obj->code === 'P') {
-					$names[] = 'pc';
-					$names[] = 'pcs';
-				}
-				$this->unitNames[(int) $obj->rowid] = $names;
-			}
-		}
-		$forms = array_unique(array($want, (string) preg_replace('/s$/', '', $want), (string) preg_replace('/es$/', '', $want)));
-		$ids = array();
-		foreach ($this->unitNames as $rowid => $names) {
-			if (array_intersect($forms, $names)) {
-				$ids[$rowid] = true;
-			}
-		}
-
-		return count($ids) === 1 ? (int) key($ids) : 0;
+		return aiUnitIdFromName($this->db, $name);
 	}
 
 	/**
@@ -5487,5 +5450,28 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Endpoint and method a bridge tool calls, for a page that shows the tool to
+	 * a person (the palette of the chat) under a plain name.
+	 *
+	 * @param  string $name Tool name.
+	 * @return array{endpoint:string,method:string,suffix:string,label:string}|null Route, or null when the name is not a bridge tool.
+	 */
+	public function toolRoute(string $name)
+	{
+		$this->getDefinitions();
+		if (empty($this->routes[$name])) {
+			return null;
+		}
+		list($key, $method) = $this->routes[$name];
+
+		return array(
+			'endpoint' => (string) $key,
+			'method' => (string) $method,
+			'suffix' => (string) substr($name, strlen('api_'.$key.'_')),
+			'label' => (string) ($this->enrichments[$key]['label'] ?? ($this->endpoints[$key]['label'] ?? $key))
+		);
 	}
 }
