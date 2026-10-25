@@ -46,6 +46,11 @@ body.ai-fullpage div.fiche {
     padding: 0;
     height: 100%;
 }
+/* On small screens the theme forces div.fiche margins with !important */
+body.ai-fullpage div.fiche {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
 
 /* Never let this page scroll horizontally: a 1px horizontal overflow would
  * show a bottom scrollbar that eats vertical space and triggers a vertical
@@ -71,6 +76,11 @@ body.ai-fullpage {
  * resolves against the container width) keeps the messages, the input pill and
  * the footer note on the exact same column, unaffected by the chat-history
  * scrollbar (which lives far out in the right padding zone). */
+/* Full page: header is edge-to-edge, no rounded card corners */
+.ai-chat-container:not(.ai-in-popover) .chat-header {
+    border-radius: 0;
+}
+
 .ai-chat-container:not(.ai-in-popover) .chat-history,
 .ai-chat-container:not(.ai-in-popover) .chat-controls {
     padding-left: max(16px, calc(50% - 410px));
