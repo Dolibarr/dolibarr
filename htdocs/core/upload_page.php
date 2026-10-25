@@ -706,7 +706,7 @@ if (empty($action)) {
 
 	// Form to upload a salary document
 	if (isModEnabled('tax')) {
-		$langs->load("taxes");
+		$langs->loadLangs(array("taxes", "compta"));
 		$uploadform .= '
 		<div id="socialcontribution" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("SocialContribution").'<br><br>';
