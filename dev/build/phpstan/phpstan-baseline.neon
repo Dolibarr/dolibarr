@@ -7,12 +7,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/modules_facture.php
 
 		-
-			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\CombinedAddress\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
 			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\CreditorInformation\.$#'
 			identifier: class.notFound
 			count: 1
@@ -26,12 +20,6 @@ parameters:
 
 		-
 			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
-			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\QrBill\.$#'
 			identifier: class.notFound
 			count: 1
 			path: ../../../htdocs/core/modules/facture/modules_facture.php
