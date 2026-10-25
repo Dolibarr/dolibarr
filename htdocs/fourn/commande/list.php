@@ -399,8 +399,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createsupplierbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -604,7 +604,10 @@ if (empty($reshook)) {
 
 			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				}
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -1012,9 +1015,9 @@ if ($search_project_ref != '') {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierOrderList is an array of ID)
@@ -1957,7 +1960,7 @@ if ($resql) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->alias).'">';
-				print dol_escape_htmltag($obj->alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->alias).'</span>';
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;

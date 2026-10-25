@@ -153,7 +153,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'stocktransfer_stocktransfer', 'ref', '', null, $date);
 

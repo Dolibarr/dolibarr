@@ -76,7 +76,7 @@ function adminProductAttributePrepareHead()
 	$head[$h][2] = 'admin';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_attribute'));
 	$head[$h][1] = $langs->trans("ProductAttributeExtrafields");
 	$nbExtrafields = $extrafields->attributes['product_attribute']['count'];
 	if ($nbExtrafields > 0) {
@@ -85,7 +85,7 @@ function adminProductAttributePrepareHead()
 	$head[$h][2] = 'product_attribute';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_value_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_attribute_value'));
 	$head[$h][1] = $langs->trans("ProductAttributeValueExtrafields");
 	$nbExtrafields = $extrafields->attributes['product_attribute_value']['count'];
 	if ($nbExtrafields > 0) {

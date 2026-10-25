@@ -356,7 +356,6 @@ WarningProjectClosed=المشروع مغلق، يجب إعادة فتحه أول
 WarningSomeBankTransactionByChequeWereRemovedAfter=تمت إزالة بعض الحركات البنكية بعد أن تم توليد الإيصال الذي يتضمنها لذلك قد يختلف عدد الشيكات وإجمالي الإيصال عن العدد والإجمالي في القائمة
 WarningFailedToAddFileIntoDatabaseIndex=تحذير فشلت إضافة الملف إلى فهرس قاعدة بيانات ECM
 WarningTheHiddenOptionIsOn=تحذير الخيار المخفي <b>%s</b> مفعّل
-WarningCreateSubAccounts=تحذير لا يمكنك إنشاء حساب فرعي مباشرة يجب إنشاء طرف ثالث أو مستخدم وتعيين رمز محاسبي له لتجده في هذه القائمة
 WarningAvailableOnlyForHTTPSServers=متاح فقط إذا كنت تستخدم اتصال HTTPS آمن
 WarningModuleXDisabledSoYouMayMissEventHere=الوحدة %s لم يتم تفعيلها لذلك قد تفوّت العديد من الأحداث هنا
 WarningPaypalPaymentNotCompatibleWithStrict=القيمة Strict تجعل ميزات الدفع الإلكتروني لا تعمل بشكل صحيح استخدم Lax بدلاً منها

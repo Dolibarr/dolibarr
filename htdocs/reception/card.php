@@ -13,8 +13,9 @@
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,6 +190,7 @@ if (isModEnabled("reception")) {
 } else {
 	$permissiontoread = $user->hasRight('fournisseur', 'commande', 'receptionner');
 	$permissiontoadd = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontoedit = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_lineupdown.inc.php
 	$permissiondellink = $user->hasRight('fournisseur', 'commande', 'receptionner'); // Used by the include of actions_dellink.inc.php
 	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
 	$permissiontodelete = $user->hasRight('fournisseur', 'commande', 'receptionner');
@@ -253,6 +255,8 @@ if (empty($reshook)) {
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
@@ -359,6 +363,7 @@ if (empty($reshook)) {
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');	// Default warehouse for the lines
 			$object->model_pdf = GETPOST('model');
 			$object->date_delivery = $date_delivery; // Date delivery planned
 			$object->date_reception = $date_reception;
@@ -400,6 +405,7 @@ if (empty($reshook)) {
 			$object->weight_units = GETPOSTINT('weight_units');
 
 			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');	// Default warehouse for the lines
 			$object->model_pdf = GETPOST('model');
 			$object->date_delivery = $date_delivery; // Date delivery planned
 			$object->date_reception = $date_reception;
@@ -506,15 +512,13 @@ if (empty($reshook)) {
 							$entrepot_id = 0;
 						}
 
-						$eatby = GETPOST($eatby, 'alpha');
-						$sellby = GETPOST($sellby, 'alpha');
-						$eatbydate = str_replace('/', '-', $eatby);
-						$sellbydate = str_replace('/', '-', $sellby);
+						$eatbydate = dol_mktime(12, 0, 0, GETPOSTINT($eatby.'month'), GETPOSTINT($eatby.'day'), GETPOSTINT($eatby.'year'));
+						$sellbydate = dol_mktime(12, 0, 0, GETPOSTINT($sellby.'month'), GETPOSTINT($sellby.'day'), GETPOSTINT($sellby.'year'));
 
 						if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
 						} else {
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch));
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), $eatbydate, $sellbydate, GETPOST($batch));
 						}
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -607,6 +611,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/reception/index.php');
@@ -666,9 +671,19 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
+	} elseif (in_array($action, array('setwarehouse', 'settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
 		// Action update
 		$error = 0;
+
+		if ($action == 'setwarehouse') {	// Test on permission already done. Default warehouse for the lines
+			// Note: setValueFrom() casts the value to int, so it can not store an empty warehouse.
+			// We use update() to keep a NULL, because a line without warehouse must not move stock.
+			$object->fk_warehouse = (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null);
+			if ($object->update($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 
 		if ($action == 'settracking_number') {		// Test on permission already done
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
@@ -748,7 +763,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'classifyclosed' && $permissiontoread) {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -813,7 +828,10 @@ if (empty($reshook)) {
 
 
 			if (!$error) {
-				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options);
+				// Warehouse: the empty choice of the select posts -1, which means "clear the warehouse" (0),
+				// while an absent field means "do not change" (-1)
+				$wh_line = GETPOSTISSET('entrepot_id') ? max(0, GETPOSTINT('entrepot_id')) : -1;
+				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, $wh_line, GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -875,15 +893,11 @@ if (empty($reshook)) {
 							$batch = "batch".$line_id;
 							$dlc = "dlc".$line_id;
 							$dluo = "dluo".$line_id;
-							// EATBY <-> DLUO
-							$eatby = GETPOST($dluo, 'alpha');
-							$eatbydate = str_replace('/', '-', $eatby);
-							// SELLBY <-> DLC
-							$sellby = GETPOST($dlc, 'alpha');
-							$sellbydate = str_replace('/', '-', $sellby);
 							$line->batch = GETPOST($batch, 'alpha');
-							$line->eatby = strtotime($eatbydate);
-							$line->sellby = strtotime($sellbydate);
+							// EATBY <-> DLUO
+							$line->eatby = dol_mktime(12, 0, 0, GETPOSTINT($dluo.'month'), GETPOSTINT($dluo.'day'), GETPOSTINT($dluo.'year'));
+							// SELLBY <-> DLC
+							$line->sellby = dol_mktime(12, 0, 0, GETPOSTINT($dlc.'month'), GETPOSTINT($dlc.'day'), GETPOSTINT($dlc.'year'));
 						}
 
 						if ($line->update($user) < 0) {
@@ -947,16 +961,38 @@ if (empty($reshook)) {
 		$description = '';
 		$fk_elementdet = '';
 		$element_type = 'reception';
-		$fk_unit = '';
+		$fk_unit = GETPOSTINT('units');
 		$idprod = 0;
 		$fk_product = 0;
 		$fk_entrepot = '';
 		$rang = '';
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
+		$cost_price_from_pfp = 0;
+		$reffourn_from_pfp = '';
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOSTINT('idprod');
+			if (empty($idprod) && GETPOSTISSET('idprodfournprice')) {
+				// The supplier product combo posts idprodfournprice (id of supplier price, or 'idprod_x' if product has no supplier price)
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+				$ipfp = GETPOST('idprodfournprice', 'alpha');
+				$reg = array();
+				if (preg_match('/^idprod_([0-9]+)$/', $ipfp, $reg)) {
+					$idprod = (int) $reg[1];
+				} elseif ((int) $ipfp > 0) {
+					$productsupplier = new ProductFournisseur($db);
+					$idprod = $productsupplier->get_buyprice((int) $ipfp, (float) price2num(GETPOST('qty', 'alpha'), 'MS'));
+					if ($idprod > 0) {
+						$cost_price_from_pfp = price2num($productsupplier->fourn_unitprice);
+						$reffourn_from_pfp = $productsupplier->ref_supplier;
+					}
+				}
+			}
+			if ($prod_entry_mode != 'free' && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
 			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 				$error++;
@@ -1095,7 +1131,18 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options);
+				// Buying price: typed value first (field of the supplier add-line block), then known supplier price
+				$typedcost = price2num(GETPOST('cost_price', 'alpha'));
+				if (!(float) $typedcost) {
+					$typedcost = price2num(GETPOST('price_ht', 'alpha'));
+				}
+				$finalcost = ((float) $typedcost > 0) ? (float) $typedcost : (float) $cost_price_from_pfp;
+				$reffourn_line = GETPOST('fourn_ref', 'alphanohtml');
+				if ($reffourn_line === '' && !empty($reffourn_from_pfp)) {
+					$reffourn_line = $reffourn_from_pfp;
+				}
+				$wh_line = max(0, GETPOSTINT('entrepot_id'));	// Empty choice of the select posts -1: store 0 (a line without warehouse deliberately generates no stock movement)
+				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options, (float) $finalcost, $reffourn_line, $wh_line, GETPOST('batch', 'alphanohtml'));
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -1226,6 +1273,16 @@ if ($action == 'create' && $permissiontoadd) {
 		}
 		print '</tr>'."\n";
 
+		// Default warehouse for the lines
+		if (isModEnabled('stock')) {
+			$langs->load('stocks');
+			print '<tr><td>'.$langs->trans('Warehouse').'</td>';
+			print '<td>';
+			print img_picto('', 'stock', 'class="pictofixedwidth"');
+			print $formproduct->selectWarehouses(GETPOSTINT('fk_warehouse') > 0 ? GETPOSTINT('fk_warehouse') : 'ifone', 'fk_warehouse', '', 1, 0, 0, '', 1, 0, array(), 'minwidth200');
+			print '</td></tr>'."\n";
+		}
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$projectid = GETPOSTINT('projectid');
@@ -1255,7 +1312,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 		print '<td colspan="3">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 		print "</td>\n";
 		print '</tr>';
@@ -1623,7 +1680,7 @@ if ($action == 'create' && $permissiontoadd) {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$paramSuffix.'month'), GETPOSTINT('dluo'.$paramSuffix.'day'), GETPOSTINT('dluo'.$paramSuffix.'year'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$paramSuffix.'month'), GETPOSTINT('dlc'.$paramSuffix.'day'), GETPOSTINT('dlc'.$paramSuffix.'year'));
 					$fk_commandefourndet = 'fk_commandefournisseurdet'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST($comment), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOSTINT($lot));
+					$dispatchLines[$numAsked] = array('prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST($comment), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOST($lot));
 				}
 			}
 
@@ -1906,7 +1963,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 					if (isModEnabled('productbatch')) {
 						if (!empty($product->status_batch)) {
-							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
+							print '<td><input name="batch'.$indiceAsked.'" value="'.dol_escape_htmltag($dispatchLines[$indiceAsked]['lot']).'"></td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, 0, 0, 1, "");
@@ -2011,7 +2068,7 @@ if ($action == 'create' && $permissiontoadd) {
 	$res = $object->fetch_optionals();
 
 	$head = reception_prepare_head($object);
-	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert', 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -2080,7 +2137,7 @@ if ($action == 'create' && $permissiontoadd) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
-	if (($typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
+	if (($typeobject == 'order_supplier' || $typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
@@ -2108,7 +2165,7 @@ if ($action == 'create' && $permissiontoadd) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -2167,7 +2224,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if (($typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("propal")) {
+	if (($typeobject == 'order_supplier' || $typeobject == 'supplier_order' || $typeobject == 'CommandeFournisseur') && $object->origin_object->id && isModEnabled("supplier_order")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -2290,6 +2347,24 @@ if ($action == 'create' && $permissiontoadd) {
 	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('reception', 'creer'));
 	print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
 	print '</td></tr>';
+
+	// Default warehouse for the lines
+	if (isModEnabled('stock')) {
+		$langs->load('stocks');
+		print '<tr><td><table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('Warehouse');
+		print '</td>';
+		if ($action != 'editwarehouse' && $object->statut == Reception::STATUS_DRAFT && $user->hasRight('reception', 'creer')) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
+		}
+		print '</tr></table></td><td colspan="3">';
+		if ($action == 'editwarehouse' && $permissiontoadd) {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'warehouse_id', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+		}
+		print '</td></tr>';
+	}
 
 	// Volume
 	print '<tr><td>';
@@ -2442,6 +2517,7 @@ if ($action == 'create' && $permissiontoadd) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						$senderissupplier = 2;	// Use the same add-line block as supplier orders; 2 = also list products without supplier price for this supplier
 						$object->formAddObjectLine(0, $mysoc, $soc);
 					}
 				}
@@ -2644,7 +2720,7 @@ if ($action == 'create' && $permissiontoadd) {
 					$prod->fetch($lines[$i]->fk_product);
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
 				} else {
-					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
+					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : '');
 				}
 
 				print '<td class="linecoldescription">';
@@ -2713,13 +2789,25 @@ if ($action == 'create' && $permissiontoadd) {
 								if ($j > 1) {
 									$htmltooltip .= '<br>';
 								}
-								$reception_static->fetch($receptionline_var['reception_id']);
+								if (empty($conf->cache['reception'][$receptionline_var['reception_id']])) {
+									$reception_static = new Reception($db);
+									$reception_static->fetch($receptionline_var['reception_id']);
+									$conf->cache['reception'][$receptionline_var['reception_id']] = $reception_static;
+								} else {
+									$reception_static = $conf->cache['reception'][$receptionline_var['reception_id']];
+								}
 								$htmltooltip .= $reception_static->getNomUrl(1, 'nolink', 0, 0, 1);
 								$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
-									$warehousestatic->fetch($receptionline_var['warehouse']);
+									if (empty($conf->cache['warehouse'][$receptionline_var['warehouse']])) {
+										$warehousestatic = new Entrepot($db);
+										$warehousestatic->fetch($receptionline_var['warehouse']);
+										$conf->cache['warehouse'][$receptionline_var['warehouse']] = $warehousestatic;
+									} else {
+										$warehousestatic = $conf->cache['warehouse'][$receptionline_var['warehouse']];
+									}
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
 								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
@@ -2932,7 +3020,7 @@ if ($action == 'create' && $permissiontoadd) {
 	 *    Button actions
 	 */
 
-	if (($user->socid == 0) && ($action != 'presend')) {
+	if (($user->socid == 0) && ($action != 'presend') && ($action != 'editline')) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();
@@ -2989,7 +3077,7 @@ if ($action == 'create' && $permissiontoadd) {
 			}
 
 			if ($user->hasRight('reception', 'supprimer')) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 
@@ -3031,7 +3119,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
-
 
 llxFooter();
 

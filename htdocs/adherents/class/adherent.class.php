@@ -837,7 +837,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= " ref = '".$this->db->escape((string) $this->ref)."'";
 		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
 		$sql .= ", civility = ".($this->civility_code ? "'".$this->db->escape($this->civility_code)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
@@ -1622,7 +1622,7 @@ class Adherent extends CommonObject
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
-		$sql .= " GREATEST(d.tms, aef.tms) as datem,";
+		$sql .= " GREATEST(d.tms, COALESCE(aef.tms, d.tms)) as datem,";
 		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
@@ -1689,7 +1689,7 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
+				if (is_object($langs) && $langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {	// $langs may be null with NOREQUIRETRAN
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
 				} else {
 					$this->country = $obj->country;
@@ -2091,7 +2091,27 @@ class Adherent extends CommonObject
 				$vattouse = 0;
 				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				} elseif (getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS') > 0) {
+					$sql = "SELECT t.taux as vat_default_rate, t.code as vat_default_code, einvoice_vatex";
+					$sql .= " FROM " . $this->db->prefix() . "c_tva as t";
+					//$sql .= " INNER JOIN " . $this->db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
+					$sql .= " WHERE t.active > 0";
+					$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+					$sql .= " AND t.rowid = ".(getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS'));
+
+					$res = $this->db->query($sql);
+					if ($res) {
+						if ($this->db->num_rows($res)) {
+							$obj = $this->db->fetch_object($res);
+
+							$vattouse = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+						}
+						$this->db->free($res);
+					} else {
+						dol_print_error($this->db);
+					}
 				}
+
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
@@ -2118,7 +2138,6 @@ class Adherent extends CommonObject
 			if (!$error && $option == 'bankviainvoice' && $accountid) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
 				$amounts[$invoice->id] = (float) price2num($amount);
@@ -2169,7 +2188,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Define output language
 				$outputlangs = $langs;
-				$newlang = '';
+				$newlang = $this->default_lang;
 				$lang_id = GETPOST('lang_id');
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
@@ -2611,7 +2630,7 @@ class Adherent extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ($withpictoimg != 2 ? 'class="pictofixedwidth"' : '').' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">';
@@ -2701,9 +2720,9 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription === 0) {
+			if (empty($need_subscription)) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("SubscriptionNotNeeded");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
@@ -2781,7 +2800,15 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT a.rowid, a.datefin, a.statut as status";
+		// The count and the number of late members are computed by the database instead of reading every member. A validated
+		// member is late when the end date of the subscription is set and before now minus the warning delay (the rule of
+		// hasDelay()); a draft member ('shift' mode) is never late.
+		$sql = "SELECT COUNT(a.rowid) as nb,";
+		if ($mode == 'expired') {
+			$sql .= " SUM(CASE WHEN a.datefin IS NOT NULL AND a.datefin < '".$this->db->idate($now - getWarningDelay('member', 'subscription'))."' THEN 1 ELSE 0 END) as nblate";
+		} else {
+			$sql .= " 0 as nblate";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
@@ -2822,18 +2849,10 @@ class Adherent extends CommonObject
 			$response->url = $url;
 			$response->img = img_object('', "user");
 
-			$adherentstatic = new Adherent($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->status;
-				$adherentstatic->status = $obj->status;
-
-				if ($adherentstatic->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -3139,7 +3158,7 @@ class Adherent extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec as datec,';
 		$sql .= ' a.datevalid as datev,';
-		$sql .= ' GREATEST(a.tms, aef.tms) as datem,';
+		$sql .= ' GREATEST(a.tms, COALESCE(aef.tms, a.tms)) as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
@@ -3445,7 +3464,8 @@ class Adherent extends CommonObject
 							$nbko++;
 							$listofmembersko[$adherent->id] = $adherent->id;
 
-							break;
+							// Do not break here: a template issue for one member (ex: not found for its language) must not prevent
+							// the reminder from being sent to the other members due the same day.
 						}
 					}
 

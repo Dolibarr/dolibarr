@@ -50,21 +50,20 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
+}
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -282,13 +281,20 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
+// Find the subdirectory name as the reference
+$refname = basename(dirname($original_file)."/");
+if ($refname == 'thumbs' || $refname == 'temp') {
+	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+	$refname = basename(dirname(dirname($original_file))."/");
+}
+
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -315,23 +321,14 @@ if (!empty($hashp) && $hashp != 'shared') {
 				}
 			}
 		}
-	} /*
-	TODO Why this else ? Which use case does it cover ?
-	TICKET_EMAIL_MUST_EXISTS means a visitor can create a ticket from public interface even if email does not exists yet as a contact.
-	Public interface means no login and unknown user (ticket are found by email submiter / id).
-	Disabled as this looks a security bypass
-	elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				if ($num > 0) {
-					$accessallowed = 1;
-				}
-			}
-		}
 	}
-	*/
+}
+
+// Check permission on per object basis
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
@@ -385,12 +382,6 @@ if ($reshook < 0) {
 
 // If we show an invoice, we test if we must regenerate the PDF
 if ($modulepart == 'facture') {
-	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
-		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
-		$refname = basename(dirname(dirname($original_file))."/");
-	}
-
 	$invoice = fetchObjectByElement(0, $modulepart, $refname);
 
 	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
@@ -465,7 +456,7 @@ if ($attachment > 0) {
 } elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
 $readfile = true;

@@ -345,7 +345,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
 
-				if (!empty($notetoshow) || !empty($object->tracking_number)) {
+				if (!empty($notetoshow) || !empty($object->tracking_number) || $object->shipping_method_id > 0) {
 					$tab_top -= 2;
 					$tab_topbeforetrackingnumber = $tab_top;
 					$height_trackingnumber = 0;
@@ -383,6 +383,14 @@ class pdf_espadon extends ModelePdfExpedition
 						if ($height_trackingnumber < 4) {
 							$height_trackingnumber = 4;
 						}
+					}
+
+					// Shipping method, even when no tracking number is set
+					if (empty($object->tracking_number) && $object->shipping_method_id > 0) {
+						$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(90, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code)), 0, 1, false, true, 'L');
+						$tab_top = $pdf->GetY();
 					}
 
 					// Notes
@@ -1118,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : dol_trunc($object->project->title, 50)), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1154,6 +1162,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 		$object->fetch_origin();
+		// A shipment without source object (SHIPMENT_STANDALONE) holds its own contacts
+		$contactobject = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
 
 		// TODO move to external function
 		if (isModEnabled($origin)) {     // commonly $origin='commande'
@@ -1194,10 +1204,7 @@ class pdf_espadon extends ModelePdfExpedition
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
-			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->origin_object)) {
-				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
-			}
+			$arrayidcontact = $contactobject->getIdContact('internal', 'SALESREPFOLL');
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
@@ -1251,7 +1258,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $contactobject->getIdContact('external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
@@ -1462,7 +1469,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30.0, // in mm
-			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
+			// A shipment without source object (SHIPMENT_STANDALONE) has no ordered quantity
+			'status' => (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') && !empty($object->origin_id)) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
 			),

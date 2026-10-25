@@ -38,7 +38,7 @@
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
+	if (!isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
@@ -535,4 +535,24 @@ function getNextFiscalYear($db, $after_date, $gm = 'tzserver')
 	}
 
 	return null;  // No next fiscal year found
+}
+
+/**
+ * Return the subledger account to use for a thirdparty.
+ * Priority: thirdparty code > default subledger from setup > empty (no subledger).
+ *
+ * @param string $thirdpartyCode   Subledger code defined on the thirdparty (may be empty)
+ * @param string $type             'customer' or 'supplier'
+ * @return string
+ */
+function getSubledgerAccountWithDefault($thirdpartyCode, $type = 'customer')
+{
+	$thirdpartyCode = trim((string) $thirdpartyCode);
+	if ($thirdpartyCode !== '') {
+		return $thirdpartyCode;
+	}
+
+	$const = ($type == 'supplier') ? 'ACCOUNTING_ACCOUNT_SUPPLIER_DEFAULT_SUBLEDGER' : 'ACCOUNTING_ACCOUNT_CUSTOMER_DEFAULT_SUBLEDGER';
+
+	return trim(getDolGlobalString($const));
 }

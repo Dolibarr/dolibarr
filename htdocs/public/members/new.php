@@ -85,7 +85,7 @@ $num = 0;
 $error = 0;
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 if (isModEnabled('multicompany')) {
 	force_switch_entity($entity);
@@ -480,6 +480,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
 			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}
@@ -950,15 +951,15 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 	// Pro phone
 	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-	print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('phone')).'"></td></tr>';
+	print '<td>'.$form->showPhoneInput(GETPOST('phone'), 'phone', $country_id, 'object_phoning', 'maxwidth300 widthcentpercentminusx').'</td></tr>';
 
 	// Personal phone
 	print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-	print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('phone_perso')).'"></td></tr>';
+	print '<td>'.$form->showPhoneInput(GETPOST('phone_perso'), 'phone_perso', $country_id, 'object_phoning', 'maxwidth300 widthcentpercentminusx').'</td></tr>';
 
 	// Mobile phone
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-	print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('phone_mobile')).'"></td></tr>';
+	print '<td>'.$form->showPhoneInput(GETPOST('phone_mobile'), 'phone_mobile', $country_id, 'object_phoning_mobile', 'maxwidth300 widthcentpercentminusx').'</td></tr>';
 
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';

@@ -138,7 +138,7 @@ if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] 
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
-	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+	$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];
 }
 
 // Enable and test if module Api is enabled
@@ -191,8 +191,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		dol_syslog("ErrorFailedToWriteInApiTempDirectory ".$conf->api->dir_temp, LOG_ERR);
-		print 'Erreur temp dir api/temp not writable';
 		header('HTTP/1.1 500 temp dir api/temp not writable');
+		print 'Erreur temp dir api/temp not writable';
 		exit(0);
 	}
 }
@@ -236,8 +236,8 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
-		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		print 'APIs are not allowed from the IP '.$ipremote;
 		//session_destroy();
 		exit(0);
 	}
@@ -368,10 +368,20 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'resources') {
+		// The API class is named Dolresources because "resources" is already used by the API explorer itself
+		$classfile = 'dolresources';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
 	$classname = ucwords($moduleobject);
+	if ($moduleobject == 'resources') {
+		// Force the class name, because ucwords() would give Resources, which is the name of
+		// the class of the API explorer itself (Luracast\Restler\Resources) and is autoloadable,
+		// so the wrong class would be dispatched.
+		$classname = 'Dolresources';
+	}
 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
@@ -389,8 +399,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 		if (! $endpointisallowed) {
 			dol_syslog('The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES', LOG_WARNING);
-			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
 			header('HTTP/1.1 501 API is forbidden by API_ENDPOINT_RULES');
+			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
 			//session_destroy();
 			exit(0);
 		}
@@ -413,8 +423,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	}
 	if (!$res) {
 		dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
-		print 'API not found (failed to include API file)';
 		header('HTTP/1.1 501 API not found (failed to include API file)');
+		print 'API not found (failed to include API file)';
 		//session_destroy();
 		exit(0);
 	}
@@ -423,10 +433,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// names (see line ~308). Without the Api suffix branch, a module file named
 	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
 	// even though the api explorer lists it (#37282).
+	// When the class name does not match the called endpoint (for example the endpoint /resources
+	// served by the class Dolresources), the endpoint must be given to Restler as the resource path,
+	// because Restler builds its routes from the class name and would answer 404 otherwise.
+	$resourcepath = (strtolower($classname) != $moduleobject) ? $moduleobject : null;
+
 	if (class_exists($classname.'Api')) {
-		$api->r->addAPIClass($classname.'Api');
+		$api->r->addAPIClass($classname.'Api', $resourcepath);
 	} elseif (class_exists($classname)) {
-		$api->r->addAPIClass($classname);
+		$api->r->addAPIClass($classname, $resourcepath);
 	}
 }
 

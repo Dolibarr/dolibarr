@@ -11,11 +11,13 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +158,11 @@ class Commande extends CommonOrder
 	 * @var string Condition payment label
 	 */
 	public $cond_reglement_doc;
+
+	/**
+	 * @var string Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
 
 	/**
 	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
@@ -331,7 +338,7 @@ class Commande extends CommonOrder
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 26),
-		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28),
+		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28, 'uieditable' => 1, 'alwayseditable' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 20),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 25),
 		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
@@ -346,8 +353,8 @@ class Commande extends CommonOrder
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 146, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150, 'uieditable' => 1, 'alwayseditable' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155, 'uieditable' => 1, 'alwayseditable' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 170),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'MulticurrencyID', 'enabled' => 1, 'visible' => -1, 'position' => 175),
@@ -363,7 +370,7 @@ class Commande extends CommonOrder
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 230),
 		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 235),
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCurrency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 245),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 250, 'isameasure' => 1),
 		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 255, 'isameasure' => 1),
@@ -448,6 +455,23 @@ class Commande extends CommonOrder
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * Override of CommonObject::persistFieldValue(): the customer ref of orders is saved with set_ref_client().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'ref_client') {
+			return $this->set_ref_client($user, (string) $this->ref_client);
+		}
+
+		return parent::persistFieldValue($user, $field);
 	}
 
 	/**
@@ -588,7 +612,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We decrement stock of product (and sub-products)
-						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
+						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -723,7 +747,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -928,7 +952,7 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
@@ -1019,6 +1043,10 @@ class Commande extends CommonOrder
 			}
 		}
 
+		if ($this->isRefClientAlreadyUsed((string) $this->ref_client, (int) $this->socid) != 0) {
+			return -1;
+		}
+
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
 		if ($result < 0) {
@@ -1052,11 +1080,11 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", '".$this->db->escape((string) $this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
@@ -1128,9 +1156,11 @@ class Commande extends CommonOrder
 						$line->ref_ext = '';
 					}
 
+					// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+					$line_price_base_type = $line->getPriceBaseType();
 					$result = $this->addline(
 						$line->desc,
-						$line->subprice,
+						(float) $line->subprice,
 						$line->qty,
 						$vatrate,
 						$line->localtax1_tx,
@@ -1139,8 +1169,8 @@ class Commande extends CommonOrder
 						$line->remise_percent,
 						$line->info_bits,
 						$line->fk_remise_except,
-						'HT',
-						0,
+						$line_price_base_type,
+						(float) $line->subprice_ttc,
 						$line->date_start,
 						$line->date_end,
 						$line->product_type,
@@ -1168,6 +1198,16 @@ class Commande extends CommonOrder
 						$this->db->rollback();
 						return -1;
 					}
+
+					// Keep the extra parameters of the source line (for example the options of subtotal lines): addline() can't
+					// do it when the object is cloned, because the origin it receives is the one of the source line, not the source line
+					if ($result > 0 && !empty($line->extraparams)) {
+						$newline = new OrderLine($this->db);
+						$newline->id = $result;
+						$newline->extraparams = $line->extraparams;
+						$newline->setExtraParameters();
+					}
+
 					// Defined the new fk_parent_line
 					if ($result > 0 && $line->product_type == 9) {
 						$fk_parent_line = $result;
@@ -1352,6 +1392,8 @@ class Commande extends CommonOrder
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $objFrom->id;
+		$object->context['createfromclone_fromref'] = $objFrom->ref;
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
@@ -1388,6 +1430,8 @@ class Commande extends CommonOrder
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
@@ -1429,6 +1473,7 @@ class Commande extends CommonOrder
 			$line->desc              = $object->lines[$i]->desc;
 			$line->price             = $object->lines[$i]->price;
 			$line->subprice          = $object->lines[$i]->subprice;
+			$line->subprice_ttc      = $object->lines[$i]->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->vat_src_code      = $object->lines[$i]->vat_src_code;
 			$line->tva_tx            = $object->lines[$i]->tva_tx;
 			$line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
@@ -1675,8 +1720,8 @@ class Commande extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
-			$label = trim($label);
-			$desc = trim($desc);
+			$label = trim((string) $label);
+			$desc = trim((string) $desc);
 
 			// Check parameters
 			if ($type < 0) {
@@ -1755,15 +1800,7 @@ class Commande extends CommonOrder
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
-
-			/*var_dump($txlocaltax1);
-			 var_dump($txlocaltax2);
-			 var_dump($localtaxes_type);
-			 var_dump($tabprice);
-			 var_dump($tabprice[9]);
-			 var_dump($tabprice[10]);
-			 exit;*/
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1808,6 +1845,8 @@ class Commande extends CommonOrder
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->total_ht = (float) $total_ht;
@@ -1871,7 +1910,7 @@ class Commande extends CommonOrder
 					} else {
 						// Loop on all lines of parent object
 						foreach ($this->lines as $tmpline) {
-							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+							if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
 								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
@@ -1989,7 +2028,7 @@ class Commande extends CommonOrder
 			 * }
 			 * }
 			 * }
-			 **/
+			 */
 		}
 	}
 
@@ -2096,6 +2135,7 @@ class Commande extends CommonOrder
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->deposit_percent = $obj->deposit_percent;
 				$this->fk_account = $obj->fk_account;
@@ -2977,6 +3017,65 @@ class Commande extends CommonOrder
 		}
 	}
 
+	/**
+	 *	Check if a customer ref is already used by another customer order of the same third party
+	 *
+	 *	Same control supplier invoices get from their uk_facture_fourn_ref_supplier
+	 *	(ref_supplier, fk_soc, entity) unique index. Can be disabled with
+	 *	ORDER_ALLOW_DUPLICATE_REF_CLIENT, for installations already holding such duplicates.
+	 *
+	 *	@param		string		$ref_client		Customer ref to check
+	 *	@param		int			$socid			Third party id
+	 *	@param		int			$excludeid		Customer order id to exclude from the check (0 on creation)
+	 *	@return		int							Return integer 1 if the customer ref is already used, 0 if free, -1 if the request failed
+	 */
+	public function isRefClientAlreadyUsed(string $ref_client, int $socid, int $excludeid = 0): int
+	{
+		global $langs;
+
+		if (getDolGlobalInt('ORDER_ALLOW_DUPLICATE_REF_CLIENT')) {
+			return 0;
+		}
+
+		$ref_client = trim($ref_client);
+		if ($ref_client === '' || $socid <= 0) {
+			return 0;
+		}
+
+		$sql = "SELECT ref FROM ".$this->db->prefix()."commande";
+		$sql .= " WHERE ref_client = '".$this->db->escape($ref_client)."'";
+		$sql .= " AND fk_soc = ".((int) $socid);
+		$sql .= " AND entity IN (".getEntity('commande').")";
+		if ($excludeid > 0) {
+			$sql .= " AND rowid <> ".((int) $excludeid);
+		}
+		$sql .= " ORDER BY rowid ASC";
+		$sql .= $this->db->plimit(1);
+
+		dol_syslog(get_class($this)."::isRefClientAlreadyUsed", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::isRefClientAlreadyUsed ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		if (!is_object($obj)) {
+			return 0;
+		}
+
+		$langs->load('orders');
+		$this->error = $langs->trans('ErrorRefCustomerAlreadyUsedOnOrder', $ref_client, $obj->ref);
+		$this->errors[] = $this->error;
+		dol_syslog(get_class($this)."::isRefClientAlreadyUsed ref_client=".$ref_client." already used by ".$obj->ref, LOG_WARNING);
+
+		return 1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set customer ref
@@ -2991,6 +3090,10 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
+
+			if ($this->isRefClientAlreadyUsed((string) $ref_client, (int) $this->socid, (int) $this->id) != 0) {
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -3256,7 +3359,7 @@ class Commande extends CommonOrder
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3348,6 +3451,8 @@ class Commande extends CommonOrder
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = (float) $pu_ht;
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc   = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = (float) $total_ht;
@@ -3440,6 +3545,9 @@ class Commande extends CommonOrder
 
 		// Check parameters
 		// Put here code to add control on parameters values
+		if ($this->isRefClientAlreadyUsed((string) $this->ref_client, (int) $this->socid, (int) $this->id) != 0) {
+			return -1;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -3461,7 +3569,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? ((int) $this->user_validation_id) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? ((int) $this->shipping_method_id) : "null").",";
@@ -3520,9 +3628,10 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param	int		$idwarehouse	Warehouse to move the stock back to (only when STOCK_CALCULATE_ON_VALIDATE_ORDER is on). -1 or 0 = no stock change.
 	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -3546,6 +3655,33 @@ class Commande extends CommonOrder
 		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
+		}
+
+		// Put the stock back, the validation had decreased it. Only when a warehouse was chosen, so
+		// deleting an order just to clean the database still leaves the stock alone.
+		// Must run before the lines are removed.
+		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1 && $this->status != self::STATUS_DRAFT && $idwarehouse > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$langs->load("agenda");
+
+			$this->fetch_lines();
+
+			$num = count($this->lines);
+			for ($i = 0; $i < $num; $i++) {
+				if ($this->lines[$i]->fk_product > 0) {
+					$mouvP = new MouvementStock($this->db);
+					$mouvP->origin = &$this;
+					$mouvP->setOrigin($this->element, $this->id);
+					// 0 as price so the weighted average value is not changed
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderDeletedInDolibarr", $this->ref));
+					if ($result < 0) {
+						$error++;
+						$this->error = $mouvP->error;
+						$this->errors = array_merge($this->errors, $mouvP->errors);
+						break;
+					}
+				}
+			}
 		}
 
 		// Remove linked categories.
@@ -4130,7 +4266,7 @@ class Commande extends CommonOrder
 		$this->specimen = 1;
 		$this->entity = $conf->entity;
 		$this->socid = 1;
-		$this->date = time();
+		$this->date = dol_now();
 		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
@@ -4255,7 +4391,7 @@ class Commande extends CommonOrder
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'einstein';
+			$modele = 'eratosthene';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
@@ -4358,13 +4494,16 @@ class Commande extends CommonOrder
 	/**
 	 * Compute shippable status and tooltip/icon for the order.
 	 *
-	 * @param array<mixed> $options Extra options (reserved for future use)
-	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
-	 * /
+	 * Can be overridden by a module through the 'getShippableInfos' hook (context
+	 * '<element>dao'). The hook result is merged over the default skeleton, so every key of
+	 * the contract stays defined whatever the module returns.
+	 *
+	 * @param array<mixed> $options 	Extra options, forwarded as-is to the hook
+	 * @return  array<string,mixed>     Array with keys: has_product, shippable, texticon, textinfo, warning
 	 */
 	public function getShippableInfos(array $options = array()): array
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$langs->loadLangs(array('orders', 'sendings', 'stocks', 'products'));
 
@@ -4375,6 +4514,18 @@ class Commande extends CommonOrder
 			'textinfo'    => '',
 			'warning'     => false,
 		);
+
+		if (is_object($hookmanager)) {
+			$parameters = array('options' => $options);
+			$reshook = $hookmanager->executeHooks('getShippableInfos', $parameters, $this);
+			if ($reshook < 0) {
+				dol_syslog(__METHOD__.' hook getShippableInfos failed: '.$hookmanager->error, LOG_ERR);
+			}
+			if (!empty($hookmanager->resArray['shippableinfos'])
+				&& is_array($hookmanager->resArray['shippableinfos'])) {
+				return array_merge($result, $hookmanager->resArray['shippableinfos']);
+			}
+		}
 
 		// Requested naming for statuses
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_CLOSED) {

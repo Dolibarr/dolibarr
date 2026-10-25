@@ -184,6 +184,18 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	// Save setup parameters
+	if (GETPOSTISSET('saveemailcollectorsettings')) {
+		$allowedext = trim((string) GETPOST('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', 'restricthtml'));
+		$result = dolibarr_set_const($db, 'EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', $allowedext, 'chaine', 0, '', $conf->entity);
+		if ($result > 0) {
+			$conf->global->EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS = $allowedext;
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -433,7 +445,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -822,10 +834,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '</tr>';
 
+// EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS: Allowlist of attachment extensions to download/save.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorAllowedAttachmentExtensions"), $langs->transnoentitiesnoconv("EmailCollectorAllowedAttachmentExtensionsHelp")).'</td>';
+print '<td class="left">';
+print '<input class="minwidth300" type="text" name="EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS" value="'.dol_escape_htmltag(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS')).'">';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
 print '<br>';
+
+print '<div class="center">';
+print '<button type="submit" class="button button-save" name="saveemailcollectorsettings" value="1">'.$langs->trans("Save").'</button>';
+print '</div>';
 
 print '</form>'."\n";
 
@@ -850,7 +873,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 }
 
 
-dol_get_fiche_end();
+print dol_get_fiche_end();
 
 
 // End of page

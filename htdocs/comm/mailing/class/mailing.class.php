@@ -188,7 +188,7 @@ class Mailing extends CommonObject
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
 	);
 
 	const STATUS_DRAFT = 0;
@@ -450,7 +450,7 @@ class Mailing extends CommonObject
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode((string) $obj->extraparams, true);
 
 				$this->tag = $obj->tag;
 				$this->name_from = $obj->name_from;

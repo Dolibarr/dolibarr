@@ -148,7 +148,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'workstation_workstation', 'ref', '', null, $date);
 

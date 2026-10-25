@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -571,6 +570,44 @@ class DateLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check previous weeks across month and year boundaries.
+	 *
+	 * @return void
+	 */
+	public function testDolGetPrevWeek()
+	{
+		global $conf;
+
+		$oldstartweek = isset($conf->global->MAIN_START_WEEK) ? getDolGlobalInt('MAIN_START_WEEK') : null;
+		$oldtimezone = date_default_timezone_get();
+		try {
+			date_default_timezone_set('UTC');
+			$cases = array(
+				array(1, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 19)),
+				array(1, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 23)),
+				array(1, 1, 3, 2023, array('year' => 2023, 'month' => 2, 'day' => 20)),
+				array(1, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 4)),
+				array(1, 1, 6, 2026, array('year' => 2026, 'month' => 5, 'day' => 25)),
+				array(1, 1, 1, 2024, array('year' => 2023, 'month' => 12, 'day' => 25)),
+				array(0, 1, 3, 2024, array('year' => 2024, 'month' => 2, 'day' => 18)),
+				array(0, 1, 1, 2025, array('year' => 2024, 'month' => 12, 'day' => 22)),
+				array(0, 15, 3, 2024, array('year' => 2024, 'month' => 3, 'day' => 3))
+			);
+			foreach ($cases as $case) {
+				$conf->global->MAIN_START_WEEK = $case[0];
+				$this->assertSame($case[4], dol_get_prev_week($case[1], 0, $case[2], $case[3]));
+			}
+		} finally {
+			date_default_timezone_set($oldtimezone);
+			if ($oldstartweek === null) {
+				unset($conf->global->MAIN_START_WEEK);
+			} else {
+				$conf->global->MAIN_START_WEEK = $oldstartweek;
+			}
+		}
+	}
+
+	/**
 	 * testGetFirstDayOfEachWeek
 	 *
 	 * @return int
@@ -626,8 +663,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolGetFirstHour()
 	{
-		global $conf;
-
 		$now = 1800 + (24 * 3600 * 10);	// The 11th of january 1970 at 0:30 in UTC
 		$result = dol_get_first_hour($now, 'gmt');
 		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
@@ -648,8 +683,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolSqlDateFilter()
 	{
-		global $conf;
-
 		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
 		print __METHOD__." result = ".$result."\n";
 		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');

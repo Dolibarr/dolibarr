@@ -72,7 +72,7 @@ class box_external_rss extends ModeleBoxes
 
 		$this->max = $max;
 
-		// On recupere numero de param de la boite
+		// Retrieve box param number
 		$reg = array();
 		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
 		$site = $reg[1];
@@ -124,7 +124,9 @@ class box_external_rss extends ModeleBoxes
 
 			// Feed common fields
 			$href = $item['link'];
-			$title = urldecode($item['title']);
+			// urldecode() can give back HTML tags (%3C...%3E) that were removed by the parser, and the text of the box is
+			// shown with no escaping when it starts with <img, <div or <span
+			$title = dol_string_nohtmltag(urldecode($item['title']), 0);
 			$date = empty($item['date_timestamp']) ? null : $item['date_timestamp']; // date will be empty if conversion into timestamp failed
 			if ($rssparser->getFormat() == 'rss') {   // If RSS
 				if (!$date && isset($item['pubdate'])) {
@@ -140,6 +142,9 @@ class box_external_rss extends ModeleBoxes
 				//$item['dc']['publisher']
 			}
 			if ($rssparser->getFormat() == 'atom') {	// If Atom
+				if (!$date && !empty($item['pubDate'])) {
+					$date = $item['pubDate'];
+				}
 				if (!$date && isset($item['issued'])) {
 					$date = $item['issued'];
 				}

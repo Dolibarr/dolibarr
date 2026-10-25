@@ -205,7 +205,7 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
+	if (!GETPOST("exportkey") || !hash_equals(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'), (string) GETPOST("exportkey"))) {
 		$user->loadRights();
 
 		top_httphead();
@@ -380,7 +380,7 @@ if ($format == 'rss') {
 			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {

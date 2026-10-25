@@ -17,7 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -221,19 +221,18 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
-// Detection browser
-if (isset($_SERVER["HTTP_USER_AGENT"])) {
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
-	$conf->browser->name = $tmp['browsername'];
-	$conf->browser->os = $tmp['browseros'];
-	$conf->browser->version = $tmp['browserversion'];
-	$conf->browser->ua = $tmp['browserua'];
-	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
-	//var_dump($conf->browser);
+// Detection browser. A request without User-Agent header (script, monitoring tool...) gets the
+// default values ('unknown' browser, 'classic' layout), so $conf->browser is always complete.
+$tmp = getBrowserInfo((string) ($_SERVER["HTTP_USER_AGENT"] ?? ''));
+$conf->browser->name = $tmp['browsername'];
+$conf->browser->os = $tmp['browseros'];
+$conf->browser->version = $tmp['browserversion'];
+$conf->browser->ua = $tmp['browserua'];
+$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
+//var_dump($conf->browser);
 
-	if ($conf->browser->layout == 'phone') {
-		$conf->dol_no_mouse_hover = 1;
-	}
+if ($conf->browser->layout == 'phone') {
+	$conf->dol_no_mouse_hover = 1;
 }
 
 // If theme is forced
@@ -752,6 +751,18 @@ if (!defined('NOLOGIN')) {
 			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
 		}
 
+		// Refuse a login submission that carries a password in a GET query string.
+		// This avoids the password ending up in web server access logs,
+		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
+		// OAuth callbacks legitimately use GET but use afteroauthloginreturn.
+		// Other external pluginn using login_hashin GET are also legitimate.
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn', 'alphanohtml', 1) && GETPOST('password', 'password', 1)) {
+			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
+			$test = false;
+		}
+
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
@@ -776,9 +787,23 @@ if (!defined('NOLOGIN')) {
 			}
 
 			// Check login for all qualified modes in array $authmode.
-			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
-			if ($login === '--bad-login-validity--') {
-				$login = '';
+			if (!empty($_SESSION['dol_totp_pending']) && GETPOSTISSET('totpcode')) {
+				// Second step of a two-factor authentication: the password was validated in the previous request, only the code is checked, against the login and entity kept in session
+				$entitytotest = (int) $_SESSION['dol_totp_pending']['entity'];
+				$login = dolTotpCheckPendingLogin($db);
+				$totpsecondstepdone = ($login ? 1 : 0);
+				$totpsecondstepfailed = ($login ? 0 : 1);
+			} else {
+				unset($_SESSION['dol_totp_pending']);	// A new password step cancels any pending second step
+				$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+				if ($login === '--bad-login-validity--') {
+					$login = '';
+				}
+				if ($login && in_array($conf->authmode, array('dolibarr', 'ldap'))) {
+					// The password is right, but a user with a two-factor authentication needs a code before any session is opened. Only the modes with a password typed in the form are concerned.
+					$login = dolTotpStartSecondFactor($db, $login, $entitytotest);
+					$totpaskingforcode = ($login ? 0 : 1);
+				}
 			}
 
 			if ($login) {
@@ -807,7 +832,7 @@ if (!defined('NOLOGIN')) {
 				//print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst.'-'.sdol_screenheight.'-'.sdol_screenwidth; exit;
 			}
 
-			if (!$login) {
+			if (!$login && empty($totpaskingforcode)) {		// A password accepted but waiting for a 2FA code is not a failed authentication. A wrong code is one.
 				dol_syslog('Bad password, connection refused (see a previous notice message for more info)', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
@@ -819,7 +844,7 @@ if (!defined('NOLOGIN')) {
 				}
 
 				// Call trigger for the "security events" log
-				$user->context['audit'] = $langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username", "alpha", 2);
+				$user->context['audit'] = (empty($totpsecondstepfailed) ? $langs->trans("ErrorBadLoginPassword") : $langs->trans("TOTPCodeRefused")).' - login='.GETPOST("username", "alpha", 2);
 
 				// Call trigger
 				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
@@ -842,7 +867,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// End test login / passwords
-		if (!$login || (in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {     // With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
+		if (!$login || (empty($totpsecondstepdone) && in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {     // With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success. The second step of a 2FA posts no password, so it is excluded from this test.
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
@@ -1113,6 +1138,12 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
+
+		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
+		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
+			dolSessionsLimitForUser($user->id, (int) $conf->file->main_limit_sessions_per_user, session_id());
+		}
 
 		$db->begin();
 
@@ -1523,7 +1554,9 @@ if (!function_exists("llxHeader")) {
 			$tmpcsstouse .= ' dol_openinpopup';
 		}
 
-		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+		// The spell checker of the browser is disabled for the whole page (the attribute is inherited by all the
+		// fields of all the forms). It is enabled back only on the fields where it is useful (free text, see DolEditor).
+		print '<body id="mainbody" class="'.$tmpcsstouse.'" spellcheck="false">'."\n";
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -1882,8 +1915,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$jsContextPathUrl = DOL_URL_ROOT . '/public/includes/dolibarr-js-context';
 		$jsContextFiles = [
 			'dolibarr-context.umd.js', // The js Dolibarr context definition
-			'dolibarr-tool.seteventmessage.js' // The first tools to help dev for easy event in js
 		];
+
+		// COMPAT-JSCONTEXT @deprecated since 25.0, remove in 27.0 : backward compatibility layer, must be loaded right after the context definition
+		if (!getDolGlobalInt('MAIN_JS_CONTEXT_DISABLE_COMPAT')) {
+			$jsContextFiles[] = 'dolibarr-context.compat.js';
+		}
+
+		$jsContextFiles[] = 'dolibarr-tool.seteventmessage.js'; // The first tools to help dev for easy event in js
+		$jsContextFiles[] = 'dolibarr-tool.fetch.js'; // Ajax requests with anti CSRF token and error handling
 
 		if (! defined('NOREQUIRETRAN')) {
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
@@ -2235,7 +2275,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->headerdone)) {
 		$disablenofollow = 0;
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
-		print '<body id="mainbody">';
+		print '<body id="mainbody" spellcheck="false">';
 	}
 
 	/*
@@ -2275,7 +2315,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$logouttext = '';
 		$logouthtmltext = '';
 		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
+			$authmode = (empty($_SESSION["dol_authmode"]) ? '' : $_SESSION["dol_authmode"]);
+			if ($authmode != 'forceuser' && $authmode != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout').' ('.$conf->browser->stringforfirstkey.' l)', 'sign-out', '', 0, 0, 0, '', 'atoplogin valignmiddle');
@@ -2352,7 +2393,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (!getDolGlobalString('MAIN_PRINT_DISABLELINK') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			if (isset($_POST) && is_array($_POST)) {
+			if (!empty($_POST)) {
 				foreach ($_POST as $key => $value) {
 					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
 					if (in_array($key, array('action', 'massaction', 'password'))) {
@@ -2524,7 +2565,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysoc->name).'</span>';
+	// $mysoc may not be loaded (pages defining NOREQUIRESOC)
+	$mysocname = (is_object($mysoc) ? $mysoc->name : '');
+	$mysoccountrycode = (is_object($mysoc) ? $mysoc->country_code : '');
+
+	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysocname).'</span>';
 	$idprofcursor = 0;
 	while ($idprofcursor < 10) {
 		$idprofcursor++;
@@ -2541,17 +2586,17 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		if ($idprofcursor == 4) {
 			$constkeyforprofid = 'MAIN_INFO_RCS';
 		}
-		$showprofid = (($idprofcursor <= 6) && $langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code) != '-');
+		$showprofid = (($idprofcursor <= 6) && $langs->transcountry("ProfId".$idprofcursor, $mysoccountrycode) != '-');
 		if ($idprofcursor > 6 && getDolGlobalString($constkeyforprofid)) {
 			$showprofid = true;
 		}
 		if ($showprofid) {
-			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), '1').'</span>';
+			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoccountrycode).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), '1').'</span>';
 		}
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
-	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code).' '.$langFlag : '').'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoccountrycode ? $langs->trans("Country".$mysoccountrycode).' '.$langFlag : '').'</span>';
 	if (isModEnabled('multicurrency')) {
 		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.getDolCurrency().'</span>';
 	}
@@ -2582,7 +2627,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	if (getDolGlobalString('MAIN_MODULE_MULTICOMPANY')) {
 		$dropdownBody .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
 	}
-	$dropdownBody .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)');
+	$dropdownBody .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.(empty($_SESSION["dol_authmode"]) ? '' : $_SESSION["dol_authmode"]).(empty($dolibarr_main_demo) ? '' : ' (demo)');
 	$dropdownBody .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
@@ -2591,16 +2636,16 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.$langs->getDefaultLang().($langFlag ? ' '.$langFlag : '');;
 
-	$tz = (int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
+	$tz = (int) (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) + (int) (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']);
 	$dropdownBody .= '<br><b>'.$langs->trans("ClientTZ").':</b> '.($tz ? ($tz >= 0 ? '+' : '').$tz : '');
-	$dropdownBody .= ' <span class="opacitymedium">('.$_SESSION['dol_tz_string'].')</span>';
+	$dropdownBody .= ' <span class="opacitymedium">('.(empty($_SESSION['dol_tz_string']) ? '' : $_SESSION['dol_tz_string']).')</span>';
 	//$dropdownBody .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
 	//if ($_SESSION['dol_dst'] > 0) $dropdownBody .= yn(1);
 	//else $dropdownBody .= yn(0);
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
-	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
-	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT'] ?? ''), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
+	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.(empty($_SESSION['dol_screenwidth']) ? '' : $_SESSION['dol_screenwidth']).' x '.(empty($_SESSION['dol_screenheight']) ? '' : $_SESSION['dol_screenheight']);
 	$dropdownBody .= ' <span class="opacitymedium">('.$conf->browser->layout.')</span>';
 	if (!empty($_SESSION["disablemodules"])) {
 		$dropdownBody .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.implode(', ', explode(',', $_SESSION["disablemodules"]));
@@ -2771,16 +2816,24 @@ function top_menu_ai()
 	if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || empty($conf->use_javascript_ajax)) {
 		return $html;
 	}
-	// Per-user gate: same right as the assistant page and its endpoints
+	// Per-user gate: same right as the assistant page and its endpoints.
+	// Without the right, show a greyed non clickable icon so the user knows the feature exists.
 	if (!$user->hasRight('ai', 'assistant', 'use')) {
+		$html .= '<!-- div for AI Assistant link (disabled, no permission) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a class="login-dropdown-a nofocusvisible opacitymedium cursornotallowed classfortooltip" title="'.dol_escape_htmltag($langs->trans('AIAssistant').' - '.$langs->trans('NotEnoughPermissions')).'"><i class="fa fa-magic"></i></a>
+	</div>';
 		return $html;
 	}
 
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
-	// the standalone page ai/assistant/index.php uses the same pattern).
-	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
+	// the standalone page ai/assistant/index.php uses the same pattern). Same
+	// filemtime cache-busting as the JS module below: a stylesheet cached for
+	// 15 minutes otherwise hides every CSS change of the chat behind a reload.
+	$aicssver = @filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css');
+	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css?v='.urlencode((string) ($aicssver ? $aicssver : DOL_VERSION)).'">';
 
 	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
 	// activation fires the click handler below, so it toggles the popover.
@@ -2807,6 +2860,13 @@ function top_menu_ai()
         jQuery(document).ready(function() {
 	        jQuery(document).on("click", function(event) {
 				if (jQuery("#topmenu-ai-popover").hasClass("open")) {
+					// A click on a node removed from the DOM while the event was bubbling
+					// (e.g. a chat action button like "Yes, continue" that removes its own
+					// message bubble) must not be mistaken for a click outside the popover:
+					// .closest() cannot reach the popover from a detached node.
+					if (event.target instanceof Element && !event.target.isConnected) {
+						return;
+					}
 		    		if (!$(event.target).closest("#topmenu-ai-toggle").length && !$(event.target).closest("#topmenu-ai-popover").length) {
 						console.log("click close ai dropdown - we click outside");
 		                // Hide the dropdown.
@@ -2815,6 +2875,18 @@ function top_menu_ai()
 				}
 	        });
 		});
+
+	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	document.addEventListener("click", function (event) {
+		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
+		if (!link) { return; }
+		try {
+			for (var i = sessionStorage.length - 1; i >= 0; i--) {
+				var key = sessionStorage.key(i);
+				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
+			}
+		} catch (e) { /* storage not available */ }
+	});
 
 	(function () {
 		var toggle = document.getElementById("topmenu-ai-toggle");
@@ -2840,7 +2912,7 @@ function top_menu_ai()
 				})
 				.then(function (htmlcontent) {
 					body.innerHTML = htmlcontent;
-					return import("'.dol_escape_js($aijsurl).'").then(function (mod) {
+					return import(\''.dol_escape_js($aijsurl).'\').then(function (mod) {
 						mod.initAiAssistant(body.querySelector(".ai-chat-container"));
 					});
 				})
@@ -2850,7 +2922,7 @@ function top_menu_ai()
 				})
 				.catch(function (e) {
 					console.error("AI Assistant popover load failed", e);
-					body.innerHTML = "<div class=\"ai-popover-loading\">'.dol_escape_js($langs->trans('Error')).'</div>";
+					body.innerHTML = \'<div class="ai-popover-loading">'.dol_escape_js($langs->trans('Error')).'</div>\';
 				})
 				.finally(function () { loading = false; });
 		}
@@ -2860,6 +2932,9 @@ function top_menu_ai()
 			if (input) { input.focus(); }
 		}
 
+		// The expand button always opens the standalone full page
+		// (/ai/assistant/index.php) in the current tab. There is no small mode:
+		// the popover opens and stays in the large ("expanded") state.
 		toggle.addEventListener("click", function (event) {
 			console.log("Click on #topmenu-ai-toggle");
 			event.preventDefault();
@@ -2869,6 +2944,8 @@ function top_menu_ai()
 			positionPopover();
 			var isOpen = popover.classList.toggle("open");
 			if (isOpen) {
+				// Always open in the large ("expanded") state.
+				popover.classList.add("expanded");
 				loadChat();
 				if (loaded) { focusInput(); }
 			}
@@ -2881,10 +2958,9 @@ function top_menu_ai()
 			if (closeBtn) {
 				popover.classList.remove("open");
 			} else if (expandBtn) {
-				var expanded = popover.classList.toggle("expanded");
-				var icon = expandBtn.querySelector("i");
-				if (icon) { icon.className = expanded ? "fa fa-compress-alt" : "fa fa-expand-alt"; }
-				expandBtn.title = expanded ? (expandBtn.dataset.titleReduce || "") : (expandBtn.dataset.titleExpand || "");
+				// Open the standalone full page in the current tab.
+				var url = expandBtn.dataset.fullscreenUrl;
+				if (url) { window.location.href = url; }
 			}
 		});
 
@@ -3906,6 +3982,8 @@ if (!function_exists("llxFooter")) {
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
+				} elseif (!empty($_POST['button_removefilter']) || !empty($_POST['button_removefilter_x'])) {
+					unset($_SESSION['lastsearch_values_'.$key]);	// Filters were removed, so previously saved criteria must not be restored later
 				}
 			}
 		}
@@ -3985,47 +4063,6 @@ if (!function_exists("llxFooter")) {
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
 			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang . '&' . $ext .'"></script>'."\n";
 		}
-
-		// JS wrapper to add an unalterable log when clicking on Download or Preview
-		// This is done on customer invoices only.
-		// This add a log and increase the pos_print_counter too (done by block-add.php).
-		/* NOTE: No more required, the trigger is now included into the call of the wrapper documents.php
-		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
-			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
-				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
-				?>
-				<script>
-				jQuery(document).ready(function () {
-					$('a.documentpreview').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentpreview (DOC_PREVIEW)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_PREVIEW'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-					$('a.documentdownload').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentdownload (DOC_DOWNLOAD)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_DOWNLOAD'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-				});
-				</script>
-				<?php
-			}
-		}
-		*/
 
 		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";

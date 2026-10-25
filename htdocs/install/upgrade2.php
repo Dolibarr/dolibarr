@@ -206,6 +206,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// Load global conf
 	$conf->setValues($db);
 
+	// Init $mysoc, needed by the init() of some modules (e.g. BlockedLog)
+	require_once $dolibarr_main_document_root.'/societe/class/societe.class.php';
+	$mysoc = new Societe($db);
+	$mysoc->setMysoc($conf);
+
 
 	// Reforce log activation (samecode than into the inc.php)
 	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
@@ -345,7 +350,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
-				// Script pour V2 -> V2.1
+				// Script for V2 -> V2.1
 				migrate_paiements($db, $langs, $conf);
 
 				migrate_contracts_det($db, $langs, $conf);
@@ -371,7 +376,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_paiementfourn_facturefourn($db, $langs, $conf);
 
 
-				// Script pour V2.1 -> V2.2
+				// Script for V2.1 -> V2.2
 				migrate_paiements_orphelins_1($db, $langs, $conf);
 
 				migrate_paiements_orphelins_2($db, $langs, $conf);
@@ -379,7 +384,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_links_transfert($db, $langs, $conf);
 
 
-				// Script pour V2.2 -> V2.4
+				// Script for V2.2 -> V2.4
 				migrate_commande_expedition($db, $langs, $conf);
 
 				migrate_commande_livraison($db, $langs, $conf);
@@ -387,11 +392,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_detail_livraison($db, $langs, $conf);
 
 
-				// Script pour V2.5 -> V2.6
+				// Script for V2.5 -> V2.6
 				migrate_stocks($db, $langs, $conf);
 
 
-				// Script pour V2.6 -> V2.7
+				// Script for V2.6 -> V2.7
 				migrate_menus($db, $langs, $conf);
 
 				migrate_commande_deliveryaddress($db, $langs, $conf);
@@ -723,6 +728,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
+				'MAIN_MODULE_SUBTOTALS' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',
 				'MAIN_MODULE_TAKEPOS' => 'newboxdefonly',
 				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)
@@ -1138,7 +1144,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
+		// All records returned by this query should have a parent in llx_paiement_facture
 		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
@@ -1750,7 +1756,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$total_ttc_f = $obj->total_ttc_f;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$facligne = new FactureLigne($db);
 				$facligne->fetch($rowid);
 
@@ -1934,9 +1940,9 @@ function migrate_price_contrat($db, $langs, $conf)
 				$remise_percent = $obj->remise_percent;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$contratligne = new ContratLigne($db);
-				//$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
+				//$contratligne->fetch($rowid); Not required because update_total only updates redefined fields
 				$contratligne->fetch($rowid);
 
 				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, 0, 'HT', $info_bits, $contratligne->product_type, $tmpmysoc);
@@ -2016,7 +2022,7 @@ function migrate_price_commande($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$commandeligne = new OrderLine($db);
 				$commandeligne->fetch($rowid);
 
@@ -2109,7 +2115,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
@@ -4390,7 +4396,13 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/export/exportcsv.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/modules/facture/pdf_crabe.modules.php',
+		'/core/modules/commande/doc/pdf_einstein.modules.php',
+		'/core/modules/expedition/doc/pdf_rouget.modules.php',
+		'/core/modules/propale/doc/pdf_azur.modules.php',
+		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
+		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -5716,7 +5728,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";

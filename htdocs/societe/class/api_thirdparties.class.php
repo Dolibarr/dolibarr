@@ -2,14 +2,15 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024       Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2026		Benjamin Falière		<benjamin@faliere.com>
  * Copyright (C) 2026		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@
  */
 
 use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for thirdparties
@@ -207,9 +210,9 @@ class Thirdparties extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.rowid', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.rowid', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -317,7 +320,7 @@ class Thirdparties extends DolibarrApi
 			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
 			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
 			if ($id < 0) {
-				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->lasterror());
 			}
 			$request_data['country_id'] = $id;
 		}
@@ -410,7 +413,7 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->company->error);
+			throw new RestException(500, $this->company->errorsToString());
 		}
 	}
 
@@ -577,6 +580,37 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
+	 * Get a customer representative to a third party
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the third party
+	 * @return	array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>			Return array of representatives if OK, < 0 if KO
+	 *
+	 * @url		GET		{id}/representative
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Third party not found
+	 */
+	public function getRepresentative($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'reader')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user);
+		/** @var array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}> $result */
+
+		return $result;
+	}
+
+	/**
 	 * Add a customer representative to a third party
 	 *
 	 * @since	20.0.0	Initial implementation
@@ -687,7 +721,7 @@ class Thirdparties extends DolibarrApi
 		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
 
 		if (is_numeric($arrayofcateg) && $arrayofcateg < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		if (is_numeric($arrayofcateg) && $arrayofcateg >= 0) {	// To fix a return of 0 instead of empty array of method getListForItem
@@ -825,7 +859,7 @@ class Thirdparties extends DolibarrApi
 		$result = $categories->getListForItem($id, 'supplier', $sortfield, $sortorder, $limit, $page);
 
 		if (is_numeric($result) && $result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		if (is_numeric($result) && $result == 0) {	// To fix a return of 0 instead of empty array of method getListForItem
@@ -1276,7 +1310,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Prepare VAT rate with code if provided
-		$vatrate = "";
+		$vatrate = (string) $tva_tx;
 		if (isset($request_data['vat_src_code']) && !empty($request_data['vat_src_code'])) {
 			$vatrate = $tva_tx . ' (' . $request_data['vat_src_code'] . ')';
 		}
@@ -1501,7 +1535,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
-			throw new RestException(405, $invoice->error);
+			throw new RestException(405, $invoice->errorsToString());
 		}
 
 		return $result;
@@ -1550,7 +1584,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if (!is_array($result) && $result < 0) {
-			throw new RestException(405, $invoice->error);
+			throw new RestException(405, $invoice->errorsToString());
 		}
 
 		return $result;
@@ -1874,8 +1908,8 @@ class Thirdparties extends DolibarrApi
 	 * @param	int		$id		ID of the third party
 	 *
 	 * @return	array
-	 * @phan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
-	 * @phpstan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
+	 * @phan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string,payment_reference:string}>
+	 * @phpstan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string,payment_reference:string}>
 	 *
 	 * @url		GET		{id}/bankaccounts
 	 *
@@ -1934,7 +1968,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 
-		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum', 'payment_reference');
 
 		$returnAccounts = array();
 
@@ -2161,8 +2195,8 @@ class Thirdparties extends DolibarrApi
 		$outputlangs = $langs;
 		$newlang = '';
 
-		//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		//if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			if (isset($this->company->thirdparty->default_lang)) {
 				$newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
 			} elseif (isset($this->company->default_lang)) {
@@ -2218,7 +2252,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0) {
 			return array("success" => $result);
 		} else {
-			throw new RestException(500, 'Error generating the document '.$this->company->error);
+			throw new RestException(500, 'Error generating the document '.$this->company->errorsToString());
 		}
 	}
 

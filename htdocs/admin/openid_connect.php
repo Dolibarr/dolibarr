@@ -209,7 +209,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 		$langs->load("errors");
 		print info_admin($langs->trans("ErrorOpenIDSetupConfNotComplete") . ':  ' . $urlforwikidoc, 0, 0, 1, 'warning');
 	} else {
-		print info_admin('In conf.php file: dolibarr_main_authentication is ' . $dolibarr_main_authentication);
+		print info_admin($langs->trans("OpenIDSetupConfOk", 'conf.php', 'dolibarr_main_authentication').' : <b>' . $dolibarr_main_authentication).'</b>';
 	}
 
 	print '<br>';
@@ -217,7 +217,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="tagtable noborder liste nobottomiftotal">';
 	print '<tr class="liste_titre">';
-	print '<th class="liste_titre" colspan="3">' . $langs->trans("Parameters") . '</th>' . "\n";
+	print '<th class="liste_titre" colspan="3">' . $langs->trans("AutomaticSetup") . '</th>' . "\n";
 	print "</tr>\n";
 
 	print '<tr class="oddeven">' . "\n";
@@ -232,7 +232,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 
 	print '<br>';
 
-	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
+	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="set">';
 

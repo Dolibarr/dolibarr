@@ -133,7 +133,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
@@ -144,7 +144,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
-print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
+print '<div class="info">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</div><br>';
 print "<br>\n";
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -162,7 +162,7 @@ print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("ActionsEvents").'</th>';
-print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall&token='.newToken().''.($param ? $param : '').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param ? $param : '').'">'.$langs->trans("None").'</a></th>';
+print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall&token='.newToken().''.($param ? $param : '').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone&token='.newToken().($param ? $param : '').'">'.$langs->trans("None").'</a></th>';
 print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
 if (!empty($triggers)) {

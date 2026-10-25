@@ -95,6 +95,9 @@ phpstan_custom.neon
 .htaccess
 /.run-phpstan
 
+# IA setup
+/AGENTS.md
+
 # Mistral Vibe
 .vibe
 /.vibeignore
@@ -103,6 +106,9 @@ phpstan_custom.neon
 .claude
 /.claudeignore
 
+# Superpowers subagent-driven-development scratch workspace
+/.superpowers
+
 # Agent workflow artifacts (specs/plans), not product documentation
 docs/superpowers/
 
@@ -110,3 +116,9 @@ docs/superpowers/
 .worktrees/
 /cookies.txt
 /post_login.html
+/AGENTS.md
+
+.bash_history
+.zed_server/
+.ssh/
+.local/

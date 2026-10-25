@@ -2,6 +2,7 @@
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,6 +223,205 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	//if ($contenttype == 'html') { print $content;exit; }
 
 	return $content;
+}
+
+/**
+ * Return the elements with contenteditable="true" and an id found into the source of a page, with what is needed to
+ * edit them with the mode "Edit inline".
+ * An element can be edited if its id is unique and if its content into the source has no php code and only text or the
+ * html tags and attributes accepted by dolWebsiteCheckEditInlineHtml().
+ *
+ * @param	string	$content	Source of the page (html with php code)
+ * @return	array<string,array{tag:string,pos:int,len:int,mode:string,blocks:int,error:string}>	Elements found, the key is the id.
+ *								pos and len are the position and length of the content of the element into $content.
+ *								mode is 'text' (only text and <br>), 'html' (accepted html) or '' if the element can not be edited.
+ *								blocks is 1 if block tags (p, h1, ul...) are allowed into the element.
+ *								error is the translation key of the reason why the element can not be edited.
+ */
+function dolWebsiteGetEditInlineElements($content)
+{
+	// Tags that can contain block tags. Content of other tags (p, h1, span...) can contain only inline tags.
+	$blocktags = array('article', 'aside', 'blockquote', 'dd', 'details', 'div', 'fieldset', 'figcaption', 'footer', 'header', 'li', 'main', 'nav', 'section', 'td', 'th');
+	$voidtags = array('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr');
+
+	// Position of the php code, an element inside a php string can not be edited
+	$phpparts = array();
+	preg_match_all('/<\?.*?(\?>|$)/s', $content, $regphp, PREG_OFFSET_CAPTURE);
+	foreach ($regphp[0] as $phppart) {
+		$phpparts[] = array($phppart[1], $phppart[1] + strlen($phppart[0]));
+	}
+
+	$elements = array();
+
+	// Opening tags with contenteditable="true". A tag with php code inside is not found (the "<" of "<?php" stops the search).
+	preg_match_all('/<([a-z][a-z0-9]*)(?=[^<>]*\scontenteditable="true")[^<>]*>/i', $content, $regtags, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+	foreach ($regtags as $regtag) {
+		if (!preg_match('/\sid="([^"]+)"/', $regtag[0][0], $regid)) {
+			continue;
+		}
+		$id = $regid[1];
+		$tag = strtolower($regtag[1][0]);
+		if (in_array($tag, $voidtags) || substr($regtag[0][0], -2) == '/>') {
+			continue;
+		}
+		if (isset($elements[$id])) {
+			$elements[$id]['mode'] = '';
+			$elements[$id]['error'] = 'ErrorEditInlineElementNotUnique';
+			continue;
+		}
+
+		$element = array('tag' => $tag, 'pos' => $regtag[0][1] + strlen($regtag[0][0]), 'len' => 0, 'mode' => '', 'blocks' => (in_array($tag, $blocktags) ? 1 : 0), 'error' => '');
+
+		// Search the closing tag of the element, counting the tags with the same name that are opened and closed inside.
+		// If the result is wrong because of a tag into a comment or a php string, the content found has a "<!--" or a "<?"
+		// and is refused below.
+		$level = 1;
+		$offset = $element['pos'];
+		$end = -1;
+		while (preg_match('/<(\/?)'.$tag.'(?=[\s\/>])[^>]*>/i', $content, $regnext, PREG_OFFSET_CAPTURE, $offset)) {
+			$offset = $regnext[0][1] + strlen($regnext[0][0]);
+			if ($regnext[1][0] == '/') {
+				$level--;
+				if ($level == 0) {
+					$end = $regnext[0][1];
+					break;
+				}
+			} elseif (substr($regnext[0][0], -2) != '/>') {
+				$level++;
+			}
+		}
+
+		$inphp = false;
+		foreach ($phpparts as $phppart) {
+			if ($regtag[0][1] >= $phppart[0] && $regtag[0][1] < $phppart[1]) {
+				$inphp = true;
+			}
+		}
+
+		if ($end >= 0) {
+			$element['len'] = $end - $element['pos'];
+		}
+		$inner = substr($content, $element['pos'], $element['len']);
+		if ($inphp || strpos($inner, '<?') !== false) {
+			$element['error'] = 'ErrorEditInlineElementWithPhp';
+		} elseif ($end < 0) {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		} elseif (!preg_match('/<(?!br\s*\/?>)/i', $inner)) {
+			$element['mode'] = 'text';
+		} elseif (dolWebsiteCheckEditInlineHtml($inner, $element['blocks'])) {
+			$element['mode'] = 'html';
+		} else {
+			$element['error'] = 'ErrorEditInlineElementNotAllowedHtml';
+		}
+
+		$elements[$id] = $element;
+	}
+
+	return $elements;
+}
+
+/**
+ * Check that a html content has only the tags and attributes that can be saved with the mode "Edit inline": text with
+ * formatting (bold, color, font size...), links and, if allowed, paragraphs, titles, lists and div.
+ * There is no image (their links into the preview are not the ones of the source), no php code and no javascript.
+ *
+ * @param	string	$html		Html content
+ * @param	int		$blocks		1=Block tags (p, h1, ul, div...) are allowed, 0=Only inline tags are allowed
+ * @return	bool				True if content is allowed
+ * @see dolWebsiteGetEditInlineElements()
+ */
+function dolWebsiteCheckEditInlineHtml($html, $blocks = 1)
+{
+	$allowedtags = array('a', 'b', 'br', 'em', 'i', 's', 'span', 'strong', 'sub', 'sup', 'u');
+	if ($blocks) {
+		$allowedtags = array_merge($allowedtags, array('blockquote', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ol', 'p', 'ul'));
+	}
+	$allowedattributes = array('class', 'href', 'rel', 'style', 'target', 'title');
+	$allowedschemes = array('http', 'https', 'mailto', 'tel');
+
+	$ok = true;
+	// Remove the allowed tags. Any other "<" (other tag, comment, php code, tag with unquoted attribute value...) stays.
+	$rest = preg_replace_callback(
+		'/<(\/?)([a-z][a-z0-9]*)((?:\s+[a-z][a-z0-9_-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'))?)*)\s*\/?>/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Empty string, the tag is removed
+		 */
+		function ($m) use ($allowedtags, $allowedattributes, $allowedschemes, &$ok) {
+			if (!in_array(strtolower($m[2]), $allowedtags) || ($m[1] == '/' && trim($m[3]) != '')) {
+				$ok = false;
+				return '';
+			}
+			preg_match_all('/([a-z][a-z0-9_-]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'))?/i', $m[3], $regattrs, PREG_SET_ORDER);
+			foreach ($regattrs as $regattr) {
+				$name = strtolower($regattr[1]);
+				$value = html_entity_decode((isset($regattr[2]) ? $regattr[2] : '').(isset($regattr[3]) ? $regattr[3] : ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				$value = preg_replace('/[\x00-\x20]+/', '', $value);	// Browsers ignore these chars into a scheme (java&#9;script:)
+				if (!in_array($name, $allowedattributes)) {
+					$ok = false;
+				} elseif ($name == 'href' && preg_match('/^([a-z][a-z0-9+.\-]*):/i', $value, $regscheme) && !in_array(strtolower($regscheme[1]), $allowedschemes)) {
+					$ok = false;
+				} elseif ($name == 'style' && preg_match('/url\(|expression|javascript|@import|\\\\|[<>]/i', $value)) {
+					$ok = false;
+				}
+			}
+			return '';
+		},
+		$html
+	);
+
+	return $ok && $rest !== null && strpos($rest, '<') === false;
+}
+
+/**
+ * Restore the links of a html content edited into the preview of a page (mode "Edit inline") as they are into the source
+ * of the page. The links of the preview are changed by dolWebsiteReplacementOfLinks().
+ *
+ * @param	Website	$website	Web site object
+ * @param	string	$html		Html content edited into the preview
+ * @param	string	$oldhtml	Html content of the element into the source of the page, before the change
+ * @return	string				Html content with the links of the source
+ */
+function dolWebsiteRestoreLinksOfEditInline($website, $html, $oldhtml)
+{
+	// Links of the source, the key is the link into the preview
+	$links = array();
+	preg_match_all('/\shref="([^"]*)"/i', $oldhtml, $reg);
+	foreach ($reg[1] as $link) {
+		if (preg_match('/href="([^"]*)"/', dolWebsiteReplacementOfLinks($website, ' href="'.$link.'"'), $regpreview)) {
+			$links[html_entity_decode($regpreview[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')] = $link;
+		}
+	}
+
+	$urlofwebsite = DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&';
+
+	$result = preg_replace_callback(
+		'/(\shref=")([^"]*)(")/i',
+		/**
+		 * @param	array<int,string>	$m	Array of matches
+		 * @return	string					Attribute href with the link of the source
+		 */
+		function ($m) use ($links, $urlofwebsite) {
+			$link = html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+			if (isset($links[$link])) {
+				return $m[1].$links[$link].$m[3];
+			}
+			// Link to a page of the website not found into the source of the element (copied from another element)
+			if (strpos($link, $urlofwebsite) === 0) {
+				$param = substr($link, strlen($urlofwebsite));
+				if (preg_match('/^pageref=([^&#]+)(?:&([^#]*))?(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag($regparam[1].'.php'.(empty($regparam[2]) ? '' : '?'.$regparam[2]).(empty($regparam[3]) ? '' : $regparam[3])).$m[3];
+				}
+				if (preg_match('/^pageid=\d+(#.*)?$/', $param, $regparam)) {
+					return $m[1].dol_escape_htmltag('/'.(empty($regparam[1]) ? '' : $regparam[1])).$m[3];
+				}
+			}
+			return $m[0];
+		},
+		$html
+	);
+
+	return ($result === null ? $html : $result);
 }
 
 /**

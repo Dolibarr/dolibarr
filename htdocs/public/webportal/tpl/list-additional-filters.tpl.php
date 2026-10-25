@@ -24,7 +24,7 @@ $formList = &$this->formList;
 $moreforfilter = '';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $context);
+$reshook = $hookmanager->executeHooks('webPortalPrintFieldPreListTitle', $parameters, $context);
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {

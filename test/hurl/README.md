@@ -78,7 +78,7 @@ DoliStore modules must come with hurl tests.
    ```bash
    DOLAPIKEY="DOLAPIKEY: _replace_with_your_Dolibarr_Token_for_API_"
    DOLIHOST="http://example.net/"
-   DOLIPORT="8080"
+   DOLIPORT="80"
    DOLISUBURL="/dolibarr" # if your dolibarr is available at / - no need to set it
    DOLIUSERNAME="foobar" # for GUI tests - if omitted, it will ask you
    DOLIPASSWORD="topsecret" # for GUI tests - if omitted, it will ask you

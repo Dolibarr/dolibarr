@@ -2,7 +2,7 @@
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -340,7 +340,7 @@ if (empty($mysoc->country_code)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("TypeMovement").'</td>'."\n";
+	print '<td>'.$langs->trans("From").'/'.$langs->trans("To").'</td>'."\n";
 	print '<td class="right" width="60"></td>'."\n";
 	print '</tr>'."\n";
 
@@ -395,6 +395,17 @@ if (empty($mysoc->country_code)) {
 	print '</div>';
 
 	print '</form>';
+
+	// The conversion loops over every matching product with updatePrice(): on a large
+	// catalog the request runs for minutes with no feedback, which invites re-submits.
+	// Show the native blocking overlay (dolBlockUI + working.gif) while it runs.
+	print '<script>
+	jQuery(function() {
+		jQuery("#convert_vatrate").closest("form").on("submit", function() {
+			dolBlockUI(\''.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'\');
+		});
+	});
+	</script>';
 }
 
 // End of page
