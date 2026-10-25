@@ -1203,3 +1203,109 @@ a.msg-action-btn.primary span {
     background: rgba(0, 0, 0, 0.04);
     border-radius: 4px;
 }
+
+/* Tool palette ("/"): a list or a form shown just above the input pill */
+.ai-palette {
+    margin: 0 0 6px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 0.88rem;
+    /* Long one-line items are cut with an ellipsis: they must never widen the
+       chat, whose page column is a table cell that grows to its content. */
+    contain: inline-size;
+    overflow-x: hidden;
+}
+.ai-palette-hint,
+.ai-palette-empty {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+}
+.ai-palette-item {
+    padding: 6px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ai-palette-item:hover,
+.ai-palette-item.selected {
+    background: var(--ai-surface-2);
+}
+.ai-palette-item.selected {
+    box-shadow: inset 3px 0 0 var(--ai-accent);
+}
+.ai-palette-form {
+    padding: 8px 10px;
+    max-height: 340px;
+}
+.ai-palette-title {
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ai-palette-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+}
+.ai-palette-row > span {
+    flex: 0 0 34%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: monospace;
+    font-size: 0.82rem;
+}
+.ai-palette-row input,
+.ai-palette-row select,
+.ai-palette-row textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 6px;
+    border: 1px solid var(--ai-border);
+    border-radius: 4px;
+    background: var(--ai-input-bg);
+    color: var(--ai-text);
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+.ai-palette-row textarea {
+    font-family: monospace;
+    resize: vertical;
+}
+.ai-palette-error {
+    color: var(--colortexterror, #b00020);
+    margin: 4px 0;
+    font-size: 0.82rem;
+}
+.ai-palette-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+}
+@media (max-width: 768px) {
+    .ai-palette-row { flex-direction: column; align-items: stretch; gap: 2px; }
+    .ai-palette-row > span { flex: none; }
+}
+.ai-cmd-totals {
+    margin-top: 6px;
+    border-collapse: collapse;
+}
+.ai-cmd-totals td {
+    padding: 2px 12px 2px 0;
+}
+
+/* API name beside the plain name of a tool in the palette */
+.ai-palette-apiname {
+    opacity: 0.55;
+    font-family: monospace;
+    font-size: 0.78rem;
+    margin-left: 4px;
+}
