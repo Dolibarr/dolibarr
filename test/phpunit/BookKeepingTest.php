@@ -154,7 +154,7 @@ class BookKeepingTest extends CommonClassTest
 	/**
 	 * Changes of a whole transaction call the bookkeeping trigger once for the transaction, and a trigger can refuse them,
 	 * for example a module that locks closed periods: date, journal or reference changed, transaction validated
-	 * from draft.
+	 * from draft, transaction cloned.
 	 * The test runs inside one transaction, so a refused change is not rolled back here: the test checks the error.
 	 *
 	 * @return	void
@@ -198,6 +198,28 @@ class BookKeepingTest extends CommonClassTest
 			$result = $bookkeeping->updateByMvt((string) $piecenum, 'doc_date', $db->idate($olddate));
 			$this->assertLessThan(0, $result, 'A refused change of the date must return an error');
 			$this->assertStringContainsString('Refused by test trigger', $bookkeeping->errorsToString());
+			InterfacePhpunitBookKeeping::$refuse = '';
+
+			// Clone: one BOOKKEEPING_CREATE for the new transaction, error if refused
+			InterfacePhpunitBookKeeping::$calls = array();
+			$nextpiecenum = $bookkeeping->getNextNumMvt();
+			$result = $bookkeeping->newClone((string) $piecenum, 'OD', $newdate);
+			$this->assertGreaterThan(0, $result, $bookkeeping->errorsToString());
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls);
+			$this->assertEquals('BOOKKEEPING_CREATE', InterfacePhpunitBookKeeping::$calls[0]['action']);
+			$this->assertEquals($nextpiecenum, InterfacePhpunitBookKeeping::$calls[0]['piece_num']);
+			$this->assertEquals($newdate, InterfacePhpunitBookKeeping::$calls[0]['doc_date']);
+			$this->assertEquals(2, InterfacePhpunitBookKeeping::$calls[0]['nblines']);
+			$this->assertEquals(2, $this->countLines($nextpiecenum, ''));
+
+			InterfacePhpunitBookKeeping::$refuse = 'BOOKKEEPING_CREATE';
+			$result = $bookkeeping->newClone((string) $piecenum, 'OD', $newdate);
+			$this->assertLessThan(0, $result, 'A refused clone must return an error');
+
+			InterfacePhpunitBookKeeping::$calls = array();
+			$result = $bookkeeping->newCloneMass(array_keys($this->getLineIds($piecenum)), 'OD', $newdate);
+			$this->assertLessThan(0, $result, 'A refused mass clone must return an error');
+			$this->assertCount(1, InterfacePhpunitBookKeeping::$calls, 'The mass clone of one transaction calls the trigger once');
 			InterfacePhpunitBookKeeping::$refuse = '';
 
 			// Validation of a draft transaction: one BOOKKEEPING_CREATE for the transaction in the ledger, error if refused
@@ -262,6 +284,25 @@ class BookKeepingTest extends CommonClassTest
 		}
 
 		return $piecenum;
+	}
+
+	/**
+	 * Return the lines of a transaction in the ledger
+	 *
+	 * @param	int		$piecenum	Piece num
+	 * @return	array<int,int>		Ids of the lines, as keys
+	 */
+	private function getLineIds($piecenum)
+	{
+		global $db;
+
+		$ids = array();
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE piece_num = ".((int) $piecenum));
+		while ($obj = $db->fetch_object($resql)) {
+			$ids[(int) $obj->rowid] = (int) $obj->rowid;
+		}
+
+		return $ids;
 	}
 
 	/**

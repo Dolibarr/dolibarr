@@ -3600,11 +3600,12 @@ class BookKeeping extends CommonObject
 	 * @param	string	$piecenum		Piece number to clone
 	 * @param	string	$code_journal	Accounting journal code
 	 * @param	int		$docdate		Date of the document
+	 * @param	int		$notrigger		0=launch triggers after, 1=disable triggers
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newClone($piecenum, $code_journal, $docdate)
+	public function newClone($piecenum, $code_journal, $docdate, $notrigger = 0)
 	{
-		global $langs;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -3632,6 +3633,7 @@ class BookKeeping extends CommonObject
 		$bookKeepingInstance = new BookKeeping($this->db);
 		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 
+		$nbcloned = 0;
 		$cloneId = [];
 		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $piecenum);
 		$resqlRowidClone = $this->db->query($sqlRowidClone);
@@ -3672,6 +3674,7 @@ class BookKeeping extends CommonObject
 							$resqlInsert = $this->db->query($sql_insert);
 
 							if ($resqlInsert) {
+								$nbcloned++;
 								setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 							} else {
 								$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
@@ -3682,6 +3685,11 @@ class BookKeeping extends CommonObject
 					}
 				}
 			}
+		}
+
+		// Call trigger, once for the new transaction
+		if (!$error && !$notrigger && $nbcloned > 0 && $this->callTriggerForTransaction('BOOKKEEPING_CREATE', (int) $pieceNumNext, $user) < 0) {
+			$error++;
 		}
 
 		if ($error) {
@@ -3699,13 +3707,15 @@ class BookKeeping extends CommonObject
 	 * @param 	int[]		$toselect		array of BookkeepingId
 	 * @param	string		$code_journal	Accounting journal code
 	 * @param	int			$docdate		Date of the document
+	 * @param	int			$notrigger		0=launch triggers after, 1=disable triggers
 	 * @return	int							Return integer -1 if KO, 1 if OK
 	 */
-	public function newCloneMass($toselect, $code_journal, $docdate)
+	public function newCloneMass($toselect, $code_journal, $docdate, $notrigger = 0)
 	{
 		global $langs, $user;
 
 		$error = 0;
+		$newpiecenums = array();
 		$this->db->begin();
 
 		$now = dol_now();
@@ -3816,6 +3826,7 @@ class BookKeeping extends CommonObject
 									$resqlInsert = $this->db->query($sql_insert);
 
 									if ($resqlInsert) {
+										$newpiecenums[(int) $pieceNumNext] = (int) $pieceNumNext;
 										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
 										$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
@@ -3827,6 +3838,13 @@ class BookKeeping extends CommonObject
 						}
 					}
 				}
+			}
+		}
+
+		// Call trigger, once for each new transaction
+		foreach ($newpiecenums as $newpiecenum) {
+			if (!$error && !$notrigger && $this->callTriggerForTransaction('BOOKKEEPING_CREATE', $newpiecenum, $user) < 0) {
+				$error++;
 			}
 		}
 
