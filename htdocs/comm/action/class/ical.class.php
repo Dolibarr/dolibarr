@@ -72,6 +72,11 @@ class ICal
 	public $journal_count;
 
 	/**
+	 * @var array<string,array{location:string,changes:array<int,array{start:int,before:int,after:int,rrule:array<string,string>,rdates:array<int,int>}>}>|null	Time zones (VTIMEZONE) declared in the file, by TZID. Null until they are read.
+	 */
+	private $vtimezones = null;
+
+	/**
 	 * @var string Help variable save last key (multiline string)
 	 */
 	public $last_key;
@@ -1255,7 +1260,163 @@ class ICal
 			'utc' => 'UTC', 'w. central africa standard time' => 'Africa/Lagos', 'morocco standard time' => 'Africa/Casablanca'
 		);
 		$key = strtolower($tzid);
-		return (isset($windows[$key]) ? $windows[$key] : '');
+		if (isset($windows[$key])) {
+			return $windows[$key];
+		}
+
+		// Unknown name: the file can say which time zone it is (X-LIC-LOCATION of its VTIMEZONE)
+		$vtimezones = $this->getVtimezones();
+		return (isset($vtimezones[$tzid]) ? $vtimezones[$tzid]['location'] : '');
+	}
+
+	/**
+	 * Return the time zones (VTIMEZONE) declared in the file, by TZID.
+	 * For each one: the name of the PHP time zone given by X-LIC-LOCATION ('' if none or unknown by PHP), and the changes of offset
+	 * of its STANDARD and DAYLIGHT parts (start as written in the file, offsets before and after in seconds, recurrence rule, RDATE).
+	 *
+	 * @return array<string,array{location:string,changes:array<int,array{start:int,before:int,after:int,rrule:array<string,string>,rdates:array<int,int>}>}>
+	 */
+	private function getVtimezones()
+	{
+		if ($this->vtimezones !== null) {
+			return $this->vtimezones;
+		}
+		$this->vtimezones = [];
+
+		$text = (string) preg_replace('/\r?\n[ \t]/', '', (string) $this->file_text);	// Unfold the lines
+		if (!preg_match_all('/^BEGIN:VTIMEZONE\s*$(.*?)^END:VTIMEZONE\s*$/ims', $text, $blocks)) {
+			return $this->vtimezones;
+		}
+		$identifiers = timezone_identifiers_list();
+		foreach ($blocks[1] as $block) {
+			if (!preg_match('/^TZID[^:\r\n]*:\s*"?([^"\r\n]+?)"?\s*$/im', $block, $reg)) {
+				continue;
+			}
+			$tzid = $reg[1];
+			$location = '';
+			if (preg_match('/^X-LIC-LOCATION[^:\r\n]*:\s*([^\r\n]+?)\s*$/im', $block, $reg)) {
+				foreach ($identifiers as $identifier) {
+					if (strcasecmp($identifier, $reg[1]) == 0) {
+						$location = $identifier;
+						break;
+					}
+				}
+			}
+			$changes = [];
+			if (preg_match_all('/^BEGIN:(STANDARD|DAYLIGHT)\s*$(.*?)^END:\1\s*$/ims', $block, $parts)) {
+				foreach ($parts[2] as $part) {
+					$props = [];
+					$offsets = [];
+					$rdates = [];
+					foreach (preg_split('/\r?\n/', $part) as $line) {
+						if (!preg_match('/^([A-Z-]+)[^:]*:(.*)$/i', trim($line), $reg)) {
+							continue;
+						}
+						$name = strtoupper($reg[1]);
+						if ($name == 'RDATE') {
+							foreach (explode(',', $reg[2]) as $rdate) {
+								if (preg_match('/^\s*(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/', $rdate, $d)) {
+									$rdates[] = (int) gmmktime((int) $d[4], (int) $d[5], (int) $d[6], (int) $d[2], (int) $d[3], (int) $d[1]);
+								}
+							}
+						} elseif ($name == 'TZOFFSETFROM') {
+							$offsets['before'] = $this->parseUtcOffset($reg[2]);
+						} elseif ($name == 'TZOFFSETTO') {
+							$offsets['after'] = $this->parseUtcOffset($reg[2]);
+						} else {
+							$props[$name] = trim($reg[2]);
+						}
+					}
+					if (empty($props['DTSTART']) || !preg_match('/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/', $props['DTSTART'], $d)
+						|| !isset($offsets['before']) || !isset($offsets['after'])) {
+						continue;
+					}
+					$rrule = !empty($props['RRULE']) ? $this->ical_rrule($props['RRULE']) : [];
+					$changes[] = [
+						'start' => (int) gmmktime((int) $d[4], (int) $d[5], (int) $d[6], (int) $d[2], (int) $d[3], (int) $d[1]),
+						'before' => $offsets['before'],
+						'after' => $offsets['after'],
+						'rrule' => ($rrule && $this->isRRuleSupported($rrule)) ? $rrule : [],
+						'rdates' => $rdates,
+					];
+				}
+			}
+			$this->vtimezones[$tzid] = ['location' => $location, 'changes' => $changes];
+		}
+		return $this->vtimezones;
+	}
+
+	/**
+	 * Convert an offset of a time zone written by iCal ('+0100', '-053000') into seconds.
+	 *
+	 * @param 	string 		$offset		Offset
+	 * @return 	int|null				Offset in seconds, or null if it is not valid
+	 */
+	private function parseUtcOffset($offset)
+	{
+		if (!preg_match('/^([+-])(\d{2})(\d{2})(\d{2})?$/', trim($offset), $reg)) {
+			return null;
+		}
+		return ($reg[1] == '-' ? -1 : 1) * ((int) $reg[2] * 3600 + (int) $reg[3] * 60 + (int) ($reg[4] ?? 0));
+	}
+
+	/**
+	 * Return the offset from UTC (in seconds) of a local date and time of a time zone declared in the file (VTIMEZONE), from its rules.
+	 *
+	 * @param 	int 	$localtime	Local date and time written as GMT timestamp
+	 * @param 	string 	$tzid		TZID of the date
+	 * @return 	int|null			Offset in seconds, or null if the file has no usable rules for this TZID
+	 */
+	private function getVtimezoneOffset($localtime, $tzid)
+	{
+		$vtimezones = $this->getVtimezones();
+		if (empty($vtimezones[$tzid]['changes'])) {
+			return null;
+		}
+		$offset = null;
+		$lastchange = null;
+		$firstchange = null;
+		$offsetbefore = null;
+		foreach ($vtimezones[$tzid]['changes'] as $change) {
+			$starts = [$change['start']];
+			if ($change['rrule']) {
+				$starts = $this->expandRRule($change['rrule'], $change['start'], $localtime + 2 * 86400, 0, $localtime - 400 * 86400);
+			}
+			foreach ($change['rdates'] as $rdate) {
+				$starts[] = $rdate;
+			}
+			foreach ($starts as $start) {
+				// A local time in the gap (spring forward) keeps the offset before, and a repeated local time (fall back) uses the first one
+				$effective = $start + max(0, $change['after'] - $change['before']);
+				if ($firstchange === null || $start < $firstchange) {
+					$firstchange = $start;
+					$offsetbefore = $change['before'];
+				}
+				if ($effective <= $localtime && ($lastchange === null || $start > $lastchange)) {
+					$lastchange = $start;
+					$offset = $change['after'];
+				}
+			}
+		}
+		if ($offset === null && $offsetbefore !== null) {
+			$offset = $offsetbefore;
+		}
+		return $offset;
+	}
+
+	/**
+	 * Tell if the dates of a TZID can be converted by tzidToTimestamp(): name known by PHP, or time zone with rules declared in the file.
+	 *
+	 * @param 	string 	$tzid	TZID of a date
+	 * @return 	bool			True if the TZID is known
+	 */
+	public function isTzidKnown($tzid)
+	{
+		if ($this->getPhpTimezone($tzid) !== '') {
+			return true;
+		}
+		$vtimezones = $this->getVtimezones();
+		return !empty($vtimezones[trim($tzid, " \t\"")]['changes']);
 	}
 
 	/**
@@ -1269,7 +1430,9 @@ class ICal
 	{
 		$timezone = $this->getPhpTimezone($tzid);
 		if ($timezone === '') {
-			return null;
+			// Not a name known by PHP: we use the rules of the time zone written in the file
+			$offset = $this->getVtimezoneOffset($localtime, trim($tzid, " \t\""));
+			return ($offset === null ? null : $localtime - $offset);
 		}
 		return dol_mktime((int) gmdate('G', $localtime), (int) gmdate('i', $localtime), (int) gmdate('s', $localtime), (int) gmdate('n', $localtime), (int) gmdate('j', $localtime), (int) gmdate('Y', $localtime), 'tz,'.$timezone);
 	}

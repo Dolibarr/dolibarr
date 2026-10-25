@@ -1221,7 +1221,7 @@ if (count($listofextcals)) {
 						$datecurstart = $icalevent['DTSTART']['unixtime']; // can't be empty
 						$datecurend = empty($icalevent['DTEND']['unixtime']) ? $datecurstart : $icalevent['DTEND']['unixtime'];
 						$tzidname = (string) ($icalevent['DTSTART']['TZID'] ?? '');
-						$tzidwall = (empty($buggedfile) && $ical->getPhpTimezone($tzidname) !== '');
+						$tzidwall = (empty($buggedfile) && $ical->isTzidKnown($tzidname));
 						if (!$tzidwall && !empty($ical->cal['DAYLIGHT']['DTSTART']) /* && $datecurstart */) {
 							//var_dump($ical->cal);
 							$tmpcurstart = $datecurstart;
