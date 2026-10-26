@@ -353,7 +353,7 @@ if (empty($reshook)) {
 
 				$payment->paiementid = $paiementid;
 				$payment->paiementcode = $paycode;
-				$payment->num_payment = '';
+				$payment->num_payment = $invoice->ref;
 
 				if ($pay != "delayed") {
 					$res = $payment->create($user);		// This record payment and regenerate the PDF
