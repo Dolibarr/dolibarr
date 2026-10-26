@@ -41,7 +41,7 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 // Per-user gate: the Assistant page is now governed by the standard
-// 'ai/assistant/use' right (granted by default to new users), so admins
+// 'ai/assistant/use' right (NOT granted by default to new users), so admins
 // can revoke access per user/group via the standard permission UI.
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
@@ -64,6 +64,6 @@ llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 <?php
 // Chat markup (shared with the topbar popover fragment, see ai/assistant/popover.php).
 // The data-ai-autoinit attribute makes ai_assistant.js initialize it on load.
-print getAiChatAssistantHtml('page');
+print getAiChatAssistantHtml('page', GETPOSTINT('conv'));
 
 llxFooter();

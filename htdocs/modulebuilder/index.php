@@ -332,6 +332,20 @@ function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
 	return $report;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('modulebuilder'));
+$hookobject = null;
+
+$parameters = array('module' => $module, 'tab' => $tab, 'tabobj' => $tabobj, 'dirins' => $dirins, 'dirread' => $dirread, 'listofmodules' => $listofmodules);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $hookobject, $action); // Note that $action may have been modified by hook
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if ($reshook > 0) {
+	// The action was fully managed by a hook, so native actions are skipped
+	$action = '';
+}
+
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
 	$modulename = dol_string_nounprintableascii(dol_string_unaccent(dol_ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
@@ -464,7 +478,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 					'Editor name'                                               => $editorname,
 					'https://www.example.com'                                   => $editorurl,
 					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
-					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
+					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\';' : '$this->picto = \'' . $picto . '\';',
 					'modulefamily'                                              => $family,
 					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
 					// array_merge -- causing str_replace to search for '0' instead of '500000'.
@@ -522,6 +536,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$modulename = dol_ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 	$varnametoupdate = '';
+	$accesspolicyfailed = false;
 	$dirins = $listofmodules[dol_strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.dol_strtolower($module);
 
@@ -604,13 +619,34 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 				dolReplaceInFile($destfile, $headerFix);
 				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			} else {
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				dolReplaceInFile($destfile, $arrayreplacement);
-				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+				// A tab page must follow the access policy stored in the object class, and never keep the template markers
+				if ($varnametoupdate) {
+					$classfile = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+					try {
+						$storedaccesspolicy = getModuleBuilderAccessPolicyFromClassFile($classfile);
+						if (applyModuleBuilderAccessPolicyToPage($destfile, $storedaccesspolicy) < 0) {
+							$accesspolicyfailed = true;
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $destfile), null, 'errors');
+						}
+					} catch (\InvalidArgumentException $e) {
+						$accesspolicyfailed = true;
+						dol_syslog("modulebuilder: invalid access policy stored in ".$classfile.": ".$e->getMessage(), LOG_ERR);
+						setEventMessages($langs->trans("ErrorModuleBuilderInvalidStoredAccessPolicy", basename($classfile)), null, 'errors');
+					}
+				}
+				if ($accesspolicyfailed) {
+					$error++;
+					dol_delete_file($destfile);
+				} else {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+					dolReplaceInFile($destfile, $arrayreplacement);
+					modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+				}
 			}
 		}
 
-		if ($varnametoupdate) {
+		if ($varnametoupdate && !$accesspolicyfailed) {
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.dol_strtolower($module).'/lib/'.dol_strtolower($module).'_'.dol_strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
@@ -1188,6 +1224,38 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$enabledcardactions = filterEnabledKeys(GETPOST('enabledcardaction', 'array'), getModuleBuilderObjectCardActions());
 	$objectalreadyexists = dol_is_file($destdir.'/class/'.dol_strtolower($objectname).'.class.php');
 
+	// Access policy of the object pages: an invalid policy rejects the whole generation, its predicates are never filtered
+	$accesspolicy = null;
+	$copiedfiles = array();
+	$accesspolicyalternatives = array();
+	for ($i = 0; $i < AccessPolicyConfig::MAX_ALTERNATIVES; $i++) {
+		$accesspolicyalternatives[] = GETPOST('accesspolicy_'.$i, 'array:aZ09');
+	}
+	try {
+		$accesspolicy = AccessPolicyConfig::fromAlternatives($accesspolicyalternatives, GETPOST('accesspolicymessage', 'alphanohtml'));
+	} catch (\InvalidArgumentException $e) {
+		$error++;
+		dol_syslog("modulebuilder: invalid access policy for object ".$objectname.": ".$e->getMessage(), LOG_WARNING);
+		setEventMessages($langs->trans("ErrorModuleBuilderInvalidAccessPolicy"), null, 'errors');
+		$tabobj = 'newobject';
+	}
+	// All the pages of an object follow the policy stored in its class: on regeneration it overrides the form
+	if (!$error && $objectalreadyexists) {
+		$classfile = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+		try {
+			$storedaccesspolicy = getModuleBuilderAccessPolicyFromClassFile($classfile);
+			if ($accesspolicy !== null && ($storedaccesspolicy === null || $storedaccesspolicy->toJson() !== $accesspolicy->toJson())) {
+				setEventMessages($langs->trans("WarningAccessPolicyOnRegeneration"), null, 'warnings');
+			}
+			$accesspolicy = $storedaccesspolicy;
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			dol_syslog("modulebuilder: invalid access policy stored in ".$classfile.": ".$e->getMessage(), LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleBuilderInvalidStoredAccessPolicy", basename($classfile)), null, 'errors');
+			$tabobj = 'newobject';
+		}
+	}
+
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
 	dol_mkdir($destdir.'/img');
@@ -1478,6 +1546,23 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 	}
 
+	// Hook to define the properties of the new object from another source than a table (a hook returning
+	// resArray['fields'] with the same format than $fields replaces the properties of the template)
+	if (!$error) {
+		$parameters = array('module' => $module, 'objectname' => $objectname, 'dirins' => $dirins, 'initfromtablename' => $tablename);
+		$reshook = $hookmanager->executeHooks('getFieldsForNewObject', $parameters, $hookobject, $action);
+		if ($reshook < 0) {
+			$error++;
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$tabobj = 'newobject';
+		} elseif ($reshook > 0 && !empty($hookmanager->resArray['fields']) && is_array($hookmanager->resArray['fields'])) {
+			// Class file is reformatted later by rebuildObjectClass()
+			$stringforproperties = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
+			$stringforproperties .= 'public $fields = '.var_export($hookmanager->resArray['fields'], true).';'."\n";
+			$stringforproperties .= '// END MODULEBUILDER PROPERTIES'."\n";
+		}
+	}
+
 	$filetogenerate = array();
 	if (!$error) {
 		// Copy some files
@@ -1574,6 +1659,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		if (!$error) {
 			foreach ($filetogenerate as $srcfile => $destfile) {
 				$result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
+				if ($result > 0) {
+					$copiedfiles[$srcfile] = $destfile;
+				}
 				if ($result <= 0) {
 					if ($result < 0) {
 						$warning++;
@@ -1832,6 +1920,25 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 							dol_syslog("modulebuilder: failed to activate card action '".$actionkey."' in ".$carddestfile, LOG_ERR);
 						}
 					}
+				}
+			}
+		}
+
+		// Resolve the access policy block of the files copied by this run only: a file that already existed holds
+		// substituted names and no marker any more
+		if (!$error) {
+			$accesspolicytargets = array_fill_keys(getModuleBuilderAccessPolicyPages(), 'page');
+			$accesspolicytargets['class/myobject.class.php'] = 'class';
+			foreach ($accesspolicytargets as $templatefile => $targettype) {
+				if (!isset($copiedfiles[$templatefile])) {
+					continue;
+				}
+				$targetfile = $destdir.'/'.$copiedfiles[$templatefile];
+				$result = ($targettype == 'class') ? applyModuleBuilderAccessPolicyToClass($targetfile, $accesspolicy) : applyModuleBuilderAccessPolicyToPage($targetfile, $accesspolicy);
+				if ($result < 0) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $targetfile), null, 'errors');
 				}
 			}
 		}
@@ -4438,6 +4545,14 @@ if ($module == 'initmodule') {
 				print $form->textwithpicto('', $langs->trans("DefinePropertiesFromExistingTableDesc").'<br>'.$langs->trans("DefinePropertiesFromExistingTableDesc2"));
 				print '</div></div>';
 
+				// Other lines of options (printed as div class="tagtr")
+				$parameters = array('module' => $module, 'tabobj' => $tabobj);
+				$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $hookobject, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
+
 				print '</div>';
 
 				print '<br>';
@@ -4458,6 +4573,20 @@ if ($module == 'initmodule') {
 					print '<input type="checkbox" name="enabledcardaction[]" id="enabledcardaction_'.$actionkey.'" value="'.dol_escape_htmltag($actionkey).'"'.$checked.'> ';
 					print '<label for="enabledcardaction_'.$actionkey.'">'.dol_escape_htmltag($langs->trans($actioninfo['label'])).'</label> &nbsp; ';
 				}
+				print '<br>';
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("AccessPolicyForObject"), $langs->trans("AccessPolicyForObjectHelp")).'</span><br>';
+				for ($i = 0; $i < AccessPolicyConfig::MAX_ALTERNATIVES; $i++) {
+					$accesspolicyselected = GETPOST('accesspolicy_'.$i, 'array:aZ09');
+					print '<span class="opacitymedium">'.dol_escape_htmltag($langs->trans($i == 0 ? "AccessPolicyFirstAlternative" : "AccessPolicyOtherAlternative", $i + 1)).'</span> &nbsp; ';
+					foreach (array_keys(PredicateRule::PREDICATES) as $predicatename) {
+						$checked = in_array($predicatename, $accesspolicyselected, true) ? ' checked' : '';
+						print '<span class="nowraponall"><input type="checkbox" name="accesspolicy_'.$i.'[]" id="accesspolicy_'.$i.'_'.$predicatename.'" value="'.dol_escape_htmltag($predicatename).'"'.$checked.'> ';
+						print '<label for="accesspolicy_'.$i.'_'.$predicatename.'">'.dol_escape_htmltag($langs->trans("AccessPolicyPredicate".ucfirst($predicatename))).'</label></span> &nbsp; ';
+					}
+					print '<br>';
+				}
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("AccessPolicyMessage"), $langs->trans("AccessPolicyMessageHelp")).'</span> &nbsp; ';
+				print '<input type="text" name="accesspolicymessage" maxlength="'.AccessPolicyConfig::MAX_MESSAGE_LENGTH.'" value="'.dol_escape_htmltag(GETPOST('accesspolicymessage', 'alphanohtml')).'" placeholder="ErrorForbidden">';
 				print '<br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
@@ -4921,6 +5050,14 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+
+							$parameters = array('module' => $module, 'tabobj' => $tabobj, 'dirread' => $dirread);
+							$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $tmpobject, $action);
+							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+							}
+							print $hookmanager->resPrint;
+
 							print '<br><br class="clearboth">';
 							print '<br class="clearboth">';
 
@@ -5075,10 +5212,8 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<textarea name="proparrayofkeyval">';
-										if (isset($proparrayofkeyval)) {
-											if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
-												print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
-											}
+										if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
+											print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
 										}
 										print '</textarea>';
 										print '</td>';

@@ -9,7 +9,7 @@ services:
     mariadb:
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: rootpassfordev
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassfordev}
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"

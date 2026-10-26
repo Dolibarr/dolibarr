@@ -160,6 +160,8 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 
 $ispaymentok = false;
+$onlinepaymentsession = null; // Data of the payment saved in database by newpayment.php (null if not found)
+$onlinepaymentsessionid = $onlinepaymentsessionservice = ''; // ID and service of the online payment session
 // If payment is ok
 $PAYMENTSTATUS = $TRANSACTIONID = $LONGTRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
@@ -379,8 +381,12 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	if (empty($TRANSACTIONID)) {
 		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION
 			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+		}
+		if (empty($TRANSACTIONID) && GETPOST('session_id', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_NEW_CHECKOUT (session cookie lost, the id comes from the success_url)
+			$TRANSACTIONID = GETPOST('session_id', 'alphanohtml');
 		}
 	}
 	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
@@ -393,10 +399,30 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		$servicestatus = 1;
 	}
 
-	// Check we are coming from the newpaymentpage
-	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
-	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
-	if (!GETPOST('payment_intent', 'alphanohtml') && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	// Find the data saved by newpayment.php in database. The key is the Checkout Session id (session_id) or the PaymentIntent/charge id.
+	$onlinepaymentsessionservice = $service;
+	$onlinepaymentsessionid = GETPOST('session_id', 'alphanohtml') ? GETPOST('session_id', 'alphanohtml') : $TRANSACTIONID;
+	if ($onlinepaymentsessionid) {
+		$onlinepaymentsession = onlinePaymentSessionFetch($onlinepaymentsessionservice, $onlinepaymentsessionid);
+	}
+
+	if (is_object($onlinepaymentsession)) {
+		// Data found: we use them instead of the session, and the payment must be the one created for the object of this fulltag
+		if (empty($onlinepaymentsession->fulltag) || $onlinepaymentsession->fulltag !== $FULLTAG) {
+			$error++;
+			$errmsg = 'Stripe payment verification failed: the payment was not created for fulltag '.$FULLTAG;
+			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		}
+		$FinalPaymentAmt = empty($onlinepaymentsession->FinalPaymentAmt) ? '' : $onlinepaymentsession->FinalPaymentAmt;
+		$currencyCodeType = empty($onlinepaymentsession->currencyCodeType) ? '' : $onlinepaymentsession->currencyCodeType;
+		$ipaddress = empty($onlinepaymentsession->ipaddress) ? '' : $onlinepaymentsession->ipaddress;
+		$paymentType = empty($onlinepaymentsession->paymentType) ? '' : $onlinepaymentsession->paymentType;
+	} elseif (!GETPOST('payment_intent', 'alphanohtml') && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+		// Data not found in database, same check than before, with the session
+		//TODO : Remove this check
+		// Check we are coming from the newpaymentpage
+		// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
+		// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
@@ -415,6 +441,16 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 			try {
+				// With Stripe Checkout, the id we have is the one of the Checkout Session (cs_...), we get the PaymentIntent from it
+				if (preg_match('/^cs_/', $TRANSACTIONID)) {
+					if (empty($stripeacc)) {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID);
+					} else {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+					}
+					$TRANSACTIONID = (string) $checkoutsession->payment_intent;
+				}
+
 				if (empty($stripeacc)) {
 					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
 				} else {
@@ -535,6 +571,23 @@ dol_syslog("ispaymentok=".$ispaymentok." tmptag=".formatLogObject($tmptag), LOG_
 
 // Set $appli for emails title
 $appli = $mysoc->name;
+
+// A transaction of the payment service is recorded only once: refuse it if a payment already uses it
+if ($ispaymentok && !empty($TRANSACTIONID)) {
+	$sqltransaction = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
+	$sqltransaction .= " WHERE p.ext_payment_id = '".$db->escape($TRANSACTIONID)."' OR p.ext_payment_id LIKE '".$db->escape($db->escapeforlike($TRANSACTIONID)).":%'";
+	$sqltransaction .= " UNION";
+	$sqltransaction .= " SELECT pd.rowid FROM ".MAIN_DB_PREFIX."payment_donation as pd";
+	$sqltransaction .= " WHERE pd.ext_payment_id = '".$db->escape($TRANSACTIONID)."' OR pd.ext_payment_id LIKE '".$db->escape($db->escapeforlike($TRANSACTIONID)).":%'";
+	$resqltransaction = $db->query($sqltransaction);
+	if (!$resqltransaction || $db->num_rows($resqltransaction) > 0) {
+		dol_syslog("The transaction ".$TRANSACTIONID." is already used by a recorded payment (or the check failed), so it is not recorded again", LOG_WARNING, 0, '_payment');
+		$ispaymentok = false;
+		$ErrorCode = "ALREADYRECORDED";
+		$ErrorShortMsg = "Payment already recorded";
+		$ErrorLongMsg = "The transaction ".$TRANSACTIONID." of the payment service was already recorded for a payment. It is not recorded again.";
+	}
+}
 
 
 // Make complementary actions (post payment actions if payment is ok)
@@ -2364,6 +2417,11 @@ if ($ispaymentok) {
 	}
 }
 
+
+// Delete the data saved in database, so the payment can't be replayed
+if ($ispaymentok && $onlinepaymentsessionid) {
+	onlinePaymentSessionConsume($onlinepaymentsessionservice, $onlinepaymentsessionid);
+}
 
 // Clean session variables to avoid duplicate actions if post is resent
 unset($_SESSION["FinalPaymentAmt"]);

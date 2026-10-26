@@ -202,6 +202,7 @@ if (!empty($socid)) {
 	$dbtable = '&societe';
 }
 $hookmanager->initHooks(array('propallist'));
+dolRedirectPostSearchListRequestToGetIfPossible('propallist');
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -666,7 +667,7 @@ if ($search_refproject) {
 if ($search_project) {
 	$sql .= natural_search('pr.title', $search_project);
 }
-if ($search_availability) {
+if ($search_availability && $search_availability != '-1') {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
 $societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
@@ -1063,11 +1064,20 @@ if ($search_refcustomer) {
 if ($search_refproject) {
 	$param .= '&search_refproject='.urlencode($search_refproject);
 }
+if ($search_project) {
+	$param .= '&search_project='.urlencode($search_project);
+}
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
 if ($search_societe_alias) {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
+if ($search_warehouse) {
+	$param .= '&search_warehouse='.urlencode($search_warehouse);
+}
+if ($search_note_public) {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
@@ -1077,6 +1087,12 @@ if ($search_sale > 0) {
 }
 if ($search_montant_ht) {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+}
+if ($search_montant_vat) {
+	$param .= '&search_montant_vat='.urlencode($search_montant_vat);
+}
+if ($search_montant_ttc) {
+	$param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
 }
 if ($search_multicurrency_code != '') {
 	$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
@@ -2027,8 +2043,10 @@ while ($i < $imaxinloop) {
 
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
-			print $obj->alias;
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

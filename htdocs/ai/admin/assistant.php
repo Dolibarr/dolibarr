@@ -282,19 +282,27 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
-	// Second step: a write asked, a read answered -> run the read, then the write
-	print '<tr class="oddeven">';
-	print '<td>' . $form->textwithpicto($langs->trans("AIChatTwoStepWrite"), $langs->trans("AIChatTwoStepWriteHelp")) . '</td>';
-	print '<td>';
-	print ajax_constantonoff('AI_CHAT_TWO_STEP_WRITE');
-	print '</td>';
-	print '</tr>';
-
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
 	print '</tr>';
+
+	// Palette of the chat input: on unless switched off (the constant records the off state)
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIPalette"), $langs->trans("AIPaletteHelp")) . '</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_PALETTE_DISABLED', array(), null, 1, 0, 1);
+	print '</td>';
+	print '</tr>';
+	if (!getDolGlobalString('AI_PALETTE_DISABLED')) {
+		print '<tr class="oddeven">';
+		print '<td>' . $form->textwithpicto($langs->trans("AIPaletteApiTools"), $langs->trans("AIPaletteApiToolsHelp")) . '</td>';
+		print '<td>';
+		print ajax_constantonoff('AI_PALETTE_API_TOOLS');
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Logging
 	print '<tr class="oddeven">';

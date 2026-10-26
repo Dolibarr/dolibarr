@@ -879,7 +879,7 @@ class Product extends CommonObject
 		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 11, 'csslist' => 'tdoverflowmax250'),
 		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
-		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61),
+		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'uieditable' => 1),
 		'note'          => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62),
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
 		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
@@ -3819,7 +3819,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3896,7 +3896,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3950,7 +3950,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -4106,7 +4106,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -4178,7 +4178,7 @@ class Product extends CommonObject
 		$sql .= " AND ed.fk_elementdet = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
@@ -4260,7 +4260,7 @@ class Product extends CommonObject
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND cf.fk_soc = ".((int) $socid);
@@ -4332,7 +4332,7 @@ class Product extends CommonObject
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
 		$sql .= " AND (mp.disable_stock_change IN (0) OR mp.disable_stock_change IS NULL)";
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND m.fk_soc = ".((int) $socid);
@@ -4457,7 +4457,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND c.statut != 0";
 		if ($socid > 0) {
@@ -4530,7 +4530,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4604,7 +4604,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4675,7 +4675,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -5780,9 +5780,27 @@ class Product extends CommonObject
 		 }*/
 
 		// les prix de fournisseurs.
+		// All the columns describing the price must be copied, not only the five historical ones:
+		// unitprice defaults to 0 in the table and find_min_price_product_fournisseur() reads it
+		// directly, so a partial copy makes the best buying price of the new product evaluate to 0.
+		// entity defaults to 1 as well, which would move the rows out of their company.
+		// ref_fourn and barcode are deliberately left empty: the unique keys
+		// uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity) and
+		// uk_product_barcode (barcode, fk_barcode_type, entity) do not contain fk_product, so
+		// copying either value would collide with the row of the source product.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
+		$sql .= " datec, fk_product, entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", entity, fk_soc, desc_fourn, fk_availability, price, quantity,";
+		$sql .= " remise_percent, remise, unitprice, charges, default_vat_code, tva_tx,";
+		$sql .= " localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, info_bits, fk_user,";
+		$sql .= " fk_supplier_price_expression, delivery_time_days, supplier_reputation, packaging,";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_tx, multicurrency_unitprice,";
+		$sql .= " multicurrency_price, status";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -7008,9 +7026,12 @@ class Product extends CommonObject
 	{
 		$result = array();
 
-		$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb, ".$this->db->prefix()."product_stock as ps";
-		$sql .= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
-		$sql .= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+		// The dates of the lot are read from llx_product_lot (eatby and sellby of llx_product_batch are deprecated and not updated when the lot is modified)
+		$sql = "SELECT pb.batch, pl.eatby, pl.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON pb.fk_product_stock = ps.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl ON pl.fk_product = ps.fk_product AND pl.batch = pb.batch";
+		$sql .= " WHERE ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
+		$sql .= " GROUP BY pb.batch, pl.eatby, pl.sellby";
 		dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -7503,6 +7524,233 @@ class Product extends CommonObject
 	}
 
 	/**
+	 *    Merge a product with current one, deleting the given product $product_origin_id.
+	 *    The product given in parameter will be removed.
+	 *    This is called for example by the product/card.php file.
+	 *    It calls the method replaceProduct() of each object with relation with products,
+	 *    including hook 'replaceProduct' for external modules.
+	 *
+	 *    @param	int     $product_origin_id	Product to merge the data from
+	 *    @return	int							-1 if error, >=0 if OK
+	 */
+	public function mergeProduct($product_origin_id)
+	{
+		global $conf, $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$productOrigin = new Product($this->db);		// The product that we will delete
+
+		dol_syslog("mergeProduct merge product id=".$product_origin_id." (will be deleted) into the product id=".$this->id);
+
+		if ($productOrigin->fetch($product_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		// Stock of origin product would be lost when it is deleted, so we refuse the merge
+		if (!$error) {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix()."product_stock";
+			$sql .= " WHERE fk_product = ".((int) $productOrigin->id)." AND reel <> 0";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			} else {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans('ErrorMergeOriginProductHasStock', $productOrigin->ref);
+					$error++;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$listofproperties = array(
+				'ref',
+				'ref_ext',
+				'label',
+				'description',
+				'url',
+				'barcode',
+				'fk_barcode_type',
+				'import_key',
+				'mandatory_period',
+				'accountancy_code_buy',
+				'accountancy_code_buy_intra',
+				'accountancy_code_buy_export',
+				'accountancy_code_sell',
+				'accountancy_code_sell_intra',
+				'accountancy_code_sell_export'
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $productOrigin->$property;
+				}
+			}
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $productOrigin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($productOrigin->array_options)) {
+				foreach ($productOrigin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// Merge categories
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$static_cat = new Categorie($this->db);
+			$custcats_ori = $static_cat->containing($productOrigin->id, 'product', 'id');
+			$custcats = $static_cat->containing($this->id, 'product', 'id');
+			$custcats = array_merge($custcats, $custcats_ori);
+			$this->setCategories($custcats);
+
+			// If product has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+			if ($productOrigin->barcode == $this->barcode) {
+				dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+				$productOrigin->barcode = '';
+				//$productOrigin->update($productOrigin->id, $user, 0, 'merge');
+			}
+
+			// Update
+			$result = $this->update($this->id, $user, 0, 'merge');
+			if ($result <= 0) {
+				$error++;
+			}
+
+			// Move links
+			if (!$error) {
+				// TODO add this functionality into the api_products.class.php
+				$objects = array(
+					'ActionComm' => '/comm/action/class/actioncomm.class.php',
+					// do not use Categorie, it cause foreign key error, merge is done before
+					//'Categorie' => '/categories/class/categorie.class.php',
+					'Commande' => '/commande/class/commande.class.php',
+					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+					'Contrat' => '/contrat/class/contrat.class.php',
+					'Delivery' => '/delivery/class/delivery.class.php',
+					'Expedition' => '/expedition/class/expedition.class.php',
+					'Facture' => '/compta/facture/class/facture.class.php',
+					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+					'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
+					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+					'Propal' => '/comm/propal/class/propal.class.php',
+					'Reception' => '/reception/class/reception.class.php',
+					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+					'TimeSpent' => '/core/class/timespent.class.php',
+				);
+				// Tables of these modules exist only if module was enabled once
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'bom_bom')) {
+					$objects['Bom'] = '/bom/class/bom.class.php';
+				}
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
+					$objects['Mo'] = '/mrp/class/mo.class.php';
+				}
+
+				// First, all core objects must update their tables
+				foreach ($objects as $object_name => $object_file) {
+					require_once DOL_DOCUMENT_ROOT.$object_file;
+
+					if (!$object_name::replaceProduct($this->db, $productOrigin->id, $this->id)) {
+						$error++;
+						$this->error = $this->db->lasterror();
+						break;
+					}
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceProduct', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge' => 1, 'mergefromid' => $productOrigin->id);
+
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// Move files from the dir of the product being deleted into the dir of the product kept.
+				// This must happen on success only: the filesystem is not part of the transaction, so
+				// moving the files on the failing path stripped the origin product of its documents
+				// while the database was rolled back, and left them orphaned on the successful one.
+				if (!empty($conf->product->multidir_output[$productOrigin->entity ?? $conf->entity])) {
+					$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? $conf->entity]."/".$productOrigin->ref;
+					$destdir = $conf->product->multidir_output[$this->entity ?? $conf->entity]."/".$this->ref;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							// dol_move() does not create the target directory, which may not exist yet
+							dol_mkdir(dirname($destfile));
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+
+				// dol_move() updated the path of moved files into ecm index, but they must also be linked to the kept product,
+				// otherwise the delete of origin product removes their index entries.
+				$sql = "UPDATE ".$this->db->prefix()."ecm_files SET src_object_id = ".((int) $this->id);
+				$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element)."' AND src_object_id = ".((int) $productOrigin->id);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				// Delete the product
+				if ($productOrigin->delete($user) < 1) {
+					$this->error = $productOrigin->error;
+					$this->errors = $productOrigin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsProductsMerge').' '.$this->error;
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		return -1;
+	}
+
+	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param  DoliDB $dbs        	Database handler
@@ -7592,19 +7840,23 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class
+	 * Check if user has a permission on this type of product (product or service)
 	 *
-	 * @return Object
+	 * @param 	User   	$user 		User to check rights
+	 * @param 	string 	$mode 		Permission to check: 'read', 'write' or 'delete'
+	 * @return 	bool 				True if user has the permission, false otherwise
 	 */
-	public function getRights()
+	public function hasUserPermission(User $user, $mode = 'write')
 	{
-		global $user;
-
-		if ($this->isProduct()) {
-			return $user->rights->produit;
-		} else {
-			return $user->rights->service;
+		$module = $this->isProduct() ? 'produit' : 'service';
+		if ($mode == 'create') {
+			$mode = 'write';
 		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
+
+		return (bool) $user->hasRight($module, $mode);
 	}
 
 	/**
@@ -7753,9 +8005,8 @@ class Product extends CommonObject
 		$now = dol_now();
 
 		// Price per customer
-		$sql  = "INSERT INTO ".$this->db->prefix()."product_customer_price (";
+		$sql  = "SELECT";
 		$sql .= " entity";
-		$sql .= ", fk_product";
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
 		$sql .= ", price";
@@ -7771,97 +8022,127 @@ class Product extends CommonObject
 		$sql .= ", localtax2_tx";
 		$sql .= ", localtax2_type";
 		$sql .= ", fk_user";
-		$sql .= ")";
-		$sql .= " SELECT";
-		$sql .= " entity";
-		$sql .= ", ".((int) $toId);
-		$sql .= ", fk_soc";
-		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", price";
-		$sql .= ", price_ttc";
-		$sql .= ", price_min";
-		$sql .= ", price_min_ttc";
-		$sql .= ", price_base_type";
-		$sql .= ", default_vat_code";
-		$sql .= ", tva_tx";
-		$sql .= ", recuperableonly";
-		$sql .= ", localtax1_tx";
-		$sql .= ", localtax1_type";
-		$sql .= ", localtax2_tx";
-		$sql .= ", localtax2_type";
-		$sql .= ", ".((int) $user->id);
-		$sql .= " FROM ".$this->db->prefix()."product_customer_price pc";
-		$sql .= " WHERE pc.fk_product = ".((int) $fromId);
-		$sql .= " AND pc.datec IN (";
-		$sql .= " SELECT MAX(pd.datec)";
-		$sql .= " FROM ".$this->db->prefix()."product_customer_price pd";
-		$sql .= " WHERE pd.fk_product = ".((int) $fromId);
-		$sql .= " AND pd.fk_soc = pc.fk_soc";
-		$sql .= " )";
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		$sql .= ", ref_customer";
+		$sql .= ", discount_percent";
+		$sql .= ", date_begin";
+		$sql .= ", date_end";
+		$sql .= ", price_label";
+		$sql .= ", import_key";
+		$sql .= ", rowid";
+		$sql .= " FROM ".$this->db->prefix()."product_customer_price";
+		$sql .= " WHERE fk_product = ".((int) $fromId);
+		$sql .= " ORDER BY rowid ASC";
+		dol_syslog(__METHOD__.' - '.$sql, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->db->rollback();
 			return -1;
 		}
-		$this->db->free($resql);
 
 		// Add of customer price extrafields
 		// Retrieving the list of extrafields
-		$sql_fields = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
-		$res_fields = $this->db->query($sql_fields);
-		if (!$res_fields) {
+		$sql_fields = "SHOW COLUMNS FROM ".$this->db->prefix()."product_customer_price_extrafields";
+		$resql_fields = $this->db->query($sql_fields);
+		if (!$resql_fields) {
 			$this->db->rollback();
 			return -1;
 		}
 		$fields = array();
-		while ($field = $this->db->fetch_object($res_fields)) {
+		while ($field = $this->db->fetch_object($resql_fields)) {
 			if (!in_array($field->Field, array('rowid', 'tms', 'fk_object'))) {
 				$fields[] = $field->Field;
 			}
 		}
-		if (!empty($fields)) {
-			// Matching old price, new price
-			$sql  = "SELECT";
-			$sql .= " oldp.rowid AS old_price_id,";
-			$sql .= " newp.rowid AS new_price_id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price AS oldp";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_customer_price AS newp";
-			$sql .= " ON newp.fk_soc = oldp.fk_soc";
-			$sql .= " WHERE oldp.fk_product = ".((int) $fromId);
-			$sql .= " AND newp.fk_product = ".((int) $toId);
-			$sql .= " AND newp.datec = '".$this->db->idate($now)."'";
-			$resql = $this->db->query($sql);
-			if (!$resql) {
+		$this->db->free($resql_fields);
+
+		while ($oldPrice = $this->db->fetch_object($resql)) {
+			// Entering the customer price for the new product
+			$sql_insert  = "INSERT INTO ".$this->db->prefix()."product_customer_price (";
+			$sql_insert .= "entity";
+			$sql_insert .= ", datec";
+			$sql_insert .= ", fk_product";
+			$sql_insert .= ", fk_soc";
+			$sql_insert .= ", ref_customer";
+			$sql_insert .= ", price";
+			$sql_insert .= ", price_ttc";
+			$sql_insert .= ", price_min";
+			$sql_insert .= ", price_min_ttc";
+			$sql_insert .= ", price_base_type";
+			$sql_insert .= ", default_vat_code";
+			$sql_insert .= ", tva_tx";
+			$sql_insert .= ", recuperableonly";
+			$sql_insert .= ", localtax1_type";
+			$sql_insert .= ", localtax1_tx";
+			$sql_insert .= ", localtax2_type";
+			$sql_insert .= ", localtax2_tx";
+			$sql_insert .= ", discount_percent";
+			$sql_insert .= ", date_begin";
+			$sql_insert .= ", date_end";
+			$sql_insert .= ", fk_user";
+			$sql_insert .= ", price_label";
+			$sql_insert .= ", import_key";
+			$sql_insert .= ") VALUES (";
+			$sql_insert .= ((int) $oldPrice->entity);
+			$sql_insert .= ", '".$this->db->idate($now)."'";
+			$sql_insert .= ", ".((int) $toId);
+			$sql_insert .= ", ".((int) $oldPrice->fk_soc);
+			$sql_insert .= ", ".(!isset($oldPrice->ref_customer) ? "NULL" : "'".$this->db->escape($oldPrice->ref_customer)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->price) ? "NULL" : price2num($oldPrice->price));
+			$sql_insert .= ", ".(is_null($oldPrice->price_ttc) ? "NULL" : price2num($oldPrice->price_ttc));
+			$sql_insert .= ", ".(is_null($oldPrice->price_min) ? "NULL" : price2num($oldPrice->price_min));
+			$sql_insert .= ", ".(is_null($oldPrice->price_min_ttc) ? "NULL" : price2num($oldPrice->price_min_ttc));
+			$sql_insert .= ", ".(!isset($oldPrice->price_base_type) ? "NULL" : "'".$this->db->escape($oldPrice->price_base_type)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->default_vat_code) ? "NULL" : "'".$this->db->escape($oldPrice->default_vat_code)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->tva_tx) ? "NULL" : price2num($oldPrice->tva_tx));
+			$sql_insert .= ", ".((int) $oldPrice->recuperableonly);
+			$sql_insert .= ", ".(is_null($oldPrice->localtax1_type) ? "NULL" : "'".$this->db->escape($oldPrice->localtax1_type)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->localtax1_tx) ? "NULL" : price2num($oldPrice->localtax1_tx));
+			$sql_insert .= ", ".(is_null($oldPrice->localtax2_type) ? "NULL" : "'".$this->db->escape($oldPrice->localtax2_type)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->localtax2_tx) ? "NULL" : price2num($oldPrice->localtax2_tx));
+			$sql_insert .= ", ".(is_null($oldPrice->discount_percent) ? "0" : price2num($oldPrice->discount_percent));
+			$sql_insert .= ", ".(empty($oldPrice->date_begin) ? "NULL" : "'".$this->db->idate($oldPrice->date_begin)."'");
+			$sql_insert .= ", ".(empty($oldPrice->date_end) ? "NULL" : "'".$this->db->idate($oldPrice->date_end)."'");
+			$sql_insert .= ", ".((int) $user->id);
+			$sql_insert .= ", ".(is_null($oldPrice->price_label) ? "NULL" : "'".$this->db->escape($oldPrice->price_label)."'");
+			$sql_insert .= ", ".(is_null($oldPrice->import_key) ? "NULL" : "'".$this->db->escape($oldPrice->import_key)."'");
+			$sql_insert .= ")";
+
+			$resql_insert = $this->db->query($sql_insert);
+
+			if (!$resql_insert) {
 				$this->db->rollback();
 				return -1;
 			}
-			while ($obj = $this->db->fetch_object($resql)) {
-				$sql_copy  = "INSERT INTO ".MAIN_DB_PREFIX."product_customer_price_extrafields";
+
+			// Retrieval of the new customer price ID
+			$newPriceId = $this->db->last_insert_id($this->db->prefix()."product_customer_price");
+			// Copy of extrafields
+			// Add of customer price extrafields
+			if (!empty($fields)) {
+				$sql_copy  = "INSERT INTO ".$this->db->prefix()."product_customer_price_extrafields";
 				$sql_copy .= " (fk_object";
 				foreach ($fields as $field) {
 					$sql_copy .= ",".$field;
 				}
 				$sql_copy .= ")";
 				$sql_copy .= " SELECT ";
-				$sql_copy .= ((int) $obj->new_price_id);
+				$sql_copy .= ((int) $newPriceId);
+
 				foreach ($fields as $field) {
 					$sql_copy .= ",".$field;
 				}
-				$sql_copy .= " FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
-				$sql_copy .= " WHERE fk_object = ".((int) $obj->old_price_id);
+				$sql_copy .= " FROM ".$this->db->prefix()."product_customer_price_extrafields";
+				$sql_copy .= " WHERE fk_object = ".((int) $oldPrice->rowid);
 				$resql_copy = $this->db->query($sql_copy);
 				if (!$resql_copy) {
 					$this->db->rollback();
 					return -1;
 				}
 			}
-			$this->db->free($resql);
 		}
 
-		$this->db->free($res_fields);
+		$this->db->free($resql);
 
 		return 1;
 	}
@@ -7881,35 +8162,34 @@ class Product extends CommonObject
 
 		// Retrieving the list of extrafields
 		$sql_fields = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-		$res_fields = $this->db->query($sql_fields);
-		if (!$res_fields) {
+		$resql_fields = $this->db->query($sql_fields);
+		if (!$resql_fields) {
 			$this->db->rollback();
 			return -1;
 		}
 		$fields = array();
-		while ($field = $this->db->fetch_object($res_fields)) {
+		while ($field = $this->db->fetch_object($resql_fields)) {
 			if (!in_array($field->Field, array('rowid', 'tms', 'fk_object'))) {
 				$fields[] = $field->Field;
 			}
 		}
 		if (!empty($fields)) {
 			// Matching old price, new price
-			$sql  = "SELECT";
-			$sql .= " oldp.rowid AS old_price_id,";
-			$sql .= " newp.rowid AS new_price_id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_price AS oldp";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_price AS newp";
-			$sql .= " ON newp.price_level = oldp.price_level";
-			$sql .= " WHERE oldp.fk_product = ".((int) $fromId);
-			$sql .= " AND newp.fk_product = ".((int) $toId);
-			$sql .= " AND newp.date_price = '".$this->db->idate($now)."'";
+			$sql  = "SELECT oldp.rowid AS old_price_id, oldp.date_price, oldp.price_level,";
+			$sql .= " newp.rowid AS new_price_id, newp.price_level";
+			$sql .= " FROM ".$this->db->prefix()."product_price AS oldp";
+			$sql .= " INNER JOIN ".$this->db->prefix()."product_price AS newp ON newp.price_level = oldp.price_level";
+			$sql .= " WHERE oldp.fk_product =  ".((int) $fromId);
+			$sql .= " AND newp.fk_product =  ".((int) $toId);
+			$sql .= " ORDER BY oldp.date_price DESC";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();
 				return -1;
 			}
+			// Copy of extrafields
 			while ($obj = $this->db->fetch_object($resql)) {
-				$sql_copy  = "INSERT INTO ".MAIN_DB_PREFIX."product_price_extrafields";
+				$sql_copy  = "INSERT INTO ".$this->db->prefix()."product_price_extrafields";
 				$sql_copy .= " (fk_object";
 				foreach ($fields as $field) {
 					$sql_copy .= ",".$field;
@@ -7920,7 +8200,7 @@ class Product extends CommonObject
 				foreach ($fields as $field) {
 					$sql_copy .= ",".$field;
 				}
-				$sql_copy .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
+				$sql_copy .= " FROM ".$this->db->prefix()."product_price_extrafields";
 				$sql_copy .= " WHERE fk_object = ".((int) $obj->old_price_id);
 				$resql_copy = $this->db->query($sql_copy);
 				if (!$resql_copy) {
@@ -7932,7 +8212,7 @@ class Product extends CommonObject
 			$this->db->free($resql);
 		}
 
-		$this->db->free($res_fields);
+		$this->db->free($resql_fields);
 
 		return 1;
 	}

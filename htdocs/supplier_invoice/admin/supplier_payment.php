@@ -180,8 +180,6 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
-print "<br>";
-
 if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 	$head = supplier_invoice_admin_prepare_head();
 } else {

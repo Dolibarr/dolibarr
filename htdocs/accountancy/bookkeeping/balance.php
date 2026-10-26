@@ -228,10 +228,12 @@ if (empty($reshook)) {
 if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) {
 	$exportType = GETPOST('export_type');
 
+	// An export must contain every account, not only the current page, otherwise the grand totals
+	// are short of the dropped rows. Same as the ledger export in listbyaccount.php.
 	if ($type == 'sub') {
-		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter, 'AND', 1);
+		$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
 	} else {
-		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
+		$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');

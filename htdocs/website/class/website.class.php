@@ -1433,7 +1433,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias images from '.$conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -5;
@@ -1444,7 +1444,7 @@ class Website extends CommonObject
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
 			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, '0', 1);
 			if ($result < 0) {
-				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				$this->error = 'Failed to copy medias js into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
 				dol_syslog($this->error, LOG_WARNING);
 				$this->errors[] = $this->error;
 				return -6;
@@ -1507,6 +1507,22 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
+					// Reject imported values that are embedded into generated PHP code or used as file names
+					if (preg_match('/[^\w\-]/', (string) $objectpagestatic->type_container) || preg_match('/[^\w\-]/', (string) $objectpagestatic->lang)) {
+						$this->errors[] = 'Bad value for type_container or lang of page ID '.$newid;
+						$error++;
+						continue;
+					}
+					if (is_array($aliasesarray)) {
+						foreach ($aliasesarray as $aliasshortcuttocreate) {
+							if (preg_match('/[^\w\-]/', trim($aliasshortcuttocreate))) {
+								$this->errors[] = 'Bad value for alias of page ID '.$newid;
+								$error++;
+								continue 2;
+							}
+						}
+					}
+
 					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
@@ -1527,6 +1543,9 @@ class Website extends CommonObject
 							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
 							$this->errors[] = $this->error;
 							$error++;
+							// Do not keep on disk a file with unauthorized PHP content
+							dol_delete_file($filetpl, 0, 0, 0, null, false, 0);
+							continue;
 						}
 					}
 

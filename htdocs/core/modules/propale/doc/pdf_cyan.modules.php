@@ -355,13 +355,15 @@ class pdf_cyan extends ModelePDFPropales
 
 				$save_note_public = $object->note_public;	// Because $object->note_public may be modified by _pagehead() that calls pdf_writeLinkedObjects() that calls ... that modify $object->note_private
 
-				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
+				$pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
+				$top_shift = $pagehead['top_shift'];
+				$shipp_shift = $pagehead['shipp_shift'];
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 
-				$tab_top = 80 + $this->marge_haute + $top_shift;
+				$tab_top = 80 + $this->marge_haute + $top_shift + $shipp_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute + $top_shift : $this->marge_haute);
 				if (!$hidetop && getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
 					// TODO : make this hidden conf the default behavior for each PDF when each PDF managed this new Display
@@ -1356,7 +1358,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', true);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht, 0, $outputlangs), 0, 'R', true);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
@@ -1697,7 +1699,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  @param  int<0,1>   	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int                   Return topshift value
+	 *  @return	array{top_shift:float|int,shipp_shift:float|int}	Height added by linked objects lines and by the shipping address frame
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1776,6 +1778,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 
@@ -2002,7 +2005,8 @@ class pdf_cyan extends ModelePDFPropales
 			}
 		}
 		$pdf->SetTextColor(0, 0, 0);
-		return $shipp_shift;
+
+		return array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
