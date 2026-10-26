@@ -398,7 +398,21 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// Configuration Examples
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
-	print '<strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
+	// Command line to declare the MCP server into Mistral Vibe, the key being read from its .env file
+	print '<strong>' . $langs->trans("MistralVibeConfig") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
+	echo htmlspecialchars('vibe mcp add dolibarr --url '.$endpoint.' --transport streamable-http --api-key-env DOLIBARR_MCP_API_KEY'."\n\n");
+	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
+	echo htmlspecialchars('DOLIBARR_MCP_API_KEY="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	print '</pre>';
+
+	// Command line to declare the MCP server into Claude Code
+	print '<br><strong>' . $langs->trans("ClaudeCodeConfig") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
+	echo htmlspecialchars('claude mcp add --transport http dolibarr '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	print '</pre>';
+
+	print '<br><strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
 	echo htmlspecialchars('
 	{
