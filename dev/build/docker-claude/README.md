@@ -35,16 +35,23 @@ dev/build/docker-claude/claudes.sh
 
 This script will build the docker image, and then run it with the current directory mounted into the container and launch `claude`.
 
-Claude is launched with the option `--dangerously-skip-permissions` by default (the container is the sandbox).
-If you want to run claude without this option, you can run
+Claude is launched by default without the option `--dangerously-skip-permissions` (mode `--no-yolo`), so permissions are asked.
+If you want to run claude with this option (the container being the sandbox), you can run
 ````
-claudes --no-yolo
+claudes --yolo
 ````
 
 When you exit claude, the container is stopped too, so you return immediately to your host.
 If you want to stay into the container with a bash shell after claude has ended, you can run
 ````
 claudes --no-exit
+````
+
+If you want to run claude in Remote Control mode (`claude remote-control`, to drive the session from claude.ai/code
+or the Claude mobile app), you can run (add `--yolo` to have the permissions automatically accepted
+with `--permission-mode bypassPermissions`)
+````
+claudes --rc
 ````
 
 The other arguments are passed to claude, for example to resume the last conversation:

@@ -144,11 +144,13 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
-# --yolo is the default mode (claude is run with --dangerously-skip-permissions,
-# the container being the sandbox). Use --no-yolo to disable it.
+# --no-yolo is the default mode (claude asks for permissions). Use --yolo to run
+# claude with --dangerously-skip-permissions (the container being the sandbox).
 # All the other arguments that are not options of claudes.sh are passed to claude.
-CLAUDE_OPTIONS="--dangerously-skip-permissions"
+# Use --rc (or rc) to launch claude in Remote Control mode (claude remote-control).
+CLAUDE_OPTIONS=""
 KEEP_CONTAINER=0
+REMOTE_CONTROL=0
 CLAUDE_ARGS=()
 
 for arg in "$@"; do
@@ -162,11 +164,24 @@ for arg in "$@"; do
         --no-exit)
             KEEP_CONTAINER=1
             ;;
+        rc|--rc)
+            REMOTE_CONTROL=1
+            ;;
         *)
             CLAUDE_ARGS+=("$arg")
             ;;
     esac
 done
+
+# The remote-control subcommand has no --dangerously-skip-permissions option:
+# the yolo mode is given to the spawned sessions with --permission-mode.
+if [ "$REMOTE_CONTROL" = "1" ]; then
+    if [ -n "$CLAUDE_OPTIONS" ]; then
+        CLAUDE_OPTIONS="remote-control --permission-mode bypassPermissions"
+    else
+        CLAUDE_OPTIONS="remote-control"
+    fi
+fi
 
 echo "CLAUDE_OPTIONS=$CLAUDE_OPTIONS ${CLAUDE_ARGS[*]}"
 

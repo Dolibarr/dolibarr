@@ -1,7 +1,11 @@
 #!/bin/bash
 # Launch a Claude Code container with the current directory mounted as a volume
-# Syntax:  claudes.sh [--no-cache] [--no-yolo] [--no-exit] [claude options...]
+# Syntax:  claudes.sh [--no-cache] [--yolo|--no-yolo] [--no-exit] [--rc] [claude options...]
+# --yolo:    run claude with the option --dangerously-skip-permissions
 # --no-yolo: run claude without the option --dangerously-skip-permissions (it is the default)
+# --rc:      run claude in Remote Control mode (claude remote-control), with the permission
+#            mode bypassPermissions for the spawned sessions (only if --yolo is provided)
+#            (rc, without the dashes, is still accepted as an alias)
 # --no-exit: stay into the container with a bash shell after claude has ended
 #            (by default, when claude is terminated, the container is terminated too)
 # Other arguments are passed to claude (for example: claudes.sh --continue).
