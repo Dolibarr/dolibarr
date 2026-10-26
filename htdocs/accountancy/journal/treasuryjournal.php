@@ -683,11 +683,13 @@ if ($resql) {
 			case 'payment_vat':
 				// Payment VAT
 				//------------------------------------------
-				$sql = "SELECT t.rowid,";
-				$sql .= " t.amount AS amount_payment, t.label AS label,";
+				// The bank link of type 'payment_vat' is on the payment (llx_payment_vat), not on the VAT declaration (llx_tva)
+				$sql = "SELECT pv.rowid, t.rowid AS tva_id,";
+				$sql .= " pv.amount AS amount_payment, t.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
-				$sql .= " FROM ".$db->prefix()."tva as t";
-				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = t.rowid AND bu.type = '".$db->escape($type)."'";
+				$sql .= " FROM ".$db->prefix()."payment_vat as pv";
+				$sql .= " INNER JOIN ".$db->prefix()."tva as t ON t.rowid = pv.fk_tva";
+				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pv.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
@@ -721,13 +723,13 @@ if ($resql) {
 							);
 						}
 
-						// Set object infos
+						// Set object infos (the object is the VAT declaration paid by this payment)
 						if (!isset($tabobject[$object_key])) {
-							$static_tva->id = $obj->rowid;
-							$static_tva->ref = $prefix_ref.$obj->rowid;
+							$static_tva->id = $obj->tva_id;
+							$static_tva->ref = $prefix_ref.$obj->tva_id;
 							$tabobject[$object_key] = array(
-								'id' => $obj->rowid,
-								'ref' => $prefix_ref.$obj->rowid,
+								'id' => $obj->tva_id,
+								'ref' => $prefix_ref.$obj->tva_id,
 								'total_ht' => -$obj->amount_payment,
 								'total_ttc' => -$obj->amount_payment,
 								'url' => $static_tva->getNomUrl(1),
