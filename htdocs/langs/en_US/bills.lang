@@ -453,6 +453,10 @@ DepositGenerationPermittedByThePaymentTermsSelected=This is permitted by the pay
 GenerateDeposit=Generate a %s%% deposit invoice
 ValidateGeneratedDeposit=Validate the generated deposit
 DepositGenerated=Deposit generated
+DepositLineDescriptionPercentProposal=Deposit on order of %s%% following our proposal N° %s
+DepositLineDescriptionPercentOrder=Deposit on order of %s%% following our order N° %s
+DepositLineDescriptionAmountProposal=Deposit on order of %s following our proposal N° %s
+DepositLineDescriptionAmountOrder=Deposit on order of %s following our order N° %s
 ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=You can only automatically generate a deposit from a proposal or an order
 ErrorPaymentConditionsNotEligibleToDepositCreation=The chose payment conditions are not eligible for automatic deposit generation
 # PaymentType

@@ -1523,7 +1523,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 		}
 	} elseif (($object->element == 'facture' || $object->element == 'facturefourn') && preg_match('/^\(DEPOSIT\).+/', $desc)) { // We must not replace '(DEPOSIT)' when it is alone, it will be translated and detailed later
-		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$desc = Facture::getVisibleDepositDescription($object, $desc, $outputlangs);
 	}
 
 	if (empty($conf->global->PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES)) {

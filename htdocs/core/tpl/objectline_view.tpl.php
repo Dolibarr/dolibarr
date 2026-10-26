@@ -154,7 +154,8 @@ if (($line->info_bits & 2) == 2) {
 				print img_picto('', 'rightarrow');
 			}
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
-				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$newdesc = Facture::getVisibleDepositDescription($object, $line->description, $langs);
 				print $text.' '.dol_htmlentitiesbr($newdesc);
 			} else {
 				print $text.' '.dol_htmlentitiesbr($line->description);
