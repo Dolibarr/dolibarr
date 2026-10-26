@@ -1776,6 +1776,28 @@ class Account extends CommonObject
 		return $out;
 	}
 
+	/**
+	 * Return the translation key for a displayed bank-account field
+	 *
+	 * @param	string	$field	Field returned by getFieldsToShow
+	 * @return	string			Translation key
+	 */
+	public function getBankFieldLabel($field)
+	{
+		$country_code = $this->getCountryCode();
+
+		if ($country_code == 'CA' && $field == 'BankCode') {
+			return 'InstitutionNumber';
+		}
+		if ($country_code == 'CA' && $field == 'DeskCode') {
+			return 'TransitNumber';
+		}
+		if ($country_code == 'US' && $field == 'BankCode') {
+			return 'ABARoutingNumber';
+		}
+
+		return $field;
+	}
 
 	/**
 	 * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
@@ -1784,6 +1806,7 @@ class Account extends CommonObject
 	 * @return		int        0=No bank code need + Account number is enough
 	 *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
 	 *                         2=Need 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
+	 *                         3=Need 2 fields for bank code: Institution number and transit number + Account number (Canada)
 	 */
 	public function useDetailedBBAN()
 	{
@@ -1792,7 +1815,10 @@ class Account extends CommonObject
 		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
-		if (in_array($country_code, array('AD', 'AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
+		if ($country_code == 'CA') {
+			return 3;
+		}
+		if (in_array($country_code, array('AD', 'AU', 'BE', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
 			return 2; // Australia, England...
 		}
 		return 0;
@@ -1922,6 +1948,12 @@ class Account extends CommonObject
 		} elseif ($detailedBBAN == 2) {
 			$fieldarray = array(
 					'BankCode',
+					'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 3) {
+			$fieldarray = array(
+					'BankCode',
+					'DeskCode',
 					'BankAccountNumber'
 			);
 		} else {
