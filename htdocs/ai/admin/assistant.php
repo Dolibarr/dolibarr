@@ -251,12 +251,22 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print $form->textwithpicto('Default Interface', $langs->trans("InputMethodHelp"));
 	print '</td>';
 	print '<td>';
+	// Same values and pictos than the engine selector of the assistant (see ai.lib.php)
+	$labelcloud = $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp');
 	$input_modes = [
-		'text' => $langs->trans('OptionTextOnly'),
-		'native' => $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
-		'whisper' => $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
+		'text' => array('label' => $langs->trans('OptionTextOnly'), 'data-html' => img_picto('', 'fa-keyboard', 'class="pictofixedwidth"') . dolPrintHTML($langs->trans('OptionTextOnly'))),
+		'cloud' => array('label' => $labelcloud, 'data-html' => img_picto('', 'fa-cloud', 'class="pictofixedwidth"') . dolPrintHTML($labelcloud)),
 	];
-	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, getDolGlobalString('AI_DEFAULT_INPUT_MODE'), 0, 0, 0);
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+		$labelwhisper = $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp');
+		$input_modes['whisper'] = array('label' => $labelwhisper, 'data-html' => img_picto('', 'fa-microphone', 'class="pictofixedwidth"') . dolPrintHTML($labelwhisper) . ' <span class="opacitymedium">(' . $langs->trans('VersionExperimental') . ')</span>');
+	}
+	$defaultinputmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultinputmode == 'native') {	// Old value saved before the key was aligned with the assistant selector
+		$defaultinputmode = 'cloud';
+	}
+	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, $defaultinputmode, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 

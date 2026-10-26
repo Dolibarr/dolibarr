@@ -975,6 +975,9 @@ function getAiChatAssistantConfig()
 	}
 
 	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultmode === 'native') {	// Old value saved by the setup page, now 'cloud'
+		$defaultmode = 'cloud';
+	}
 	// The whisper option is not rendered without the experimental features: fall back
 	// to the default text mode so the JS never selects a value missing from the combo.
 	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
