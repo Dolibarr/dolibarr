@@ -159,7 +159,9 @@ if ($action == 'addrights' || $action == 'delrights') {
 		}
 	}
 
-	header('Location: ' . $_SERVER['PHP_SELF']);
+	// Keep page_y (added by the .reposition links) so the scroll position is restored after redirect
+	$page_y = GETPOSTINT('page_y');
+	header('Location: ' . $_SERVER['PHP_SELF'] . ($page_y > 0 ? '?page_y=' . $page_y : ''));
 	exit;
 }
 
