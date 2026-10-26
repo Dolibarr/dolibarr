@@ -161,8 +161,8 @@ $excludefirstline = (GETPOST('excludefirstline', 'alphanohtml', 3) ? GETPOST('ex
 $endatlinenb = (GETPOST('endatlinenb', 'alphanohtml', 3) ? GETPOST('endatlinenb', 'alphanohtml', 3) : '');
 $updatekeys			= (GETPOST('updatekeys', 'array', 3) ? GETPOST('updatekeys', 'array', 3) : array());
 $importtriggermode = GETPOST('importtriggermode', 'alpha', 3);
-$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
-$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
+$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
+$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');		// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
 $relativepath = '';
@@ -1025,7 +1025,7 @@ if ($step == 3 && $datatoimport) {
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button smallpaddingimp reposition" id="applyprofile" name="applyprofile" value="'.$langs->trans("Apply").'">';
+	print '<input type="submit" class="button smallpaddingimp reposition nomargintop nomarginbottom" id="applyprofile" name="applyprofile" value="'.$langs->trans("Apply").'">';
 	// Add js to show button
 	if (!empty($conf->use_javascript_ajax)) {
 		print '<script>

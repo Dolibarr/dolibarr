@@ -1477,6 +1477,15 @@ if (empty($reshook)) {
 				}
 			}
 
+			// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+			// addline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+			if ($price_ht === '' && $price_ttc === '' && $price_ht_devise === '' && $price_ttc_devise !== '') {
+				$pu_ht = 0;
+				$pu_ttc = 0;
+				$price_base_type = 'TTC';
+				$pu_ht_devise = price2num($price_ttc_devise, 'MU');
+			}
+
 			if (!$error) {
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
@@ -1691,7 +1700,7 @@ if (empty($reshook)) {
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -1762,6 +1771,14 @@ if (empty($reshook)) {
 					break;
 				}
 			}
+		}
+
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$pu = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = $pu_ttc_devise;
 		}
 
 		// Check minimum price
@@ -2043,7 +2060,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanvalidate) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercancancel) {
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
 		$qualified_for_stock_change = 0;

@@ -10,13 +10,13 @@ GROUP_NAME="${HOST_GROUP:-developer}"
 # The container uses --network=host, so the block is installed once on the network stack shared
 # with the VM (it requires the capability NET_ADMIN, added by vibes.sh).
 # It guarantees that no email can be sent from the container (see dev/build/docker-vibe/README.md).
-# Set the environment variable VIBE_ALLOW_SMTP=1 to start a container without this protection.
-if [ "${VIBE_ALLOW_SMTP}" != "1" ]; then
+# Set the environment variable DOCKER_ALLOW_SMTP=1 to start a container without this protection.
+if [ "${DOCKER_ALLOW_SMTP:-}" != "1" ]; then
     if ! /usr/local/bin/smtpblock.sh; then
         echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
         echo "The container is stopped to guarantee that no email can be sent from it."
         echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
-        echo "or set VIBE_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+        echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
         exit 1
     fi
 fi
@@ -74,6 +74,17 @@ fi
 # user can not write into it. Give it to the user so the tools can create
 # their files into it (rtk: ~/.config/rtk, git: ~/.config/git, ...).
 chown "$USER_NAME:$GROUP_NAME" "/home/$USER_NAME"
+
+# Add the user to the group owning the Apache logs of the host (mounted by vibes.sh),
+# so they can be read. The group is created when the GID does not exist into the image.
+if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
+    LOG_GROUP=$(getent group "$HOST_APACHE_LOG_GID" | cut -d: -f1)
+    if [ -z "$LOG_GROUP" ]; then
+        LOG_GROUP="hostapachelog"
+        groupadd --gid "$HOST_APACHE_LOG_GID" "$LOG_GROUP"
+    fi
+    usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+fi
 
 
 # Allow the user to become root inside the container with a passwordless sudo

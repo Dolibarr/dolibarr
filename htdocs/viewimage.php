@@ -382,7 +382,7 @@ if ($modulepart == 'barcode') {
 			// we must check the securekey that protet against forging url
 			if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 				$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$id.'-'.$login, 'md5');
-				if ($encodedsecurekey != GETPOST('securekey')) {
+				if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 					$code = 'badvalueforsecurekey';
 				}
 			}

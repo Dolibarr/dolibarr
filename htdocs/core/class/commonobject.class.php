@@ -164,7 +164,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * notnull?: int<-1, 1>,
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
+	 * uieditable?: int<0, 1>,
 	 * default?: string|int,
 	 * description?: string,
 	 * index?: int<0, 1>,
@@ -223,6 +224,7 @@ abstract class CommonObject
 	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 * 'noteditable' says if field is not editable (1 or 0)
 	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'uieditable' says if field can be modified from the user interface with generic tools like ajax edition (1 or 0, default 0). See isFieldEditableFromUi()
 	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 * 'index' if we want an index in database.
 	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
@@ -2448,14 +2450,17 @@ abstract class CommonObject
 		}
 
 
-		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
-			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		// Property holding the value, ex: opp_status for the field fk_opp_status of a project
+		$property = $this->getFieldPropertyName($fieldKey);
+
+		if (is_object($this->oldcopy) && property_exists($this, $property) && property_exists($this->oldcopy, $property)) {
+			$this->oldcopy->$property = $this->$property;
 		}
 
 		$this->fieldValueBeingSet[$fieldKey] = true;
 
 		// Set new value
-		$this->$fieldKey = $value;
+		$this->$property = $value;
 
 		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
 		// both declared as real properties on the object for backward compatibility, so PHP never triggers
@@ -2503,6 +2508,193 @@ abstract class CommonObject
 	protected function onFieldValueChanged($fieldKey, $value)
 	{
 		// Nothing to do by default.
+	}
+
+	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Some classes keep a field in a property with another name than the field (ex: the field fk_opp_status
+	 * of a project is in the property opp_status).
+	 * Override in child classes for their own fields, and return the result of the parent for the others.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		return $field;
+	}
+
+	/**
+	 * Return the value of a field of $fields, read in the property holding it (see getFieldPropertyName()).
+	 * Use it instead of $object->$field when the field name comes from $fields (generic tools of the user interface...).
+	 *
+	 * @param	string	$field	Field name
+	 * @return	mixed			Value, null if the object has no property for this field
+	 */
+	public function getFieldUiValue($field)
+	{
+		$property = $this->getFieldPropertyName($field);
+
+		return property_exists($this, $property) ? $this->$property : null;
+	}
+
+	/**
+	 * Save into database the current value of one field, called by updateFieldFromUi().
+	 * By default, notes are saved with update_note() and other fields with setValueFrom(), with the trigger XXX_MODIFY.
+	 * Override in child classes to use a dedicated method holding business rules (ex: set_ref_client()).
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @return int          Return integer <0 if KO, >0 if OK
+	 */
+	protected function persistFieldValue(User $user, $field)
+	{
+		if ($field == 'note_public' || $field == 'note_private') {
+			return $this->update_note((string) $this->$field, $field == 'note_public' ? '_public' : '_private');
+		}
+
+		$type = $this->fields[$field]['type'];
+		if (preg_match('/^(int|integer)\b/', $type)) {
+			$format = 'int';
+		} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			$format = 'date';
+		} else {
+			$format = 'text';
+		}
+		$trigkey = (property_exists($this, 'TRIGGER_PREFIX') && !empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)).'_MODIFY';
+
+		return $this->setValueFrom($field, $this->getFieldUiValue($field), '', null, $format, '', $user, $trigkey);
+	}
+
+	/**
+	 * Update a field from the user interface (ajax edition of cards...) and save it into database.
+	 * The field must be allowed by isFieldEditableFromUi(), the value is checked and set by setFieldValue(),
+	 * then only this field is saved by persistFieldValue().
+	 *
+	 * @param User   $user  User making the change
+	 * @param string $field Field name
+	 * @param mixed  $value New value
+	 * @return int          Return integer <0 if KO (error into $this->error and $this->errors), >0 if OK
+	 */
+	public function updateFieldFromUi(User $user, $field, $value)
+	{
+		global $langs;
+
+		if (!$this->isFieldEditableFromUi($user, $field)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorFieldIsNotEditable');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$property = $this->getFieldPropertyName($field);
+		$oldvalue = $this->getFieldUiValue($field);
+
+		if (!$this->setFieldValue($user, $field, $value)) {
+			if (empty($this->error)) {
+				$this->error = $this->getFieldError($field);
+			}
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		$result = $this->persistFieldValue($user, $field);
+		if ($result <= 0) {
+			// Keep the object consistent with the database
+			$this->$property = $oldvalue;
+			if (empty($this->error) && !empty($this->errors)) {
+				$this->error = implode(', ', $this->errors);
+			}
+			return -3;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Return the value of a field posted by the user interface (ajax edition of fields).
+	 * Inputs are named with the prefix 'ajaxfield_' followed by the field name, like the names generated by
+	 * showInputField() with this key prefix (ex: ajaxfield_note_public, or ajaxfield_date_livraisonday... for a date).
+	 * Override in child classes when the input of a field is not the default one (several inputs, other names...)
+	 * or to check the range of a value.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	mixed			Value to save, null if the input is not posted (a missing input must never empty a field)
+	 *                          or if the type of field is not supported
+	 */
+	public function getFieldValueFromAjaxPost($field)
+	{
+		$key = 'ajaxfield_'.$field;
+		$type = $this->fields[$field]['type'];
+
+		if (!GETPOSTISSET($key) && !GETPOSTISSET($key.'year')) {
+			return null;
+		}
+
+		if ($type == 'html') {
+			return dol_html_entity_decode(GETPOST($key, 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1);
+		} elseif (preg_match('/^(varchar|text)\b/', $type)) {
+			return GETPOST($key, 'alphanohtml');
+		} elseif (preg_match('/^(int|integer)\b/', $type)) {
+			return GETPOSTINT($key);
+		} elseif ($type == 'date') {
+			// At noon like the cards, so the day does not change with the time zone
+			return GETPOSTDATE($key, '12:00:00');
+		} elseif (in_array($type, array('datetime', 'timestamp'))) {
+			return GETPOSTDATE($key, 'getpost');
+		}
+
+		// Other types (lists, amounts...) are not supported yet
+		return null;
+	}
+
+	/**
+	 * Return the output html of a field for the user interface (ajax edition of fields).
+	 * By default, it is the output of showOutputField().
+	 * Override in child classes only for fields the card does not show with showOutputField(),
+	 * so a refreshed value always looks like the displayed one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		// Fields like notes are hidden from generic forms and lists (visible = 0) but shown by their own block of the card,
+		// so the output is forced visible: the field is already allowed by isFieldReadableFromUi().
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showOutputField($fielddef, $field, $this->getFieldUiValue($field));
+	}
+
+	/**
+	 * Return the input html of a field for the user interface (ajax edition of fields).
+	 * Inputs are named with the prefix 'ajaxfield_', so they are read back by getFieldValueFromAjaxPost().
+	 * By default, it is the input of showInputField(), and the notes use the same editor as the notes of the card.
+	 * Override in child classes together with getFieldValueFromAjaxPost() when the input of a field is not the default one.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldEditableFromUi()
+	 * @return	string			Input html
+	 */
+	public function ajaxInputField($field)
+	{
+		$value = $this->getFieldUiValue($field);
+		$htmlname = 'ajaxfield_'.$field;
+
+		// Same editor as the notes of the card (core/tpl/notes.tpl.php)
+		if ($field == 'note_public' || $field == 'note_private') {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$withckeditor = isModEnabled('fckeditor') && getDolGlobalString($field == 'note_public' ? 'FCKEDITOR_ENABLE_NOTE_PUBLIC' : 'FCKEDITOR_ENABLE_NOTE_PRIVATE');
+			$doleditor = new DolEditor($htmlname, (string) $value, '100%', 200, 'dolibarr_notes', 'In', true, false, $withckeditor, 12, '95%');
+
+			return (string) $doleditor->Create(1);
+		}
+
+		// Fields like notes are hidden from generic forms (visible = 0), the field is already allowed by isFieldEditableFromUi()
+		$fielddef = $this->fields[$field];
+		$fielddef['visible'] = 1;
+
+		return $this->showInputField($fielddef, $field, $value, '', '', 'ajaxfield_');
 	}
 
 	/**
@@ -4385,7 +4577,7 @@ abstract class CommonObject
 				if (empty($reshook) && $forcedroundingmode == '0') {	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 					// This part of code is to fix data. We should not call it too often.
 					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
-					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
+					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx, (isset($obj->multicurrency_subprice) ? $obj->multicurrency_subprice : 0), (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 					$diff_when_using_price_ht = price2num((float) $tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price and unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
 					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
@@ -4542,6 +4734,9 @@ abstract class CommonObject
 			$this->total_localtax1 = (float) price2num($this->total_localtax1);
 			$this->total_localtax2 = (float) price2num($this->total_localtax2);
 			$this->total_ttc = (float) price2num($this->total_ttc);
+			$this->multicurrency_total_ht = (float) price2num($this->multicurrency_total_ht, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_tva, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_ttc = (float) price2num($this->multicurrency_total_ttc, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 			$this->db->free($resql);
 
@@ -4563,9 +4758,9 @@ abstract class CommonObject
 				$sql .= " ".$this->db->sanitize($fieldlocaltax1)." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldlocaltax2)." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldttc)." = ".((float) price2num($this->total_ttc, 'MT', 1));
-				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
-				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
-				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
+				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
 				$sql .= " WHERE rowid = ".((int) $this->id);
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -10247,10 +10442,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Returns the rights used for this class for a specific user
+	 * Returns the rights used for this class for a specific user.
+	 * This is called by getRights() and hasUserPermission()
 	 *
 	 * @param User $user User to check rights
-	 *
 	 * @return null|int|stdClass        Object of permission for the module
 	 */
 	public function getRightsForUser(User $user)
@@ -10258,13 +10453,14 @@ abstract class CommonObject
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
-		if ($element == 'facturerec') {
-			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec') {
-			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
-		} elseif ($module && $user->hasRight($module, $element)) {
-			// for modules built with ModuleBuilder
-			return $user->hasRight($module, $element);
+		if ($module && $user->hasRight($module, $element)) {
+			// for modules built with ModuleBuilder (permissions $module->$element->read, write, delete)
+			$rights = $user->hasRight($module, $element);
+			// Some core modules have a permission named like the element, but it is not the permissions of the object
+			// (ex: commande->commande->export), their permissions are $element->lire, creer... like when module is not set
+			if (!is_object($rights) || isset($rights->read) || isset($rights->write) || isset($rights->delete) || isset($rights->lire) || isset($rights->creer) || isset($rights->supprimer)) {
+				return $rights;
+			}
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
@@ -10389,6 +10585,73 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check whether a field can be edited from the user interface with generic tools (ajax edition of cards...),
+	 * where the user chooses the field to modify.
+	 *
+	 * isFieldEditAllowed() is a generic rule for PHP code and allows any field not marked as "noteditable",
+	 * including computed or technical fields (ref, status, totals...). Exposing it to the user interface
+	 * would let a user change them, so the user interface requires an explicit opt-in on each field
+	 * with the "uieditable" attribute, in addition to all rules of isFieldEditAllowed().
+	 * The private note is always hidden to external users, so it is never editable by them.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the field can be edited from the user interface, false otherwise
+	 */
+	public function isFieldEditableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || empty($this->fields[$field]['uieditable'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		return $this->isFieldEditAllowed($user, $field);
+	}
+
+	/**
+	 * Check whether the value of a field can be read from the user interface with generic tools
+	 * (ajax refresh of the values displayed on a card...), by a user allowed to read the object.
+	 *
+	 * The field must be enabled and visible on the card (visible 1, 3, 4 or 5, or an expression giving one of these values),
+	 * or editable from the user interface (fields like notes are hidden from generic forms but shown by their own block of the card).
+	 * Password fields are never readable, and the private note is always hidden to external users.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if the value of the field can be read from the user interface, false otherwise
+	 */
+	public function isFieldReadableFromUi(User $user, $field)
+	{
+		if (!$this->isFieldDefined($field) || !$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		if (preg_match('/^password/', (string) $this->fields[$field]['type'])) {
+			return false;
+		}
+
+		if ($field == 'note_private' && !empty($user->socid)) {
+			return false;
+		}
+
+		if (!empty($this->fields[$field]['uieditable'])) {
+			return true;
+		}
+
+		$visible = isset($this->fields[$field]['visible']) ? $this->fields[$field]['visible'] : 0;
+		if (!is_numeric($visible)) {
+			$visible = dol_eval((string) $visible);
+		}
+
+		return in_array(abs((int) $visible), array(1, 3, 4, 5));
 	}
 
 
@@ -12621,5 +12884,104 @@ abstract class CommonObject
 		$line = $trace[0]['line'] ?? 'line unknown';
 		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
 		dol_syslog($syslogMessage, $loglevel);
+	}
+
+	/**
+	 * Show preview link of the element (last generate or *<ref>*.pdf) if found and authorized to show the preview (file type)
+	 * @see dolIsAllowedForPreview()
+	 *
+	 * @param	string		$rootdir		Root directory of the file
+	 * @param	string		$relativepath	Relative directory of the file (from the root directory)
+	 * @return	string						Output string with HTML
+	 */
+	public function showLastFilePreview($rootdir = '', $relativepath = '')
+	{
+		global $conf, $formfile, $langs;
+
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+
+		// Clean and check root path
+		if (empty($rootdir)) {
+			$element = $this->element;
+			$rootdir = $conf->$element->multidir_output[$this->entity];
+		}
+		if (!empty($rootdir)) {
+			$rootdir = rtrim($rootdir, '/') . '/';
+		}
+		if (empty($rootdir) || !file_exists($rootdir) || !dol_is_dir($rootdir)) {
+			return '';
+		}
+
+		// Clean relative path
+		if (empty($relativepath)) {
+			$relativepath = dol_sanitizeFileName($this->ref);
+		}
+		if (!empty($relativepath)) {
+			$relativepath = rtrim($relativepath, '/') . '/';
+		}
+
+		// Set, clean and check file directory
+		$filedir = $rootdir . $relativepath;
+		if (!empty($filedir)) {
+			$filedir = rtrim($filedir, '/') . '/';
+		}
+		if (empty($filedir) || !file_exists($filedir) || !dol_is_dir($filedir)) {
+			return '';
+		}
+
+		$found = false;
+		$file = array();
+		$relativefilepath = '';
+
+		// Search with last_main_doc
+		if (!empty($this->last_main_doc) && dolIsAllowedForPreview($this->last_main_doc)) {
+			$filename = basename($this->last_main_doc);
+			$filepath = $filedir . $filename;
+			if (file_exists($filepath) && dol_is_file($filepath)) {
+				$relativefilepath = $relativepath . $filename;
+				$found = true;
+			}
+		}
+
+		// Search with *<ref>*.pdf
+		if (!$found) {
+			$filelist = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($this->ref) . '.*\.pdf$', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+			if (is_array($filelist) && !empty($filelist)) {
+				// Defined relative dir to DOL_DATA_ROOT
+				$relativedir = '';
+				if ($filedir) {
+					$relativedir = preg_replace('/^' . preg_quote(DOL_DATA_ROOT, '/') . '/', '', $filedir);
+					$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				}
+				// Get list of files stored into database for same relative directory
+				if ($relativedir) {
+					completeFileArrayWithDatabaseInfo($filelist, $relativedir);
+					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filelist';
+
+					//var_dump($sortfield.' - '.$sortorder);
+					if (!empty($sortfield) && !empty($sortorder)) {    // If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+						$filelist = dol_sort_array($filelist, $sortfield, $sortorder);
+					}
+				}
+				$filename = $filelist[0]['name'];
+				$filepath = $filedir . $filename;
+				if (file_exists($filepath) && dol_is_file($filepath) && dolIsAllowedForPreview($filename)) {
+					$file = $filelist[0];
+					$relativefilepath = $relativepath . $filename;
+					$found = true;
+				}
+			}
+		}
+
+		// Print preview link
+		if ($found) {
+			if (!is_object($formfile)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+				$formfile = new FormFile($this->db);
+			}
+			return $formfile->showPreview($file, $this->element, $relativefilepath, 0, 'entity=' . $this->entity);
+		}
+
+		return '';
 	}
 }

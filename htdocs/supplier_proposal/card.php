@@ -577,7 +577,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Set accepted/refused
-		if (!GETPOST('statut')) {
+		// Only the 2 values of the form are accepted (like for a customer proposal), not any status
+		if (!in_array(GETPOSTINT('statut'), array(SupplierProposal::STATUS_SIGNED, SupplierProposal::STATUS_NOTSIGNED))) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
@@ -1389,6 +1390,14 @@ if (empty($reshook)) {
 				$pu_ht_devise = 0;
 			}
 
+			// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+			// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+			if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+				$ht = 0;
+				$price_base_type = 'TTC';
+				$pu_ht_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+			}
+
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
 				(float) $ht,
@@ -2120,7 +2129,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
 		if ($action == 'editdate_livraison') {
-			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
+			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

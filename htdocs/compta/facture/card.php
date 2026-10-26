@@ -422,6 +422,11 @@ if (empty($reshook)) {
 			}
 		}
 
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $object->type != Facture::TYPE_DEPOSIT && empty($object->date_pointoftax)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+			$action = '';
+		}
+
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
@@ -1302,6 +1307,12 @@ if (empty($reshook)) {
 			$discount->socid = $object->socid;
 			$discount->fk_facture_source = $object->id;
 
+			// Copy multicurrency fields of source invoice (only if the source invoice was in a foreign currency)
+			if (isModEnabled('multicurrency') && $object->multicurrency_code && $object->multicurrency_code != getDolCurrency()) {
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+			}
+
 			$error = 0;
 
 
@@ -1413,10 +1424,10 @@ if (empty($reshook)) {
 					}
 
 					$discount->tva_tx = abs((float) $tva_tx);
-					$discount->localtax1_tx = $taxes['localtax1'];
-					$discount->localtax1_type = $taxes['localtax1_type'];
-					$discount->localtax2_tx = $taxes['localtax2'];
-					$discount->localtax2_type = $taxes['localtax2_type'];
+					$discount->localtax1_tx = !empty($taxes['localtax1']) ? $taxes['localtax1'] : 0;
+					$discount->localtax1_type = !empty($taxes['localtax1_type']) ? $taxes['localtax1_type'] : 0;
+					$discount->localtax2_tx = !empty($taxes['localtax2']) ? $taxes['localtax2'] : 0;
+					$discount->localtax2_type = !empty($taxes['localtax2_type']) ? $taxes['localtax2_type'] : 0;
 					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
@@ -2125,13 +2136,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
+									isset($lines[$i]) ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$i >= 0 ? $lines[$i]->special_code : 0,
+									isset($lines[$i]) ? $lines[$i]->special_code : 0,
 									$object->origin_type,
 									0,
 									0,
@@ -2154,8 +2165,18 @@ if (empty($reshook)) {
 
 							if ($diff != 0) {
 								$object->fetch_lines();
-								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								// Apply rounding diff to the first real line, ignoring special lines
+								$targetLine = null;
+								foreach ($object->lines as $line) {
+									if (empty($line->special_code)) {
+										$targetLine = $line;
+										break;
+									}
+								}
+								if ($targetLine !== null) {
+									$subprice_diff = $targetLine->subprice - $diff / (1 + $targetLine->tva_tx / 100);
+									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $targetLine->tva_tx, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
+								}
 							}
 						}
 
@@ -2207,6 +2228,12 @@ if (empty($reshook)) {
 									}
 									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString('CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE')))) {
 										continue;
+									}
+
+									// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
+									if ($srcobject->element == 'shipping' && empty($srcobject->origin_id)) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+										shippingSetStandaloneLineSellPrice($lines[$i], $object->thirdparty);
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
@@ -2481,10 +2508,10 @@ if (empty($reshook)) {
 					foreach ($object->lines as $i => &$line) {
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
-						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$line->situation_percent = 0;  // New situation percent must be 0 (No cumulative)
-						} else {
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 							$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+						} else {
+							$line->situation_percent = 0;  // New situation percent must be 0 (No cumulative)
 						}
 
 						// The $line->situation_percent has been modified, so we must recalculate all amounts
@@ -2638,7 +2665,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE || !empty($line->fk_remise_except)) {
 				continue;
 			}
 			$tvatx = $line->tva_tx;
@@ -2661,10 +2688,10 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-				$percent = $line->getAllPrevProgress($object->id);
-			} else {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 				$percent = $line->get_prev_progress($object->id);
+			} else {
+				$percent = $line->getAllPrevProgress($object->id);
 			}
 			if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
 				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
@@ -3195,6 +3222,15 @@ if (empty($reshook)) {
 				}
 				*/
 
+				// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+				// addline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+				if ($price_ht === '' && $price_ttc === '' && $price_ht_devise === '' && $price_ttc_devise !== '') {
+					$pu_ht = 0;
+					$pu_ttc = 0;
+					$price_base_type = 'TTC';
+					$pu_ht_devise = price2num($price_ttc_devise, 'MU');
+				}
+
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
 
@@ -3464,7 +3500,7 @@ if (empty($reshook)) {
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -3577,6 +3613,14 @@ if (empty($reshook)) {
 			}
 		}
 
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$pu = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = $pu_ttc_devise;
+		}
+
 		// Check minimum price
 		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
@@ -3642,7 +3686,9 @@ if (empty($reshook)) {
 		}
 
 		// Invoice situation
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$addprogress = price2num(GETPOST('progress', 'alpha'));
+		} else {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 			$fullprogress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
@@ -3656,8 +3702,6 @@ if (empty($reshook)) {
 				$fullprogress = 100;
 			}
 			$addprogress = $fullprogress - $previousprogress;
-		} else {
-			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		}
 
 		// Update line

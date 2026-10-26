@@ -127,6 +127,21 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					"",
 					0,
 				],
+				// For emails
+				[
+					"SUPPLIER_ORDER_MAIL_FROM",
+					"chaine",
+					"",
+					"From des mails",
+					0,
+				],
+				[
+					"SUPPLIER_ORDER_EMAIL_TEMPLATE_REMIND_LATE_DELIVERY",
+					"emailtemplate:order_supplier",
+					"(SendingReminderForLateSupplierDelivery)",
+					"",
+					0,
+				],
 			];
 
 			/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
@@ -173,13 +188,28 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					'class' => 'fourn/class/fournisseur.facture.class.php',
 					'objectname' => 'FactureFournisseur',
 					'method' => 'sendEmailsRemindersOnSupplierInvoiceDueDate',
-					'parameters' => '10,all,EmailTemplateCode,duedate',
-					'comment' => 'Send an email when we reach the supplier invoice due date (or supplier invoice date) - n days. First param is n, the number of days before due date (or supplier invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent supplier invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the supplier invoice to use.',
+					'parameters' => '10,all,EmailTemplateCode,duedate,internalfollowingcontact',
+					'comment' => 'Send an email when we reach the supplier invoice due date (or supplier invoice date) - n days. First param is n, the number of days before due date (or supplier invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent supplier invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the supplier invoice to use. The fifth parameter (Forced recipients) is mandatory: it is a list of values separated by ";" among a fixed email, "thirdpartyemail" (email of thirdparty), "internalfollowingcontact" (internal contacts of supplier invoice of type following-up) or "salesrepresentative" (emails of sales representatives of thirdparty).',
 					'frequency' => 1,
 					'unitfrequency' => 3600 * 24,
 					'priority' => 50,
 					'status' => 0,
 					'test' => 'isModEnabled("supplier_invoice")',
+					'datestart' => $datestart
+				),
+				2 => array(
+					'label' => 'SendReminderForLateSupplierDeliveriesTitle',
+					'jobtype' => 'method',
+					'class' => 'fourn/class/fournisseur.commande.class.php',
+					'objectname' => 'CommandeFournisseur',
+					'method' => 'sendReminderForLateSupplierDeliveries',
+					'parameters' => '0',
+					'comment' => 'SendReminderForLateSupplierDeliveries',
+					'frequency' => 1,
+					'unitfrequency' => 3600 * 24,
+					'priority' => 50,
+					'status' => 1,
+					'test' => 'isModEnabled("supplier_order")',
 					'datestart' => $datestart
 				));
 

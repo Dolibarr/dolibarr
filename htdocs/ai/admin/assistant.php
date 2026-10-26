@@ -285,7 +285,15 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '</tr>';
+
+	// API tools in the palette of the chat input (the palette itself is always on)
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIPaletteApiTools"), $langs->trans("AIPaletteApiToolsHelp")) . '</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_PALETTE_API_TOOLS');
+	print '</td>';
 	print '</tr>';
 
 	// Logging

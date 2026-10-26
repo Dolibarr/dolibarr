@@ -453,7 +453,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
-	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
+	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && !hash_equals((string) $sessiontokenforthisurl, (string) GETPOST('token', 'alpha'))) {
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
@@ -787,9 +787,23 @@ if (!defined('NOLOGIN')) {
 			}
 
 			// Check login for all qualified modes in array $authmode.
-			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
-			if ($login === '--bad-login-validity--') {
-				$login = '';
+			if (!empty($_SESSION['dol_totp_pending']) && GETPOSTISSET('totpcode')) {
+				// Second step of a two-factor authentication: the password was validated in the previous request, only the code is checked, against the login and entity kept in session
+				$entitytotest = (int) $_SESSION['dol_totp_pending']['entity'];
+				$login = dolTotpCheckPendingLogin($db);
+				$totpsecondstepdone = ($login ? 1 : 0);
+				$totpsecondstepfailed = ($login ? 0 : 1);
+			} else {
+				unset($_SESSION['dol_totp_pending']);	// A new password step cancels any pending second step
+				$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+				if ($login === '--bad-login-validity--') {
+					$login = '';
+				}
+				if ($login && in_array($conf->authmode, array('dolibarr', 'ldap'))) {
+					// The password is right, but a user with a two-factor authentication needs a code before any session is opened. Only the modes with a password typed in the form are concerned.
+					$login = dolTotpStartSecondFactor($db, $login, $entitytotest);
+					$totpaskingforcode = ($login ? 0 : 1);
+				}
 			}
 
 			if ($login) {
@@ -818,7 +832,7 @@ if (!defined('NOLOGIN')) {
 				//print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst.'-'.sdol_screenheight.'-'.sdol_screenwidth; exit;
 			}
 
-			if (!$login) {
+			if (!$login && empty($totpaskingforcode)) {		// A password accepted but waiting for a 2FA code is not a failed authentication. A wrong code is one.
 				dol_syslog('Bad password, connection refused (see a previous notice message for more info)', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
@@ -830,7 +844,7 @@ if (!defined('NOLOGIN')) {
 				}
 
 				// Call trigger for the "security events" log
-				$user->context['audit'] = $langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username", "alpha", 2);
+				$user->context['audit'] = (empty($totpsecondstepfailed) ? $langs->trans("ErrorBadLoginPassword") : $langs->trans("TOTPCodeRefused")).' - login='.GETPOST("username", "alpha", 2);
 
 				// Call trigger
 				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
@@ -853,7 +867,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// End test login / passwords
-		if (!$login || (in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {     // With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
+		if (!$login || (empty($totpsecondstepdone) && in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {     // With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success. The second step of a 2FA posts no password, so it is excluded from this test.
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
@@ -2802,12 +2816,26 @@ function top_menu_ai()
 	if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || empty($conf->use_javascript_ajax)) {
 		return $html;
 	}
-	// Per-user gate: same right as the assistant page and its endpoints
+	// Per-user gate: same right as the assistant page and its endpoints.
+	// Without the right, show a greyed non clickable icon so the user knows the feature exists.
 	if (!$user->hasRight('ai', 'assistant', 'use')) {
+		$html .= '<!-- div for AI Assistant link (disabled, no permission) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a class="login-dropdown-a nofocusvisible opacitymedium cursornotallowed classfortooltip" title="'.dol_escape_htmltag($langs->trans('AIAssistant').' - '.$langs->trans('NotEnoughPermissions')).'"><i class="fa fa-magic"></i></a>
+	</div>';
 		return $html;
 	}
 
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+
+	// On smartphone, no popover: the icon is a direct link to the standalone assistant page.
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$html .= '<!-- div for AI Assistant link (opens the AI assistant page) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a accesskey="a" href="'.DOL_URL_ROOT.'/ai/assistant/index.php?mainmenu=tools&amp;leftmenu=ai" id="topmenu-ai-toggle" class="login-dropdown-a nofocusvisible" title="'.dol_escape_htmltag($ailabel).'"><i class="fa fa-magic"></i></a>
+	</div>';
+		return $html;
+	}
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
 	// the standalone page ai/assistant/index.php uses the same pattern). Same
@@ -2857,6 +2885,18 @@ function top_menu_ai()
 	        });
 		});
 
+	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	document.addEventListener("click", function (event) {
+		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
+		if (!link) { return; }
+		try {
+			for (var i = sessionStorage.length - 1; i >= 0; i--) {
+				var key = sessionStorage.key(i);
+				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
+			}
+		} catch (e) { /* storage not available */ }
+	});
+
 	(function () {
 		var toggle = document.getElementById("topmenu-ai-toggle");
 		var popover = document.getElementById("topmenu-ai-popover");
@@ -2874,7 +2914,8 @@ function top_menu_ai()
 		function loadChat() {
 			if (loaded || loading) { return; }
 			loading = true;
-			fetch("'.DOL_URL_ROOT.'/ai/assistant/popover.php", { credentials: "same-origin" })
+			// Resolved against location.origin: fetch() rejects a URL inheriting user:pass@ from the page URL.
+			fetch(new URL("'.DOL_URL_ROOT.'/ai/assistant/popover.php", window.location.origin).href, { credentials: "same-origin" })
 				.then(function (resp) {
 					if (!resp.ok) { throw new Error("HTTP " + resp.status); }
 					return resp.text();
@@ -3951,6 +3992,8 @@ if (!function_exists("llxFooter")) {
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
+				} elseif (!empty($_POST['button_removefilter']) || !empty($_POST['button_removefilter_x'])) {
+					unset($_SESSION['lastsearch_values_'.$key]);	// Filters were removed, so previously saved criteria must not be restored later
 				}
 			}
 		}
