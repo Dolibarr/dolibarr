@@ -248,7 +248,7 @@ if ($resql) {
 					$account_vat_sold = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						$object_key = $obj->bu_type.'_'.$obj->rowid;	// ->bu_type is "payment", ->rowid is invoice ID
 
 						// To check...
 						// If 1 invoice has 2 payments at 2 different date, seems ok, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
