@@ -892,7 +892,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						//var_dump($this->user_login);exit;
 						//var_dump($this->login);exit;
 
@@ -1221,7 +1221,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
 						if (is_int($result) && $result < 0) {
 							$this->error = $luser->error;
