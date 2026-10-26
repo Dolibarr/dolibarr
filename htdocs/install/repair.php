@@ -216,7 +216,7 @@ $ecmrepairentities = array(1 => $langs->trans('Entity').' 1');
 if (isModEnabled('multicompany')) {
 	$ecmrepairentities = array();
 	if (isset($mc) && is_object($mc) && method_exists($mc, 'getEntitiesList')) {
-		$ecmrepairentities = $mc->getEntitiesList(true, false, true);
+		$ecmrepairentities = $mc->getEntitiesList('1', false, true);
 	}
 }
 $ecmrepairentity = GETPOSTISSET('ecm_entity') ? GETPOSTINT('ecm_entity') : 1;
