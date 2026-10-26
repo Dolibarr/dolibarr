@@ -3509,7 +3509,7 @@ if ($action == 'create') {
 			if ($totalVolume) {
 				print '<tr><td>' . $langs->trans("CalculatedVolume") . '</td>';
 				print '<td class="valuefield">';
-				print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'), 1);
+				print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT')), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'), 1);
 				print '</td></tr>';
 			}
 		}
