@@ -356,7 +356,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// Service User
 	print '<tr class="oddeven">';
-	print '<td>Service User <span class="fa fa-info-circle" title="' . $langs->trans("UserPermissionsTooltip") . '"></span></td>';
+	print '<td class="fieldrequired">Service User '.img_picto($langs->trans("UserPermissionsTooltip"), 'info').'</td>';
 	print '<td>';
 	print '<div style="display: flex; align-items: center;">';
 	// Use -1 when not set, so select_dolusers() does not preselect the current user
@@ -369,19 +369,23 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// API Key
 	print '<tr class="oddeven">';
-	print '<td>MCP API Key</td>';
+	print '<td class="fieldrequired">MCP API Key</td>';
 	print '<td>';
 	if ($apiKey) {
 		print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-		print ' <a class="button small smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("Generate")).'">'.img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"').'</a>';
 	} else {
 		print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-		print ' <a class="button small smallpaddingimp" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
+		print ' <a href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '" title="' . dol_escape_htmltag($langs->trans("Generate")) . '">' . img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"') . '</a>';
 	}
 	print '</td>';
 	print '</tr>';
 
 	$endpoint = dol_buildpath('/ai/server/mcp_server.php', 3);
+	// Name of the MCP server in the configuration examples: the database name, restricted to safe chars for a command line
+	$mcpservername = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $conf->db->name);
+	// Name of the environment variable holding the key, suffixed with the database name so several instances can share the same .env file
+	$mcpapikeyenvname = 'DOLIBARR_MCP_API_KEY_'.dol_strtoupper(preg_replace('/[^a-zA-Z0-9_]/', '_', $conf->db->name));
 
 	print '<tr class="oddeven">';
 	print '<td>MCP Endpoint URL</td>';
@@ -401,15 +405,15 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// Command line to declare the MCP server into Mistral Vibe, the key being read from its .env file
 	print '<strong>' . $langs->trans("MistralVibeConfig") . '</strong><br>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('vibe mcp add dolibarr --url '.$endpoint.' --transport streamable-http --api-key-env DOLIBARR_MCP_API_KEY'."\n\n");
+	echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --api-key-env '.$mcpapikeyenvname."\n\n");
 	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
-	echo htmlspecialchars('DOLIBARR_MCP_API_KEY="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
 	print '</pre>';
 
 	// Command line to declare the MCP server into Claude Code
 	print '<br><strong>' . $langs->trans("ClaudeCodeConfig") . '</strong><br>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('claude mcp add --transport http dolibarr '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
 	print '</pre>';
 
 	print '<br><strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
@@ -417,7 +421,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	echo htmlspecialchars('
 	{
 	  "mcpServers": {
-	    "dolibarr": {
+	    "'.$mcpservername.'": {
 	      "command": "node",
 	      "args": ["/path/to/mcp-bridge.js"],
 	      "env": {
