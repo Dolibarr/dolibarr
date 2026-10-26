@@ -237,7 +237,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="toolsTable">';
 print '<tr class="liste_titre">';
-print '<td class="tdoverflowmax200" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
+print '<td class="tdoverflowmax250" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
 print '<td class="hideonsmartphone">' . $langs->trans('ToolDescription') . '</td>';
 print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('ChatAssistant') . '</td>';
@@ -278,7 +278,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '<tr class="oddeven group-' . $groupId . '" data-tool-name="' . dol_escape_htmltag($name) . '" data-tool-type="' . $type . '">';
 
 			// Tool
-			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax200">';
+			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax250">';
 			print '<strong>' . dol_escape_htmltag($name) . '</strong>';
 			if ($isSystem) {
 				print '<br><span class="badgeneutral">' . $langs->trans('System') . '</span>';

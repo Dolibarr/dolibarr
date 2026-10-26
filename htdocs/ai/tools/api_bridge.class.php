@@ -153,7 +153,10 @@ class ToolApiBridge extends McpTool
 	 * hand-written enrichment. A method absent from 'methods' is never exposed.
 	 * Per method: 'suffix' (tool name suffix, defaults to list/get/lowercased),
 	 * 'description' (appended to the derived tool description), 'params'
-	 * (per-parameter doc overriding what the docblock parser guessed).
+	 * (per-parameter doc overriding what the docblock parser guessed),
+	 * 'fixed_params' (arguments forced on the call and hidden from the schema).
+	 * An entry may set 'endpoint' to call the REST class of another key, so
+	 * several groups of tools can share one REST class (documents_*).
 	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
 	 * used by api/index.php.
 	 *
@@ -163,7 +166,7 @@ class ToolApiBridge extends McpTool
 	 * endpoint absent from this map is still exposed, with the description and
 	 * parameter docs reflection gives — that is the whole point of scanning.
 	 *
-	 * @var array<string, array{label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>}>}>
+	 * @var array<string, array{endpoint?:string, label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>, fixed_params?:array<string,string>}>}>
 	 */
 	private $enrichments = [];
 
@@ -1279,16 +1282,151 @@ class ToolApiBridge extends McpTool
 
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
-		$this->enrichments['documents'] = [
+		// The REST class documents serves three different file areas, each one
+		// exposed as its own group of tools so the model never mixes them: the
+		// files of business objects, the free tree of the ECM module, and the
+		// public medias of the website module. 'endpoint' names the REST class
+		// they all call, 'fixed_params' the arguments forced on the call.
+		$uploadParams = [
+			'filename' => "Name of the file to create (e.g. 'photo.jpg').",
+			'filecontent' => "Content of the file. Omit to create an empty file.",
+			'fileencoding' => "'base64' when filecontent is base64-encoded, empty (default) for plain text.",
+			'overwriteifexists' => "1 to overwrite a file that already exists with the same name, 0 (default) to fail instead.",
+			'createdirifnotexists' => "1 (default) to create the subdirectories when they do not exist, 0 to fail."
+		];
+		$this->enrichments['documents_objects'] = [
+			'endpoint' => 'documents',
 			'label' => 'documents attached to business objects',
 			'methods' => [
 				'getDocumentsListByElement' => [
 					'suffix' => 'list',
-					'description' => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them.",
+					'description' => "List the files attached to a business object (invoice, proposal, order, third party, product, project...). Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them. Not for the free directory tree of the DMS (use the api_documents_manual tools) nor for the public medias of the website (use the api_documents_medias tools).",
 					'params' => [
 						'modulepart' => "Object type: invoice, supplier_invoice, order, supplier_order, propal (proposal), supplier_proposal, shipment, societe (third party), product, contract, ficheinter (intervention), project, project_task, ticket, expensereport, holiday, member, actioncomm (event), category, user.",
 						'id' => "Rowid of the object, when known.",
 						'ref' => "Reference of the object, when the id is unknown."
+					]
+				],
+				// GET /documents/download of the same REST class: the answer carries
+				// the file content base64-encoded, so keep it for small files only.
+				'index' => [
+					'suffix' => 'download',
+					'description' => "Download one file attached to a business object and return its content base64-encoded. Give modulepart (the object type) and original_file, the path relative to that area. List the files of the object with api_documents_objects_list first to learn the path, or build it from the object (e.g. 'FA2401-0001/FA2401-0001.pdf'). Only for small files: the whole content travels in the answer.",
+					'params' => [
+						'modulepart' => "Object type: same values as api_documents_objects_list modulepart.",
+						'original_file' => "Relative path with filename, relative to the area (e.g. 'FA2401-0001/FA2401-0001.pdf')."
+					]
+				],
+				// POST /documents/upload of the same REST class. No 'right' is
+				// declared: the API checks the access per modulepart, and no single
+				// Dolibarr right covers every area (an invoice needs facture/...).
+				'post' => [
+					'suffix' => 'upload',
+					'description' => "Attach a file to a business object. Give modulepart (the object type), the ref of the object (its directory is derived from it; for a third party or a contact use the rowid instead), and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUploadDocument',
+						'required' => ['filename', 'modulepart', 'ref'],
+						'args' => ['filename', 'modulepart']
+					],
+					'params' => [
+						'filename' => $uploadParams['filename'],
+						'modulepart' => "Object type: same values as api_documents_objects_list modulepart.",
+						'ref' => "Reference of the business object the file is attached to (rowid for a third party or a contact).",
+						'filecontent' => $uploadParams['filecontent'],
+						'fileencoding' => $uploadParams['fileencoding'],
+						'overwriteifexists' => $uploadParams['overwriteifexists']
+					]
+				]
+			]
+		];
+		$this->enrichments['documents_manual'] = [
+			'endpoint' => 'documents',
+			'label' => 'documents of the DMS free directory tree',
+			'methods' => [
+				'getDocumentsListByDirectory' => [
+					'suffix' => 'list',
+					'module' => 'ecm',
+					'fixed_params' => ['modulepart' => 'ecm'],
+					'description' => "List the files and subdirectories of a directory of the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Answers \"what is in the Contracts folder\", \"find the file named agreement\". Returns for each entry its type (dir or file), its path to give to api_documents_manual_download, size, date and a download link, never the content. Start at the root (empty subdir), then go down.",
+					'params' => [
+						'subdir' => "Directory to list, relative to the root of the DMS manual tree (e.g. 'Contracts/2024'). Empty for the root.",
+						'recursive' => "1 to also list the content of the subdirectories, 0 (default) for this directory only.",
+						'search' => "Return only the files and directories whose name contains this text.",
+						'sortfield' => "Sort on 'name' (default), 'date' or 'size'.",
+						'sortorder' => "'asc' (default) or 'desc'."
+					]
+				],
+				'index' => [
+					'suffix' => 'download',
+					'module' => 'ecm',
+					'fixed_params' => ['modulepart' => 'ecm'],
+					'description' => "Download one file of the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object, and return its content base64-encoded. Give original_file, the path relative to the root of that tree (e.g. 'MyDirectory/MySubDirectory/agreement.pdf'): the path api_documents_manual_list returns. Only for small files: the whole content travels in the answer.",
+					'params' => [
+						'original_file' => "Relative path with filename, relative to the root of the DMS manual tree (e.g. 'Contracts/2024/agreement.pdf')."
+					]
+				],
+				'post' => [
+					'suffix' => 'upload',
+					'module' => 'ecm',
+					'fixed_params' => ['modulepart' => 'ecm'],
+					'description' => "Upload a file into the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Give subdir (the directory inside the tree, preferably an existing one) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUploadDocument',
+						'required' => ['filename'],
+						'args' => ['filename', 'modulepart']
+					],
+					'params' => [
+						'filename' => $uploadParams['filename'],
+						'subdir' => "Directory inside the DMS manual tree (e.g. 'Contracts/2024'). Empty for the root.",
+						'filecontent' => $uploadParams['filecontent'],
+						'fileencoding' => $uploadParams['fileencoding'],
+						'overwriteifexists' => $uploadParams['overwriteifexists'],
+						'createdirifnotexists' => $uploadParams['createdirifnotexists']
+					]
+				]
+			]
+		];
+		// No 'right' declared on medias: the API checks it (website/write to upload).
+		$this->enrichments['documents_medias'] = [
+			'endpoint' => 'documents',
+			'label' => 'public medias of the website module',
+			'methods' => [
+				'getDocumentsListByDirectory' => [
+					'suffix' => 'list',
+					'fixed_params' => ['modulepart' => 'medias'],
+					'description' => "List the files and subdirectories of a directory of the public medias directory, the files (images, videos, documents) published and reachable from the websites of the website module. Answers \"which images does the website mywebsite use\", \"is there a logo in the medias\". Returns for each entry its type (dir or file), its path to give to api_documents_medias_download, size, date and a download link, never the content. The images of a website are usually in 'image/<website ref>'.",
+					'params' => [
+						'subdir' => "Directory to list, relative to the medias directory (e.g. 'image/mywebsite'). Empty for the root.",
+						'recursive' => "1 to also list the content of the subdirectories, 0 (default) for this directory only.",
+						'search' => "Return only the files and directories whose name contains this text.",
+						'sortfield' => "Sort on 'name' (default), 'date' or 'size'.",
+						'sortorder' => "'asc' (default) or 'desc'."
+					]
+				],
+				'index' => [
+					'suffix' => 'download',
+					'fixed_params' => ['modulepart' => 'medias'],
+					'description' => "Download one file of the public medias directory, the files (images, videos, documents) published and reachable from the websites of the website module, and return its content base64-encoded. Give original_file, the path inside that directory (e.g. 'image/mywebsite/picture.png'): the path api_documents_medias_list returns. Only for small files: the whole content travels in the answer.",
+					'params' => [
+						'original_file' => "Relative path with filename inside the medias directory (e.g. 'image/mywebsite/picture.png')."
+					]
+				],
+				'post' => [
+					'suffix' => 'upload',
+					'fixed_params' => ['modulepart' => 'medias'],
+					'description' => "Upload a file into the public medias directory, where the images, videos and documents of the websites of the website module are stored: the file becomes publicly reachable. Give subdir (e.g. 'image/mywebsite' for the images of the website mywebsite) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewUploadDocument',
+						'required' => ['filename', 'subdir'],
+						'args' => ['filename', 'modulepart']
+					],
+					'params' => [
+						'filename' => $uploadParams['filename'],
+						'subdir' => "Directory inside the medias directory (e.g. 'image/mywebsite' for the images of the website mywebsite).",
+						'filecontent' => $uploadParams['filecontent'],
+						'fileencoding' => $uploadParams['fileencoding'],
+						'overwriteifexists' => $uploadParams['overwriteifexists'],
+						'createdirifnotexists' => $uploadParams['createdirifnotexists']
 					]
 				]
 			]
@@ -2460,6 +2598,46 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Groups of tools to build: enrichment key => key of the discovered endpoint
+	 * whose REST class it calls. An enrichment calls the endpoint of the same
+	 * name, unless it names another one with 'endpoint' (several groups of tools
+	 * can share one REST class). Ordered by endpoint, as discovered.
+	 *
+	 * @return array<string, string> Enrichment key => endpoint key
+	 */
+	private function toolGroups(): array
+	{
+		$groups = [];
+		foreach (array_keys($this->endpoints) as $epkey) {
+			foreach ($this->enrichments as $key => $enrichment) {
+				if (($enrichment['endpoint'] ?? $key) === $epkey) {
+					$groups[$key] = $epkey;
+				}
+			}
+		}
+
+		return $groups;
+	}
+
+	/**
+	 * Arguments a tool forces on its call ('fixed_params' of its enrichment),
+	 * whatever the caller sent: the documents area of a group of documents tools.
+	 *
+	 * @param  string              $toolName Tool name.
+	 * @param  array<string,mixed> $args     Tool arguments as sent.
+	 * @return array<string,mixed>           Arguments with the fixed ones set.
+	 */
+	private function applyFixedParams(string $toolName, array $args)
+	{
+		$meta = $this->methodMetaFor($toolName);
+		foreach ((array) ($meta['fixed_params'] ?? array()) as $pname => $value) {
+			$args[$pname] = $value;
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Apply the AI_MCP_API_BRIDGE_METHODS restriction. Intersection only: the
 	 * constant can narrow what the whitelist exposes — on every endpoint,
 	 * enriched or not — but can never add a method to it, so it can never turn
@@ -2515,7 +2693,7 @@ class ToolApiBridge extends McpTool
 		$this->routes = [];
 		$this->endpoints = $this->discoverEndpoints();
 
-		foreach ($this->endpoints as $key => $ep) {
+		foreach ($this->toolGroups() as $key => $epkey) {
 			// Endpoint whitelist, per the review that merged the bridge in
 			// #39856 ("we should add a whitelist of api we think it is enable
 			// for ai"): a discovered endpoint is exposed only when it carries a
@@ -2530,10 +2708,11 @@ class ToolApiBridge extends McpTool
 			// else, whatever reflection could find on the API class. Enriched
 			// endpoints without a 'methods' key fall back to the read-only pair.
 			$methods = $this->applyMethodRestriction($this->enrichments[$key]['methods'] ?? $this->defaultMethods());
-			if (empty($methods) || !$this->resolveEndpointClass($key)) {
+			if (empty($methods) || !$this->resolveEndpointClass($epkey)) {
 				continue;	// nothing left to expose, or api file without its class
 			}
-			$ep = $this->endpoints[$key];	// re-read: 'class' is now resolved
+			$ep = $this->endpoints[$epkey];	// re-read: 'class' is now resolved
+			$ep['label'] = $this->enrichments[$key]['label'] ?? $ep['label'];
 
 			foreach ($methods as $method => $meta) {
 				// A method may need an optional module beyond its endpoint's own
@@ -2790,6 +2969,13 @@ class ToolApiBridge extends McpTool
 			foreach ((array) ($meta['write']['required'] ?? array()) as $pname) {
 				$required[] = $pname;
 			}
+		}
+
+		// Arguments the tool forces on the call are not the caller's to give.
+		$fixed = array_keys((array) ($meta['fixed_params'] ?? array()));
+		if ($fixed) {
+			$properties = array_diff_key($properties, array_flip($fixed));
+			$required = array_values(array_diff($required, $fixed));
 		}
 
 		if (!empty($meta['write'])) {
@@ -3807,6 +3993,7 @@ class ToolApiBridge extends McpTool
 		if (empty($write)) {
 			return McpTool::NO_WRITE;
 		}
+		$args = $this->applyFixedParams($toolName, $args);
 		if (!empty($write['update'])) {
 			try {
 				$args = $this->normaliseWriteArgs($args, $write);
@@ -4014,6 +4201,7 @@ class ToolApiBridge extends McpTool
 		if (empty($write)) {
 			return '';
 		}
+		$args = $this->applyFixedParams($toolName, $args);
 
 		try {
 			$args = $this->normaliseWriteArgs($args, $write);
@@ -5119,6 +5307,43 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Keep what the chat shows of the content of a directory: type, name, path,
+	 * size, date, and a link for a file.
+	 *
+	 * @param	mixed	$output		Result of getDocumentsListByDirectory()
+	 * @param	string	$modulepart	Area listed ('ecm' or 'medias')
+	 * @return	mixed				Projected list, or $output unchanged if it is not a list
+	 */
+	private function projectDirectoryList($output, $modulepart)
+	{
+		$paginated = is_array($output) && isset($output['data']) && is_array($output['data']);
+		$entries = $paginated ? $output['data'] : $output;
+		if (!is_array($entries)) {
+			return $output;
+		}
+		$list = array();
+		foreach ($entries as $entry) {
+			$isdir = (($entry['type'] ?? '') === 'dir');
+			$item = array(
+				'type' => $isdir ? 'dir' : 'file',
+				'name' => (string) ($entry['name'] ?? ''),
+				'path' => (string) ($entry['relativename'] ?? ''),
+				'modified' => dol_print_date((int) ($entry['date'] ?? 0), 'dayhour')
+			);
+			if (!$isdir) {
+				$item['size'] = dol_print_size((int) ($entry['size'] ?? 0), 1);
+				$item['url'] = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&file='.urlencode($item['path']);
+			}
+			$list[] = $item;
+		}
+		if ($paginated) {
+			$output['data'] = $list;
+			return $output;
+		}
+		return $list;
+	}
+
+	/**
 	 * Whether the object a file list was asked for exists.
 	 *
 	 * @param	array<string,mixed>	$args	Tool arguments (modulepart, id, ref)
@@ -5208,6 +5433,8 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
+		$args = $this->applyFixedParams($name, $args);
+
 		// A model may send the record as a request_data body, or name line fields
 		// the way the custom tools do: accept both, so the write receives what the
 		// preview described.
@@ -5227,7 +5454,8 @@ class ToolApiBridge extends McpTool
 			return ["error" => "Tool function '$name' not found."];
 		}
 		list($key, $method) = $this->routes[$name];
-		$ep = $this->endpoints[$key];
+		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);	// REST endpoint the tool group calls
+		$ep = $this->endpoints[$epkey];
 
 		// A write on a record that exists: what the call always carries, whatever
 		// the model sent (the triggers run and core gives the number), and the
@@ -5345,6 +5573,7 @@ class ToolApiBridge extends McpTool
 			// from scratch by normaliseTargetArgs(), with the options fixed there.
 			if (array_key_exists($pname, $args)
 				&& (empty($writemeta) || empty($methodmeta['params']) || array_key_exists($pname, $methodmeta['params'])
+					|| isset($methodmeta['fixed_params'][$pname])
 					|| in_array($writekind, array('update', 'action', 'delete', 'payment'), true))) {
 				// Cap an explicit 'limit': one call must not pull thousands of full objects.
 				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
@@ -5388,6 +5617,9 @@ class ToolApiBridge extends McpTool
 						throw new RuntimeException('The API did not return the updated record');
 					}
 					$output = ['success' => true, 'id' => (int) $output['id'], 'ref' => $output['ref']];
+				} elseif ($epkey === 'documents' && !is_array($output)) {
+					// The upload REST method answers with the file name it wrote, not a rowid.
+					$output = array('success' => true, 'filename' => (string) $output);
 				} elseif (!is_array($output)) {
 					// A create returns the new rowid as a scalar: name it, so the
 					// caller gets the same shape as any other tool result.
@@ -5409,8 +5641,11 @@ class ToolApiBridge extends McpTool
 						}
 					}
 				}
-				if ($key === 'documents') {
+				if ($epkey === 'documents' && $method === 'getDocumentsListByElement') {
 					$output = $this->projectDocumentList($output, (string) ($args['modulepart'] ?? ''));
+				}
+				if ($epkey === 'documents' && $method === 'getDocumentsListByDirectory') {
+					$output = $this->projectDirectoryList($output, (string) ($args['modulepart'] ?? ''));
 				}
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
@@ -5434,8 +5669,9 @@ class ToolApiBridge extends McpTool
 					"http_status" => ($code > 0 ? $code : 500)
 				];
 				// The API answers 404 for an object with no files: that is an empty
-				// list, unless the object itself does not exist.
-				if ($key === 'documents' && $code == 404 && $this->documentObjectExists($args)) {
+				// list, unless the object itself does not exist. For a download,
+				// 404 means the file itself is missing: keep the error.
+				if ($epkey === 'documents' && $method === 'getDocumentsListByElement' && $code == 404 && $this->documentObjectExists($args)) {
 					$output = [];
 				}
 			}
@@ -5456,7 +5692,7 @@ class ToolApiBridge extends McpTool
 		}
 
 		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
-		$elementForExtrafields = $this->extrafieldsElementForEndpoint($key);
+		$elementForExtrafields = $this->extrafieldsElementForEndpoint($epkey);
 		if ($elementForExtrafields !== '' && empty($writemeta['compact_result'])) {
 			require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
 			$output = aiStripPersonalExtrafields($this->db, $output, $elementForExtrafields);
@@ -5490,7 +5726,7 @@ class ToolApiBridge extends McpTool
 			'endpoint' => (string) $key,
 			'method' => (string) $method,
 			'suffix' => (string) substr($name, strlen('api_'.$key.'_')),
-			'label' => (string) ($this->enrichments[$key]['label'] ?? ($this->endpoints[$key]['label'] ?? $key))
+			'label' => (string) ($this->enrichments[$key]['label'] ?? ($this->endpoints[$this->enrichments[$key]['endpoint'] ?? $key]['label'] ?? $key))
 		);
 	}
 }

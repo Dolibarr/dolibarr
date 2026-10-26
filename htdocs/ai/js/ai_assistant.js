@@ -1654,7 +1654,7 @@ export function initAiAssistant(container) {
     function paletteRank(tool, ctx) {
         if (!ctx) return 3;
         if (ctx.families.some((f) => tool.name.indexOf('api_' + f + '_') === 0)) return 0;
-        if (tool.name === 'api_documents_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
+        if (tool.name === 'api_documents_objects_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
         const p = tool.properties || {};
         if (ctx.socid && (p.socid || p.thirdparty_ids)) return 2;
         return 3;
@@ -2132,7 +2132,7 @@ export function initAiAssistant(container) {
         const own = paletteRank(tool, ctx) <= 1;   // the card's own tools and its files
         if (pname === 'id' && own && ctx.id) return String(ctx.id);
         if (pname === 'ref' && own && ctx.ref) return ctx.ref;
-        if (pname === 'modulepart' && tool.name === 'api_documents_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
+        if (pname === 'modulepart' && tool.name === 'api_documents_objects_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
         if ((pname === 'socid' || pname === 'thirdparty_ids') && ctx.socid) return String(ctx.socid);
         return '';
     }
