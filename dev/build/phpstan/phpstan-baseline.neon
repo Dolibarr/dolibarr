@@ -1,30 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
-			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\CreditorInformation\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
-			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentAmountInformation\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
-			message: '#^Call to static method create\(\) on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../../../htdocs/core/modules/facture/modules_facture.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 2
