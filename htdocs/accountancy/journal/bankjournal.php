@@ -1681,9 +1681,9 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
-		$sqlmid = 'SELECT v.rowid as ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
-		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvatid"]);
+		$sqlmid = 'SELECT pv.fk_tva as ref';	// paymentvatid is the id of the payment, the ref is the id of the VAT declaration it pays
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_vat as pv";
+		$sqlmid .= " WHERE pv.rowid=".((int) $val["paymentvatid"]);
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
 	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';
