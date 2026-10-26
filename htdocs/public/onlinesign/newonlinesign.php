@@ -66,8 +66,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -94,12 +94,12 @@ $message = GETPOST('message', 'aZ09');
 // currency (iso code)
 
 $suffix = GETPOST("suffix", 'aZ09');
-$source = (string) GETPOST("source", 'aZ09');
+$source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
-if ($source === '') {
+if ($source == '') {
 	$source = 'proposal';
 }
 if (!empty($refusepropal)) {
@@ -115,8 +115,10 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 // Complete urls for post treatment
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
-$urlok .= 'source='.urlencode($source).'&';
-$urlko .= 'source='.urlencode($source).'&';
+if (!empty($source)) {
+	$urlok .= 'source='.urlencode($source).'&';
+	$urlko .= 'source='.urlencode($source).'&';
+}
 if (!empty($REF)) {
 	$urlok .= 'ref='.urlencode($REF).'&';
 	$urlko .= 'ref='.urlencode($REF).'&';
@@ -136,45 +138,57 @@ $creditor = $mysoc->name;
 
 $type = $source;
 if (!$action) {
-	if (!$ref) {
+	if ($source && !$ref) {
 		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
 	}
+}
+
+// Preserve the public order page's existing no-fallback policy.
+$securekeyseed = getOnlineSignatureSecuritySeed((string) $source, $source != 'order');
+
+if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, 'hash')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
+}
+
+if ($source == 'proposal') {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$object = new Propal($db);
+	$result = $object->fetch(0, $ref, '', $entity);
+} elseif ($source == 'contract') {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+	$object = new Contrat($db);
+	$result = $object->fetch(0, $ref);
+} elseif ($source == 'fichinter') {
+	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+	$object = new Fichinter($db);
+	$result = $object->fetch(0, $ref);
+} elseif ($source == 'societe_rib') {
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+	$object = new CompanyBankAccount($db);
+	$result = $object->fetch(0, $ref);
+} elseif ($source == 'order') {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	$object = new Commande($db);
+	$result = $object->fetch(0, $ref);
+} elseif ($source == 'expedition') {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+	$object = new Expedition($db);
+	$result = $object->fetch(0, $ref);
+} else {
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('onlinesign'));
 
-$sourceDefinition = getOnlineSignatureSourceDefinition($source, $ref, (int) $entity);
-if (empty($sourceDefinition)) {
-	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
-}
-
-if (!empty($sourceDefinition['langfiles']) && is_array($sourceDefinition['langfiles'])) {
-	$langs->loadLangs($sourceDefinition['langfiles']);
-}
-
-if (!isOnlineSignatureSourceEnabled($sourceDefinition)) {
-	httponly_accessforbidden($langs->trans('FeatureOnlineSignDisabled'), 403, 1);
-}
-
-if (!verifyOnlineSignatureSecureKey($sourceDefinition, $ref, (int) $entity, $SECUREKEY)) {
-	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
-}
-
-$object = fetchOnlineSignatureObject($sourceDefinition, $ref, (int) $entity);
-if (!is_object($object) || empty($object->id)) {
-	httponly_accessforbidden($langs->trans('ErrorRecordNotFound'), 404, 1);
-}
-
 $error = 0;
-$mesg = '';
 
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes' && $source === 'proposal' && $object instanceof Propal) {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -277,16 +291,16 @@ if (getDolGlobalString('ONLINE_SIGN_NEWFORM_TEXT')) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	if ($source === 'proposal' && $object instanceof Propal) {
+	if ($source == 'proposal') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageProposal", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromProposal", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source === 'contract' && $object instanceof Contrat) {
+	} elseif ($source == 'contract') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageContract", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromContract", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
+	} elseif ($source == 'fichinter') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageFichinter", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source === 'expedition' && $object instanceof Expedition) {
+	} elseif ($source == 'expedition') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageExpedition", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromExpedition", $creditor).'<br><br></td></tr>'."\n";
 	} else {
@@ -299,13 +313,13 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-if ($source === 'proposal' && $object instanceof Propal) {
+if ($source == 'proposal') {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignProposal").'<br><br></td></tr>'."\n";
-} elseif ($source === 'contract' && $object instanceof Contrat) {
+} elseif ($source == 'contract') {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").'<br><br></td></tr>'."\n";
-} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
+} elseif ($source == 'fichinter') {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").'<br><br></td></tr>'."\n";
-} elseif ($source === 'expedition' && $object instanceof Expedition) {
+} elseif ($source == 'expedition') {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignExpedition").'<br><br></td></tr>'."\n";
 } else {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign".dol_ucfirst($source)).'<br><br></td></tr>'."\n";
@@ -314,7 +328,7 @@ $found = false;
 $error = 0;
 
 // Signature on commercial proposal
-if ($source === 'proposal' && $object instanceof Propal) {
+if ($source == 'proposal') {
 	$found = true;
 	$langs->load("proposal");
 
@@ -406,10 +420,10 @@ if ($source === 'proposal' && $object instanceof Propal) {
 		}
 	}
 
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source === 'order' && $object instanceof Commande) {
+} elseif ($source == 'order') {
 	$found = true;
 	$langs->load("orders");
 
@@ -491,10 +505,10 @@ if ($source === 'proposal' && $object instanceof Propal) {
 		}
 	}
 
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source === 'contract' && $object instanceof Contrat) { // Signature on contract
+} elseif ($source == 'contract') { // Signature on contract
 	$found = true;
 	$langs->load("contract");
 
@@ -541,10 +555,10 @@ if ($source === 'proposal' && $object instanceof Propal) {
 	}
 
 
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
+} elseif ($source == 'fichinter') {
 	// Signature on fichinter
 	$found = true;
 	$langs->load("interventions");
@@ -590,10 +604,10 @@ if ($source === 'proposal' && $object instanceof Propal) {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source === 'societe_rib' && $object instanceof CompanyBankAccount) {
+} elseif ($source == 'societe_rib') {
 	$found = true;
 	$langs->loadLangs(array("companies", "commercial", "withdrawals"));
 
@@ -649,7 +663,7 @@ if ($source === 'proposal' && $object instanceof Propal) {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-} elseif ($source === 'expedition' && $object instanceof Expedition) {
+} elseif ($source == 'expedition') {
 	// Signature on expedition
 	$found = true;
 	$langs->load("interventions");
@@ -693,14 +707,14 @@ if ($source === 'proposal' && $object instanceof Propal) {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 } else {
 	$found = true;
 	$langs->load('companies');
 
-	if (method_exists($object, 'fetch_thirdparty') && (!empty($object->socid) || !empty($object->fk_soc))) {
+	if (!empty($object->socid) || !empty($object->fk_soc)) {
 		$result = $object->fetch_thirdparty();
 	}
 
@@ -712,36 +726,31 @@ if ($source === 'proposal' && $object instanceof Propal) {
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
-	if (!empty($object->thirdparty) && is_object($object->thirdparty) && !empty($object->thirdparty->name)) {
-		// Target
-		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-		print '</td><td class="CTableRow2">';
-		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print '<b>'.$object->thirdparty->name.'</b>';
-		print '</td></tr>'."\n";
-	}
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-	$objectref = empty($object->ref) ? $ref : $object->ref;
-	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $objectref).'</b>';
+	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $object->ref).'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
 
-	$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
+	$last_main_doc_file = $object->last_main_doc;
 
-	if (method_exists($object, 'generateDocument') && (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$last_main_doc_file))) {
+	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
 		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
 		$object->generateDocument($defaulttemplate, $langs);
-		$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
 	}
 
-	$documentmodulepart = empty($sourceDefinition['document_modulepart']) ? (empty($sourceDefinition['modulepart']) ? $source : (string) $sourceDefinition['modulepart']) : (string) $sourceDefinition['document_modulepart'];
-	$directdownloadlink = method_exists($object, 'getLastMainDocLink') ? $object->getLastMainDocLink($documentmodulepart) : '';
+	$directdownloadlink = $object->getLastMainDocLink($source);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($last_main_doc_file, '');
+		print img_mime($object->last_main_doc, '');
 		if ($message == "signed") {
 			print $langs->trans("DownloadSignedDocument").'</a>';
 		} else {
@@ -855,7 +864,7 @@ if ($action == "dosign" && empty($cancel)) {
 	});
 	</script>';
 } else {
-	if ($source === 'proposal' && $object instanceof Propal) {
+	if ($source == 'proposal') {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
@@ -878,19 +887,19 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
 			print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("RefusePropal").'">';
 		}
-	} elseif ($source === 'contract' && $object instanceof Contrat) {
+	} elseif ($source == 'contract') {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans("ContractSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignContract").'">';
 		}
-	} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
+	} elseif ($source == 'fichinter') {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans("FichinterSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
-	} elseif ($source === 'expedition' && $object instanceof Expedition) {
+	} elseif ($source == 'expedition') {
 		if ($message == 'signed' || $object->signed_status == Expedition::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {
