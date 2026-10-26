@@ -119,15 +119,10 @@ class modHoliday extends DolibarrModules
 		$this->tabs[] = array(); // To add a new tab identified by code tabname1
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = [
+			['file' => 'box_holidays_to_approve.php', 'enabledbydefaulton' => 'Home'],
+		];
 		$r = 0;
-
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
 
 
 		// Cronjobs
@@ -349,25 +344,6 @@ class modHoliday extends DolibarrModules
 	{
 		// Permissions
 		$this->remove($options);
-
-		//ODT template
-		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
-		$dest=$dirodt.'/template_order.odt';
-
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
-			}
-		}
-		*/
 
 		$sql = array(
 			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),

@@ -47,7 +47,7 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
+$langs->loadLangs(array("admin", "other", "bills", "orders"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -146,6 +146,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -178,8 +179,6 @@ $form = new Form($db);
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
-
-print "<br>";
 
 if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 	$head = supplier_invoice_admin_prepare_head();
@@ -309,10 +308,12 @@ foreach ($dirmodels as $reldir) {
 								$htmltooltip .= $langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+										$langs->load('errors');
 										$nextval = $langs->trans($nextval);
 									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
+									$langs->load('errors');
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}

@@ -70,7 +70,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, 'product', $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
 }

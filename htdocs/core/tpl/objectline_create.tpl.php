@@ -150,11 +150,11 @@ if ($nolinesbefore) {
 		<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 		<?php } ?>
 		<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
-		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHT').'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span>'; ?></span></td>
-		<?php } ?>
 		<?php if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 			<td class="linecoluttc right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
+		<?php } ?>
+		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
+			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHT').'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span>'; ?></span></td>
 		<?php } ?>
 		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 			<td class="linecoluttc_currency right"><span id="title_up_ttc_currency"><?php echo $langs->trans('PriceUTTC').'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span>'; ?></td>
@@ -377,6 +377,11 @@ if ($nolinesbefore) {
 
 			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
 			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
+			// After creation, product card replaces __ID__ with the new product id so it is preselected in the line form.
+			// The supplier combo uses 'idprod_ID' for a product without supplier price.
+			$urlbacktoobject = $_SERVER["PHP_SELF"].'?id='.$object->id;
+			$paramforselectedproduct = (empty($senderissupplier) ? 'idprod=__ID__' : 'idprodfournprice=idprod___ID__');
+			$paramsbacktoobject = '&backtopage='.urlencode($urlbacktoobject.'&prod_entry_mode=predef&'.$paramforselectedproduct).'&backtopageforcancel='.urlencode($urlbacktoobject);
 			if ($addproducton || $addserviceon) {
 				if ($addproducton && $addserviceon) {
 					echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
@@ -385,14 +390,14 @@ if ($nolinesbefore) {
 					echo '</a>';
 					echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
 					if ($object->element == 'reception') {
-						// Open the product/service creation in the core dialog popup; on success product/card.php reloads the parent with idprod___ID__ (autoselect)
-						$urlnewp = '/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprodfournprice=idprod___ID__');
-						$urlnews = '/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprodfournprice=idprod___ID__');
+						// Open the product/service creation in the core dialog popup; on success product/card.php reloads the parent with the new id (autoselect)
+						$urlnewp = '/product/card.php?action=create&type=0'.$paramsbacktoobject;
+						$urlnews = '/product/card.php?action=create&type=1'.$paramsbacktoobject;
 						echo '<span class="dropdown-item">'.dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('NewProduct'), $langs->trans("NewProduct"), $urlnewp, '', 'classlink').'</span>';
 						echo '<span class="dropdown-item">'.dolButtonToOpenUrlInDialogPopup('addservice', $langs->transnoentitiesnoconv('NewService'), $langs->trans("NewService"), $urlnews, '', 'classlink').'</span>';
 					} else {
-						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
-						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0'.$paramsbacktoobject.'"> '.$langs->trans("NewProduct").'</a>';
+						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1'.$paramsbacktoobject.'"> '.$langs->trans("NewService").'</a>';
 					}
 					echo '</div>';
 					echo '</div>';
@@ -404,7 +409,7 @@ if ($nolinesbefore) {
 							// The popup child page (product/card.php) reloads the parent itself after a successful creation
 							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url);
 						} else {
-							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0'.$paramsbacktoobject.'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
@@ -414,7 +419,7 @@ if ($nolinesbefore) {
 							// The popup child page (product/card.php) reloads the parent itself after a successful creation
 							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url);
 						} else {
-							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1'.$paramsbacktoobject.'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 				}
@@ -525,19 +530,19 @@ if ($nolinesbefore) {
 	</td>
 
 	<?php
-	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		$coldisplay++; ?>
-		<td class="nobottom linecoluht_currency right">
-			<input type="text" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
-		</td>
-		<?php
-	}
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluttc right">
 			<input type="text" name="price_ttc" id="price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
 					<?php
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+		$coldisplay++; ?>
+		<td class="nobottom linecoluht_currency right">
+			<input type="text" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
+		</td>
+		<?php
 	}
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++; ?>
@@ -845,7 +850,6 @@ if (!empty($object->thirdparty)) {
 	/** @type {JsConf} */
 	const jsConf = <?php print json_encode($jsConf); ?>;
 	if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
-
 		/* Some js test when we click on button "Add" */
 		$(function() {
 			if (jsConf.conf.DISPLAY_MARGIN_RATES) {
@@ -909,7 +913,7 @@ if (!empty($object->thirdparty)) {
 				}
 			}
 
-			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+			$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 			return true;
 		}
@@ -981,6 +985,40 @@ if (!empty($object->thirdparty)) {
 
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
+		function getSelectedProductCombinationsData() {
+			var data = {};
+			jQuery('#attributes_box select[name^="combinations["]').each(function() {
+				data[jQuery(this).attr('name')] = jQuery(this).val();
+			});
+			return data;
+		}
+
+		function refreshProductPriceFromSelectedCombinations() {
+			var productId = jQuery('#idprod').val();
+			if (!productId) {
+				return;
+			}
+
+			var postData = jQuery.extend({
+				'id': productId,
+				'socid': jsConf.docObject.socid,
+				'token': jsConf.conf.token,
+				'addalsovatforthirdpartyid': 1
+			}, getSelectedProductCombinationsData());
+
+			jQuery.post(jsConf.url.fetchProductUrl, postData, function(data) {
+				if (jsConf.conf.inputalsopricewithtax == 1 && data.pricebasetype == 'TTC' && !jsConf.conf.MAIN_NO_INPUT_PRICE_WITH_TAX) {
+					jQuery('#price_ttc').val(data.price_ttc);
+				} else {
+					jQuery('#price_ht').val(data.price_ht);
+				}
+			}, 'json');
+		}
+
+		jQuery(document).on('change', '#attributes_box select[name^="combinations["]', function() {
+			refreshProductPriceFromSelectedCombinations();
+		});
+
 		jQuery("#price_ht").keyup(function(event) {
 			// console.log(event.which);		// discard event tag and arrows
 			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
@@ -1111,7 +1149,7 @@ if (!empty($object->thirdparty)) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
-						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.token, 'addalsovatforthirdpartyid': 1 },
+						jQuery.extend({ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.token, 'addalsovatforthirdpartyid': 1 }, getSelectedProductCombinationsData()),
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
@@ -1139,7 +1177,7 @@ if (!empty($object->thirdparty)) {
 								jQuery('#date_end').removeClass('inputmandatory');
 							}
 
-							if (jsConf.conf.inputalsopricewithtax == 1 && data.pricebasetype == 'TTC' && jsConf.conf.MAIN_NO_INPUT_PRICE_WITH_TAX) {
+							if (jsConf.conf.inputalsopricewithtax == 1 && data.pricebasetype == 'TTC' && !jsConf.conf.MAIN_NO_INPUT_PRICE_WITH_TAX) {
 								console.log("objectline_create.tpl set content of price_ttc");
 								jQuery("#price_ttc").val(data.price_ttc);
 							} else {
@@ -1244,7 +1282,7 @@ if (!empty($object->thirdparty)) {
 										}
 									}
 								} else {
-									jQuery('#dp_desc').text(proddesc);
+									jQuery('#dp_desc').val(proddesc);
 								}
 							}
 
@@ -1389,6 +1427,28 @@ if (!empty($object->thirdparty)) {
 				'json');
 			}
 
+			<?php if (getDolGlobalString('PRODUCT_USE_UNITS') && !empty($senderissupplier)) { ?>
+			// The unit synchronisation above lives in the margin block, whose ajax call is only
+			// made when the margin module is enabled and the user may edit it. A supplier order is
+			// normally created with that module off, so the unit stayed on the first one of the
+			// list. The same information is fetched here, outside of the margin condition.
+			if (!(jsConf.conf.usemargins && jsConf.userRight.margins.creer)) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': jsConf.conf.token }, function(data) {
+					if (data && data.length > 0) {
+						var fkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && fkUnit === null) {
+								fkUnit = this.fk_unit;
+							}
+						});
+						if (fkUnit !== null && $("#units").length) {
+							$("#units").val(fkUnit).trigger('change');
+						}
+					}
+				},
+				'json');
+			}
+			<?php } ?>
 
 			if (jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY || jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) {
 				/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
@@ -1540,7 +1600,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text(description);
+						jQuery('#dp_desc').val(description);
 					}
 				}
 			} else if (jQuery('#idprodfournprice').length > 0) {
@@ -1583,7 +1643,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text('');
+						jQuery('#dp_desc').val('');
 					}
 				}
 			}

@@ -16,7 +16,7 @@ BOMsSetup=Configuration du module BOM
 ListOfBOMs=Nomenclatures - BOM
 ListOfManufacturingOrders=Ordres Fabrication
 NewBOM=Nouveau BOM
-ProductBOMHelp=Produit à créer (ou désassembler) avec cette nomenclature. <br> Remarque: les produits avec la propriété 'Nature de produit' = 'Matière première' ne sont pas visibles dans cette liste.
+ProductBOMHelp=produit à créer (ou désassembler) avec ce Nomenclature.<br>Remarque : produits avec la propriété « Nature de produit » = « Matière première » ne sont pas visibles dans cette liste.
 CloneDefBomProduct=Cloner la Nomenclature par défaut à utiliser pour fabriquer le produit
 CloneOtherBomsProduct=Cloner toutes les nomenclatures pouvant être utilisées pour fabriquer le produit
 BOMofRef=Nomenclature de %s
@@ -73,7 +73,7 @@ QtyAlreadyConsumed=Qté déjà consommée
 QtyAlreadyProduced=Qté déjà produite
 QtyAlreadyConsumedShort=Qté consommée
 QtyAlreadyProducedShort=Qté produite
-QtyRequiredIfNoLoss=Qté nécessaire pour produire la quantité définie dans la nomenclature s'il n'y a pas de perte (si le rendement de fabrication est de 100%%)
+QtyRequiredIfNoLoss=Qté requis pour produire la quantité définie dans le Nomenclature s'il n'y a pas de perte (si l'efficacité de fabrication est de 100%%)
 ConsumeOrProduce=Consommer ou Produire
 ConsumeAndProduceAll=Consommer et Produire tout
 Manufactured=Fabriqué
@@ -101,7 +101,7 @@ ManufacturingGeneratedValue=Valeur de fabrication générée
 BOMTotalCost=Le coût de production de cette nomenclature basé sur chaque quantité et produit à consommer (utilise le cout de la sous BOM si existante, sinon le prix de revient du produit si défini, sinon le PMP si défini, sinon le meilleur prix d'achat)
 BOMTotalCostService=Si le module "Poste" est activé et qu'un poste est défini par défaut sur la ligne, alors le calcul est "quantité (convertie en heures) x coût horaire du poste", sinon "quantité x prix de revient du service"
 GoOnTabProductionToProduceFirst=Vous devez avoir la production pour clôturer un Ordre de Fabrication (voir onglet '%s'). Mais vous pouvez l'annuler.
-ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit ne peut pas être utilisé dans une Nomenclature ou un Ordre de fabrication.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit ne peut pas être utilisé dans un Nomenclature ou un MO
 Workstation=Poste de travail
 Workstations=Postes de travail
 WorkstationsDescription=Gestion des postes de travail

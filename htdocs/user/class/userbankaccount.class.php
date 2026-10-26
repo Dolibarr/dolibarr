@@ -5,7 +5,7 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,21 @@ class UserBankAccount extends Account
 			if ($this->db->affected_rows($resql)) {
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
-				return $this->update($user);
+				$result = $this->update($user, 1);
+				if ($result < 0) {
+					return $result;
+				}
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+					if ($result < 0) {
+						return -1;
+					}
+					// End call triggers
+				}
+
+				return $this->id;
 			} else {
 				return 0;
 			}
@@ -217,6 +231,7 @@ class UserBankAccount extends Account
 
 				$this->id = $obj->rowid;
 				$this->userid = $obj->fk_user;
+				$this->entity = $obj->entity;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;
@@ -302,6 +317,16 @@ class UserBankAccount extends Account
 				$error++;
 				$this->error = "Error ".$this->db->lasterror();
 			}
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {

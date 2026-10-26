@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf, $user, $langs, $db;
+global $conf, $user, $langs, $db, $mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -432,6 +432,25 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolVerifyHash
+	 *
+	 * @return void
+	 */
+	public function testDolVerifyHash()
+	{
+		$hash = dol_hash('mypassword', '3');	// md5
+		$this->assertTrue(dol_verifyHash('mypassword', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('mypassword2', $hash, '3'));
+		$this->assertFalse(dol_verifyHash('', $hash, '3'));
+
+		// Two different strings whose md5 are "0e" followed by digits only: they are equal for a loose comparison (magic hashes)
+		$this->assertEquals('0e462097431906509019562988736854', md5('240610708'));
+		$this->assertEquals('0e830400451993494058024219903391', md5('QNKCDZO'));
+		$this->assertFalse(dol_verifyHash('QNKCDZO', md5('240610708'), '3'), 'Two magic hashes must not match');
+		$this->assertTrue(dol_verifyHash('240610708', md5('240610708'), '3'));
+	}
+
+	/**
 	 * testGetRandomPassword
 	 *
 	 * @return int
@@ -549,6 +568,17 @@ class SecurityTest extends CommonClassTest
 
 		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
+
+		// A call with an empty features parameter must refuse the access, even for a user with
+		// all the permissions: no permission can be checked, so nothing may be allowed.
+		$result = restrictedArea($user, '', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with an empty features parameter must return 0 (access refused)');
+
+		$result = restrictedArea($user, '   ', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a features parameter of spaces must return 0 (access refused)');
+
+		$result = restrictedArea($user, null, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a null features parameter must return 0 (access refused)');
 	}
 
 	/**
@@ -586,6 +616,55 @@ class SecurityTest extends CommonClassTest
 		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
 	}
 
+	/**
+	 * testRestrictedAreaBank
+	 *
+	 * restrictedArea() accepts 'bank' (the module name given by fetchObjectByElement() for a bank account, used by the
+	 * ajax pages like ajaxtooltip.php) as an alias of 'banque': the right to check is banque->lire, nothing else.
+	 *
+	 * @return void
+	 */
+	public function testRestrictedAreaBank()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testRestrictedAreaBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
+
+		try {
+			// The right to read bank accounts is enough (whatever the other rights of the module)
+			$reader = new User($db);
+			$reader->id = $user->id;
+			$reader->entity = $user->entity;
+			$reader->rights = new stdClass();
+			$reader->rights->banque = new stdClass();
+			$reader->rights->banque->lire = 1;
+			$reader->rights->banque->cheque = 0;
+			$this->assertEquals(1, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature bank');
+			$this->assertEquals(1, restrictedArea($reader, 'banque', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature banque');
+
+			// Without the right to read bank accounts, the access is refused even with the right on cheque receipts
+			$reader->rights->banque->lire = 0;
+			$reader->rights->banque->cheque = 1;
+			$this->assertEquals(0, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user without banque->lire must be refused with the feature bank');
+		} finally {
+			$account->delete($user);
+		}
+	}
+
 
 	/**
 	 * testDolSanitizeUrl
@@ -611,6 +690,25 @@ class SecurityTest extends CommonClassTest
 		$test = '/javas:cript/google.com';
 		$result = dol_sanitizeUrl($test);
 		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl C');
+
+		// A normal relative url is not modified when we accept all urls
+		$test = '/comm/propal/card.php?id=23&search_ref=a:b@c;d';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals($test, $result, 'Test on dol_sanitizeUrl D: a url without evil chars is unchanged with type 0');
+
+		// A raw < or > (that a browser never sends in a url) is encoded, so it can not close an html tag or an inline script block
+		$test = '/comm/propal/card.php?id=23&x=</script><b>X</b>';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script%3E%3Cb%3EX%3C/b%3E', $result, 'Test on dol_sanitizeUrl E: < and > are encoded');
+
+		$test = '/comm/propal/card.php?id=23&x=</script/x';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script/x', $result, 'Test on dol_sanitizeUrl F: < is encoded even with no closing >');
+
+		$test = '/x?a=<img src=x onerror=alert(1)>';
+		$result = dol_sanitizeUrl($test);
+		$this->assertStringNotContainsString('<', $result, 'Test on dol_sanitizeUrl G');
+		$this->assertStringNotContainsString('>', $result, 'Test on dol_sanitizeUrl G');
 	}
 
 	/**
@@ -1650,6 +1748,51 @@ class SecurityTest extends CommonClassTest
 		$result = dol_htmlwithnojs($s);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($s, $result, 'Test for default, on a string with a LF inside');
+
+		return 0;
+	}
+
+	/**
+	 * testDolTotp
+	 *
+	 * @return	int
+	 */
+	public function testDolTotp()
+	{
+		// Test vectors of the appendix B of the RFC 6238, with the seed '12345678901234567890' and SHA-1
+		$secret = dolTotpBase32Encode('12345678901234567890');
+		$this->assertEquals('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', $secret, 'Base32 encoding of the seed of the RFC 6238');
+
+		$vectors = array(59 => '94287082', 1111111109 => '07081804', 1111111111 => '14050471', 1234567890 => '89005924', 2000000000 => '69279037', 20000000000 => '65353130');
+		foreach ($vectors as $timestamp => $expectedcode) {
+			$result = dolTotpGetCode($secret, (int) floor($timestamp / 30), 8);
+			print __METHOD__." timestamp=".$timestamp." result=".$result."\n";
+			$this->assertEquals($expectedcode, $result, 'Test vector of the RFC 6238 at timestamp '.$timestamp);
+		}
+
+		// A generated secret must be a 160 bits value, as recommended by the RFC 4226
+		$secret = dolTotpNewSecret();
+		$this->assertEquals(32, strlen($secret), 'A generated secret must be 32 base32 chars');
+		$this->assertEquals(20, strlen(dolTotpBase32Decode($secret)), 'A generated secret must decode to 20 bytes');
+
+		// The spaces of a key typed by hand must be ignored
+		$this->assertEquals(dolTotpBase32Decode($secret), dolTotpBase32Decode(chunk_split($secret, 4, ' ')), 'Spaces in a base32 key must be ignored');
+
+		// A code is accepted on its own period and on the neighbouring ones, to tolerate a clock offset
+		$now = dol_now();
+		$step = (int) floor($now / 30);
+		$this->assertEquals($step, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step), $now), 'The code of the current period must be accepted');
+		$this->assertEquals($step - 1, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step - 1), $now), 'The code of the previous period must be accepted');
+		$this->assertEquals($step + 1, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step + 1), $now), 'The code of the next period must be accepted');
+		$this->assertEquals(0, dolTotpCheckCode($secret, dolTotpGetCode($secret, $step - 2), $now), 'The code of a period too far must be refused');
+		$this->assertEquals(0, dolTotpCheckCode($secret, '123', $now), 'A code of a wrong length must be refused');
+		$this->assertEquals(0, dolTotpCheckCode($secret, 'abcdef', $now), 'A code with no digit must be refused');
+		$this->assertEquals(0, dolTotpCheckCode('', dolTotpGetCode($secret, $step), $now), 'A check with no secret must be refused');
+
+		// The URI shown as a QR code must carry the parameters expected by the authenticator applications
+		$result = dolTotpGetUri('mylogin', $secret, 'MyCompany');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('otpauth://totp/MyCompany:mylogin?secret='.$secret.'&issuer=MyCompany&algorithm=SHA1&digits=6&period=30', $result, 'Test of the otpauth URI');
 
 		return 0;
 	}

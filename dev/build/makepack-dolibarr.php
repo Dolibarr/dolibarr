@@ -638,6 +638,8 @@ if ($nboftargetok) {
 		run("rm -fr $BUILDROOT/$PROJECT/.stickler.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.travis.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.tx");
+		run("rm -fr $BUILDROOT/$PROJECT/.vibe");
+		run("rm -fr $BUILDROOT/$PROJECT/.vibeignore");
 		run("rm -f  $BUILDROOT/$PROJECT/build.xml");
 		run("rm -fr $BUILDROOT/$PROJECT/pyproject.toml");
 

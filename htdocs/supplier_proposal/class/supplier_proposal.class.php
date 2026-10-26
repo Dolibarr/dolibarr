@@ -19,7 +19,8 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,13 +182,17 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string 	Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
 
 	/**
 	 * @var string
 	 */
 	public $mode_reglement_code;
 	/**
-	 * @deprecated Use $mode_reglement_code
+	 * @deprecated 	Use $mode_reglement_code
 	 * @var string	Mode reglement
 	 */
 	public $mode_reglement;
@@ -567,6 +572,31 @@ class SupplierProposal extends CommonObject
 						return -1;
 					}
 				}
+
+				// Predefine quantity according to packaging (same rule as for supplier orders)
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+					$prod = new Product($this->db);
+					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+					$prod->get_buyprice(($fk_fournprice > 0 ? (int) $fk_fournprice : 0), (float) $qty, $fk_product, 'none', $this->socid);
+
+					$newqty = $this->roundQtyToPackaging($qty, $prod->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+
+					// Enforce the supplier minimum purchase quantity on top of packaging rounding: if the line is below
+					// the supplier minimum, round the minimum itself up to the next packaging multiple.
+					if (!empty($prod->fourn_qty) && (float) $qty > 0 && (float) $qty < (float) $prod->fourn_qty) {	// A negative quantity (return) is not concerned by the minimum purchase quantity
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $prod->fourn_qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval((float) $prod->fourn_qty / (float) $prod->packaging) + 1;
+							$qty = (float) price2num((float) $prod->packaging * $coeff, 'MS');
+						} else {
+							$qty = (float) $prod->fourn_qty;
+						}
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
 			} else {
 				$product_type = $type;
 			}
@@ -604,7 +634,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -754,7 +785,12 @@ class SupplierProposal extends CommonObject
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_options = [], $ref_supplier = '', $fk_unit = 0, $pu_ht_devise = 0)
 	{
-		global $mysoc;
+		global $mysoc, $langs;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -797,6 +833,23 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
+			// Round the quantity to the packaging before computing the amounts of the line,
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+				$tmpline = new SupplierProposalLine($this->db);
+				if ($tmpline->fetch($rowid) > 0 && $tmpline->fk_product > 0) {
+					$prod = new Product($this->db);
+					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+					$prod->get_buyprice(($fk_fournprice > 0 ? (int) $fk_fournprice : (int) $tmpline->fk_fournprice), (float) $qty, $tmpline->fk_product, 'none', $this->socid);
+
+					$newqty = $this->roundQtyToPackaging($qty, $prod->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+				}
+			}
+
 			$tabprice = calcul_price_total(
 				$qty,
 				$pu,
@@ -812,7 +865,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -941,6 +995,11 @@ class SupplierProposal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
+			if ($this->id > 0 && (int) $line->fk_supplier_proposal !== (int) $this->id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
 			if ($line->delete($user) > 0) {
 				$this->update_price(1);
 
@@ -991,9 +1050,11 @@ class SupplierProposal extends CommonObject
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
 
-		// Multicurrency
-		if (!empty($this->multicurrency_code)) {
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+		} elseif (!empty($this->multicurrency_code)) {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = getDolCurrency();
@@ -1035,8 +1096,8 @@ class SupplierProposal extends CommonObject
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
 		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "null");
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'" . $this->db->escape($this->deposit_percent) . "'" : 'NULL');
@@ -1093,6 +1154,16 @@ class SupplierProposal extends CommonObject
 					$num = count($this->lines);
 
 					for ($i = 0; $i < $num; $i++) {
+						if (!is_object($this->lines[$i])) {	// Lines coming from the REST API are plain arrays
+							// Build a real line object: the code below calls methods on it
+							// (getPriceBaseType), which an array cannot answer.
+							$lineobj = new SupplierProposalLine($this->db);
+							foreach ($this->lines[$i] as $key => $val) {
+								$lineobj->$key = $val;
+							}
+							$this->lines[$i] = $lineobj;
+						}
+
 						// Reset fk_parent_line for no child products and special product
 						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
 							$fk_parent_line = 0;
@@ -1291,7 +1362,7 @@ class SupplierProposal extends CommonObject
 	{
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
-		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
+		$sql .= ", p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as date_modification";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
@@ -1360,6 +1431,7 @@ class SupplierProposal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
 				$this->extraparams = (array) (!empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array());
@@ -1479,6 +1551,65 @@ class SupplierProposal extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *  Update the header fields of the price request that can be edited without a dedicated action
+	 *
+	 *  @param	User	$user		Object user that modify
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function update($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET";
+		$sql .= " fk_projet = ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_cond_reglement = ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+		$sql .= ", fk_mode_reglement = ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+		$sql .= ", fk_account = ".($this->fk_account > 0 ? ((int) $this->fk_account) : "null");
+		$sql .= ", fk_shipping_method = ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
+		$sql .= ", date_livraison = ".($this->delivery_date ? "'".$this->db->idate($this->delivery_date)."'" : "null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PROPOSAL_SUPPLIER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if ($error) {
+			$this->error = implode(', ', $this->errors);
+			$this->db->rollback();
+			return -1 * $error;
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
@@ -1833,7 +1964,7 @@ class SupplierProposal extends CommonObject
 	 *	Update ProductFournisseur
 	 *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		Product $product				contain information to update
+	 * 	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User	$user					Object user
 	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
@@ -1856,7 +1987,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Create Price Fournisseur
 	 *
-	 *	@param		ProductFournisseur 	$product	Object Product TODO: Determine the correct type
+	 *	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User				$user		Object user
 	 *	@return     int								Return integer <0 if KO, >0 if OK
 	 */
@@ -2171,7 +2302,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT c.rowid, GREATEST(c.tms, cef.tms) as date_modification,";
+		$sql = "SELECT c.rowid, GREATEST(c.tms, COALESCE(cef.tms, c.tms)) as date_modification,";
 		$sql .= " c.datec as date_creation, c.date_valid as date_validation, c.date_cloture as date_closure,";
 		$sql .= " c.fk_user_author, c.fk_user_modif, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";

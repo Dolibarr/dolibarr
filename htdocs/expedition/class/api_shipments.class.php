@@ -4,6 +4,7 @@
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +189,7 @@ class Shipments extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving shipments list : '.$this->db->lasterror());
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -236,6 +237,13 @@ class Shipments extends DolibarrApi
 
 			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
+
+		// A standalone shipment has no source order line to point to: its lines are free
+		// lines, recorded with addlinefree() exactly as the shipment card records them.
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($request_data['origin_id']) && !isset($request_data['origin_type'])) {
+			return $this->createStandalone($request_data['lines'] ?? array());
+		}
+
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
@@ -265,6 +273,75 @@ class Shipments extends DolibarrApi
 		if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
 		}
+
+		return $this->shipment->id;
+	}
+
+	/**
+	 * Create a standalone shipment (no source order) and its free lines
+	 *
+	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @return  int              ID of shipment created
+	 * @throws  RestException
+	 */
+	private function createStandalone($lines)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		if (!is_array($lines)) {
+			throw new RestException(400, 'Field lines must be an array');
+		}
+		$this->shipment->lines = array();
+
+		$this->db->begin();
+
+		if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
+			throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
+		}
+
+		foreach ($lines as $line) {
+			if (!is_array($line)) {
+				$this->db->rollback();
+				throw new RestException(400, 'Each line must be an object');
+			}
+			$fk_product = (int) ($line['fk_product'] ?? 0);
+			$description = sanitizeVal((string) ($line['description'] ?? ($line['desc'] ?? '')), 'restricthtml');
+			$qty = (float) price2num($line['qty'] ?? '', 'MS');
+			$fk_unit = isset($line['fk_unit']) ? (int) $line['fk_unit'] : null;
+
+			$error = '';
+			if (!isset($line['qty']) || $line['qty'] === '') {
+				$error = 'Field qty is mandatory';
+			} elseif ($qty < 0) {
+				$error = 'Field qty cannot be negative';
+			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
+				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && $description === '') {
+				$error = 'A line needs a fk_product or a description';
+			} elseif ($fk_product > 0) {
+				$product = new Product($this->db);
+				if ($product->fetch($fk_product) <= 0) {
+					$error = 'Product '.$fk_product.' not found';
+				} elseif ($fk_unit === null) {
+					$fk_unit = $product->fk_unit;
+				}
+			}
+			if ($error !== '') {
+				$this->db->rollback();
+				throw new RestException(400, $error);
+			}
+
+			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
+			$rang = (int) ($line['rang'] ?? 0);
+
+			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
+			}
+		}
+
+		$this->db->commit();
 
 		return $this->shipment->id;
 	}
@@ -305,17 +382,20 @@ class Shipments extends DolibarrApi
 	/**
 	 * Add a line to a given shipment
 	 *
-	 * A shipment line always references the order line it ships (fk_origin_line):
-	 * the shipped quantity relates to that order line. A line can only be added
-	 * while the shipment is still a draft, before any stock movement.
+	 * A line of a shipment created from an order references the order line it ships
+	 * (fk_origin_line): the shipped quantity relates to that order line.
+	 * A shipment without order (SHIPMENT_STANDALONE) has free lines instead: give
+	 * fk_product and/or description, but no fk_origin_line.
+	 * A line can only be added while the shipment is still a draft, before any stock movement.
 	 * Lines managed by lot/serial (batch) are not supported here (the quantity is
 	 * split by lot in expeditiondet_batch) - use the dedicated dispatch flow instead.
 	 *
-	 * @param int   $id                 Id of shipment to update
-	 * @param int   $fk_origin_line     Id of the order line shipped by this line			{@from body}{@required true}
-	 * @param float $qty                Quantity to ship for this line						{@from body}{@required true}{@min 1}
-	 * @param int   $warehouse_id       Source warehouse id (may be optional depending on STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)	{@from body}{@required false}
-	 * @param int   $fk_product         Product id (optional, defaults to the order line product)	{@from body}{@required false}
+	 * @param int    $id                 Id of shipment to update
+	 * @param int    $fk_origin_line     Id of the order line shipped by this line (mandatory for a shipment created from an order)	{@from body}{@required false}
+	 * @param float  $qty                Quantity to ship for this line						{@from body}{@required true}{@min 1}
+	 * @param int    $warehouse_id       Source warehouse id (may be optional depending on STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)	{@from body}{@required false}
+	 * @param int    $fk_product         Product id (optional, defaults to the order line product)	{@from body}{@required false}
+	 * @param string $description        Description of a free line of a shipment without order	{@from body}{@required false}
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -327,7 +407,7 @@ class Shipments extends DolibarrApi
 	 * @throws RestException 405
 	 * @throws RestException 500
 	 */
-	public function postLine($id, $fk_origin_line = 0, $qty = 0, $warehouse_id = 0, $fk_product = 0)
+	public function postLine($id, $fk_origin_line = 0, $qty = 0, $warehouse_id = 0, $fk_product = 0, $description = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(403);
@@ -348,6 +428,40 @@ class Shipments extends DolibarrApi
 		}
 
 		$fk_origin_line = (int) $fk_origin_line;
+
+		// A shipment without order has no order line to point to: add a free line, as the shipment card does.
+		if ($fk_origin_line <= 0 && empty($this->shipment->origin_id) && getDolGlobalString('SHIPMENT_STANDALONE')) {
+			$qty = (float) $qty;
+			$fk_product = (int) $fk_product;
+			$description = sanitizeVal((string) $description, 'restricthtml');
+			$fk_unit = null;
+
+			if ($qty <= 0) {
+				throw new RestException(400, 'Field qty is mandatory and must be greater than 0');
+			}
+			if ($fk_product > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$product = new Product($this->db);
+				if ($product->fetch($fk_product) <= 0) {
+					throw new RestException(400, 'Product '.$fk_product.' not found');
+				}
+				$fk_unit = $product->fk_unit;
+			} elseif (getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
+				throw new RestException(400, 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)');
+			} elseif ($description === '') {
+				throw new RestException(400, 'A line needs a fk_product or a description');
+			}
+
+			$lineId = $this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, -1, $description, 0, array(), (int) $warehouse_id);
+			if ($lineId <= 0) {
+				$msg = $this->shipment->errorsToString() ? $this->shipment->errorsToString() : 'Error while adding shipment line';
+				// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
+				throw new RestException(in_array($lineId, array(-1, -3, -4), true) ? 400 : 500, $msg);
+			}
+
+			return $lineId;
+		}
+
 		if ($fk_origin_line <= 0) {
 			throw new RestException(400, 'Field fk_origin_line is mandatory');
 		}
@@ -891,7 +1005,14 @@ class Shipments extends DolibarrApi
 			$data = array();
 		}
 		$shipment = array();
-		foreach (Shipments::$FIELDS as $field) {
+		// A standalone shipment carries no source document, exactly as the card
+		// allows when SHIPMENT_STANDALONE is enabled: do not demand an origin the
+		// user is entitled to omit.
+		$mandatory = Shipments::$FIELDS;
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($data['origin_id']) && !isset($data['origin_type'])) {
+			$mandatory = array_values(array_diff($mandatory, array('origin_id', 'origin_type')));
+		}
+		foreach ($mandatory as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

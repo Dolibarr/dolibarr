@@ -105,12 +105,12 @@ if ($line->qty > 0) { ?>
 	</td>
 	<td class="linecoluht"></td>
 	<?php
-	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecoluht_currency"></td>';
-	}
 	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		print '<td class="linecoluttc"></td>';
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+		print '<td class="linecoluht_currency"></td>';
 	}
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		print '<td class="linecoluttc_currency"></td>';
@@ -154,10 +154,10 @@ if ($line->qty > 0) { ?>
 	// Handling if situation invoices conf is enabled
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		print '<td class="linecolcycleref nowrap right"></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			print '<td  class="nowrap right"></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
+			print '<td></td>';
 		}
-		print '<td class="linecolcycleref2 right nowrap"></td>';
+		print '<td class="linecolcycleref2"></td>';
 	}
 
 	// Handling colspan if margin module is enabled

@@ -121,7 +121,7 @@ class Utils
 					if ($choice == 'tempfilesold') {
 						foreach ($filesarray as $key => $val) {
 							if ($val['date'] > ($now - ($nbsecondsold))) {
-								unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
+								unset($filesarray[$key]); // Discard temp dir if modified during the last $nbsecondsold
 							}
 						}
 					}
@@ -332,6 +332,15 @@ class Utils
 					$langs->load("errors");
 					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
 					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+					return -1;
+				}
+				// In low memory mode, the output of the dump is piped into an OS compressor that must be allowed too
+				$compressorcommands = array('gz' => 'gzip', 'bz' => 'bzip2', 'zstd' => 'zstd');
+				if ($lowmemorydump && !empty($compressorcommands[$compression]) && !in_array($compressorcommands[$compression], $arrayofallowedcommand)) {
+					$langs->loadLangs(array("admin", "errors"));
+					dol_syslog("Compression command ".$compressorcommands[$compression]." is not inside the allowed commands", LOG_WARNING);
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('NotAvailableCommandNotAllowed', $compressorcommands[$compression]);
 					return -1;
 				}
 			}
@@ -1011,7 +1020,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
 					$this->errors[] = $this->error;
 				}
@@ -1025,7 +1035,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
 					$this->errors[] = $this->error;
 				}

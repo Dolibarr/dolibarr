@@ -54,10 +54,13 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $hookmanager->initHooks(array('ticketnote'));
-$result = restrictedArea($user, 'ticket', $id, 'ticket');
 
 $object = new Ticket($db);
 $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'ticket', $id, 'ticket');
 
 $permissiontoadd = $user->hasRight('ticket', 'write');
 $permissionnote = $user->hasRight('ticket', 'write'); // Used by the include of actions_setnotes.inc.php

@@ -645,7 +645,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew =
 /**
  * 	Get list of entity id to use.
  *
- * 	@param	string	$element		Current element
+ * 	@param	string	$element		Current element. The value is usually coming from $object->element property. Example:
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
  *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
@@ -688,7 +688,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans', 'extrafields');
 		if (getDolGlobalString('HOLIDAY_ALLOW_ZERO_IN_DIC')) { // this constant break the dictionary admin without Multicompany
 			$addzero[] = 'c_holiday_types';
 		}
@@ -1681,7 +1681,7 @@ function dol_include_once($relpath, $classname = '')
 /**
  *	Return path of url or filesystem. Can check into alternate dir or alternate dir + main dir depending on value of $returnemptyifnotfound.
  *
- * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
+ * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: '/mymoduledir/myfile'
  *  @param	int		$type						0=Used for a Filesystem path,
  *  											1=Used for an URL path (output relative),
  *  											2=Used for an URL path (output full path using same host that current url),
@@ -1754,7 +1754,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 			$regs = array();
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
-				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
+				//print $key.' - '.$dirroot.' - '.$path.' - '.$conf->file->dol_url_root[$key].' - '.$regs[1].'<br>'."\n";
 				//if (file_exists($dirroot.'/'.$regs[1])) {
 				if (@file_exists($dirroot . '/' . $regs[1])) {	// avoid [php:warn]
 					if ($type == 1) {
@@ -2086,7 +2086,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 }
 
 /**
- *  Clean a string to use it as an URL (into a href or src attribute)
+ *  Clean a string to use it as an URL (into a href or src attribute, or into a js string that is a location).
+ *  Raw '<' and '>' are url encoded (a browser always sends them encoded, so a real URL never holds them).
  *
  *  @param      string		$stringtoclean		String to clean
  *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
@@ -2118,6 +2119,9 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	// A raw < or > can not be part of a valid URL. We encode them, so the result can not open an html tag or close an inline script block (</script does not need a >).
+	$stringtoclean = str_replace(array('<', '>'), array('%3C', '%3E'), $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -2323,7 +2327,7 @@ function dolSlugify($stringtoslugify)
  * Returns text escaped for inclusion into JavaScript code.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and " with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -2351,7 +2355,8 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr((string) $stringtoescape, $substitjs);
+	// Escape also "</script" so the string can't close the <script> block that contains it ("<\/" is "</" in a JS string)
+	return preg_replace('/<\/(script)/i', '<\\/$1', strtr((string) $stringtoescape, $substitjs));
 }
 
 /**
@@ -2426,7 +2431,9 @@ function dol_escape_all($stringtoescape)
  */
 function dol_escape_xml($stringtoescape)
 {
-	return $stringtoescape;
+	$stringtoescape = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stringtoescape);	// Characters not allowed in XML 1.0
+
+	return htmlspecialchars($stringtoescape, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 
@@ -3107,7 +3114,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'tzserver', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array{}|array{seconds:int<0,59>,minutes:int<0,59>,hours:int<0,23>,mday:int<1,31>,wday:int<0,6>,mon:int<1,12>,year:int<0,9999>,yday:int<0,366>,0:int}						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -3128,7 +3135,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-	if ($forcetimezone) {
+	if ($forcetimezone && $forcetimezone != 'tzserver') {
 		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
 	$arrayinfo = array(
@@ -3642,7 +3649,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		return '';
 	}
 	if (empty($countrycode)) {
-		$countrycode = $mysoc->country_code;
+		$countrycode = (is_object($mysoc) ? $mysoc->country_code : '');
 	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
@@ -4035,7 +4042,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
  *  @param	int		$showname	1=Show reverse domain name instead of IP
- * 	@return string 				Formatted IP, with country if GeoIP module is enabled
+ * 	@return string 				Formatted IP, with country (and city, if the GeoIP datafile is a City database) if GeoIP module is enabled
  */
 function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
@@ -4057,6 +4064,11 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
 			$ret .= '&nbsp;';
 		} else {
 			// Nothing
+		}
+
+		$cityname = dolGetCityFromIp($ip);
+		if ($cityname) {	// Only set if the GeoIP datafile in use is a City database
+			$ret .= dol_escape_htmltag($cityname) . '&nbsp;';
 		}
 	}
 
@@ -4150,6 +4162,38 @@ function dolGetCountryCodeFromIp($ip)
 	}
 
 	return $countrycode;
+}
+
+/**
+ * 	Return a city name from IP. Empty string if not found or if the configured GeoIP
+ *  datafile is a Country-only database (no city record available in that case).
+ *
+ * 	@param	string	$ip			IP
+ * 	@return string 				City name, or ''
+ */
+function dolGetCityFromIp($ip)
+{
+	$cityname = '';
+
+	if (isModEnabled('geoipmaxmind')) {
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				$cityname = $geoip->getCityNameFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
+	}
+
+	return $cityname;
 }
 
 
@@ -4349,15 +4393,16 @@ function dolGetFirstLetters($s, $nbofchar = 1)
  *
  * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
+ * @param	int			$binarycount		Do a binary count (count number of bytes in string, not number of human characters)
  * @return  int								Length of string
  */
-function dol_strlen($string, $stringencoding = 'UTF-8')
+function dol_strlen($string, $stringencoding = 'UTF-8', $binarycount = 0)
 {
 	if (is_null($string)) {
 		return 0;
 	}
 
-	if (function_exists('mb_strlen')) {
+	if (function_exists('mb_strlen') && empty($binarycount)) {
 		return mb_strlen($string, $stringencoding);
 	} else {
 		return strlen($string);
@@ -4538,7 +4583,23 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
+		$curcode = $currency_code;
+		if ($curcode === 'auto') {
+			$curcode = $conf->currency;
+		}
+
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		$rounding = min($max_decimals_unit, $max_decimals_tot);
 	}
 	$nbdecimal = $rounding;
 
@@ -4584,11 +4645,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$nbdecimal = dol_strlen($decpart);
 	}
 
+	$curcode = $currency_code;
+	if ($curcode === 'auto') {
+		$curcode = $conf->currency;
+	}
+
+	$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN');
+	if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode) && getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode) !== '') {
+		$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode);
+	}
+
 	// If nbdecimal is higher than max to show
-	$nbdecimalmaxshown = (int) str_replace('...', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'));
+	$nbdecimalmaxshown = (int) str_replace('...', '', $max_decimals_shown);
 	if ($trunc && $nbdecimal > $nbdecimalmaxshown) {
 		$nbdecimal = $nbdecimalmaxshown;
-		if (preg_match('/\.\.\./i', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'))) {
+		if (preg_match('/\.\.\./i', $max_decimals_shown)) {
 			// If output is truncated, we show ...
 			$end = '...';
 		}
@@ -4596,10 +4667,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// If force rounding
 	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
-		if ($forcerounding === 'MU') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
-		} elseif ($forcerounding === 'MT') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		if ($forcerounding === 'MU' || $forcerounding === 'CU') {
+			$nbdecimal = $max_decimals_unit;
+		} elseif ($forcerounding === 'MT' || $forcerounding === 'CT') {
+			$nbdecimal = $max_decimals_tot;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = (int) $forcerounding;
 		}
@@ -4651,6 +4733,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
  * 					                        Default 0 if unknown.
+ *  @param	string			$currencycode	Currency code
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9c', '', 0)   => '9c', price2num('W9c', '', 1)   => 'W9c', price2num('W9c', '', 2)   => '9c'
@@ -4660,7 +4743,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *
  *	@see    price()							Opposite function of price2num
  */
-function price2num($amount, $rounding = '', $option = 0)
+function price2num($amount, $rounding = '', $option = 0, $currencycode = '')
 {
 	global $langs;
 
@@ -4754,18 +4837,39 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			}
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			}
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
-		} elseif ($rounding == 'CU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
-		} elseif ($rounding == 'CT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
-		} elseif ($rounding == 'CR') {
-			$currencycode = (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') ? getDolCurrency() : '';
-			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . ($currencycode ? '_' . $currencycode : '');
+		} elseif ($rounding == 'CU' || preg_match('/^CU_([a-zA-Z]+)$/', (string) $rounding, $regscu)) {
+			$cur = !empty($regscu[1]) ? $regscu[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
+			}
+		} elseif ($rounding == 'CT' || preg_match('/^CT_([a-zA-Z]+)$/', (string) $rounding, $regsct)) {
+			$cur = !empty($regsct[1]) ? $regsct[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));
+			}
+		} elseif ($rounding == 'CR' || preg_match('/^CR_([a-zA-Z]+)$/', (string) $rounding, $regscr)) {
+			$cur = !empty($regscr[1]) ? $regscr[1] : $currencycode;
+			if (empty($cur) && (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+				$cur = getDolCurrency();
+			}
+			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . (!empty($cur) ? '_' . $cur : '');
 			$nbofdectoround = getDolGlobalInt($rounding_const, getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_RATE', 8));
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
@@ -4825,6 +4929,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 
 	if (empty($thirdparty_seller) || !is_object($thirdparty_seller)) {
 		$thirdparty_seller = $mysoc;
+	}
+	// $mysoc may be null when called from a page with NOREQUIRESOC (like viewimage.php). With no seller, there is no localtax.
+	if (!is_object($thirdparty_seller)) {
+		return 0;
 	}
 
 	dol_syslog(
@@ -6088,42 +6196,40 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$dom->loadHTML('<?xml encoding="UTF-8"><div id="' . $wrapperId . '">' . $stringtoclean . '</div>', LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 		error_reporting($savwarning);
 
-		if ($dom instanceof DOMDocument) {
-			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
-				$el = $els->item($i);
-				if (!$el instanceof DOMElement) {
-					continue;
-				}
-				$attrs = $el->attributes;
-				for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
-					//var_dump($attrs->item($ii));
-					if (!empty($attrs->item($ii)->name)) {
-						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
-							// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
-							$els->item($i)->removeAttribute($attrs->item($ii)->name);
-						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
-							// If attribute is 'style'
-							$valuetoclean = $attrs->item($ii)->value;
+		for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
+			$el = $els->item($i);
+			if (!$el instanceof DOMElement) {
+				continue;
+			}
+			$attrs = $el->attributes;
+			for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
+				//var_dump($attrs->item($ii));
+				if (!empty($attrs->item($ii)->name)) {
+					if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+						// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
+						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+						// If attribute is 'style'
+						$valuetoclean = $attrs->item($ii)->value;
 
-							if (isset($valuetoclean)) {
-								do {
-									$oldvaluetoclean = $valuetoclean;
-									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
-									}
+						if ($valuetoclean !== null) {
+							do {
+								$oldvaluetoclean = $valuetoclean;
+								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+									$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
+								}
 
-									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
-									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
-									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
-								} while ($oldvaluetoclean != $valuetoclean);
-							}
-
-							$attrs->item($ii)->value = $valuetoclean;
+								// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+								$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+								$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
+							} while ($oldvaluetoclean != $valuetoclean);
 						}
+
+						$attrs->item($ii)->value = $valuetoclean;
 					}
 				}
 			}
@@ -6987,7 +7093,12 @@ function safeArrayMap($callback, array $array)
 
 
 /**
- * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
+ * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'.
+ *
+ * Note: This function can be called thousand of times, so it should just make init of memory vars, with no db access. If you need a dynamic coming from the db,
+ * the return entry must be a simple "lazy load" string, like this example:
+ *   $substitutionarray['__SUBSTITUTION_KEY__@lazyload'] = '/pathtoclass.class.php:Object:methodToCall:id';
+ * The call of the dynamic code methodToCall() to read data will be done by the function make_substitutions() but only if the key __SUBSTITUTION_KEY__ is found into the source string.
  *
  * @param	Translate       $outputlangs    Output language
  * @param	int             $onlykey		1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
@@ -7020,7 +7131,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
-		if (is_object($user) && ($user instanceof User)) {
+		if (is_object($user)) {
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -7147,6 +7258,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = '__TICKET_TYPE_LABEL__';
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = '__TICKET_SEVERITY_LABEL__';
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = '__TICKET_CATEGORY_LABEL__';
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = '__TICKET_PUBLIC_URL__';
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = '__TICKET_MANAGEMENT_URL__';
 			}
 			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
@@ -7289,23 +7405,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (is_object($object) && $object->element == 'societe') {
 				/** @var Societe $object */
 				'@phan-var-force Societe $object';
-				$substitutionarray['__THIRDPARTY_ID__'] = $object->id ?? '';
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_ID__'] = ($object->id > 0 ? $object->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (string) $object->name;
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (string) $object->name_alias;
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
 				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
 				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone);
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax);
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ?: '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code;
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF3__'] = $object->idprof3 ?? '';
@@ -7329,7 +7445,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->thirdparty->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->thirdparty->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->thirdparty->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->thirdparty->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->thirdparty->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->thirdparty->idprof2 ?? '';
@@ -7441,6 +7557,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
 				$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
 				$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
+				// __TICKET_TYPE__, __TICKET_SEVERITY__ and __TICKET_CATEGORY__ hold the raw codes.
+				// An email usually needs the human readable labels instead.
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = empty($object->type_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = empty($object->severity_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = empty($object->category_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = dol_buildpath('/ticket/card.php', 2).'?track_id='.urlencode((string) $object->track_id);
 				$userstat = new User($db);
 				if ($object->fk_user_assign > 0) {
 					$userstat->fetch($object->fk_user_assign);
@@ -7701,8 +7824,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$mysocuselocaltax2 = false;
 		if ($mysoc instanceof Societe && !empty($mysoc->country_code)) {
 			$tmparray = $mysoc->useLocalTax(-1);
-			$mysocuselocaltax1 = $tmparray[1];
-			$mysocuselocaltax2 = $tmparray[2];
+			if (is_array($tmparray)) {
+				$mysocuselocaltax1 = $tmparray[1];
+				$mysocuselocaltax2 = $tmparray[2];
+			}
 		}
 
 		// Local taxes
@@ -8018,7 +8143,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
+ *  @param  array<string,string|int|float|null>	$substitutionarray		Array substitution old value => new value value
  *  @param  Translate		$outputlangs            Output language
  *  @param  ?CommonObject	$object                 Source object
  *  @param  ?mixed			$parameters       		Add more parameters (useful to pass product lines)
@@ -8461,6 +8586,93 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 
 
 /**
+ * Evaluate a condition made of simple terms, without eval(). Recognized terms, optionally preceded by '!', separated by '&&' or by '||'
+ * (but not both, so there is no precedence to handle), with no other parenthesis than the ones of the calls:
+ * isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'[, 'zzz']), $user->rights->xxx->yyy[->zzz], $user->admin, $conf->xxx->enabled,
+ * getDolGlobalString('XXX'), getDolGlobalInt('XXX'), $leftmenu == 'xxx', $mainmenu != 'xxx', and the literals 1, 0, true, false.
+ * The result is the one eval() would give (a property that is not set is false, no warning is raised), so verifCond() can use
+ * this function first and keep dol_eval() for the other conditions.
+ *
+ * @param	string		$s		Condition to evaluate
+ * @return	bool|null			Result of the condition, or null if the condition is not made of the known terms only
+ * @see verifCond(), dol_eval()
+ */
+function dolEvalSimpleCondition($s)
+{
+	global $conf, $user, $leftmenu, $mainmenu;
+
+	$s = trim((string) $s);
+	if ($s === '1' || $s === 'true') {
+		return true;
+	}
+	if ($s === '0' || $s === 'false') {
+		return false;
+	}
+	// Only the characters of the known terms, and parentheses only around the quoted arguments of a call
+	if (!preg_match('/^[a-zA-Z0-9_$>=!&|\s\'",()-]+$/', $s)) {
+		return null;
+	}
+	if (strpbrk($s, '()') !== false && !preg_match('/^(?:[^()]*\((?:\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)(?:,\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)*\))*[^()]*$/', $s)) {
+		return null;
+	}
+	$hasand = (strpos($s, '&&') !== false);
+	$hasor = (strpos($s, '||') !== false);
+	if ($hasand && $hasor) {
+		return null;
+	}
+	$terms = ($hasor ? explode('||', $s) : ($hasand ? explode('&&', $s) : array($s)));
+
+	$result = null;
+	foreach ($terms as $term) {
+		$term = trim($term);
+		$negation = false;
+		if (substr($term, 0, 1) === '!') {
+			$negation = true;
+			$term = ltrim(substr($term, 1));
+		}
+		$reg = array();
+		if (preg_match('/^isModEnabled\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = isModEnabled($reg[1]);
+		} elseif (preg_match('/^\$user->hasRight\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*(?:,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*)?\)$/', $term, $reg)) {
+			$value = (bool) (!empty($reg[3]) ? $user->hasRight($reg[1], $reg[2], $reg[3]) : $user->hasRight($reg[1], $reg[2]));
+		} elseif (preg_match('/^\$user->rights->([a-zA-Z0-9_]+)->([a-zA-Z0-9_]+)(?:->([a-zA-Z0-9_]+))?$/', $term, $reg)) {
+			if (!empty($reg[3])) {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]}->{$reg[3]});
+			} else {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]});
+			}
+		} elseif ($term === '$user->admin') {
+			$value = !empty($user->admin);
+		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
+			$value = !empty($conf->{$reg[1]}->enabled);
+		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
+		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
+			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
+			$value = ($reg[2] == '==' ? ($current == $reg[3]) : ($current != $reg[3]));
+		} elseif ($term === '1' || $term === 'true') {
+			$value = true;
+		} elseif ($term === '0' || $term === 'false') {
+			$value = false;
+		} else {
+			return null;	// Not a known term, the caller will use eval()
+		}
+		if ($negation) {
+			$value = !$value;
+		}
+		if ($result === null) {
+			$result = $value;
+		} elseif ($hasor) {
+			$result = ($result || $value);
+		} else {
+			$result = ($result && $value);
+		}
+	}
+
+	return $result;
+}
+
+/**
  * Verify if condition in string is ok or not
  *
  * @param 	string	$strToEvaluate		String with condition to check
@@ -8474,6 +8686,12 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
+		// Most of the conditions are simple (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'), $conf->xxx->enabled...): they are
+		// evaluated directly, without eval() and its checks, when they match one of the known shapes.
+		$rights = dolEvalSimpleCondition($strToEvaluate);
+		if ($rights !== null) {
+			return $rights;
+		}
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
@@ -10852,6 +11070,13 @@ function getElementProperties($elementType)
 		$subelement = $elementType;
 		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
 		$subdir = '/'.$elementType;
+	} elseif ($elementType == 'evaluationdet') {
+		$classpath = 'hrm/class';
+		$classfile = 'evaluationdet';
+		$classname = 'EvaluationLine';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'hrm';
+		$subelement = 'evaluationdet';
+		$table_element = 'hrm_evaluationdet';
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -10885,6 +11110,12 @@ function getElementProperties($elementType)
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
+	} elseif ($elementType == 'cashcontrol') {
+		$classpath = 'compta/cashcontrol/class';
+		$classfile = 'cashcontrol';
+		$classname = 'CashControl';
+		$module = 'takepos';
+		$table_element = 'pos_cash_fence';
 	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';
@@ -11172,7 +11403,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				}
 
 				$ret = $objecttmp->fetch($element_id, $element_ref);
-				if ($ret >= 0) {
+				if ($ret > 0) {
 					if (empty($objecttmp->module)) {
 						$objecttmp->module = $element_prop['module'];
 					}
@@ -11620,9 +11851,16 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Add fields that are ALWAYS forbidden when using USF search criteria
 	$newforbiddenfields[] = 'pass';
 	$newforbiddenfields[] = 'pass_crypted';
+	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	// An operand with more than one level of prefix (example: dbprefix.table.field) is not valid into a USF criteria,
+	// we neutralize it like a forbidden field to avoid any leak or SQL error based on db prefix existence
+	if (substr_count($operand, '.') > 1) {
+		return '1=1';
+	}
 
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {
@@ -11662,7 +11900,6 @@ function dolForgeSQLCriteriaCallback($matches)
 			$reg = array();
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
-				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
 				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
 			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
@@ -11949,6 +12186,86 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Function to remove parameters having their default value.
+ * By example, it could be useful to filter useless params from $_GET.
+ *
+ * @param array<string,string> $parameters An array containing a list of parameters to filter
+ *
+ * @return array<string,string> The filtered array cleaned from its default values.
+ */
+function dolRemoveDefaultParameters(array $parameters): array
+{
+	foreach ($parameters as $key => $value) {
+		if ($value == '' || $value == '-1') {
+			unset($parameters[$key]);
+		}
+	}
+
+	return $parameters;
+}
+
+/**
+ * Function to redirect search list forms from POST to GET request.
+ * The redirection is done only for search list forms following these conditions :
+ * - request parameter 'action' must be 'list'
+ * - request parameter 'formfilteraction' must be 'list'
+ * - request method must be 'POST'
+ * - request must not be a massaction request
+ * - string length of the redirection URL must be <= 2000
+ * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
+ *
+ * The goal of this function is to be able to avoid browser warning when going back to a search list page result when navigating in browser history.
+ * Typical case :
+ * - go to a search list page (propal list)
+ * - click on a propal item
+ * - go back in browser history
+ * - browser ask to resend post action (because search form list page return directly html content in the POST response)
+ *
+ * By redirecting POST request to a GET one, there will be not problem to go back to
+ * the search list page (because browser is going back to a GET page)
+ * Need to set the experimental conf MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE to 2000 (or to the max value allowed for GET string by the web server)
+ *
+ * @param string $context The current page context name
+ *
+ * @return void
+ */
+function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
+{
+	if (getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+		preg_match('/list$/', $context) &&
+		GETPOST('action') == 'list' &&
+		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
+		$_SERVER['REQUEST_METHOD'] == 'POST'
+	) {
+		// Detect if it is a simple search (not an massaction)
+		if (!GETPOST('massaction')) {
+			$postData = $_POST;
+
+			// Remove useless data for a simple search list request
+			unset($postData['massaction']);
+			unset($postData['confirmmassactioninvisible']);
+			unset($postData['token']);
+
+			$postData = dolRemoveDefaultParameters($postData);
+
+			// Prepare redirection URL
+			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
+			$urlParams = http_build_query($postData);
+			if ($urlParams !== '') {
+				$newLocationUrl .= '?' . $urlParams;
+			}
+
+			// Make a GET redirection if URL is not too long
+			$maxUrlLength = getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE");
+			if (strlen($newLocationUrl) <= $maxUrlLength) {
+				header('Location: ' . $newLocationUrl);
+				exit();
+			}
+		}
+	}
 }
 
 /**

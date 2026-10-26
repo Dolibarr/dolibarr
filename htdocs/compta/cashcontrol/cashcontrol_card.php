@@ -7,7 +7,7 @@
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,9 +255,9 @@ if ($action == "start" && $permissiontoadd) {
 
 	if (!$error) {
 		if (GETPOSTINT('closeday')) {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'gmt');
 		} else {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'gmt');
 		}
 		dol_syslog('The closing date will be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
 
@@ -449,6 +449,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		// Delete OK
@@ -1034,7 +1035,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($object->status == CashControl::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
 				if (!isALNERunningVersion()) {
 					if ($permissiontoreopen) {

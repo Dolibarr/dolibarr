@@ -72,7 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "stripe", "propal", "commercial"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "members", "paybox", "stripe", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -139,13 +139,13 @@ $creditor = $mysoc->name;
 $type = $source;
 if (!$action) {
 	if ($source && !$ref) {
+		$langs->load('errors');
 		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
 	}
 }
 
-// Preserve the public order page's existing no-fallback policy.
-$securekeyseed = getOnlineSignatureSecuritySeed((string) $source, $source != 'order');
-
+// Check securitykey
+$securekeyseed = getOnlineSignatureSecuritySeed((string) $source);
 if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, 'hash')) {
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
 }
@@ -175,6 +175,7 @@ if ($source == 'proposal') {
 	$object = new Expedition($db);
 	$result = $object->fetch(0, $ref);
 } else {
+	$langs->load('errors');
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
@@ -192,7 +193,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permiss
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$db->escape($object->note_private)."', date_signature = '".$db->idate(dol_now())."'";
+	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$db->escape((string) $object->note_private)."', date_signature = '".$db->idate(dol_now())."'";
 	$sql .= " WHERE rowid = ".((int) $object->id);
 
 	dol_syslog(__FILE__, LOG_DEBUG);
@@ -764,6 +765,7 @@ $parameters = array('source' => $source);
 $reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found) {
+	$langs->load('errors');
 	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($langs->transnoentitiesnoconv("ErrorBadParameters")).'</div></td></tr>'."\n";
 }
 

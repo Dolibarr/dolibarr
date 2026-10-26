@@ -23,12 +23,11 @@
  *		\remarks	To run this script as CLI:  phpunit FunctionsLibDragDropTest.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');

@@ -32,15 +32,14 @@ function getOnlineSignatureDefaultSecuritySeed()
 }
 
 /**
- * Resolve the configured security seed without changing the caller's fallback policy.
+ * Resolve the configured security seed, falling back to the instance seed.
  *
  * @param string $source Source code
- * @param bool $usedefault Whether to use the instance seed when no token is configured
  * @return string Security seed
  */
-function getOnlineSignatureSecuritySeed($source, $usedefault = true)
+function getOnlineSignatureSecuritySeed($source)
 {
-	$defaultsalt = $usedefault ? getOnlineSignatureDefaultSecuritySeed() : '';
+	$defaultsalt = getOnlineSignatureDefaultSecuritySeed();
 
 	return getDolGlobalString(dol_strtoupper($source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }

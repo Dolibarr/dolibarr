@@ -23,15 +23,17 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/extrafields.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();

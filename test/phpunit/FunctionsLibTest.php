@@ -30,12 +30,11 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -492,6 +491,42 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fk_soc:IN:'1','2=b')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
 		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a forbidden field with 2 levels of prefix (dbprefix.table.field) is also forbidden (protection against CVE-2026-89012 bypass)
+		$filter = "(dolibarr.u.pass_crypted:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(DOLIBARR.U.API_KEY:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(mydb.t.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(u.pass_temp:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that any other field with 2 levels of prefix is neutralized too (no db prefix existence oracle, no SQL error)
+		$filter = "(dolibarr.t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a field forbidden by the caller is also forbidden with 2 levels of prefix
+		$filter = "(dolibarr.u.salary:like:'1%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that valid filters with a single level of prefix still work
+		$filter = "(u.api_key:like:'ZZZZ%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('ref'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.ref:like:'SO-%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
@@ -1457,6 +1492,11 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_js($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
+
+		$input = "a</script><script>alert(1)</SCRIPT >";
+		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("a<\\/script><script>alert(1)<\\/SCRIPT >", $result, "Test closing script tag");
 	}
 
 
@@ -1715,6 +1755,71 @@ class FunctionsLibTest extends CommonClassTest
 
 		$a = verifCond('$user->hasMethodKo("facture", "read")');
 		$this->assertFalse($a);
+	}
+
+	/**
+	 * testVerifCondFastPath
+	 *
+	 * verifCond() evaluates the simple conditions with dolEvalSimpleCondition() instead of dol_eval(): both must give the same
+	 * result, and the conditions that are not simple must be left to dol_eval().
+	 *
+	 * @return	void
+	 */
+	public function testVerifCondFastPath()
+	{
+		global $conf, $user, $langs, $db, $leftmenu, $mainmenu;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$leftmenu = 'setup';
+		$mainmenu = 'home';
+		$conf->global->PHPUNIT_FASTPATH_STRING = 'abc';
+		$conf->global->PHPUNIT_FASTPATH_ZERO = '0';
+
+		// Simple conditions: the fast path must answer, with the result of dol_eval()
+		$simpleconditions = array(
+			'1', '0', 'true', 'false', ' 1 ',
+			'isModEnabled("societe")', "isModEnabled('societe')", 'isModEnabled("nonexistingmodulexyz")', '!isModEnabled("nonexistingmodulexyz")',
+			'$user->hasRight("facture", "read")', "\$user->hasRight('facture', 'lire')", '$user->hasRight("facture", "nonexistingperm")', '$user->hasRight("user", "user", "lire")',
+			'$user->rights->facture->lire', '$user->rights->user->user', '$user->rights->user->user->lire', '$user->rights->nonexistingmodulexyz->lire', '$user->rights->facture->lire->nonexistinglevel',
+			'$user->admin', '!$user->admin',
+			'$conf->societe->enabled', '$conf->nonexistingmodulexyz->enabled', '!$conf->nonexistingmodulexyz->enabled',
+			'getDolGlobalString("PHPUNIT_FASTPATH_STRING")', 'getDolGlobalString("PHPUNIT_FASTPATH_ZERO")', '!getDolGlobalString("PHPUNIT_FASTPATH_NOTSET")', 'getDolGlobalInt("PHPUNIT_FASTPATH_ZERO")', 'getDolGlobalInt("PHPUNIT_FASTPATH_STRING")',
+			'$leftmenu == "setup"', "\$leftmenu=='setup'", '$leftmenu != "setup"', '$mainmenu == "home"', '$mainmenu == "companies"', '$leftmenu == ""',
+			'isModEnabled("societe") && $user->hasRight("facture", "lire")', 'isModEnabled("societe") && isModEnabled("nonexistingmodulexyz")',
+			'isModEnabled("nonexistingmodulexyz") || isModEnabled("societe")', 'isModEnabled("nonexistingmodulexyz") || isModEnabled("othernonexistingxyz")',
+			'isModEnabled("societe") && !isModEnabled("nonexistingmodulexyz") && $leftmenu == "setup"', '$user->admin || $user->hasRight("user", "user", "lire")',
+		);
+		foreach ($simpleconditions as $cond) {
+			$fast = dolEvalSimpleCondition($cond);
+			$this->assertNotNull($fast, 'Condition must be recognized by the fast path: '.$cond);
+			$this->assertIsBool($fast, 'Fast path must return a boolean for: '.$cond);
+			$rep = dol_eval($cond, 1, 1, '1');
+			$slow = (bool) $rep && (!is_string($rep) || (strpos($rep, 'Exception during') === false && strpos($rep, 'Bad call of') === false && strpos($rep, 'Bad string syntax to evaluate') === false));
+			$this->assertSame($slow, $fast, 'Fast path and dol_eval() must agree on: '.$cond);
+			$this->assertSame($slow, verifCond($cond), 'verifCond() must give the result of dol_eval() on: '.$cond);
+		}
+
+		// Conditions that are not simple: left to dol_eval()
+		$complexconditions = array(
+			'isModEnabled("societe") && (isModEnabled("facture") || isModEnabled("propal"))',
+			'isModEnabled("societe") || isModEnabled("facture") && isModEnabled("propal")',
+			'getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2', '$user->id > 0', 'preg_match("/^setup/", $leftmenu)', '$user->isExternalUser()',
+			'(getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->rights->user->group_advance->read : $user->hasRight("user", "user", "lire"))',
+			'$object->status == 1', 'isModEnabled($leftmenu)', 'isModEnabled("societe");', 'isModEnabled("societe") ||',
+		);
+		foreach ($complexconditions as $cond) {
+			$this->assertNull(dolEvalSimpleCondition($cond), 'Condition must not be handled by the fast path: '.$cond);
+		}
+		// ...and verifCond() still works on them
+		$this->assertTrue(verifCond('isModEnabled("societe") && (isModEnabled("facture") || isModEnabled("nonexistingmodulexyz"))'));
+		$this->assertTrue(verifCond('$user->id > 0'));
+		$this->assertTrue(verifCond('preg_match("/^setup/", $leftmenu)'));
+
+		unset($conf->global->PHPUNIT_FASTPATH_STRING);
+		unset($conf->global->PHPUNIT_FASTPATH_ZERO);
 	}
 
 

@@ -3,10 +3,11 @@
 # a pull request into facts; what a workflow does with those facts is its own business.
 docs		*.md
 docs		.agents/*
-ci		.github/*
+ci			.github/*
 build		dev/*
 langs		*/langs/*
+fixtures	*/test/fixtures/*
 fixtures	*/test/*/fixtures/*
 fixtures	*/test/samples/*
-sql		*/sql/*
+sql			*/sql/*
 code		*

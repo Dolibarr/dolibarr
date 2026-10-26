@@ -12,16 +12,22 @@ Security reports are valid only on any current stable version for the last 2 maj
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Submit only 1 report per vulnerability. Reports combining several vulnerabilities, as well as reports generated using AI, will be rejected. 
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues (Due to trouble to manage issue, we do not use GitHub security Advisories). 
 
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 
-- Or send an email to security@dolibarr.org with clear textual (txt or md format) description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+- Or send an email to security@dolibarr.org with clear textual description of the report (TXT or MD format, do not submit archive, audio or video files) along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+  In such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager. A mention of your name/pseudo may be added in the commit message (no guarantee for this, our project is maintain by volunteers and they may forgot it sometimes).
 
-NOTE: Both processes are private vulnerability report processes: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
+
+NOTES:
+
+Submit only 1 report per vulnerability. Reports combining several vulnerabilities are automatically rejected.
+ 
+For both processes, advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
 
 Also, note that we are a project developed by volunteers and have no funds for bounties.
 
@@ -29,13 +35,11 @@ Also, note that we are a project developed by volunteers and have no funds for b
 ## Hunting vulnerabilities on Dolibarr
 
 We believe that the future of software is online SaaS. This means software is more and more critical and no technology is perfect. Working with skilled security researchers is crucial in identifying weaknesses in our technology.
-
 If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly.
-We plan to re-open our bug bounty program (closed at the end of 2024) in the future, but this is not yet available.
+However, our project is a community project and we can't provide any bounty or reward.
 
 Any type of denial-of-service attack is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
-
-We recommend installing Dolibarr ERP CRM on your own server (like most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access to every side of the application.
+So we recommend installing Dolibarr ERP CRM on your own server (like most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access to every side of the application.
 
 
 ### User Agent

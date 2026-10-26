@@ -30,7 +30,7 @@ require_once __DIR__.'/../../htdocs/core/lib/signature.lib.php';
 class OnlineSignatureLibTest extends PHPUnit\Framework\TestCase
 {
 	/**
-	 * Preserve configured values and each caller's existing fallback policy.
+	 * Preserve configured values and the native instance fallback.
 	 *
 	 * @return void
 	 */
@@ -56,10 +56,6 @@ class OnlineSignatureLibTest extends PHPUnit\Framework\TestCase
 								$conf->global->$key = $value;
 							}
 							$this->assertSame($value === null ? $expecteddefault : $value, getOnlineSignatureSecuritySeed($source));
-							$this->assertSame($value === null ? '' : $value, getOnlineSignatureSecuritySeed($source, false));
-							// The public order page historically does not use the instance fallback.
-							$expectedpublic = $value === null ? ($source == 'order' ? '' : $expecteddefault) : $value;
-							$this->assertSame($expectedpublic, getOnlineSignatureSecuritySeed($source, $source != 'order'));
 						}
 						unset($conf->global->$key);
 					}
