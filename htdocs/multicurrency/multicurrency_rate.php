@@ -490,7 +490,7 @@ if ($resql) {
 		// USER REQUEST UPDATE FOR THIS LINE
 		if ($action == "updateRate" && $obj->rowid == $id_rate_selected) {
 			//  var_dump($obj);
-			print ' <td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
+			print ' <td>'.$form->selectDate($db->jdate($obj->date_sync), 'dateinput', 0, 0, 1, '', 1, 1).'</td>';
 			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
 			print ' <td><input type="text" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
