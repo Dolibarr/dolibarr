@@ -917,6 +917,7 @@ function getAiChatAssistantConfig()
 		'AIHelpHelp',
 		'AIHelpClear',
 		'AIHelpStatus',
+		'AIHelpTools',
 		'AIHelpMentions',
 		'AIHelpMentionThirdparty',
 		'AIHelpMentionProduct',

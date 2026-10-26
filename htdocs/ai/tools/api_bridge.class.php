@@ -1611,6 +1611,7 @@ class ToolApiBridge extends McpTool
 						'required' => array('id', 'pageurl', 'title'),
 						'object' => 'WebsitePage',
 						'args' => array('title', 'pageurl', 'id'),
+						'args_objects' => array('id' => 'Website'),
 						'right' => array('website', 'write')
 					),
 					'params' => array(
@@ -2808,6 +2809,16 @@ class ToolApiBridge extends McpTool
 			$schema = $this->updateInputSchema($meta['write']);
 		}
 
+		// A write runs only once confirmed: the first call answers input_required
+		// with a requestState (see McpHandler::checkWriteConfirmation()), and the
+		// caller runs it by calling again with the same arguments plus it.
+		if (!empty($meta['write'])) {
+			$schema['properties']['requestState'] = array(
+				'type' => 'string',
+				'description' => 'Confirmation state returned with the input_required answer of a first call. Call again with the same arguments plus this value to run the write. Short-lived, one use.'
+			);
+		}
+
 		$schema = self::normalizeInputSchema($schema);
 
 		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
@@ -3948,6 +3959,13 @@ class ToolApiBridge extends McpTool
 			return dol_print_date((int) $value, 'day');
 		}
 		$class = (string) ($write['object'] ?? '');
+		// An argument naming a record other than the written one (the website a
+		// page is created in) is resolved to what the user knows it by.
+		$argsObjects = (array) ($write['args_objects'] ?? array());
+		if (isset($argsObjects[$argname]) && is_numeric($value) && (int) $value > 0 && !empty($this->db)) {
+			$obj = $this->fetchRecord((string) $argsObjects[$argname], (int) $value);
+			return ($obj && $this->userCanReach((string) $argsObjects[$argname], (int) $obj->id)) ? $this->describeRecord($obj) : $value;
+		}
 		// The record the write is about, named only to a user who may see it.
 		if ($class !== '' && $argname === (string) ($write['target'] ?? 'id') && is_numeric($value) && (int) $value > 0 && !empty($this->db)) {
 			$obj = $this->fetchRecord($class, (int) $value);
@@ -4234,7 +4252,8 @@ class ToolApiBridge extends McpTool
 			'Contrat' => '/contrat/class/contrat.class.php',
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
-			'WebsitePage' => '/website/class/websitepage.class.php'
+			'WebsitePage' => '/website/class/websitepage.class.php',
+			'Website' => '/website/class/website.class.php'
 		);
 		$ref = trim((string) $ref);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
@@ -4242,7 +4261,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Contact|Project|Task|Ticket|Fichinter|Contrat|Reception|Expedition|WebsitePage|Website $obj';
 		if ((int) $id > 0) {
 			$found = ($obj->fetch((int) $id) > 0);
 		} elseif ($obj instanceof Contact || $obj instanceof Societe) {

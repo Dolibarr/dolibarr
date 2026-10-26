@@ -1614,7 +1614,7 @@ export function initAiAssistant(container) {
     const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help'];
 
     // Commands of the chat shown in the palette (run by handleQuery()), with their label key.
-    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus']];
+    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus'], ['tools', 'AIHelpTools']];
     // The whole name of one of them typed: the palette stays open on it until Enter.
     function paletteLocalTyped(v) {
         return typeof v === 'string' && PALETTE_LOCALS.some((l) => v.trim().toLowerCase() === '/' + l[0]);

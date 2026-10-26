@@ -687,6 +687,8 @@ class Websites extends DolibarrApi
 	 */
 	private function _addBlogpostWrappers($website, $websitepage)
 	{
+		dol_syslog("_addBlogpostWrappers");
+
 		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
 
 		$websitepagetemp = new WebsitePage($this->db);
