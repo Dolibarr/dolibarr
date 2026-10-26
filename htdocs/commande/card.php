@@ -290,7 +290,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && $usercancreate) {
-		if ($action == 'confirm_massdellines') {
+		if ($action == 'confirm_massdellines') { // Test on permission already done
 			$result = 0;
 			$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
 			foreach ($arrLines2del as $lineid) {
