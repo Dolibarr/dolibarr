@@ -91,7 +91,7 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$prospect = new Societe($db);
 	$result = $prospect->fetch($idprospect);
 
-	if ($result >= 0) {
+	if ($result > 0) {
 		// Apply new status
 		$prospect->stcomm_id = $idstatus;
 
