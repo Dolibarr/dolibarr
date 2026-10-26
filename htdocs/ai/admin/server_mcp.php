@@ -135,8 +135,12 @@ if ($action == 'update_external') {
 
 	$user_id = GETPOSTINT("AI_MCP_USER_ID");
 	if (GETPOSTISSET('AI_MCP_USER_ID')) {
-		$res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
-		if ($res <= 0) {
+		if ($user_id > 0) {
+			$res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
+		} else {
+			$res = dolibarr_del_const($db, "AI_MCP_USER_ID", $conf->entity);
+		}
+		if ($res < 0) {
 			$error++;
 		}
 	}
@@ -355,7 +359,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>Service User <span class="fa fa-info-circle" title="' . $langs->trans("UserPermissionsTooltip") . '"></span></td>';
 	print '<td>';
 	print '<div style="display: flex; align-items: center;">';
-	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID'), 'AI_MCP_USER_ID', 1);
+	// Use -1 when not set, so select_dolusers() does not preselect the current user
+	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID', -1), 'AI_MCP_USER_ID', 1);
 	print ' <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Save").'" style="margin-left: 20px;">';
 	print '</div>';
 	print '<span class="opacitymedium small">' . $langs->trans("DedicatedUserRecommendation") . '</span>';

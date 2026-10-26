@@ -8181,7 +8181,7 @@ class Product extends CommonObject
 			$sql .= " INNER JOIN ".$this->db->prefix()."product_price AS newp ON newp.price_level = oldp.price_level";
 			$sql .= " WHERE oldp.fk_product =  ".((int) $fromId);
 			$sql .= " AND newp.fk_product =  ".((int) $toId);
-			$sql .= " ORDER BY oldp.date_price ASC";
+			$sql .= " ORDER BY oldp.date_price DESC";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->db->rollback();

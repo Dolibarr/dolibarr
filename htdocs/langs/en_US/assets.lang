@@ -145,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Error when calculating the depreciation l
 AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
 AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
 AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
 AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount

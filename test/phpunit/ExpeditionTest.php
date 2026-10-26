@@ -28,13 +28,12 @@
 
 global $conf,$user,$langs,$db,$mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
 
@@ -1042,6 +1041,30 @@ class ExpeditionTest extends CommonClassTest
 			$this->assertSame(400, $e->getCode());
 			$this->assertSame('Field fk_origin_line is mandatory', $e->getMessage());
 		}
+	}
+
+	/**
+	 * Only shipments without linked source object are counted as standalone (used to lock the setup option).
+	 *
+	 * @return void
+	 */
+	public function testCountStandaloneShipments()
+	{
+		global $db, $user;
+
+		$this->configureStandaloneShipmentStock(false, false);
+		$staticshipment = new Expedition($db);
+		$nbbefore = $staticshipment->countStandalone();
+		$this->assertGreaterThanOrEqual(0, $nbbefore, $staticshipment->errorsToString());
+
+		$this->createStandaloneShipment();
+		$this->assertSame($nbbefore + 1, $staticshipment->countStandalone());
+
+		// A shipment with a source object (here a sales order) is not standalone
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->add_object_linked('commande', 1);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertSame($nbbefore + 1, $staticshipment->countStandalone());
 	}
 
 	/**

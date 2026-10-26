@@ -126,6 +126,24 @@ before_install:
   fi
 
 - |
+  echo "===== $(date) Stop here if a job of GitHub Actions already failed on the pull request (title, description, quota...)"
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] || [ -z "$TRAVIS_PULL_REQUEST" ]; then
+    echo "Not a pull request, we do not check the GitHub checks"
+  elif ! command -v jq >/dev/null 2>&1; then
+    echo "Command jq not found, we do not check the GitHub checks"
+  else
+    # GITHUB_TOKEN is optional, it only avoids the rate limit of the anonymous API (not available on pull request from a fork)
+    failed_checks=$(curl -s ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+      "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_PULL_REQUEST_SHA/check-runs?per_page=100" \
+      | jq -r '.check_runs[]? | select(.conclusion == "failure" and .app.slug != "travis-ci") | .name' 2>/dev/null)
+    if [ -n "$failed_checks" ]; then
+      echo "These GitHub checks failed, we stop the build to save Travis minutes:"
+      echo "$failed_checks"
+      travis_terminate 1
+    fi
+  fi
+
+- |
   echo ===== $(date) Install repository of packages for PHP
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
@@ -637,6 +655,9 @@ script:
 
   - |
     echo ===== $(date) Unit testing
+    # Note: We do not use set -e here because it stops the Travis shell, so after_failure is never run and we can't see dolibarr.log.
+    # The step still fails because the last command returns the phpunit result.
+    set +e
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
     if [ "x$TRAVIS_RUN_PHPUNIT_SOURCE_SCAN" = "xyes" ]; then
       phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
@@ -647,9 +668,7 @@ script:
     echo "Content of end of apache error.log"
     sudo tail -n 200 /var/log/apache2/travis_error_log
     echo ===== $(date) end =====
-    # Comment next line if you want to go to the end to see the dolibarr.log file.
-    [ $phpunitresult == 0 ] || exit $phpunitresult
-    echo
+    [ "$phpunitresult" = "0" ]
 
 after_script:
   - |

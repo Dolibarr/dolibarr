@@ -53,6 +53,20 @@ $constname = GETPOST('constname', 'aZ09');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alphanohtml');
 
+// Search criteria
+$search_name = GETPOST('search_name', 'alpha');
+$search_value = GETPOST('search_value', 'alpha');
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
+	$search_name = '';
+	$search_value = '';
+}
+
+// True if the search or clear search button of the list of records was submitted
+$filterbuttonclicked = (bool) (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha')
+	|| GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha'));
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -90,7 +104,7 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 }
 
 // Add a new record (only when the zone to add a new record was submitted and no mass action is in progress)
-if ($action == 'add' && empty($massaction) && GETPOSTISSET('constname')) {
+if ($action == 'add' && empty($massaction) && GETPOSTISSET('constname') && empty($filterbuttonclicked)) {
 	$error = 0;
 
 	if (empty($constname)) {
@@ -201,7 +215,7 @@ $selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('chec
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Button + to show/hide the zone to add a new record
-$addformvisible = (($action == 'create' || $action == 'add') && empty($massaction));	// $action == 'add' keeps the zone visible if a field is missing
+$addformvisible = (($action == 'create' || ($action == 'add' && GETPOSTISSET('constname'))) && empty($massaction) && empty($filterbuttonclicked));	// $action == 'add' keeps the zone visible if a field is missing
 $urlbuttonplus = $_SERVER['PHP_SELF'].($addformvisible ? '' : '?action=create');
 if (empty($user->entity) && $debug) {
 	$urlbuttonplus .= $addformvisible ? '?debug=1' : '&debug=1';
@@ -209,6 +223,12 @@ if (empty($user->entity) && $debug) {
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlbuttonplus, '', ($addformvisible ? 2 : 1));
 
 $param = '';
+if ($search_name !== '') {
+	$param .= '&search_name='.urlencode($search_name);
+}
+if ($search_value !== '') {
+	$param .= '&search_value='.urlencode($search_value);
+}
 
 // Unique form, so the combo of mass actions into the line of title can submit the selection of records
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST" spellcheck="false">';
@@ -223,6 +243,7 @@ print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
 
 // Zone to add a new record (visible only when we click on the button +)
 if ($addformvisible) {
+	dol_set_focus('input[name="constname"]');
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
@@ -279,6 +300,39 @@ if ($massaction == 'predelete') {
 // List of records
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
+
+// Line with search filters
+print '<tr class="liste_titre_filter">';
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	print $form->showFilterButtons();
+	print '</td>';
+}
+// Name
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+print '</td>';
+// Value
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100" name="search_value" value="'.dol_escape_htmltag($search_value).'">';
+print '</td>';
+// Comment
+print '<td class="liste_titre"></td>';
+// Date last change
+print '<td class="liste_titre"></td>';
+// Entity limit to superadmin
+if (isModEnabled('multicompany') && !$user->entity) {
+	print '<td class="liste_titre"></td>';
+}
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	print $form->showFilterButtons();
+	print '</td>';
+}
+print '</tr>'."\n";
+
 print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
@@ -315,8 +369,11 @@ if ((empty($user->entity)/*  || $user->admin */) && $debug) {
 	// to force for superadmin to debug
 	$sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 }
-if (GETPOST('name')) {
-	$sql .= natural_search("name", GETPOST('name'));
+if ($search_name !== '') {
+	$sql .= natural_search($db->decrypt('name'), $search_name);
+}
+if ($search_value !== '') {
+	$sql .= natural_search($db->decrypt('value'), $search_value);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -386,6 +443,15 @@ if ($result) {
 
 		print "\n";
 		$i++;
+	}
+
+	// Show a line when there is no record found
+	if ($num == 0) {
+		$colspan = 5;	// 4 fields + action column
+		if (isModEnabled('multicompany') && !$user->entity) {
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 }
 

@@ -1907,7 +1907,7 @@ class Account extends CommonObject
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC', 'DZ'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
 		if ($country_code == 'CA') {

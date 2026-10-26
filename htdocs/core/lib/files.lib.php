@@ -9,6 +9,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1927,6 +1928,8 @@ function dol_delete_preview($object)
 		$dir = $conf->expedition->dir_output.'/receipt';
 	} elseif ($object->element == 'fichinter') {
 		$dir = $conf->ficheinter->dir_output;
+	} elseif ($object->element == 'chequereceipt') {
+		$dir = $conf->bank->dir_output.'/checkdeposits';
 	} else {
 		$dir = empty($conf->$element->dir_output) ? '' : $conf->$element->dir_output;
 	}
@@ -3227,7 +3230,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 					$valuetouse = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 					$encodedsecurekey = dol_hash($valuetouse.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
-					if ($encodedsecurekey == $securekey) {
+					if (hash_equals($encodedsecurekey, (string) $securekey)) {
 						$accessok = true;
 					}
 				}
@@ -3984,8 +3987,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if (!empty($hookmanager->resArray['original_file'])) {
 				$original_file = $hookmanager->resArray['original_file'];
 			}
-			if (!empty($hookmanager->resArray['accessallowed'])) {
-				$accessallowed = $hookmanager->resArray['accessallowed'];
+			// A hook that replaces the result (return > 0) may also refuse access, by setting accessallowed to 0
+			if (isset($hookmanager->resArray['accessallowed'])) {
+				$accessallowed = ($hookmanager->resArray['accessallowed'] ? 1 : 0);
 			}
 			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
 				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
@@ -4418,15 +4422,23 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 		$utils = new Utils($db);
 		$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+		$outputfiletxt = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.txt'; // File where docling writes the converted text
+
+		// Docling can convert images with OCR, so we set the input format according to the file extension
+		$fromformat = (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filetoprocess) ? 'image' : 'pdf');
 
 		// We also exclude '/temp/' dir and 'documents/admin/documents'
 		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
-		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text ".escapeshellarg($filetoprocess);
+		dol_delete_file($outputfiletxt);
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from ".$fromformat." --to text --output-file ".escapeshellarg($outputfiletxt)." ".escapeshellarg($filetoprocess);
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-		if (!$resultexec['error']) {
-			$txt = $resultexec['output'];
+		// Docling writes the result into the file set with --output-file. The standard output contains only logs, and docling may
+		// return no error even if conversion failed, so the conversion is a success only if the output file was created.
+		if (!$resultexec['error'] && dol_is_file($outputfiletxt)) {
+			$txt = (string) file_get_contents($outputfiletxt);
+			dol_delete_file($outputfiletxt);
 			//$matches = array();
 			//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
 			//	$keywords = $matches[1];
@@ -4437,8 +4449,8 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 			$textforfulltextindex = $txt;
 		} else {
 			$message .= $resultexec['output'];
-			$message .= ($message ? "\n" : "").$resultexec['error'];
-			dol_syslog($resultexec['error']);
+			$message .= ($message ? "\n" : "").($resultexec['error'] ? $resultexec['error'] : 'Docling did not generate the output file');
+			dol_syslog('dolDocToText docling failed: '.($resultexec['error'] ? $resultexec['error'] : 'no output file'), LOG_WARNING);
 			$error++;
 		}
 	}

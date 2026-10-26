@@ -422,6 +422,11 @@ if (empty($reshook)) {
 			}
 		}
 
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE') && getDolGlobalString('INVOICE_POINTOFTAX_DATE_MANDATORY') && $object->type != Facture::TYPE_DEPOSIT && empty($object->date_pointoftax)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePointOfTax")).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+			$action = '';
+		}
+
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
@@ -2503,10 +2508,10 @@ if (empty($reshook)) {
 					foreach ($object->lines as $i => &$line) {
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
-						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$line->situation_percent = 0;  // New situation percent must be 0 (No cumulative)
-						} else {
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 							$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+						} else {
+							$line->situation_percent = 0;  // New situation percent must be 0 (No cumulative)
 						}
 
 						// The $line->situation_percent has been modified, so we must recalculate all amounts
@@ -2660,7 +2665,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE || !empty($line->fk_remise_except)) {
 				continue;
 			}
 			$tvatx = $line->tva_tx;
@@ -2683,10 +2688,10 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-				$percent = $line->getAllPrevProgress($object->id);
-			} else {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 				$percent = $line->get_prev_progress($object->id);
+			} else {
+				$percent = $line->getAllPrevProgress($object->id);
 			}
 			if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
 				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
@@ -3217,6 +3222,15 @@ if (empty($reshook)) {
 				}
 				*/
 
+				// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+				// addline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+				if ($price_ht === '' && $price_ttc === '' && $price_ht_devise === '' && $price_ttc_devise !== '') {
+					$pu_ht = 0;
+					$pu_ttc = 0;
+					$price_base_type = 'TTC';
+					$pu_ht_devise = price2num($price_ttc_devise, 'MU');
+				}
+
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
 
@@ -3486,7 +3500,7 @@ if (empty($reshook)) {
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -3599,6 +3613,14 @@ if (empty($reshook)) {
 			}
 		}
 
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$pu = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = $pu_ttc_devise;
+		}
+
 		// Check minimum price
 		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
@@ -3664,7 +3686,9 @@ if (empty($reshook)) {
 		}
 
 		// Invoice situation
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$addprogress = price2num(GETPOST('progress', 'alpha'));
+		} else {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 			$fullprogress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
@@ -3678,8 +3702,6 @@ if (empty($reshook)) {
 				$fullprogress = 100;
 			}
 			$addprogress = $fullprogress - $previousprogress;
-		} else {
-			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		}
 
 		// Update line
@@ -6935,8 +6957,10 @@ if ($action == 'create') {
 		// Get object lines
 		$result = $object->getLinesArray();
 
-		// Display context of lines, also sets the global variables used by the line templates
-		$linesContext = $object->initObjectLinesDisplay();
+		// Add products/services form
+		//$forceall = 1;
+		global $inputalsopricewithtax;
+		$inputalsopricewithtax = 1;
 
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
@@ -6960,7 +6984,7 @@ if ($action == 'create') {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
+			$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 		}
 
 		// Form to add new line
@@ -6974,7 +6998,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
+					$object->formAddObjectLine(1, $mysoc, $soc);
 				}
 			} else {
 				$parameters = array();
