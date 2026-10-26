@@ -455,6 +455,23 @@ print '</td>';
 </td>
 
 <?php
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
+	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
+	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
+		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
+	}
+	if (!$upinctax) {
+		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
+	}
+	if (empty($line->fk_remise_except)) {
+		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+	}	// if upinctax can't be known, we show subprice excl ta
+	?>
+	</td>
+<?php }
+
 // Multicurrency unit price excluding tax - HT
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="linecoluht_currency nowraponall right">
@@ -474,23 +491,6 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 			print ' '.$form->textwithpicto('', $creditlinetooltip, 1, 'help', '', 1);
 		}
 	}
-	?>
-	</td>
-<?php }
-
-if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
-	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
-	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
-		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
-		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
-	}
-	if (!$upinctax) {
-		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
-	}
-	if (empty($line->fk_remise_except)) {
-		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
-	}	// if upinctax can't be known, we show subprice excl ta
 	?>
 	</td>
 <?php }

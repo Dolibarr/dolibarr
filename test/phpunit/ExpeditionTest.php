@@ -1044,6 +1044,30 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
+	 * Only shipments without linked source object are counted as standalone (used to lock the setup option).
+	 *
+	 * @return void
+	 */
+	public function testCountStandaloneShipments()
+	{
+		global $db, $user;
+
+		$this->configureStandaloneShipmentStock(false, false);
+		$staticshipment = new Expedition($db);
+		$nbbefore = $staticshipment->countStandalone();
+		$this->assertGreaterThanOrEqual(0, $nbbefore, $staticshipment->errorsToString());
+
+		$this->createStandaloneShipment();
+		$this->assertSame($nbbefore + 1, $staticshipment->countStandalone());
+
+		// A shipment with a source object (here a sales order) is not standalone
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->add_object_linked('commande', 1);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertSame($nbbefore + 1, $staticshipment->countStandalone());
+	}
+
+	/**
 	 * testExpeditionDelete
 	 *
 	 * Check that an Expedition object can be deleted.

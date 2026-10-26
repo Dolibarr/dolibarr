@@ -1413,6 +1413,26 @@ class Form
 	}
 
 	/**
+	 *  Flag the link definitions returned by the showLinkToObjectBlock hook, so we know their SQL was not written here.
+	 *
+	 *  We never append an ORDER BY to a query we do not own unless it tells us which column to sort on, because we
+	 *  cannot know the table aliases it uses.
+	 *
+	 * @param 	array<string,array<string,mixed>>	$linksfromhook	Link definitions returned by a hook
+	 * @return  array<string,array<string,mixed>>					Same definitions, each flagged with 'fromhook'
+	 */
+	private function flagLinksFromHook($linksfromhook)
+	{
+		foreach ($linksfromhook as $key => $val) {
+			if (is_array($val)) {
+				$linksfromhook[$key]['fromhook'] = 1;
+			}
+		}
+
+		return $linksfromhook;
+	}
+
+	/**
 	 *  Generate HTML table rows for standard object linking (invoices, orders, proposals, etc.).
 	 *
 	 *  This method creates the table body rows with checkboxes for selecting objects to link.
@@ -6984,20 +7004,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *     Show a confirmation HTML form or AJAX popup
+	 * Show a confirmation HTML form or AJAX popup
 	 *
-	 * @param string $page Url of page to call if confirmation is OK
-	 * @param string $title Title
-	 * @param string $question Question
-	 * @param string $action Action
-	 * @param array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                                                                                                                                                                                                                          'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                                                                                                                                                                                                                          'other', 'onecolumn' or 'hidden'...
-	 * @param string $selectedchoice "" or "no" or "yes"
-	 * @param int<0,2>|string $useajax 0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int $height Force height of box
-	 * @param int $width Force width of box
-	 * @return    void
+	 * @param 	string 	$page 				Url of page to call if confirmation is OK
+	 * @param 	string 	$title 				Title
+	 * @param 	string 	$question 			Question
+	 * @param 	string 	$action 			Action
+	 * @param 	array<array{name?:string,value?:string|float|bool,values?:string[],default?:string,label?:string,type:string,size?:int|string,morecss?:string,moreattr?:string,style?:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *                                                                                                                                                                                                                                              'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                                                                                                                                                                                                                              'other', 'onecolumn' or 'hidden'...
+	 * @param 	string 	$selectedchoice 	"" or "no" or "yes"
+	 * @param 	int<0,2>|string $useajax 		0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * @param 	int 	$height 			Force height of box
+	 * @param 	int 	$width 				Force width of box
+	 * @return	void
 	 * @deprecated
 	 * @see formconfirm()
 	 */
@@ -7027,7 +7047,7 @@ class Form
 	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int<0,1>|''|'no'|'yes'|'1'|'0'	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int<0,2>|string	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int|string 	$height 			Force height of box (0 = auto)
+	 * @param int|string 	$height 			Min height of box (0 = calculated automatically). Box grows if content is higher.
 	 * @param int 			$width 				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
 	 * @param string 		$labelbuttonyes 	Label for Yes
@@ -7035,9 +7055,11 @@ class Form
 	 * @param string 		$helpContent 		Optional help text to display in a collapsible block at the bottom left of the dialog.
 	 * 											If set, a standard '?' icon with the label "Help" will appear.
 	 * 											Clicking it expands the content provided here. Supports HTML.
+	 * @param string 		$labelbuttonother	Optional third button translation key (empty = no third button).
+	 * @param string 		$valuebuttonother	Value of confirm for the third button. Empty = close the dialog, or submit cancel=1 without confirm in HTML mode.
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '', $labelbuttonother = '', $valuebuttonother = 'other')
 	{
 		global $langs, $conf;
 
@@ -7057,7 +7079,14 @@ class Form
 		if (empty($height)) {
 			$height = 185;
 			if (is_array($formquestion)) {
-				$height += (count($formquestion) * 40);
+				$nbofquestions = 0;
+				foreach ($formquestion as $input) {
+					// Hidden fields are not visible so they must not be counted into the height
+					if (is_array($input) && (!isset($input['type']) || $input['type'] != 'hidden')) {
+						$nbofquestions++;
+					}
+				}
+				$height += ($nbofquestions * 40);
 			}
 			if ($question) {
 				$height += dol_nboflines_bis($question, 80) * 40;
@@ -7290,14 +7319,18 @@ class Form
 			$postconfirmas = 'GET';
 			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
+			// Height is auto so content is never truncated. The $height provided or calculated is used as a min height.
 			$formconfirm .= '
 					resizable: false,
-					height: \'' . dol_escape_js($height) . '\',
+					height: \'auto\',' . (is_numeric($height) ? '
+					minHeight: ' . ((int) $height) . ',' : '') . '
+					maxHeight: Math.round($(window).height() * 0.9),
 					width: \'' . dol_escape_js($width) . '\',
 					modal: true,
 					closeOnEscape: false,
-					buttons: {
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\': function() {
+					buttons: [{
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7334,8 +7367,10 @@ class Form
 								console.log("after post ok");
 							}
 							$(this).dialog("close");
-						},
-						\'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\': function() {
+						}
+					}, {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\',
+						click: function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7367,7 +7402,34 @@ class Form
 							}
 							$(this).dialog("close");
 						}
-					}
+					}';
+			if ($labelbuttonother !== '') {
+				$formconfirm .= ', {
+						text: \'' . dol_escape_js($langs->transnoentities($labelbuttonother)) . '\',
+						click: function() {';
+				if ($valuebuttonother !== '') {
+					$pageother = $page . (strpos($page, '?') === false ? '?' : '&') . 'action=' . urlencode($action) . '&confirm=' . urlencode($valuebuttonother);
+					$formconfirm .= '
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputok = ' . json_encode($inputok) . ';
+							var fields = $(this).find(":input");
+							$.each(inputok, function(i, inputname) {
+								var field = fields.filter(function() { return this.id === inputname || this.name === inputname; });
+								if (field.is(":radio, :checkbox")) { field = field.filter(":checked"); }
+								var inputvalue = field.val();
+								if (typeof inputvalue === "undefined") { inputvalue = ""; }
+								options += "&" + encodeURIComponent(inputname) + "=" + encodeURIComponent(inputvalue);
+							});
+							var pageother = \'' . dol_escape_js($pageother) . '\';
+							var urljump = pageother + "&" + options;
+							dolSubmitConfirmForm(urljump, pageother, options, ' . $maxurllengthforget . ');';
+				}
+				$formconfirm .= '
+							$(this).dialog("close");
+						}
+					}';
+			}
+			$formconfirm .= ']
 				}
 				);
 
@@ -7424,8 +7486,14 @@ class Form
 			$formconfirm .= '<div class="inline-block">' . $question . '</div>';
 
 			$formconfirm .= '<div class="inline-block">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
-			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			if ($labelbuttonother !== '') {
+				foreach (array(array('confirm', 'yes', $labelbuttonyes), array('confirm', 'no', $labelbuttonno), array($valuebuttonother === '' ? 'cancel' : 'confirm', $valuebuttonother === '' ? '1' : $valuebuttonother, $labelbuttonother)) as $confirmbutton) {
+					$formconfirm .= '<button class="button valignmiddle confirmvalidatebutton small" type="submit" name="' . $confirmbutton[0] . '" value="' . dol_escape_htmltag($confirmbutton[1]) . '"' . ($confirmbutton[0] === 'cancel' ? ' formnovalidate' : '') . '>' . dol_escape_htmltag($langs->transnoentities($confirmbutton[2])) . '</button>';
+				}
+			} else {
+				$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
+				$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
+			}
 			$formconfirm .= '</div>';
 
 			$formconfirm .= '</div>';
@@ -7440,12 +7508,24 @@ class Form
 				$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 				$formconfirm .= '
 				$(document).ready(function () {
-					$(".confirmvalidatebutton").on("click", function() {
+					$(".confirmvalidatebutton").off("click.formconfirm").on("click.formconfirm", function(event) {
+						event.preventDefault();
+						var form = $(this).closest("form");
+						if (form.data("formconfirm-submitting")) { return; }
 						console.log("We click on button confirmvalidatebutton");
+						if (this.name) {
+							if (!this.formNoValidate && !form[0].reportValidity()) { return; }
+							$("<input>").attr({type: "hidden", name: this.name, value: this.value, "data-formconfirm-choice": "1"}).appendTo(form);
+						}
+						form.data("formconfirm-submitting", true);
 						$(this).attr("disabled", "disabled");
-						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
+						setTimeout(function() {
+							form.removeData("formconfirm-submitting");
+							form.find(".confirmvalidatebutton").removeAttr("disabled");
+							form.find("[data-formconfirm-choice]").remove();
+						}, 3000);
 						//console.log($(this).closest("form"));
-						$(this).closest("form").submit();
+						form.submit();
 					});
 				});
 				';
@@ -11577,6 +11657,12 @@ class Form
 
 		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
 
+		// Maximum number of candidate objects fetched and rendered per link type.
+		// The candidate lists are built on every object card load, so without a ceiling a thirdparty with a large
+		// history makes this function run unbounded queries and serialize all of their rows into hidden HTML.
+		// 0 = no limit (restores the historical unbounded behaviour).
+		$maxcandidates = getDolGlobalInt('MAIN_LINKTOOBJECT_MAX_CANDIDATES', 100);
+
 		if (!empty($thirdparty_id) && $thirdparty_id > 0) {
 			$listofidcompanytoscan = (int) $thirdparty_id;
 			if (is_object($object->thirdparty) && ($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
@@ -11618,6 +11704,7 @@ class Form
 					'label' => 'LinkToMemberSubscription',
 					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
 					'linkname' => 'subscription',
+					'orderby' => 'sub.rowid DESC',		// This query does not use the 't' alias
 				),
 				'conferenceorboothattendee' => array(
 					'enabled' => isModEnabled('eventorganization'),
@@ -11628,7 +11715,8 @@ class Form
 						.$this->db->prefix()."eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN ("
 						.$this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')'
 						. (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
-					'linkname' => 'attendee'
+					'linkname' => 'attendee',
+					'orderby' => 'a.rowid DESC',		// This query does not use the 't' alias
 				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),
@@ -11704,11 +11792,11 @@ class Form
 
 		if (empty($reshook)) {
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
-				$possiblelinks = array_merge($possiblelinks, $hookmanager->resArray);
+				$possiblelinks = array_merge($possiblelinks, $this->flagLinksFromHook($hookmanager->resArray));
 			}
 		} elseif ($reshook > 0) {
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
-				$possiblelinks = $hookmanager->resArray;
+				$possiblelinks = $this->flagLinksFromHook($hookmanager->resArray);
 			}
 		}
 
@@ -11759,15 +11847,43 @@ class Form
 
 				$sql = $possiblelink['sql'];
 
+				// Bound the candidate list. We fetch one row more than the ceiling: if we get it, we know the list is
+				// truncated without having to run a separate COUNT(*) for each link type.
+				// An ORDER BY is mandatory here, otherwise the rows kept by the LIMIT would be an arbitrary subset.
+				// We skip a query that is already limited or that comes from a hook without a known sort column, so a
+				// query provided by an external module is never rewritten.
+				$truncated = false;
+				$applylimit = ($maxcandidates > 0 && !preg_match('/\bLIMIT\b/i', $sql));
+				if ($applylimit && !empty($possiblelink['fromhook']) && empty($possiblelink['orderby'])) {
+					$applylimit = false;
+				}
+				if ($applylimit) {
+					// Note: the 4th parameter of sanitize() keeps the spaces, needed for a "field DESC" expression
+					$sql .= ' ORDER BY '.$this->db->sanitize(empty($possiblelink['orderby']) ? 't.rowid DESC' : $possiblelink['orderby'], 0, 0, 1);
+					$sql .= $this->db->plimit($maxcandidates + 1, 0);
+				}
+
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
+
+					if ($applylimit && $num > $maxcandidates) {
+						$truncated = true;
+						$num = $maxcandidates;		// Render the ceiling only, the extra row was fetched to detect truncation
+					}
 
 					if ($num > 0) {
 						// Section for free predefined list
 						if (getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 							$htmltoenteralink .= '<br>';
 						}
+						// Tell the user the list is not complete, so a missing candidate is never silently hidden
+						if ($truncated) {
+							$htmltoenteralink .= '<div class="opacitymedium small paddingtopbottom">';
+							$htmltoenteralink .= img_warning().' '.$langs->trans("LinkToObjectListTruncated", $maxcandidates);
+							$htmltoenteralink .= '</div>';
+						}
+
 						$htmltoenteralink .= '<!-- form to add a link from object to same thirdparty -->'."\n";
 						$htmltoenteralink .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinked' . $key . '">';
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -11809,8 +11925,10 @@ class Form
 
 
 				// Complete the list for the combo box
+				// When the list was truncated, $num is the ceiling and not the real total, so we show it as "100+"
+				$nbtoshow = ($truncated ? $num.'+' : (string) $num);
 				if ($num > 0 || !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
-					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $num . ')</a></li>';
+					$linktoelemlist .= '<li><a href="#linkto' . $key . '" class="linkto dropdowncloseonclick" rel="' . $key . '">' . $langs->trans($possiblelink['label']) . ' (' . $nbtoshow . ')</a></li>';
 					// } else $linktoelem.=$langs->trans($possiblelink['label']);
 				} else {
 					$linktoelemlist .= '<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
@@ -13902,9 +14020,11 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			// Add onclick to disable submit buttons (except cancel) after first click to prevent duplicate form submissions on slow connections
-			$onclick = ($button['name'] !== 'cancel') ? ' onclick="if(this.form && this.form.checkValidity && !this.form.checkValidity()) { return true; } this.disabled=true; this.form.submit();"' : '';
-			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '"' . $onclick . '>';
+			// Add class to disable submit buttons (except cancel) once form is submitted to prevent duplicate form submissions on slow connections (see lib_foot.js.php)
+			if ($button['name'] !== 'cancel') {
+				$addclass .= ($addclass ? ' ' : '').'disableonsubmit';
+			}
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 

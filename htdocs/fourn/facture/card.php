@@ -445,6 +445,8 @@ if (empty($reshook)) {
 
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $usercancreate) {
+		// Keep the previous values so triggers on BILL_SUPPLIER_MODIFY can see what changed
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
 		if ($object->update($user) < 0) {
@@ -1035,19 +1037,29 @@ if (empty($reshook)) {
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
 					// multi-currency
 					$discount->multicurrency_code = $object->multicurrency_code;
 					$discount->multicurrency_tx = $object->multicurrency_tx;
-					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+						// A credit note can mix lines of both signs: each VAT rate keeps its own sign
+						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+					} else {
+						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					}
 					// keep compatibility
-					$discount->multicurrency_amount_ht = abs((float) $discount->multicurrency_total_ht);
-					$discount->multicurrency_amount_tva = abs((float) $discount->multicurrency_total_tva);
-					$discount->multicurrency_amount_ttc = abs((float) $discount->multicurrency_total_ttc);
+					$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+					$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+					$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 
 					// Clean vat code
 					$reg = array();
@@ -1899,6 +1911,14 @@ if (empty($reshook)) {
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 		$pu_devise = price2num(GETPOST('multicurrency_subprice'), 'MU', 2);
+
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$up = 0;
+			$price_base_type = 'TTC';
+			$pu_devise = price2num(GETPOST('multicurrency_price_ttc'), 'MU', 2);
+		}
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);

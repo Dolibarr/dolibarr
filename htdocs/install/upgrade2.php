@@ -4402,6 +4402,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
 		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',

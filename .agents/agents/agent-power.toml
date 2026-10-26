@@ -109,10 +109,6 @@ denylist = [
     "tmux"
 ]
 
-[tools.grep]
-permission = "always"
-allowlist = ["/tmp/**"]
-
 [tools.read_file]
 permission = "always"
 allowlist = ["/tmp/**"]

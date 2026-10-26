@@ -68,7 +68,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment. The JSON must be valid: values must be literals, never expressions or calculations, and no comments.';
 
 
 	/**
@@ -104,7 +104,7 @@ class Ai
 	 * @param	string						$format			Format for output ('', 'html', ...)
 	 * @param	array<string,string>		$moreheaders	More headers
 	 * @param	string						$moreendpoint	Add a part to endpoint url
-	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,model?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
@@ -140,7 +140,7 @@ class Ai
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
 			} elseif ($function == 'assistant') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistants';
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
@@ -318,6 +318,15 @@ class Ai
 				}
 			}
 
+			// For document parsing, ask the services that support it to return only a valid JSON
+			if ($function == 'docparsing' && !is_array($instructions)) {
+				if ($this->apiService == 'google') {
+					$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
+				} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
+					$arrayforpayload['response_format'] = array('type' => 'json_object');
+				}
+			}
+
 			/*
 			$arrayforpayload['temperature'] = 0.7;
 			$arrayforpayload['max_tokens'] = -1;
@@ -380,10 +389,16 @@ class Ai
 			global $dolibarr_ai_allow_local_endpoints;
 			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
+			// Parsing a document is long, so we use a response timeout of at least 60 seconds for this case
+			$timeoutresponse = 0;
+			if ($function == 'docparsing') {
+				$timeoutresponse = max(60, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			}
+
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
 
 			if (empty($response['http_code'])) {
-				throw new Exception('API request failed. No http received');
+				throw new Exception('API request failed. No http received'.(empty($response['curl_error_no']) ? '' : ' (curl error '.$response['curl_error_no'].': '.$response['curl_error_msg'].')'));
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
 				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
@@ -396,6 +411,7 @@ class Ai
 							'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 							'format' => $format,
 							'service' => $this->apiService,
+							'model' => $model,
 							'function' => $function
 						);
 					}
@@ -517,6 +533,7 @@ class Ai
 				'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 				'format' => $format,
 				'service' => $this->apiService,
+				'model' => $model,
 				'function' => $function
 			);
 		}
@@ -535,11 +552,20 @@ class Ai
 
 		//var_dump($json['items']);
 		if ($type == 'supplier_invoice') {
+			// The AI service may put the invoice data into another section than document_info, so we complete document_info with them
+			foreach (array('invoice_details', 'invoice_info', 'invoice') as $keysection) {
+				if (!empty($json[$keysection]) && is_array($json[$keysection])) {
+					$json['document_info'] = array_merge($json[$keysection], (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array());
+				}
+			}
+
 			// Invoice info
 			if (!empty($json['document_info']['reference'])) {
 				$tmparray['supplierref'] = $json['document_info']['reference'];
 			} elseif (!empty($json['document_info']['invoice_number'])) {
 				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			} elseif (!empty($json['document_info']['document_ref'])) {
+				$tmparray['supplierref'] = $json['document_info']['document_ref'];
 			}
 
 			if (!empty($json['document_info']['title'])) {
@@ -553,6 +579,8 @@ class Ai
 			// Issue date
 			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['invoice_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['invoice_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['invoice_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {

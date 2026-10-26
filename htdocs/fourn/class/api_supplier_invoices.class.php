@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2023-2026	Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -296,6 +296,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data = array();
 		}
 
+		// Keep the previous values so triggers on BILL_SUPPLIER_MODIFY can see what changed
+		$this->invoice->oldcopy = dol_clone($this->invoice, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -315,11 +318,11 @@ class SupplierInvoices extends DolibarrApi
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 
-		if ($this->invoice->update(DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->invoice->errorsToString());
 		}
-
-		return false;
 	}
 
 	/**
