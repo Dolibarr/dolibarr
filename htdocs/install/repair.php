@@ -214,9 +214,12 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 // Maintenance runs under the installer lock, without an authenticated application user.
 $ecmrepairentities = array(1 => $langs->trans('Entity').' 1');
 if (isModEnabled('multicompany')) {
-	$ecmrepairentities = array();
-	if (isset($mc) && is_object($mc) && method_exists($mc, 'getEntitiesList')) {
-		$ecmrepairentities = $mc->getEntitiesList('1', false, true);
+	$resql = $db->query("SELECT rowid, label FROM ".$db->prefix()."entity ORDER BY rowid");
+	if ($resql) {
+		while (is_object($obj = $db->fetch_object($resql))) {
+			$ecmrepairentities[(int) $obj->rowid] = dol_html_entity_decode($obj->label, 0);
+		}
+		$db->free($resql);
 	}
 }
 $ecmrepairentity = GETPOSTISSET('ecm_entity') ? GETPOSTINT('ecm_entity') : 1;
@@ -1501,36 +1504,22 @@ if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
 	} elseif ($ecmrepairmode === 'confirmed' && (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !is_string($ecmrepairtoken) || !hash_equals(newToken(), $ecmrepairtoken))) {
 		print '<tr><td class="error">'.$langs->trans('RepairEcmInvalidToken').'</td></tr>';
 	} else {
-		$previousentity = $conf->entity;
-		$ecmreport = null;
-		try {
-			if ($conf->setEntityValues($db, $ecmrepairentity) < 0) {
-				print '<tr><td class="error">'.$langs->trans('RepairEcmDatabaseError').'</td></tr>';
-			} else {
-				print '<tr><td colspan="2"><br>'.$langs->trans('RepairEcmHeading', dol_escape_htmltag($ecmrepairentities[$ecmrepairentity])).'</td></tr>';
-				$ecmreport = repairEcmFiles($db, $ecmrepairentity, DOL_DATA_ROOT, $ecmrepairmode === 'confirmed');
-				foreach ($ecmreport['entries'] as $ecmentry) {
-					print '<tr><td>'.((int) $ecmentry['id']).'</td><td>'.dol_escape_htmltag($ecmentry['path']).'</td></tr>';
-				}
-				print '<tr><td colspan="2">'.$langs->trans('RepairEcmSummary', $ecmreport['processed'], $ecmreport['missing'], $ecmreport['deleted'], $ecmreport['skipped']).'</td></tr>';
-				if ($ecmrepairmode === 'test') {
-					print '<tr><td colspan="2">'.$langs->trans('RepairEcmTestMode').'</td></tr>';
-				}
-				if ($ecmreport['limitreached']) {
-					print '<tr><td colspan="2">'.$langs->trans('RepairEcmLimit', 100).'</td></tr>';
-				}
-				if ($ecmreport['error'] !== '') {
-					print '<tr><td colspan="2" class="error">'.$langs->trans($ecmreport['error']).'</td></tr>';
-				}
-			}
-		} finally {
-			$conf->setEntityValues($db, $previousentity);
-			if (defined('SYSLOG_FILE')) {
-				$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
-			}
-			$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+		print '<tr><td colspan="2"><br>'.$langs->trans('RepairEcmHeading', dol_escape_htmltag($ecmrepairentities[$ecmrepairentity])).'</td></tr>';
+		$ecmreport = repairEcmFiles($db, $ecmrepairentity, DOL_DATA_ROOT, $ecmrepairmode === 'confirmed');
+		foreach ($ecmreport['entries'] as $ecmentry) {
+			print '<tr><td>'.((int) $ecmentry['id']).'</td><td>'.dol_escape_htmltag($ecmentry['path']).'</td></tr>';
 		}
-		if ($ecmrepairmode === 'confirmed' && is_array($ecmreport) && $ecmreport['error'] === '') {
+		print '<tr><td colspan="2">'.$langs->trans('RepairEcmSummary', $ecmreport['processed'], $ecmreport['missing'], $ecmreport['deleted'], $ecmreport['skipped']).'</td></tr>';
+		if ($ecmrepairmode === 'test') {
+			print '<tr><td colspan="2">'.$langs->trans('RepairEcmTestMode').'</td></tr>';
+		}
+		if ($ecmreport['limitreached']) {
+			print '<tr><td colspan="2">'.$langs->trans('RepairEcmLimit', 100).'</td></tr>';
+		}
+		if ($ecmreport['error'] !== '') {
+			print '<tr><td colspan="2" class="error">'.$langs->trans($ecmreport['error']).'</td></tr>';
+		}
+		if ($ecmrepairmode === 'confirmed' && $ecmreport['error'] === '') {
 			setEventMessages($langs->trans('RepairEcmCompleted', dol_escape_htmltag($ecmrepairentities[$ecmrepairentity]), $ecmreport['deleted']), null, 'mesgs');
 			while (ob_get_level() > $ecmrepairbufferlevel) {
 				ob_end_clean();
