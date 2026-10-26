@@ -181,8 +181,8 @@ function repairEcmFiles($db, $entity, $documentroot, $confirmed = false, $maxdel
 		return $report;
 	}
 	$rootprefix = rtrim(str_replace('\\', '/', $realroot), '/').'/';
-	$sql = 'SELECT rowid, filename, filepath FROM '.$db->prefix().'ecm_files';
-	$sql .= ' WHERE entity = '.((int) $entity).' ORDER BY rowid ASC';
+	$sql = "SELECT rowid, filename, filepath FROM ".$db->prefix()."ecm_files";
+	$sql .= " WHERE entity = ".((int) $entity)." ORDER BY rowid ASC";
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$report['error'] = 'RepairEcmDatabaseError';
@@ -244,8 +244,8 @@ function repairEcmFiles($db, $entity, $documentroot, $confirmed = false, $maxdel
 		if (dol_is_file($filetocheck) || dol_is_file($filetocheck.'.noexe')) {
 			continue;
 		}
-		$sql = 'DELETE FROM '.$db->prefix().'ecm_files WHERE rowid = '.((int) $candidate->rowid);
-		$sql .= ' AND entity = '.((int) $entity);
+		$sql = "DELETE FROM ".$db->prefix()."ecm_files WHERE rowid = ".((int) $candidate->rowid);
+		$sql .= " AND entity = ".((int) $entity);
 		$sql .= " AND filepath = '".$db->escape($candidate->filepath)."' AND filename = '".$db->escape($candidate->filename)."'";
 		$result = $db->query($sql);
 		if (!$result) {
