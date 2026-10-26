@@ -911,6 +911,17 @@ function getAiChatAssistantConfig()
 		'AIPaletteRunHint',
 		'AIMentionThirdpartyHint',
 		'AIMentionProductHint',
+		'AIHelpCommands',
+		'AIHelpPalette',
+		'AIHelpInternal',
+		'AIHelpHelp',
+		'AIHelpClear',
+		'AIHelpStatus',
+		'AIHelpMentions',
+		'AIHelpMentionThirdparty',
+		'AIHelpMentionProduct',
+		'AIHelpFreeText',
+		'AIPaletteMore',
 		'OpenVerb',
 		'AIPdfReport',
 
@@ -984,8 +995,8 @@ function getAiChatAssistantConfig()
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
-		// The "/" palette of the chat input (the "@" / "#" suggestions do not depend on it).
-		'palette' => getDolGlobalString('AI_PALETTE_DISABLED') ? 0 : 1,
+		// The "/" palette of the chat input, always on.
+		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
 		'paletteApiTools' => getDolGlobalInt('AI_PALETTE_API_TOOLS', 0),
 		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider

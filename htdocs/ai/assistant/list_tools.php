@@ -60,10 +60,6 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
-// The palette can be switched off in the setup of the assistant.
-if (getDolGlobalString('AI_PALETTE_DISABLED')) {
-	accessforbidden('The palette of the chat is disabled');
-}
 aiCheckCsrfToken('ai/assistant/list_tools.php');
 
 top_httphead('application/json');

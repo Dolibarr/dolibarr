@@ -230,7 +230,7 @@ export function initAiAssistant(container) {
             const mention = mentionTarget();
             if (mention) {
                 mentionSuggest(mention);    // "@" or "#" being typed, in a command or a question
-            } else if (paletteWanted(v)) {
+            } else if (paletteWanted(v) || paletteLocalTyped(v)) {
                 paletteOpen(v.slice(1));
             } else if (container.querySelector('.ai-palette-list')) {
                 paletteClose();
@@ -284,7 +284,7 @@ export function initAiAssistant(container) {
         }
     }
 
-    // Start a new conversation: used by the Clear button and the "/new" command
+    // Reset the chat display and state: used by startNewConversation() (Clear button, "/new" and "/clear" commands)
     function clearConversation(fromOtherInstance = false) {
         // Remove conversation messages; keep the welcome element so it can be
         // shown again on the full page (the popover has no welcome screen).
@@ -1611,7 +1611,14 @@ export function initAiAssistant(container) {
 
     // "/tools" stays the debug command of the chat; any other "/..." line is the palette.
     // Commands the chat answers by itself (sendMessage): never caught by the palette.
-    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/status'];
+    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help'];
+
+    // Commands of the chat shown in the palette (run by handleQuery()), with their label key.
+    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus']];
+    // The whole name of one of them typed: the palette stays open on it until Enter.
+    function paletteLocalTyped(v) {
+        return typeof v === 'string' && PALETTE_LOCALS.some((l) => v.trim().toLowerCase() === '/' + l[0]);
+    }
 
     function paletteWanted(v) {
         if (!config.palette) return false;   // switched off in the setup: everything goes to the AI
@@ -1814,7 +1821,7 @@ export function initAiAssistant(container) {
 
     async function paletteOpen(filter) {
         const tools = await paletteLoad();
-        if (!paletteWanted(input.value) && input.value !== '') return;   // the user moved on meanwhile
+        if (!paletteWanted(input.value) && !paletteLocalTyped(input.value) && input.value !== '') return;   // the user moved on meanwhile
         const typed = paletteParseCommand(input.value);
         if (typed && typed.typedSpace) {
             // A command and its words: how to write it, and what fits the word
@@ -1824,11 +1831,13 @@ export function initAiAssistant(container) {
         }
         const ctx = paletteContext();
         const f = (filter || '').toLowerCase().trim();
-        const cmds = (paletteCommands || []).filter((c) => !f || c.name.indexOf(f) === 0 || c.label.toLowerCase().indexOf(f) !== -1);
-        // Nothing typed: only the tools of the page being viewed, never the first
-        // ones of the alphabet. Typed: the best matches first.
+        // Commands of the chat itself, run by handleQuery(). Nothing typed: only them,
+        // plus a line pointing to /help for the commands and tools that need no AI.
+        const locals = PALETTE_LOCALS.filter((l) => !f || l[0].indexOf(f) === 0);
+        const cmds = f ? (paletteCommands || []).filter((c) => c.name.indexOf(f) === 0) : [];
+        // Typed: only the tools whose name starts with what is typed.
         const list = tools
-            .filter((tl) => (f ? paletteMatch(tl, f) < 3 : paletteRank(tl, ctx) < 3))
+            .filter((tl) => f && paletteMatch(tl, f) === 0)
             .sort((a, b) => {
                 const ra = paletteRank(a, ctx);
                 const rb = paletteRank(b, ctx);
@@ -1836,14 +1845,14 @@ export function initAiAssistant(container) {
                 return (ra - rb) || (f ? paletteMatch(a, f) - paletteMatch(b, f) : 0) || (ra <= 1 ? paletteKind(a, ctx) - paletteKind(b, ctx) : 0) || a.name.localeCompare(b.name);
             })
             .slice(0, 12);
-        const hidden = f ? 0 : tools.length - list.length;
         const box = document.createElement('div');
         box.className = 'ai-palette ai-palette-list';
         let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteHint'))}</div>`;
-        if (hidden > 0) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteTypeToSearch').replace('%s', String(hidden)))}</div>`;
-        const items = cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
-            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`));
+        const items = locals.map((l) => `<div class="ai-palette-item" data-local="/${escapeHtml(l[0])}"><strong>/${escapeHtml(l[0])}</strong> <span class="opacitymedium">${escapeHtml(t(l[1]))}</span></div>`)
+            .concat(cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
+            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`)));
         html += items.length ? items.join('').replace('class="ai-palette-item', 'class="ai-palette-item selected') : `<div class="ai-palette-empty opacitymedium">${escapeHtml(t('NoResults'))}</div>`;
+        if (!f) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteMore'))}</div>`;
         box.innerHTML = html;
         paletteMount(box);
         // mousedown, not click: the input keeps its focus.
@@ -1853,6 +1862,12 @@ export function initAiAssistant(container) {
     // A command: write its name in the input (and run it when it needs no words);
     // an API tool: its form.
     function palettePick(el) {
+        if (el.dataset.local) {
+            paletteClose();
+            input.value = el.dataset.local;
+            handleQuery();
+            return;
+        }
         if (el.dataset.cmd) {
             if (el.dataset.cmd === 'total') {
                 runCommand('total', '');
@@ -2799,11 +2814,35 @@ export function initAiAssistant(container) {
         if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
-        // "/new" is handled locally (no AI call): same as the Clear button, without confirmation.
-        if (query.toLowerCase() === '/new' && !readyDocs.length) {
+        // "/new" and "/clear" are handled locally (no AI call): same as the Clear button.
+        if ((query.toLowerCase() === '/new' || query.toLowerCase() === '/clear') && !readyDocs.length) {
             input.value = '';
             input.style.height = '44px';
-            clearConversation();
+            startNewConversation();
+            return;
+        }
+
+        // "/help" is answered locally (no AI call): the commands this user may run,
+        // the internal ones and the "@" / "#" suggestions. No raw text: never sent as context.
+        if (query.toLowerCase() === '/help' && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            appendMsg('user', escapeHtml(query));
+            await paletteLoad();
+            const line = (syntax, label, inline) => '<li><strong><code>' + escapeHtml(syntax) + '</code></strong>' + (inline ? ' : ' : '<br>') + escapeHtml(label) + '</li>';
+            let html = '<div class="small"><b>' + escapeHtml(t('AIHelpInternal')) + '</b><ul>';
+            html += line('/help', t('AIHelpHelp'), true);
+            html += line('/new, /clear', t('AIHelpClear'), true);
+            html += line('/status', t('AIHelpStatus'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpMentions')) + '</b><ul>';
+            html += line('@', t('AIHelpMentionThirdparty'), true);
+            html += line('#', t('AIHelpMentionProduct'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpCommands')) + '</b><ul>';
+            (paletteCommands || []).forEach((c) => { html += line(c.syntax || ('/' + c.name), c.label || ''); });
+            html += line('/...', t('AIHelpPalette'));
+            html += '</ul>' + escapeHtml(t('AIHelpFreeText')) + '</div>';
+            appendMsg('bot', html);
+            input.focus();
             return;
         }
 
