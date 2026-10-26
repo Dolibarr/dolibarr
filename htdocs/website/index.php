@@ -3201,7 +3201,7 @@ if (!GETPOST('hide_websitemenu')) {
 	//
 
 	print '<!-- Toolbar for website -->';
-	if ($action != 'file_manager') {
+	if ($action != 'file_manager' && $action != 'editfile') {
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("Website").': ';
 		print '</div>';
@@ -3464,7 +3464,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>';
 	}
 
-	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'editsecurity')) || in_array($mode, array('replacesite'))) {
+	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'editfile', 'replacesiteconfirm', 'editsecurity')) || in_array($mode, array('replacesite'))) {
 		if (!$user->hasRight('website', 'write')) {
 			$disabled = ' disabled';
 		}
@@ -3474,7 +3474,7 @@ if (!GETPOST('hide_websitemenu')) {
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
 			print '<input type="submit" id="savefile" class="button buttonforacesave button-save small'.$disabled.'" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		}
-		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
+		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'editfile' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
 			print '<input type="submit" id="savefile" class="button buttonforacesave button-save small'.$disabled.'" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		}
 		if ($action != 'preview') {
@@ -3488,7 +3488,7 @@ if (!GETPOST('hide_websitemenu')) {
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm', 'editsecurity'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
+	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'editfile', 'replacesite', 'replacesiteconfirm', 'editsecurity'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
@@ -3994,7 +3994,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite', 'editsecurity'))) {
+		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'editfile', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite', 'editsecurity'))) {
 			if (!$user->hasRight('website', 'write')) {
 				$disabled = ' disabled';
 			}
@@ -5358,7 +5358,7 @@ if ($action == 'preview') {
 
 if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="fichenopadding" style="padding-right: 20px"><br>';
+	print '<div class="fichenopadding" style="padding-right: 20px">'.($dol_openinpopup ? '' : '<br>');
 
 	$module = 'medias';
 	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php

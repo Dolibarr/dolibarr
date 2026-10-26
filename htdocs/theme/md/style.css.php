@@ -543,6 +543,10 @@ body {
 	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
+/* A page loaded into a dialog popup has the background of the card, not the one of the body */
+body.dol_openinpopup {
+	/* background-color: var(--colorbacktabcard1); */
+}
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
@@ -7636,6 +7640,11 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+}
+#ecm-layout-north {
+	min-height: 40px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 div#ecm-layout-west {
 	width: 380px;

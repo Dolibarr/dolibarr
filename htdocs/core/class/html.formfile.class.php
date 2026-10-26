@@ -1887,7 +1887,21 @@ class FormFile
 				if (e.key === "Enter") {
 					e.preventDefault();	/* Do not submit the parent form */
 				}
-			})' : '').';
+			})' : '').'.each(function() {
+				var input = this;
+				if (jQuery(input).val() != "") {
+					dolFilterDocLines(input);	/* Filter kept after a reload (edit, rename, cancel) */
+				}
+				/* Keep the filter when a link of a line reloads the page (edit button) */
+				jQuery(input).closest("table").find("a.editfilelink").off(".dolfilterdoc").on("click.dolfilterdoc", function() {
+					var href = jQuery(this).attr("href");
+					var search = jQuery(input).val();
+					if (search != "" && href && href != "#") {
+						href = href.replace(/([?&])search_doc_ref=[^&]*/, "$1").replace(/[?&]$/, "");
+						jQuery(this).attr("href", href + (href.indexOf("?") >= 0 ? "&" : "?") + "search_doc_ref=" + encodeURIComponent(search));
+					}
+				});
+			});
 		});
 		</script>'."\n";
 	}

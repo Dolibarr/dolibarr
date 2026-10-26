@@ -8114,6 +8114,7 @@ div.ecmjqft {
 }
 #ecm-layout-north {
 	min-height: 40px;
+	margin-bottom: 8px;
 }
 #ecm-layout-north div.attachareaformuserfileecm {
 	padding-bottom: 0px;
