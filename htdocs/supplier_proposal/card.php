@@ -2332,11 +2332,18 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-		// Display context of lines, also sets the global variables used by the line templates
-		$linesContext = $object->initObjectLinesDisplay();
+		// Add free products/services form
+		global $forceall, $senderissupplier, $inputalsopricewithtax;
+		$forceall = 1;
+		$dateSelector = 0;
+		$inputalsopricewithtax = 1;
+		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty.
+		if (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
+			$senderissupplier = getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY');
+		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
+			$object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
 		}
 
 		// Form to add new line
@@ -2344,13 +2351,13 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				// Add products/services form
 
-				$parameters = array('dateSelector' => $linesContext['dateSelector']);
+				$parameters = array('dateSelector' => $dateSelector);
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
+					$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 				}
 			}
 		}
