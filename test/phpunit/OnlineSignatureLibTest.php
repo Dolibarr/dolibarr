@@ -67,4 +67,3 @@ class OnlineSignatureLibTest extends PHPUnit\Framework\TestCase
 		}
 	}
 }
-
