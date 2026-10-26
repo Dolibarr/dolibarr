@@ -277,18 +277,6 @@ parameters:
 			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
 
 		-
-			message: '#^Offset ''u\.salary'' on array\{u\.salary\: \(float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/user/list.php
-
-		-
-			message: '#^Offset ''val'' on array\{val\: array\{u\.salary\: \(float\|int\)\}, nbfield\: int\<0, max\>, pos\?\: non\-empty\-array\<int, ''u\.salary''\>\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/user/list.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
