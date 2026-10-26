@@ -4402,6 +4402,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
 		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -5727,7 +5728,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";

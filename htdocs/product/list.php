@@ -1404,7 +1404,7 @@ if (!empty($arrayfields['p.fk_country']['checked'])) {
 // State
 if (!empty($arrayfields['p.fk_state']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formcompany->select_state((int) $search_state, $search_country);
+	print $formcompany->select_state((int) $search_state, $search_country, 'state_id', 'maxwidth200onsmartphone  minwidth300', 1);
 	print '</td>';
 }
 // Accountancy code sell

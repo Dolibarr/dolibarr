@@ -468,16 +468,19 @@ class Account extends CommonObject
 
 		$this->balance = 0;
 
-		$this->type_lib = array(
-			self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
-			self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
-			self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
-		);
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$this->type_lib = array(
+				self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
+				self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
+				self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
+			);
 
-		$this->labelStatus = array(
-			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
-			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
-		);
+			$this->labelStatus = array(
+				self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+				self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+			);
+		}
 	}
 
 	/**
@@ -1868,6 +1871,28 @@ class Account extends CommonObject
 		return $out;
 	}
 
+	/**
+	 * Return the translation key for a displayed bank-account field
+	 *
+	 * @param	string	$field	Field returned by getFieldsToShow
+	 * @return	string			Translation key
+	 */
+	public function getBankFieldLabel($field)
+	{
+		$country_code = $this->getCountryCode();
+
+		if ($country_code == 'CA' && $field == 'BankCode') {
+			return 'InstitutionNumber';
+		}
+		if ($country_code == 'CA' && $field == 'DeskCode') {
+			return 'TransitNumber';
+		}
+		if ($country_code == 'US' && $field == 'BankCode') {
+			return 'ABARoutingNumber';
+		}
+
+		return $field;
+	}
 
 	/**
 	 * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
@@ -1876,15 +1901,19 @@ class Account extends CommonObject
 	 * @return		int        0=No bank code need + Account number is enough
 	 *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
 	 *                         2=Need 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
+	 *                         3=Need 2 fields for bank code: Institution number and transit number + Account number (Canada)
 	 */
 	public function useDetailedBBAN()
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC', 'DZ'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
-		if (in_array($country_code, array('AD', 'AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
+		if ($country_code == 'CA') {
+			return 3;
+		}
+		if (in_array($country_code, array('AD', 'AU', 'BE', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
 			return 2; // Australia, England...
 		}
 		return 0;
@@ -2014,6 +2043,12 @@ class Account extends CommonObject
 		} elseif ($detailedBBAN == 2) {
 			$fieldarray = array(
 					'BankCode',
+					'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 3) {
+			$fieldarray = array(
+					'BankCode',
+					'DeskCode',
 					'BankAccountNumber'
 			);
 		} else {
@@ -2889,6 +2924,7 @@ class AccountLine extends CommonObjectLine
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 				$this->user_rappro = $obj->fk_user_rappro;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

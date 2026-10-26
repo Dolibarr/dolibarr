@@ -1157,6 +1157,17 @@ class Don extends CommonObject
 				// we delete preview files
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_delete_preview($object);
+
+				// Index file in database, as commonGenerateDocument() does
+				if (!empty($obj->result['fullpath'])) {
+					// Check that the file exists, before indexing it (it does not exist if we create a PDF and auto delete the ODT file)
+					if (dol_is_file($obj->result['fullpath'])) {
+						$this->indexFile($obj->result['fullpath'], (empty($obj->update_main_doc_field) ? 0 : 1));
+					}
+				} else {
+					dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+				}
+
 				return 1;
 			} else {
 				$outputlangs->charset_output = $sav_charset_output;

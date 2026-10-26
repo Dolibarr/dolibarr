@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,11 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int Deadline for payment
 	 */
 	public $date_lim_reglement;
+
+	/**
+	 * @var ?int	Point of tax date (date of supply)
+	 */
+	public $date_pointoftax;
 
 	/**
 	 * @var ?int		Payment term ID
@@ -614,14 +620,55 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Check that the point of tax date of a validated invoice is not changed by an update.
+	 *  Once validated, the invoice is issued and its point of tax date decides the VAT period.
+	 *  To correct it, the invoice must be set back to draft, or a credit note must be created.
+	 *  The status is read from the database, the one of the object may have been changed (for example by the API).
+	 *
+	 *  @return	int		1 if not changed or invoice is a draft, -1 if changed on a validated invoice or error
+	 */
+	protected function checkPointOfTaxNotChanged()
+	{
+		global $langs;
+
+		if (empty($this->id)) {
+			return 1;
+		}
+
+		$sql = "SELECT fk_statut, date_pointoftax FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj || (int) $obj->fk_statut == self::STATUS_DRAFT) {
+			return 1;
+		}
+
+		// Compare the days, as stored by update()
+		$olddate = substr((string) $obj->date_pointoftax, 0, 10);
+		$newdate = (dol_strlen((string) $this->date_pointoftax) != 0 ? substr($this->db->idate((int) $this->date_pointoftax), 0, 10) : '');
+		if ($olddate !== $newdate) {
+			$langs->load("bills");
+			$this->error = $langs->trans("ErrorPointOfTaxOfValidatedInvoiceCantBeChanged", $this->ref);
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
 	 *  Return list of payments
 	 *
 	 *  @see $error Empty string '' if no error.
 	 *
 	 *	@param		string	$filtertype			1 to filter on type of payment == 'PRE' for the payment lines
 	 *  @param      int     $multicurrency  	Return multicurrency_amount instead of amount
-	 *  @param		int		$mode				0=payments + discount, 1=payments only
-	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
+	 *  @param		int		$mode				0=payments + discount, 1=payments only, 2=discounts only
+	 *  @return     array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>		 Array with list of payments (date is the raw date returned by the database)
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0, $mode = 0)
 	{

@@ -4,6 +4,7 @@
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +31,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -505,6 +505,83 @@ class FilesLibTest extends CommonClassTest
 				$this->assertEquals(0, $result['accessallowed'], "Check write access denied to '$modulepart/$filename':".json_encode($result));
 			}
 			$user->rights->fournisseur = $savpermsupplier;
+		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentHook
+	 *
+	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentHook()
+	{
+		global $conf, $user, $hookmanager;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savhookmanager = $hookmanager;
+		$savconfmodule = isset($conf->mytestmodule) ? $conf->mytestmodule : null;
+		$savadmin = $user->admin;
+
+		// A module of the generic case, with its directory
+		$conf->mytestmodule = new stdClass();
+		$conf->mytestmodule->dir_output = DOL_DATA_ROOT.'/mytestmodule';
+		$conf->mytestmodule->multidir_output = array(1 => DOL_DATA_ROOT.'/mytestmodule');
+		$filename = 'export/FA010101.zip';
+
+		// A hook of a module on the context 'main' of the page, answering what the test sets in $answer
+		$hook = new class {
+			/** @var array<string,mixed> */
+			public $results = array();
+			/** @var int */
+			public $answer = 0;
+			/** @var array<string,mixed> */
+			public $answerresults = array();
+			/**
+			 * @param array<string,mixed>	$parameters	Hook parameters
+			 * @return int
+			 */
+			public function checkSecureAccess($parameters)
+			{
+				$this->results = $this->answerresults;
+				return $this->answer;
+			}
+		};
+		$hookmanager = new HookManager($this->savdb);
+		$hookmanager->contextarray = array('main');
+		$hookmanager->hooks['main']['mytestmodule'] = $hook;
+		$hookmanager->hooksSorted['main']['50:mytestmodule'] = $hook;
+
+		// Admin, hook without opinion (0): access allowed as without hook
+		$user->admin = 1;
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "Admin, hook returns 0: access allowed:".json_encode($result));
+
+		// Admin, hook replaces the result and refuses access
+		$hook->answer = 1;
+		$hook->answerresults = array('accessallowed' => 0);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "Admin, hook returns 1 with accessallowed 0: access refused:".json_encode($result));
+
+		// No permission, hook replaces the result and grants access (behaviour before this change, kept)
+		$user->admin = 0;
+		$hook->answerresults = array('accessallowed' => 1);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "No permission, hook returns 1 with accessallowed 1: access allowed:".json_encode($result));
+
+		// No permission, hook replaces the result without saying anything about access: refused as without hook
+		$hook->answerresults = array();
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "No permission, hook returns 1 without accessallowed: access refused:".json_encode($result));
+
+		$user->admin = $savadmin;
+		$hookmanager = $savhookmanager;
+		if ($savconfmodule === null) {
+			unset($conf->mytestmodule);
+		} else {
+			$conf->mytestmodule = $savconfmodule;
 		}
 	}
 

@@ -30,6 +30,7 @@ if (!defined('ROWS_3')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -62,10 +63,10 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		foreach (array('conf', 'langs', 'user', 'object', 'form', 'extrafields', 'hookmanager', 'forceall', 'forcetoshowtitlelines', 'filtertype', 'disableedit', 'disablemove', 'disableremove', '_POST', '_GET', '_SESSION', '_SERVER') as $name) {
+		foreach (array('conf', 'db', 'langs', 'user', 'object', 'form', 'extrafields', 'hookmanager', 'forceall', 'forcetoshowtitlelines', 'filtertype', 'disableedit', 'disablemove', 'disableremove', '_POST', '_GET', '_SESSION', '_SERVER') as $name) {
 			$this->savedGlobals[$name] = $GLOBALS[$name] ?? null;
 		}
-		global $conf, $langs, $user, $object, $form, $extrafields, $hookmanager, $forcetoshowtitlelines;
+		global $conf, $db, $langs, $user, $object, $form, $extrafields, $hookmanager, $forcetoshowtitlelines;
 		$conf = new Conf();
 		$conf->entity = 1;
 		$conf->global->MAIN_DISABLE_FREE_LINES = 1;
@@ -78,9 +79,15 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 		$langs->setDefaultLang('en_US');
 		$db = $this->createMock(DoliDBMysqli::class);
 		$db->method('prefix')->willReturn('llx_');
-		$db->method('query')->willReturn(true);
+		$fixtureRow = 0;
+		$db->method('query')->willReturnCallback(function () use (&$fixtureRow) {
+			$fixtureRow = 0;
+			return true;
+		});
 		$db->method('num_rows')->willReturn(1);
-		$db->method('fetch_object')->willReturn((object) array('rowid' => 3, 'label' => 'Main warehouse', 'description' => '', 'fk_parent' => 0, 'stock' => 0));
+		$db->method('fetch_object')->willReturnCallback(function () use (&$fixtureRow) {
+			return $fixtureRow++ ? false : (object) array('rowid' => 3, 'label' => 'Main warehouse', 'code' => 'P', 'sortorder' => 1, 'short_label' => 'p.', 'unit_type' => 'unit', 'active' => 1, 'description' => '', 'fk_parent' => 0, 'stock' => 0);
+		});
 		$object = new Expedition($db);
 		$object->id = 12;
 		$object->status = Expedition::STATUS_DRAFT;
@@ -148,7 +155,7 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * Free entry is available only when allowed, retaining input after an error.
+	 * Free entry requires shipment opt-in and respects the global prohibition.
 	 *
 	 * @return void
 	 */
@@ -156,17 +163,134 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 	{
 		global $conf, $form;
 		$_POST = array('prod_entry_mode' => 'free', 'type' => '0', 'dp_desc' => 'Packing & handling');
-		$form->expects($this->once())->method('select_type_of_lines')->with(0, 'type');
+		$form->expects($this->once())->method('select_type_of_lines')->with('0', 'type');
+		foreach (array(array(null, 0, false), array(0, 0, false), array(1, 0, true), array(1, 1, false)) as $case) {
+			unset($conf->global->SHIPMENTS_ALLOW_FREE_LINES);
+			if ($case[0] !== null) {
+				$conf->global->SHIPMENTS_ALLOW_FREE_LINES = $case[0];
+			}
+			$conf->global->MAIN_DISABLE_FREE_LINES = $case[1];
+			$html = $this->renderCreateForm();
+			$this->assertSame($case[2], strpos($html, 'id="prod_entry_mode_free"') !== false);
+			$this->assertSame($case[2], strpos($html, 'name="dp_desc"') !== false);
+			if ($case[2]) {
+				$this->assertStringContainsString('id="prod_entry_mode_free" value="free" checked', $html);
+				$this->assertStringContainsString('Packing &amp; handling', $html);
+			} else {
+				$this->assertStringContainsString('name="prod_entry_mode" value="predef"', $html);
+			}
+		}
+	}
+
+	/**
+	 * Free shipment lines expose a unit selector and retain the submitted unit.
+	 *
+	 * @return void
+	 */
+	public function testCreateFormKeepsSubmittedUnit()
+	{
+		global $conf, $form;
+		$conf->global->PRODUCT_USE_UNITS = 1;
 		$conf->global->MAIN_DISABLE_FREE_LINES = 0;
+		$conf->global->SHIPMENTS_ALLOW_FREE_LINES = 1;
+		$_POST = array('prod_entry_mode' => 'free', 'type' => '0', 'dp_desc' => 'Packing', 'units' => '6');
+		$form->expects($this->once())->method('selectUnits')->with(6, 'units', 1)->willReturn('<select name="units"><option value="6" selected>Piece</option></select>');
 		$html = $this->renderCreateForm();
-		$this->assertStringContainsString('id="prod_entry_mode_free" value="free" checked', $html);
-		$this->assertStringContainsString('name="dp_desc"', $html);
-		$this->assertStringContainsString('Packing &amp; handling', $html);
-		$conf->global->MAIN_DISABLE_FREE_LINES = 1;
-		$html = $this->renderCreateForm();
-		$this->assertStringNotContainsString('id="prod_entry_mode_free"', $html);
-		$this->assertStringNotContainsString('name="dp_desc"', $html);
-		$this->assertStringContainsString('name="prod_entry_mode" value="predef"', $html);
+		$dom = new DOMDocument();
+		$dom->loadHTML('<table>'.$html.'</table>');
+		$xpath = new DOMXPath($dom);
+		$this->assertSame(1, $xpath->query('//td[contains(@class, "linecoluseunit")]/select[@name="units"]/option[@selected and @value="6"]')->length);
+	}
+
+	/**
+	 * Shipment headers and inputs share the same columns with optional features.
+	 * Commercial fields and service periods must never enter this form.
+	 *
+	 * @return void
+	 */
+	public function testCreateFormColumnsMatchShipmentHeaders()
+	{
+		global $conf;
+		foreach (array(0, 1) as $stock) {
+			foreach (array(0, 1) as $units) {
+				foreach (array(0, 1) as $numbering) {
+					$conf->modules = array('product' => 1, 'stock' => $stock);
+					$conf->global->PRODUCT_USE_UNITS = $units;
+					$conf->global->MAIN_VIEW_LINE_NUMBER = $numbering;
+					$conf->global->MAIN_DISABLE_FREE_LINES = 0;
+					$conf->global->SHIPMENTS_ALLOW_FREE_LINES = 1;
+					$html = $this->renderCreateForm();
+					$dom = new DOMDocument();
+					$dom->loadHTML('<table>'.$html.'</table>');
+					$xpath = new DOMXPath($dom);
+					$rows = $xpath->query('//table/tr');
+					$this->assertSame(2, $rows->length);
+					$expected = 5 + $stock + $units + $numbering;
+					foreach ($rows as $row) {
+						$columns = 0;
+						foreach ($xpath->query('./td|./th', $row) as $cell) {
+							$columns += max(1, (int) $cell->getAttribute('colspan'));
+						}
+						$this->assertSame($expected, $columns);
+					}
+					foreach (array('linecoldescription', 'linecolqty', 'linecoluseunit', 'linecolwarehouse') as $column) {
+						$positions = array();
+						foreach ($rows as $row) {
+							$cell = $xpath->query('./td[contains(@class, "'.$column.'")]|./th[contains(@class, "'.$column.'")]', $row)->item(0);
+							$positions[] = $cell ? $xpath->query('preceding-sibling::*', $cell)->length : -1;
+						}
+						$this->assertSame($positions[0], $positions[1]);
+					}
+					$this->assertSame(0, $xpath->query('//*[@name="tva_tx" or @name="price_ht" or @name="price_ttc" or @name="remise_percent" or @name="date_start" or @name="date_end"]')->length);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Viewing and editing keep the same column count as the shipment header.
+	 *
+	 * @return void
+	 */
+	public function testViewAndEditColumnsMatchShipmentHeaders()
+	{
+		global $conf, $object;
+		$line = new ExpeditionLigne($object->db);
+		$line->id = 42;
+		$line->fk_product = 0;
+		$line->qty = 1;
+		$line->description = 'Packing';
+		$object->lines = array($line);
+		foreach (array(0, 1) as $stock) {
+			foreach (array(0, 1) as $units) {
+				foreach (array(0, 1) as $numbering) {
+					$conf->modules = array('product' => 1, 'stock' => $stock);
+					$conf->global->PRODUCT_USE_UNITS = $units;
+					$conf->global->MAIN_VIEW_LINE_NUMBER = $numbering;
+					foreach (array('view', 'editline') as $action) {
+						ob_start();
+						try {
+							$object->printObjectLines($action, new Societe($object->db), null, 42, 0, '/expedition/tpl');
+							$html = ob_get_contents();
+						} finally {
+							ob_end_clean();
+						}
+						$dom = new DOMDocument();
+						$dom->loadHTML('<table>'.$html.'</table>');
+						$xpath = new DOMXPath($dom);
+						$rows = $xpath->query('//table/thead/tr|//table/tr');
+						$this->assertSame(2, $rows->length);
+						foreach ($rows as $row) {
+							$columns = 0;
+							foreach ($xpath->query('./td|./th', $row) as $cell) {
+								$columns += max(1, (int) $cell->getAttribute('colspan'));
+							}
+							$this->assertSame(5 + $stock + $units + $numbering, $columns);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**

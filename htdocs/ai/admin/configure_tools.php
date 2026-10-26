@@ -118,6 +118,9 @@ if (!empty($unfilteredSchema) && is_array($unfilteredSchema)) {
 
 $rawAst     = getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS');
 $rawMcp     = getDolGlobalString('AI_MCP_SERVER_ALLOWED_TOOLS');
+// When the chat assistant or the MCP server is disabled, its active switches are dimmed: they have no effect
+$astEnabled = getDolGlobalBool('AI_ASSISTANT_ENABLED');
+$mcpEnabled = getDolGlobalBool('AI_MCP_ENABLED');
 $astAllowed = McpHandler::resolveAllowList($rawAst, $allDiscoveredTools);
 $mcpAllowed = McpHandler::resolveAllowList($rawMcp, $allDiscoveredTools);
 
@@ -302,7 +305,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-ast-link reposition' . $lockCssClass . '" href="' . $urlAst . '">';
+				print '<a class="ctx-ast-link reposition' . $lockCssClass . (($isAstOn && !$astEnabled) ? ' opacitymedium' : '') . '" href="' . $urlAst . '">';
 				print img_picto($langs->trans($isAstOn ? 'Remove' : 'Add'), $pictoAst, '', 0, 0, 0, '', !$isAstOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}
@@ -321,7 +324,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-mcp-link reposition' . $lockCssClass . '" href="' . $urlMcp . '">';
+				print '<a class="ctx-mcp-link reposition' . $lockCssClass . (($isMcpOn && !$mcpEnabled) ? ' opacitymedium' : '') . '" href="' . $urlMcp . '">';
 				print img_picto($langs->trans($isMcpOn ? 'Remove' : 'Add'), $pictoMcp, '', 0, 0, 0, '', !$isMcpOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}

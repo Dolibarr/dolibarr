@@ -9,6 +9,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1927,6 +1928,8 @@ function dol_delete_preview($object)
 		$dir = $conf->expedition->dir_output.'/receipt';
 	} elseif ($object->element == 'fichinter') {
 		$dir = $conf->ficheinter->dir_output;
+	} elseif ($object->element == 'chequereceipt') {
+		$dir = $conf->bank->dir_output.'/checkdeposits';
 	} else {
 		$dir = empty($conf->$element->dir_output) ? '' : $conf->$element->dir_output;
 	}
@@ -3207,6 +3210,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
+		// To write or delete a photo, the user needs the permission to modify users (or to modify its own user card for its own photo)
+		if ($mode != 'read' && empty($fuser->admin) && !$fuser->hasRight('user', 'user', $lire) && !((int) $original_file == $fuser->id && $fuser->hasRight('user', 'self', $lire))) {
+			$accessallowed = 0;
+		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphotopublic' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos that were set to public (for virtual credit card) by their owner (public user photos can be read
@@ -3223,7 +3230,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 					$valuetouse = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 					$encodedsecurekey = dol_hash($valuetouse.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
-					if ($encodedsecurekey == $securekey) {
+					if (hash_equals($encodedsecurekey, (string) $securekey)) {
 						$accessok = true;
 					}
 				}
@@ -3306,7 +3313,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
-		if ($fuser->hasRight('holiday', $read) || $fuser->hasRight('holiday', 'readall') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('holiday', $read) || ($mode == 'read' && $fuser->hasRight('holiday', 'readall')) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
@@ -3319,7 +3326,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'salaries') && !empty($conf->salaries->dir_output)) {
 		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
-		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('salaries', $read) || ($mode == 'read' && $fuser->hasRight('salaries', 'readall')) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// The 'read' permission is labelled "yours only" and the two screens leading to this
 			// download, salaries/card.php and salaries/document.php, do enforce it on fk_user.
@@ -3338,7 +3345,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->salaries->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
-		if ($fuser->hasRight('expensereport', $lire) || $fuser->hasRight('expensereport', 'readall') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('expensereport', $lire) || ($mode == 'read' && $fuser->hasRight('expensereport', 'readall')) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
@@ -3439,7 +3446,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
-		if ($fuser->hasRight("categorie", $lire) || $fuser->hasRight("takepos", "run")) {
+		if ($fuser->hasRight("categorie", $lire) || ($mode == 'read' && $fuser->hasRight("takepos", "run"))) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
@@ -3788,7 +3795,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->hasRight('export', 'lire');
+		$accessallowed = $fuser->hasRight('export', $lire);
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
@@ -3796,11 +3803,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module
-		$accessallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
+		$accessallowed = $fuser->hasRight('recruitment', 'recruitmentjobposition', $read);
 		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'hrm' && !empty($conf->hrm->dir_output)) {
 		// Wrapping for hrm module
-		$accessallowed = $user->hasRight('hrm', 'all', 'read');
+		$accessallowed = $fuser->hasRight('hrm', 'all', $read);
 		$original_file = $conf->hrm->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
@@ -3942,7 +3949,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$partsofdirinoriginalfile = explode('/', $original_file);
 			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-				if ($partofdirinoriginalfile && ($fuser->hasRight($modulepart, $partofdirinoriginalfile, 'lire') || $fuser->hasRight($modulepart, $partofdirinoriginalfile, 'read'))) {
+				if ($partofdirinoriginalfile && ($fuser->hasRight($modulepart, $partofdirinoriginalfile, $lire) || $fuser->hasRight($modulepart, $partofdirinoriginalfile, $read))) {
 					$accessallowed = 1;
 				}
 			}
@@ -3980,12 +3987,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if (!empty($hookmanager->resArray['original_file'])) {
 				$original_file = $hookmanager->resArray['original_file'];
 			}
-			if (!empty($hookmanager->resArray['accessallowed'])) {
-				$accessallowed = $hookmanager->resArray['accessallowed'];
+			// A hook that replaces the result (return > 0) may also refuse access, by setting accessallowed to 0
+			if (isset($hookmanager->resArray['accessallowed'])) {
+				$accessallowed = ($hookmanager->resArray['accessallowed'] ? 1 : 0);
 			}
 			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
 				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
 			}
+		}
+	}
+
+	// Some wrappers are open to everybody for reading (company logos, graphs, images of the WYSIWYG editor, photos...). This must not
+	// allow to write or delete files: this is reserved to admins (the logos are managed by the setup of the company) or, for photos
+	// of members, to users that can modify members.
+	if ($mode != 'read' && empty($fuser->admin)) {
+		if (in_array($modulepart, array('mycompany', 'companylogo', 'graph_stock', 'graph_fourn', 'graph_product', 'barcode', 'iconmailing', 'fckeditor', 'editor', 'bittorrent'))) {
+			$accessallowed = 0;
+		}
+		if ($modulepart == 'memberphoto' && !$fuser->hasRight('adherent', $lire)) {
+			$accessallowed = 0;
 		}
 	}
 
@@ -4402,15 +4422,23 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 		$utils = new Utils($db);
 		$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+		$outputfiletxt = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.txt'; // File where docling writes the converted text
+
+		// Docling can convert images with OCR, so we set the input format according to the file extension
+		$fromformat = (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filetoprocess) ? 'image' : 'pdf');
 
 		// We also exclude '/temp/' dir and 'documents/admin/documents'
 		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
-		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text ".escapeshellarg($filetoprocess);
+		dol_delete_file($outputfiletxt);
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from ".$fromformat." --to text --output-file ".escapeshellarg($outputfiletxt)." ".escapeshellarg($filetoprocess);
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-		if (!$resultexec['error']) {
-			$txt = $resultexec['output'];
+		// Docling writes the result into the file set with --output-file. The standard output contains only logs, and docling may
+		// return no error even if conversion failed, so the conversion is a success only if the output file was created.
+		if (!$resultexec['error'] && dol_is_file($outputfiletxt)) {
+			$txt = (string) file_get_contents($outputfiletxt);
+			dol_delete_file($outputfiletxt);
 			//$matches = array();
 			//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
 			//	$keywords = $matches[1];
@@ -4421,8 +4449,8 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 			$textforfulltextindex = $txt;
 		} else {
 			$message .= $resultexec['output'];
-			$message .= ($message ? "\n" : "").$resultexec['error'];
-			dol_syslog($resultexec['error']);
+			$message .= ($message ? "\n" : "").($resultexec['error'] ? $resultexec['error'] : 'Docling did not generate the output file');
+			dol_syslog('dolDocToText docling failed: '.($resultexec['error'] ? $resultexec['error'] : 'no output file'), LOG_WARNING);
 			$error++;
 		}
 	}

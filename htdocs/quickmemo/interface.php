@@ -48,6 +48,7 @@ require '../main.inc.php';
 // Load required classes
 require_once DOL_DOCUMENT_ROOT . '/core/class/jsonResponse.class.php';
 require_once __DIR__ . '/class/memo.class.php';
+require_once __DIR__ . '/lib/quickmemo.lib.php';
 if (!class_exists('Validate')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
 }
@@ -933,56 +934,6 @@ function quickMemoInterfacePopulateMemoTplFromQueryObj($obj)
 }
 
 /**
- * Check that current user can read the object a memo is attached to.
- * Writing a memo does not change the object, so read access on the object is enough.
- *
- * @param string $element_type    Element type of the object ('' for global contexts like home page)
- * @param int    $element_id      Id of the object
- * @param bool   $moduleLevelOnly True to check only the permission on the module (memo shared on all objects of this type)
- * @return bool
- */
-function quickMemoInterfaceCanAccessElement($element_type, $element_id, $moduleLevelOnly = false)
-{
-	global $user, $hookmanager;
-
-	if (empty($element_type)) {
-		return true;
-	}
-
-	$parameters = array('element_type' => $element_type, 'element_id' => $element_id, 'moduleLevelOnly' => $moduleLevelOnly);
-	$hookobject = null;
-	$action = '';
-	$reshook = $hookmanager->executeHooks('quickMemoCheckElementAccess', $parameters, $hookobject, $action);
-	if ($reshook > 0) {
-		return true;
-	} elseif ($reshook < 0) {
-		return false;
-	}
-
-	$object = fetchObjectByElement($moduleLevelOnly ? 0 : (int) $element_id, $element_type, '', $moduleLevelOnly ? 0 : 1);
-	if (!is_object($object) || empty($object->element)) {
-		return false;
-	}
-	if (!$moduleLevelOnly && empty($object->id)) {
-		return false;
-	}
-
-	// Property module is set by fetchObjectByElement() only when object is fetched
-	$module = !empty($object->module) ? $object->module : getElementProperties($element_type)['module'];
-	if (empty($module)) {
-		return false;
-	}
-
-	$feature2 = ($module != $object->element ? $object->element : '');
-	if ($feature2 && !$user->hasRight($module, $object->element, 'read')) {
-		$feature2 = '';
-	}
-
-	// Force mode 'read', else restrictedArea() guesses the mode from our 'action' (create, delete...) and checks write permission on the object
-	return (bool) restrictedArea($user, $module, $moduleLevelOnly ? 0 : $object, $object->table_element, $feature2, 'fk_soc', 'rowid', 0, 1, 'read');
-}
-
-/**
  * Get the entity of a memo: entity of the linked object, or current entity for global memos
  * and memos shared on all objects of a type.
  *
@@ -1000,7 +951,7 @@ function quickMemoInterfaceGetMemoEntity($element_type, $element_id, $shared_on_
 	}
 
 	// Object already loaded in cache by quickMemoInterfaceCanAccessElement()
-	$object = fetchObjectByElement($element_id, $element_type, '', 1);
+	$object = fetchObjectByElement($element_id, quickMemoInterfaceResolveElementType($element_type), '', 1);
 
 	return is_object($object) ? (int) setEntity($object) : (int) $conf->entity;
 }

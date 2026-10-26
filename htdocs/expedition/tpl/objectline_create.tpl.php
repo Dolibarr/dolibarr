@@ -114,12 +114,12 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
-$freelines = !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
+$freelines = getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') && !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
 if ($freelines) {
 	print '<span class="prod_entry_mode_free nowraponall">';
 	print '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.((GETPOST('prod_entry_mode', 'aZ09') == 'free' || (!GETPOSTISSET('prod_entry_mode') && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT'))) ? ' checked' : '').'>';
 	print '<label for="prod_entry_mode_free">'.$langs->trans('FreeLineOfType').'</label> ';
-	$form->select_type_of_lines(GETPOSTISSET('type') ? GETPOSTINT('type') : -1, 'type', 1, 1, 1, 'minwidth200');
+	$form->select_type_of_lines((string) (GETPOSTISSET('type') ? GETPOSTINT('type') : -1), 'type', 1, 1, 1, 'minwidth200');
 	print '</span><br>';
 }
 
@@ -178,7 +178,8 @@ print '</td>';
 // Unit
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
-	print '<td class="nobottom linecoluseunit">';
+	print '<td class="bordertop nobottom linecoluseunit left">';
+	print $form->selectUnits(GETPOSTISSET('units') ? GETPOSTINT('units') : '', 'units', 1);
 	print '</td>';
 }
 

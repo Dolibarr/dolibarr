@@ -806,7 +806,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 /**
  * Check that a user can access the object a document is attached to. The permission on the module must have been checked
- * before with dol_check_secure_access_document().
+ * before with dol_check_secure_access_document() with $mode as parameter.
  * This function adds the check per object (thirdparties of a restricted sales representative, ...) by calling restrictedArea().
  *
  * @param	User		$user			User to check
@@ -849,9 +849,14 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 		'shipping' => array('expedition', 'expedition'),
 		'reception' => array('reception', 'reception'),
 		'supplier_proposal' => array('supplier_proposal', 'supplier_proposal'),
+		'project' => array('project', 'project'),
+		'projet' => array('project', 'project'),
+		'project_task' => array('project', 'project'),
 	);
 	// For these moduleparts, the first subdirectory is the id of the object instead of its ref
 	$modulepartwithid = array('societe', 'company', 'thirdparty', 'contact', 'socpeople');
+	// For these moduleparts, the first subdirectory is the ref of the object (files of tasks are into the directory of their project)
+	$modulepartwithfirstdirasref = array('project', 'projet', 'project_task');
 
 	// Same fix than into dol_check_secure_access_document(): files of 'expedition' into 'receipt/' are delivery notes
 	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
@@ -871,7 +876,14 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
 		if (is_object($object)) {
-			return restrictedArea($user, $modulepart, $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+			// Same than generic case of dol_check_secure_access_document(): file 'myobject/REF/file' may be protected by permission modulepart->myobject->read
+			$feature2 = '';
+			$tmparray = explode('/', ltrim($original_file, '/'));
+			if (count($tmparray) > 2 && ($user->hasRight($modulepart, $tmparray[0], $mode))) {
+				$feature2 = $tmparray[0];
+			}
+			// Call checkUserAccessToObject() directly (module permission already checked by dol_check_secure_access_document())
+			return checkUserAccessToObject($user, array($modulepart), $object, '', $feature2, 'fk_soc', 'rowid') ? 1 : 0;
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;
@@ -880,12 +892,16 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (in_array($modulepart, $modulepartwithid)) {
 		$tmparray = explode('/', ltrim($original_file, '/'));
 		$object = fetchObjectByElement((int) $tmparray[0], $modulepartlinkedtothirdparty[$modulepart][0]);
+	} elseif (in_array($modulepart, $modulepartwithfirstdirasref)) {
+		$tmparray = explode('/', ltrim($original_file, '/'));
+		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], (count($tmparray) > 1 ? $tmparray[0] : ''));
 	} else {
 		$object = fetchObjectByElement(0, $modulepartlinkedtothirdparty[$modulepart][0], $refname);
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+		// Call checkUserAccessToObject() directly (module permission already checked by dol_check_secure_access_document())
+		return checkUserAccessToObject($user, array($modulepartlinkedtothirdparty[$modulepart][1]), $object, '', '', 'fk_soc', 'rowid') ? 1 : 0;
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties

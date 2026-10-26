@@ -61,8 +61,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissionnote = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('project', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('project', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 

@@ -47,7 +47,7 @@ $currencycode = GETPOST('currencycode', 'alpha');
 if (empty($action)) {
 	$action = 'edit';
 }
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : getDolCurrency());
 }
@@ -153,7 +153,7 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array(getDolCurrency()); // Default currency always first position
 
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
 	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
@@ -180,7 +180,7 @@ if ($action == 'edit') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+	if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 		print '<input type="hidden" name="currencycode" value="' . $currencycode . '">';
 	}
 
@@ -248,7 +248,7 @@ if ($action == 'edit') {
 	print '</div>';
 }
 
-if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+if ((isModEnabled('multicompany') || isModEnabled('multicurrency')) && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}

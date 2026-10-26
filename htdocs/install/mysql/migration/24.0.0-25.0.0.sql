@@ -40,6 +40,26 @@
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_rowid_seq RENAME TO llx_adherent_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplier_extrafields_rowid_seq RENAME TO llx_supplier_proposal_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplierdet_extrafields_rowid_seq RENAME TO llx_supplier_proposaldet_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_payment_salary_extrafields_rowid_seq RENAME TO llx_salary_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_advtargetemailing_rowid_seq RENAME TO llx_mailing_advtarget_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_rowid_seq RENAME TO llx_prelevement_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_demande_rowid_seq RENAME TO llx_prelevement_demande_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_bank_categ_rowid_seq RENAME TO llx_category_bank_rowid_seq;
+
+-- V13 forgotten: sequences of tables renamed from llx_livraison* to llx_delivery* were not renamed with pgsql
+
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_rowid_seq RENAME TO llx_delivery_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_extrafields_rowid_seq RENAME TO llx_delivery_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_rowid_seq RENAME TO llx_deliverydet_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_extrafields_rowid_seq RENAME TO llx_deliverydet_extrafields_rowid_seq;
+
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -51,6 +71,19 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 
 -- v25 migration
+
+-- Add the 11 Algerian wilayas created by Law 26-06 and numbered by Decree 26-206.
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '59', '', 0, '', 'Aflou' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '59');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '60', '', 0, '', 'Barika' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '60');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '61', '', 0, '', 'El Kantara' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '61');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '62', '', 0, '', 'Bir El Ater' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '62');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '63', '', 0, '', 'El Aricha' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '63');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '64', '', 0, '', 'Ksar Chellala' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '64');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '65', '', 0, '', 'Aïn Ouessara' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '65');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '66', '', 0, '', 'Messaad' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '66');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '67', '', 0, '', 'Ksar El Boukhari' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '67');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '68', '', 0, '', 'Bou Saâda' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '68');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301, '69', '', 0, '', 'El Abiodh Sidi Cheikh' WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '69');
 
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
@@ -506,3 +539,22 @@ ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- Passkeys (WebAuthn credentials) used by the authentication mode 'passkey', saved into llx_oauth_token with service 'passkey'
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_label varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_credential_id varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_user_handle varchar(128) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_sign_count integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+-- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
+ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
+
+-- RF or national reference the supplier provides to accept payments
+ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
+
+-- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);

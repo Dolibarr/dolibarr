@@ -36,6 +36,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -76,6 +77,39 @@ if (empty($user->admin)) {
  * Actions
  */
 
+// Build the SQL filter to get the siblings (same parent) of the entry to move, with same rules than tree_recur()
+$sqlsiblings = '';
+if ($action == 'up' || $action == 'down') {
+	$sql = "SELECT m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, p.mainmenu as parent_mainmenu, p.leftmenu as parent_leftmenu, p.type as parent_type";
+	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."menu as p ON p.rowid = m.fk_menu";
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
+	$sql .= " AND m.entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	$obj = ($resql ? $db->fetch_object($resql) : null);
+	if ($obj) {
+		if ((int) $obj->fk_menu == -1) {
+			// Parent is defined by its mainmenu/leftmenu codes
+			$parentmainmenu = (string) $obj->fk_mainmenu;
+			$parentleftmenu = (string) $obj->fk_leftmenu;
+			$sqlsiblings = "m.fk_menu IN (SELECT p.rowid FROM ".MAIN_DB_PREFIX."menu as p";
+			$sqlsiblings .= " WHERE p.menu_handler = '".$db->escape($menu_handler_to_search)."' AND p.entity = ".((int) $conf->entity);
+			$sqlsiblings .= " AND p.mainmenu = '".$db->escape($parentmainmenu)."'";
+			$sqlsiblings .= " AND ".($parentleftmenu == '' ? "p.type = 'top' AND (p.leftmenu IS NULL OR p.leftmenu = '')" : "p.leftmenu = '".$db->escape($parentleftmenu)."'").")";
+		} else {
+			// Parent is defined by its id
+			$parentmainmenu = (string) $obj->parent_mainmenu;
+			$parentleftmenu = (string) $obj->parent_leftmenu;
+			$sqlsiblings = "m.fk_menu = ".((int) $obj->fk_menu);
+		}
+		// A left menu entry with an empty leftmenu code can't be the parent of entries linked by code
+		if ((int) $obj->fk_menu != 0 && $parentmainmenu != '' && ((int) $obj->fk_menu == -1 || $parentleftmenu != '' || $obj->parent_type == 'top')) {
+			$sqlsiblings .= " OR (m.fk_menu = -1 AND m.fk_mainmenu = '".$db->escape($parentmainmenu)."'";
+			$sqlsiblings .= " AND ".($parentleftmenu == '' ? "(m.fk_leftmenu IS NULL OR m.fk_leftmenu = '')" : "m.fk_leftmenu = '".$db->escape($parentleftmenu)."'").")";
+		}
+	}
+}
+
 if ($action == 'up') {
 	$current = array();
 	$previous = array();
@@ -84,6 +118,7 @@ if ($action == 'up') {
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -97,36 +132,56 @@ if ($action == 'up') {
 		$i++;
 	}
 
-	// Menu before
-	$sql = "SELECT m.rowid, m.position";
-	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
-	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".((int) $conf->entity);
-	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
-	$sql .= " ORDER BY m.position, m.rowid";
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-		$previous['rowid'] = (int) $obj->rowid;
-		$previous['order'] = (int) $obj->position;
-		$i++;
+	// Menu before (only the closest one)
+	if (!empty($current) && $sqlsiblings) {
+		$sql = "SELECT m.rowid, m.position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " WHERE (m.position < ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid < ".((int) $current['rowid'])."))";
+		$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
+		$sql .= " AND m.entity = ".((int) $conf->entity);
+		$sql .= " AND m.type = '".$db->escape($current['type'])."'";
+		$sql .= " AND (".$sqlsiblings.")";
+		$sql .= " ORDER BY m.position DESC, m.rowid DESC";
+		$sql .= $db->plimit(1);
+		dol_syslog("admin/menus/index.php ".$sql);
+		$result = $db->query($sql);
+		$num = $db->num_rows($result);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
+			$previous['rowid'] = (int) $obj->rowid;
+			$previous['order'] = (int) $obj->position;
+			$i++;
+		}
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".((int) $previous['order']);
-	$sql .= " WHERE m.rowid = ".((int) $current['rowid']); // Up the selected entry
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".((int) ($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1));
-	$sql .= " WHERE m.rowid = ".((int) $previous['rowid']); // Descend celui du dessus
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
+	// Swap positions only if there is an entry before (nothing to do for the first entry)
+	if (!empty($current) && !empty($previous)) {
+		$error = 0;
+		$db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " SET m.position = ".((int) $previous['order']);
+		$sql .= " WHERE m.rowid = ".((int) $current['rowid']); // Up the selected entry
+		dol_syslog("admin/menus/index.php ".$sql);
+		if (!$db->query($sql)) {
+			$error++;
+		}
+		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " SET m.position = ".((int) ($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1));
+		$sql .= " WHERE m.rowid = ".((int) $previous['rowid']); // Descend celui du dessus
+		dol_syslog("admin/menus/index.php ".$sql);
+		if (!$error && !$db->query($sql)) {
+			$error++;
+		}
+
+		if ($error) {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		} else {
+			$db->commit();
+		}
+	}
 } elseif ($action == 'down') {
 	$current = array();
 	$next = array();
@@ -135,6 +190,7 @@ if ($action == 'up') {
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -148,54 +204,114 @@ if ($action == 'up') {
 		$i++;
 	}
 
-	// Menu after
-	$sql = "SELECT m.rowid, m.position";
-	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
-	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".((int) $conf->entity);
-	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
-	$sql .= " ORDER BY m.position, m.rowid";
-	dol_syslog("admin/menus/index.php ".$sql);
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-		$next['rowid'] = (int) $obj->rowid;
-		$next['order'] = (int) $obj->position;
-		$i++;
+	// Menu after (only the closest one)
+	if (!empty($current) && $sqlsiblings) {
+		$sql = "SELECT m.rowid, m.position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " WHERE (m.position > ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid > ".((int) $current['rowid'])."))";
+		$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
+		$sql .= " AND m.entity = ".((int) $conf->entity);
+		$sql .= " AND m.type = '".$db->escape($current['type'])."'";
+		$sql .= " AND (".$sqlsiblings.")";
+		$sql .= " ORDER BY m.position, m.rowid";
+		$sql .= $db->plimit(1);
+		dol_syslog("admin/menus/index.php ".$sql);
+		$result = $db->query($sql);
+		$num = $db->num_rows($result);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
+			$next['rowid'] = (int) $obj->rowid;
+			$next['order'] = (int) $obj->position;
+			$i++;
+		}
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".((int) ($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1)); // Down the selected entry
-	$sql .= " WHERE m.rowid = ".((int) $current['rowid']);
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m"; // Up the next entry
-	$sql .= " SET m.position = ".((int) $current['order']);
-	$sql .= " WHERE m.rowid = ".((int) $next['rowid']);
-	dol_syslog("admin/menus/index.php ".$sql);
-	$db->query($sql);
+	// Swap positions only if there is an entry after (nothing to do for the last entry)
+	if (!empty($current) && !empty($next)) {
+		$error = 0;
+		$db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " SET m.position = ".((int) ($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1)); // Down the selected entry
+		$sql .= " WHERE m.rowid = ".((int) $current['rowid']);
+		dol_syslog("admin/menus/index.php ".$sql);
+		if (!$db->query($sql)) {
+			$error++;
+		}
+		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m"; // Up the next entry
+		$sql .= " SET m.position = ".((int) $current['order']);
+		$sql .= " WHERE m.rowid = ".((int) $next['rowid']);
+		dol_syslog("admin/menus/index.php ".$sql);
+		if (!$error && !$db->query($sql)) {
+			$error++;
+		}
+
+		if ($error) {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		} else {
+			$db->commit();
+		}
+	}
 } elseif ($action == 'confirm_delete' && $confirm == 'yes') {
-	$db->begin();
+	$menutodelete = new Menubase($db);
+	$menutodelete->fetch(GETPOSTINT('menuId'));
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql .= " WHERE rowid = ".GETPOSTINT('menuId');
-	$resql = $db->query($sql);
-	if ($resql) {
-		$db->commit();
-
-		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
-
-		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
-		exit;
-	} else {
-		$db->rollback();
-
-		$reload = 0;
+	if (empty($menutodelete->id) || (int) $menutodelete->entity != (int) $conf->entity) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 		$action = '';
+	} else {
+		// Count children, linked by fk_menu or by fk_mainmenu/fk_leftmenu (same rules than tree_recur())
+		$sql = "SELECT COUNT(m.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " WHERE m.entity = ".((int) $conf->entity);
+		$sql .= " AND m.menu_handler = '".$db->escape($menutodelete->menu_handler)."'";
+		$sql .= " AND (m.fk_menu = ".((int) $menutodelete->id);
+		if (!empty($menutodelete->mainmenu) && ($menutodelete->type == 'top' || !empty($menutodelete->leftmenu))) {
+			$sql .= " OR (m.fk_menu = -1 AND m.fk_mainmenu = '".$db->escape($menutodelete->mainmenu)."'";
+			if ($menutodelete->type == 'top') {
+				$sql .= " AND (m.fk_leftmenu IS NULL OR m.fk_leftmenu = '')";
+			} else {
+				$sql .= " AND m.fk_leftmenu = '".$db->escape($menutodelete->leftmenu)."'";
+			}
+			$sql .= ")";
+		}
+		$sql .= ")";
+		$nbchildren = -1;
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$nbchildren = (int) $obj->nb;
+		}
+
+		if ($nbchildren < 0) {
+			setEventMessages($db->lasterror(), null, 'errors');
+			$action = '';
+		} elseif ($nbchildren > 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorRecordHasChildren"), null, 'errors');
+			$action = '';
+		} else {
+			$db->begin();
+
+			$result = $menutodelete->delete($user);
+			if ($result > 0) {
+				$db->commit();
+
+				setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
+
+				header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.urlencode($menu_handler));
+				exit;
+			} else {
+				$db->rollback();
+				setEventMessages($menutodelete->error, $menutodelete->errors, 'errors');
+
+				$reload = 0;
+				$action = '';
+			}
+		}
 	}
 }
 
@@ -231,8 +347,7 @@ $h++;
 
 print dol_get_fiche_head($head, 'editor', '', -1);
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span>";
-print '<br class="hideonsmartphone">'."\n";
+print '<div class="info hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</div>\n";
 print "<br>\n";
 
 
@@ -241,10 +356,16 @@ if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE m.rowid = ".GETPOSTINT('menuId');
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$result = $db->query($sql);
-	$obj = $db->fetch_object($result);
+	$obj = ($result ? $db->fetch_object($result) : null);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->transnoentitiesnoconv("DeleteMenu"), $langs->transnoentitiesnoconv("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	if ($obj) {
+		print $form->formconfirm("index.php?menu_handler=".urlencode($menu_handler)."&menuId=".GETPOSTINT('menuId'), $langs->transnoentitiesnoconv("DeleteMenu"), $langs->transnoentitiesnoconv("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	} else {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+	}
 }
 
 $newcardbutton = '';
@@ -288,7 +409,7 @@ $data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' =
 
 // Then all child items must be declared
 
-$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
+$sql = "SELECT m.rowid, m.titre, m.langs, m.type, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 $sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
 $sql .= " AND entity = ".((int) $conf->entity);
@@ -304,24 +425,24 @@ if ($res) {
 		if (!empty($menu['langs'])) {
 			$langs->load($menu['langs']);
 		}
-		$titre = $langs->trans($menu['titre']);
+		$titre = $langs->transnoentitiesnoconv($menu['titre']);
 
 		$entry = '<table class="nobordernopadding centpercent"><tr><td class="tdoverflowmax200">';
-		$entry .= '<strong class="paddingleft"><a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
+		$entry .= '<strong class="paddingleft"><a href="edit.php?menu_handler='.urlencode($menu_handler_to_search).'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.dolPrintHTML($titre).'</a></strong>';
 		$entry .= '</td>';
 		$entry .= '<td class="right nowraponall">';
-		$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-		$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-		$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+		$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.urlencode($menu_handler_to_search).'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+		$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.urlencode($menu_handler_to_search).'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+		$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
 		$entry .= '&nbsp; ';
-		$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+		$entry .= '<a class="marginleftonly marginrightonly reposition" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a class="reposition" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=down&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 		$entry .= '</td></tr></table>';
 
-		$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-		$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+		$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.urlencode($menu_handler_to_search).'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+		$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.urlencode($menu_handler_to_search).'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
 		$buttons .= '&nbsp; ';
-		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+		$buttons .= '<a class="marginleftonly marginrightonly reposition" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a class="reposition" href="index.php?menu_handler='.urlencode($menu_handler_to_search).'&action=down&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 		$data[] = array(
 			'rowid' => (int) $menu['rowid'],
@@ -332,6 +453,7 @@ if ($res) {
 			'leftmenu' => (string) $menu['leftmenu'],
 			'fk_mainmenu' => (string) $menu['fk_mainmenu'],
 			'fk_leftmenu' => (string) $menu['fk_leftmenu'],
+			'type' => (string) $menu['type'],
 			'position' => (int) $menu['position'],
 			'entry' => $entry,
 			'buttons' => $buttons
@@ -387,10 +509,32 @@ if (count($remainingdata)) {
 
 	print '<tr>';
 	print '<td colspan="2">';
-	foreach ($remainingdata as $datar) {
-		$father = array('rowid' => $datar['rowid'], 'title' => "???", 'mainmenu' => $datar['fk_mainmenu'], 'leftmenu' => $datar['fk_leftmenu'], 'fk_mainmenu' => '', 'fk_leftmenu' => '');
-		//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
-		tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+	// Index of existing records, to know if a remaining record has a parent that is a known record
+	$recordsbyid = array();
+	$recordsbycode = array();
+	foreach ($data as $datar) {
+		if (!empty($datar['rowid'])) {
+			$recordsbyid[$datar['rowid']] = 1;
+			if ($datar['leftmenu'] != '') {
+				$recordsbycode[$datar['mainmenu'].'|'.$datar['leftmenu']] = 1;
+			}
+		}
+	}
+
+	// Pass 1 starts a block only for records with no known parent, so children are shown nested under their parent.
+	// Pass 2 shows records not yet output (for example records in a loop of parents).
+	for ($pass = 1; $pass <= 2; $pass++) {
+		foreach ($remainingdata as $datar) {
+			if (!empty($tree_recur_alreadyadded[$datar['rowid']])) {
+				continue;
+			}
+			if ($pass == 1 && (($datar['fk_menu'] > 0 && !empty($recordsbyid[$datar['fk_menu']])) || ($datar['fk_menu'] == -1 && !empty($recordsbycode[$datar['fk_mainmenu'].'|'.$datar['fk_leftmenu']])))) {
+				continue;
+			}
+			$father = array('rowid' => $datar['rowid'], 'title' => "???", 'mainmenu' => $datar['fk_mainmenu'], 'leftmenu' => $datar['fk_leftmenu'], 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+		}
 	}
 
 	print '</td>';

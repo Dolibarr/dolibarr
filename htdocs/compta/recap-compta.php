@@ -49,9 +49,19 @@ $action = GETPOST('action', 'aZ09');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $search_date_start = GETPOSTDATE('search_date_start', 'getpost'); // Use tzserver because invoice date is a date without hour
 $search_date_end = GETPOSTDATE('search_date_end', 'getpostend');
+$search_status = GETPOST('search_status', 'aZ09');
+if (!in_array($search_status, array('unpaid', 'paid'), true)) {
+	$search_status = '';
+}
+$search_late = GETPOST('search_late', 'aZ09');
+if (!in_array($search_late, array('late', 'notlate'), true)) {
+	$search_late = '';
+}
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_status = '';
+	$search_late = '';
 }
 
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
@@ -108,6 +118,13 @@ foreach (array('search_date_start' => $search_date_start, 'search_date_end' => $
 		$dateparam .= '&'.$dateprefix.'day='.dol_print_date($datets, '%d').'&'.$dateprefix.'month='.dol_print_date($datets, '%m').'&'.$dateprefix.'year='.dol_print_date($datets, '%Y');
 	}
 }
+$filterparam = '';
+if ($search_status !== '') {
+	$filterparam .= '&search_status='.urlencode($search_status);
+}
+if ($search_late !== '') {
+	$filterparam .= '&search_late='.urlencode($search_late);
+}
 
 
 /**
@@ -123,9 +140,11 @@ foreach (array('search_date_start' => $search_date_start, 'search_date_end' => $
  * @param	int|''		$datestart		Start date filter (timestamp), '' for none
  * @param	int|''		$dateend		End date filter (timestamp), '' for none
  * @param	float		$opening		Balance before $datestart (output)
+ * @param	string		$search_status		'' all, 'unpaid' or 'paid'
+ * @param	string		$search_late		'' all, 'late' or 'notlate'
  * @return	array<int,array<string,mixed>>	Lines sorted on $sortorder, preceded by an opening balance line when $datestart is set
  */
-function recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, &$errors, $datestart = '', $dateend = '', &$opening = 0.0)
+function recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, &$errors, $datestart = '', $dateend = '', &$opening = 0.0, $search_status = '', $search_late = '')
 {
 	global $conf, $langs;
 
@@ -168,6 +187,22 @@ function recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortor
 		$alreadypaid = $fac->getSommePaiement();
 		$alreadypaid += $fac->getSumDepositsUsed();
 		$alreadypaid += $fac->getSumCreditNotesUsed();
+
+		if ($search_status !== '') {
+			$remaintopay = $object->getInvoiceRemainToPayInOutstanding($fac, 'customer', 0);
+			if ($search_status === 'unpaid' && $remaintopay <= 0) {
+				continue;
+			}
+			if ($search_status === 'paid' && ($remaintopay > 0 || $fac->status == Facture::STATUS_DRAFT || $fac->status == Facture::STATUS_ABANDONED)) {
+				continue;
+			}
+		}
+		if ($search_late !== '') {
+			$remaintopaylate = $object->getInvoiceRemainToPayInOutstanding($fac, 'customer', 1);
+			if (($search_late === 'late' && $remaintopaylate <= 0) || ($search_late === 'notlate' && $remaintopaylate > 0)) {
+				continue;
+			}
+		}
 
 		$userstatic->id = (int) $objf->userid;
 		$userstatic->login = (string) $objf->login;
@@ -344,7 +379,7 @@ if (empty($reshook) && in_array($action, array('exportpdf', 'exportxlsx')) && !$
 if (empty($reshook) && $action == 'exportpdf' && $id > 0 && $permissiontoreadinvoice) {
 	$errors = array();
 	$opening = 0.0;
-	$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening);
+	$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 	foreach ($errors as $err) {
 		dol_syslog('recap-compta.php exportpdf '.$err, LOG_WARNING);
 	}
@@ -446,7 +481,7 @@ if (empty($reshook) && $action == 'exportxlsx' && $id > 0 && $permissiontoreadin
 
 	$errors = array();
 	$opening = 0.0;
-	$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening);
+	$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 	foreach ($errors as $err) {
 		dol_syslog('recap-compta.php exportxlsx '.$err, LOG_WARNING);
 	}
@@ -562,7 +597,7 @@ if ($id > 0) {
 	if ($dol_openinpopup) {
 		$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
 	}
-	$param .= $dateparam;
+	$param .= $dateparam.$filterparam;
 
 	if (empty($dol_openinpopup)) {
 		$head = societe_prepare_head($object);
@@ -574,8 +609,14 @@ if ($id > 0) {
 
 	if ($permissiontoreadinvoice) {
 		// Invoice list
-		$morehtmlright = reportExportButtons('&socid='.((int) $id).'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).$dateparam, 'recapcompta');
-		print load_fiche_titre($langs->trans("CustomerPreview"), $morehtmlright);
+		$morehtmlright = reportExportButtons('&socid='.((int) $id).'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).$dateparam.$filterparam, 'recapcompta');
+		$titrelist = $langs->trans("CustomerPreview");
+		if ($search_status === 'unpaid' && $search_late === 'late') {
+			$titrelist = $langs->trans("CurrentOutstandingBillLate");
+		} elseif ($search_status === 'unpaid' && $search_late === '') {
+			$titrelist = $langs->trans("CurrentOutstandingBill");
+		}
+		print load_fiche_titre($titrelist, $morehtmlright);
 
 		// Date filter
 		print '<form method="GET" action="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'" name="recapcomptafilter">';
@@ -591,6 +632,12 @@ if ($id > 0) {
 		print '</div> ';
 		print '<div class="inline-block valignmiddle nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div> ';
+		print '<div class="inline-block valignmiddle marginleftonlyshort">'.$langs->trans('Status').' ';
+		print $form->selectarray('search_status', array('unpaid' => $langs->trans('Unpaid'), 'paid' => $langs->trans('Paid')), $search_status, $langs->trans('All'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 0);
+		print '</div> ';
+		print '<div class="inline-block valignmiddle marginleftonlyshort">'.$langs->trans('Late').' ';
+		print $form->selectarray('search_late', array('late' => $langs->trans('Late'), 'notlate' => $langs->trans('NotLate')), $search_late, $langs->trans('All'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 0);
 		print '</div> ';
 		print '<div class="inline-block valignmiddle">'.$form->showFilterButtons().'</div>';
 		print '</div>';
@@ -611,7 +658,7 @@ if ($id > 0) {
 
 		$errors = array();
 		$opening = 0.0;
-		$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening);
+		$TData = recapComptaGetData($db, $object, $hookmanager, $id, $sortfield, $sortorder, $errors, $search_date_start, $search_date_end, $opening, $search_status, $search_late);
 		foreach ($errors as $err) {
 			print '<tr class="oddeven"><td colspan="7"><span class="error">'.dol_escape_htmltag($err).'</span></td></tr>';
 		}

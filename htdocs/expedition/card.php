@@ -242,6 +242,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -1219,13 +1227,14 @@ if (empty($reshook)) {
 		$fk_product = 0;
 		$fk_entrepot = isModEnabled('stock') ? max(0, GETPOSTINT('entrepot_id')) : 0;
 		$rang = '';
+		$freelines = getDolGlobalInt('SHIPMENTS_ALLOW_FREE_LINES') && !getDolGlobalString('MAIN_DISABLE_FREE_LINES');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOSTINT('idprod');
 		}
-		if ($idprod <= 0 && (getDolGlobalString('MAIN_DISABLE_FREE_LINES') || $prod_entry_mode != 'free')) {
+		if ($idprod <= 0 && (!$freelines || $prod_entry_mode != 'free')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 			$error++;
 		}
@@ -1269,7 +1278,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($idprod > 0 || (!getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $prod_entry_mode == 'free' && !empty($line_desc)))) {
+		if (!$error && ($idprod > 0 || ($freelines && $prod_entry_mode == 'free' && !empty($line_desc)))) {
 			// Clean parameters
 			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
@@ -1551,6 +1560,12 @@ if ($action == 'create' && $usercancreate) {
 			print '</td>';
 		}
 		print '</tr>'."\n";
+
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
 
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
@@ -3186,9 +3201,10 @@ if ($action == 'create' && $usercancreate) {
 			// Show object lines
 			$result = $object->getLinesArray();
 
-			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
+			$lineform = ($action == 'editline') ? 'updateline' : 'addproduct';
+			print '	<form name="'.$lineform.'" id="'.$lineform.'" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 			<input type="hidden" name="token" value="' . newToken().'">
-			<input type="hidden" name="action" value="updateline">
+			<input type="hidden" name="action" value="'.(($action == 'editline') ? 'updateline' : 'addline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="page_y" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">
@@ -3199,45 +3215,29 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			if (!empty($object->lines)) {
-				print '<table id="tablelines" class="noborder noshadow" width="100%">';
-			}
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/expedition/tpl');
+				$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 0, '/expedition/tpl');
 			}
-
-			if (!empty($object->lines)) {
-				print '</table>';
-			}
-			print '</div>';
-
-			print "</form>\n";
 
 			// Form to add new line
 			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
 					// Add products/services form
-					print '<form name="addproduct" id="addproduct" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="action" value="addline">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
-					print '<div class="div-table-responsive-no-min">';
-					print '<table id="tablelines_add" class="noborder noshadow borderbottom centpercent">';
-
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$forcetoshowtitlelines = true;
-						$object->formAddObjectLine(1, $mysoc, null, '/expedition/tpl');
+						$forcetoshowtitlelines = empty($object->lines);
+						$object->formAddObjectLine(0, $mysoc, null, '/expedition/tpl');
 						$forcetoshowtitlelines = false;
 					}
-					print '</table></div></form>';
 				}
 			}
+			print "</table></div></form>\n";
 		}
 	}
 

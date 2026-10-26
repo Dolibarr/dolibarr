@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2022	Open-DSI					<support@open-dsi.fr>
- * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017-2026  Frédéric France				<frederic.france@free.fr>
@@ -33,7 +33,16 @@
  *  \ingroup    Accountancy (Double entries)
  *  \brief      Page with bank journal
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -63,13 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
@@ -320,11 +323,11 @@ if ($result) {
 		$accountancy_code_general = 'NotDefined';
 		if ($lineisapurchase > 0) {
 			$accountancy_code_general = (!empty($obj->accountancy_code_supplier_general) && $obj->accountancy_code_supplier_general != '-1') ? $obj->accountancy_code_supplier_general : $account_supplier;
-			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
+			$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_fournisseur, 'supplier');
 		}
 		if ($lineisasale > 0) {
 			$accountancy_code_general = (!empty($obj->accountancy_code_customer_general) && $obj->accountancy_code_customer_general != '-1') ? $obj->accountancy_code_customer_general : $account_customer;
-			$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $account_customer);
+			$compta_soc = getSubledgerAccountWithDefault($obj->code_compta_client, 'customer');
 		}
 
 		$tabcompany[$obj->rowid] = array(
@@ -515,7 +518,7 @@ if ($result) {
 						if ($is_sc) {
 							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
 						} else {
-							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							$tabtp[$obj->rowid][$compta_user] = isset($tabtp[$obj->rowid][$compta_user]) ? $tabtp[$obj->rowid][$compta_user] + $amounttouse : $amounttouse;
 						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
@@ -616,7 +619,7 @@ if ($result) {
 							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								$tabtp[$obj->rowid][$compta_user] = isset($tabtp[$obj->rowid][$compta_user]) ? $tabtp[$obj->rowid][$compta_user] + $amounttouse : $amounttouse;
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
@@ -693,7 +696,7 @@ if ($result) {
 							$tmpinvoice->fetch($invoiceid);
 							$tmpinvoice->fetch_thirdparty();
 							if ($tmpinvoice->thirdparty->code_compta_client) {
-								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] += $amount;
+								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] = isset($tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client]) ? $tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta_client] + $amount : $amount;
 							}
 						}
 					}
