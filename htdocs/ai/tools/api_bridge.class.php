@@ -203,6 +203,13 @@ class ToolApiBridge extends McpTool
 	private $writeRefusedFields = [];
 
 	/**
+	 * Line of the last line write: the line found, its position, the changes.
+	 *
+	 * @var array{line:?object,position:int,changes:array<string,mixed>}
+	 */
+	private $writeLine = array('line' => null, 'position' => 0, 'changes' => array());
+
+	/**
 	 * Fallback docs for parameters shared by most API index()/get() methods, used
 	 * when neither the per-method 'params' enrichment nor the docblock provides a
 	 * usable description. Kept in one place so every bridged list tool documents
@@ -1997,9 +2004,10 @@ class ToolApiBridge extends McpTool
 	 * @param  string[]              $right      Right needed to write.
 	 * @param  bool                  $buy        True for a supplier document: purchase price and VAT.
 	 * @param  array<string,string>  $rename     Line fields the REST endpoint names differently.
+	 * @param  array<string,mixed>   $defaults   Line fields always sent, unless given.
 	 * @return array<string,mixed>               Method enrichment.
 	 */
-	private function addLineMethod($label, $lookupTool, $class, array $right, $buy = false, array $rename = array())
+	private function addLineMethod($label, $lookupTool, $class, array $right, $buy = false, array $rename = array(), array $defaults = array())
 	{
 		$lookup = (substr($lookupTool, -7) === '_by_ref') ? $lookupTool : $lookupTool." with sqlfilters (t.ref:=:'THEREF')";
 
@@ -2022,6 +2030,9 @@ class ToolApiBridge extends McpTool
 		}
 		if ($rename) {
 			$write['rename'] = $rename;
+		}
+		if ($defaults) {
+			$write['defaults'] = $defaults;
 		}
 
 		return array(
@@ -2175,11 +2186,63 @@ class ToolApiBridge extends McpTool
 			'orders' => array('sale order', 'Commande', array('commande', 'supprimer')),
 			'proposals' => array('commercial proposal', 'Propal', array('propal', 'supprimer')),
 			'supplier_invoices' => array('supplier invoice', 'FactureFournisseur', array('fournisseur', 'facture', 'supprimer')),
-			'supplier_proposals' => array('supplier proposal', 'SupplierProposal', array('supplier_proposal', 'supprimer'))
+			'supplier_proposals' => array('supplier proposal', 'SupplierProposal', array('supplier_proposal', 'supprimer')),
+			'contracts' => array('contract', 'Contrat', array('contrat', 'supprimer')),
+			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'supprimer'))
 		);
 		foreach ($deletes as $key => $d) {
 			$this->enrichments[$key]['methods']['delete'] = $this->deleteMethod($d[0], $d[1], $d[2]);
 		}
+
+		// Lines of a draft: changed or removed, never on a validated document.
+		$lines = array(
+			'proposals' => array('commercial proposal', 'Propal', array('propal', 'creer'), 'product'),
+			'orders' => array('sale order', 'Commande', array('commande', 'creer'), 'product'),
+			'invoices' => array('customer invoice', 'Facture', array('facture', 'creer'), 'product'),
+			'supplier_invoices' => array('supplier invoice', 'FactureFournisseur', array('fournisseur', 'facture', 'creer'), 'supplier'),
+			'contracts' => array('contract', 'Contrat', array('contrat', 'creer'), 'contract'),
+			'interventions' => array('intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention')
+		);
+		foreach ($lines as $key => $l) {
+			$this->enrichments[$key]['methods']['putLine'] = $this->lineMethod('update', $l[0], $l[1], $l[2], $l[3]);
+			$this->enrichments[$key]['methods']['deleteLine'] = $this->lineMethod('delete', $l[0], $l[1], $l[2], $l[3]);
+		}
+		// The REST postLine() of a contract reads every field: none is left unset.
+		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
+		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
+
+		// Header of a draft: the fields a user corrects, by their old and new value.
+		$project = array('type' => array('integer', 'null'), 'minimum' => 1, 'description' => 'Rowid of the project, or null to unlink it.');
+		$date = array('type' => array('integer', 'null'), 'minimum' => 0, 'description' => 'Unix timestamp, or null to clear.');
+		$text = array('type' => 'string');
+		$this->enrichments['proposals']['methods']['put'] = $this->headerUpdateMethod('commercial proposal', 'Propal', array('propal', 'creer'), array('propal', 'lire'), array('propal', '', ''), 'propal', array(
+			'ref_client' => array($text, 'RefCustomer'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['orders']['methods']['put'] = $this->headerUpdateMethod('sale order', 'Commande', array('commande', 'creer'), array('commande', 'lire'), array('commande', '', ''), 'commande', array(
+			'ref_client' => array($text, 'RefCustomer'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'delivery_date' => array($date, 'DeliveryDate'), 'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['invoices']['methods']['put'] = $this->headerUpdateMethod('customer invoice', 'Facture', array('facture', 'creer'), array('facture', 'lire'), array('facture', '', ''), 'facture', array(
+			'ref_client' => array($text, 'RefCustomer'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'date_lim_reglement' => array($date, 'DateMaxPayment'), 'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['supplier_invoices']['methods']['put'] = $this->headerUpdateMethod('supplier invoice', 'FactureFournisseur', array('fournisseur', 'facture', 'creer'), array('fournisseur', 'facture', 'lire'), array('fournisseur', 'facture_fourn', 'facture'), 'facture_fourn', array(
+			'ref_supplier' => array($text, 'RefSupplier'), 'label' => array($text, 'Label'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'date_echeance' => array($date, 'DateMaxPayment'), 'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['supplier_proposals']['methods']['put'] = $this->headerUpdateMethod('supplier proposal', 'SupplierProposal', array('supplier_proposal', 'creer'), array('supplier_proposal', 'lire'), array('supplier_proposal', '', ''), 'supplier_proposal', array(
+			'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'delivery_date' => array($date, 'DeliveryDate'), 'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['contracts']['methods']['put'] = $this->headerUpdateMethod('contract', 'Contrat', array('contrat', 'creer'), array('contrat', 'lire'), array('contrat', '', ''), 'contrat', array(
+			'ref_customer' => array($text, 'RefCustomer'), 'ref_supplier' => array($text, 'RefSupplier'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'fk_project' => array($project, 'Project')
+		));
+		$this->enrichments['interventions']['methods']['put'] = $this->headerUpdateMethod('intervention', 'Fichinter', array('ficheinter', 'creer'), array('ficheinter', 'lire'), array('ficheinter', '', ''), 'fichinter', array(
+			'description' => array($text, 'Description'), 'ref_client' => array($text, 'RefCustomer'), 'note_public' => array($text, 'NotePublic'), 'note_private' => array($text, 'NotePrivate'),
+			'fk_project' => array($project, 'Project')
+		));
 
 		$this->enrichments['interventions']['methods']['post'] = array(
 			'suffix' => 'create',
@@ -2300,6 +2363,7 @@ class ToolApiBridge extends McpTool
 		$this->writeProblems = array();
 		$this->writeRefusedFields = array();
 		$this->writeTarget = null;
+		$this->writeLine = array('line' => null, 'position' => 0, 'changes' => array());
 	}
 
 	/**
@@ -2395,6 +2459,114 @@ class ToolApiBridge extends McpTool
 				'right' => $right
 			),
 			'params' => array('id' => "The draft ".$label.": rowid, or its ref.")
+		);
+	}
+
+	/**
+	 * Enrichment of a line method of a draft document: change, delete or, for an
+	 * intervention, add one line.
+	 *
+	 * @param  string   $action  'update', 'delete' or 'add'.
+	 * @param  string   $label   Document name, as the model reads it.
+	 * @param  string   $class   Business class of the document.
+	 * @param  string[] $right   Right needed to write.
+	 * @param  string   $profile Line shape: 'product', 'supplier', 'contract' or 'intervention'.
+	 * @return array<string,mixed> Method enrichment.
+	 */
+	private function lineMethod($action, $label, $class, array $right, $profile)
+	{
+		$fields = ($profile === 'intervention') ? array(
+			'desc' => "Text of the line.",
+			'date' => "Date of the work, YYYY-MM-DD.",
+			'duration' => "Time spent, in hours (1.5 for 1h30)."
+		) : array(
+			'qty' => "New quantity.",
+			'subprice' => "New unit price excl. tax.",
+			'remise_percent' => "New discount, in %.",
+			'tva_tx' => "New VAT rate.",
+			'desc' => "New text of the line.",
+			'unit' => "New unit, by name (piece, kg, hour...)."
+		);
+		if ($profile === 'supplier') {
+			unset($fields['desc']);	// FactureFournisseur::updateline() keeps the old text
+		}
+		$which = array(
+			'line' => "The line: its position as shown on the document (1 = first), or its product ref or label.",
+			'lineid' => "Rowid of the line, when known from a read of the document."
+		);
+		$params = array('id' => "The draft ".$label.": rowid, or its ref.");
+		if ($action === 'add') {
+			$description = "Add ONE line (work done) to a DRAFT ".$label.". Give 'id', desc, and date and duration. The user confirms before anything is written.";
+			$params += $fields;
+		} elseif ($action === 'update') {
+			$description = "Change ONE line of a DRAFT ".$label.". Give 'id', the line ('line' or 'lineid') and ONLY what changes: ".implode(', ', array_keys($fields)).". The product of a line cannot be changed: delete the line and add another. The user confirms before anything is written.";
+			$params += $which + $fields;
+		} else {
+			$description = "Delete ONE line of a DRAFT ".$label.". Give 'id' and the line ('line' or 'lineid'). The user confirms before anything is written.";
+			$params += $which;
+		}
+
+		return array(
+			'suffix' => $action.'_line',
+			'description' => $description,
+			'write' => array(
+				'kind' => 'line',
+				'line_action' => $action,
+				'line_profile' => $profile,
+				'preview' => ($action === 'add') ? 'AIPreviewAddInterventionLine' : ($action === 'update' ? 'AIPreviewChangeDocumentLine' : 'AIPreviewDeleteDocumentLine'),
+				'object' => $class,
+				'label' => $label,
+				'target' => 'id',
+				'lookup' => 'ref',
+				'fields' => ($action === 'delete') ? array() : array_keys($fields),
+				'right' => $right
+			),
+			'params' => $params
+		);
+	}
+
+	/**
+	 * Enrichment of the put method of a document header: the listed fields of a
+	 * draft, confirmed with their old and new value.
+	 *
+	 * @param  string   $label       Document name, as the model reads it.
+	 * @param  string   $class       Business class of the document.
+	 * @param  string[] $right       Right needed to write.
+	 * @param  string[] $readright   Right needed to read.
+	 * @param  string[] $access      Feature, table and subfeature, as the REST class checks them.
+	 * @param  string   $extrafields Element of its extra fields.
+	 * @param  array<string,array{0:array<string,mixed>,1:string}> $fields Field => schema and label key.
+	 * @return array<string,mixed> Method enrichment.
+	 */
+	private function headerUpdateMethod($label, $class, array $right, array $readright, array $access, $extrafields, array $fields)
+	{
+		$update = array();
+		$labels = array();
+		$dates = array();
+		foreach ($fields as $name => $f) {
+			$update[$name] = $f[0];
+			$labels[$name] = $f[1];
+			if (strpos((string) ($f[0]['description'] ?? ''), 'timestamp') !== false) {
+				$dates[] = $name;
+			}
+		}
+		$update['array_options'] = array('type' => 'object', 'description' => 'Extra fields by their options_ code, e.g. {"options_mycode": "value"}.');
+
+		return array(
+			'suffix' => 'update',
+			'description' => "Update header fields of a DRAFT ".$label." after confirmation: ".implode(', ', array_keys($update)).". Identify it by id or exact ref. Omitted fields are preserved. Status, totals, third party and lines cannot be changed here.",
+			'write' => array(
+				'parent' => 'id', 'ref' => 'ref', 'object' => $class, 'label' => $label,
+				'right' => $right, 'read_right' => $readright, 'access' => $access,
+				'draft_only' => true,
+				'preview' => 'AIPreviewUpdateRecord',
+				'update' => $update,
+				'preview_labels' => $labels,
+				'preview_dates' => $dates,
+				'preview_objects' => isset($update['fk_project']) ? array('fk_project' => 'Project') : array(),
+				'extrafields' => $extrafields,
+				'references' => isset($update['fk_project']) ? array('fk_project' => array('projet', 'projet', '')) : array()
+			)
 		);
 	}
 
@@ -3251,7 +3423,7 @@ class ToolApiBridge extends McpTool
 	 * @param  string $class Business class declared by the write.
 	 * @param  int    $id    Rowid of the record.
 	 * @param  string $ref   Exact reference when no rowid was supplied.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|null Record, or null when it cannot be read.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|Contrat|Fichinter|null Record, or null when it cannot be read.
 	 */
 	protected function fetchBusinessObject($class, $id, $ref = '')
 	{
@@ -3267,14 +3439,16 @@ class ToolApiBridge extends McpTool
 			'Reception' => '/reception/class/reception.class.php',
 			'Expedition' => '/expedition/class/expedition.class.php',
 			'Ticket' => '/ticket/class/ticket.class.php',
-			'Project' => '/projet/class/project.class.php'
+			'Project' => '/projet/class/project.class.php',
+			'Contrat' => '/contrat/class/contrat.class.php',
+			'Fichinter' => '/fichinter/class/fichinter.class.php'
 		);
 		if (empty($paths[$class]) || ((int) $id <= 0 && $ref === '')) {
 			return null;
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
-		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project $obj';
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Reception|Expedition|Project|Contrat|Fichinter $obj';
 		$result = $ref === '' ? $obj->fetch((int) $id) : $obj->fetch((int) $id, $ref);
 		if ($result > 0) {
 			return $obj;
@@ -3324,7 +3498,7 @@ class ToolApiBridge extends McpTool
 	 *
 	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
 	 * @param  array<string,mixed> $args  Arguments of the call.
-	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Project|null Record, or null when not found.
+	 * @return Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product|Project|Contrat|Fichinter|null Record, or null when not found.
 	 */
 	private function fetchWriteParent(array $write, array $args)
 	{
@@ -3482,6 +3656,11 @@ class ToolApiBridge extends McpTool
 		if (!$this->canAccessWriteObject($write['access'], (int) $parent->id)) {
 			throw new InvalidArgumentException('Access denied to record');
 		}
+		if (!empty($write['draft_only']) && (int) $parent->status !== 0) {
+			global $langs;
+			$langs->load('other');
+			throw new InvalidArgumentException($langs->transnoentitiesnoconv('AIWriteNotDraftEdit', (string) $write['label'], (string) $parent->ref));
+		}
 		if (!empty($write['project_update'])) {
 			$this->validateProjectUpdate($args, $parent);
 		}
@@ -3582,7 +3761,7 @@ class ToolApiBridge extends McpTool
 		// A write on a record that exists.
 		$this->resetWriteState();
 		$kind = (string) ($write['kind'] ?? '');
-		if (in_array($kind, array('update', 'action', 'delete', 'payment'), true)) {
+		if (in_array($kind, array('update', 'action', 'delete', 'payment', 'line'), true)) {
 			return $this->normaliseTargetArgs($args, $write);
 		}
 		if (!empty($write['lookup']) && $kind === '') {
@@ -4011,6 +4190,7 @@ class ToolApiBridge extends McpTool
 				$context = $supplier ? $supplier->name : '';
 			}
 			$langs->load('sendings');
+			$langs->load('bills');
 			$changes = [];
 			foreach ($write['update'] as $field => $definition) {
 				if (array_key_exists($field, $args)) {
@@ -4041,7 +4221,7 @@ class ToolApiBridge extends McpTool
 		$args = $this->normaliseWriteArgs($args, $write);
 
 		$kind = (string) ($write['kind'] ?? '');
-		if (in_array($kind, array('update', 'action', 'delete', 'payment'), true)) {
+		if (in_array($kind, array('update', 'action', 'delete', 'payment', 'line'), true)) {
 			return $this->previewTargetWrite($write, $args);
 		}
 
@@ -4213,7 +4393,7 @@ class ToolApiBridge extends McpTool
 		}
 
 		$kind = (string) ($write['kind'] ?? '');
-		if (in_array($kind, array('update', 'action', 'delete', 'payment'), true)) {
+		if (in_array($kind, array('update', 'action', 'delete', 'payment', 'line'), true)) {
 			return $this->precheckTargetWrite($write, $args);
 		}
 		// What the arguments already showed: a project that cannot be found, a
@@ -4537,7 +4717,9 @@ class ToolApiBridge extends McpTool
 			'Contact' => array('contact', 'socpeople&societe', ''),
 			'Project' => array('project', '', ''),
 			'Reception' => array('reception', '', ''),
-			'Expedition' => array('expedition', '', '')
+			'Expedition' => array('expedition', '', ''),
+			'Contrat' => array('contrat', '', ''),
+			'Fichinter' => array('ficheinter', '', '')
 		);
 		if (!isset($map[$class])) {
 			return true;
@@ -4913,7 +5095,207 @@ class ToolApiBridge extends McpTool
 			return $out;
 		}
 
+		if ($kind === 'line') {
+			return $this->normaliseLineArgs($args, $write, $out);
+		}
+
 		return $out;	// delete: the record alone
+	}
+
+	/**
+	 * Arguments of a line write on a draft: the line found from what the user
+	 * said, and the full body the REST method needs, its unchanged values kept.
+	 *
+	 * @param  array<string,mixed> $args  Arguments as received.
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @param  array<string,mixed> $out   Arguments already resolved (the document id).
+	 * @return array<string,mixed>        Arguments for the REST method.
+	 */
+	private function normaliseLineArgs(array $args, array $write, array $out)
+	{
+		global $langs;
+
+		$action = (string) $write['line_action'];
+		$profile = (string) $write['line_profile'];
+		$doc = $this->writeTarget;
+		$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'pu_ht' => 'subprice', 'description' => 'desc', 'label' => 'desc', 'vat_rate' => 'tva_tx', 'discount' => 'remise_percent', 'fk_unit' => 'unit', 'line_id' => 'lineid', 'rowid' => 'lineid', 'position' => 'line', 'product_ref' => 'line', 'product' => 'line');
+		$changes = array();
+		foreach ($args as $name => $value) {
+			if (in_array($name, array('id', 'ref', 'requestState'), true) || substr((string) $name, 0, 1) === '_') {
+				continue;
+			}
+			$name = (isset($aliases[$name]) && !isset($args[$aliases[$name]])) ? $aliases[$name] : $name;
+			if (in_array($name, array('line', 'lineid'), true) && $action !== 'add') {
+				continue;
+			}
+			if (in_array($name, (array) $write['fields'], true) && !is_array($value)) {
+				$changes[$name] = $value;
+			} elseif ($name !== 'request_data') {
+				$this->writeRefusedFields[] = (string) $name;
+			}
+		}
+
+		$langs->load('other');
+		$line = null;
+		$position = 0;
+		if ($action !== 'add' && $doc && (int) $doc->status === 0) {
+			$wanted = $args['lineid'] ?? ($args['line_id'] ?? ($args['rowid'] ?? ''));
+			$byid = ((string) $wanted !== '');
+			if (!$byid) {
+				$wanted = $args['line'] ?? ($args['position'] ?? ($args['product_ref'] ?? ($args['product'] ?? '')));
+			}
+			$w = dol_strtolower(trim((string) $wanted));
+			$found = array();
+			$exact = array();
+			foreach (array_values((array) $doc->lines) as $i => $l) {
+				if ($byid || is_numeric($wanted)) {
+					// By rowid, or by its position on the document (1 = first).
+					if ($byid ? ((int) $l->id === (int) $wanted) : ((int) $wanted === $i + 1)) {
+						$found[$i + 1] = $l;
+					}
+					continue;
+				}
+				// By product: its ref exactly, else words of its label or text.
+				$ref = dol_strtolower((string) ($l->product_ref ?? ($l->ref ?? '')));
+				$words = dol_strtolower($this->lineName($l).' '.dol_string_nohtmltag((string) ($l->desc ?? ($l->description ?? ''))));
+				if ($w !== '' && $ref === $w) {
+					$exact[$i + 1] = $l;
+				} elseif ($w !== '' && strpos($words, $w) !== false) {
+					$found[$i + 1] = $l;
+				}
+			}
+			if ($exact) {
+				$found = $exact;
+			}
+			if ((string) $wanted === '') {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteLineNotGiven', $this->linesSummary($doc));
+			} elseif (count($found) === 1) {
+				$position = (int) key($found);
+				$line = reset($found);
+			} else {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv(count($found) ? 'AIWriteLineSeveral' : 'AIWriteLineNotFound', (string) $wanted, $this->linesSummary($doc));
+			}
+		}
+
+		// Values as the line stores them: hours in seconds, dates as timestamps, a unit by its rowid.
+		if (isset($changes['unit'])) {
+			$unit = $this->unitIdFromName((string) $changes['unit']);
+			if ($unit <= 0) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUnknownUnit', (string) $changes['unit']);
+			}
+			$changes['unit'] = $unit;
+		}
+		foreach (array('qty', 'subprice', 'remise_percent', 'tva_tx') as $num) {
+			if (isset($changes[$num])) {
+				$changes[$num] = (float) price2num($changes[$num]);
+			}
+		}
+		if (isset($changes['duration'])) {
+			$changes['duration'] = (int) round((float) price2num($changes['duration']) * 3600);
+		}
+		if (isset($changes['date']) && !is_numeric($changes['date'])) {
+			$changes['date'] = $this->writeDate('date', $changes['date'], 0);
+			if ($changes['date'] === null) {
+				unset($changes['date']);
+			}
+		}
+		$this->writeLine = array('line' => $line, 'position' => $position, 'changes' => $changes);
+
+		if ($action === 'delete') {
+			$out['lineid'] = $line ? (int) $line->id : 0;
+			return $out;
+		}
+		if ($profile === 'intervention') {
+			$body = array();
+			foreach (array('desc' => 'description', 'date' => 'date', 'duration' => 'duration') as $from => $to) {
+				if (array_key_exists($from, $changes)) {
+					$body[$to] = $changes[$from];
+				}
+			}
+			if ($action === 'add') {
+				$body += array('date' => dol_now(), 'duration' => 0);
+			} else {
+				$out['lineid'] = $line ? (int) $line->id : 0;
+			}
+			$out['_body'] = $body;
+			return $out;
+		}
+
+		// Every value the REST updateline() reads, from the line itself, so only what
+		// the user changed is changed (most REST putLine() pass absent fields as null).
+		$out['lineid'] = $line ? (int) $line->id : 0;
+		$body = array();
+		if ($line) {
+			$keep = array('desc', 'label', 'subprice', 'qty', 'remise_percent', 'tva_tx', 'localtax1_tx', 'localtax2_tx', 'info_bits', 'date_start', 'date_end', 'product_type', 'fk_parent_line', 'fk_fournprice', 'pa_ht', 'special_code', 'fk_unit', 'ref_ext', 'rang', 'situation_percent', 'fk_product', 'ref_supplier', 'date_start_real', 'date_end_real');
+			foreach ($keep as $field) {
+				$body[$field] = $line->$field ?? null;
+			}
+			if ($profile === 'supplier') {
+				$body['subprice'] = $line->pu_ht ?? ($line->subprice ?? null);
+				$body['desc'] = $line->description ?? ($line->desc ?? null);
+			} elseif ($profile === 'contract') {
+				$body['desc'] = $line->description ?? ($line->desc ?? null);
+				$body['fk_fourn_price'] = $line->fk_fournprice ?? null;
+			}
+			$body['array_options'] = is_array($line->array_options ?? null) ? $line->array_options : array();
+			// A VAT code stays with its rate, else updateline() drops it.
+			if (!array_key_exists('tva_tx', $changes) && !empty($line->vat_src_code) && strpos((string) $body['tva_tx'], '(') === false) {
+				$body['tva_tx'] = $body['tva_tx'].' ('.$line->vat_src_code.')';
+			}
+		}
+		foreach (array('qty', 'subprice', 'remise_percent', 'tva_tx', 'desc') as $field) {
+			if (array_key_exists($field, $changes)) {
+				$body[$field] = $changes[$field];
+			}
+		}
+		if (array_key_exists('unit', $changes)) {
+			$body['fk_unit'] = $changes['unit'];
+		}
+		$body['price_base_type'] = 'HT';
+		$body['multicurrency_subprice'] = 0;	// recomputed from the unit price
+		if ($profile === 'supplier') {
+			$body['pu_ht'] = $body['subprice'] ?? null;
+			$body['description'] = $body['desc'] ?? null;
+			unset($body['subprice'], $body['desc']);
+		}
+		$out['_body'] = $body;
+
+		return $out;
+	}
+
+	/**
+	 * Lines of a document, as a numbered list for a message: position, product, quantity.
+	 *
+	 * @param  CommonObject $doc Document with its lines.
+	 * @return string
+	 */
+	private function linesSummary($doc)
+	{
+		$list = array();
+		foreach (array_values((array) $doc->lines) as $i => $l) {
+			if ($i >= 15) {
+				$list[] = '...';
+				break;
+			}
+			$list[] = ($i + 1).': '.dol_trunc($this->lineName($l), 40).(isset($l->qty) ? ' x '.((float) $l->qty) : '');
+		}
+
+		return $list ? implode('; ', $list) : '-';
+	}
+
+	/**
+	 * A line as the user knows it: product ref and label, else its text.
+	 *
+	 * @param  object $l Line.
+	 * @return string
+	 */
+	private function lineName($l)
+	{
+		$ref = (string) ($l->product_ref ?? ($l->ref ?? ''));
+		$label = (string) ($l->product_label ?? '');
+		$text = trim(dol_string_nohtmltag((string) ($l->desc ?? ($l->description ?? ''))));
+
+		return $ref !== '' ? $ref.($label !== '' ? ' - '.$label : '') : $text;
 	}
 
 	/**
@@ -5032,6 +5414,9 @@ class ToolApiBridge extends McpTool
 		if ($kind === 'delete') {
 			return $langs->trans($write['preview'], $write['label'], $what);
 		}
+		if ($kind === 'line') {
+			return $this->previewLineWrite($write, $what);
+		}
 		if ($kind === 'payment') {
 			$mode = (int) ($args['paymentid'] ?? 0);
 			$code = $mode > 0 ? (string) dol_getIdFromCode($this->db, (string) $mode, 'c_paiement', 'id', 'code', 1) : '';
@@ -5073,6 +5458,91 @@ class ToolApiBridge extends McpTool
 		}
 
 		return $langs->trans($write['preview'], $what);
+	}
+
+	/**
+	 * Confirmation sentence of a line write: the line by its position and product,
+	 * each change from its old to its new value, and the new line total.
+	 *
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @param  string              $what  The document, as describeRecord() names it.
+	 * @return string
+	 */
+	private function previewLineWrite(array $write, $what)
+	{
+		global $langs;
+
+		$langs->load('main');
+		$langs->load('products');
+		$langs->load('interventions');
+		$line = $this->writeLine['line'];
+		$changes = $this->writeLine['changes'];
+		$position = (string) $this->writeLine['position'];
+		$labels = array('qty' => 'Qty', 'subprice' => 'PriceUHT', 'remise_percent' => 'Discount', 'tva_tx' => 'VAT', 'desc' => 'Description', 'unit' => 'Unit', 'date' => 'Date', 'duration' => 'Duration');
+		$text = array();
+		foreach ($changes as $name => $new) {
+			$old = $line ? ($line->{$name === 'unit' ? 'fk_unit' : ($name === 'subprice' && isset($line->pu_ht) ? 'pu_ht' : $name)} ?? null) : null;
+			if ($name === 'desc') {
+				$old = $line ? ($line->desc ?? ($line->description ?? '')) : '';
+			}
+			if ($name === 'unit') {
+				$old = $this->unitLabel((int) $old);
+				$new = $this->unitLabel((int) $new);
+			} elseif ($name === 'subprice') {
+				$old = ($old === null) ? '' : price((float) $old);
+				$new = price((float) $new);
+			} elseif ($name === 'duration') {
+				$old = ($old === null) ? '' : convertSecondToTime((int) $old, 'allhourmin');
+				$new = convertSecondToTime((int) $new, 'allhourmin');
+			} elseif ($name === 'date') {
+				$old = empty($old) ? '' : dol_print_date((int) $old, 'day');
+				$new = dol_print_date((int) $new, 'day');
+			} elseif (in_array($name, array('qty', 'remise_percent', 'tva_tx'), true)) {
+				$old = ($old === null) ? '' : (string) ((float) $old);
+				$new = (string) ((float) $new);
+			} else {
+				$old = dol_trunc(dol_string_nohtmltag((string) $old), 40);
+				$new = dol_trunc(dol_string_nohtmltag((string) $new), 40);
+			}
+			$text[] = $langs->transnoentitiesnoconv($labels[$name]).' '.($write['line_action'] === 'add' ? '' : $old.' → ').$new;
+		}
+
+		if ($write['line_action'] === 'add') {
+			return $langs->trans($write['preview'], $what, implode(', ', $text));
+		}
+		$name = $line ? dol_trunc($this->lineName($line), 60) : '';
+		if ($write['line_action'] === 'delete') {
+			$amount = ($line && isset($line->total_ht)) ? ', '.price((float) $line->total_ht) : '';
+			return $langs->trans($write['preview'], $position, $what, $name.(isset($line->qty) ? ' x '.((float) $line->qty) : '').$amount);
+		}
+		// The new total of the line, as core will compute it before taxes.
+		if ($line && (array_key_exists('qty', $changes) || array_key_exists('subprice', $changes) || array_key_exists('remise_percent', $changes))) {
+			$qty = (float) ($changes['qty'] ?? $line->qty);
+			$pu = (float) ($changes['subprice'] ?? ($line->pu_ht ?? $line->subprice));
+			$rem = (float) ($changes['remise_percent'] ?? $line->remise_percent);
+			$text[] = $langs->transnoentitiesnoconv('TotalHT').' '.price((float) ($line->total_ht ?? 0)).' → '.price(price2num($qty * $pu * (1 - $rem / 100), 'MT'));
+		}
+
+		return $langs->trans($write['preview'], $position, $what, $name, implode(', ', $text));
+	}
+
+	/**
+	 * Label of a unit, as the user reads it.
+	 *
+	 * @param  int    $id Rowid of the unit, 0 for none.
+	 * @return string
+	 */
+	private function unitLabel($id)
+	{
+		global $langs;
+
+		if ($id <= 0 || empty($this->db)) {
+			return '-';
+		}
+		$resql = $this->db->query("SELECT label, short_label FROM ".$this->db->prefix()."c_units WHERE rowid = ".((int) $id));
+		$obj = $resql ? $this->db->fetch_object($resql) : null;
+
+		return $obj ? $langs->transnoentitiesnoconv((string) $obj->label) : (string) $id;
 	}
 
 	/**
@@ -5118,6 +5588,26 @@ class ToolApiBridge extends McpTool
 				if ($assignee->fetch((int) $args['fk_user_assign']) <= 0 || (int) $assignee->status !== 1) {
 					return $langs->transnoentitiesnoconv('AIWriteRecordNotFound', 'user', (string) $args['fk_user_assign']);
 				}
+			}
+
+			return '';
+		}
+		if ($kind === 'line') {
+			if ((int) $obj->status !== 0) {
+				return $langs->transnoentitiesnoconv('AIWriteNotDraftLines', $label, (string) $obj->ref);
+			}
+			if (!empty($this->writeRefusedFields)) {
+				return $langs->transnoentitiesnoconv('AIWriteFieldsNotAllowed', implode(', ', $this->writeRefusedFields), implode(', ', (array) $write['fields']));
+			}
+			$changes = $this->writeLine['changes'];
+			if ($write['line_action'] === 'update' && !$changes) {
+				return $langs->transnoentitiesnoconv('AIWriteNothingToChange');
+			}
+			if ($write['line_action'] === 'add' && trim((string) ($changes['desc'] ?? '')) === '') {
+				return $langs->transnoentitiesnoconv('AIWriteMissingField', 'desc');
+			}
+			if (array_key_exists('qty', $changes) && (float) $changes['qty'] <= 0) {
+				return $langs->transnoentitiesnoconv('AIWriteLineQtyZero');
 			}
 
 			return '';
@@ -5514,6 +6004,11 @@ class ToolApiBridge extends McpTool
 			// advertises the fields flat, because that is what a model fills
 			// in, so the body is rebuilt here from everything it sent.
 			if ($pname === 'request_data') {
+				// A line write: the body normaliseLineArgs() built, unchanged values included.
+				if ($writekind === 'line') {
+					$callArgs[] = (array) ($args['_body'] ?? array());
+					continue;
+				}
 				if (!empty($writemeta['update'])) {
 					$callArgs[] = array_intersect_key($args, $writemeta['update']);
 					continue;
@@ -5574,7 +6069,7 @@ class ToolApiBridge extends McpTool
 			if (array_key_exists($pname, $args)
 				&& (empty($writemeta) || empty($methodmeta['params']) || array_key_exists($pname, $methodmeta['params'])
 					|| isset($methodmeta['fixed_params'][$pname])
-					|| in_array($writekind, array('update', 'action', 'delete', 'payment'), true))) {
+					|| in_array($writekind, array('update', 'action', 'delete', 'payment', 'line'), true))) {
 				// Cap an explicit 'limit': one call must not pull thousands of full objects.
 				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
 			} elseif ($p->isOptional()) {
@@ -5594,7 +6089,7 @@ class ToolApiBridge extends McpTool
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
-				if (in_array($writekind, array('update', 'action', 'delete', 'payment'), true)) {
+				if (in_array($writekind, array('update', 'action', 'delete', 'payment', 'line'), true)) {
 					// The record the user named, under its ref (a new one once
 					// validated), rather than the whole object the API returns.
 					$targetid = (int) ($args[$writemeta['target'] ?? 'id'] ?? 0);
