@@ -145,6 +145,14 @@ if ($action == 'update_external') {
 		}
 	}
 
+	// Checkbox has its own form, flagged by a hidden field because an unchecked checkbox is not posted
+	if (GETPOSTISSET('AI_MCP_BEHIND_BASIC_AUTH_FORM')) {
+		$res = dolibarr_set_const($db, "AI_MCP_BEHIND_BASIC_AUTH", GETPOSTINT("AI_MCP_BEHIND_BASIC_AUTH"), 'int', 0, '', $conf->entity);
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
 	if ($error) {
 		setEventMessages($langs->trans("ErrorSavingSettings"), null, 'errors');
 	} else {
@@ -402,22 +410,52 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// Configuration Examples
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
+
+	// Server behind a HTTP Basic authentication: the Authorization header is then taken, so the key goes into the DOLAPIKEY header
+	$behindbasicauth = getDolGlobalInt('AI_MCP_BEHIND_BASIC_AUTH');
+	$basicauthplaceholder = 'BASE64_OF_LOGIN:PASSWORD';
+	// If this page is itself behind the Basic authentication, reuse the credentials sent by the browser to fill the examples
+	$basicauthvalue = $basicauthplaceholder;
+	$authheader = empty($_SERVER['HTTP_AUTHORIZATION']) ? (empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) ? '' : $_SERVER['REDIRECT_HTTP_AUTHORIZATION']) : $_SERVER['HTTP_AUTHORIZATION'];
+	$reg = array();
+	if (preg_match('/^Basic\s+([a-zA-Z0-9+\/=]+)$/i', $authheader, $reg)) {
+		$basicauthvalue = $reg[1];
+	} elseif (!empty($_SERVER['PHP_AUTH_USER'])) {
+		$basicauthvalue = base64_encode($_SERVER['PHP_AUTH_USER'].':'.(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']));
+	}
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update_external">';
+	print '<input type="hidden" name="AI_MCP_BEHIND_BASIC_AUTH_FORM" value="1">';
+	print '<input type="checkbox" id="AI_MCP_BEHIND_BASIC_AUTH" name="AI_MCP_BEHIND_BASIC_AUTH" value="1"'.($behindbasicauth ? ' checked' : '').' onchange="this.form.submit();">';
+	print ' <label for="AI_MCP_BEHIND_BASIC_AUTH">'.$form->textwithpicto($langs->trans("MCPServerBehindBasicAuth"), $langs->trans("MCPServerBehindBasicAuthHelp", $basicauthplaceholder)).'</label>';
+	print '</form>';
+	print '<br>';
+
 	// Command line to declare the MCP server into Mistral Vibe, the key being read from its .env file
 	print '<strong>' . $langs->trans("MistralVibeConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --api-key-env '.$mcpapikeyenvname."\n\n");
-	echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
-	echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	if ($behindbasicauth) {
+		echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --header \'Authorization=Basic '.$basicauthvalue.'\' --header \'DOLAPIKEY='.($apiKey ? $apiKey : "YOUR_KEY_HERE").'\'');
+	} else {
+		echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --api-key-env '.$mcpapikeyenvname."\n\n");
+		echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
+		echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	}
 	print '</pre>';
 
 	// Command line to declare the MCP server into Claude Code
 	print '<br><strong>' . $langs->trans("ClaudeCodeConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	if ($behindbasicauth) {
+		echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Basic '.$basicauthvalue.'" --header "DOLAPIKEY: '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	} else {
+		echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	}
 	print '</pre>';
 
 	print '<br><strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
 	echo htmlspecialchars('
 	{
 	  "mcpServers": {
