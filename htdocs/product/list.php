@@ -98,6 +98,9 @@ $search_note_public = GETPOST('search_note_public', 'alphanohtml');
 $search_note_private = GETPOST('search_note_private', 'alphanohtml');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
+$search_minbuyprice = GETPOST('search_minbuyprice', 'alpha');
+$search_pmp = GETPOST('search_pmp', 'alpha');
+$search_cost_price = GETPOST('search_cost_price', 'alpha');
 $searchCategoryProductOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
@@ -429,6 +432,9 @@ if (empty($reshook)) {
 		$search_country = "";
 		$search_state = "";
 		$search_vatrate = "";
+		$search_minbuyprice = '';
+		$search_pmp = '';
+		$search_cost_price = '';
 		$search_finished = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
@@ -527,6 +533,30 @@ if ($search_type != '' && $search_type != '-1') {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 
+// Sorting and filtering on buy prices must not reveal them to users who cannot read them
+$usercanreadsupplierpricesinlist = $user->hasRight('fournisseur', 'lire');
+if ((string) $type != '1' && isModEnabled('product')) {
+	$usercanreadsupplierpricesinlist = $usercanreadsupplierpricesinlist && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire'));
+}
+if ((string) $type != '0' && isModEnabled('service')) {
+	$usercanreadsupplierpricesinlist = $usercanreadsupplierpricesinlist && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire'));
+}
+// Dynamic supplier prices are computed in PHP, so they cannot be sorted or filtered in SQL
+$cansortfilterminbuyprice = $usercanreadsupplierpricesinlist && !isModEnabled('dynamicprices');
+if (!$usercanreadsupplierpricesinlist) {
+	$search_pmp = '';
+	$search_cost_price = '';
+	if (preg_match('/p\.pmp|p\.cost_price/', $sortfield)) {
+		$sortfield = 'p.ref';
+	}
+}
+if (!$cansortfilterminbuyprice) {
+	$search_minbuyprice = '';
+	if (preg_match('/pfpmin\./', $sortfield)) {
+		$sortfield = 'p.ref';
+	}
+}
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.description, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
@@ -589,6 +619,16 @@ if (isModEnabled('variants')) {
 }
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
+}
+// Same selection rules as ProductFournisseur::find_min_price_product_fournisseur()
+if (preg_match('/pfpmin\./', $sortfield) || $search_minbuyprice !== '') {
+	$sql .= " LEFT JOIN (SELECT pfp.fk_product, MIN(pfp.unitprice * (1 - pfp.remise_percent / 100)) as minbuyprice";
+	$sql .= " FROM ".$db->prefix()."product_fournisseur_price as pfp";
+	$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = pfp.fk_soc";
+	$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
+	$sql .= " AND s.entity IN (".getEntity('societe').")";
+	$sql .= " AND s.status = 1";
+	$sql .= " GROUP BY pfp.fk_product) as pfpmin ON pfpmin.fk_product = p.rowid AND p.tobuy = 1";
 }
 
 // Add table from hooks
@@ -683,6 +723,15 @@ if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch
 }
 if ($search_vatrate) {
 	$sql .= natural_search('p.tva_tx', $search_vatrate, 1);
+}
+if ($search_minbuyprice !== '') {
+	$sql .= natural_search('pfpmin.minbuyprice', $search_minbuyprice, 1);
+}
+if ($search_pmp !== '') {
+	$sql .= natural_search('p.pmp', $search_pmp, 1);
+}
+if ($search_cost_price !== '') {
+	$sql .= natural_search('p.cost_price', $search_cost_price, 1);
 }
 if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -911,6 +960,15 @@ if ($search_state != '') {
 }
 if ($search_vatrate) {
 	$param .= "&search_vatrate=".urlencode($search_vatrate);
+}
+if ($search_minbuyprice !== '') {
+	$param .= '&search_minbuyprice='.urlencode($search_minbuyprice);
+}
+if ($search_pmp !== '') {
+	$param .= '&search_pmp='.urlencode($search_pmp);
+}
+if ($search_cost_price !== '') {
+	$param .= '&search_cost_price='.urlencode($search_cost_price);
 }
 if ($fourn_id > 0) {
 	$param .= "&fourn_id=".urlencode((string) ($fourn_id));
@@ -1330,8 +1388,10 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 
 // Minimum buying Price
 if (!empty($arrayfields['p.minbuyprice']['checked'])) {
-	print '<td class="liste_titre">';
-	print '&nbsp;';
+	print '<td class="liste_titre right">';
+	if ($cansortfilterminbuyprice) {
+		print '<input class="right flat maxwidth50" type="text" name="search_minbuyprice" value="'.dol_escape_htmltag($search_minbuyprice).'">';
+	}
 	print '</td>';
 }
 // Number buying Price
@@ -1348,14 +1408,18 @@ if (!empty($arrayfields['p.tva_tx']['checked'])) {
 }
 // WAP
 if (!empty($arrayfields['p.pmp']['checked'])) {
-	print '<td class="liste_titre">';
-	print '&nbsp;';
+	print '<td class="liste_titre right">';
+	if ($usercanreadsupplierpricesinlist) {
+		print '<input class="right flat maxwidth50" type="text" name="search_pmp" value="'.dol_escape_htmltag($search_pmp).'">';
+	}
 	print '</td>';
 }
 // cost_price
 if (!empty($arrayfields['p.cost_price']['checked'])) {
-	print '<td class="liste_titre">';
-	print '&nbsp;';
+	print '<td class="liste_titre right">';
+	if ($usercanreadsupplierpricesinlist) {
+		print '<input class="right flat maxwidth50" type="text" name="search_cost_price" value="'.dol_escape_htmltag($search_cost_price).'">';
+	}
 	print '</td>';
 }
 // Limit for alert
@@ -1619,7 +1683,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 }
 
 if (!empty($arrayfields['p.minbuyprice']['checked'])) {
-	print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"], ($cansortfilterminbuyprice ? 'pfpmin.minbuyprice' : ''), "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.numbuyprice']['checked'])) {
@@ -1631,11 +1695,11 @@ if (!empty($arrayfields['p.tva_tx']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.pmp']['checked'])) {
-	print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"], ($usercanreadsupplierpricesinlist ? 'p.pmp' : ''), "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.cost_price']['checked'])) {
-	print_liste_field_titre($arrayfields['p.cost_price']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.cost_price']['label'], $_SERVER["PHP_SELF"], ($usercanreadsupplierpricesinlist ? 'p.cost_price' : ''), "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
