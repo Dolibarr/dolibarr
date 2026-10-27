@@ -5409,8 +5409,26 @@ if ($action == 'editsource') {
 
 	$poscursor = array('x' => GETPOST('PAGE_CONTENT_x'), 'y' => GETPOST('PAGE_CONTENT_y'));
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$titlecontent = 'HTML Source';
+
+	// Add the link to the AI feature into the status bar of the ACE editor
+	if (isModEnabled('ai')) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		$formmail->withaiprompt = 'html';
+		$showlinktolayout = '';
+		$showlinktoai = 'textgenerationwebpage';
+		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		$htmlname = 'PAGE_CONTENT';
+		$out = '';
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		$titlecontent .= ' &nbsp; '.$out;
+	}
+
 	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', $maxheightwin, 'Full', '', true, true, 'ace', ROWS_5, '40%', 0, $poscursor);
-	$doleditor->Create(0, '', false, 'HTML Source', 'php');
+	$doleditor->Create(0, '', false, $titlecontent, 'php');
 }
 
 if ($action == 'editcontent') {
