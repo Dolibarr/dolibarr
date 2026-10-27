@@ -1161,7 +1161,7 @@ $( document ).ready(function() {
 		print "ModalBox('ModalTerminal');";
 	}
 
-	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
+	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING') && !empty($_SESSION["takeposterminal"])) {
 		// Look for any cash control fence created today on this terminal, regardless of its status,
 		// so the auto-open popup only fires on the first cash control of a calendar day. Without this,
 		// refreshing the browser the same day after closing a fence used to immediately re-fire the
