@@ -648,7 +648,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
-input[type="search"] {
+input[type="search"]:not(.dropdown-search-input) {
 	padding-left: 4px !important;
 }
 
@@ -4182,6 +4182,10 @@ div.login_block_tools {
 	vertical-align: middle;
 	line-height: <?php echo $disableimages ? '25' : '53'; ?>px;
 	height: <?php echo $disableimages ? '25' : '51'; ?>px;
+}
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
 }
 div.login_block_other {
 	display: inline-block;

@@ -3973,6 +3973,10 @@ div.login a:hover {
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 15px; }
 div.login_block_tools { padding-top: 0px; }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -9534,7 +9538,8 @@ table.jPicker {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 
