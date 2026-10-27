@@ -93,6 +93,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_PRIVACY_REDACTION')) {
+		$res = dolibarr_set_const($db, "AI_PRIVACY_REDACTION", min(2, max(0, GETPOSTINT("AI_PRIVACY_REDACTION"))), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
 		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -272,10 +279,14 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 
 	// Enhanced Privacy control
 	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans('ObfuscatePIIData') . '</td>';
+	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
-	print ajax_constantonoff('AI_PRIVACY_REDACTION');
-	print ' &nbsp; <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
+	$redaction_options = [
+		'0' => $langs->trans("RedactionNone"),
+		'1' => $langs->trans("RedactionSensitiveData"),
+		'2' => $langs->trans("RedactionSensitiveDataAndThirdparties")
+	];
+	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 

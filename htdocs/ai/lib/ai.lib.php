@@ -1518,11 +1518,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$forms[] = dol_substr($norm, 0, dol_strlen($norm) - 2);
 		}
 		foreach (array_unique($forms) as $w) {
-			$sql .= " OR s.nom LIKE '%".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($w))."%'";
+			$sql .= " OR s.nom LIKE '".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '".$db->escape($db->escapeforlike($w))."%'";
 		}
 	}
 	$sql .= ")";
-	$sql .= " LIMIT 2000";
+	$sql .= " LIMIT 1000";
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
