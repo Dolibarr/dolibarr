@@ -803,7 +803,7 @@ class AccountingJournal extends CommonObject
 
 		// Accounting accounts
 		$acc_disc_granted = getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED');
-		$acc_vat_coll_def = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT');			// Normal to apply vat default account for buy with customer's discount
+		$acc_vat_coll_def = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT');			// A discount granted to a customer reduces the VAT collected on the sale
 
 		while ($obj = $this->db->fetch_object($resql)) {
 			if ($invoice_static->fetch((int) $obj->rowid) <= 0) {
@@ -1112,7 +1112,7 @@ class AccountingJournal extends CommonObject
 
 		// Accounting accounts
 		$acc_disc_recv    = getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED');
-		$acc_vat_ded_def  = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT');			// Normal to apply vat default account for sold with supplier's discount
+		$acc_vat_ded_def  = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT');			// A discount received from a supplier reduces the deductible VAT on the purchase
 
 		while ($obj = $this->db->fetch_object($resql)) {
 			if ($invoicesupplier_static->fetch((int) $obj->rowid) <= 0) {
