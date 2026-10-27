@@ -2048,10 +2048,12 @@ if (empty($reshook)) {
 									if (!empty($line->special_code)) {
 										continue;
 									}
-									if (!isset($TTotalByTva[$line->tva_tx])) {
-										$TTotalByTva[$line->tva_tx] = 0;
+									// Group by vat rate and vat code, so addline() receives the rate in the "rate (CODE)" format and the code is kept on the deposit lines
+									$vatkey = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+									if (!isset($TTotalByTva[$vatkey])) {
+										$TTotalByTva[$vatkey] = 0;
 									}
-									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+									$TTotalByTva[$vatkey] += $line->total_ttc;
 								}
 								unset($line);	// Break the reference, so the loops on $line later do not overwrite the last line of $srcobject
 								'@phan-var-force array<string,float> $TTotalByTva';
@@ -2064,7 +2066,7 @@ if (empty($reshook)) {
 									$coef = ($srcobject->total_ttc != 0 ? $total / $srcobject->total_ttc : 0); // Calc coef (0 if the total of the source is 0, there is nothing to split)
 									$am = $amount * $coef;
 									$amount_ttc_diff += $am;
-									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
+									$amountdeposit[$tva] += $am / (1 + (float) preg_replace('/\s*\(.*\)/', '', (string) $tva) / 100); // Convert into HT for the addline
 								}
 								unset($total);
 							} else {
@@ -2180,7 +2182,9 @@ if (empty($reshook)) {
 								}
 								if ($targetLine !== null) {
 									$subprice_diff = $targetLine->subprice - $diff / (1 + $targetLine->tva_tx / 100);
-									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $targetLine->tva_tx, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
+									// Pass the rate in the "rate (CODE)" format so updateline() keeps the vat code
+									$tva_tx_with_code = $targetLine->tva_tx.($targetLine->vat_src_code ? ' ('.$targetLine->vat_src_code.')' : '');
+									$object->updateline($targetLine->id, $targetLine->desc, $subprice_diff, $targetLine->qty, $targetLine->remise_percent, $targetLine->date_start, $targetLine->date_end, $tva_tx_with_code, 0, 0, 'HT', $targetLine->info_bits, $targetLine->product_type, 0, 0, 0, $targetLine->pa_ht, $targetLine->label, 0, array(), 100);
 								}
 							}
 						}

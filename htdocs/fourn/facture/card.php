@@ -1538,10 +1538,12 @@ if (empty($reshook)) {
 									if (!empty($line->special_code)) {
 										continue;
 									}
-									if (!isset($TTotalByTva[$line->tva_tx])) {
-										$TTotalByTva[$line->tva_tx] = 0;
+									// Group by vat rate and vat code, so addline() receives the rate in the "rate (CODE)" format and the code is kept on the deposit lines
+									$vatkey = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+									if (!isset($TTotalByTva[$vatkey])) {
+										$TTotalByTva[$vatkey] = 0;
 									}
-									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+									$TTotalByTva[$vatkey] += $line->total_ttc;
 								}
 								unset($line);	// Break the reference, so the loops on $line later do not overwrite the last line of $srcobject
 								'@phan-var-force array<string,float> $TTotalByTva';
@@ -1554,7 +1556,7 @@ if (empty($reshook)) {
 									if (!isset($amountdeposit[$tva])) {
 										$amountdeposit[$tva] = 0;
 									}
-									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
+									$amountdeposit[$tva] += $am / (1 + (float) preg_replace('/\s*\(.*\)/', '', (string) $tva) / 100); // Convert into HT for the addline
 								}
 								unset($total);
 							} else {
@@ -1645,11 +1647,13 @@ if (empty($reshook)) {
 							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && (float) price2num($diff, 'MT') != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
+								// Pass the rate in the "rate (CODE)" format so updateline() keeps the vat code
+								$tva_tx_with_code = $object->lines[0]->tva_tx.($object->lines[0]->vat_src_code ? ' ('.$object->lines[0]->vat_src_code.')' : '');
 								$object->updateline(
 									$object->lines[0]->id,
 									$object->lines[0]->desc,
 									$subprice_diff,
-									$object->lines[0]->tva_tx,
+									$tva_tx_with_code,
 									$object->lines[0]->localtax1_tx,
 									$object->lines[0]->localtax2_tx,
 									$object->lines[0]->qty,
