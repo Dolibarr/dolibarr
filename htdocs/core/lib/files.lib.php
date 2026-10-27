@@ -3616,14 +3616,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->commande->multidir_output[$entity]) ? $conf->fournisseur->commande->multidir_output[$entity] : $conf->fournisseur->commande->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$original_file = (!empty($conf->fournisseur->facture->multidir_output[$entity]) ? $conf->fournisseur->facture->multidir_output[$entity] : $conf->fournisseur->facture->dir_output).'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'supplier_payment') {
 		// Wrapping for supplier payments
