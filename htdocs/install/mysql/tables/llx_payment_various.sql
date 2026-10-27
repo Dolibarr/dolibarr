@@ -32,7 +32,7 @@ create table llx_payment_various
   accountancy_code      varchar(32),
   subledger_account     varchar(32),
   fk_projet             integer DEFAULT NULL,
-  fk_soc                integer DEFAULT NULL,       -- optional link to a thirdparty (MAIN option BANK_VARIOUSPAYMENT_USE_THIRDPARTY)
+  fk_soc                integer DEFAULT NULL,       -- optional link to a thirdparty (MAIN option BANK_VARIOUS_PAYMENT_USE_THIRDPARTY)
   entity                integer DEFAULT 1 NOT NULL,	-- multi company id
   note                  text,
   fk_bank               integer,
