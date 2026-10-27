@@ -474,7 +474,8 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 }
 if ($action == 'seteditinline') {	// Test on permission not required here
 	// Explain which elements can be edited
-	setEventMessages($langs->trans("EditInLineAllowedAreas"), null, 'warnings');
+	// The span with class editinlineallowedareas is used to close this sticky warning automatically after 10 seconds
+	setEventMessages('<span class="editinlineallowedareas">'.$langs->trans("EditInLineAllowedAreas").'</span>', null, 'warnings');
 
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
@@ -3778,6 +3779,15 @@ if (!GETPOST('hide_websitemenu')) {
 							'error' => ($element['error'] ? $langs->transnoentitiesnoconv($element['error'], $id) : '')
 						);
 					}
+
+					// Close the warning that explains which elements can be edited after 10 seconds
+					print '<script>
+						$(document).ready(function() {
+							setTimeout(function() {
+								$(".jnotify-notification").has(".editinlineallowedareas").fadeOut(500, function() { $(this).remove(); });
+							}, 10000);
+						});
+					</script>'."\n";
 
 					print '<!-- Code to enable edit inline of elements with contenteditable="true" -->'."\n";
 					print '<style>
