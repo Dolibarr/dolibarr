@@ -77,7 +77,7 @@ if (empty($securitykey)) {
 	echo 'Securitykey is required. Check setup of clicktodial module.';
 	exit;
 }
-if ($securitykey != getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP')) {
+if (!hash_equals(getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP'), (string) $securitykey)) {
 	echo 'Securitykey is wrong.';
 	exit;
 }

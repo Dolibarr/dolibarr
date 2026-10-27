@@ -319,6 +319,11 @@ class ActionComm extends CommonObject
 	public $icalcolor;
 
 	/**
+	 * @var array<string,string|array<int,string>> Details of an event coming from an external ical file (description, organizer, attendees, url, categories, geo)
+	 */
+	public $icaldetails = array();
+
+	/**
 	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams;

@@ -345,6 +345,7 @@ ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NUL
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_advtargetemailing_rowid_seq RENAME TO llx_mailing_advtarget_rowid_seq;
 
 ALTER TABLE llx_mailing ADD UNIQUE INDEX uk_mailing (titre, entity);
 

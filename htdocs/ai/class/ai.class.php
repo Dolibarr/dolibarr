@@ -26,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 
@@ -67,7 +68,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an Assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment. The JSON must be valid: values must be literals, never expressions or calculations, and no comments.';
 
 
 	/**
@@ -103,7 +104,7 @@ class Ai
 	 * @param	string						$format			Format for output ('', 'html', ...)
 	 * @param	array<string,string>		$moreheaders	More headers
 	 * @param	string						$moreendpoint	Add a part to endpoint url
-	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,model?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
@@ -139,7 +140,7 @@ class Ai
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
 			} elseif ($function == 'assistant') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistants';
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
@@ -317,6 +318,15 @@ class Ai
 				}
 			}
 
+			// For document parsing, ask the services that support it to return only a valid JSON
+			if ($function == 'docparsing' && !is_array($instructions)) {
+				if ($this->apiService == 'google') {
+					$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
+				} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
+					$arrayforpayload['response_format'] = array('type' => 'json_object');
+				}
+			}
+
 			/*
 			$arrayforpayload['temperature'] = 0.7;
 			$arrayforpayload['max_tokens'] = -1;
@@ -379,10 +389,16 @@ class Ai
 			global $dolibarr_ai_allow_local_endpoints;
 			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
+			// Parsing a document is long, so we use a response timeout of at least 60 seconds for this case
+			$timeoutresponse = 0;
+			if ($function == 'docparsing') {
+				$timeoutresponse = max(60, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			}
+
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
 
 			if (empty($response['http_code'])) {
-				throw new Exception('API request failed. No http received');
+				throw new Exception('API request failed. No http received'.(empty($response['curl_error_no']) ? '' : ' (curl error '.$response['curl_error_no'].': '.$response['curl_error_msg'].')'));
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
 				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
@@ -395,6 +411,7 @@ class Ai
 							'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 							'format' => $format,
 							'service' => $this->apiService,
+							'model' => $model,
 							'function' => $function
 						);
 					}
@@ -450,6 +467,22 @@ class Ai
 				// array raises a TypeError, which the catch below does not take (TypeError
 				// implements Throwable but does not extend Exception) and so ends as a fatal
 				// error on the ajax endpoints calling this method.
+				// Reasoning models (Mistral, ...) may return content as an array of chunks
+				// ({"type":"thinking",...}, {"type":"text","text":"..."}): we keep only the text chunks.
+				if (isset($decodedResponse['choices'][0]['message']['content'])
+					&& is_array($decodedResponse['choices'][0]['message']['content'])) {
+					$textofchunks = '';
+					$foundtextchunk = false;
+					foreach ($decodedResponse['choices'][0]['message']['content'] as $chunk) {
+						if (is_array($chunk) && ($chunk['type'] ?? '') == 'text' && isset($chunk['text']) && is_string($chunk['text'])) {
+							$textofchunks .= $chunk['text'];
+							$foundtextchunk = true;
+						}
+					}
+					if ($foundtextchunk) {
+						$decodedResponse['choices'][0]['message']['content'] = $textofchunks;
+					}
+				}
 				if (!isset($decodedResponse['choices'][0]['message']['content'])
 					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
 					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
@@ -516,6 +549,7 @@ class Ai
 				'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 				'format' => $format,
 				'service' => $this->apiService,
+				'model' => $model,
 				'function' => $function
 			);
 		}
@@ -525,8 +559,8 @@ class Ai
 	 * Decode JSON into array
 	 *
 	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
-	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
-	 * @return array<string,string|float>	Array of values
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'salary', 'social_contribution', 'expense', 'thirdparty', ...)
+	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
@@ -534,20 +568,35 @@ class Ai
 
 		//var_dump($json['items']);
 		if ($type == 'supplier_invoice') {
+			// The AI service may put the invoice data into another section than document_info, so we complete document_info with them
+			foreach (array('invoice_details', 'invoice_info', 'invoice') as $keysection) {
+				if (!empty($json[$keysection]) && is_array($json[$keysection])) {
+					$json['document_info'] = array_merge($json[$keysection], (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array());
+				}
+			}
+
 			// Invoice info
 			if (!empty($json['document_info']['reference'])) {
 				$tmparray['supplierref'] = $json['document_info']['reference'];
 			} elseif (!empty($json['document_info']['invoice_number'])) {
 				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			} elseif (!empty($json['document_info']['document_ref'])) {
+				$tmparray['supplierref'] = $json['document_info']['document_ref'];
 			}
 
 			if (!empty($json['document_info']['title'])) {
-				$tmparray['title'] = $json['document_info']['title'];
+				$tmparray['invoice_label'] = $json['document_info']['title'];
+			} elseif (!empty($json['recipient']['description'])) {
+				$tmparray['invoice_label'] = $json['recipient']['description'];
+			} elseif (!empty($json['document_info']['invoice_reference'])) {
+				$tmparray['invoice_label'] = $json['document_info']['invoice_reference'];
 			}
 
 			// Issue date
 			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['invoice_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['invoice_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['invoice_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
@@ -560,12 +609,17 @@ class Ai
 			}
 
 			// Currency
-			if ($json['summary']['currency'] == '€') {
+			// Note: We extract subarrays into local variables, so the is_string() checks do not narrow the type of the $json subarrays for the rest of the method
+			$summary = (is_array($json['summary'] ?? null) ? $json['summary'] : array());
+			$documentinfo = (is_array($json['document_info'] ?? null) ? $json['document_info'] : array());
+			$currencyinsummary = (isset($summary['currency']) && is_string($summary['currency'])) ? $summary['currency'] : '';
+			$currencyindocinfo = (isset($documentinfo['currency_code']) && is_string($documentinfo['currency_code'])) ? $documentinfo['currency_code'] : '';
+			if ($currencyinsummary == '€') {
 				$tmparray['currency_code'] = 'EUR';
-			} elseif (strlen($json['summary']['currency']) == 3) {
-				$tmparray['currency_code'] = $json['summary']['currency'];
-			} elseif (strlen($json['document_info']['currency_code']) == 3) {
-				$tmparray['currency_code'] = $json['document_info']['currency_code'];
+			} elseif (dol_strlen($currencyinsummary) == 3) {
+				$tmparray['currency_code'] = $currencyinsummary;
+			} elseif (dol_strlen($currencyindocinfo) == 3) {
+				$tmparray['currency_code'] = $currencyindocinfo;
 			}
 
 			// Note
@@ -620,11 +674,6 @@ class Ai
 				}
 			}
 
-			// Invoice
-			if (!empty($json['recipient']['description'])) {
-				$tmparray['invoice_label'] = $json['recipient']['description'];
-			}
-
 			// Items
 			if (empty($json['items'])) {
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
@@ -640,12 +689,12 @@ class Ai
 
 					if (!empty($item['description'])) {
 						$tmparray['lines'][$i]['desc'] = $item['description'];
-					} elseif (!empty($item['service'] && is_string($item['service']))) {
+					} elseif (!empty($item['service']) && is_string($item['service'])) {
 						$tmparray['lines'][$i]['desc'] = $item['service'];
 					}
 
 					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
-					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? ($item['vat_rate'] ?? ($item['vatrate'] ?? null));
 					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
 					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
 					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
@@ -664,6 +713,125 @@ class Ai
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
 					}
 				}
+			}
+
+			if (!empty($json['summary'])) {
+				// The AI service may use different key names for the same data
+				$tmparray['total_ht'] = $json['summary']['total_excluding_tax'] ?? ($json['summary']['total_excl_tax'] ?? ($json['summary']['total_ht'] ?? ($json['summary']['subtotal'] ?? null)));
+				$tmparray['vat_rate'] = $json['summary']['tax_rate'] ?? ($json['summary']['vat_rate'] ?? ((isset($json['summary']['tax']) && is_array($json['summary']['tax'])) ? ($json['summary']['tax']['rate'] ?? null) : null));
+				$tmparray['total_ttc'] = $json['summary']['total_including_tax'] ?? ($json['summary']['total_incl_tax'] ?? ($json['summary']['total_ttc'] ?? ($json['summary']['total'] ?? null)));
+			}
+
+			// If no global VAT rate found, use the VAT rate of lines when all lines have the same one
+			if (!isset($tmparray['vat_rate']) && !empty($tmparray['lines'])) {
+				$vatratesoflines = array_unique(array_map('strval', array_filter(array_column($tmparray['lines'], 'vat_rate'), 'is_numeric')));
+				if (count($vatratesoflines) == 1 && count(array_filter(array_column($tmparray['lines'], 'vat_rate'), 'is_numeric')) == count($tmparray['lines'])) {
+					$tmparray['vat_rate'] = (float) reset($vatratesoflines);
+				}
+			}
+		} elseif ($type == 'salary') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$employee = (isset($json['employee']) && is_array($json['employee'])) ? $json['employee'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			if (!empty($employee['name']) && is_string($employee['name'])) {
+				$tmparray['employee_name'] = $employee['name'];
+			}
+			if (!empty($docinfo['title']) && is_string($docinfo['title'])) {
+				$tmparray['label'] = $docinfo['title'];
+			}
+
+			// Dates (period of salary and payment date)
+			$arraydatekeys = array(
+				'period_start' => array('period_start', 'start_date', 'date_start'),
+				'period_end' => array('period_end', 'end_date', 'date_end'),
+				'payment_date' => array('payment_date', 'date_payment', 'paid_on')
+			);
+			foreach ($arraydatekeys as $keydest => $keyssrc) {
+				foreach ($keyssrc as $keysrc) {
+					if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+						$tmparray[$keydest] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+						break;
+					}
+				}
+			}
+
+			// Amounts
+			$tmparray['gross_salary'] = $summary['gross_salary'] ?? ($summary['gross_pay'] ?? ($summary['gross'] ?? null));
+			$tmparray['net_to_pay'] = $summary['net_to_pay'] ?? ($summary['net_pay'] ?? ($summary['net_paid'] ?? ($summary['net_salary'] ?? null)));
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
+			}
+		} elseif ($type == 'social_contribution') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			foreach (array('title' => 'label', 'organization' => 'organization', 'reference' => 'reference') as $keysrc => $keydest) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc])) {
+					$tmparray[$keydest] = $docinfo[$keysrc];
+				}
+			}
+			if (!empty($json['employee']['name']) && is_string($json['employee']['name'])) {
+				$tmparray['employee_name'] = $json['employee']['name'];
+			}
+
+			// Dates (end of period the tax is related to, and due date)
+			$arraydatekeys = array(
+				'period_start' => array('period_start', 'start_date'),
+				'period_end' => array('period_end', 'end_date'),
+				'due_date' => array('due_date', 'payment_date', 'date_limit')
+			);
+			foreach ($arraydatekeys as $keydest => $keyssrc) {
+				foreach ($keyssrc as $keysrc) {
+					if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+						$tmparray[$keydest] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+						break;
+					}
+				}
+			}
+
+			// Amount
+			$tmparray['amount'] = $summary['amount_to_pay'] ?? ($summary['total_to_pay'] ?? ($summary['amount'] ?? ($summary['total'] ?? null)));
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
+			}
+		} elseif ($type == 'expense') {
+			// The AI service may use different key names for the same data, so we test several of them
+			$docinfo = (isset($json['document_info']) && is_array($json['document_info'])) ? $json['document_info'] : array();
+			$summary = (isset($json['summary']) && is_array($json['summary'])) ? $json['summary'] : array();
+
+			foreach (array('merchant' => 'merchant', 'title' => 'label', 'category' => 'category') as $keysrc => $keydest) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc])) {
+					$tmparray[$keydest] = $docinfo[$keysrc];
+				}
+			}
+
+			// Date of expense
+			foreach (array('date', 'expense_date', 'issue_date') as $keysrc) {
+				if (!empty($docinfo[$keysrc]) && is_string($docinfo[$keysrc]) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $docinfo[$keysrc])) {
+					$tmparray['date'] = dol_stringtotime($docinfo[$keysrc], 'tzuserrel');
+					break;
+				}
+			}
+
+			// Amounts. If VAT rate is not provided, we try to calculate it from amounts.
+			$tmparray['total_ttc'] = $summary['total_including_tax'] ?? ($summary['total_ttc'] ?? ($summary['total'] ?? null));
+			$tmparray['total_ht'] = $summary['total_excluding_tax'] ?? ($summary['total_ht'] ?? null);
+			$tmparray['vat_rate'] = $summary['vat_rate'] ?? ($summary['tax_rate'] ?? null);
+			$vatamount = $summary['vat_amount'] ?? ($summary['tax_amount'] ?? null);
+			if (!is_numeric($tmparray['vat_rate']) && is_numeric($vatamount) && is_numeric($tmparray['total_ht']) && $tmparray['total_ht'] > 0) {
+				$tmparray['vat_rate'] = round(100 * (float) $vatamount / (float) $tmparray['total_ht'], 1);
+			}
+
+			$currency = (isset($docinfo['currency_code']) && is_string($docinfo['currency_code'])) ? $docinfo['currency_code'] : '';
+			if (dol_strlen($currency) == 3) {
+				$tmparray['currency_code'] = $currency;
 			}
 		}
 

@@ -177,6 +177,8 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeProjectsTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
@@ -229,6 +231,8 @@ class AllTests
 		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		require_once dirname(__FILE__).'/ModuleBuilderTemplateConventionsTest.php';
+		$suite->addTestSuite('ModuleBuilderTemplateConventionsTest');
 		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function
 		// fails when output was already done (here by output log of unit tests)
 		//require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
@@ -247,6 +251,9 @@ class AllTests
 		$suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
 		$suite->addTestSuite('UserGroupTest');
+
+		require_once dirname(__FILE__).'/VCardTest.php';
+		$suite->addTestSuite('VCardTest');
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
