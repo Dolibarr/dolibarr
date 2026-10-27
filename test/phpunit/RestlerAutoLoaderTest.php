@@ -55,6 +55,13 @@ class RestlerAutoLoaderTest extends TestCase
 		$originalState = $reflection->getStaticProperties();
 		$loaded = false;
 		try {
+			// Isolate the singleton when an earlier test already bootstrapped Restler.
+			$defaults = $reflection->getDefaultProperties();
+			foreach ($originalState as $name => $value) {
+				$property = $reflection->getProperty($name);
+				$property->setAccessible(true);
+				$property->setValue(null, $defaults[$name]);
+			}
 			spl_autoload_register(array($this, 'loadFixture'));
 			spl_autoload_register(\Luracast\Restler\AutoLoader::instance());
 			$loaded = class_exists('DolibarrRestlerAutoloadFixture');
