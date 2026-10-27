@@ -24,17 +24,12 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 
 - Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
 
-- To manually build the .exe from Windows (Note: running from makepack-dolibarr.pl script is however recommended):
-
-  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
-  The .exe file will be build into directory build.
 
 
 ### On Windows
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
-- Install Perl for Windows (https://strawberryperl.com/)
 - Install isetup-5.5.8.exe (https://www.jrsoftware.org)
 - Install Microsoft Visual C++ Redistributable 2017 (https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 - Install WampServer-3.2.6-64.exe (Apache 2.4.51, PHP 7.4.26, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
@@ -52,6 +47,11 @@ Prerequisites to build autoexe DoliWamp package from Windows:
   $dolibarr_main_url_root='http://localhost';
 ```
 
+- To manually build the .exe from Windows (Note: running from makepack-dolibarr.php script is however recommended):
+
+  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
+  The .exe file will be build into directory build.
+  
 
 ## Actions to do a FREEZE / BETA
 
