@@ -2916,6 +2916,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('supplier_proposal').")";
 	} elseif (($modulepart == 'apercusupplier_order' || $modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les apercu supplier order
 		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
