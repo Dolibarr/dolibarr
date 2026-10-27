@@ -165,6 +165,7 @@ ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default 
 ErrorCreditTransferAddressIncomplete=The credit transfer file needs the town and the country of %s: complete its address, then create the order again.
 ErrorCreditTransferQRIBANNeedsQRReference=The bank account of the supplier of invoice %s is a QR-IBAN: enter the QR reference (27 digits) of the QR bill as payment reference of the invoice.
 ErrorCreditTransferQRReferenceNeedsQRIBAN=The payment reference of invoice %s is a QR reference, it can only be paid to a QR-IBAN: check the bank account of the supplier.
+ErrorCreditTransferCurrencyNeedsVersion9=%s is in %s, a SEPA credit transfer file (pain.001.001.03) only accepts EUR: create the order from a bank account using pain.001.001.09.
 ErrorICSmissing=Missing ICS in Bank account %s
 TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines
 WarningSomeDirectDebitOrdersAlreadyExists=Warning: There is already some pending Direct Debit orders (%s) requested for an amount of %s

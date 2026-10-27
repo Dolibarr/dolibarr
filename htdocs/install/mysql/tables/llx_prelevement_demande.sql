@@ -27,6 +27,8 @@ create table llx_prelevement_demande
   fk_salary           integer NULL,
   sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
+  multicurrency_code  varchar(3),
+  multicurrency_amount double(24,8),
   date_demande        datetime NOT NULL,
   traite              smallint DEFAULT 0,		-- 1 means a file for direct-debit or credit-transfer has been created and is in process or finished. Note: can be detected by fk_prelevement_bons IS NOT NULL too.
   date_traite         datetime,

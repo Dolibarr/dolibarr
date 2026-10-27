@@ -337,6 +337,24 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 * Return in the invoice currency the amount of a direct debit or credit transfer request made in the company currency.
+	 * A request for the whole remaining amount gets the remaining amount in the invoice currency, so its payment settles the invoice.
+	 *
+	 * @param	float	$amount		Amount in the company currency
+	 * @return	float				Amount in the invoice currency
+	 */
+	public function getRequestAmountInInvoiceCurrency($amount)
+	{
+		if (empty($this->multicurrency_code) || $this->multicurrency_code == getDolCurrency() || empty($this->multicurrency_tx)) {
+			return (float) price2num($amount, 'MT');
+		}
+		if ((float) price2num($amount, 'MT') == (float) $this->getRemainToPay()) {
+			return (float) $this->getRemainToPay(1);
+		}
+		return (float) price2num($amount * $this->multicurrency_tx, 'MT');
+	}
+
+	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
 	 *  This also set ->totalpaid and ->totalpaid_multicurrency
@@ -1617,7 +1635,7 @@ abstract class CommonInvoice extends CommonObject
 					} else {
 						$sql .= 'fk_facture, ';
 					}
-					$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
+					$sql .= ' amount, multicurrency_code, multicurrency_amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
 					if (empty($bac->id)) {
 						$sql .= ')';
 					} else {
@@ -1625,6 +1643,8 @@ abstract class CommonInvoice extends CommonObject
 					}
 					$sql .= " VALUES (".((int) $this->id);
 					$sql .= ", ".((float) price2num($amount));
+					$sql .= ", '".$this->db->escape(empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code)."'";
+					$sql .= ", ".((float) $this->getRequestAmountInInvoiceCurrency((float) $amount));
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", ".((int) $fuser->id);
 					$sql .= ", '".$this->db->escape($bac->code_banque)."'";

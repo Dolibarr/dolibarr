@@ -33,6 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
@@ -634,6 +635,7 @@ class BonPrelevement extends CommonObject
 
 				$amounts = array();
 				$amountsperthirdparty = array();
+				$multicurrencyamountsperthirdparty = array();
 
 				$facs = $this->getListInvoices(1, $type);
 				if ($this->error) {
@@ -641,7 +643,7 @@ class BonPrelevement extends CommonObject
 				}
 
 				// Loop on each invoice or salary.
-				// $facs should be array(0=>id, 1=>amount requested)
+				// $facs should be array(0=>id, 1=>amount requested, 2=>amount requested in the currency of the document)
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++) {
 					if ($this->type == 'bank-transfer') {
@@ -657,9 +659,13 @@ class BonPrelevement extends CommonObject
 					$result = $fac->fetch($facs[$i][0]);
 
 					$amounts[$fac->id] = $facs[$i][1];
+					$amountincurrency = null;
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
 							$amountsperthirdparty[$fac->fk_user][$fac->id] = $facs[$i][1];
+						} elseif (!empty($fac->multicurrency_code) && $fac->multicurrency_code != getDolCurrency()) {
+							$amountincurrency = ($facs[$i][2] !== null ? (float) $facs[$i][2] : $fac->getRequestAmountInInvoiceCurrency((float) $facs[$i][1]));
+							$multicurrencyamountsperthirdparty[$fac->socid.'-'.$fac->multicurrency_code][$fac->id] = $amountincurrency;
 						} else {
 							$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 						}
@@ -684,7 +690,12 @@ class BonPrelevement extends CommonObject
 					if ($type == 'salary') {
 						$amountofdocument = $fac->amount;
 					}
-					if (price2num($alreadypayed + $facs[$i][1], 'MT') == price2num($amountofdocument, 'MT')) {
+					if ($amountincurrency !== null) {
+						$documentpaid = (price2num($fac->getRemainToPay(1) - $amountincurrency, 'MT') == 0);
+					} else {
+						$documentpaid = (price2num($alreadypayed + $facs[$i][1], 'MT') == price2num($amountofdocument, 'MT'));
+					}
+					if ($documentpaid) {
 						$result = $fac->setPaid($user);
 						if ($result < 0) {
 							$this->error = $fac->error;
@@ -693,8 +704,15 @@ class BonPrelevement extends CommonObject
 					}
 				}
 
-				// Make one payment per customer or employee
-				foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts) {
+				// Make one payment per customer or employee, and per supplier and currency for invoices in another currency than the company one
+				$paymentsamounts = array();
+				foreach ($amountsperthirdparty as $cursoramounts) {
+					$paymentsamounts[] = array('amounts' => $cursoramounts, 'multicurrency_amounts' => array());
+				}
+				foreach ($multicurrencyamountsperthirdparty as $cursoramounts) {
+					$paymentsamounts[] = array('amounts' => array(), 'multicurrency_amounts' => $cursoramounts);
+				}
+				foreach ($paymentsamounts as $paymentamounts) {
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
 							$paiement = new PaymentSalary($this->db);
@@ -705,7 +723,10 @@ class BonPrelevement extends CommonObject
 						$paiement = new Paiement($this->db);
 					}
 					$paiement->datepaye = $date;
-					$paiement->amounts = $cursoramounts; // Array with detail of dispatching of payments for each invoice
+					$paiement->amounts = $paymentamounts['amounts']; // Array with detail of dispatching of payments for each invoice
+					if ($paiement instanceof Paiement) {
+						$paiement->multicurrency_amounts = $paymentamounts['multicurrency_amounts'];
+					}
 
 					if ($this->type == 'bank-transfer') {
 						if ($type == 'salary') {
@@ -892,6 +913,7 @@ class BonPrelevement extends CommonObject
 		}
 		if ($amounts) {
 			$sql .= ", SUM(pl.amount)";
+			$sql .= ", SUM((SELECT pd.multicurrency_amount FROM " . MAIN_DB_PREFIX . "prelevement_demande as pd WHERE pd.rowid = pl.fk_prelevement_demande))";
 		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as pb,";
 		$sql .= " " . MAIN_DB_PREFIX . "prelevement_lignes as pl,";
@@ -925,7 +947,8 @@ class BonPrelevement extends CommonObject
 					} else {
 						$arr[$i] = array(
 							$row[0],
-							$row[1]
+							$row[1],
+							$row[2]
 						);
 					}
 					$i++;
@@ -2123,7 +2146,8 @@ class BonPrelevement extends CommonObject
 				$dateTime_YMD = dol_print_date($date_actu, '%Y%m%d');
 				$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
 				$fileCrediteurSection = '';
-				$fileEmetteurSection = '';
+				$paymentgroups = array();
+				$controlsum = 0;
 				$i = 0;
 
 				/*
@@ -2211,12 +2235,14 @@ class BonPrelevement extends CommonObject
 						$drum = $obj->drum;
 						$rum = $obj->rum;
 						$ribpaymentref = (string) ($obj->rib_payment_reference ?? '');
+						$requestcurrency = '';
+						$requestamountincurrency = 0;
 
 						// But if a force bank account is defined, we use it instead
 						if (!empty($obj->fk_prelevement_demande)) {
 							$companybankaccountid = 0;
 
-							$sqltmp = "SELECT fk_societe_rib FROM ".MAIN_DB_PREFIX."prelevement_demande";
+							$sqltmp = "SELECT fk_societe_rib, multicurrency_code, multicurrency_amount FROM ".MAIN_DB_PREFIX."prelevement_demande";
 							$sqltmp .= " WHERE rowid = ".((int) $obj->fk_prelevement_demande);
 
 							$resqltmp = $this->db->query($sqltmp);
@@ -2224,6 +2250,8 @@ class BonPrelevement extends CommonObject
 							$objtmp = $this->db->fetch_object($resqltmp);
 							if ($objtmp) {
 								$companybankaccountid = (int) $objtmp->fk_societe_rib;
+								$requestcurrency = (string) $objtmp->multicurrency_code;
+								$requestamountincurrency = (float) $objtmp->multicurrency_amount;
 							}
 
 							$bankaccount = new CompanyBankAccount($this->db);
@@ -2238,6 +2266,20 @@ class BonPrelevement extends CommonObject
 							}
 						}
 
+						$currency = getDolCurrency();
+						$amountincurrency = (float) $obj->somme;
+						if ($requestcurrency !== '') {
+							$currency = $requestcurrency;
+							$amountincurrency = $requestamountincurrency;
+						} elseif (empty($forsalary)) {
+							$invoice = new FactureFournisseur($this->db);
+							$invoice->fetch($obj->idfac);
+							$currency = (empty($invoice->multicurrency_code) ? getDolCurrency() : $invoice->multicurrency_code);
+							$amountincurrency = $invoice->getRequestAmountInInvoiceCurrency((float) $obj->somme);
+						}
+						$sepapayment = ($this->sepa_schema_version != '9' || ($currency == 'EUR' && in_array(strtoupper(substr(preg_replace('/\s/', '', $iban), 0, 2)), getCountriesInSEPA())));
+						$paymentgroup = ($sepapayment ? 'SEPA' : $currency);
+
 						$refobj = $obj->reffac;
 						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL" . $obj->idfac;
@@ -2248,30 +2290,41 @@ class BonPrelevement extends CommonObject
 							$paymentref = (string) (empty($obj->payment_reference) ? $ribpaymentref : $obj->payment_reference);
 						}
 
-						$errorsofline = $this->getCreditTransferLineErrors($obj, $iban, $paymentref, !empty($forsalary));
+						$errorsofline = $this->getCreditTransferLineErrors($obj, $iban, $paymentref, !empty($forsalary), $currency);
 						if (count($errorsofline)) {
 							$this->invoice_in_error = array_merge($this->invoice_in_error, $errorsofline);
 							$result = -2;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier, $paymentref);
+						if (empty($paymentgroups[$paymentgroup])) {
+							$paymentgroups[$paymentgroup] = array('xml' => '', 'nb' => 0, 'total' => 0);
+						}
+						$paymentgroups[$paymentgroup]['xml'] .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $amountincurrency, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier, $paymentref, $currency, $sepapayment);
+						$paymentgroups[$paymentgroup]['nb']++;
+						$paymentgroups[$paymentgroup]['total'] += $amountincurrency;
 
 						$this->total += $obj->somme;
+						$controlsum += $amountincurrency;
 						$i++;
 					}
-					$nbtotalDrctDbtTxInf = $i;
 				} else {
 					$this->error = $this->db->lasterror();
 					fwrite($this->file, 'ERROR CREDITOR ' . $sql . $CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}
-				// Define $fileEmetteurSection. Start of block PmtInf. Will contains all $nbtotalDrctDbtTxInf
+				// One block PmtInf per group of payments: the SEPA payments, then one per currency for the others
 				if ($result != -2) {
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
+					foreach ($paymentgroups as $paymentgroup => $paymentsofgroup) {
+						$fileCrediteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $paymentsofgroup['nb'], $paymentsofgroup['total'], $CrLf, $format, $type, $fk_bank_account, $paymentgroup);
+						$fileCrediteurSection .= $paymentsofgroup['xml'];
+						$fileCrediteurSection .= '		</PmtInf>' . $CrLf;
+					}
 				}
 
+				$controlsum = price2num($controlsum, 'MT');
 				if (getDolGlobalString('SEPA_FORCE_TWO_DECIMAL')) {
 					$this->total = number_format((float) price2num($this->total, 'MT'), 2, ".", "");
+					$controlsum = number_format((float) $controlsum, 2, ".", "");
 				}
 
 				/**
@@ -2286,14 +2339,14 @@ class BonPrelevement extends CommonObject
 				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/CT' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
-				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
+				fwrite($this->file, '			<CtrlSum>' . $controlsum . '</CtrlSum>' . $CrLf);
 				fwrite($this->file, '			<InitgPty>' . $CrLf);
 				$initiatingpartyname = strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '));
 				if ($this->sepa_schema_version == '9') {
 					$initiatingpartyname = dol_trunc($initiatingpartyname, 70, 'right', 'UTF-8', 1);
 				}
 				fwrite($this->file, '				<Nm>' . dolEscapeXML($initiatingpartyname) . '</Nm>' . $CrLf);
-				if ($this->sepa_schema_version != '9' || !empty($this->emetteur_ics)) {
+				if (!empty($this->emetteur_ics)) {
 					fwrite($this->file, '				<Id>' . $CrLf);
 					fwrite($this->file, '				    <PrvtId>' . $CrLf);
 					fwrite($this->file, '					<Othr>' . $CrLf);
@@ -2304,16 +2357,11 @@ class BonPrelevement extends CommonObject
 				}
 				fwrite($this->file, '			</InitgPty>' . $CrLf);
 				fwrite($this->file, '		</GrpHdr>' . $CrLf);
-				// SEPA File Emetteur (mycompany)
-				if ($result != -2) {
-					fwrite($this->file, $fileEmetteurSection);
-				}
-				// SEPA File Creditors
+				// SEPA File Emetteur (mycompany) and Creditors
 				if ($result != -2) {
 					fwrite($this->file, $fileCrediteurSection);
 				}
 				// SEPA FILE FOOTER
-				fwrite($this->file, '		</PmtInf>' . $CrLf);
 				fwrite($this->file, '	</CstmrCdtTrfInitn>' . $CrLf);
 				fwrite($this->file, '</Document>' . $CrLf);
 			}
@@ -2487,9 +2535,10 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$iban			IBAN of the beneficiary
 	 *	@param	string		$paymentref		Payment reference given by the beneficiary
 	 *	@param	bool		$forsalary		True when the line pays a salary
+	 *	@param	string		$currency		Currency of the line
 	 *	@return	array<string,string>		Error messages with a link to the record to fix
 	 */
-	private function getCreditTransferLineErrors($obj, $iban, $paymentref, $forsalary)
+	private function getCreditTransferLineErrors($obj, $iban, $paymentref, $forsalary, $currency)
 	{
 		global $langs;
 
@@ -2508,6 +2557,15 @@ class BonPrelevement extends CommonObject
 				$link = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->socid).'&action=edit">'.dol_escape_htmltag($obj->nom).'</a>';
 				$errors['soc'.$obj->socid] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferAddressIncomplete', '{s}'));
 			}
+		}
+
+		if ($this->sepa_schema_version != '9' && $currency != 'EUR') {
+			if ($forsalary) {
+				$link = '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.((int) $obj->idfac).'">'.dol_escape_htmltag($obj->reffac).'</a>';
+			} else {
+				$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.((int) $obj->idfac).'">'.dol_escape_htmltag($obj->reffac).'</a>';
+			}
+			$errors['currency'.$obj->idfac] = str_replace('{s}', $link, $langs->trans('ErrorCreditTransferCurrencyNeedsVersion9', '{s}', $currency));
 		}
 
 		if (!$forsalary) {
@@ -2621,10 +2679,12 @@ class BonPrelevement extends CommonObject
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
 	 *  @param  string      $row_comment		A free text string for the Unstructured data field
 	 *  @param  string      $row_paymentref		Structured reference (QRR or RF) given by the beneficiary of a credit transfer
+	 *  @param  string      $row_currency		Currency of the amount of a credit transfer
+	 *  @param  bool        $row_sepa			False when the credit transfer is not a SEPA payment (not EUR or to an IBAN outside SEPA)
 	 *	@return	string							Return string with SEPA part DrctDbtTxInf
 	 *  @see EnregDestinataire()
 	 */
-	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '', $row_paymentref = '')
+	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '', $row_paymentref = '', $row_currency = 'EUR', $row_sepa = true)
 	{
 		// phpcs:enable
 		global $conf, $mysoc, $hookmanager;
@@ -2762,16 +2822,18 @@ class BonPrelevement extends CommonObject
 					$categoryPurpose = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_CATEGORY_PURPOSE', 'CORE');
 
 					$XML_CREDITOR .= '					<InstrPrty>' . $instrprty . '</InstrPrty>' . $CrLf;
-					$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
-					$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
-					$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+					if ($row_sepa) {
+						$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
+						$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
+						$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+					}
 					$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
 					$XML_CREDITOR .= '						<Cd>' . $categoryPurpose . '</Cd>' . $CrLf;
 					$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
 					$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 				}
 				$XML_CREDITOR .= '				<Amt>' . $CrLf;
-				$XML_CREDITOR .= '				<InstdAmt Ccy="EUR">' . round((float) $row_somme, 2) . '</InstdAmt>' . $CrLf;
+				$XML_CREDITOR .= '				<InstdAmt Ccy="' . dolEscapeXML($row_currency) . '">' . round((float) $row_somme, 2) . '</InstdAmt>' . $CrLf;
 				$XML_CREDITOR .= '				</Amt>' . $CrLf;
 				/*
 				 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
@@ -2931,9 +2993,10 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$format				FRST, RCUR, OOFF or FNAL
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *  @param	string	$paymentgroup		Credit transfer only: 'SEPA' for the SEPA payments, else the currency of the payments of the block
 	 *	@return	string						String with SEPA Sender
 	 */
-	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
+	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0, $paymentgroup = 'SEPA')
 	{
 		// phpcs:enable
 
@@ -3042,12 +3105,12 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Credit Transfer
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon . ($paymentgroup == 'SEPA' ? '' : '-' . $paymentgroup)) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>TRF</PmtMtd>' . $CrLf;
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>' . $total . '</CtrlSum>' . $CrLf;
-				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format)) {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
+				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format) && $paymentgroup == 'SEPA') {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
 					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
@@ -3095,7 +3158,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent(getDolGlobalString('MAIN_INFO_SOCIETE_ZIP').' '.getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>' . $CrLf; // Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>' . ($paymentgroup == 'SEPA' ? 'SLEV' : 'SHAR') . '</ChrgBr>' . $CrLf; // Field "Responsible of fees". Must be SLEV for SEPA payments
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
