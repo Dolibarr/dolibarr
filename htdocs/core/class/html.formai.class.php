@@ -303,6 +303,10 @@ class FormAI extends Form
 						instructions = $(element).val();
 					} else {
 						instructions = userprompt;
+						/* For a web page or an email, the existing content is sent too so the AI can modify it instead of generating it from scratch */
+						if ((functionai == 'textgenerationwebpage' || functionai == 'textgenerationemail') && userprompt && texttomodify && texttomodify.trim() != '') {
+							instructions = userprompt + '\\n\\nApply this instruction to the following existing content of the ' + (functionai == 'textgenerationemail' ? 'email' : 'page') + ', and return the full modified content (if the instruction asks for a new content, ignore the existing one):\\n' + texttomodify;
+						}
 					}
 
 					/* Show message API running */

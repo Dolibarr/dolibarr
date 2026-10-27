@@ -335,6 +335,16 @@ if (empty($backtourl)) {
 			$section_dir .= '/';
 		}
 		$backtourl = DOL_URL_ROOT.'/website/index.php?action=file_manager'.($website ? '&website='.urlencode($website) : '').'&section_dir='.urlencode($section_dir);
+		// Keep the popup mode (no menus) when the file manager is open into a dialog popup
+		if (GETPOSTINT('dol_hide_topmenu')) {
+			$backtourl .= '&dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
+		}
+		if (GETPOSTINT('dol_hide_leftmenu')) {
+			$backtourl .= '&dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
+		}
+		if (GETPOST('dol_openinpopup', 'aZ09')) {
+			$backtourl .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+		}
 	} else {
 		// Generic case that should work for everybody else
 		$backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".((int) $id).'&file='.urlencode($file);

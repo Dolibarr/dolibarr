@@ -240,6 +240,16 @@ if ($action == 'create') {
 	if ($pageid) {
 		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag((string) $pageid).'">';
 	}
+	// Keep the popup mode (no menus) when page is open into a dialog popup
+	if (GETPOSTINT('dol_hide_topmenu')) {
+		print '<input type="hidden" name="dol_hide_topmenu" value="'.GETPOSTINT('dol_hide_topmenu').'">';
+	}
+	if (GETPOSTINT('dol_hide_leftmenu')) {
+		print '<input type="hidden" name="dol_hide_leftmenu" value="'.GETPOSTINT('dol_hide_leftmenu').'">';
+	}
+	if (GETPOST('dol_openinpopup', 'aZ09')) {
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag(GETPOST('dol_openinpopup', 'aZ09')).'">';
+	}
 
 	$title = $langs->trans("ECMNewSection");
 	print load_fiche_titre($title);

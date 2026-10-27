@@ -7184,6 +7184,15 @@ span#morelines {
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
 }
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
+}
 .websitebar .button, .websitebar .buttonDelete
 {
 	padding: 4px 5px 4px 5px !important;
