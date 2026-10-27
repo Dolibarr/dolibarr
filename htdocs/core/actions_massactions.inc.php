@@ -140,7 +140,9 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 // The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
 // request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
 // lists and the cards (entity, third parties of the sales representative, projects the user can see...).
-if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+// Note: some mass actions are done on ids that are not ids of $objectclass: users for 'increaseholiday' (holiday/define_holiday.php),
+// lines of invoices or expense reports for 'ventil' and 'set_default_account' (accountancy/.../list.php).
+if (!$error && $massaction && !in_array($massaction, array('increaseholiday', 'ventil', 'set_default_account')) && !empty($toselect) && is_array($toselect)) {
 	$objecttmpforaccesscheck = new $objectclass($db);
 	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
 	if (!empty($refusedids)) {
@@ -542,7 +544,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$email_from = $obj->email_from;
 					}
 				} else {
-					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail', 'email').'>';
 				}
 
 				$replyto = $email_from;
@@ -1206,6 +1208,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 	$nbok = 0;
 	$nbignored = 0;
 	/** @var string[] $TMsg */
@@ -1300,9 +1304,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	// Complete with classes that use this massaction
-	<<<'EOPHAN'
-@phan-var-force 'Commande'|'CommandeFournisseur'|'Contrat'|'Expedition'|'ExpenseReport'|'Facture'|'FactureFournisseur'|'Fichinter'|'Project'|'Propal'|'SupplierProposal' $objectclass
-EOPHAN;
+	'@phan-var-force \'Commande\'|\'CommandeFournisseur\'|\'Contrat\'|\'Expedition\'|\'ExpenseReport\'|\'Facture\'|\'FactureFournisseur\'|\'Fichinter\'|\'Project\'|\'Propal\'|\'SupplierProposal\' $objectclass';
 
 	$db->begin();
 	$nbok = 0;
@@ -1393,6 +1395,9 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 
 		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
+			// The CommonSocialNetworks trait forces $object to its own type on the global $object for phan, which
+			// makes phan lose the CommonObject methods here (fetch, setCategoriesCommon). Restore the real type.
+			'@phan-var-force CommonObject $object';
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
 				foreach ($toselect as $toselectid) {
@@ -1833,51 +1838,10 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				}
 
 				if (!$error) {
-					// To
-					$destinataire = new User($db);
-					$destinataire->fetch($objecttmp->fk_user);
-					$emailTo = $destinataire->email;
-
-					if (!$emailTo) {
-						dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-					} else {
-						// From
-						$expediteur = new User($db);
-						$expediteur->fetch($objecttmp->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-						// Subject
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
-
-						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
-
-						// Content
-						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
-						$message .= "\n";
-
-						$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($objecttmp->date_debut, 'day'), dol_print_date($objecttmp->date_fin, 'day'))."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
-						$message .= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$objecttmp->id."\n\n";
-						$message .= "\n";
-
-						$trackid = 'leav'.$objecttmp->id;
-
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
-
-						// Sending email
-						$result = $mail->sendfile();
-
-						if (!$result) {
-							setEventMessages($mail->error, $mail->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
-							$action = '';
-						}
+					$result = $objecttmp->sendApprovalEmail();
+					if ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'warnings'); // Show error, but do no make rollback, so $error is not set to 1
+						$action = '';
 					}
 				}
 			} else {

@@ -127,7 +127,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->commande->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->order->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto, 0, '', '', 0, '', 1);
@@ -163,7 +163,7 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
+					$proj->fetch((int) $object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

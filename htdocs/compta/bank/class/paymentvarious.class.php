@@ -141,6 +141,11 @@ class PaymentVarious extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int|string	Third party ID
+	 */
+	public $socid;
+
+	/**
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
@@ -405,6 +410,13 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
+		// Delete attached documents directory
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$dir = $conf->bank->dir_output.'/various_payment/'.((int) $this->id);
+		if (file_exists($dir)) {
+			dol_delete_dir_recursive($dir);
+		}
+
 		return 1;
 	}
 
@@ -666,7 +678,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

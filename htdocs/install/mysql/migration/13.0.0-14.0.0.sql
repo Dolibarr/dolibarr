@@ -382,6 +382,7 @@ ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
 UPDATE llx_extrafields SET elementtype = 'salary' WHERE elementtype = 'payment_salary';
 ALTER TABLE llx_payment_salary_extrafields RENAME TO llx_salary_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_payment_salary_extrafields_rowid_seq RENAME TO llx_salary_extrafields_rowid_seq;
 -- VMYSQL4.1 DROP INDEX idx_payment_salary_extrafields on llx_salary_extrafields;
 -- VPGSQL8.2 DROP INDEX idx_payment_salary_extrafields;
 ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);

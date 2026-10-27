@@ -276,11 +276,6 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
-	}
-
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
@@ -292,6 +287,11 @@ $coldisplay++;
 			print ' readonly';
 		}
 		print '></td>';
+	}
+
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -463,8 +463,8 @@ $coldisplay++;
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -558,13 +558,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		var ratejs = price2numjs(rate.val());
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("rateMustBeNumeric"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -603,6 +603,7 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
@@ -610,13 +611,23 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_price_ttc").val('');
+		}
+	});
+	jQuery("#multicurrency_price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
 		}
 	});
 

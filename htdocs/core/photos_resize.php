@@ -500,10 +500,10 @@ print load_fiche_titre($title);
 $infoarray = dol_getImageSize($dir."/".GETPOST("file", 'alpha'));
 $height = $infoarray['height'];
 $width = $infoarray['width'];
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("CurrentInformationOnImage").': </span>';
-print '<span class="opacitymedium">';
+print '<div class="info">';
+print '<span class="hideonsmartphone">'.$langs->trans("CurrentInformationOnImage").': </span>';
 print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong>';
-print '</span><br>';
+print '</div>';
 
 print '<br>'."\n";
 
@@ -569,9 +569,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
-	if (empty($conf->dol_no_mouse_hover) && $object !== null) {
+	if (empty($conf->dol_no_mouse_hover)) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) ($object !== null ? $object->entity : $conf->entity)).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';
 		print '</div><br>';
 
@@ -581,12 +581,12 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '
 		      <div class="jc_coords">
 		         '.$langs->trans("NewSizeAfterCropping").':
-		         &nbsp; <label>X1=<input type="number" class="flat maxwidth50" id="x" name="x" /></label>
-		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth50" id="y" name="y" /></label>
-		         &nbsp; <label>X2=<input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
-		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
-		         &nbsp; <label>W=<input type="number" class="flat maxwidth50" id="w" name="w" /></label>
-		         &nbsp; <label>H=<input type="number" class="flat maxwidth50" id="h" name="h" /></label>
+		         &nbsp; <label>X1=<input type="number" class="flat maxwidth75 right" id="x" name="x" /></label>
+		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth75 right" id="y" name="y" /></label>
+		         &nbsp; <label>X2=<input type="number" class="flat maxwidth75 right" id="x2" name="x2" /></label>
+		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth75 right" id="y2" name="y2" /></label>
+		         &nbsp; <label>W=<input type="number" class="flat maxwidth75 right" id="w" name="w" /></label>
+		         &nbsp; <label>H=<input type="number" class="flat maxwidth75 right" id="h" name="h" /></label>
 		      </div>
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />

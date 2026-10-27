@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for contracts
@@ -146,9 +147,9 @@ class Contracts extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -723,7 +724,7 @@ class Contracts extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->contract->error);
+			throw new RestException(405, $this->contract->errorsToString());
 		}
 	}
 
@@ -814,7 +815,7 @@ class Contracts extends DolibarrApi
 		if ($this->contract->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->contract->error);
+			throw new RestException(500, $this->contract->errorsToString());
 		}
 	}
 
@@ -850,7 +851,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!$this->contract->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete contract : '.$this->contract->error);
+			throw new RestException(500, 'Error when delete contract : '.$this->contract->errorsToString());
 		}
 
 		return array(
@@ -907,7 +908,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Contract: '.$this->contract->error);
+			throw new RestException(500, 'Error when validating Contract: '.$this->contract->errorsToString());
 		}
 
 		return array(
@@ -964,7 +965,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already close');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Contract: '.$this->contract->error);
+			throw new RestException(500, 'Error when closing Contract: '.$this->contract->errorsToString());
 		}
 
 		return array(

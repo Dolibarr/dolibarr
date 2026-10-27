@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors"));
+$langs->loadLangs(array("admin"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -153,7 +153,7 @@ print dol_get_fiche_head($head, 'contacts', '', -1);
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -162,7 +162,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
 print "</tr>\n";
 
-// DN Pour les contacts
+// DN For the contacts
 print '<!-- LDAP_CONTACT_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
 print '<input size="48" type="text" name="contactdn" value="' . getDolGlobalString('LDAP_CONTACT_DN').'">';
@@ -328,6 +328,7 @@ if (function_exists("ldap_connect")) {
 				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</span><br>';
+				$langs->load('errors');
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -340,6 +341,7 @@ if (function_exists("ldap_connect")) {
 			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</span><br>';
+			$langs->load('errors');
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

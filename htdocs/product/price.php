@@ -111,8 +111,14 @@ if ($object->id > 0) {
 
 $maxpricesupplier = 0;
 
+$permissiontoadd = 0;
 if ($object->id > 0) {
-	$permissiontoadd = $object->getRights()->creer;
+	if ($object->type == $object::TYPE_PRODUCT) {
+		$permissiontoadd = $user->hasRight('produit', 'creer');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		$permissiontoadd = $user->hasRight('service', 'creer');
+	}
 } else {
 	$permissiontoadd = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 }
@@ -623,7 +629,7 @@ if (empty($reshook)) {
 			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
 			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
 		}
-		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, -1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1330,7 +1336,20 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				}
 				foreach ($extralabels as $key => $value) {
 					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
+						$extravalue = $genericObject->array_options['options_' . $key];
+						// If field is a computed field, we make computation to get value
+						if (!empty($extrafields->attributes["product_price"]['computed'][$key])) {
+							$genericObject->price = $object->multiprices[$i];
+							$genericObject->price_ttc = $object->multiprices_ttc[$i];
+							$genericObject->price_base_type = $object->multiprices_base_type[$i];
+							$genericObject->price_min = $object->multiprices_min[$i];
+							$genericObject->price_min_ttc = $object->multiprices_min_ttc[$i];
+							$genericObject->tva_tx = $object->multiprices_tva_tx[$i];
+
+							$objectoffield = $genericObject; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+							$extravalue = dol_eval((string) $extrafields->attributes["product_price"]['computed'][$key], 1, 1, '2');
+						}
+						print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_price')."</td>";
 					}
 				}
 				$db->free($resql1);
@@ -1673,7 +1692,7 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 	print '<br></form><br>';
 }
 
-if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRights()->creer) {
+if (($action == 'edit_price' || $action == 'edit_level_price') && $permissiontoadd) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("NewPrice"), '');
 
@@ -1801,7 +1820,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print $form->buttonsSaveCancel();
 
 		print '</form>';
-	} elseif ($action == 'edit_level_price' && $object->getRights()->creer) {
+	} elseif ($action == 'edit_level_price' && $permissiontoadd) {
 		print '<!-- Edit price per level -->'."\n"; ?>
 		<script>
 
@@ -2404,7 +2423,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
 
 				//. vatrate($tva_tx, true, $line->recuperableonly) .
 				print "</td>";
@@ -2693,17 +2712,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$sql .= " WHERE fk_object = ".((int) $line->id);
 					$resql = $db->query($sql);
 					if ($resql) {
-						if ($db->num_rows($resql) != 1) {
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
-									print "<td></td>";
-								}
-							}
-						} else {
-							$obj = $db->fetch_object($resql);
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						// Row may not exist yet (e.g. if the only extrafield configured is a computed one, no row is ever inserted)
+						$obj = ($db->num_rows($resql) == 1) ? $db->fetch_object($resql) : null;
+						foreach ($extralabels as $key => $value) {
+							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+								// If field is a computed field, we make computation to get value, whether or not a stored row exists
+								if (!empty($extrafields->attributes["product_customer_price"]['computed'][$key])) {
+									$objectoffield = $line; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+									$extravalue = dol_eval((string) $extrafields->attributes["product_customer_price"]['computed'][$key], 1, 1, '2');
+									print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_customer_price')."</td>";
+								} elseif ($obj) {
 									print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_customer_price')."</td>";
+								} else {
+									print "<td></td>";
 								}
 							}
 						}

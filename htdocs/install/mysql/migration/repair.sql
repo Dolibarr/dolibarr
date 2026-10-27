@@ -248,7 +248,7 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
-update llx_document_model set nom = 'typhon' where (nom = '' OR nom is null) and type = 'delivery';
+update llx_document_model set nom = 'storm' where (nom = '' OR nom is null) and type = 'delivery';
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
 
 

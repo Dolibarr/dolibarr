@@ -34,6 +34,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
@@ -48,7 +49,7 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
+// TODO add rule to restrict payment access
 //restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
@@ -77,9 +78,6 @@ if ($payment->id > 0) {
 // Delete payment
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
-	$db->query($sql);
 
 	$fk_loan = $payment->fk_loan;
 
@@ -143,7 +141,8 @@ print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$
 
 // Amount
 print '<tr><td>'.$langs->trans('LoanCapital').'</td><td>'.price($payment->amount_capital, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
-print '<tr><td>'.$langs->trans('Insurance').'</td><td>'.price($payment->amount_insurance, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+$loan->fetch($payment->fk_loan);
+print '<tr><td>'.loanChargeLabel($loan->charge_type, $langs).'</td><td>'.price($payment->amount_insurance, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note Private
@@ -246,7 +245,7 @@ print '<div class="tabsAction">';
 
 if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 	} else {
 		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 0);
 	}

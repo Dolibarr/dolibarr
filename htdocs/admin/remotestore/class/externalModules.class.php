@@ -60,6 +60,11 @@ class ExternalModules
 	public $cache_file;
 
 	/**
+	 * @var array<string,array{url:string,branch:string,const_enable:string,raw_base_url:string,file_source_url:string,cache_file:string,status:int,error:string}> Additional GitHub mono repositories of modules (from MAIN_ADD_EXTERNAL_MODULES_SOURCE), indexed by a key
+	 */
+	public $custom_sources = array();
+
+	/**
 	 * // the url of this page
 	 * @var string
 	 */
@@ -157,6 +162,54 @@ class ExternalModules
 		$this->file_source_url = "https://raw.githubusercontent.com/Dolibarr/dolibarr-community-modules/refs/heads/main/index.yaml";
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
 
+		// For the additional modules repositories (GitHub mono repositories with same structure than the community repository)
+		// MAIN_ADD_EXTERNAL_MODULES_SOURCE is a comma separated list of 'URL[:branch]'
+		// Example: 'https://github.com/DoliCloud/dolimods:master,https://github.com/owner/repo:develop'
+		// If the branch is not provided, 'main' is used.
+		$i = 0;
+		foreach (explode(',', getDolGlobalString('MAIN_ADD_EXTERNAL_MODULES_SOURCE')) as $customsource) {
+			$customsource = trim($customsource);
+			if ($customsource === '') {
+				continue;
+			}
+			$i++;
+
+			$url = $customsource;
+			$branch = '';
+			$reg = array();
+			// A ':' followed by a string with no '/' at the end is the branch (the ':' of 'https:' is never followed by such a string)
+			if (preg_match('/^(.+):([\w.\/-]+)$/', $customsource, $reg) && strpos($reg[2], '/') === false) {
+				$url = $reg[1];
+				$branch = $reg[2];
+			}
+			$url = preg_replace('/\/+$/', '', $url);
+
+			$owner = '';
+			$repo = '';
+			// Accept 'https://github.com/owner/repo', 'https://github.com/owner/repo.git' or 'https://github.com/owner/repo/tree/branch'
+			if (preg_match('/^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/tree\/([\w.\/-]+))?$/', $url, $reg)) {
+				$owner = $reg[1];
+				$repo = $reg[2];
+				if (empty($branch)) {
+					$branch = empty($reg[3]) ? 'main' : $reg[3];
+				}
+			}
+
+			// The key is used to build the name of the constant to enable the source, so it must be stable
+			$key = ($owner ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '_', $owner.'_'.$repo)) : 'INVALID'.$i);
+
+			$this->custom_sources[$key] = array(
+				'url' => $url,
+				'branch' => $branch,
+				'const_enable' => 'MAIN_ENABLE_EXTERNALMODULES_CUSTOM_'.$key,
+				'raw_base_url' => ($owner ? 'https://github.com/'.$owner.'/'.$repo.'/raw/refs/heads/'.$branch : ''),
+				'file_source_url' => ($owner ? 'https://raw.githubusercontent.com/'.$owner.'/'.$repo.'/refs/heads/'.$branch.'/index.yaml' : ''),
+				'cache_file' => DOL_DATA_ROOT.'/admin/temp/remote_github_custom_modules_file_'.strtolower($key).'.yaml',
+				'status' => 0,
+				'error' => '',
+			);
+		}
+
 		$lang       = $langs->defaultlang;
 		$lang_array = array('en_US', 'fr_FR', 'es_ES', 'it_IT', 'de_DE');
 		if (!in_array($lang, $lang_array)) {
@@ -183,13 +236,33 @@ class ExternalModules
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
+		// Check access to the additional repos
+		$nbcustomsourcesok = 0;
+		foreach ($this->custom_sources as $key => $customsource) {
+			if (!getDolGlobalString($customsource['const_enable'])) {
+				continue;
+			}
+			if ($customsource['file_source_url']) {
+				$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
+
+				$this->error = '';
+				$this->getRemoteYamlFile($customsource['file_source_url'], $cachedelayforgithubrepo, $customsource['cache_file']);
+
+				$this->custom_sources[$key]['error'] = (string) $this->error;
+				$this->custom_sources[$key]['status'] = dol_is_file($customsource['cache_file']) ? 1 : 0;
+				$nbcustomsourcesok += $this->custom_sources[$key]['status'];
+			} else {
+				$this->custom_sources[$key]['error'] = 'Each value of MAIN_ADD_EXTERNAL_MODULES_SOURCE must be a GitHub repository URL like https://github.com/owner/repo or https://github.com/owner/repo:branch';
+			}
+		}
+
 		// Check access to Dolistore API /api/categories -> /api/index.php/marketplace/categories
 		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$this->dolistoreApiStatus = $this->checkApiStatus();
 		}
 
 		// Count the number of online providers
-		$this->numberOfProviders = $this->dolistoreApiStatus + $this->githubFileStatus;
+		$this->numberOfProviders = (int) $this->dolistoreApiStatus + (int) $this->githubFileStatus + $nbcustomsourcesok;
 	}
 
 	/**
@@ -253,18 +326,23 @@ class ExternalModules
 
 	/**
 	 * Fetch modules from a cache YAML file
-	 * @param array<string, mixed> $options Options for filter
+	 * @param array<string, mixed> 	$options 	Options for filter
+	 * @param string				$cache_file	Cache file to read. If empty, we use the cache file of the community repository.
 	 *
 	 * @return list<array<string, array<string, string|null>|string|null>> List of modules
 	 */
-	public function fetchModulesFromFile($options = array())
+	public function fetchModulesFromFile($options = array(), $cache_file = '')
 	{
 		$modules = array();
 
-		if (!empty($this->cache_file) && file_exists($this->cache_file)) {
-			dol_syslog(__METHOD__ . " - Loading cache file: " . $this->cache_file, LOG_DEBUG);
+		if (empty($cache_file)) {
+			$cache_file = $this->cache_file;
+		}
 
-			$content = file_get_contents($this->cache_file);
+		if (!empty($cache_file) && file_exists($cache_file)) {
+			dol_syslog(__METHOD__ . " - Loading cache file: " . $cache_file, LOG_DEBUG);
+
+			$content = file_get_contents($cache_file);
 			if ($content !== false) {
 				$modules = $this->readYaml($content);
 			} else {
@@ -430,12 +508,33 @@ class ExternalModules
 			$fileProducts = $fileProducts['data'];
 		}
 
-		// Number of pages
-		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
+		// Fetch the products from the additional github repos
 
-		// Merge both sources (github community modules have priority on dolistore).
+		$customFileProducts = array();
+		$customFileProductsTotalMax = 0;
+		foreach ($this->custom_sources as $key => $customsource) {
+			if (empty($customsource['status']) || !getDolGlobalInt($customsource['const_enable'])) {
+				continue;
+			}
+			$tmpProducts = $this->fetchModulesFromFile($data, $customsource['cache_file']);
+
+			$tmpProducts = $this->adaptData($tmpProducts, 'githubcustom', $key);
+
+			$tmpProducts = $this->applyFilters($tmpProducts, $data);
+
+			$customFileProductsTotalMax = max($customFileProductsTotalMax, $tmpProducts['total']);
+
+			$this->numberTotalOfProducts += $tmpProducts['total'];
+
+			$customFileProducts = array_merge($customFileProducts, $tmpProducts['data']);
+		}
+
+		// Number of pages
+		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $customFileProductsTotalMax / $this->per_page, $dolistoreProductsTotal / $this->per_page));
+
+		// Merge all sources (github modules have priority on dolistore, the additional repos have priority on the community repo).
 		$this->products = $dolistoreProducts;
-		foreach ($fileProducts as $fileProduct) {
+		foreach (array_merge($fileProducts, $customFileProducts) as $fileProduct) {
 			$id = $fileProduct['id'];
 			if ($id > 0) {
 				if (empty($this->products[$id])) {		// Not already present in array
@@ -527,7 +626,7 @@ class ExternalModules
 				if ($product['source'] === 'dolistore') {	// 0 on dolistore may mean 0 or a complementary fee to subscribe
 					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
 					$price = '<h3><a href="'.$urlview.'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
-				} elseif ($product['source'] === 'githubcommunity') {
+				} elseif (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
 					if (array_key_exists('price_ht', $product) && empty($product['price_ht'])) {
 						if ($product['status'] == 'soon') {
 							$price = '<h3>'.$langs->trans('StillInDevelopment').'</h3>';
@@ -545,7 +644,7 @@ class ExternalModules
 					$price = '<h3>'.$langs->trans('Unknown').'</h3>';
 				}
 
-				if ($product['source'] === 'githubcommunity') {
+				if (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
 					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
 					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright colorgrey"');
 					$download_link .= '</a>';
@@ -563,7 +662,6 @@ class ExternalModules
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
 						}
 					}
@@ -575,7 +673,6 @@ class ExternalModules
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
 
@@ -583,14 +680,14 @@ class ExternalModules
 				if ((!empty($product['direct-download']) && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
 					$urldownload = '';
 
-					if ($product['source'] === 'githubcommunity') {
+					if (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
 						$current_version = $product['module_version'] ?? '';
 						$module_name = strtolower(preg_replace('/@.*$/', '', $product['ref'] ?? ''));
 
 						// Remove "-" followed by current version at the end of the string if it exists
 						$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
 
-						$urldownload = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
+						$urldownload = $this->getGithubRawBaseUrl($product['source'], $product['custom_source_key'] ?? '').'/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
 
 						$reg = array();
 						$urlview = $product["dolistore-download"];		// View on Dolistore
@@ -695,6 +792,8 @@ class ExternalModules
 				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize valignmiddle inline-block pictofixedwidth" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
 			} elseif ($product["source"] == 'githubcommunity') {
 				$html .= img_picto($langs->trans('Source').': GitHub community repo', 'group', 'class="pictofixedwidth valignmiddle"');
+			} elseif ($product["source"] == 'githubcustom') {
+				$html .= img_picto($langs->trans('Source').': '.($this->custom_sources[$product['custom_source_key']]['url'] ?? ''), 'fa-code-branch', 'class="pictofixedwidth valignmiddle"');
 			} else {
 				$html .= img_picto($langs->trans('Source').': '.$langs->trans('Other'), 'generic', 'class="pictofixedwidth"');
 			}
@@ -1040,16 +1139,35 @@ class ExternalModules
 	}
 
 	/**
+	 * Return the base URL to get raw files of a GitHub modules repository
+	 *
+	 * @param	string	$source		Source ('githubcommunity' or 'githubcustom')
+	 * @param	string	$sourcekey	Key of the additional repository into $this->custom_sources (when $source is 'githubcustom')
+	 * @return	string				Base URL (Example: 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main')
+	 */
+	public function getGithubRawBaseUrl($source, $sourcekey = '')
+	{
+		if ($source === 'githubcustom') {
+			return $this->custom_sources[$sourcekey]['raw_base_url'] ?? '';
+		}
+
+		return 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main';
+	}
+
+	/**
 	 * Get YAML file from remote source and put it into the cache file
 	 *
 	 * @param 	string 		$file_source_url 	URL of the remote source
 	 * @param 	int 		$cache_time 		Cache time
+	 * @param	string		$cache_file			Cache file to use. If empty, we use the cache file of the community repository.
 	 * @return 	bool|string 					File content
 	 */
-	public function getRemoteYamlFile($file_source_url, $cache_time)
+	public function getRemoteYamlFile($file_source_url, $cache_time, $cache_file = '')
 	{
 		$yaml = '';
-		$cache_file = $this->cache_file;
+		if (empty($cache_file)) {
+			$cache_file = $this->cache_file;
+		}
 		$cache_folder = dirname($cache_file);
 
 		// Check if cache directory exists
@@ -1154,9 +1272,10 @@ class ExternalModules
 	 *
 	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data 	Data fetched from github remote source
 	 * @param string $source 	Source of the data
+	 * @param string $sourcekey	Key of the additional repository into $this->custom_sources (when $source is 'githubcustom')
 	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
 	 */
-	public function adaptData($data, $source)
+	public function adaptData($data, $source, $sourcekey = '')
 	{
 		$adaptedData = [];
 
@@ -1164,7 +1283,7 @@ class ExternalModules
 			return $adaptedData;
 		}
 
-		if ($source === 'githubcommunity') {
+		if (in_array($source, array('githubcommunity', 'githubcustom'))) {
 			foreach ($data as $package) {
 				if (empty($package['modulename'])) {
 					continue;
@@ -1219,7 +1338,8 @@ class ExternalModules
 					'link' => !empty($package['git'])
 						? $package['git']
 						: '#',
-					'source' => 'githubcommunity',
+					'source' => $source,
+					'custom_source_key' => $sourcekey,
 					'status' => !empty($package['status']) ? $package['status'] : '',
 					'direct-download' => !empty($package['direct-download'])
 						? $package['direct-download']
@@ -1442,8 +1562,14 @@ class ExternalModules
 				}
 				break;
 			case 'githubcommunity':
+			case 'githubcustom':
+				$sourcekey = (string) ($producttoinstall['custom_source_key'] ?? '');
+				if ($producttoinstall['source'] == 'githubcustom' && (empty($this->custom_sources[$sourcekey]['raw_base_url']) || !getDolGlobalString($this->custom_sources[$sourcekey]['const_enable']))) {
+					dol_syslog(__METHOD__ . ': The additional modules repository '.$sourcekey.' is not enabled or not valid into MAIN_ADD_EXTERNAL_MODULES_SOURCE', LOG_ERR);
+					return false;
+				}
 				if (!empty($producttoinstall['direct-download']) && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
-					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
+					$source_url = $this->getGithubRawBaseUrl($producttoinstall['source'], $sourcekey).'/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
 					$downloaded = $this->_downloadFile($source_url, $tmpdir);
 					if (!$downloaded) {
 						dol_syslog(__METHOD__ . ': GitHub community module download failed: ' . $source_url . ', Try to find a Dolistore link', LOG_WARNING);

@@ -244,7 +244,7 @@ class ViewImageController extends Controller
 		}
 
 		// Security:
-		// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+		// We forbid directory traversal as well as pipes in file names.
 		if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
 			dol_syslog("Refused to deliver file " . $fullpath_original_file);
 			print "ErrorFileNameInvalid: " . dol_escape_htmltag($original_file);
@@ -389,7 +389,7 @@ class ViewImageController extends Controller
 					// we must check the securekey that protet against forging url
 					if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 						$encodedsecurekey = dol_hash($conf->file->instance_unique_id . 'uservirtualcard' . $id . '-' . $login, 'md5');
-						if ($encodedsecurekey != GETPOST('securekey')) {
+						if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 							$code = 'badvalueforsecurekey';
 						}
 					}

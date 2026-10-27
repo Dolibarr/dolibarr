@@ -21,6 +21,7 @@ use Luracast\Restler\RestException;
 
 dol_include_once('/recruitment/class/recruitmentjobposition.class.php');
 dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -176,12 +177,9 @@ class Recruitments extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				// fk_soc is optional on RecruitmentJobPosition (a position isn't necessarily tied to a
-				// customer's site), so a row with no linked thirdparty must still be visible to the sales
-				// rep rather than being hidden by an EXISTS check that can never match a null fk_soc.
-				$sql .= " AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale, 0, 1);
 			}
 		}
 		if ($sqlfilters) {
@@ -296,9 +294,9 @@ class Recruitments extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -488,7 +486,7 @@ class Recruitments extends DolibarrApi
 		if ($this->jobposition->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getJobPosition($id);
 		} else {
-			throw new RestException(500, $this->jobposition->error);
+			throw new RestException(500, $this->jobposition->errorsToString());
 		}
 	}
 
@@ -539,7 +537,7 @@ class Recruitments extends DolibarrApi
 		if ($this->candidature->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getCandidature($id);
 		} else {
-			throw new RestException(500, $this->candidature->error);
+			throw new RestException(500, $this->candidature->errorsToString());
 		}
 	}
 
@@ -571,7 +569,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		if (!$this->jobposition->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting jobposition : '.$this->jobposition->error);
+			throw new RestException(500, 'Error when deleting jobposition : '.$this->jobposition->errorsToString());
 		}
 
 		return array(
@@ -609,7 +607,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		if (!$this->candidature->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting candidature : '.$this->candidature->error);
+			throw new RestException(500, 'Error when deleting candidature : '.$this->candidature->errorsToString());
 		}
 
 		return array(

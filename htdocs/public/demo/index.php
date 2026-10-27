@@ -4,7 +4,7 @@
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,8 +162,8 @@ foreach ($modulesdir as $dir) {
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					try {

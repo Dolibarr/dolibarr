@@ -652,7 +652,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$keyforbreak = 'num_vote';
+	$keyforbreak = 'fk_invoice';	// Used by commonfields_view.tpl.php
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
@@ -685,10 +685,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}
@@ -711,8 +711,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->eventorganization->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->hasRight('project', 'conferenceorboothattendee', 'read'); // If you can read, you can build the PDF to read content
-			$delallowed = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('project', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('project', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('eventorganization:ConferenceOrBoothAttendee', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, (string) $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

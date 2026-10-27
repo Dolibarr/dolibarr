@@ -28,7 +28,6 @@
 
 global $conf, $user, $langs, $db, $mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -57,7 +56,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db, $mysoc;
 
 		print 'setUpBeforeClass '.$db->transaction_opened."\n";
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -66,6 +65,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}
 
+		print 'ModulesTest mysoc country_code = '.$mysoc->country_code."\n";
 		//$infotable = $db->DDLListTablesFull($db->database_name);
 		//print "List of existing tables before running test ModulesTest\n";
 		//print var_export($infotable, true)."\n";

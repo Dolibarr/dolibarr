@@ -623,7 +623,7 @@ if ($id > 0 || !empty($ref)) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -1054,6 +1054,10 @@ if ($id > 0 || !empty($ref)) {
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+							if ($objp->tobatch == 2) {
+								// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+								print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+							}
 						} else {
 							$type = 'dispatch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -1301,8 +1305,13 @@ if ($id > 0 || !empty($ref)) {
 				if (isModEnabled("reception")) {
 					print '<td class="nowraponall">';
 					if (!empty($objp->fk_reception)) {
-						$reception = new Reception($db);
-						$reception->fetch($objp->fk_reception);
+						if (empty($conf->cache['reception'][$objp->fk_reception])) {
+							$reception = new Reception($db);
+							$reception->fetch($objp->fk_reception);
+							$conf->cache['reception'][$objp->fk_reception] = $reception;
+						} else {
+							$reception = $conf->cache['reception'][$objp->fk_reception];
+						}
 						print $reception->getNomUrl(1);
 					}
 
@@ -1340,8 +1349,14 @@ if ($id > 0 || !empty($ref)) {
 				if (isModEnabled('productbatch')) {
 					if ($objp->batch) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-						$lot = new Productlot($db);
-						$lot->fetch(0, $objp->pid, $objp->batch);
+						$lotcachekey = $objp->pid.'_'.$objp->batch;
+						if (empty($conf->cache['productlot'][$lotcachekey])) {
+							$lot = new Productlot($db);
+							$lot->fetch(0, $objp->pid, $objp->batch);
+							$conf->cache['productlot'][$lotcachekey] = $lot;
+						} else {
+							$lot = $conf->cache['productlot'][$lotcachekey];
+						}
 						print '<td class="dispatch_batch_number" data-col="batch"  data-batch="' . dolPrintHTMLForAttribute($objp->batch) . '" data-productid="' . $objp->fk_product . '" >'.$lot->getNomUrl(1).'</td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc">'.dol_print_date($lot->sellby, 'day').'</td>';

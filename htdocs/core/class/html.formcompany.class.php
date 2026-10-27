@@ -299,7 +299,7 @@ class FormCompany extends Form
 
 		$out = '';
 
-		// Search departements/cantons/province active d'une region et pays actif
+		// Search active departments/cantons/provinces of a region and active country
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " " . $this->db->prefix() . "c_departements as d, " . $this->db->prefix() . "c_regions as r," . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
@@ -789,7 +789,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";
+					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";   // Quoting for dol_escape_js is ok @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 					print ' onChange="' . $javaScript . '"';
 				}
 				print '>';
@@ -920,6 +920,8 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) {
 					$selected = $newselected;
+				} else {
+					$selected = array();
 				}
 			}
 			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%', '', '', $placeholder);
@@ -1006,17 +1008,6 @@ class FormCompany extends Form
 		}
 
 		$selected = $preselected;
-		if (!$selected) {
-			if ($idprof == 1 && !empty($this->idprof1)) {
-				$selected = $this->idprof1;
-			} elseif ($idprof == 2 && !empty($this->idprof2)) {
-				$selected = $this->idprof2;
-			} elseif ($idprof == 3 && !empty($this->idprof3)) {
-				$selected = $this->idprof3;
-			} elseif ($idprof == 4 && !empty($this->idprof4)) {
-				$selected = $this->idprof4;
-			}
-		}
 
 		$maxlength = $formlength;
 		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");

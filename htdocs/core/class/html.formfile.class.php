@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ class FormFile
 	{
 		global $langs;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
@@ -293,7 +292,7 @@ class FormFile
 				$out .= '<td>'.$options.'</td>';
 			}
 			$out .= '<td valign="middle" class="nowrap">';
-			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dolPrintHTMLForAttribute($savingdocmask).'"> ';
 			$out .= '<label class="opacitymedium small" for="savingdocmask">';
 			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 			$out .= '</label>';
@@ -537,13 +536,13 @@ class FormFile
 						{
 							jQuery(\'#'.$modulepart.'_table\').hide();
 							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Show")).')\');
 						}
 						else
 						{
 							jQuery(\'#'.$modulepart.'_table\').show();
 							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Hide")).')\');
 						}
 						return false;
 					});
@@ -887,7 +886,7 @@ class FormFile
 
 			if (!empty($hookmanager->hooks['formfile'])) {
 				foreach ($hookmanager->hooks['formfile'] as $module) {
-					if (method_exists($module, 'formBuilddocLineOptions')) {
+					if (is_object($module) && method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
 						$out .= '<th></th>';
 					}
@@ -1077,7 +1076,6 @@ class FormFile
 					if (is_object($hookmanager)) {
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1114,6 +1112,9 @@ class FormFile
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td></td>';
 					}
+					if ($colspanmore) {
+						$out .= '<td colspan="'.$colspanmore.'"></td>';
+					}
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
@@ -1122,7 +1123,7 @@ class FormFile
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
 				$addcolumforpicto = ($delallowed || $printer || $morepicto);
 				$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-				$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$out .= '<tr><td colspan="'.($colspan + $colspanmore).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
@@ -1436,18 +1437,26 @@ class FormFile
 
 			if (!empty($addfilterfields)) {
 				print '<tr class="liste_titre nodrag nodrop">';
-				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref', 'alpha')).'"></td>';
-				print '<td></td>';
-				print '<td></td>';
+				print '<td class="liste_titre"><input type="text" class="maxwidth200 search_doc_ref" name="search_doc_ref" value="'.dolPrintHTMLForAttribute(GETPOST('search_doc_ref', 'alpha')).'" placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Filter")).'" autocomplete="off"></td>';
+				print '<td class="liste_titre"></td>';
+				print '<td class="liste_titre"></td>';
 				if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
-					print '<td></td>';
+					print '<td class="liste_titre"></td>';
 				}
-				print '<td></td>';
-				print '<td></td>';
+				if (empty($moreoptions['hideshared'])) {
+					print '<td class="liste_titre"></td>';
+				}
+				if (!empty($moreoptions['buttons'])) {
+					print '<td class="liste_titre"></td>';
+				}
+				print '<td class="liste_titre"></td>';
 				if (empty($disablemove) && count($filearray) > 1) {
-					print '<td></td>';
+					print '<td class="liste_titre"></td>';
 				}
 				print "</tr>\n";
+
+				// Filter lines on file name, client side (the list of files is not paginated)
+				$this->printJsToFilterOnFileName(1);
 			}
 
 			// Get list of files stored into database for the same relative directory
@@ -1535,11 +1544,11 @@ class FormFile
 					// Do we have entry into database ?
 
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
-					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'" data-filename="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 
 					// File name
-					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax300" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1593,7 +1602,7 @@ class FormFile
 					if ($sizetoshow == $sizetoshowbytes) {
 						print $sizetoshow;
 					} else {
-						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+						print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 					}
 					print '</td>';
 
@@ -1842,6 +1851,61 @@ class FormFile
 	}
 
 
+	/**
+	 *	Print the JS code to filter, client side, the lines of a list of files (rows tr.oddeven with attribute data-filename)
+	 *	from the value of the input with class search_doc_ref.
+	 *
+	 *	@param	int<0,1>	$disableenter	1=Disable the submit of the parent form when pressing Enter into the filter input
+	 *	@return	void
+	 */
+	private function printJsToFilterOnFileName($disableenter = 0)
+	{
+		global $conf;
+
+		if (empty($conf->use_javascript_ajax)) {
+			return;
+		}
+
+		print '<script nonce="'.getNonce().'">
+		jQuery(document).ready(function() {
+			function dolFilterDocLines(input) {
+				var search = jQuery(input).val().toLowerCase();
+				var lines = jQuery(input).closest("table").find("tr.oddeven[data-filename]");
+				lines.each(function() {
+					var filename = String(jQuery(this).attr("data-filename") || "").toLowerCase();
+					jQuery(this).toggle(search == "" || filename.indexOf(search) >= 0);
+				});
+				/* Keep the bottom border and rounded corners on the last visible line */
+				lines.removeClass("lastvisible");
+				if (search != "") {
+					lines.filter(":visible").last().addClass("lastvisible");
+				}
+			}
+			jQuery("input.search_doc_ref").off(".dolfilterdoc").on("keyup.dolfilterdoc input.dolfilterdoc", function() {
+				dolFilterDocLines(this);
+			})'.($disableenter ? '.on("keydown.dolfilterdoc", function(e) {
+				if (e.key === "Enter") {
+					e.preventDefault();	/* Do not submit the parent form */
+				}
+			})' : '').'.each(function() {
+				var input = this;
+				if (jQuery(input).val() != "") {
+					dolFilterDocLines(input);	/* Filter kept after a reload (edit, rename, cancel) */
+				}
+				/* Keep the filter when a link of a line reloads the page (edit button) */
+				jQuery(input).closest("table").find("a.editfilelink").off(".dolfilterdoc").on("click.dolfilterdoc", function() {
+					var href = jQuery(this).attr("href");
+					var search = jQuery(input).val();
+					if (search != "" && href && href != "#") {
+						href = href.replace(/([?&])search_doc_ref=[^&]*/, "$1").replace(/[?&]$/, "");
+						jQuery(this).attr("href", href + (href.indexOf("?") >= 0 ? "&" : "?") + "search_doc_ref=" + encodeURIComponent(search));
+					}
+				});
+			});
+		});
+		</script>'."\n";
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show list of documents in a directory of ECM module.
@@ -1867,6 +1931,7 @@ class FormFile
 		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $search_doc_date_start, $search_doc_date_end;
 		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
@@ -1879,10 +1944,18 @@ class FormFile
 			$url = $_SERVER["PHP_SELF"];
 		}
 
+		$enablebulkdownload = ($modulepart == 'invoice_supplier');
+
 		if (!empty($addfilterfields)) {
-			print '<form action="'.$_SERVER['PHP_SELF'].'">';
+			print '<form action="'.dol_escape_htmltag($url).'" method="'.($enablebulkdownload ? 'POST' : 'GET').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="module" value="'.$modulepart.'">';
+			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($modulepart).'">';
+			if ($sortfield) {
+				print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+			}
+			if ($sortorder) {
+				print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1890,23 +1963,48 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			if ($enablebulkdownload) {
+				print '<td class="liste_titre center">';
+				print $form->showCheckAddButtons('checkforselect', 0);
+				print '</td>';
+			}
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
-			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'" autocomplete="off"></td>';
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
-			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre center">';
+			if ($enablebulkdownload) {
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_start) ? $search_doc_date_start : '', 'search_doc_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_end) ? $search_doc_date_end : '', 'search_doc_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+			}
+			print '</td>';
 			// Shared and action column
 			print '<td class="liste_titre right">';
+			if ($enablebulkdownload) {
+				print '<button type="submit" class="button smallpaddingimp marginrightonly" name="action" value="download_selected">';
+				print img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download");
+				print '</button>';
+			}
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
 			print "</tr>\n";
+
+			// Filter lines on file name, client side. Enter still submits the form to filter server side.
+			$this->printJsToFilterOnFileName(0);
 		}
 
 		print '<tr class="liste_titre">';
+		if ($enablebulkdownload) {
+			print '<th class="liste_titre center maxwidthsearch"></th>';
+		}
 		$sortref = "fullname";
 		if ($modulepart == 'invoice_supplier') {
 			$sortref = 'level1name';
@@ -2133,9 +2231,17 @@ class FormFile
 				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
+				if ($modulepart == 'invoice_supplier' && (int) $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref]->entity !== (int) $conf->entity) {
+					continue;
+				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" data-filename="'.dolPrintHTMLForAttribute($file['name']).'">';
+				if ($enablebulkdownload) {
+					print '<td class="center">';
+					print '<input type="checkbox" class="flat checkforselect" name="selectedfiles[]" value="'.dol_escape_htmltag($relativefile).'">';
+					print '</td>';
+				}
 				// Ref
 				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
@@ -2188,7 +2294,7 @@ class FormFile
 				if ($sizetoshow == $sizetoshowbytes) {
 					print $sizetoshow;
 				} else {
-					print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+					print $form->textwithpicto($sizetoshow, price($file['size'], 0, $langs, 0, 0).' '.$langs->trans("b"), -1);
 				}
 				print '</td>';
 
@@ -2223,7 +2329,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.urlencode(GETPOST("section")).'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td>";
 
@@ -2232,7 +2338,7 @@ class FormFile
 		}
 
 		if (count($filearray) == 0) {
-			print '<tr class="oddeven"><td colspan="5">';
+			print '<tr class="oddeven"><td colspan="'.($enablebulkdownload ? '6' : '5').'">';
 			if (empty($textifempty)) {
 				print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 			} else {

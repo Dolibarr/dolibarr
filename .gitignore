@@ -97,6 +97,7 @@ phpstan_custom.neon
 
 # IA setup
 /AGENTS.md
+/CLAUDE.md
 
 # Mistral Vibe
 .vibe
@@ -106,6 +107,9 @@ phpstan_custom.neon
 .claude
 /.claudeignore
 
+# Superpowers subagent-driven-development scratch workspace
+/.superpowers
+
 # Agent workflow artifacts (specs/plans), not product documentation
 docs/superpowers/
 
@@ -113,3 +117,9 @@ docs/superpowers/
 .worktrees/
 /cookies.txt
 /post_login.html
+/AGENTS.md
+
+.bash_history
+.zed_server/
+.ssh/
+.local/

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
@@ -188,10 +189,6 @@ llxHeader();
 
 $form = new Form($db);
 
-// TODO Report from bookkeeping not yet available, so we switch on report on business events
-if ($modecompta == "BOOKKEEPING") {
-	$modecompta = "CREANCES-DETTES";
-}
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
@@ -225,7 +222,10 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
-	// TODO
+	$name = $langs->trans("Turnover").', '.$langs->trans("ByUserAuthorOfInvoice");
+	$calcmode = $langs->trans("CalcModeBookkeeping");
+	$description = $langs->trans("RulesCADue");
+	$builddate = dol_now();
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	// TODO
 }
@@ -274,6 +274,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
+	// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+	$hookmanager->initHooks(array('turnoverreport'));
+	$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+	$sql .= $hookmanager->resPrint;
 	if ($date_start && $date_end) {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
@@ -291,12 +296,36 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 		$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-} // elseif ($modecompta == "BOOKKEEPING") {
-// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+} elseif ($modecompta == "BOOKKEEPING") {
+	// Turnover per invoice author computed from the accounting ledger. Each posting is linked back to
+	// its source invoice via fk_doc (reliable at invoice level, unlike fk_docdet which the transfer
+	// engine does not preserve when several lines share the same account). HT is the sum of postings
+	// on INCOME-type accounts; TTC is the amount posted on the customer subledger line of the invoice.
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+
+	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname,";
+	$sql .= " SUM(CASE WHEN b.subledger_account IS NOT NULL AND b.subledger_account != '' THEN b.debit - b.credit ELSE 0 END) as amount_ttc,";
+	$sql .= " SUM(CASE WHEN aa.pcg_type = 'INCOME' THEN b.credit - b.debit ELSE 0 END) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = b.fk_doc AND b.doc_type = 'customer_invoice'";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = f.fk_user_author";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = b.numero_compte AND aa.entity = b.entity AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " WHERE 1=1";
+	if ($date_start && $date_end) {
+		$sql .= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
+	}
+} // elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 // }
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
+if ($modecompta == 'BOOKKEEPING') {
+	$sql .= " AND b.entity = ".((int) $conf->entity);
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
+} else {
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
@@ -468,7 +497,7 @@ if (count($amount)) {
 			} else {
 				//print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
 			}
-		} elseif ($modecompta == 'CREANCES-DETTES') {
+		} elseif ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
 			} else {
@@ -532,7 +561,7 @@ if (count($amount)) {
 	// Total
 	print '<tr class="liste_total">';
 	print '<td>'.$langs->trans("Total").'</td>';
-	if ($modecompta != 'CREANCES-DETTES') {
+	if ($modecompta == 'RECETTES-DEPENSES') {
 		print '<td></td>';
 	} else {
 		print '<td class="right">'.price($catotal_ht).'</td>';

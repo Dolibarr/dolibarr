@@ -546,9 +546,10 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
+	 * @param	bool	$withauth	False to only send EHLO and switch to TLS (STARTTLS) without login
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-	private function _server_authenticate()
+	private function _server_authenticate($withauth = true)
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -660,7 +661,7 @@ class SMTPs
 
 				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method)) {
 					$this->_setErr(132, 'STARTTLS connection failed.');
-					return $_retVal;
+					return false;
 				}
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
@@ -668,6 +669,11 @@ class SMTPs
 					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
+			}
+
+			if (!$withauth) {
+				// No login, only EHLO and STARTTLS were needed
+				return $_retVal;
 			}
 
 			// Default authentication method is LOGIN
@@ -743,6 +749,9 @@ class SMTPs
 			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
+			} elseif (preg_match('@tls://@i', $this->getHost())) {
+				// No login but STARTTLS is on: the switch to TLS is needed before sending the message, or it is sent in clear text
+				$_retVal = $this->_server_authenticate(false);
 			} else {
 				// This is a "normal" SMTP Server "handshack"
 				// Send the RFC821 specified HELO.
@@ -803,15 +812,11 @@ class SMTPs
 					 */
 
 					/*
-					 * TODO
-					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
-					 * if not, the whole message will fail
-					 * If any email address fails, we will need to RESET the connection,
-					 * mark the last address as "bad" and start the address loop over again.
-					 * If any address fails, the entire message fails.
+					 * If any address fails, the entire message fails: the sending is reported as failed, so sending
+					 * the message to the other recipients would make duplicates when it is sent again.
+					 * Closing the connection before the end of the data cancels the message.
 					 */
 					if (!$this->socket_send_str('RCPT TO: <'.$_address.'>', '250')) {
-						// Stop here, sending DATA would desynchronize the SMTP responses
 						fclose($this->socket);
 						return false;
 					}
@@ -821,13 +826,18 @@ class SMTPs
 				// with any custom headers...
 				// This is the last response code we look for until the end of the message.
 				if (!$this->socket_send_str('DATA', '354')) {
+					// The data must not be sent, the server would read it as SMTP commands
 					fclose($this->socket);
 					return false;
 				}
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$_retVal = $this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
+				$data = $this->getHeader().$this->getBodyContent();
+				// Dot-stuffing (RFC 5321 4.5.2): a line starting with a "." gets a second one, that the server removes.
+				// Without it, a line with only "." ends the data and the next lines are read by the server as SMTP commands.
+				$data = preg_replace('/^\./m', '..', $data);
+				$_retVal = $this->socket_send_str($data."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				$this->socket_send_str('QUIT');
@@ -1714,7 +1724,7 @@ class SMTPs
 			$_msgData = $_msgData[$_types[0]];
 
 			$content = 'Content-Type: '.$_msgData['mimeType'].'; charset="'.$this->getCharSet().'"'."\r\n"
-			. 'Content-Transfer-Encoding: '.$this->getTransEncodeType()."\r\n"
+			. 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_msgData['data'])."\r\n"
 			. 'Content-Disposition: inline'."\r\n"
 			. 'Content-Description: Message'."\r\n";
 
@@ -1796,6 +1806,7 @@ class SMTPs
 				} else {
 					if (array_key_exists('image', $this->_msgContent)) {
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n";
 						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 						$content .= 'Content-Type: multipart/related; boundary="'.$this->_getBoundary('related').'"'."\r\n";
@@ -1810,6 +1821,7 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['dataText'])."\r\n";
 						$content .= "\r\n".$_content['dataText']."\r\n";
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
@@ -1817,6 +1829,7 @@ class SMTPs
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
 					$content .= "\r\n";
+					$content .= 'Content-Transfer-Encoding: '.$this->_getTextTransferEncoding($_content['data'])."\r\n";
 
 					if ($this->getMD5flag()) {
 						$content .= 'Content-MD5: '.$_content['md5']."\r\n";
@@ -1839,6 +1852,23 @@ class SMTPs
 		}
 
 		return $content;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Content-Transfer-Encoding of a text part: the text is sent as is, so it is '8bit' when it has non ASCII
+	 * characters (UTF-8 accents...), '7bit' is valid only for an ASCII text (RFC 2045).
+	 *
+	 * @param	string	$text	Text of the part
+	 * @return	string			Content-Transfer-Encoding
+	 */
+	private function _getTextTransferEncoding($text)
+	{
+		// phpcs:enable
+		if (preg_match('/[^\x00-\x7F]/', $text)) {
+			return '8bit';
+		}
+		return $this->getTransEncodeType();
 	}
 
 	/**

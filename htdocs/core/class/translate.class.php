@@ -976,7 +976,7 @@ class Translate
 	public function file_exists($filename, $searchalt = 0)
 	{
 		// phpcs:enable
-		// Test si fichier dans repertoire de la langue
+		// Test if file is in the language directory
 		foreach ($this->dir as $searchdir) {
 			if (is_readable(dol_osencode($searchdir . "/langs/" . $this->defaultlang . "/" . $filename))) {
 				return true;

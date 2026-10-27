@@ -299,7 +299,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$formquestion = array_merge($formquestion, array(
-				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('RECRUITMENTJOBPOSITION_CLOSE_SIGNED', $object->socid, $object)),
+				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('RECRUITMENTJOBPOSITION_CLOSE_SIGNED', 0, $object)),
 			));
 		}*/
 
@@ -345,11 +345,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects(0, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, !empty($object->socid) ? $object->socid : 0, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -440,7 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=recruitmentjobposition', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=recruitmentjobposition', 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			/*
@@ -460,7 +460,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Delete
 			$params = array();
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

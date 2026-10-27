@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2006-2007  Yannick Warnier     <ywarnier@beeznest.org>
  * Copyright (C) 2011	    Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2017  Juanjo Menent       <jmenent@2byte.es>
@@ -30,6 +31,9 @@
  *      \brief      Library for tax module
  */
 
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
  * Prepare array with list of tabs
@@ -109,11 +113,12 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  'sell'|'buy' $direction     'sell' or 'buy'
  *  @param  int<0,12>	 $m				Month
  *  @param  int<0,4>	 $q           	Quarter
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],drate?:string[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],pstatus?:int[],pstatusbuy?:int[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per third party), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -179,18 +184,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
 			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		} else {
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		}
 		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
@@ -210,10 +215,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
-		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -235,18 +244,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Paid (partially or completely)
 		if ($direction == 'buy') {
 			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		} else {
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		}
 		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
@@ -268,10 +277,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
-		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
@@ -321,7 +334,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -376,18 +389,18 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
 			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		} else {
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		}
 		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
@@ -407,10 +420,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
-		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -432,8 +449,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		$sql .= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Paid (partially or completely)
+		$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
 		$sql .= " AND s.rowid = f.fk_soc";
 		$sql .= " AND pf.".$db->sanitize($fk_facture2)." = f.rowid";
@@ -453,7 +470,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
-		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
@@ -487,7 +504,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['localtax2'] += (float) $assoc['total_localtax2'];
 			}
 			$list[$assoc['company_id']]['dtotal_ttc'][] = (float) $assoc['total_ttc'];
-			$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
+			$list[$assoc['company_id']]['dtype'][] = (int) $assoc['dtype'];
 			$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 			$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
@@ -504,7 +521,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$list[$assoc['company_id']]['company_supplier_accounting_code'][] = (string) $assoc['company_supplier_accounting_code'];
 			$list[$assoc['company_id']]['company_status'][] = (int) $assoc['company_status'];
 
-			$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+			$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 			$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 			$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -553,7 +570,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
 		$sql .= " WHERE e.entity = ".((int) $conf->entity);
-		$sql .= " AND e.fk_statut in (6)";
+		$sql .= " AND e.fk_statut IN (" . ExpenseReport::STATUS_CLOSED . ")";
 		if ($y && $m) {
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -569,7 +586,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = -1";
-		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR e.date_debut IS NOT NULL OR e.date_fin IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.total_tva <> 0)";
 		}
@@ -620,7 +637,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['company_status'][] = 0;
 
 				$list[$assoc['company_id']]['user_id'][] = (int) $assoc['fk_user_author'];
-				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
+				$list[$assoc['company_id']]['drate'][] = (string) $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -669,11 +686,12 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  @param  int			 $modetax     	Not used
  *  @param  'sell'|'buy' $direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
  *  @param  int<0,12>	 $m           	Month
- *  @return int<-3,-1>|array<int|string,array{totalht:float,vat:float,localtax1:float,localtax2:float,dtotal_ttc:float[],dtype:int[],datef:int[],datep:int[],company_name:string[],company_id:int[],company_alias:string[],company_email:string[],company_tva_intra:string[],company_client:int[],company_fournisseur:int[],company_customer_code:string[],company_supplier_code:string[],company_customer_accounting_code:string[],company_supplier_accounting_code:string[],company_status:int[],user_id:int[],drate:string[],ddate_start:int[],ddate_end:int[],facid:int[],facnum:string[],type:int[],ftotal_ttc:float[],descr:string[],totalht_list:string[],vat_list:float[],localtax1_list:float[],localtax2_list:float[],pid:int[],pref:string[],ptype:int[],payment_id:int[],payment_ref:string[],payment_amount:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @return int<-3,-1>|array<int|string,array{totalht?:int|float,vat?:int|float,localtax1?:int|float,localtax2?:int|float,dtotal_ttc?:float[],dtype?:(int|string)[],datef?:(''|int)[],datep?:(''|int)[],company_name?:string[],company_id?:int[],company_alias?:string[],company_email?:string[],company_tva_intra?:string[],company_client?:int[],company_fournisseur?:int[],company_customer_code?:string[],company_supplier_code?:string[],company_customer_accounting_code?:string[],company_supplier_accounting_code?:string[],company_status?:int[],user_id?:int[],ddate_start?:(''|int)[],ddate_end?:(''|int)[],facid?:int[],facnum?:string[],type?:int[],ftotal_ttc?:float[],descr?:string[],totalht_list?:float[],vat_list?:float[],localtax1_list?:float[],localtax2_list?:float[],pid?:int[],pref?:string[],ptype?:(int|string)[],payment_id?:int[],payment_ref?:string[],payment_amount?:float[]}>  Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -737,18 +755,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
 			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		} else {
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		}
 		if ($y && $m) {
@@ -766,10 +784,14 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
-		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -791,8 +813,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		$sql .= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Paid (partially or completely)
+		$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -808,7 +830,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
-		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
@@ -917,18 +939,18 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
 			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		} else {
 			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-				$sql .= " AND f.type IN (0,1,2,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_SITUATION . ")";
 			} else {
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+				$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 			}
 		}
 		if ($y && $m) {
@@ -946,10 +968,14 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
-		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -971,8 +997,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
-		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		$sql .= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND f.fk_statut IN (".Facture::STATUS_VALIDATED.", ".Facture::STATUS_CLOSED.")"; // Paid (partially or completely)
+		$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . ", " . Facture::TYPE_REPLACEMENT . ", " . Facture::TYPE_CREDIT_NOTE . ", " . Facture::TYPE_DEPOSIT . ", " . Facture::TYPE_SITUATION . ")";
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -988,7 +1014,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
-		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
@@ -1090,7 +1116,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid";
 		$sql .= " WHERE e.entity = ".((int) $conf->entity);
-		$sql .= " AND e.fk_statut in (6)";
+		$sql .= " AND e.fk_statut IN (" . ExpenseReport::STATUS_CLOSED . ")";
 		if ($y && $m) {
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -1106,7 +1132,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " AND (d.product_type = -1";
-		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
+		$sql .= " OR e.date_debut IS NOT NULL OR e.date_fin IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.total_tva <> 0)";
 		}

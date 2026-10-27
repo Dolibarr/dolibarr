@@ -799,7 +799,7 @@ class TimeSpent extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -842,8 +842,6 @@ class TimeSpent extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $conf, $langs;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -855,14 +853,6 @@ class TimeSpent extends CommonObject
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			// @phan-suppress-next-line PhanUndeclaredProperty
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(5).'</div>';
@@ -1068,5 +1058,22 @@ class TimeSpent extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old product id
+	 * @param 	int 	$dest_id 	New product id
+	 * @return 	bool
+	 */
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'element_time'
+		);
+
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 }

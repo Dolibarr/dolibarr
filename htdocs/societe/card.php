@@ -53,7 +53,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -1126,12 +1125,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$object->mode_reglement_id = $paymentTypeId;
 		$object->barcode = GETPOST('barcode', 'alphanohtml');
-		$object->idprof1 = GETPOST('idprof1', 'alphanohtml');
-		$object->idprof2 = GETPOST('idprof2', 'alphanohtml');
-		$object->idprof3 = GETPOST('idprof3', 'alphanohtml');
-		$object->idprof4 = GETPOST('idprof4', 'alphanohtml');
-		$object->idprof5 = GETPOST('idprof5', 'alphanohtml');
-		$object->idprof6 = GETPOST('idprof6', 'alphanohtml');
+		// Only the professional ids displayed by the form are posted: the edit form renders the id N
+		// only when N <= THIRDPARTY_MIN_NB_PROF_ID or when the key ProfId<N><country code> is
+		// translated for the language of the user. Reading the 6 of them unconditionally erases the
+		// value stored for a hidden one, so keep the current value when the field was not submitted.
+		for ($i = 1; $i <= 6; $i++) {
+			$key = 'idprof'.$i;
+			if (GETPOSTISSET($key)) {
+				$object->$key = GETPOST($key, 'alphanohtml');
+			}
+		}
 		$object->typent_id = GETPOSTINT('typent_id');
 		$object->effectif_id = GETPOSTINT('effectif_id');
 		$object->civility_id = GETPOST('civility_id', 'alpha');
@@ -1629,7 +1632,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $langs->trans('DefaultBankAccount');
 				print '</td>';
 				print '<td>';
-				$form->select_comptes(GETPOST('fk_account'), 'fk_account', 0, '', 1);
+				$form->select_comptes(GETPOSTISSET('fk_account') ? GETPOSTINT('fk_account') : $object->fk_account, 'fk_account', 0, '', 1);
 				print "</td>";
 				print '</tr>';
 			}
@@ -1651,7 +1654,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td>';
 			print '<td colspan="3">';
 			print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-			print dolPrintHTMLForTextArea($object->address);
+			print dolPrintText($object->address);
 			print '</textarea>';
 			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 			print '</td></tr>';
@@ -1696,7 +1699,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx').'</td>';
 
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -1704,12 +1707,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Phone mobile
 			print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth200 widthcentpercentminusx').'</td></tr>';
 
 			// Fax
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').'<input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td></tr>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx').'</td></tr>';
 
 			// URL
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
@@ -1908,7 +1911,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<tr><td colspan="'.$colspan.'"><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
 			$nbactive = '...';
-			print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+			print '<span class="badge badge-secondary marginleftonly">'.$nbactive.'</span></a>';
 			print '</td>';
 			print '</tr>';
 
@@ -2022,15 +2025,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr class="morefields">';
 			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			// TODO Use select_doluser in multiselect mode
-			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
-			print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($selected, 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'quatrevingtpercent widthcentpercentminusx', 1, 0, true);
 			print '</td></tr>';
 
 			// Add logo
-			print '<tr class="hideonsmartphone morefields"">';
+			print '<tr class="hideonsmartphone morefields">';
 			print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 			print '<td colspan="3">';
 			print '<input class="flat" type="file" name="photo" id="photoinput" />';
@@ -2040,7 +2041,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</table>'."\n";
 
 			print '<script nonce="'.getNonce().'" type="text/javascript">
-					$("document").ready(function() { toogleMoreFields(false); });
+					$(document).ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
 						console.log("Click on link .morefieldslnk (create)");
@@ -2050,17 +2051,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
-						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+						const items = $(".morefields, .morefieldsbis, .trextrafields:not(.trextrafieldsgroup)");
+						var cookieState;
 
-						if (!chgCookieState) cookieState = !cookieState ;
+						if (chgCookieState) {
+							cookieState = !items.is(":visible");
+							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
+						} else {
+							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+						}
 
 						if (cookieState) {
-							items.hide();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
-						} else {
 							items.show();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+							lnk.attr("aria-expanded", "true");
+						} else {
+							items.hide();
+							lnk.attr("aria-expanded", "false");
 						}
 					}
 				</script>
@@ -2198,6 +2204,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->typent_id = GETPOSTINT('typent_id');
 				$object->effectif_id = GETPOSTINT('effectif_id');
 				$object->barcode				= GETPOST('barcode', 'alphanohtml');
+				$object->fk_account				= GETPOSTINT('fk_account') > 0 ? GETPOSTINT('fk_account') : 0;
 				$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
 				$object->default_lang = GETPOST('default_lang', 'alpha');
 
@@ -2522,6 +2529,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
+				// Default bank account
+				if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
+					print '<tr><td>'.$form->editfieldkey('DefaultBankAccount', 'fk_account', '', $object, 0).'</td>';
+					print '<td colspan="3">';
+					$form->select_comptes(GETPOSTISSET('fk_account') ? GETPOSTINT('fk_account') : $object->fk_account, 'fk_account', 0, '', 1);
+					print '</td></tr>';
+				}
+
 				// Status
 				print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? '' : ' colspan="3"').'>';
 				print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
@@ -2534,7 +2549,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 				print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft" spellcheck="false">';
-				print dolPrintHTMLForTextArea($object->address);
+				print dolPrintText($object->address);
 				print '</textarea>';
 				print $form->widgetForTranslation("address", $object, (int) $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 				print '</td></tr>';
@@ -2575,15 +2590,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Phone / Fax
 				print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx').'</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
 				print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth200 widthcentpercentminusx').'</td></tr>';
 
 				print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').'<input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.$form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx').'</td>';
 				print '</tr>';
 
 				// Web
@@ -2792,7 +2807,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
 				$nbactive = '...';
-				print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+				print '<span class="badge badge-secondary marginleftonly">'.$nbactive.'</span></a>';
 				print '</td>';
 				print '</tr>';
 
@@ -2870,11 +2885,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$parameters = array('socid' => $socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-				print '<tr class="morefieldsbis tdsmallheight"><td colspan="4"></td></tr>';
+				print '<tr class="morefields morefieldsbis tdsmallheight"><td colspan="4"></td></tr>';
 
 				// Parent company
 				if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
-					print '<tr class="morefieldsbis">';
+					print '<tr class="morefields morefieldsbis">';
 					print '<td>'.$langs->trans('ParentCompany').'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -2883,19 +2898,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Assign sale representative
-				print '<tr class="morefieldsbis">';
+				print '<tr class="morefields morefieldsbis">';
 				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 				$arrayselected = GETPOST('commercial', 'array');
 				if (empty($arrayselected)) {
 					$arrayselected = $object->getSalesRepresentatives($user, 1);
 				}
-				print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($arrayselected, 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'quatrevingtpercent widthcentpercentminusx', 1, 0, true);
 				print '</td></tr>';
 
 				// Logo
-				print '<tr class="hideonsmartphone morefieldsbis">';
+				print '<tr class="hideonsmartphone morefields morefieldsbis">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				if ($object->logo) {
@@ -2927,7 +2941,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</table>'."\n";
 
 				print '<script nonce="'.getNonce().'" type="text/javascript">
-					$("document").ready(function() { toogleMoreFields(false); });
+					$(document).ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
 						console.log("Click on link .morefieldslnk (edit)");
@@ -2937,17 +2951,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
-						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+						const items = $(".morefields, .morefieldsbis, .trextrafields:not(.trextrafieldsgroup)");
+						var cookieState;
 
-						if (!chgCookieState) cookieState = !cookieState ;
+						if (chgCookieState) {
+							cookieState = !items.is(":visible");
+							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
+						} else {
+							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+						}
 
 						if (cookieState) {
-							items.hide();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
-						} else {
 							items.show();
-							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+							lnk.attr("aria-expanded", "true");
+						} else {
+							items.hide();
+							lnk.attr("aria-expanded", "false");
 						}
 					}
 				</script>
@@ -3050,7 +3069,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
@@ -3555,19 +3574,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (empty($object->email) && !$at_least_one_email_contact) {
 						$title = $langs->trans('NoEMail');
 					}
-					print dolGetButtonAction($title, $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', 'btn-send-mail', (!empty($object->email) || $at_least_one_email_contact) ? 1 : -1);
+					print dolGetButtonAction($title, $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', 'btn-send-mail', (!empty($object->email) || $at_least_one_email_contact) ? 1 : -1);
 				}
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
+				$cloneSocietetUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=clone&token='.newToken();
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					$cloneSocietetUrl = '';
 					$cloneButtonId = 'action-clone';
 				} else {
-					$cloneSocietetUrl = '';
 					$cloneButtonId = '';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'), array('attr' => array('class' => 'reposition')));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
@@ -3577,15 +3595,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 				}
 
-				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
+				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 
 				$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
 				$buttonId = 'action-delete-no-ajax';
 				if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
-					$deleteUrl = '';
 					$buttonId = 'action-delete';
 				}
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print '</div>'."\n";

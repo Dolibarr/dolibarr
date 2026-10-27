@@ -217,7 +217,7 @@ class FieldsManager
 	 */
 	public function errorsToString($separator = ', ')
 	{
-		return $this->error . (is_array($this->errors) ? (!empty($this->error) ? $separator : '') . implode($separator, $this->errors) : '');
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 	/**

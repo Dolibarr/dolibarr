@@ -117,7 +117,7 @@ if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") &
 
 	// check parameters
 	$forcelangprod = GETPOST('forcelangprod', 'alpha');
-	$libelle = GETPOST('libelle', 'alpha');
+	$label = GETPOST('label', 'alpha') ?: GETPOST('libelle', 'alpha');
 	$desc = GETPOST('desc', 'restricthtml');
 
 	if (empty($forcelangprod)) {
@@ -126,7 +126,7 @@ if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") &
 	}
 
 	if (!$error) {
-		if (empty($libelle)) {
+		if (empty($label)) {
 			$error++;
 			$object->errors[] = $langs->trans('Language_'.$forcelangprod).' : '.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Label'));
 		}
@@ -134,12 +134,15 @@ if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") &
 		if (!$error) {
 			// update the object
 			if ($forcelangprod == $current_lang) {
-				$object->label = $libelle;
+				$object->label = $label;
 				$object->description = dol_htmlcleanlastbr($desc);
 
-				$object->update($user);
+				$res = $object->update($user);
+				if ($res < 0) {
+					$error++;
+				}
 			} else {
-				$object->multilangs[$forcelangprod]["label"] = $libelle;
+				$object->multilangs[$forcelangprod]["label"] = $label;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
 			}
 
@@ -165,20 +168,23 @@ if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") 
 	$current_lang = $langs->getDefaultLang();
 
 	foreach ($object->multilangs as $key => $value) {     // recording of new values in the object
-		$libelle = GETPOST('libelle-'.$key, 'alpha');
+		$label = GETPOST('label-'.$key, 'alpha');
 		$desc = GETPOST('desc-'.$key, 'restricthtml');
 
-		if (empty($libelle)) {
+		if (empty($label)) {
 			$error++;
 			$object->errors[] = $langs->trans('Language_'.$key).' : '.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Label'));
 		}
 
 		if ($key == $current_lang) {
-			$object->label       = $libelle;
+			$object->label       = $label;
 			$object->description = dol_htmlcleanlastbr($desc);
-			$object->update($user, 1);
+			$res = $object->update($user, 1);
+			if ($res < 0) {
+				$error++;
+			}
 		} else {
-			$object->multilangs[$key]["label"]       = $libelle;
+			$object->multilangs[$key]["label"]       = $label;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);
 		}
 	}
@@ -305,8 +311,8 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 
 			// Label
-			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : ($object->multilangs[$key]['label'] ?? ''));
-			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$libelle.'"></td></tr>';
+			$label = (GETPOST('label-'.$key, 'alpha') ? GETPOST('label-'.$key, 'alpha') : ($object->multilangs[$key]['label'] ?? ''));
+			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="label-'.$key.'" size="40" value="'.$label.'"></td></tr>';
 
 			// Desc
 			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : ($object->multilangs[$key]['description'] ?? ''));
@@ -369,7 +375,7 @@ if ($action == 'add' && $permissiontoadd) {
 	print $formadmin->select_language(GETPOST('forcelangprod', 'alpha'), 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
-	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
+	print '<td><input name="label" class="minwidth200 maxwidth300" value="'.GETPOST('label', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();

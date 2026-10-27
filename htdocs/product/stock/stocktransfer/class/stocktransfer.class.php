@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -149,7 +149,7 @@ class StockTransfer extends CommonObject
 		'label'                    => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'css' => 'minwidth100', 'csslist' => 'tdoverflowmax125', 'autofocusoncreate' => 1),
 		'description'              => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 3,),
 		'fk_project'               => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'position' => 32, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
-		'fk_soc'                   => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1/*, 'help'=>"LinkToThirdparty"*/, 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax100'),
+		'fk_soc'                   => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1/*, 'help'=>"LinkToThirdparty"*/, 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => ''),
 		'fk_warehouse_source'      => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'WarehouseSource', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferSource', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
 		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'WarehouseDestination', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferDestination', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
 		'note_public'              => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
@@ -167,7 +167,7 @@ class StockTransfer extends CommonObject
 		'model_pdf'                => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'fk_incoterms'             => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -2, 'position' => 220),
 		'location_incoterms'       => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -2, 'position' => 225),
-		'status'                   => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'StockStransferDecremented', '3' => 'StockStransferIncremented'),),
+		'status'                   => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'StockStransferDecrementedStatus', '3' => 'StockStransferIncremented'),),
 	);
 	/**
 	 * @var int
@@ -342,7 +342,6 @@ class StockTransfer extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -834,7 +833,7 @@ class StockTransfer extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -895,12 +894,12 @@ class StockTransfer extends CommonObject
 			//$langs->load("stocktransfer@stocktransfer");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StockStransferDecremented');
+			$this->labelStatus[self::STATUS_TRANSFERED] = $langs->trans('StockStransferDecrementedStatus');
 			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('StockStransferIncremented');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('StockStransferDecremented');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('StockStransferIncremented');
+			$this->labelStatusShort[self::STATUS_TRANSFERED] = $langs->trans('InProgress');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
 		}
 
 		$statusType = 'status'.$status;

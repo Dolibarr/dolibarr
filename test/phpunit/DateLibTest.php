@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -504,6 +503,36 @@ class DateLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check monthly dates calculated from the original date do not drift after short months.
+	 *
+	 * @return void
+	 */
+	public function testDolTimePlusDureeMonthlyAnchor()
+	{
+		$cases = array(
+			array(10, 31, 2026, array('2026-11-30', '2026-12-31', '2027-01-31', '2027-02-28', '2027-03-31')),
+			array(1, 31, 2028, array('2028-02-29', '2028-03-31')),
+			array(1, 30, 2027, array('2027-02-28', '2027-03-30')),
+			array(1, 28, 2027, array('2027-02-28', '2027-03-28')),
+			array(1, 29, 2028, array('2028-02-29', '2028-03-29')),
+			array(1, 29, 2027, array('2027-02-28', '2027-03-29')),
+		);
+
+		foreach ($cases as $case) {
+			$anchor = dol_mktime(10, 0, 0, $case[0], $case[1], $case[2], 'gmt');
+			foreach ($case[3] as $index => $expecteddate) {
+				$occurrence = dol_time_plus_duree($anchor, $index + 1, 'm', 1, 'gmt');
+				$this->assertSame($expecteddate, dol_print_date($occurrence, '%Y-%m-%d', 'gmt'));
+			}
+		}
+
+		// dol_mktime() needs 'tz,TimeZone' for a named timezone, and dol_print_date() does not support it, so we compare timestamps
+		$timedanchor = dol_mktime(9, 0, 0, 3, 28, 2026, 'tz,Europe/Paris');
+		$timedoccurrence = dol_time_plus_duree($timedanchor, 1, 'm', 1, 'Europe/Paris');
+		$this->assertSame(dol_mktime(9, 0, 0, 4, 28, 2026, 'tz,Europe/Paris'), $timedoccurrence);
+	}
+
+	/**
 	 * testDolStringToTime
 	 *
 	 * @return int
@@ -664,8 +693,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolGetFirstHour()
 	{
-		global $conf;
-
 		$now = 1800 + (24 * 3600 * 10);	// The 11th of january 1970 at 0:30 in UTC
 		$result = dol_get_first_hour($now, 'gmt');
 		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
@@ -686,8 +713,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolSqlDateFilter()
 	{
-		global $conf;
-
 		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
 		print __METHOD__." result = ".$result."\n";
 		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');

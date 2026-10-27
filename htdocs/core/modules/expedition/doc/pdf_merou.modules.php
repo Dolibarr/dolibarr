@@ -160,19 +160,21 @@ class pdf_merou extends ModelePdfExpedition
 			$origin = $object->origin;
 
 			$object->fetch_origin();
+			// A shipment without source object (SHIPMENT_STANDALONE) holds its own contacts
+			$contactobject = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
 
 			//Create sender
 			$this->expediteur = $mysoc;
 
 			//Create recipient
-			$idcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$idcontact = $contactobject->getIdContact('external', 'SHIPPING');
 			$this->destinataire = new Contact($this->db);
 			if (!empty($idcontact[0])) {
 				$this->destinataire->fetch($idcontact[0]);
 			}
 
 			//Create deliverer
-			$idcontact = $object->origin_object->getIdContact('internal', 'LIVREUR');
+			$idcontact = $contactobject->getIdContact('internal', 'LIVREUR');
 			$this->livreur = new User($this->db);
 			if (!empty($idcontact[0])) {
 				$this->livreur->fetch($idcontact[0]);
@@ -300,7 +302,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pageposbefore = $pdf->getPage();
 
 					// Description of product line
-					$libelleproduitservice = pdf_writelinedesc($pdf, $object, $i, $outputlangs, 90, 3, 50, $curY, 0, 1);
+					$labelproductservice = pdf_writelinedesc($pdf, $object, $i, $outputlangs, 90, 3, 50, $curY, 0, 1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter = $pdf->getPage();
@@ -516,7 +518,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Print Draft Watermark
 		if ($object->statut == 0 && (getDolGlobalString('SENDING_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SENDING_DRAFT_WATERMARK);
 		}
@@ -661,9 +663,10 @@ class pdf_merou extends ModelePdfExpedition
 
 		$object->fetch_thirdparty();
 
-		// If SHIPPING contact defined on order, we use it
+		// If SHIPPING contact defined on order (or on the shipment itself when it has no source object), we use it
 		$usecontact = false;
-		$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+		$contactobject = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
+		$arrayidcontact = $contactobject->getIdContact('external', 'SHIPPING');
 		if (count($arrayidcontact) > 0) {
 			$usecontact = true;
 			$result = $object->fetch_contact($arrayidcontact[0]);

@@ -24,6 +24,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for projects
@@ -245,9 +246,9 @@ class Projects extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = " . ((int) $search_sale) . ")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select projects of given category
@@ -435,7 +436,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : ' . $this->project->error);
+			throw new RestException(500, 'Error : ' . $this->project->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->project);
@@ -754,7 +755,7 @@ class Projects extends DolibarrApi
 		if ($this->project->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->project->error);
+			throw new RestException(500, $this->project->errorsToString());
 		}
 	}
 
@@ -783,7 +784,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!$this->project->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete project : ' . $this->project->error);
+			throw new RestException(500, 'Error when delete project : ' . $this->project->errorsToString());
 		}
 
 		return array(
@@ -836,7 +837,7 @@ class Projects extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Project: ' . $this->project->error);
+			throw new RestException(500, 'Error when validating Project: ' . $this->project->errorsToString());
 		}
 
 		return array(
@@ -909,9 +910,9 @@ class Projects extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select projects of given category
@@ -1040,7 +1041,6 @@ class Projects extends DolibarrApi
 		unset($object->country_code);
 
 		unset($object->weekWorkLoad);
-		unset($object->weekWorkLoad);
 
 		//unset($object->lines);            // for task we use timespent_lines, but for project we use lines
 
@@ -1166,7 +1166,7 @@ class Projects extends DolibarrApi
 				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
 					$result = $task->add_contact($fk_socpeople, $taskContactType, $source, $notrigger);
 					if ($result < 0) {
-						throw new RestException(500, 'Error adding contact to task '.$task->id.': '.$task->error);
+						throw new RestException(500, 'Error adding contact to task '.$task->id.': '.$task->errorsToString());
 					}
 				}
 			}

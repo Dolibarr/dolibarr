@@ -304,7 +304,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
 } elseif ($action === 'update' && $combination_id > 0 && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -390,7 +390,7 @@ if ($action === 'confirm_deletecombination' && $usercancreate) {
 		$action = '';
 	}
 } elseif ($action === 'edit' && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}

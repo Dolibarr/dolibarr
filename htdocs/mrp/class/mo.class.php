@@ -311,10 +311,12 @@ class Mo extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -1065,8 +1067,8 @@ class Mo extends CommonObject
 			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
-			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-			$codemovementCancel = $langs->trans("StockIncrease");
+			$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
@@ -1089,8 +1091,8 @@ class Mo extends CommonObject
 				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
+				$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 
 				if ($qtytoprocess >= 0) {
@@ -1516,8 +1518,8 @@ class Mo extends CommonObject
 					$qtytoprocess = $lineDetails['qty'];
 
 					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
+					$labelmovementCancel = $langs->transnoentitiesnoconv("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->transnoentitiesnoconv("StockIncrease");
 
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
@@ -2037,6 +2039,21 @@ class Mo extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old product id
+	 * @param int 		$dest_id 		New product id
+	 * @return bool
+	 */
+	public static function replaceProduct($db, $origin_id, $dest_id)
+	{
+		$tables = array('mrp_mo', 'mrp_production');
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
 
 	/**
 	 * Function used to return children of Mo
@@ -2177,8 +2194,13 @@ class Mo extends CommonObject
 		}
 
 		$now = dol_now();
+		$warning_delay = $conf->mrp->progress->warning_delay;
 
-		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
+		// The count and the number of late MO are computed by the database instead of reading every MO. A MO is late when it has
+		// a planned end date and that date is before now minus the warning delay.
+		$sql = "SELECT COUNT(rowid) as nb,";
+		$sql .= " SUM(CASE WHEN date_end_planned IS NOT NULL AND date_end_planned < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
+		$sql .= " FROM ".$this->db->prefix()."mrp_mo";
 		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
 		$sql .= " AND entity IN (".getEntity('mrp_mo').")";
 
@@ -2186,7 +2208,6 @@ class Mo extends CommonObject
 		if ($resql) {
 			$langs->load("mrp");
 			$response = new WorkboardResponse();
-			$warning_delay = $conf->mrp->progress->warning_delay ;
 			$response->warning_delay = $warning_delay / 86400;
 			$response->label = $langs->trans("MOProgress");
 			$response->labelShort = $langs->trans("MOProgress");
@@ -2194,15 +2215,12 @@ class Mo extends CommonObject
 			$response->img = img_object('', "mrp");
 
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if (!empty($obj->date_end_planned)) {
-					$date_end_planned = $this->db->jdate($obj->date_end_planned);
-					if ($now > ($date_end_planned + $warning_delay)) {
-						$response->nbtodolate++;
-						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
-					}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
+					$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
 				}
 			}
 

@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -881,10 +881,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject 	$obj  	Object to link to category
 	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
+	 * @param	int				$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 * @see del_type()
 	 */
-	public function add_type($obj, $type = '')
+	public function add_type($obj, $type = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -942,10 +943,12 @@ class Categorie extends CommonObject
 			}
 
 			// Call trigger
-			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 
@@ -974,10 +977,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject $obj  Object
 	 * @param   string       $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param	int			 $notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int          1 if OK, -1 if KO
 	 * @see add_type()
 	 */
-	public function del_type($obj, $type)
+	public function del_type($obj, $type, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -1002,10 +1006,12 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Call trigger
-			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 
@@ -2328,7 +2334,7 @@ class Categorie extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		$current_lang = (is_object($langs) ? $langs->getDefaultLang() : '');	// $langs may be null when called from a page with NOREQUIRETRAN
 
 		$sql = "SELECT lang, label, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_lang";

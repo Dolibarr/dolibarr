@@ -3,7 +3,8 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -509,6 +509,83 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolCheckSecureAccessDocumentHook
+	 *
+	 * A module using the hook checkSecureAccess can grant access, and can also refuse it.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentHook()
+	{
+		global $conf, $user, $hookmanager;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+
+		$savhookmanager = $hookmanager;
+		$savconfmodule = isset($conf->mytestmodule) ? $conf->mytestmodule : null;
+		$savadmin = $user->admin;
+
+		// A module of the generic case, with its directory
+		$conf->mytestmodule = new stdClass();
+		$conf->mytestmodule->dir_output = DOL_DATA_ROOT.'/mytestmodule';
+		$conf->mytestmodule->multidir_output = array(1 => DOL_DATA_ROOT.'/mytestmodule');
+		$filename = 'export/FA010101.zip';
+
+		// A hook of a module on the context 'main' of the page, answering what the test sets in $answer
+		$hook = new class {
+			/** @var array<string,mixed> */
+			public $results = array();
+			/** @var int */
+			public $answer = 0;
+			/** @var array<string,mixed> */
+			public $answerresults = array();
+			/**
+			 * @param array<string,mixed>	$parameters	Hook parameters
+			 * @return int
+			 */
+			public function checkSecureAccess($parameters)
+			{
+				$this->results = $this->answerresults;
+				return $this->answer;
+			}
+		};
+		$hookmanager = new HookManager($this->savdb);
+		$hookmanager->contextarray = array('main');
+		$hookmanager->hooks['main']['mytestmodule'] = $hook;
+		$hookmanager->hooksSorted['main']['50:mytestmodule'] = $hook;
+
+		// Admin, hook without opinion (0): access allowed as without hook
+		$user->admin = 1;
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "Admin, hook returns 0: access allowed:".json_encode($result));
+
+		// Admin, hook replaces the result and refuses access
+		$hook->answer = 1;
+		$hook->answerresults = array('accessallowed' => 0);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "Admin, hook returns 1 with accessallowed 0: access refused:".json_encode($result));
+
+		// No permission, hook replaces the result and grants access (behaviour before this change, kept)
+		$user->admin = 0;
+		$hook->answerresults = array('accessallowed' => 1);
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(1, $result['accessallowed'], "No permission, hook returns 1 with accessallowed 1: access allowed:".json_encode($result));
+
+		// No permission, hook replaces the result without saying anything about access: refused as without hook
+		$hook->answerresults = array();
+		$result = dol_check_secure_access_document('mytestmodule', $filename, 0, '', '', 'read');
+		$this->assertEquals(0, $result['accessallowed'], "No permission, hook returns 1 without accessallowed: access refused:".json_encode($result));
+
+		$user->admin = $savadmin;
+		$hookmanager = $savhookmanager;
+		if ($savconfmodule === null) {
+			unset($conf->mytestmodule);
+		} else {
+			$conf->mytestmodule = $savconfmodule;
+		}
+	}
+
+	/**
 	 * testDolDirMove
 	 *
 	 * @return void
@@ -575,6 +652,40 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
+	}
+
+	/**
+	 * dol_move_uploaded_file() returns a translation key when it refuses a file, so the caller can
+	 * translate it. The virus branch must return a key alone: a key with the technical message of the
+	 * antivirus appended matches no entry of errors.lang and is shown untranslated to the user.
+	 *
+	 * @return void
+	 */
+	public function testDolMoveUploadedFileReturnsATranslationKeyOnVirus()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load("errors");
+
+		// A jpg renamed as a pdf, holding javascript: dolCheckOnFileName() refuses it
+		$srcfile = $conf->admin->dir_temp.'/uploadedvirus.tmp';
+		dol_copy(dirname(__FILE__).'/file_pdf_with_js.pdf.jpg', $srcfile, '0', 1);
+
+		$destfile = $conf->admin->dir_temp.'/uploadedvirus.pdf';
+		dol_delete_file($destfile, 0, 1);
+
+		$result = dol_move_uploaded_file($srcfile, $destfile, 1, 0, 0, 1);
+		print __METHOD__." result=".$result."\n";
+
+		$this->assertSame('ErrorFileIsAnInfectedPDFWithJSInside', $result, 'A pdf with js inside must be refused with its own translation key');
+		$this->assertNotSame($result, $langs->trans($result), 'The returned code must be a key that can be translated');
+		$this->assertFalse(file_exists($destfile), 'The refused file must not have been moved to its destination');
+
+		dol_delete_file($srcfile, 0, 1);
 	}
 
 	/**

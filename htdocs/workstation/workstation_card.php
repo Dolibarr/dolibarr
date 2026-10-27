@@ -318,7 +318,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = workstationPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -358,7 +358,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dolBuildUrl('/workstation/workstation_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/workstation/workstation_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -471,7 +471,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Disable / Enable
@@ -487,11 +487,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
 			$buttonId = 'action-delete-no-ajax';
 			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can use preloaded confirm if not jmobile
-				$deleteUrl = '';
 				$buttonId = 'action-delete';
 			}
 			$params = array();
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

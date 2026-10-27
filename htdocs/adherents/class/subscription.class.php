@@ -115,6 +115,21 @@ class Subscription extends CommonObject
 	public $fk_adherent;
 
 	/**
+	 * @var string Member first name
+	 */
+	public $member_firstname;
+
+	/**
+	 * @var string Member last name
+	 */
+	public $member_lastname;
+
+	/**
+	 * @var string Member company
+	 */
+	public $member_company;
+
+	/**
 	 * @var double amount subscription
 	 */
 	public $amount;
@@ -167,6 +182,7 @@ class Subscription extends CommonObject
 	public function create($user, $notrigger = 0)
 	{
 		global $langs;
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 
 		$error = 0;
 
@@ -192,6 +208,19 @@ class Subscription extends CommonObject
 		$member = new Adherent($this->db);
 		$result = $member->fetch($this->fk_adherent);
 
+		// Check if member status allows subscription creation
+		$allowedStatusesStr = getDolGlobalString('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS');
+		if ($allowedStatusesStr === '') {
+			$allowedStatusesStr = Adherent::STATUS_DRAFT.','.Adherent::STATUS_RESILIATED.','.Adherent::STATUS_VALIDATED;
+		}
+		$allowedStatuses = array_map('intval', explode(',', $allowedStatusesStr));
+		if (!in_array((int) $member->statut, $allowedStatuses, true)) {
+			$this->error = $langs->trans('ErrorSubscriptionNotAllowed', $member->getLibStatut(1));
+			dol_syslog(get_class($this).'::create User='.$user->id.' tried to create subscription for member='.$member->id.' with status='.$member->statut.', allowed='.$allowedStatusesStr, LOG_WARNING);
+			$this->db->rollback();
+			return -1;
+		}
+
 		if ($this->fk_type == null) {	// If type not defined, we use the type of member
 			$type = $member->typeid;
 		} else {
@@ -204,7 +233,7 @@ class Subscription extends CommonObject
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
-		$sql .= " '".$this->db->escape($this->note_private)."',";
+		$sql .= " '".$this->db->escape((string) $this->note_private)."',";
 		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
 		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
@@ -228,6 +257,18 @@ class Subscription extends CommonObject
 				$error++;
 				$this->error = $member->error;
 				$this->errors[] = $this->error;
+			}
+		}
+
+		// Recording a subscription means the person became a member: validate a draft member
+		if (!$error && (int) $member->statut == Adherent::STATUS_DRAFT) {
+			$result = $member->validate($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $langs->trans('ErrorValidationFailed', $member->error);
+				dol_syslog(get_class($this).': ErrorValidationFailed for member='.$member->id, LOG_ERR);
+			} else {
+				dol_syslog('Auto-validated member '.$member->id.' upon subscription creation', LOG_INFO);
 			}
 		}
 
@@ -286,13 +327,15 @@ class Subscription extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT rowid, fk_type, fk_adherent, datec,";
-		$sql .= " tms,";
-		$sql .= " dateadh as dateh,";
-		$sql .= " datef,";
-		$sql .= " subscription, note as note_public, fk_bank";
-		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql = "SELECT s.rowid, s.fk_type, s.fk_adherent, s.datec,";
+		$sql .= " s.tms,";
+		$sql .= " s.dateadh as dateh,";
+		$sql .= " s.datef,";
+		$sql .= " s.subscription, s.note as note_public, s.fk_bank,";
+		$sql .= " a.firstname as member_firstname, a.lastname as member_lastname, a.societe as member_company";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a ON a.rowid = s.fk_adherent";
+		$sql .= " WHERE s.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -305,6 +348,9 @@ class Subscription extends CommonObject
 
 				$this->fk_type        = $obj->fk_type;
 				$this->fk_adherent    = $obj->fk_adherent;
+				$this->member_firstname = $obj->member_firstname;
+				$this->member_lastname  = $obj->member_lastname;
+				$this->member_company   = $obj->member_company;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
 				$this->dateh          = $this->db->jdate($obj->dateh);
@@ -485,6 +531,13 @@ class Subscription extends CommonObject
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->note_public;
+		$memberName = dolGetFirstLastname($this->member_firstname, $this->member_lastname);
+		if (empty($memberName)) {
+			$memberName = $this->member_company;
+		}
+		if (!empty($memberName)) {
+			$label .= '<br><b>'.$langs->trans('Member').':</b> '.$memberName;
+		}
 		if (!empty($this->dateh)) {
 			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
 		}
@@ -516,6 +569,16 @@ class Subscription extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}

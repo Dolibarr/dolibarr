@@ -482,6 +482,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Clean parameters
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
@@ -648,6 +651,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->special_code)) {
 			$this->special_code = 0;
 		}
@@ -722,7 +728,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= " ".price2num($this->subprice).",";
-		$sql .= " ".(!empty($this->qty) ? price2num($this->total_ttc / $this->qty) : price2num($this->total_ttc)).",";
+		// pu_ttc holds the TTC entry mode: the typed TTC unit price when entered including tax, 0 otherwise (like update()).
+		$sql .= " ".price2num($this->subprice_ttc).",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_code_ventilation) ? ((int) $this->fk_code_ventilation) : 0).',';

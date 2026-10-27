@@ -33,7 +33,7 @@ class CommonSellistField extends CommonField
 	/**
 	 * @var string    Url of the AJAX page for get options of the sellist
 	 */
-	public static $ajaxUrl = DOL_URL_ROOT . '/core/ajax/ajaxfield.php';
+	public static $ajaxUrl = DOL_URL_ROOT . '/core/ajax/ajaxsellistfield.php';
 
 	/**
 	 * @var array<string,array<string,array{label:string,parent:string}>>	Options cached
@@ -302,6 +302,10 @@ class CommonSellistField extends CommonField
 					if (isset($fieldInfos->optionsSqlDependencyValue)) {
 						// TODO rework for dependency with a date or a multiselect
 						$sql .= " AND " . $this->db->sanitize($optionsParams['parentField']) . " = '" . $this->db->escape($fieldInfos->optionsSqlDependencyValue) . "'";
+					}
+					// Manage text searched (from AJAX), on the label fields
+					if (isset($fieldInfos->optionsSqlSearch) && $fieldInfos->optionsSqlSearch !== '' && !empty($optionsParams['labelFields'])) {
+						$sql .= natural_search($optionsParams['labelFields'], $fieldInfos->optionsSqlSearch, 0);
 					}
 					// Only selected values
 					if (!empty($selectedValues)) {
