@@ -2612,10 +2612,17 @@ class ToolApiBridge extends McpTool
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';	// dolGetModulesDirs(), getModuleDirForApiClass() — main.inc.php loads this only conditionally; api/index.php requires it explicitly for the same reason
 		require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/AutoLoader.php';
+		$previousloaders = spl_autoload_functions();
 		$loader = Luracast\Restler\AutoLoader::instance();
 		spl_autoload_register($loader);
 		require_once DOL_DOCUMENT_ROOT . '/api/class/api.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/api/class/api_access.class.php';
+		// Luracast\Restler\AutoLoader::instance() (called here and by api_access.class.php) unregisters all the other autoloaders
+		// (the Composer one, the one of PHPUnit...). Put them back: outside of the Restler HTTP runtime, the rest of the code still
+		// needs them to load the classes that are not loaded yet.
+		foreach ($previousloaders as $previousloader) {
+			spl_autoload_register($previousloader);
+		}
 	}
 
 	/**
