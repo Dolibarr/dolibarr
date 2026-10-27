@@ -2466,6 +2466,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
 }
 .div-table-responsive, .div-table-responsive-no-min {
+	/* Keep wide tables from expanding the surrounding table-cell layout. */
+	width: 0;
+	min-width: 100%;
 	overflow-x: auto;
 	min-height: 0.01%;
 }
