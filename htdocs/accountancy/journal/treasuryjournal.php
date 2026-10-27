@@ -211,7 +211,7 @@ if ($resql) {
 				// Customer invoices
 				//------------------------------------------
 				$sql = "SELECT f.rowid, f.ref AS ref, f.total_ht AS invoice_total_ht, f.total_ttc AS invoice_total_ttc,";
-				$sql .= " pf.amount AS amount_payment,";
+				$sql .= " pf.amount AS amount_payment, pf.fk_paiement AS payment_id,";
 				$sql .= " fd.rowid AS row_id, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -222,6 +222,7 @@ if ($resql) {
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = fd.fk_product";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=f.rowid";
 				} else {
@@ -328,7 +329,7 @@ if ($resql) {
 				// Supplier invoices
 				//------------------------------------------
 				$sql = "SELECT ff.rowid, ff.ref, ff.total_ht AS supplier_invoice_total_ht, ff.total_ttc AS supplier_invoice_total_ttc,";
-				$sql .= " pff.amount AS amount_payment,";
+				$sql .= " pff.amount AS amount_payment, pff.fk_paiementfourn AS payment_id,";
 				$sql .= " ffd.rowid AS row_id, ffd.total_ht, ffd.tva AS total_tva, ffd.total_localtax1, ffd.total_localtax2, ffd.tva_tx, ffd.total_ttc, ffd.vat_src_code,";
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -339,6 +340,7 @@ if ($resql) {
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = ffd.fk_product";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ff.rowid";
 				} else {
@@ -441,7 +443,7 @@ if ($resql) {
 				// Expense reports
 				//------------------------------------------
 				$sql = "SELECT er.rowid, er.ref, er.total_ht AS expense_report_total_ht, er.total_ttc AS expense_report_total_ttc,";
-				$sql .= " per.amount AS amount_payment,";
+				$sql .= " per.amount AS amount_payment, per.rowid AS payment_id,";
 				$sql .= " erf.rowid AS row_id, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code,";
 				$sql .= " ctf.accountancy_code,";
 				$sql .= " aa.label as accountancy_code_label,";
@@ -453,6 +455,7 @@ if ($resql) {
 				$sql .= " LEFT JOIN ".$db->prefix()."c_type_fees as ctf ON ctf.id = erf.fk_c_type_fees";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.account_number = ctf.accountancy_code";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=er.rowid";
 				} else {
@@ -551,11 +554,12 @@ if ($resql) {
 				// Payment salaries
 				//------------------------------------------
 				$sql = "SELECT ps.rowid,";
-				$sql .= " ps.amount AS amount_payment, ps.label AS label,";
+				$sql .= " ps.amount AS amount_payment, ps.rowid as payment_id, ps.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_salary as ps";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = ps.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=ps.rowid";
 				} else {
@@ -616,7 +620,7 @@ if ($resql) {
 				// Socials contributions
 				//------------------------------------------
 				$sql = "SELECT cs.rowid, cs.ref, cs.libelle AS label, cs.amount AS sociales_contributions_amount,";
-				$sql .= " pc.amount AS amount_payment,";
+				$sql .= " pc.amount AS amount_payment, pc.rowid as payement_id,";
 				$sql .= " ccs.accountancy_code,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."paiementcharge as pc";
@@ -624,6 +628,7 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."chargesociales AS cs ON cs.rowid = pc.fk_charge";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_chargesociales as ccs ON ccs.id = cs.fk_type";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=cs.rowid";
 				} else {
@@ -685,12 +690,14 @@ if ($resql) {
 			case 'payment_vat':
 				// Payment VAT
 				//------------------------------------------
+				// TODO Must use the payment_vat table to have same pattern than other payments.
 				$sql = "SELECT t.rowid,";
 				$sql .= " t.amount AS amount_payment, t.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."tva as t";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = t.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
 				} else {
@@ -752,12 +759,13 @@ if ($resql) {
 				// Payment donation
 				//------------------------------------------
 				$sql = "SELECT d.rowid, d.amount AS don_amount,";
-				$sql .= " pd.amount AS amount_payment,";
+				$sql .= " pd.amount AS amount_payment, pd.rowid as payment_id,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_donation as pd";
 				$sql .= " INNER JOIN ".$db->prefix()."don as d ON pd.fk_donation = d.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pd.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=d.rowid";
 				} else {
@@ -819,12 +827,13 @@ if ($resql) {
 				// Payment loan
 				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label, l.charge_type,";
-				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
+				$sql .= " pl.amount_capital, pl.rowid as payment_id, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
 				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pl.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=l.rowid";
 				} else {
@@ -909,11 +918,12 @@ if ($resql) {
 				// Payment various
 				//------------------------------------------
 				$sql = "SELECT pv.rowid,";
-				$sql .= " pv.sens AS sens_payment, pv.amount AS amount_payment, pv.label, pv.accountancy_code,";
+				$sql .= " pv.sens AS sens_payment, pv.amount AS amount_payment, pv.rowid as payment_id, pv.label, pv.accountancy_code,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_various as pv";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pv.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=pv.rowid";
 				} else {
@@ -975,13 +985,14 @@ if ($resql) {
 				// Subscription member
 				//------------------------------------------
 				$sql = "SELECT su.rowid,";
-				$sql .= " su.subscription AS amount_payment, su.note AS label,";
+				$sql .= " su.subscription AS amount_payment, su.rowid as payment_id, su.note AS label,";
 				$sql .= " adh.lastname, adh.firstname,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."subscription as su";
 				$sql .= " INNER JOIN ".$db->prefix()."adherent as adh ON adh.rowid = su.fk_adherent";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = su.fk_bank AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=su.rowid";
 				} else {
@@ -1047,6 +1058,7 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."bank as b ON bu.url_id = b.rowid";
 				$sql .= " LEFT JOIN ".$db->prefix()."bank_account as ba ON ba.rowid = b.fk_account";
 				// Already in bookkeeping or not
+				// FIXME A link on accounting_bookkeeping without criteria on doc_type is a bug
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=b.rowid";
 				} else {
