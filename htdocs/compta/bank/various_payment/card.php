@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -68,6 +69,7 @@ $sens = GETPOSTINT("sens");
 $amount = GETPOST("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
+$fk_soc = GETPOSTINT('fk_soc');
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
 if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
@@ -160,6 +162,11 @@ if (empty($reshook)) {
 
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
+
+		if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+			$object->fk_soc = ($fk_soc > 0 ? $fk_soc : 0);
+			$object->socid = $object->fk_soc;
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -529,6 +536,14 @@ if ($action == 'create') {
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
 
+	// Third party
+	if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $form->select_company($fk_soc, 'fk_soc', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 widthcentpercentminusx maxwidth500');
+		print '</td></tr>';
+	}
+
 	// Project
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
@@ -689,6 +704,18 @@ if ($object->id > 0) {
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+
+	// Thirdparty - optionnal
+	if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+		if ($object->fk_soc > 0) {
+			$thirdparty = new Societe($db);
+			if ($thirdparty->fetch($object->fk_soc) > 0) {
+				print $thirdparty->getNomUrl(1);
+			}
+		}
+		print '</td></tr>';
+	}
 
 	// Payment date
 	print "<tr>";

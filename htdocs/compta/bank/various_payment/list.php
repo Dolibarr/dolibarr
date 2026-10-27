@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -60,6 +61,7 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
 $search_datep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
 $search_datep_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
 $search_datev_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_value_startmonth'), GETPOSTINT('search_date_value_startday'), GETPOSTINT('search_date_value_startyear'));
@@ -125,6 +127,7 @@ $filtre = GETPOST("filtre", 'alpha');
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_ref = '';
 	$search_label = '';
+	$search_company = '';
 	$search_datep_start = '';
 	$search_datep_end = '';
 	$search_datev_start = '';
@@ -169,10 +172,15 @@ $fieldstosearchall = array(
 	'v.amount' => $langs->trans("Debit").", ".$langs->trans("Credit"),
 );
 
+if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+	$fieldstosearchall['s.nom'] = 'ThirdParty';
+}
+
 // Definition of fields for lists
 $arrayfields = array(
 	'ref'			=> array('label' => "Ref", 'checked' => '1', 'position' => 100),
 	'label'			=> array('label' => "Label", 'checked' => '1', 'position' => 110),
+	'company'       => array('label' => 'ThirdParty', 'checked' => 1, 'position' => 115, 'enabled' => (string) (int) getDolGlobalInt('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')),
 	'datep'			=> array('label' => "DatePayment", 'checked' => '1', 'position' => 120),
 	'datev'			=> array('label' => "DateValue", 'checked' => '-1', 'position' => 130),
 	'type'			=> array('label' => "PaymentMode", 'checked' => '1', 'position' => 140),
@@ -258,6 +266,7 @@ $accountstatic = null;
 if ($arrayfields['bank']['checked']) {
 	$accountstatic = new Account($db);
 }
+$companystatic = new Societe($db);
 $proj = null;
 if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
@@ -271,6 +280,9 @@ $help_url = '';
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code, v.subledger_account, v.fk_projet as fk_project,";
+if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+	$sql .= " v.fk_soc, s.nom as soc_name,";
+}
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql .= " pst.code as payment_code";
 
@@ -287,6 +299,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (v.rowid = ef.fk_object)";
 }
+if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON v.fk_soc = s.rowid";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -298,6 +313,9 @@ if ($search_ref) {
 }
 if ($search_label) {
 	$sql .= natural_search(array('v.label'), $search_label);
+}
+if ($search_company && getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+	$sql .= natural_search(array('s.nom', 's.name_alias'), $search_company);
 }
 if ($search_datep_start) {
 	$sql .= " AND v.datep >= '".$db->idate($search_datep_start)."'";
@@ -417,6 +435,9 @@ if ($search_ref) {
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
+if ($search_company) {
+	$param .= '&search_company='.urlencode($search_company);
+}
 if ($search_datep_start) {
 	$param .= '&search_datep_start='.urlencode((string) $search_datep_start);
 }
@@ -529,6 +550,13 @@ if ($arrayfields['ref']['checked']) {
 if ($arrayfields['label']['checked']) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
+	print '</td>';
+}
+
+// Thirdparty
+if (!empty($arrayfields['company']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_company" value="'.dolPrintHTMLForAttribute($search_company).'">';
 	print '</td>';
 }
 
@@ -652,6 +680,10 @@ if ($arrayfields['ref']['checked']) {
 }
 if ($arrayfields['label']['checked']) {
 	print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], 'v.label', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['company']['checked'])) {
+	print_liste_field_titre($arrayfields['company']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if ($arrayfields['datep']['checked']) {
@@ -778,6 +810,20 @@ while ($i < $imaxinloop) {
 		// Label payment
 		if ($arrayfields['label']['checked']) {
 			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($variousstatic->label).'"><span class="spantitle">'.dolPrintHTML($variousstatic->label)."</span></td>";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Thirdparty
+		if (!empty($arrayfields['company']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if (!empty($obj->fk_soc)) {
+				$companystatic->id = $obj->fk_soc;
+				$companystatic->name = $obj->soc_name;
+				print $companystatic->getNomUrl(1);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
