@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 /**
@@ -56,6 +57,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 
 $type = GETPOST('type', 'aZ09');
 $sourcetype = GETPOST('sourcetype', 'aZ');
+$forusers = in_array($sourcetype, array('salary', 'expensereport'));
 
 $search_facture = GETPOST('search_facture', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
@@ -144,7 +146,7 @@ if ($type == 'bank-transfer') {
 }
 
 // List of requests
-if ($sourcetype != 'salary') {
+if (!$forusers) {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc,";
 	$sql .= " s.nom as name, s.rowid as socid,";
 	$sql .= " pd.date_demande as date_demande, pd.amount, pd.fk_user_demande";
@@ -189,6 +191,28 @@ if ($sourcetype != 'salary') {
 		$sql .= natural_search("s.nom", $search_societe);
 	}
 	$sql .= $db->order($sortfield, $sortorder);
+} elseif ($sourcetype == 'expensereport') {
+	$sql = "SELECT e.rowid, e.total_ttc, pd.amount,";
+	$sql .= " e.fk_user_author as fk_user, pd.date_demande";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."user as u,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE e.rowid = pd.fk_expensereport";
+	$sql .= " AND u.rowid = e.fk_user_author";
+	$sql .= " AND e.entity IN (".getEntity("expensereport").")";
+	if (!$status) {
+		$sql .= " AND pd.traite = 0";
+	}
+	$sql .= " AND pd.ext_payment_id IS NULL";
+	if ($status) {
+		$sql .= " AND pd.traite = ".((int) $status);
+	}
+	$sql .= " AND e.paid = 0";
+	if ($search_facture) {
+		$sql .= natural_search("e.ref", $search_facture);
+	}
+	if ($search_societe) {
+		$sql .= natural_search("CONCAT(u.firstname,' ',u.lastname)", $search_societe);
+	}
 } else {
 	$sql = "SELECT s.rowid,s.amount as total_ttc, pd.amount,";
 	$sql .= " s.fk_user, pd.date_demande, pd.fk_salary, CONCAT(u.firstname,' ',u.lastname) as nom";
@@ -249,7 +273,7 @@ $newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prele
 if ($type == 'bank-transfer') {
 	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("GoBack").'</a>';
 }
-if ($sourcetype != 'salary') {
+if (!$forusers) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
 } else {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?status=0&type=bank-transfer&sourcetype='.$sourcetype.'" method="POST"  id="searchFormList" name="searchFormList">';
@@ -305,7 +329,7 @@ print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
-print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype == 'expensereport' ? "ExpenseReport" : ($sourcetype ? "RefSalary" : "Bill")), $_SERVER["PHP_SELF"]);
 print_liste_field_titre(($sourcetype ? "Employee" : "Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
@@ -316,6 +340,7 @@ print '</tr>';
 
 $userstatic = new User($db);
 $salarystatic = new Salary($db);
+$expensereportstatic = new ExpenseReport($db);
 
 $i = 0;
 while ($i < min($num, $limit) && $resql !== null) {
@@ -323,8 +348,11 @@ while ($i < min($num, $limit) && $resql !== null) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
-	if ($sourcetype != 'salary') {
+	if (!$forusers) {
 		$invoicestatic->fetch($obj->rowid);
+	} elseif ($sourcetype == 'expensereport') {
+		$expensereportstatic->fetch($obj->rowid);
+		$userstatic->fetch($obj->fk_user);
 	} else {
 		$salarystatic->fetch($obj->fk_salary);
 		$userstatic->fetch($obj->fk_user);
@@ -338,15 +366,17 @@ while ($i < min($num, $limit) && $resql !== null) {
 
 	// Ref facture
 	print '<td class="tdoverflowmax125">';
-	if ($sourcetype != 'salary') {
+	if (!$forusers) {
 		print $invoicestatic->getNomUrl(1, 'withdraw');
+	} elseif ($sourcetype == 'expensereport') {
+		print $expensereportstatic->getNomUrl(1);
 	} else {
 		print $salarystatic->getNomUrl(1, 'withdraw');
 	}
 	print '</td>';
 
 	print '<td class="tdoverflowmax150">';
-	if ($sourcetype != 'salary') {
+	if (!$forusers) {
 		$thirdpartystatic->id = $obj->socid;
 		$thirdpartystatic->name = $obj->name;
 		print $thirdpartystatic->getNomUrl(1, 'customer');

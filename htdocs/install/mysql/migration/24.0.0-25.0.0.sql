@@ -562,6 +562,9 @@ ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) 
 ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_code varchar(3) AFTER amount;
 ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_amount double(24,8) AFTER multicurrency_code;
 
+ALTER TABLE llx_prelevement ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+
 -- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);

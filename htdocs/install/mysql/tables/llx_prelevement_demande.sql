@@ -25,6 +25,7 @@ create table llx_prelevement_demande
   fk_facture          integer NULL,
   fk_facture_fourn    integer NULL,
   fk_salary           integer NULL,
+  fk_expensereport    integer NULL,
   sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
   multicurrency_code  varchar(3),
