@@ -781,6 +781,39 @@ class BonVirementTest extends CommonClassTest
 	}
 
 	/**
+	 * testRequestInInvoiceCurrency
+	 *
+	 * A request typed in the invoice currency keeps that amount and gets its company currency amount with the invoice
+	 * rate, the request of the whole remaining amount gets the remaining amount in the company currency.
+	 *
+	 * @return void
+	 */
+	public function testRequestInInvoiceCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->WITHDRAW_STRICT_CHECK_AMOUNT = 1;
+		$fac = $this->createValidatedSupplierInvoice(self::$socidA, 100.0, 'USD', 1.3);
+
+		$this->assertEquals(1, $fac->demande_prelevement($user, 0, 'bank-transfer', 'supplier_invoice', 0, 0, 52.0), (string) $fac->error);
+		$this->assertEquals(1, $fac->demande_prelevement($user, 0, 'bank-transfer', 'supplier_invoice', 0, 0, 78.0), (string) $fac->error);
+		unset($conf->global->WITHDRAW_STRICT_CHECK_AMOUNT);
+
+		$resql = $db->query("SELECT amount, multicurrency_code, multicurrency_amount FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_facture_fourn = ".((int) $fac->id)." ORDER BY rowid");
+		$partial = $db->fetch_object($resql);
+		$this->assertSame('USD', $partial->multicurrency_code);
+		$this->assertEquals(52.0, (float) $partial->multicurrency_amount);
+		$this->assertEquals(40.0, (float) $partial->amount);
+		$balance = $db->fetch_object($resql);
+		$this->assertEquals(78.0, (float) $balance->multicurrency_amount);
+		$this->assertEquals(60.0, (float) $balance->amount);
+	}
+
+	/**
 	 * testVersion9RefusesIncompleteAddress
 	 *
 	 * pain.001.001.09 needs the town and the country of every party: the order is not created and the error

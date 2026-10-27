@@ -355,6 +355,24 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 * Return in the company currency the amount of a direct debit or credit transfer request made in the invoice currency.
+	 * A request for the whole remaining amount gets the remaining amount in the company currency.
+	 *
+	 * @param	float	$amount		Amount in the invoice currency
+	 * @return	float				Amount in the company currency
+	 */
+	public function getRequestAmountInCompanyCurrency($amount)
+	{
+		if (empty($this->multicurrency_code) || $this->multicurrency_code == getDolCurrency() || empty($this->multicurrency_tx)) {
+			return (float) price2num($amount, 'MT');
+		}
+		if ((float) price2num($amount, 'MT') == (float) $this->getRemainToPay(1)) {
+			return (float) $this->getRemainToPay();
+		}
+		return (float) price2num($amount / $this->multicurrency_tx, 'MT');
+	}
+
+	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
 	 *  This also set ->totalpaid and ->totalpaid_multicurrency
@@ -1511,14 +1529,19 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param	string	$sourcetype					Source ('facture' or 'supplier_invoice')
 	 *  @param	int	    $checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
 	 *  @param  int     $ribId						If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
+	 *  @param  float   $amountInInvoiceCurrency	Amount requested in the invoice currency, used instead of $amount when not 0
 	 *  @return int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement(User $fuser, float $amount = 0, string $type = 'direct-debit', string $sourcetype = 'facture', int $checkduplicateamongall = 0, int $ribId = 0)
+	public function demande_prelevement(User $fuser, float $amount = 0, string $type = 'direct-debit', string $sourcetype = 'facture', int $checkduplicateamongall = 0, int $ribId = 0, float $amountInInvoiceCurrency = 0)
 	{
 		// phpcs:enable
 		global $conf;
 
 		$error = 0;
+
+		if ($amountInInvoiceCurrency != 0) {
+			$amount = $this->getRequestAmountInCompanyCurrency($amountInInvoiceCurrency);
+		}
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
@@ -1644,7 +1667,7 @@ abstract class CommonInvoice extends CommonObject
 					$sql .= " VALUES (".((int) $this->id);
 					$sql .= ", ".((float) price2num($amount));
 					$sql .= ", '".$this->db->escape(empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code)."'";
-					$sql .= ", ".((float) $this->getRequestAmountInInvoiceCurrency((float) $amount));
+					$sql .= ", ".((float) ($amountInInvoiceCurrency != 0 ? price2num($amountInInvoiceCurrency, 'MT') : $this->getRequestAmountInInvoiceCurrency((float) $amount)));
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", ".((int) $fuser->id);
 					$sql .= ", '".$this->db->escape($bac->code_banque)."'";
