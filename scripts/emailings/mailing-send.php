@@ -425,6 +425,25 @@ if ($resql) {
 
 						$i++;
 					}
+
+					// Loop finished, set global status of emailing to 'sent completely' if there is no more recipient to send to.
+					// Note: $obj now contains the last recipient, so we must use $id for the emailing.
+					$sqlleft = "SELECT COUNT(mc.rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+					$sqlleft .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
+					$resqlleft = $db->query($sqlleft);
+					if ($resqlleft) {
+						$objleft = $db->fetch_object($resqlleft);
+						if ($objleft && (int) $objleft->nb == 0) {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 3 WHERE rowid = ".((int) $id);
+							$result_sql = $db->query($sql);
+
+							dol_syslog("update global status", LOG_DEBUG);
+							print "Update status of emailing id ".$id." to 3\n";
+						}
+					} else {
+						dol_print_error($db);
+						$error++;
+					}
 				} else {
 					$mesg = "Emailing id ".$id." has no or no more recipient to target";
 					print $mesg."\n";
