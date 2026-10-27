@@ -114,7 +114,8 @@ class ToolApiBridge extends McpTool
 		'memberstypes' => array('thirdparty', 'billing'),
 		'partnerships' => array('thirdparty', 'commercial'),
 		'multicurrencies' => array('billing', 'reporting'),
-		'websites' => array('commercial')
+		'websites' => array('commercial'),
+		'users' => array('thirdparty', 'project')
 	);
 
 	/**
@@ -1799,6 +1800,62 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'categories_list',
 					'description' => "Tags (categories) of one contact.",
 					'params' => array('id' => "Rowid of the contact.")
+				)
+			)
+		);
+
+		// Users (staff accounts) and their groups, read side. Lookups by id,
+		// login, email and self stay downstream-gated so a user may still read
+		// his own record without the user/user/lire right. Write side (user
+		// creation, password, group assignment) is left out on purpose.
+		$this->enrichments['users'] = array(
+			'label' => 'users (staff accounts) and user groups',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,login,firstname,lastname,email,job,statut,admin,employee',
+					'description' => "Users of the ERP (staff accounts): login, name, email, job, employee flag. statut: 1 active, 0 inactive. Search by name with sqlfilters on t.lastname, t.firstname or t.login. Useful when you need the rowid of a user to assign him somewhere (project, task, ticket).",
+					'params' => array(
+						'user_ids' => "Comma-separated user rowids to restrict to (e.g. '1,5').",
+						'category' => "Rowid of a user category (tag) to restrict to its members."
+					),
+					'right' => array('user', 'user', 'lire')
+				),
+				'get' => array(
+					'description' => "One user with login, name, email, phones, job and status.",
+					'params' => array('id' => "Rowid of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
+				),
+				'getByLogin' => array(
+					'suffix' => 'get_by_login',
+					'description' => "One user by its exact login.",
+					'params' => array('login' => "Exact login of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
+				),
+				'getByEmail' => array(
+					'suffix' => 'get_by_email',
+					'description' => "One user by its exact email address.",
+					'params' => array('email' => "Exact email address of the user.", 'includepermissions' => "1 to also load his permission set (heavy, default 0).")
+				),
+				'getInfo' => array(
+					'suffix' => 'me',
+					'description' => "The user currently connected: answers 'who am I', 'my email', 'my permissions'.",
+					'params' => array('includepermissions' => "1 to also load his permission set (heavy, default 0).")
+				),
+				'getGroups' => array(
+					'suffix' => 'groups_of_user',
+					'description' => "Groups a user belongs to.",
+					'params' => array('id' => "Rowid of the user."),
+					'right' => array('user', 'user', 'lire')
+				),
+				'listGroups' => array(
+					'suffix' => 'groups_list',
+					'description' => "All user groups (e.g. administrators, sales): name, note. Members of one group come from api_users_group_info with load_members=1.",
+					'params' => array(
+						'group_ids' => "Comma-separated group rowids to restrict to (e.g. '1,5')."
+					)
+				),
+				'infoGroups' => array(
+					'suffix' => 'group_info',
+					'description' => "One user group: name, note; set load_members=1 to include its members.",
+					'params' => array('group' => "Rowid of the user group.", 'load_members' => "1 to include the members of the group (default 0).", 'includepermissions' => "1 to also load its permission set (heavy, default 0).")
 				)
 			)
 		);
