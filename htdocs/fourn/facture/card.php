@@ -1538,17 +1538,25 @@ if (empty($reshook)) {
 									if (!empty($line->special_code)) {
 										continue;
 									}
+									if (!isset($TTotalByTva[$line->tva_tx])) {
+										$TTotalByTva[$line->tva_tx] = 0;
+									}
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
 								}
+								unset($line);	// Break the reference, so the loops on $line later do not overwrite the last line of $srcobject
 								'@phan-var-force array<string,float> $TTotalByTva';
 
 								$amount_ttc_diff = 0.;
 								foreach ($TTotalByTva as $tva => &$total) {
-									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$coef = ($srcobject->total_ttc != 0 ? $total / $srcobject->total_ttc : 0); // Calc coef (0 if the total of the source is 0, there is nothing to split)
 									$am = $amount * $coef;
 									$amount_ttc_diff += $am;
+									if (!isset($amountdeposit[$tva])) {
+										$amountdeposit[$tva] = 0;
+									}
 									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
 								}
+								unset($total);
 							} else {
 								if ($typeamount == 'amount') {
 									$amountdeposit[0] = $valuedeposit;
@@ -1634,7 +1642,7 @@ if (empty($reshook)) {
 
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && (float) price2num($diff, 'MT') != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline(

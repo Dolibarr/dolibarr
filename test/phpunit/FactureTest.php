@@ -33,6 +33,7 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/workboardresponse.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
@@ -607,6 +608,79 @@ class FactureTest extends CommonClassTest
 		$db->rollback();
 	}
 	*/
+
+	/**
+	 * Deposit created from an order with the hidden option MAIN_DEPOSIT_MULTI_TVA (one line per VAT rate).
+	 * Check the amount, and that an order whose total is 0 does not make a division by zero.
+	 * Done in a transaction that is rolled back.
+	 *
+	 * @return void
+	 */
+	public function testFactureDepositMultiVat()
+	{
+		global $conf, $user, $langs, $db, $mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		$db->begin();
+
+		// A payment term with a deposit percent (restored by the rollback)
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_payment_term ORDER BY rowid LIMIT 1";
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertNotEmpty($obj, 'No payment term in the database');
+		$db->query("UPDATE ".$db->prefix()."c_payment_term SET deposit_percent = '30' WHERE rowid = ".((int) $obj->rowid));
+
+		$soc = new Societe($db);
+		$soc->name = 'Test deposit multi vat '.dol_print_date(dol_now(), 'dayhourlog');
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$this->assertGreaterThan(0, $soc->create($user), (string) $soc->error);
+
+		$savmulti = getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA');
+		$conf->global->MAIN_DEPOSIT_MULTI_TVA = '1';
+
+		// Order with 2 VAT rates: 100 at 20% and 50 at 5.5%, so 120 + 52.75 = 172.75
+		$order = new Commande($db);
+		$order->socid = $soc->id;
+		$order->date = dol_now();
+		$order->cond_reglement_id = (int) $obj->rowid;
+		$this->assertGreaterThan(0, $order->create($user), (string) $order->error);
+		$this->assertGreaterThan(0, $order->addline('Line 20', 100, 1, 20));
+		$this->assertGreaterThan(0, $order->addline('Line 5.5', 50, 1, 5.5));
+		$order->fetch($order->id);
+		$order->fetch_lines();
+		$order->deposit_percent = '30';
+		$this->assertEquals(172.75, (float) price2num($order->total_ttc, 'MT'));
+
+		$deposit = Facture::createDepositFromOrigin($order, dol_now(), (int) $obj->rowid, $user);
+		$this->assertNotNull($deposit, (string) $order->error);
+		$this->assertEquals(2, count($deposit->lines), 'One line per VAT rate');
+		$this->assertEqualsWithDelta(51.825, (float) $deposit->total_ttc, 0.011, 'The deposit is 30% of the TTC of the order (to the cent)');
+
+		// Order with a total of 0: 100 and -100 at 20%
+		$order2 = new Commande($db);
+		$order2->socid = $soc->id;
+		$order2->date = dol_now();
+		$order2->cond_reglement_id = (int) $obj->rowid;
+		$this->assertGreaterThan(0, $order2->create($user), (string) $order2->error);
+		$this->assertGreaterThan(0, $order2->addline('Line +', 100, 1, 20));
+		$this->assertGreaterThan(0, $order2->addline('Line -', -100, 1, 20));
+		$order2->fetch($order2->id);
+		$order2->fetch_lines();
+		$order2->deposit_percent = '30';
+		$this->assertEquals(0, (float) price2num($order2->total_ttc, 'MT'));
+
+		$deposit2 = Facture::createDepositFromOrigin($order2, dol_now(), (int) $obj->rowid, $user);
+		$this->assertNotNull($deposit2, 'No division by zero when the total of the order is 0');
+
+		$conf->global->MAIN_DEPOSIT_MULTI_TVA = $savmulti;
+		$db->rollback();
+	}
 
 	/**
 	 * Edit an object to test updates
