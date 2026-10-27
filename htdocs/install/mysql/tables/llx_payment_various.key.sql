@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2017-2026	Alexandre Spangaro	<alexandre@inovea-conseil.com>
+-- Copyright (C) 2026       Alexandre Spangaro  <alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_entity_datep (entity, datep);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_datep (datep);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
+
+ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
