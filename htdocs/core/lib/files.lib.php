@@ -3399,7 +3399,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
-		if ($fuser->hasRight('agenda', 'myactions', $read)) {
+		if ($fuser->hasRight('agenda', 'allactions', $read)) {
+			$accessallowed = 1;
+		} elseif ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
