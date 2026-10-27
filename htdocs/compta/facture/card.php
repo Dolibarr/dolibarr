@@ -1900,12 +1900,12 @@ if (empty($reshook)) {
 						$error++;
 						$action = 'create';
 					}
-					if ($typeamount == 'variable' && $valuedeposit <= 0) {
+					if ($typeamount == 'variable' && ($valuedeposit <= 0 || $valuedeposit > 100)) {
 						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
 						$error++;
 						$action = 'create';
 					}
-					if ($typeamount == 'variablealllines' && $valuedeposit <= 0) {
+					if ($typeamount == 'variablealllines' && ($valuedeposit <= 0 || $valuedeposit > 100)) {
 						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
 						$error++;
 						$action = 'create';
