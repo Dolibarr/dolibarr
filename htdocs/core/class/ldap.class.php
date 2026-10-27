@@ -1226,18 +1226,50 @@ class Ldap
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
 			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".implode(',', $attributeArray).")");
 			//var_dump($attributeArray);
-			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
+			$attributes = $attributeArray;
 		} else {
 			// Return list with fields selected by default
 			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter);
-			$this->result = @ldap_search($this->connection, $userDn, $filter);
-		}
-		if (!$this->result) {
-			$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
-			return -1;
+			$attributes = array();
 		}
 
-		$info = @ldap_get_entries($this->connection, $this->result);
+		// Paged search: servers like Active Directory return at most MaxPageSize entries per response (1000 by default),
+		// silently truncating bigger lists. A server not supporting the control returns everything in one page.
+		$paged = defined('LDAP_CONTROL_PAGEDRESULTS');	// PHP >= 7.3
+		$info = array('count' => 0);
+		$cookie = '';
+		do {
+			if ($paged) {
+				$controls = array(array('oid' => LDAP_CONTROL_PAGEDRESULTS, 'value' => array('size' => 500, 'cookie' => $cookie)));
+				$this->result = @ldap_search($this->connection, $userDn, $filter, $attributes, 0, 0, 0, LDAP_DEREF_NEVER, $controls);
+			} else {
+				$this->result = @ldap_search($this->connection, $userDn, $filter, $attributes);
+			}
+			if (!$this->result) {
+				$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
+				return -1;
+			}
+
+			$entries = @ldap_get_entries($this->connection, $this->result);
+			if (!is_array($entries)) {
+				$this->error = 'LDAP get entries failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
+				return -1;
+			}
+			for ($k = 0; $k < $entries['count']; $k++) {
+				$info[$info['count']++] = $entries[$k];
+			}
+
+			$prevcookie = $cookie;
+			$cookie = '';
+			if ($paged) {
+				$errcode = $matcheddn = $errmsg = $referrals = null;
+				$controls = array();
+				ldap_parse_result($this->connection, $this->result, $errcode, $matcheddn, $errmsg, $referrals, $controls);
+				if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
+					$cookie = (string) $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+				}
+			}
+		} while ($cookie !== '' && $cookie !== $prevcookie);	// A repeated cookie would loop forever
 
 		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
 		// a ldap_search en majuscule !!!
