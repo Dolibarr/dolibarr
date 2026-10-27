@@ -336,9 +336,11 @@ class BookKeeping extends CommonObject
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
-		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
+		// WARNING: This is not reliable: label may have been modified so we can think this is not a duplicate on (bank.rowid=fk_doc)/type
+		// when it is.
+		// Note also that for some cases, we accept voluntarly duplicates, for example treasury transfer on one payment done on 2 invoices, we record 2 parts with same (bank.rowid=fk_doc)/type.
 		//
-		// The page that make transfer make the test on couple (doc_type - fk_doc) by doing a
+		// The pages that make transfer (for debit/credit accounting) make the test on couple (doc_type - fk_doc) by doing:
 		// "WHERE b.rowid IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice|supplier_invoice|bank')"
 
 		$sql = "SELECT count(*) as nb";
