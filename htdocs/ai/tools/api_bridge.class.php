@@ -1803,6 +1803,30 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Webhook targets and the trigger codes they can subscribe to, read
+		// side. Creating, editing or deleting targets is left out on purpose.
+		$this->enrichments['webhook'] = array(
+			'label' => 'webhook targets (outgoing webhooks)',
+			'methods' => array(
+				'index' => array(
+					'default_properties' => 'id,ref,label,url,trigger_codes,type,status',
+					'description' => "Webhook targets: the URL called when business events fire and the trigger codes subscribed (trigger_codes). status: 0 disabled, 1 automatic trigger, 2 manual trigger. type: 0 when only a success response is required, 1 when the URL is also called on errors. Search with sqlfilters on t.url or t.trigger_codes (e.g. \"(t.trigger_codes:like:'%BILL_VALIDATE%')\").",
+					'params' => array('pagination_data' => $pagination),
+					'right' => array('webhook', 'webhook_target', 'read')
+				),
+				'get' => array(
+					'description' => "One webhook target: ref, label, url, trigger codes, type and status.",
+					'params' => array('id' => "Rowid of the webhook target."),
+					'right' => array('webhook', 'webhook_target', 'read')
+				),
+				'listOfTriggers' => array(
+					'suffix' => 'triggers',
+					'description' => "All trigger codes a webhook can subscribe to (business event codes like COMPANY_CREATE, BILL_VALIDATE...).",
+					'right' => array('webhook', 'webhook_target', 'read')
+				)
+			)
+		);
+
 		// Read methods of endpoints already exposed.
 		$more = array(
 			'warehouses' => array(
