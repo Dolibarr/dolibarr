@@ -817,8 +817,13 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 
-		global $dolibarr_main_use_dol_eval_new;
+		global $dolibarr_main_use_dol_eval_new, $dolibarr_main_use_dol_eval_safe;
 		$dolibarr_main_use_dol_eval_new = 0;
+		$issafe = !empty($dolibarr_main_use_dol_eval_safe);	// Set by testDolEvalSafe() that calls this test again, so we are sure DolSafeEval has the same protection than the other engines
+		// The message of DolSafeEval is the same for all errors of syntax, when the message of the other engines gives a detail
+		$bad = static function ($detail) use (&$issafe) {
+			return $issafe ? 'Bad string syntax to evaluate' : 'Bad string syntax to evaluate ('.$detail.')';
+		};	// Set by testDolEvalSafe() that calls this test again, to be sure DolSafeEval has the same protection than the other engines
 
 
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
@@ -855,7 +860,7 @@ class SecurityTest extends CommonClassTest
 			print "result2 = ".$result."\n";
 			$this->assertFalse($result);
 
-			if (empty($dolibarr_main_restrict_eval_methods)) {		// Old mode
+			if (empty($dolibarr_main_restrict_eval_methods) && !$issafe) {		// Old mode
 				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
 				$result3a = dol_eval($s, 1, 1, '2');
 				print "result3a = ".$result3a."\n";
@@ -892,17 +897,29 @@ class SecurityTest extends CommonClassTest
 			$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
 			$result3b = dol_eval($s, 1, 1, '2');
 			print "result3b = ".$result."\n";
-			$this->assertEquals('0', $result3b);
+			if ($issafe) {		// DolSafeEval does not accept new nor assignments
+				$this->assertStringContainsString('Bad string syntax to evaluate', (string) $result3b);
+			} else {
+				$this->assertEquals('0', $result3b);
+			}
 
 			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result3c = ".$result."\n";
-			$this->assertEquals('Parent project not found', $result);
+			if ($issafe) {
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+			} else {
+				$this->assertEquals('Parent project not found', $result);
+			}
 
 			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : \'Parent project not found\'';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result4 = ".$result."\n";
-			$this->assertEquals('Parent project not found', $result, 'Test 4');
+			if ($issafe) {
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4');
+			} else {
+				$this->assertEquals('Parent project not found', $result, 'Test 4');
+			}
 
 			$s = '4 < 5';
 			$result = (string) dol_eval($s, 1, 1, '2');
@@ -913,7 +930,7 @@ class SecurityTest extends CommonClassTest
 			$s = 'MyClass::MyMethod()';
 			$result = dol_eval($s, 1, 1, '2');
 			print "result7 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($bad('double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL'), $result, 'The string was not detected as evil');
 			*/
 
 			/* not allowed. Not a one line eval string
@@ -924,20 +941,22 @@ class SecurityTest extends CommonClassTest
 
 			// Now string not allowed
 
-			$s = '4 <5';
-			$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
-			print "result = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
+			if (!$issafe) {		// These 2 rules are rules on chars of the filter of the other engines. DolSafeEval parses the string.
+				$s = '4 <5';
+				$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
+				print "result = ".$result."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
 
-			$s = '4 < 5';
-			$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
-			print "result = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
+				$s = '4 < 5';
+				$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
+				print "result = ".$result."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
+			}
 
 			$s = '1==\x01';
 			$result = dol_eval($s, 1, 1, '1');	// Check that we can't make dol_eval on string containing \ char.
 			print "result5 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
+			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result);
 
 			$s = 'new abc->invoke(\'whoami\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
@@ -976,7 +995,7 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('instruction;', 1, 1);	// ; is not allowed.
 			print "result7 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
 
 			$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
 			print "result7 = ".$result."\n";
@@ -998,7 +1017,7 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 			print "result9 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+			$this->assertStringContainsString($bad('found chars that are not chars for a simple one line clean eval string'), $result, 'The string was not detected as evil');
 
 			$result = (string) dol_eval('`ls`', 1, 0);
 			print "result10 = ".$result."\n";
@@ -1061,7 +1080,11 @@ class SecurityTest extends CommonClassTest
 			$leftmenu = 'LLL';
 			$result = (string) dol_eval('$mainmenu=\'T2\' && ($mainmenu == \'TTT\')', 1, 0);
 			print "result11 = ".$result."\n";
-			$this->assertEquals('1', $result, 'The string was not detected as evil');
+			if ($issafe) {		// DolSafeEval does not accept assignments
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+			} else {
+				$this->assertEquals('1', $result, 'The string was not detected as evil');
+			}
 
 
 			// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL
@@ -1086,7 +1109,11 @@ class SecurityTest extends CommonClassTest
 			$leftmenu = 'ab';
 			$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
 			print "resultconcat3 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
+			if ($issafe) {		// A concatenation is harmless with DolSafeEval, a string can never be called as a function
+				$this->assertEquals('abs', $result);
+			} else {
+				$this->assertStringContainsString($bad('dot char is forbidden if not strictly between 2 numbers'), $result, 'Test concat - The string was not reported as a bad syntax when it should');
+			}
 
 
 			// Not allowed
@@ -1096,7 +1123,7 @@ class SecurityTest extends CommonClassTest
 			$leftmenu = 'abs';
 			$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 			print "result20 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function)', $result, 'Test 20 - The string was not detected as evil');
+			$this->assertStringContainsString($bad('mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function'), $result, 'Test 20 - The string was not detected as evil');
 
 			$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
 			print "result21 = ".$result."\n";
@@ -1112,7 +1139,7 @@ class SecurityTest extends CommonClassTest
 
 			$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
 			print "result24 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+			$this->assertStringContainsString($bad('The char ? can be used only with a space before and after'), json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 
 			$result = (string) dol_eval('$$a', 1, 0);
 			print "result25 = ".$result."\n";
@@ -1163,6 +1190,84 @@ class SecurityTest extends CommonClassTest
 		$this->assertTrue($result);
 
 		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
+	}
+
+
+	/**
+	 * testDolEvalSafe.
+	 * Same checks than testDolEval(), but with $dolibarr_main_use_dol_eval_safe = 2, so the string is never given to eval(),
+	 * then checks specific to DolSafeEval.
+	 *
+	 * @return void
+	 */
+	public function testDolEvalSafe()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		global $dolibarr_main_use_dol_eval_safe, $dolibarr_main_restrict_eval_methods;
+		$savsafe = $dolibarr_main_use_dol_eval_safe;
+		$savrestrict = $dolibarr_main_restrict_eval_methods;
+		$dolibarr_main_use_dol_eval_safe = 2;
+
+		try {
+			$this->testDolEval();
+
+			$dolibarr_main_restrict_eval_methods = '';	// So the default allowlist of DolSafeEval is used
+
+			// Expressions that must be evaluated
+			$this->assertEquals(7, dol_eval('1 + 2 * 3', 1, 0));
+			$this->assertTrue(dol_eval('max(1, 3) == 3 && abs(-2) == 2', 1, 0));
+			$this->assertEquals('b', dol_eval("1 > 2 ? 'a' : 'b'", 1, 0));
+			$this->assertEquals(3, dol_eval('floor(3.7)', 1, 0));
+			$this->assertEquals(4, dol_eval('ceil(3.2)', 1, 0));
+			$this->assertEquals(3, dol_eval('intdiv(10, 3)', 1, 0));
+			$this->assertEquals(1, dol_eval('fmod(10, 3)', 1, 0));
+			$this->assertEquals(4, dol_eval('sqrt(16)', 1, 0));
+			$this->assertEquals(8, dol_eval('pow(2, 3)', 1, 0));
+			$this->assertEquals(2, dol_eval('log10(100)', 1, 0));
+			$this->assertEquals(1, dol_eval('exp(0) * cos(0)', 1, 0));
+			$this->assertTrue(dol_eval('is_numeric("12.5") && !is_numeric("abc") && is_nan(sqrt(-1)) && is_finite(pi())', 1, 0));
+			$this->assertEquals(12, dol_eval('intval("12abc")', 1, 0));
+			$this->assertEquals(1.5, dol_eval('floatval("1.5")', 1, 0));
+			$this->assertStringContainsString('Bad string syntax to evaluate', (string) dol_eval('intdiv(1, 0)', 1, 0));	// DivisionByZeroError is caught
+			$this->assertStringContainsString('Bad string syntax to evaluate', (string) dol_eval('rand(1, 2)', 1, 0));	// Not deterministic: not allowed
+			$this->assertFalse(dol_eval("1 && getDolGlobalInt('doesnotexist1') && getDolGlobalString('MAIN_FEATURES_LEVEL')", 1, 0));
+			$this->assertFalse(verifCond('$conf->abc->doesnotexist1 && $conf->def->doesnotexist1'));
+			$this->assertTrue(verifCond("\$user->hasRight('doesnotexist', 'read') || !isModEnabled('doesnotexist')"));
+
+			// Strings that must be refused, and that verifCond() must reject too
+			$evil = array(
+				'$_SESSION["x"]',
+				'$GLOBALS["conf"]',
+				'$db->query("x")',
+				'$conf->db->pass',
+				'$conf->global->MAIN_MAIL_SMTPS_PW',
+				'getDolGlobalString("MAIN_MAIL_SMTPS_PW")',
+				'getDolGlobalString("MAIN_" . "AGENDA_XCAL_EXPORTKEY")',
+				'$user->accesstoken',
+				"1; system('id')",
+			);
+			foreach ($evil as $s) {
+				$result = dol_eval($s, 1, 0);
+				print "result = ".json_encode($result)." for ".$s."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', (string) $result, 'The string was not detected as evil: '.$s);
+				$this->assertFalse(verifCond($s), 'verifCond must return false for: '.$s);
+			}
+
+			// Names that contain a secret without being separated by _ (verifCond() is not used: its fast path for getDolGlobalString('X') only tells if the constant is set)
+			$secretnames = array('CRON_KEY', 'BLOCKEDLOG_HMAC_KEY', 'BOOKCAL_SECUREKEY', 'MAIN_AGENDA_XCAL_EXPORTKEY');
+			foreach ($secretnames as $name) {
+				$result = dol_eval('getDolGlobalString("'.$name.'")', 1, 1, '1');
+				$this->assertStringContainsString('Bad string syntax to evaluate', (string) $result, 'The constant was not refused: '.$name);
+			}
+		} finally {
+			$dolibarr_main_use_dol_eval_safe = $savsafe;
+			$dolibarr_main_restrict_eval_methods = $savrestrict;
+		}
 	}
 
 
