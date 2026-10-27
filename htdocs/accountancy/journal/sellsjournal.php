@@ -65,7 +65,7 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 

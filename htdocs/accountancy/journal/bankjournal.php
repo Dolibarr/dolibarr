@@ -98,7 +98,7 @@ $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
 
-if ($in_bookkeeping == '') {
+if ($in_bookkeeping == '' || $action == 'writebookkeeping') {	// Never transfer again documents already in bookkeeping
 	$in_bookkeeping = 'notyet';
 }
 
