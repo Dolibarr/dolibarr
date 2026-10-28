@@ -2111,7 +2111,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Payments already done (from payment on this expensereport)
-			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.multicurrency_amount, p.fk_bank,";
 			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -2167,14 +2167,15 @@ if ($action == 'create') {
 						print '</td>';
 					}
 					print '<td></td>';
-					print '<td class="right">'.price($objp->amount)."</td>";
+					$paymentamount = ($object->isInForeignCurrency() ? $objp->multicurrency_amount : $objp->amount);
+					print '<td class="right">'.price($paymentamount)."</td>";
 					print "</tr>";
-					$totalpaid += $objp->amount;
+					$totalpaid += $paymentamount;
 					$i++;
 				}
 				$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 
-				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
+				$remaintopay = price2num(($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc) - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
 				if ($remaintopay > 0) {
@@ -2194,7 +2195,7 @@ if ($action == 'create') {
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").':</td>';
 				print '<td></td>';
-				print '<td class="right">'.price($object->total_ttc).'</td></tr>';
+				print '<td class="right">'.price($object->isInForeignCurrency() ? $object->multicurrency_total_ttc : $object->total_ttc).'</td></tr>';
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay").':</td>';
 				print '<td></td>';

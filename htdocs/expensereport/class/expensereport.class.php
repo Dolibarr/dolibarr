@@ -2893,14 +2893,15 @@ class ExpenseReport extends CommonObject
 	/**
 	 * 	Return amount of payments already done
 	 *
+	 *  @param		int<0,1>	$multicurrency	1=Return the amount in the currency of the expense report
 	 *  @return		int						Amount of payment already done, <0 if KO
 	 */
-	public function getSumPayments()
+	public function getSumPayments($multicurrency = 0)
 	{
 		$table = 'payment_expensereport';
 		$field = 'fk_expensereport';
 
-		$sql = 'SELECT sum(amount) as amount';
+		$sql = 'SELECT sum('.($multicurrency ? 'multicurrency_amount' : 'amount').') as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$this->db->sanitize($field)." = ".((int) $this->id);
 
