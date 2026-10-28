@@ -946,6 +946,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 	$sql = "SELECT rowid, module";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as c";
 	$sql .= " WHERE module IS NOT NULL AND module <> ''";
+	$sql .= " AND c.entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY module";
 
 	$resql = $db->query($sql);
@@ -984,6 +985,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
 						if (GETPOST('clean_menus') == 'confirmed') {
 							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$db->escape($modulecond)."'";
+							$sql2 .= " AND entity = ".((int) $conf->entity);
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
 								$error++;
