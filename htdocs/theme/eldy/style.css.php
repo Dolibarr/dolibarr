@@ -648,7 +648,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
-input[type="search"] {
+input[type="search"]:not(.dropdown-search-input) {
 	padding-left: 4px !important;
 }
 
@@ -2466,6 +2466,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
 }
 .div-table-responsive, .div-table-responsive-no-min {
+	/* Keep wide tables from expanding the surrounding table-cell layout. */
+	width: 0;
+	min-width: 100%;
 	overflow-x: auto;
 	min-height: 0.01%;
 }
@@ -4182,6 +4185,10 @@ div.login_block_tools {
 	vertical-align: middle;
 	line-height: <?php echo $disableimages ? '25' : '53'; ?>px;
 	height: <?php echo $disableimages ? '25' : '51'; ?>px;
+}
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
 }
 div.login_block_other {
 	display: inline-block;
@@ -7183,6 +7190,15 @@ span#morelines {
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
+}
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
 }
 .websitebar .button, .websitebar .buttonDelete
 {

@@ -232,6 +232,24 @@ class Utils
 
 
 	/**
+	 *  Return the -p parameter of mysqldump with the password, escaped to be used in a shell command line.
+	 *
+	 *  @param	string	$password	Password of the database
+	 *  @return	string				Parameter, like -p"password" on Windows and -p'password' otherwise
+	 */
+	public function getShellPasswordParam($password)
+	{
+		if (preg_match('/^win/i', PHP_OS)) {
+			// Behavior kept as it was on Windows
+			return '-p"'.str_replace(array('"', '`', '$'), array('\\"', '\\`', '\\$'), $password).'"';
+		}
+
+		// Inside double quotes, a shell still interprets \, $ and ` so we use single quotes
+		return '-p'.escapeshellarg($password);
+	}
+
+
+	/**
 	 *  Make a backup of database
 	 *  CAN BE A CRON TASK
 	 *
@@ -358,7 +376,9 @@ class Utils
 			if (!empty($dolibarr_main_db_port)) {
 				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
-			if (GETPOST("use_transaction", "alpha")) {
+			// The default (scheduled job) uses a transaction too, as the form does, instead of locking
+			// all the tables, which blocks every write into the database during the backup.
+			if (GETPOST("use_transaction", "alpha") || $usedefault) {
 				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
@@ -420,7 +440,7 @@ class Utils
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
 				$paramcrypted .= ' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
-				$paramclear .= ' -p"'.str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass).'"';
+				$paramclear .= ' '.$this->getShellPasswordParam($dolibarr_main_db_pass);
 			}
 
 			$handle = '';
@@ -1218,6 +1238,11 @@ class Utils
 			return -1;
 		}
 
+		// Read all the tables inside one transaction, so the dump is a consistent snapshot of the
+		// database even if data is changed during the backup (same as mysqldump --single-transaction).
+		// Only reads (SHOW CREATE TABLE, SELECT) are done inside it.
+		$db->begin();
+
 		// Print headers and global mysql config vars
 		$sqlhead = '';
 		$sqlhead .= "-- ".$db::LABEL." dump via php with Dolibarr ".DOL_VERSION."
@@ -1353,6 +1378,8 @@ class Utils
 		fwrite($handle, $sqlfooter);
 
 		fclose($handle);
+
+		$db->commit();
 
 		return 1;
 	}
