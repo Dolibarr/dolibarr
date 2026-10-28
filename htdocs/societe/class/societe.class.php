@@ -5604,6 +5604,10 @@ class Societe extends CommonObject
 		} else {
 			$sql .= " AND entity IN (".getEntity('invoice').")";
 		}
+		// Invoices before this date (YYYY-MM-DD) are excluded from the outstanding amount (history migrated or settled elsewhere)
+		if (preg_match('/^\d{4}-\d{2}-\d{2}$/', getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'))) {
+			$sql .= " AND datef >= '".$this->db->escape(getDolGlobalString('SOCIETE_OUTSTANDING_BILLS_FROM_DATE'))."'";
+		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
 		$resql = $this->db->query($sql);
