@@ -62,6 +62,7 @@ $langs->loadLangs(array("main", "other", "exports"));
 
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
+$step = GETPOST('step', 'aZ09');	// '' = all steps, 'converttotext' = conversion of the file into text only, 'analyze' = analysis of the text only
 
 $upload_dir = $conf->user->dir_temp.'/import';
 
@@ -328,48 +329,133 @@ if ($modulepart == 'invoice_supplier') {
 // TODO Move the convert code into an AJAX service and just output the JS code to call the ajax service to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
-	// Call the tool able to convert the file into text: pdftotext for a PDF file, docling for an image (docling includes an OCR)
-	$methodtotext = '';
-	if (preg_match('/\.pdf$/i', $fullpathoffile)) {
-		$methodtotext = 'pdftotext';
-	} elseif (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $fullpathoffile)) {
-		$methodtotext = 'docling';
-	}
-
 	$result = array('error' => 0, 'message' => '', 'keywords' => '', 'content' => '', 'cmd' => '');
-	if (!empty($methodtotext)) {
-		$result = dolDocToText($fullpathoffile, $methodtotext, 'fulltext');
-	}
-	if (empty($result['error'])) {
-		// Remove the spaces used to align columns of tables, so more useful content is kept in the limit of chars sent to the AI
-		$fileContent = preg_replace('/[ \t]{2,}/', ' ', (string) $result['content']);
+	$fileContent = '';
+
+	// Step 'converttotext': conversion of the file into text (done by the AI service with the option
+	// AI_USED_FOR_FILE_TO_TEXT_CONVERTION, or with a local tool like pdftotext or docling)
+	if (empty($step) || $step == 'converttotext') {
+		$useAIForFileToTextConversion = isModEnabled("ai") && getDolGlobalString('AI_USED_FOR_FILE_TO_TEXT_CONVERTION');
+
+		if ($useAIForFileToTextConversion) {
+			// Option AI module is on, the conversion of the raw binary file into text is done
+			// by the AI service with a first call (with the model AI_API_<SERVICE>_MODEL_DOCPARSING or its default value).
+			// A service or a file type not supported returns an error, there is no fall back on a local conversion.
+			$rawfile = $ai->getPayloadToConvertRawFileIntoText($fullpathoffile);
+			if (!empty($rawfile['error'])) {
+				$error++;
+				$errors[] = $rawfile['message'];
+			} else {
+				if (getDolGlobalString("AI_DEBUG")) {
+					dol_syslog("ajaxuploadpage.php Call AI service for step 'convert raw file into text' (file=".$file.")", LOG_DEBUG, 0, '_ai');
+				}
+				$result = $ai->generateContent($rawfile['payload'], 'auto', $rawfile['function'], '');
+				if (is_array($result)) {	// If array, there is an error
+					if (getDolGlobalString("AI_DEBUG")) {
+						dol_syslog("ajaxuploadpage.php AI service returned an error for step 'convert raw file into text': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+					}
+					$error++;
+					$errors[] = getAIErrorMessage($result);
+				} else {
+					// Remove the spaces used to align columns of tables, so more useful content is kept in the limit of chars sent to the AI
+					$fileContent = preg_replace('/[ \t]{2,}/', ' ', (string) $result);
+				}
+			}
+		} else {
+			// Call the tool able to convert the file into text: pdftotext for a PDF file, docling for an image (docling includes an OCR)
+			$methodtotext = '';
+			if (preg_match('/\.pdf$/i', $fullpathoffile)) {
+				$methodtotext = 'pdftotext';
+			} elseif (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $fullpathoffile)) {
+				$methodtotext = 'docling';
+			}
+
+			$result = array('error' => 0, 'message' => '', 'keywords' => '', 'content' => '', 'cmd' => '');
+			if (!empty($methodtotext)) {
+				$result = dolDocToText($fullpathoffile, $methodtotext, 'fulltext');
+			}
+			if (empty($result['error'])) {
+				// Remove the spaces used to align columns of tables, so more useful content is kept in the limit of chars sent to the AI
+				$fileContent = preg_replace('/[ \t]{2,}/', ' ', (string) $result['content']);
+			}
+		}
+
+		// Save the text into a file with the extension .txt, so it can be analyzed by a second call with the step 'analyze'
+		if (!$error && $fileContent && dol_sanitizeFileName($file) === $file) {
+			if (file_put_contents($fullpathoffile.'.txt', $fileContent) === false) {
+				dol_syslog("Failed to write the text file ".$fullpathoffile.'.txt', LOG_WARNING);
+				$error++;
+				$errors[] = 'Failed to write the text file';
+			} else {
+				dolChmod($fullpathoffile.'.txt');
+			}
+		}
 	}
 
-	if ($fileContent) {
+	// When we do only the step 'converttotext', we can return here: the analysis is done by a second call with the step 'analyze'
+	if ($step == 'converttotext') {
+		$db->close();
+
+		if (!empty($errors)) {
+			http_response_code(500);
+			print json_encode(array('errors' => $errors));
+		} elseif (dol_is_file($fullpathoffile.'.txt')) {
+			print json_encode(array('ok' => 1));
+		} else {
+			$langs->load("errors");
+			http_response_code(500);
+			$errors[] = $langs->trans("ErrorFailedToConvertFileInText");
+			if (is_array($result) && !empty($result['message'])) {
+				$errors[] = $result['message'];
+			}
+			print json_encode(array('errors' => $errors));
+		}
+		exit(0);
+	}
+
+	// For the step 'analyze', load the text saved by the previous call with the step 'converttotext'
+	if ($step == 'analyze' && dol_is_file($fullpathoffile.'.txt')) {
+		$fileContent = file_get_contents($fullpathoffile.'.txt');
+	}
+
+	if (!$error && $fileContent) {
 		$prompt = 'This is the content of the document:'."\n\n".dol_substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
 
 		if (getDolGlobalString("AI_DEBUG")) {
 			dol_syslog("ajaxuploadpage.php Call AI service for step 'converttotext' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
 		}
-		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');		// Call AIservice from a text extracted from file.
-		// $result is an array of error messages or a string with answer
-		if (is_array($result)) {	// If array, there is an error
-			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("ajaxuploadpage.php AI service returned an error for step 'converttotext': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
-			}
+		// The analysis of the content is done with the text generation model, the model AI_API_<SERVICE>_MODEL_DOCPARSING is reserved to the OCR conversion.
+		// For the 'custom' service, the hardcoded default has no meaning for an unknown provider, so we stop with a clear error when the constant is not set.
+		$arrayofai = getListOfAIServices();
+		$apiservice = $ai->getApiService();
+		$defaultmodelfortext = (($apiservice != 'custom' && !empty($arrayofai[$apiservice]['textgeneration']['default'])) ? $arrayofai[$apiservice]['textgeneration']['default'] : '');
+		$modelforanalysis = getDolGlobalString('AI_API_'.strtoupper($apiservice).'_MODEL_TEXT', $defaultmodelfortext);
+		if (empty($modelforanalysis)) {
 			$error++;
-			$errors[] = getAIErrorMessage($result);
+			$errors[] = 'No AI model defined to analyze documents for the service '.$apiservice.' (check the setup of the module AI)';
 		} else {
-			$answer = (string) $result;
+			$result = $ai->generateContent($prompt, $modelforanalysis, 'docparsing', '');
+			// $result is an array of error messages or a string with answer
+			if (is_array($result)) {	// If array, there is an error
+				if (getDolGlobalString("AI_DEBUG")) {
+					dol_syslog("ajaxuploadpage.php AI service returned an error for step 'converttotext': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
+				}
+				$error++;
+				$errors[] = getAIErrorMessage($result);
+			} else {
+				$answer = (string) $result;
 
-			$answer = preg_replace('/^```json/', '', $answer);
-			$answer = preg_replace('/```$/', '', $answer);
+				$answer = preg_replace('/^```json/', '', $answer);
+				$answer = preg_replace('/```$/', '', $answer);
+			}
 		}
-	} else {
+	} elseif (!$error) {
 		$langs->load("errors");
 		$error++;
 		$errors[] = $langs->trans("ErrorFailedToConvertFileInText");
-		$errors[] = $result['message'];
+		if (is_array($result) && !empty($result['message'])) {
+			$errors[] = $result['message'];
+		}
 	}
 }
 

@@ -144,6 +144,9 @@ class Ai
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
+			} elseif ($function == 'ocr') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'ocr';
 			} else {	// if $function == 'docparsing', 'text...', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				if ($this->apiService == 'google') {
@@ -175,8 +178,8 @@ class Ai
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'translation') {
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'docparsing') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
+			} elseif (in_array($function, array('docparsing', 'ocr'))) {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService]['docparsing']['default']);
 			} else {
 				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
@@ -184,7 +187,7 @@ class Ai
 		}
 
 		// Google Gemini: append /models/<model>:generateContent now that $model is resolved.
-		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread'))
+		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread', 'ocr'))
 			&& strpos($this->apiEndpoint, ':generateContent') === false) {
 			$this->apiEndpoint .= '/models/'.rawurlencode($model).':generateContent';
 		}
@@ -364,9 +367,9 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
-						if ($function == 'docparsing') {
+						if ($function == 'docparsing' || $function == 'ocr') {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following file to upload:\n");
-							fwrite($fp, $instructions."\n");
+							fwrite($fp, (is_string($instructions) ? $instructions : var_export($instructions, true))."\n");
 						} else {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
 							fwrite($fp, $fullInstructions."\n");
@@ -389,10 +392,10 @@ class Ai
 			global $dolibarr_ai_allow_local_endpoints;
 			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-			// Parsing a document is long, so we use a response timeout of at least 60 seconds for this case
+			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
 			$timeoutresponse = 0;
-			if ($function == 'docparsing') {
-				$timeoutresponse = max(60, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			if (in_array($function, array('docparsing', 'ocr'))) {
+				$timeoutresponse = max(90, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 			}
 
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
@@ -447,6 +450,14 @@ class Ai
 					$generatedContent = (string) $decodedResponse['error'];
 				} else {
 					$generatedContent = (string) var_export($decodedResponse['error'], true);
+				}
+			} elseif ($function == 'ocr' && !empty($decodedResponse['pages']) && is_array($decodedResponse['pages'])) {
+				// Response of the OCR endpoint (Mistral /v1/ocr): the text extracted from each page is into pages[].markdown
+				$generatedContent = '';
+				foreach ($decodedResponse['pages'] as $page) {
+					if (isset($page['markdown']) && is_scalar($page['markdown'])) {
+						$generatedContent .= ($generatedContent ? "\n" : '').(string) $page['markdown'];
+					}
 				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
@@ -553,6 +564,67 @@ class Ai
 				'function' => $function
 			);
 		}
+	}
+
+	/**
+	 * Build the payload of the first call of the raw file mode: the call that converts the raw binary file into text,
+	 * so the OCR is done by the AI service instead of by a local tool. For Mistral, the call targets the dedicated OCR
+	 * endpoint of the service, for the other OpenAI-compatible services, it is a multimodal chat completion with the
+	 * file encoded into base64. The model used is AI_API_<SERVICE>_MODEL_DOCPARSING or its default value.
+	 * As generateContent() does not complete the payload when it is an array, the model is set here.
+	 *
+	 * @param	string		$filepath	Full path of the file to send
+	 * @return	array<string,mixed>		Array with keys 'payload' and 'function' for generateContent(), or array with key 'error' set if the service or the file type is not supported
+	 */
+	public function getPayloadToConvertRawFileIntoText($filepath)
+	{
+		// Only the OpenAI-compatible services support the raw file mode
+		if (!in_array($this->apiService, array('chatgpt', 'mistral', 'groq', 'deepseek', 'perplexity', 'zai', 'custom'))) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file');
+		}
+
+		$isimage = preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filepath);
+		$ispdf = preg_match('/\.pdf$/i', $filepath);
+		if (!$isimage && !$ispdf) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file with this file type (only PDF and image files are supported)');
+		}
+
+		$arrayofai = getListOfAIServices();
+		$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', (empty($arrayofai[$this->apiService]['docparsing']['default']) ? '' : $arrayofai[$this->apiService]['docparsing']['default']));
+		if (empty($model) || $model == 'na') {
+			return array('error' => true, 'message' => 'No AI model defined to parse documents for the service '.$this->apiService);
+		}
+
+		$mimetype = dol_mimetype($filepath);
+		$filecontentb64 = base64_encode((string) file_get_contents(dol_osencode($filepath)));
+
+		if ($this->apiService == 'mistral') {
+			// Mistral OCR endpoint: it accepts images and PDF files as a base64 into a data URI
+			// (into a image_url part for images, a document_url part for PDF) and returns the text of each page as markdown
+			$typedoc = ($isimage ? 'image_url' : 'document_url');
+			$payload = array(
+				'model' => $model,
+				'document' => array('type' => $typedoc, $typedoc => 'data:'.$mimetype.';base64,'.$filecontentb64)
+			);
+			return array('payload' => $payload, 'function' => 'ocr');
+		}
+
+		// Other OpenAI-compatible services: multimodal chat completion with the file into base64
+		if ($isimage) {
+			$filepart = array('type' => 'image_url', 'image_url' => array('url' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		} else {
+			$filepart = array('type' => 'file', 'file' => array('filename' => dol_basename($filepath), 'file_data' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		}
+		$payload = array(
+			'messages' => array(
+				array('role' => 'user', 'content' => array(
+					array('type' => 'text', 'text' => 'Convert the content of this document into text. Return only the text of the document, no comment.'),
+					$filepart
+				))
+			),
+			'model' => $model
+		);
+		return array('payload' => $payload, 'function' => 'docparsing');
 	}
 
 	/**
