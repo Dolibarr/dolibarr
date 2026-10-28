@@ -197,6 +197,9 @@ NoRecordFoundIBankcAccount=No record found in bank account. Commonly, this occur
 AlreadyOneBankAccount=Already one bank account defined
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA file variant
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Yes = Store 'Payment Type' in 'Credit Transfer' section of SEPA file<br><br>When generating a SEPA XML file for Credit transfers, the section "PaymentTypeInformation" can now be placed inside the "CreditTransferTransactionInformation" section (instead of "Payment" section). We strongly recommend to keep this unchecked to place PaymentTypeInformation at Payment level, as all banks will not necessarily accept it at CreditTransferTransactionInformation level. Contact your bank before placing PaymentTypeInformation at CreditTransferTransactionInformation level.
+CreditTransferFileFormat=Credit transfer file format
+CreditTransferFileFormatHelp=Format of the credit transfer files made from this account. Swiss banks expect pain.001.001.09 (Swiss Payment Standards).
+CreditTransferFileFormatOfSetup=Same as the setup: %s
 ToCreateRelatedRecordIntoBank=To create missing related bank record
 XNewLinesConciliated=%s new line(s) conciliated
 InSepa=SEPA Area
