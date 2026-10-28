@@ -54,7 +54,7 @@ $letters = 'aAbBCDeEFgGhHJKLmMnNpPqQRsStTuVwWXYZz2345679';
 $number = strlen($letters);
 $string = '';
 for ($i = 0; $i < $length; $i++) {
-	$string .= $letters[mt_rand(0, $number - 1)];
+	$string .= $letters[random_int(0, $number - 1)];
 }
 //print $string;
 
