@@ -282,10 +282,14 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $permissiontodelete) {
-		$object->delete($user);
-
-		header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Update field
@@ -845,7 +849,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
@@ -977,8 +981,8 @@ if ($action == 'create') {
 		$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($object->date, '%Y') . ')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y') . ')';
 		// Only on template invoices
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' .dol_print_date($object->date_when, 'dayhour') . ')' : '');
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour') . ')' : '');
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen");
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen");
 		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $langs->trans("Count");
 		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $langs->trans("MaxPeriodNumber");
 
@@ -1012,7 +1016,7 @@ if ($action == 'create') {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, '');
+			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -1598,7 +1602,7 @@ if ($action == 'create') {
 		}
 
 		// Delete
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteinvoice&token='.newToken(), 'delete', ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer")));
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteinvoice&token='.newToken(), 'delete', ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer")), array('attr' => array('class' => 'reposition')))."\n";
 
 		print '</div>';
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2026	Jose MARTINEZ	<jose.martinez@pichinov.com>
+/* Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 
 // Translations
-$langs->loadLangs(array("admin", "errors", "stocks"));
+$langs->loadLangs(array("admin", "stocks"));
 
 // Access control
 if (!$user->admin) {
@@ -107,6 +107,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -134,6 +135,16 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setmod') {
 	// The default value ('') means: free reference typed by the user
 	dolibarr_set_const($db, 'INVENTORY_ADDON', $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'setstartmode') {
+	$startmode = GETPOST('INVENTORY_DEFAULT_START_MODE', 'aZ09');
+	if (!in_array($startmode, array(Inventory::START_MODE_CURRENT, Inventory::START_MODE_NONE, Inventory::START_MODE_ZERO))) {
+		$startmode = Inventory::START_MODE_CURRENT;
+	}
+	if (dolibarr_set_const($db, 'INVENTORY_DEFAULT_START_MODE', $startmode, 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -156,6 +167,39 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 // Configuration header
 $head = stock_admin_prepare_head();
 print dol_get_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
+
+// Options
+print load_fiche_titre($langs->trans("Options"), '', '');
+
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setstartmode">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td class="right">'.$langs->trans("Value").'</td>';
+print '</tr>';
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("InventoryStartMode"), $langs->trans("InventoryStartModeHelp")).'</td>';
+print '<td class="right">';
+$startmodes = array(
+	Inventory::START_MODE_CURRENT => $langs->trans("InventoryStartModeCurrent"),
+	Inventory::START_MODE_NONE => $langs->trans("InventoryStartModeNone"),
+	Inventory::START_MODE_ZERO => $langs->trans("InventoryStartModeZero"),
+);
+$currentstartmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', Inventory::START_MODE_CURRENT);
+if (!array_key_exists($currentstartmode, $startmodes)) {
+	$currentstartmode = Inventory::START_MODE_CURRENT;
+}
+print $form->selectarray('INVENTORY_DEFAULT_START_MODE', $startmodes, $currentstartmode, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+print ' <input type="submit" class="button small" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</table>';
+print '</div>';
+print '</form>';
+print '<br>';
 
 // Numbering models
 print load_fiche_titre($langs->trans("NumberingModules", $langs->transnoentities("Inventory")), '', '');
@@ -205,6 +249,7 @@ foreach ($dirmodels as $reldir) {
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
+							$langs->load('errors');
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
 							print $langs->trans($tmp);
@@ -235,6 +280,7 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$langs->load('errors');
 									$nextval = $langs->trans($nextval);
 								}
 								$htmltooltip .= $nextval.'<br>';

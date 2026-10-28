@@ -5,6 +5,7 @@
  * Copyright (C) 2017       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,14 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+
+$object = new CommandeFournisseur($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	}
+}
 
 // Security check
 $socid = 0;
@@ -168,7 +177,7 @@ if (isModEnabled('project')) {
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
@@ -255,7 +264,7 @@ if (!empty($object->id)) {
 	$nbEvent = dol_getcache($cachekey);
 
 
-	$titlelist = $langs->trans("ActionsOnOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
+	$titlelist = $langs->trans("ActionsOnSupplierOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	}

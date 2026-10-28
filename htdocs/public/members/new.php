@@ -85,7 +85,7 @@ $num = 0;
 $error = 0;
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 if (isModEnabled('multicompany')) {
 	force_switch_entity($entity);
@@ -346,6 +346,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
+	} elseif (!getDolGlobalString('MEMBER_NEWFORM_FORCETYPE')) {
+		// The type must be one of the active types proposed by the form
+		// (when a type is forced by setup, the type posted is ignored and replaced by the forced one)
+		$tmpadht = new AdherentType($db);
+		if (!array_key_exists(GETPOSTINT('typeid'), $tmpadht->liste_array(1))) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorBadValueForParameter", GETPOSTINT('typeid'), $langs->transnoentitiesnoconv("Type"))."<br>\n";
+		}
 	}
 
 	if ($morphy && $morphy != 'mor' && empty($lastname)) {
@@ -472,6 +480,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
 			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}
@@ -494,7 +503,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template

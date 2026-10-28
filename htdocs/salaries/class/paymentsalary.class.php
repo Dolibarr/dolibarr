@@ -300,9 +300,11 @@ class PaymentSalary extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
-		if ($result < 0) {
-			$error++;
+		if (!$error) {
+			$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if ($totalamount != 0 && !$error) {
@@ -454,6 +456,15 @@ class PaymentSalary extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTSALARY_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -504,6 +515,15 @@ class PaymentSalary extends CommonObject
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTSALARY_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback

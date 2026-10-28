@@ -465,8 +465,8 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Reconciliation
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
-		'@phan-var-force Account $object';
+	if (!empty($object->user_rappro) || !empty($object->fk_user_rappro) || !empty($object->date_rappro)) {
+		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -486,7 +486,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->fk_user_rappro ? $object->fk_user_rappro : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -3119,12 +3119,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 
@@ -3204,7 +3208,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
+								data: { action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3214,7 +3218,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
+								data: { action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});

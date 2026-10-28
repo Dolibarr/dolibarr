@@ -229,6 +229,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
 				$sql .= " WHERE rowid = ".((int) $monId);
+				$sql .= " AND fk_facture_fourn IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE entity IN (".getEntity('facture_fourn', 0)."))";	// Line must belong to an object of an allowed entity
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
@@ -930,7 +931,7 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 		// VAT Num
-		if (!empty($arrayfields['co.label']['checked'])) {
+		if (!empty($arrayfields['s.tva_intra']['checked'])) {
 			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 			$totalarray['nbfield']++;
 		}

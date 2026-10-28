@@ -777,7 +777,7 @@ while ($i < $imaxinloop) {
 
 		// Label payment
 		if ($arrayfields['label']['checked']) {
-			print '<td class="tdoverflowmax150" title="'.$variousstatic->label.'">'.$variousstatic->label."</td>";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($variousstatic->label).'"><span class="spantitle">'.dolPrintHTML($variousstatic->label)."</span></td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

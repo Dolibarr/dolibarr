@@ -142,7 +142,10 @@ if (empty($reshook)) {
 
 	if ($action == 'setfk_user' && $permissiontoadd) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'setlib' && $permissiontoadd) {
@@ -172,6 +175,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $permissiontodelete && $confirm == 'yes') {
 		$totalpaid = $object->getSommePaiement();
 		if (empty($totalpaid)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				header("Location: list.php");
@@ -533,7 +537,7 @@ if ($id > 0) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
 				if ($result > 0) {
-					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 				}
 			} else {
 				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
@@ -541,7 +545,7 @@ if ($id > 0) {
 					$userstatic = new User($db);
 					$result = $userstatic->fetch($object->fk_user);
 					if ($result > 0) {
-						$morehtmlref .= $userstatic->getNomUrl(1);
+						$morehtmlref .= $userstatic->getNomUrl(-1);
 					} else {
 						dol_print_error($db);
 						exit();
@@ -835,12 +839,12 @@ if ($id > 0) {
 
 			// Clone
 			if ($user->hasRight('tax', 'charges', 'creer')) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			}
 
 			// Delete
 			if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 			}

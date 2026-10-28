@@ -88,7 +88,7 @@ $confirm	= GETPOST("confirm");
 $ref = GETPOST('ref', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = '';
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $lineid		= GETPOSTINT('lineid');
 $projectid = GETPOSTINT('projectid');
@@ -118,6 +118,9 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
+	}
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 	}
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) {
@@ -259,13 +262,6 @@ if (empty($reshook)) {
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				if (isModEnabled('category')) {
-					$categories = GETPOST('categories', 'array:int');
-					if (method_exists($object, 'setCategories')) {
-						$object->setCategories($categories);
-					}
-				}
-
 				$db->commit();
 
 				// Define output language
@@ -328,6 +324,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$result = $object->delete($user);
 				if ($result > 0) {
 					header('Location: list.php?restore_lastsearch_values=1');
@@ -384,10 +381,14 @@ if (empty($reshook)) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
-		$discount->unlink_invoice();
-		$object->fetch($id);
-		if ($object->paye == 1 && (float) $object->getRemainToPay() > 0) {
-			$object->setUnpaid($user);
+		if ($result > 0 && $object->id > 0 && $discount->fk_invoice_supplier == $object->id) {	// The credit note must be linked to this invoice
+			$discount->unlink_invoice();
+			$object->fetch($id);
+			if ($object->paye == 1 && (float) $object->getRemainToPay() > 0) {
+				$object->setUnpaid($user);
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 		}
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
@@ -425,6 +426,8 @@ if (empty($reshook)) {
 
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $usercancreate) {
+		// Keep the previous values so triggers on BILL_SUPPLIER_MODIFY can see what changed
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
 		if ($object->update($user) < 0) {
@@ -576,9 +579,116 @@ if (empty($reshook)) {
 		if (GETPOSTINT("remise_id")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOSTINT("remise_id"));
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$idremise = GETPOSTINT("remise_id");
+
+				// If the available credit is larger than what the invoice can still absorb, split it automatically:
+				// only the required part is inserted as a line, the rest stays available for another invoice.
+				$usemccompare = false;
+				$discount = new DiscountAbsolute($db);
+				if ($discount->fetch($idremise) > 0) {
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, when the credit is in the invoice currency, compare and split
+					// in that currency (the company-currency amounts may use different exchange rates and would compare wrongly).
+					$usemccompare = (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+						&& !empty($discount->multicurrency_code) && !empty($object->multicurrency_code)
+						&& $discount->multicurrency_code == $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+					$maxtoabsorb = (float) price2num($usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0), 'MT');
+					$discountamountforcompare = (float) price2num($usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc, 'MT');
+					if ($discountamountforcompare > $maxtoabsorb) {
+						if ($maxtoabsorb <= 0) {
+							// Nothing left to absorb: the credit cannot be used on this invoice at all
+							$error++;
+							setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+						} else {
+							// Amount to apply, expressed in both currencies (the split itself works on company-currency amounts)
+							$depositeur = (float) $discount->amount_ttc;
+							$depositdev = (float) $discount->multicurrency_amount_ttc;
+							if ($usemccompare && $depositdev != 0) {
+								$applydev = $maxtoabsorb;
+								// Convert the applied part with the rate the credit carries, when it has one. Deriving it from the
+								// rounded company-currency total of the credit shifts the part by a cent, which then shows up as a
+								// phantom exchange difference on an invoice that uses the very same rate.
+								$creditrate = !empty($discount->multicurrency_tx) ? (float) $discount->multicurrency_tx : 0;
+								if ($creditrate > 0) {
+									$applyeur = (float) price2num($applydev / $creditrate, 'MT');
+								} else {
+									$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								}
+							} else {
+								$applyeur = $maxtoabsorb;
+								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
+							}
+							$splitparts = $discount->splitAmount($applyeur, (float) price2num($depositeur - $applyeur, 'MT'));
+							$applypart = $splitparts[0];
+							$remainpart = $splitparts[1];
+							$remaindev = 0.0;
+							if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+								// Keep the foreign-currency value of each part in the same proportion
+								$remaindev = (float) price2num($depositdev - $applydev, 'MT');
+								$applypart->multicurrency_amount_ttc = $applydev;
+								$applypart->multicurrency_amount_ht = price2num($applydev / (1 + (float) $applypart->tva_tx / 100), 'MT');
+								$applypart->multicurrency_amount_tva = price2num($applydev - (float) $applypart->multicurrency_amount_ht);
+								$remainpart->multicurrency_amount_ttc = $remaindev;
+								$remainpart->multicurrency_amount_ht = price2num($remaindev / (1 + (float) $remainpart->tva_tx / 100), 'MT');
+								$remainpart->multicurrency_amount_tva = price2num($remaindev - (float) $remainpart->multicurrency_amount_ht);
+							}
+							$discount->fk_facture_source = 0;
+							$discount->fk_invoice_supplier_source = 0;
+							$resdelete = $discount->delete($user);
+							$newidapply = $applypart->create($user);
+							$newidremain = $remainpart->create($user);
+							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
+								$idremise = $newidapply;
+								$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
+								$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
+								if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+									$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+									$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+								}
+								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
+							} else {
+								$error++;
+								setEventMessages($langs->trans("Error"), null, 'errors');
+							}
+						}
+					}
+				}
+
+				if (!$error) {
+					$result = $object->insert_discount($idremise);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+					if ($result > 0 && $usemccompare) {
+						// Follow the original currency: the part of the invoice covered by the credit keeps the company-currency value the
+						// credit was paid at, the rest stays at the invoice rate. The invoice rate becomes that effective rate, so the
+						// company-currency totals mirror the foreign-currency ones (no residual once the foreign amount is settled).
+						$object->fetch($id);
+						$object->fetch_lines();
+						$foreigngoods = 0.0;
+						$foreigncredits = 0.0;
+						$companycredits = 0.0;
+						foreach ($object->lines as $creditline) {
+							if (empty($creditline->fk_remise_except)) {
+								$foreigngoods += (float) $creditline->multicurrency_total_ttc;
+							} else {
+								$foreigncredits -= (float) $creditline->multicurrency_total_ttc;
+								$companycredits -= (float) $creditline->total_ttc;
+							}
+						}
+						$targetcompany = ((float) $object->multicurrency_tx > 0 ? ($foreigngoods - $foreigncredits) / (float) $object->multicurrency_tx : 0) + $companycredits;
+						if ($foreigngoods > 0 && $targetcompany > 0) {
+							$neweffectivetx = (float) price2num($foreigngoods / $targetcompany, 'CR');
+							if (abs($neweffectivetx - (float) $object->multicurrency_tx) >= 0.00000001) {
+								$resrate = $object->setMulticurrencyRate($neweffectivetx, 1);
+								if ($resrate < 0) {
+									$error++;
+									setEventMessages($object->error, $object->errors, 'errors');
+								} else {
+									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'CR')), null, 'mesgs');
+								}
+							}
+						}
+					}
 				}
 			} else {
 				dol_print_error($db, $object->error);
@@ -783,12 +893,16 @@ if (empty($reshook)) {
 		$discountcheck = new DiscountAbsolute($db);
 		$result = $discountcheck->fetch(0, 0, $object->id);
 
+		// The conditions are the same than the ones used to show the button converttoreduc (the button is not a protection)
 		$canconvert = 0;
-		if ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+		if ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discountcheck->id) && $object->status > FactureFournisseur::STATUS_DRAFT) {
+			$canconvert = 1; // we can convert a validated deposit into discount if deposit is paid (completely, partially or not at all) and not already converted
 		}
-		if (($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_STANDARD) && $object->paid == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not refunded completely and not already converted and amount of payment is 0 (see also the real condition used as the condition to show button converttoreduc)
+		if (($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_STANDARD) && $object->status == FactureFournisseur::STATUS_VALIDATED && $object->paid == 0 && empty($discountcheck->id)) {
+			$canconvert = 1; // we can convert a validated credit note into discount if it is not refunded completely and not already converted
+			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && price2num($object->getSommePaiement(), 'MT') != 0 && !getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED')) {
+				$canconvert = 0; // A credit note already partially refunded can be converted only if SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED is set (the remaining amount only is converted)
+			}
 		}
 		if ($canconvert) {
 			$db->begin();
@@ -908,19 +1022,29 @@ if (empty($reshook)) {
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
 					// multi-currency
 					$discount->multicurrency_code = $object->multicurrency_code;
 					$discount->multicurrency_tx = $object->multicurrency_tx;
-					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+						// A credit note can mix lines of both signs: each VAT rate keeps its own sign
+						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+					} else {
+						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					}
 					// keep compatibility
-					$discount->multicurrency_amount_ht = abs((float) $discount->multicurrency_total_ht);
-					$discount->multicurrency_amount_tva = abs((float) $discount->multicurrency_total_tva);
-					$discount->multicurrency_amount_ttc = abs((float) $discount->multicurrency_total_ttc);
+					$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+					$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+					$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 
 					// Clean vat code
 					$reg = array();
@@ -958,6 +1082,8 @@ if (empty($reshook)) {
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
 			}
+		} elseif (empty($discountcheck->id)) {
+			setEventMessages($langs->trans('ErrorInvoiceCantBeConvertedToDiscountInThisState'), null, 'errors');
 		}
 	} elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercancreate) {
 		// Delete payment
@@ -1029,6 +1155,8 @@ if (empty($reshook)) {
 				$result = $object->fetch(GETPOSTINT('fac_replacement'));
 				$object->fetch_thirdparty();
 
+				$tmpproject = GETPOSTINT('projectid');
+
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOSTINT('socid');
@@ -1043,6 +1171,7 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account			= GETPOSTINT('fk_account');
 				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+				$tmpproject = GETPOSTINT('projectid');
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -1187,6 +1316,7 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
+
 						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
 						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
 						$retAddLine = $object->addline($desc, -$remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
@@ -1414,17 +1544,27 @@ if (empty($reshook)) {
 									if (!empty($line->special_code)) {
 										continue;
 									}
-									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+									// Group by vat rate and vat code, so addline() receives the rate in the "rate (CODE)" format and the code is kept on the deposit lines
+									$vatkey = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+									if (!isset($TTotalByTva[$vatkey])) {
+										$TTotalByTva[$vatkey] = 0;
+									}
+									$TTotalByTva[$vatkey] += $line->total_ttc;
 								}
+								unset($line);	// Break the reference, so the loops on $line later do not overwrite the last line of $srcobject
 								'@phan-var-force array<string,float> $TTotalByTva';
 
 								$amount_ttc_diff = 0.;
 								foreach ($TTotalByTva as $tva => &$total) {
-									$coef = $total / $srcobject->total_ttc; // Calc coef
+									$coef = ($srcobject->total_ttc != 0 ? $total / $srcobject->total_ttc : 0); // Calc coef (0 if the total of the source is 0, there is nothing to split)
 									$am = $amount * $coef;
 									$amount_ttc_diff += $am;
-									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
+									if (!isset($amountdeposit[$tva])) {
+										$amountdeposit[$tva] = 0;
+									}
+									$amountdeposit[$tva] += $am / (1 + (float) preg_replace('/\s*\(.*\)/', '', (string) $tva) / 100); // Convert into HT for the addline
 								}
+								unset($total);
 							} else {
 								if ($typeamount == 'amount') {
 									$amountdeposit[0] = $valuedeposit;
@@ -1510,14 +1650,16 @@ if (empty($reshook)) {
 
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && (float) price2num($diff, 'MT') != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
+								// Pass the rate in the "rate (CODE)" format so updateline() keeps the vat code
+								$tva_tx_with_code = $object->lines[0]->tva_tx.($object->lines[0]->vat_src_code ? ' ('.$object->lines[0]->vat_src_code.')' : '');
 								$object->updateline(
 									$object->lines[0]->id,
 									$object->lines[0]->desc,
 									$subprice_diff,
-									$object->lines[0]->tva_tx,
+									$tva_tx_with_code,
 									$object->lines[0]->localtax1_tx,
 									$object->lines[0]->localtax2_tx,
 									$object->lines[0]->qty,
@@ -1628,6 +1770,14 @@ if (empty($reshook)) {
 									$error++;
 									break;
 								}
+
+								// Keep the extra parameters of the source line (for example the options of subtotal lines)
+								if ($result > 0 && !empty($lines[$i]->extraparams)) {
+									$newline = new SupplierInvoiceLine($db);
+									$newline->id = $result;
+									$newline->extraparams = $lines[$i]->extraparams;
+									$newline->setExtraParameters();
+								}
 							}
 
 							// Now reload line
@@ -1666,6 +1816,13 @@ if (empty($reshook)) {
 			$action = 'create';
 			//$_GET['socid'] = $_POST['socid'];
 		} else {
+			if (isModEnabled('category')) {
+				$categories = GETPOST('categories', 'array:int');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1753,6 +1910,14 @@ if (empty($reshook)) {
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 		$pu_devise = price2num(GETPOST('multicurrency_subprice'), 'MU', 2);
+
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$up = 0;
+			$price_base_type = 'TTC';
+			$pu_devise = price2num(GETPOST('multicurrency_price_ttc'), 'MU', 2);
+		}
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -2614,6 +2779,9 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print dol_get_fiche_head();
 
@@ -3093,7 +3261,7 @@ if ($action == 'create') {
 			// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
 			if (GETPOSTISSET('vat_reverse_charge')) {  // Check if form was submitted previously
 				$vat_reverse_charge = (GETPOST('vat_reverse_charge', 'alpha') == 'on' || GETPOST('vat_reverse_charge', 'alpha') == '1') ? 1 : 0;
-			} elseif ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+			} elseif ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != $mysoc->country_code && isInEEC($mysoc) && isInEEC($societe) && !empty($societe->tva_intra))) {
 				$vat_reverse_charge = 1;
 			} else {
 				$vat_reverse_charge = 0;
@@ -3963,9 +4131,9 @@ if ($action == 'create') {
 
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="total_ht">' . price($object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_ht">' . price($object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
@@ -3993,31 +4161,31 @@ if ($action == 'create') {
 				print '&nbsp; &nbsp; &nbsp; &nbsp;';
 				print '</div>';
 			}
-			print '<span class="nowraponall">'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</span>';
+			print '<span class="nowraponall" data-dol-field="total_tva">'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</span>';
 			print '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowraponall amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowraponall amountcard right" data-dol-field="multicurrency_total_tva">' . price($object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
 			if ($societe->localtax1_assuj == "1") { //Localtax1
 				print '<tr>';
 				print '<td>' . $langs->transcountry("AmountLT1", $societe->country_code) . '</td>';
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="total_localtax1">' . price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
 				print '</tr>';
 			}
 			if ($societe->localtax2_assuj == "1") { //Localtax2
 				print '<tr>';
 				print '<td>' . $langs->transcountry("AmountLT2", $societe->country_code) . '</td>';
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="total_localtax2">' . price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency) . '</td>';
 				print '</tr>';
 			}
 
 			print '<tr>';
 			print '<td>' . $langs->trans('AmountTTC') . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right" data-dol-field="total_ttc">' . price($object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right" data-dol-field="multicurrency_total_ttc">' . price($object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
@@ -4075,7 +4243,7 @@ if ($action == 'create') {
 				$i = 0;
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder paymenttable centpercent">';
+				print '<table class="noborder paymenttable centpercent" id="paymenttable">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 				print '<td><span class="hideonsmartphone">'.$langs->trans('Date').'</span></td>';
@@ -4652,7 +4820,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($action != 'edit' && $usercancreate) {
-					print '<a class="butAction butActionClone" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Clone as predefined / Create template
@@ -4684,7 +4852,7 @@ if ($action == 'create') {
 						$enableDelete = true;
 						$htmltooltip = '';
 					}
-					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), (string) $object->id, $enableDelete, $params);
+					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), (string) $object->id, $enableDelete, array('attr' => array('class' => 'reposition')));
 				}
 				print '</div>';
 

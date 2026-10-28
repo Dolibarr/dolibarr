@@ -595,7 +595,10 @@ class MultiCurrency extends CommonObject
 			$multicurrency_tx = $invoice_rate;
 		} else {
 			$tmparray = self::getInvoiceRate($fk_facture, $table);
-			$multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
+			// getInvoiceRate() returns false when the invoice cannot be read. Reading the rate
+			// from that boolean emits a PHP warning and gives null, which this method then
+			// reports as a failed conversion anyway.
+			$multicurrency_tx = ($tmparray === false ? 0 : $tmparray['invoice_multicurrency_tx']);
 		}
 
 		if ($multicurrency_tx) {
@@ -643,8 +646,6 @@ class MultiCurrency extends CommonObject
 	 */
 	public function recalculRates(&$TRate)
 	{
-		global $conf;
-
 		if (getDolCurrency() != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
 			$alternate_source = 'USD'.getDolCurrency();
 			if (!empty($TRate->$alternate_source)) {
@@ -676,12 +677,8 @@ class MultiCurrency extends CommonObject
 		global $db, $langs;
 
 		if (getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
-			if ($mode == "cron") {
-				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
-			} else {
-				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
-			}
-			$this->errors[] = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
+			$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
+			$this->errors[] = $this->output;
 			return -1;
 		}
 
