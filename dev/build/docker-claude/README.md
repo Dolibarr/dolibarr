@@ -18,9 +18,11 @@ URL is opened in the browser of the host, see "Clipboard and links" into `dev/bu
 You can also use an API key or a long lived token: when the environment variable `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN`
 (created with `claude setup-token`) is set on the host, it is passed to the container.
 
-The state file of Claude Code (onboarding, trusted directories, ...) is a single file `~/.claude.json` that is replaced at each write,
-so it can not be bind mounted. The container is run with `CLAUDE_CONFIG_DIR=~/.claude`, so its state file is `~/.claude/.claude.json`,
-separated from the one of the host: the first run into the container may ask again for the theme and for the trust of the directory.
+The state file of Claude Code (onboarding, trusted directories, MCP servers, ...) is a single file `~/.claude.json` that is replaced
+at each write, so it can not be bind mounted. Into the container, `~/.claude.json` is a link to `~/.claude/.claude.json` (into the
+mounted directory), and `claudes.sh` copies the `~/.claude.json` of the host into `~/.claude/.claude.json` at each launch: the
+container gets the MCP servers, the trusted directories and the theme of the host, but the changes made into the container
+(for example a MCP server added with `claude mcp add`) are lost at the next launch. Add them on the host instead.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````

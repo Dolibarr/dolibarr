@@ -543,6 +543,10 @@ body {
 	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
+/* A page loaded into a dialog popup has the background of the card, not the one of the body */
+body.dol_openinpopup {
+	/* background-color: var(--colorbacktabcard1); */
+}
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
@@ -3969,6 +3973,10 @@ div.login a:hover {
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 15px; }
 div.login_block_tools { padding-top: 0px; }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -4884,10 +4892,12 @@ table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirs
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -4928,11 +4938,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
 }
-table.liste tr:last-child td:first-child,
+table.liste tr:last-child td:first-child, table.liste tr.lastvisible td:first-child,
 table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.liste tr:last-child td:last-child,
+table.liste tr:last-child td:last-child, table.liste tr.lastvisible td:last-child,
 table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -6749,6 +6759,15 @@ span#morelines {
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
 }
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
+}
 .websitebar .button, .websitebar .buttonDelete
 {
 	padding: 2px 4px 2px 4px !important;
@@ -7634,6 +7653,11 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+}
+#ecm-layout-north {
+	min-height: 40px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 div#ecm-layout-west {
 	width: 380px;
@@ -9514,7 +9538,8 @@ table.jPicker {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 

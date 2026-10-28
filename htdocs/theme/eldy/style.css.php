@@ -648,7 +648,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
-input[type="search"] {
+input[type="search"]:not(.dropdown-search-input) {
 	padding-left: 4px !important;
 }
 
@@ -2466,6 +2466,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
 }
 .div-table-responsive, .div-table-responsive-no-min {
+	/* Keep wide tables from expanding the surrounding table-cell layout. */
+	width: 0;
+	min-width: 100%;
 	overflow-x: auto;
 	min-height: 0.01%;
 }
@@ -4183,6 +4186,10 @@ div.login_block_tools {
 	line-height: <?php echo $disableimages ? '25' : '53'; ?>px;
 	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 div.login_block_other {
 	display: inline-block;
 	vertical-align: middle;
@@ -5055,7 +5062,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 }
 table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
-table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
+table.liste tr.lastvisible td, table.noborder tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -5107,10 +5114,12 @@ table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirs
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -5151,11 +5160,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-child td:first-child,
+table.liste tr:last-child td:first-child, table.liste tr.lastvisible td:first-child,
 table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.liste tr:last-child td:last-child,
+table.liste tr:last-child td:last-child, table.liste tr.lastvisible td:last-child,
 table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -7182,6 +7191,15 @@ span#morelines {
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
 }
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
+}
 .websitebar .button, .websitebar .buttonDelete
 {
 	padding: 4px 5px 4px 5px !important;
@@ -8112,6 +8130,7 @@ div.ecmjqft {
 }
 #ecm-layout-north {
 	min-height: 40px;
+	margin-bottom: 8px;
 }
 #ecm-layout-north div.attachareaformuserfileecm {
 	padding-bottom: 0px;
