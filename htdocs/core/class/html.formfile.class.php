@@ -1753,6 +1753,16 @@ class FormFile
 									if ($modulepart == 'medias' && !GETPOST('website')) {
 										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
 									}
+									// Keep the popup mode (no menus) when the file manager is open into a dialog popup
+									if (GETPOSTINT('dol_hide_topmenu')) {
+										$moreparaminurl .= '&dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
+									}
+									if (GETPOSTINT('dol_hide_leftmenu')) {
+										$moreparaminurl .= '&dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
+									}
+									if (GETPOST('dol_openinpopup', 'aZ09')) {
+										$moreparaminurl .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+									}
 									//var_dump($moreparaminurl);
 									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
