@@ -376,7 +376,9 @@ class Utils
 			if (!empty($dolibarr_main_db_port)) {
 				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
-			if (GETPOST("use_transaction", "alpha")) {
+			// The default (scheduled job) uses a transaction too, as the form does, instead of locking
+			// all the tables, which blocks every write into the database during the backup.
+			if (GETPOST("use_transaction", "alpha") || $usedefault) {
 				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
@@ -1236,6 +1238,11 @@ class Utils
 			return -1;
 		}
 
+		// Read all the tables inside one transaction, so the dump is a consistent snapshot of the
+		// database even if data is changed during the backup (same as mysqldump --single-transaction).
+		// Only reads (SHOW CREATE TABLE, SELECT) are done inside it.
+		$db->begin();
+
 		// Print headers and global mysql config vars
 		$sqlhead = '';
 		$sqlhead .= "-- ".$db::LABEL." dump via php with Dolibarr ".DOL_VERSION."
@@ -1371,6 +1378,8 @@ class Utils
 		fwrite($handle, $sqlfooter);
 
 		fclose($handle);
+
+		$db->commit();
 
 		return 1;
 	}
