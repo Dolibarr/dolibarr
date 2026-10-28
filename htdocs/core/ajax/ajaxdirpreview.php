@@ -233,6 +233,16 @@ if (!empty($websitekey)) {
 if (!empty($pageid)) {
 	$param .= '&pageid='.((int) $pageid);
 }
+// Keep the popup mode (no menus) when the file manager is open into a dialog popup
+if (GETPOSTINT('dol_hide_topmenu')) {
+	$param .= '&dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
+}
+if (GETPOSTINT('dol_hide_leftmenu')) {
+	$param .= '&dol_hide_leftmenu='.GETPOSTINT('dol_hide_leftmenu');
+}
+if (GETPOST('dol_openinpopup', 'aZ09')) {
+	$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+}
 
 
 // Dir scan
@@ -533,6 +543,14 @@ if ($useajax || $action == 'deletefile') {
 	}
 	if (!empty($pageid) && $pageid > 0) {
 		$formquestion['pageid'] = array('type' => 'hidden', 'value' => $pageid, 'name' => 'pageid');
+	}
+	foreach (array('dol_hide_topmenu', 'dol_hide_leftmenu') as $tmpparam) {
+		if (GETPOSTINT($tmpparam)) {
+			$formquestion[$tmpparam] = array('type' => 'hidden', 'value' => GETPOSTINT($tmpparam), 'name' => $tmpparam);
+		}
+	}
+	if (GETPOST('dol_openinpopup', 'aZ09')) {
+		$formquestion['dol_openinpopup'] = array('type' => 'hidden', 'value' => GETPOST('dol_openinpopup', 'aZ09'), 'name' => 'dol_openinpopup');
 	}
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax ? 'deletefile' : 0));

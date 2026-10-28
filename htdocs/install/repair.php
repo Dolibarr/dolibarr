@@ -79,7 +79,7 @@ error_reporting($err);
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("admin", "install", "other"));
+$langs->loadLangs(array("main", "errors", "admin", "install", "other"));
 
 if ($dolibarr_main_db_type == "mysqli") {
 	$choix = 1;
@@ -102,14 +102,28 @@ if (!is_object($conf)) {
 // dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
 // so we force an empty one here, before any action that may need it.
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-$user = new User($db);
+
+// The installer does not initialize the session and CSRF token like main.inc.php.
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+if (empty($_SESSION['newtoken'])) {
+	$_SESSION['newtoken'] = bin2hex(random_bytes(32));
+}
+$ecmrepairbufferlevel = ob_get_level();
+$ecmrepairpost = GETPOST('clean_ecm_files_table', 'aZ09') === 'confirmed' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+if ($ecmrepairpost) {
+	ob_start(); // Allow a redirect after the installer has rendered its progress output.
+}
 
 
 /*
  * View
  */
 
-pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
+pHeader($langs->trans("Repair"), "repair", GETPOST('action', 'aZ09'));
+print '<input type="hidden" name="token" value="'.newToken().'">';
+dol_htmloutput_events();
 
 // Action to launch the repair script
 $actiondone = 1;
@@ -146,6 +160,7 @@ $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
+$user = new User($db);
 
 $form = new Form($db);
 
@@ -188,6 +203,26 @@ print '</div>';
 
 print '<br>';
 
+
+$conf->setValues($db);
+// Reset forced setup after the setValues
+if (defined('SYSLOG_FILE')) {
+	$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+}
+$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
+// Maintenance runs under the installer lock, without an authenticated application user.
+$ecmrepairentities = array(1 => $langs->trans('Entity').' 1');
+if (isModEnabled('multicompany')) {
+	$resql = $db->query("SELECT rowid, label FROM ".$db->prefix()."entity ORDER BY rowid");
+	if ($resql) {
+		while (is_object($obj = $db->fetch_object($resql))) {
+			$ecmrepairentities[(int) $obj->rowid] = dol_html_entity_decode($obj->label, 0);
+		}
+		$db->free($resql);
+	}
+}
+$ecmrepairentity = GETPOSTISSET('ecm_entity') ? GETPOSTINT('ecm_entity') : 1;
 
 print '<div class="info" style="padding-top: 10px">';
 print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
@@ -321,9 +356,20 @@ foreach ($sections as $section => $options) {
 		} else {
 			print $info;
 		}
+		if ($option == 'clean_ecm_files_table') {
+			print '<br><label for="ecm_entity">'.$langs->trans('RepairEcmEntity').'</label> ';
+			print '<link rel="stylesheet" href="../public/includes/jquery/plugins/select2/dist/css/select2.css">';
+			print '<script src="../public/includes/jquery/plugins/select2/dist/js/select2.full.min.js"></script>';
+			print $form->selectarray('ecm_entity', $ecmrepairentities, $ecmrepairentity, 0, 0, 0, 'style="width: 220px"', 0, 0, 0, '', 'minwidth150');
+		}
 		print '</td>';
-		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
-		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
+		if ($option == 'clean_ecm_files_table') {
+			print '<td class="center"><button class="button" type="submit" name="clean_ecm_files_table" value="test">'.$langs->trans('Test').'</button></td>';
+			print '<td class="center"><button class="button" type="submit" name="clean_ecm_files_table" value="confirmed">'.$langs->trans('Repair').'</button></td>';
+		} else {
+			print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
+			print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
+		}
 		print '</tr>';
 	}
 }
@@ -333,14 +379,6 @@ print '</div>';
 
 print '<br id="sectionresult">';
 print '<br>';
-
-
-$conf->setValues($db);
-// Reset forced setup after the setValues
-if (defined('SYSLOG_FILE')) {
-	$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
-}
-$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 
 /* Start action here */
@@ -359,10 +397,12 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	if (ob_get_level() > 0) {
-		ob_flush();
+	if (!$ecmrepairpost) {
+		if (ob_get_level() > 0) {
+			ob_flush();
+		}
+		flush();
 	}
-	flush();
 }
 
 
@@ -1457,55 +1497,37 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 // clean_old_module_entries: Clean data into const when files of module were removed without being
 if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Clean table ecm_files from lines of entries whose physical files does not exists anymore (emplemented for entity 1 only)</td></tr>';
-
-	$MAXTODELETE = 100;
-
-	$sql = "SELECT rowid, filename, filepath, entity from ".MAIN_DB_PREFIX."ecm_files";
-	$sql .= " WHERE entity = 1";
-	$sql .= " ORDER BY rowid ASC";
-
-	$nbfile = 0;
-	$nbfiletodelete = 0;
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		if ($num) {
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				if ($obj->rowid > 0) {
-					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
-					$nbfile++; // Count of files analyzed
-					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
-						$nbfiletodelete++;
-						if ($nbfiletodelete <= $MAXTODELETE) {
-							print '<tr><td>Found line with id '.$obj->rowid.', entity '.$obj->entity.', file "'.$filetocheck.'" to delete';
-							if (GETPOST('clean_ecm_files_table', 'alpha') == 'confirmed') {
-								$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files WHERE rowid = ".((int) $obj->rowid);
-								$resqldelete = $db->query($sqldelete);
-								if (!$resqldelete) {
-									dol_print_error($db);
-								}
-								print ' - deleted';
-							}
-							print '</td></tr>';
-						} else {
-							break;
-						}
-					}
-				}
-				$i++;
-			}
-		}
-		if ($nbfiletodelete > $MAXTODELETE) {
-			print '<tr><td>There is more than '.$MAXTODELETE.' invalid entries into ecm_files index table (among '.$nbfile.' analyzed) with no valid physical files. Run the page several time to process all of them.</td></tr>';
-		} else {
-			print '<tr><td>Nb of entries processed into ecm_files index table: '.$nbfile.', number of invalid record: '.$nbfiletodelete.'</td></tr>';
-		}
+	$ecmrepairmode = GETPOST('clean_ecm_files_table', 'aZ09');
+	$ecmrepairtoken = GETPOST('token', 'alphanohtml');
+	if (!in_array($ecmrepairmode, array('test', 'confirmed'), true) || $ecmrepairentity <= 0 || !isset($ecmrepairentities[$ecmrepairentity])) {
+		print '<tr><td class="error">'.$langs->trans('ErrorWrongParameters').'</td></tr>';
+	} elseif ($ecmrepairmode === 'confirmed' && (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !is_string($ecmrepairtoken) || !hash_equals(newToken(), $ecmrepairtoken))) {
+		print '<tr><td class="error">'.$langs->trans('RepairEcmInvalidToken').'</td></tr>';
 	} else {
-		dol_print_error($db);
+		print '<tr><td colspan="2"><br>'.$langs->trans('RepairEcmHeading', dol_escape_htmltag($ecmrepairentities[$ecmrepairentity])).'</td></tr>';
+		$ecmreport = repairEcmFiles($db, $ecmrepairentity, DOL_DATA_ROOT, $ecmrepairmode === 'confirmed');
+		foreach ($ecmreport['entries'] as $ecmentry) {
+			print '<tr><td>'.((int) $ecmentry['id']).'</td><td>'.dol_escape_htmltag($ecmentry['path']).'</td></tr>';
+		}
+		print '<tr><td colspan="2">'.$langs->trans('RepairEcmSummary', $ecmreport['processed'], $ecmreport['missing'], $ecmreport['deleted'], $ecmreport['skipped']).'</td></tr>';
+		if ($ecmrepairmode === 'test') {
+			print '<tr><td colspan="2">'.$langs->trans('RepairEcmTestMode').'</td></tr>';
+		}
+		if ($ecmreport['limitreached']) {
+			print '<tr><td colspan="2">'.$langs->trans('RepairEcmLimit', 100).'</td></tr>';
+		}
+		if ($ecmreport['error'] !== '') {
+			print '<tr><td colspan="2" class="error">'.$langs->trans($ecmreport['error']).'</td></tr>';
+		}
+		if ($ecmrepairmode === 'confirmed' && $ecmreport['error'] === '') {
+			setEventMessages($langs->trans('RepairEcmCompleted', dol_escape_htmltag($ecmrepairentities[$ecmrepairentity]), $ecmreport['deleted']), null, 'mesgs');
+			while (ob_get_level() > $ecmrepairbufferlevel) {
+				ob_end_clean();
+			}
+			$db->close();
+			header('Location: '.$_SERVER['PHP_SELF'].'?clean_ecm_files_table=test&ecm_entity='.((int) $ecmrepairentity).'&selectlang='.urlencode($setuplang), true, 303);
+			exit;
+		}
 	}
 }
 
