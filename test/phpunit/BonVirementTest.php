@@ -31,6 +31,8 @@ require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.cl
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expensereport/class/expensereport.class.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/userbankaccount.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -68,6 +70,7 @@ class BonVirementTest extends CommonClassTest
 	const QRIBAN_CH       = 'CH4431999123000889012';
 	const QRREFERENCE     = '210000000003139471430009017';
 	const BIC_CH          = 'UBSWCHZH80A';
+	const IBAN_EMPLOYEE   = 'FR7630001007941234567891155';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -907,9 +910,153 @@ class BonVirementTest extends CommonClassTest
 		$this->assertStringContainsString('/fourn/facture/card.php?facid='.$facD->id, $bon->invoice_in_error['invoice'.$facD->id]);
 	}
 
+	/**
+	 * testExpenseReportCreditTransfer
+	 *
+	 * An approved expense report is requested, added to an order that pays the IBAN of its user, and is paid with a
+	 * payment of expense report when the order is credited.
+	 *
+	 * @return void
+	 */
+	public function testExpenseReportCreditTransfer()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$employeeid = $this->createEmployeeWithBankAccount();
+		$expensereport = $this->createExpenseReport($employeeid);
+		$this->assertGreaterThan(0, $expensereport->setValidate($user), (string) $expensereport->error);
+		$this->assertGreaterThan(0, $expensereport->setApproved($user), (string) $expensereport->error);
+
+		$this->assertEquals(1, $expensereport->demande_prelevement($user, 600.0), (string) $expensereport->error);
+		$this->assertEquals(0, $expensereport->demande_prelevement($user, 600.0), 'A second request must be refused while the first one is waiting');
+
+		$resql = $db->query("SELECT rowid, amount, multicurrency_code, multicurrency_amount FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_expensereport = ".((int) $expensereport->id));
+		$request = $db->fetch_object($resql);
+		$this->assertEquals(600.0, (float) $request->amount);
+		$this->assertSame($conf->currency, $request->multicurrency_code);
+		$this->assertEquals(600.0, (float) $request->multicurrency_amount);
+
+		$bon = new BonPrelevement($db);
+		$this->assertEquals(1, $bon->nbOfInvoiceToPay('bank-transfer', 'expensereport'));
+		$this->assertEquals(600.0, $bon->SommeAPrelever('bank-transfer', 'expensereport'));
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array((int) $request->rowid), self::$fkBankAccount, 'expensereport');
+		$this->assertEquals(1, $result, 'BonPrelevement::create() failed: '.$bon->error.' '.implode(', ', $bon->invoice_in_error));
+		$this->assertEquals(array(self::IBAN_EMPLOYEE => 600.0), $this->parseSepaIbanAmounts($bon->filename));
+		$this->assertEquals(1, $bon->checkIfExpenseReportBonPrelevement());
+		$this->assertEquals(0, $bon->nbOfInvoiceToPay('bank-transfer', 'expensereport'));
+
+		$this->assertGreaterThan(0, $bon->fetch($bon->id));
+		$this->assertGreaterThanOrEqual(0, $bon->set_infotrans($user, dol_now(), 2), (string) $bon->error);
+		$this->assertGreaterThan(0, $bon->fetch($bon->id));
+		$this->assertGreaterThanOrEqual(0, $bon->set_infocredit($user, dol_now(), 'expensereport'), (string) $bon->error);
+
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(1, $expensereport->paid);
+		$this->assertEquals(ExpenseReport::STATUS_CLOSED, $expensereport->status);
+		$resql = $db->query("SELECT amount, num_payment, fk_bank FROM ".MAIN_DB_PREFIX."payment_expensereport WHERE fk_expensereport = ".((int) $expensereport->id));
+		$this->assertEquals(1, $db->num_rows($resql));
+		$payment = $db->fetch_object($resql);
+		$this->assertEquals(600.0, (float) $payment->amount);
+		$this->assertSame($bon->ref, $payment->num_payment);
+		$this->assertGreaterThan(0, (int) $payment->fk_bank);
+	}
+
+	/**
+	 * testExpenseReportRequestNeedsApproval
+	 *
+	 * Only an approved expense report can be requested for a credit transfer.
+	 *
+	 * @return void
+	 */
+	public function testExpenseReportRequestNeedsApproval()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = $this->createExpenseReport($this->createEmployeeWithBankAccount());
+		$this->assertGreaterThan(0, $expensereport->setValidate($user), (string) $expensereport->error);
+
+		$this->assertLessThan(0, $expensereport->demande_prelevement($user, 600.0));
+	}
+
+	/**
+	 * testExpenseReportRequestAboveRemainToPay
+	 *
+	 * A credit transfer request cannot be higher than the remaining amount to pay of the expense report.
+	 *
+	 * @return void
+	 */
+	public function testExpenseReportRequestAboveRemainToPay()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = $this->createExpenseReport($this->createEmployeeWithBankAccount());
+		$this->assertGreaterThan(0, $expensereport->setValidate($user), (string) $expensereport->error);
+		$this->assertGreaterThan(0, $expensereport->setApproved($user), (string) $expensereport->error);
+
+		$this->assertSame(-4, $expensereport->demande_prelevement($user, 600.01));
+		$this->assertSame(1, $expensereport->demande_prelevement($user, 600.0), (string) $expensereport->error);
+	}
+
 	// ---------------------------------------------------------------------------
 	// Private helpers
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Creates a user with one bank account, the beneficiary of the credit transfers of its expense reports.
+	 *
+	 * @return int Row ID of the user
+	 */
+	private function createEmployeeWithBankAccount(): int
+	{
+		global $user, $db;
+
+		$employee = new User($db);
+		$employee->login = 'bonvirementtest'.uniqid();
+		$employee->firstname = 'Test';
+		$employee->lastname = 'Employee';
+		$employeeid = (int) $employee->create($user);
+		$this->assertGreaterThan(0, $employeeid, 'User::create() failed: '.$employee->error);
+
+		$rib = new UserBankAccount($db);
+		$rib->userid = $employeeid;
+		$rib->iban = self::IBAN_EMPLOYEE;
+		$rib->bic = self::BIC;
+		$this->assertGreaterThan(0, $rib->create($user), 'UserBankAccount::create() failed: '.$rib->error);
+
+		return $employeeid;
+	}
+
+	/**
+	 * Creates a draft expense report of 600 (5 lines of 120) for a user.
+	 *
+	 * @param int $userid Row ID of the user the expense report is for
+	 * @return ExpenseReport
+	 */
+	private function createExpenseReport(int $userid): ExpenseReport
+	{
+		global $user, $db;
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->status = ExpenseReport::STATUS_DRAFT;
+		$expensereport->fk_user_author = $userid;
+		$this->assertGreaterThan(0, $expensereport->create($user), 'ExpenseReport::create() failed: '.$expensereport->error);
+		$expensereport->fetch($expensereport->id);
+
+		return $expensereport;
+	}
 
 	/**
 	 * Selects pain.001.001.09 and gives the company the town and country it needs, for the current test only.
