@@ -467,6 +467,22 @@ class Ai
 				// array raises a TypeError, which the catch below does not take (TypeError
 				// implements Throwable but does not extend Exception) and so ends as a fatal
 				// error on the ajax endpoints calling this method.
+				// Reasoning models (Mistral, ...) may return content as an array of chunks
+				// ({"type":"thinking",...}, {"type":"text","text":"..."}): we keep only the text chunks.
+				if (isset($decodedResponse['choices'][0]['message']['content'])
+					&& is_array($decodedResponse['choices'][0]['message']['content'])) {
+					$textofchunks = '';
+					$foundtextchunk = false;
+					foreach ($decodedResponse['choices'][0]['message']['content'] as $chunk) {
+						if (is_array($chunk) && ($chunk['type'] ?? '') == 'text' && isset($chunk['text']) && is_string($chunk['text'])) {
+							$textofchunks .= $chunk['text'];
+							$foundtextchunk = true;
+						}
+					}
+					if ($foundtextchunk) {
+						$decodedResponse['choices'][0]['message']['content'] = $textofchunks;
+					}
+				}
 				if (!isset($decodedResponse['choices'][0]['message']['content'])
 					|| !is_string($decodedResponse['choices'][0]['message']['content'])) {
 					throw new Exception('API response of AI endpoint '.$this->apiEndpoint.' does not contain the expected choices[0].message.content string');
