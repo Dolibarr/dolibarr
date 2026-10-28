@@ -40,6 +40,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -59,6 +60,7 @@ $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');
 $sourcetype = GETPOST('sourcetype', 'aZ09');
+$forusers = in_array($sourcetype, array('salary', 'expensereport'));
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOSTINT('id_bankaccount');
 $executiondate = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -167,11 +169,14 @@ if (empty($reshook)) {
 					if ($type != 'bank-transfer') {
 						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 					}
-					if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+					if ($type == 'bank-transfer' && !$forusers) {
 						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSupplier", $format);
 					}
 					if ($type == 'bank-transfer' && $sourcetype == 'salary') {
 						$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+					}
+					if ($type == 'bank-transfer' && $sourcetype == 'expensereport') {
+						$mesg = $langs->trans("NoExpenseReportsCouldBeWithdrawed", $format);
 					}
 					setEventMessages($mesg, null, 'errors');
 				}
@@ -250,21 +255,21 @@ llxHeader('', $title);
 
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-$head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
+$head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'), $bprev->nbOfInvoiceToPay($type, 'expensereport'));
 if ($type) {
-	print dol_get_fiche_head($head, ((GETPOSTISSET('sourcetype') && GETPOST('sourcetype') != '') ? 'salary' : 'invoice'), $langs->trans("Invoices"), -1, $bprev->picto);
+	print dol_get_fiche_head($head, ($forusers ? $sourcetype : 'invoice'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {
 	print load_fiche_titre($title);
 	print dol_get_fiche_head(array(), '', '', -1);
 }
 
 
-if ($sourcetype != 'salary') {
+if (!$forusers) {
 	$nb = $bprev->nbOfInvoiceToPay($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 	$pricetowithdraw = $bprev->SommeAPrelever($type);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 } else {
-	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
-	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$nb = $bprev->nbOfInvoiceToPay($type, $sourcetype);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	$pricetowithdraw = $bprev->SommeAPrelever($type, $sourcetype);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 }
 if ($nb < 0) {
 	dol_print_error($db, $bprev->error);
@@ -280,6 +285,9 @@ if ($type == 'bank-transfer') {
 }
 if ($sourcetype == 'salary') {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransferForSalaries");
+}
+if ($sourcetype == 'expensereport') {
+	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransferForExpenseReports");
 }
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
@@ -409,7 +417,7 @@ print '<br>';
 /*
  * Invoices waiting for withdraw
  */
-if ($sourcetype != 'salary') {
+if (!$forusers) {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
@@ -439,7 +447,7 @@ if ($sourcetype != 'salary') {
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-} else {
+} elseif ($sourcetype == 'salary') {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
 	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
@@ -455,6 +463,19 @@ if ($sourcetype != 'salary') {
 	$sql .= " AND pd.ext_payment_id IS NULL";
 	$sql .= " AND s.rowid = pd.fk_salary AND s.paye = ".Salary::STATUS_UNPAID;
 	$sql .= " AND pd.traite = 0";
+} elseif ($sourcetype == 'expensereport') {
+	$sql = "SELECT e.ref, e.rowid, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e,";
+	$sql .= " ".MAIN_DB_PREFIX."user as u,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE e.fk_user_author = u.rowid";
+	$sql .= " AND e.entity IN (".getEntity('expensereport').")";
+	$sql .= " AND e.fk_statut = ".ExpenseReport::STATUS_APPROVED;
+	$sql .= " AND e.paid = 0";
+	$sql .= " AND pd.traite = 0";
+	$sql .= " AND pd.ext_payment_id IS NULL";
+	$sql .= " AND e.rowid = pd.fk_expensereport";
 }
 
 $nbtotalofrecords = '';
@@ -501,11 +522,14 @@ if ($resql) {
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	$picto = 'bill';
 	if ($type == 'bank-transfer') {
-		if ($sourcetype != 'salary') {
-			$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
-		} else {
+		if ($sourcetype == 'salary') {
 			$title = $langs->trans("SalaryWaitingWithdraw");
 			$picto = 'salary';
+		} elseif ($sourcetype == 'expensereport') {
+			$title = $langs->trans("ExpenseReportWaitingWithdraw");
+			$picto = 'trip';
+		} else {
+			$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 		}
 	}
 	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, $picto, 0, '', '', $limit);
@@ -513,10 +537,12 @@ if ($resql) {
 
 	$tradinvoice = "Invoice";
 	if ($type == 'bank-transfer') {
-		if ($sourcetype != 'salary') {
-			$tradinvoice = "SupplierInvoice";
-		} else {
+		if ($sourcetype == 'salary') {
 			$tradinvoice = "RefSalary";
+		} elseif ($sourcetype == 'expensereport') {
+			$tradinvoice = "ExpenseReport";
+		} else {
+			$tradinvoice = "SupplierInvoice";
 		}
 	}
 
@@ -529,14 +555,14 @@ if ($resql) {
 			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		}
 	}
-	// Ref invoice or salary
+	// Ref invoice, salary or expense report
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
 	// Ref supplier
-	if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+	if ($type == 'bank-transfer' && !$forusers) {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
 	}
 	// Thirdparty or user
-	if ($sourcetype != 'salary') {
+	if (!$forusers) {
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 	} else {
 		print '<td>'.$langs->trans("Employee").'</td>';
@@ -562,7 +588,7 @@ if ($resql) {
 	print '</tr>';
 
 	if ($num) {
-		if ($sourcetype != 'salary') {
+		if (!$forusers) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
@@ -571,7 +597,7 @@ if ($resql) {
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
-			if ($sourcetype != 'salary') {
+			if (!$forusers) {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->socid);
 
@@ -580,13 +606,17 @@ if ($resql) {
 				if ($type == 'bank-transfer') {
 					$invoicestatic->ref_supplier = $obj->ref_supplier;
 				}
-				$salary = null;
+				$userdocument = null;
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch($obj->soc_rib_id ?? 0, '', $obj->uid);
 
-				$salary = new Salary($db);
-				$salary->fetch($obj->rowid);
+				if ($sourcetype == 'expensereport') {
+					$userdocument = new ExpenseReport($db);
+				} else {
+					$userdocument = new Salary($db);
+				}
+				$userdocument->fetch($obj->rowid);
 			}
 			print '<tr class="oddeven">';
 
@@ -603,21 +633,23 @@ if ($resql) {
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
-			if ($sourcetype != 'salary' || $salary === null) {
+			if (!$forusers || $userdocument === null) {
 				print $invoicestatic->getNomUrl(1, 'withdraw');
+			} elseif ($userdocument instanceof ExpenseReport) {
+				print $userdocument->getNomUrl(1);
 			} else {
-				print $salary->getNomUrl(1, 'withdraw');
+				print $userdocument->getNomUrl(1, 'withdraw');
 			}
 			print '</td>';
 
-			if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+			if ($type == 'bank-transfer' && !$forusers) {
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
 				print dol_escape_htmltag($invoicestatic->ref_supplier);
 				print '</td>';
 			}
 
 			// Thirdparty
-			if ($sourcetype != 'salary') {
+			if (!$forusers) {
 				print '<td class="tdoverflowmax100">';
 				$thirdpartystatic->fetch($obj->socid);
 				print $thirdpartystatic->getNomUrl(1, 'ban');

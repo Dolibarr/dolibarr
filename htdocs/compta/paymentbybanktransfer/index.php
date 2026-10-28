@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
  * @var Conf $conf
@@ -80,6 +81,7 @@ $thirdpartystatic = new Societe($db);
 $invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 $salary = new Salary($db);
+$expensereport = new ExpenseReport($db);
 $userstatic = new User($db);
 
 $newcardbutton = '';
@@ -116,6 +118,17 @@ if (isModEnabled('salaries')) {
 	$amounttoshow = $bprev->SommeAPrelever('bank-transfer', 'salary');
 	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary" title="'.price($amounttoshow).'">';
 	print $bprev->nbOfInvoiceToPay('bank-transfer', 'salary');
+	print '</a>';
+	print '</td></tr>';
+	$totaltoshow += $amounttoshow;
+}
+
+if (isModEnabled('expensereport')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransferForExpenseReports").'</td>';
+	print '<td class="right">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer', 'expensereport');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=expensereport" title="'.price($amounttoshow).'">';
+	print $bprev->nbOfInvoiceToPay('bank-transfer', 'expensereport');
 	print '</a>';
 	print '</td></tr>';
 	$totaltoshow += $amounttoshow;
@@ -275,6 +288,63 @@ if (isModEnabled('salaries')) {
 		} else {
 			$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
 			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSalaryInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
+		}
+		print "</table></div><br>";
+	} else {
+		dol_print_error($db);
+	}
+}
+
+if (isModEnabled('expensereport')) {
+	$sqlForExpenseReport = "SELECT e.rowid, e.fk_user_author, pd.amount, pd.date_demande FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sqlForExpenseReport .= " WHERE e.rowid = pd.fk_expensereport AND e.paid = 0 AND pd.traite = 0";
+	$sqlForExpenseReport .= " AND e.entity IN (".getEntity('expensereport').")";
+
+	$resql2 = $db->query($sqlForExpenseReport);
+	if ($resql2) {
+		$numRow = $db->num_rows($resql2);
+		$j = 0 ;
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder rightpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="5">'.$langs->trans("ExpenseReportWaitingWithdraw");
+		print '<a class="badge badge-info marginleftonly" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=expensereport">'.$numRow.'</a>';
+		print '</th></tr>';
+
+		if ($numRow) {
+			while ($j < $numRow && $j < 10) {
+				$objExpenseReport = $db->fetch_object($resql2);
+
+				$userstatic->fetch($objExpenseReport->fk_user_author);
+
+				$expensereport->fetch($objExpenseReport->rowid);
+
+				print '<tr class="oddeven"><td class="nowraponall">';
+				print $expensereport->getNomUrl(1);
+				print '</td>';
+
+				print '<td class="tdoverflowmax150">';
+				print $userstatic->getNomUrl(-1);
+				print '</td>';
+
+				print '<td class="right">';
+				print '<span class="amount">'.price($objExpenseReport->amount).'</span>';
+				print '</td>';
+
+				print '<td class="right" title="'.$langs->trans("DateRequest").'">';
+				print dol_print_date($db->jdate($objExpenseReport->date_demande), 'day');
+				print '</td>';
+
+				print '<td class="right">';
+				print $expensereport->getLibStatut(3);
+				print '</td>';
+				print '</tr>';
+				$j++;
+			}
+		} else {
+			$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoExpenseReportToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 		}
 		print "</table></div><br>";
 	} else {

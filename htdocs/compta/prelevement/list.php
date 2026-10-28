@@ -237,6 +237,37 @@ if ($type == 'bank-transfer') {
 	if ($search_company) {
 		$sql .= natural_search(array("u.firstname","u.lastname"), $search_company);
 	}
+
+	$sql .= " UNION";
+
+	$sql .= " SELECT p.rowid, p.ref, p.statut as status, p.datec";
+	$sql .= ", e.rowid as facid, e.ref as invoiceref, e.total_ttc";
+	$sql .= ", u.rowid as socid, CONCAT(u.firstname, ' ', u.lastname) as name, u.ref_employee as code_client, NULL as code_fournisseur, u.email";
+	$sql .= ", pl.amount as amount_line, pl.statut as status_line, pl.rowid as rowid_line";
+
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."expensereport as e";
+	$sql .= " , ".MAIN_DB_PREFIX."user as u";
+
+	$sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
+	$sql .= " AND pf.fk_prelevement_lignes = pl.rowid";
+	$sql .= " AND pf.fk_expensereport = e.rowid";
+	$sql .= " AND e.fk_user_author = u.rowid";
+	$sql .= " AND e.entity IN (".getEntity('expensereport').")";
+	if ($search_bon) {
+		$sql .= " AND pl.rowid = '".$db->escape($search_bon)."'";
+	}
+	if ($search_line) {
+		$sql .= natural_search("p.ref", $search_line);
+	}
+	if ($search_code) {
+		$sql .= natural_search("NULL", $search_code);
+	}
+	if ($search_company) {
+		$sql .= natural_search(array("u.firstname","u.lastname"), $search_company);
+	}
 }
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -521,7 +552,11 @@ while ($i < $imaxinloop) {
 		$link_title = 'Invoice';
 		$link_picto = 'bill';
 		if ($type == 'bank-transfer') {
-			if ($bon->checkIfSalaryBonPrelevement()) {
+			if ($bon->checkIfExpenseReportBonPrelevement()) {
+				$link_to_bill = '/expensereport/card.php?id=';
+				$link_title = 'ExpenseReport';
+				$link_picto = 'trip';
+			} elseif ($bon->checkIfSalaryBonPrelevement()) {
 				$link_to_bill = '/salaries/card.php?id=';
 				$link_title = 'SalaryInvoice';
 				$link_picto = 'salary';
