@@ -750,7 +750,13 @@ class FormMail extends Form
 						);
 
 						if (!empty($arraydefaultmessage->email_from) && !empty($arraydefaultmessage->id)) {
-							$templatemailfrom = ' &lt;'.$arraydefaultmessage->email_from.'&gt;';
+							// A sender stored as "Name <email@domain.com>" already carries its own angle brackets,
+							// so we only add a pair around a value that is a bare email address.
+							if (preg_match('/<[^<>]+>$/', trim($arraydefaultmessage->email_from))) {
+								$templatemailfrom = ' '.dol_escape_htmltag($arraydefaultmessage->email_from);
+							} else {
+								$templatemailfrom = ' &lt;'.dol_escape_htmltag($arraydefaultmessage->email_from).'&gt;';
+							}
 							$liste['from_template_'.((int) $arraydefaultmessage->id)] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
 						}
 
