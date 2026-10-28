@@ -3550,6 +3550,26 @@ abstract class CommonObject
 									$line->ref_supplier
 								);
 								break;
+							case 'expensereport':
+								/** @var ExpenseReportLine $line */
+								'@phan-var-force ExpenseReport $this';
+								'@phan-var-force ExpenseReportLine $line';
+								$this->updateline(
+									$line->id,
+									$line->fk_c_type_fees,
+									$line->fk_project,
+									$line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''),
+									$line->comments,
+									$line->qty,
+									$line->value_unit,
+									$line->dates,
+									$this->id,
+									$line->fk_c_exp_tax_cat,
+									$line->fk_ecm_files,
+									0,
+									($mode == 2 ? 0 : $line->multicurrency_subprice_ttc)
+								);
+								break;
 							default:
 								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
 								break;

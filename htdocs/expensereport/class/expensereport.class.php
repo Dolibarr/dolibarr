@@ -376,7 +376,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$now = dol_now();
 
@@ -391,6 +391,14 @@ class ExpenseReport extends CommonObject
 		$fuserid = $this->fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		if (empty($fuserid)) {
 			$fuserid = $user->id;
+		}
+
+		if (empty($this->multicurrency_code)) {
+			$this->multicurrency_code = $conf->currency;
+		}
+		if (empty($this->multicurrency_tx)) {
+			require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_debut);
 		}
 
 		$this->db->begin();
@@ -414,6 +422,9 @@ class ExpenseReport extends CommonObject
 		$sql .= ",note_public";
 		$sql .= ",note_private";
 		$sql .= ",entity";
+		$sql .= ",fk_multicurrency";
+		$sql .= ",multicurrency_code";
+		$sql .= ",multicurrency_tx";
 		$sql .= ") VALUES(";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".price2num($this->total_ht, 'MT');
@@ -433,6 +444,9 @@ class ExpenseReport extends CommonObject
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->fk_multicurrency);
+		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql .= ", ".((float) $this->multicurrency_tx);
 		$sql .= ")";
 
 		$result = $this->db->query($sql);
@@ -481,6 +495,10 @@ class ExpenseReport extends CommonObject
 						}
 						//$newndfline=new ExpenseReportLine($this->db);
 						$newndfline->fk_expensereport = $this->id;
+						if (empty($newndfline->multicurrency_total_ttc)) {
+							$this->line = $newndfline;
+							$this->setLineMulticurrencyAmounts(0, $mysoc, array($newndfline->localtax1_type, $newndfline->localtax1_tx, $newndfline->localtax2_type, $newndfline->localtax2_tx));
+						}
 						$result = $newndfline->insert();
 						if ($result < 0) {
 							$this->error = $newndfline->error;
@@ -701,7 +719,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
+		$sql .= " d.fk_multicurrency, d.multicurrency_code, d.multicurrency_tx, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -728,6 +747,13 @@ class ExpenseReport extends CommonObject
 				$this->localtax2    = $obj->total_localtax2;		// For backward compatibility
 				$this->total_localtax1 = $obj->total_localtax1;
 				$this->total_localtax2 = $obj->total_localtax2;
+
+				$this->fk_multicurrency = $obj->fk_multicurrency;
+				$this->multicurrency_code = $obj->multicurrency_code;
+				$this->multicurrency_tx = $obj->multicurrency_tx;
+				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -1150,6 +1176,8 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
+		$sql .= ' de.fk_multicurrency, de.multicurrency_code, de.multicurrency_subprice, de.multicurrency_subprice_ttc,';
+		$sql .= ' de.multicurrency_total_ht, de.multicurrency_total_tva, de.multicurrency_total_ttc,';
 		$sql .= ' ctf.code as code_type_fees, ctf.label as label_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->db->sanitize($this->table_element_line).' as de';
@@ -1191,6 +1219,14 @@ class ExpenseReport extends CommonObject
 				$deplig->total_ttc        = $objp->total_ttc;
 				$deplig->total_localtax1  = $objp->total_localtax1;
 				$deplig->total_localtax2  = $objp->total_localtax2;
+
+				$deplig->fk_multicurrency = $objp->fk_multicurrency;
+				$deplig->multicurrency_code = $objp->multicurrency_code;
+				$deplig->multicurrency_subprice = $objp->multicurrency_subprice;
+				$deplig->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
+				$deplig->multicurrency_total_ht = $objp->multicurrency_total_ht;
+				$deplig->multicurrency_total_tva = $objp->multicurrency_total_tva;
+				$deplig->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
 				$deplig->type_fees_libelle  = $objp->label_type_fees;
@@ -1981,9 +2017,10 @@ class ExpenseReport extends CommonObject
 	 * @param    int         $fk_c_exp_tax_cat         Car category id
 	 * @param    int         $type                     Type line
 	 * @param    int         $fk_ecm_files             Id of ECM file to link to this expensereport line
+	 * @param    float       $up_devise                Unit price (price with tax) in the currency of the expense report, used instead of $up when not 0
 	 * @return   int                                   Return integer <0 if KO, >0 if OK
 	 */
-	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
+	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0, $up_devise = 0)
 	{
 		global $mysoc;
 
@@ -2014,6 +2051,9 @@ class ExpenseReport extends CommonObject
 				$vatrate = price2num($vatrate); // $txtva can have format '5.0 (XXX)' or '5'
 			}
 			$up = price2num($up);
+			if (!empty($up_devise)) {
+				$up = $up_devise / $this->getMulticurrencyRate();
+			}
 
 			$this->db->begin();
 
@@ -2064,6 +2104,7 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules($type, $seller);
+			$this->setLineMulticurrencyAmounts((float) $this->line->value_unit == (float) $up ? (float) $up_devise : 0, $seller, $localtaxes_type);
 
 			$result = $this->line->insert(0, true);
 			if ($result > 0) {
@@ -2086,6 +2127,54 @@ class ExpenseReport extends CommonObject
 			$this->error = 'ErrorExpenseNotDraftAndNotRefused';
 			return -3;
 		}
+	}
+
+	/**
+	 * Return true when the expense report is in another currency than the company one.
+	 *
+	 * @return	bool
+	 */
+	public function isInForeignCurrency()
+	{
+		global $conf;
+
+		return (!empty($this->multicurrency_code) && $this->multicurrency_code != $conf->currency);
+	}
+
+	/**
+	 * Return the rate of the currency of the expense report, 1 when it has none.
+	 *
+	 * @return	float
+	 */
+	public function getMulticurrencyRate()
+	{
+		return (empty($this->multicurrency_tx) ? 1.0 : (float) $this->multicurrency_tx);
+	}
+
+	/**
+	 * Set the amounts of $this->line in the currency of the expense report, from its unit price with taxes in that currency or, when 0, from its unit price in the company currency.
+	 *
+	 * @param	float					$up_devise			Unit price with taxes in the currency of the expense report
+	 * @param	Societe					$seller				Seller
+	 * @param	array<string|int>		$localtaxes_type	Local taxes of the line, as returned by getLocalTaxesFromRate()
+	 * @return	void
+	 */
+	private function setLineMulticurrencyAmounts($up_devise, $seller, $localtaxes_type)
+	{
+		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+		$code = (empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code);
+		$tmp = calcul_price_total($this->line->qty, (float) $this->line->value_unit, 0, (float) $this->line->vatrate, -1, -1, 0, 'TTC', 0, 0, $seller, $localtaxes_type, 100, $this->getMulticurrencyRate(), $up_devise, $code);
+
+		$this->line->fk_multicurrency = $this->fk_multicurrency;
+		$this->line->multicurrency_code = $code;
+		$this->line->multicurrency_subprice = (float) $tmp[19];
+		$this->line->multicurrency_subprice_ttc = (float) $tmp[21];
+		$this->line->multicurrency_total_ht = (float) $tmp[16];
+		$this->line->multicurrency_total_tva = (float) $tmp[17];
+		$this->line->multicurrency_total_ttc = (float) $tmp[18];
 	}
 
 	/**
@@ -2270,9 +2359,10 @@ class ExpenseReport extends CommonObject
 	 * @param   int         	$fk_c_exp_tax_cat       Id of category of car
 	 * @param   int         	$fk_ecm_files           Id of ECM file to link to this expensereport line
 	 * @param   int     		$notrigger      		1=No trigger
+	 * @param   float   		$value_unit_devise      Unit price (with taxes) in the currency of the expense report, used instead of $value_unit when not 0
 	 * @return  int             	                    Return integer <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
+	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0, $value_unit_devise = 0)
 	{
 		global $user, $mysoc;
 
@@ -2304,6 +2394,10 @@ class ExpenseReport extends CommonObject
 				$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
+
+			if (!empty($value_unit_devise)) {
+				$value_unit = $value_unit_devise / $this->getMulticurrencyRate();
+			}
 
 			$tmp = calcul_price_total($qty, $value_unit, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 			// calcul total of line
@@ -2369,6 +2463,7 @@ class ExpenseReport extends CommonObject
 			}
 			$this->applyOffset();
 			$this->checkRules();
+			$this->setLineMulticurrencyAmounts((float) $this->line->value_unit == (float) $value_unit ? (float) $value_unit_devise : 0, $seller, $localtaxes_type);
 
 			$result = $this->line->update($user, $notrigger);
 			if ($result < 0) {

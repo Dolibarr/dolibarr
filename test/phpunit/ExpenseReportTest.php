@@ -272,4 +272,84 @@ class ExpenseReportTest extends CommonClassTest
 
 		$expensereport->delete($user);
 	}
+
+	/**
+	 * testExpenseReportInForeignCurrency
+	 *
+	 * Lines typed in the currency of the expense report are converted to the company currency with its rate,
+	 * and a new rate converts them again.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportInForeignCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$expensereport->multicurrency_code = 'USD';
+		$expensereport->multicurrency_tx = 0.8;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id LIMIT 1");
+		$typefeesid = (int) $db->fetch_object($resql)->id;
+
+		$expensereport->fetch($expensereport->id);
+		$lineid = $expensereport->addline(1, 0, $typefeesid, 0, dol_now(), 'Taxi', 0, 0, 0, 0, 100);
+		$this->assertGreaterThan(0, $lineid, (string) $expensereport->error);
+
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(100, (float) $expensereport->lines[0]->multicurrency_total_ttc);
+		$this->assertEquals(125, (float) $expensereport->lines[0]->total_ttc);
+		$this->assertEquals(100, (float) $expensereport->multicurrency_total_ttc);
+		$this->assertEquals(125, (float) $expensereport->total_ttc);
+
+		$this->assertGreaterThan(0, $expensereport->updateline($lineid, $typefeesid, 0, 0, 'Taxi', 1, 0, dol_now(), $expensereport->id, 0, 0, 0, 50), (string) $expensereport->error);
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(50, (float) $expensereport->multicurrency_total_ttc);
+		$this->assertEquals(62.5, (float) $expensereport->total_ttc);
+
+		$this->assertGreaterThan(0, $expensereport->setMulticurrencyRate(0.5, 1));
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(50, (float) $expensereport->multicurrency_total_ttc, 'The amounts typed in the currency of the report are kept');
+		$this->assertEquals(100, (float) $expensereport->total_ttc, 'The amounts in company currency follow the new rate');
+
+		$expensereport->delete($user);
+	}
+
+	/**
+	 * testExpenseReportInCompanyCurrency
+	 *
+	 * An expense report created with its lines and no currency is in the company currency, with the same amounts in both.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportInCompanyCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+
+		$expensereport->fetch($expensereport->id);
+		$this->assertSame($conf->currency, $expensereport->multicurrency_code);
+		$this->assertGreaterThan(0, (float) $expensereport->total_ttc);
+		$this->assertEquals((float) $expensereport->total_ttc, (float) $expensereport->multicurrency_total_ttc);
+
+		$expensereport->delete($user);
+	}
 }
