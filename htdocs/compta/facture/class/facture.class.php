@@ -3840,6 +3840,20 @@ class Facture extends CommonInvoice
 			}
 		}
 
+		// Hook to let modules check or prepare the invoice before it is validated (still a draft: no number, no transaction)
+		if (!$error) {
+			global $hookmanager;
+			$hookaction = 'validate';
+			$hookmanager->initHooks(array('invoicedao'));
+			$parameters = array('force_number' => $force_number, 'idwarehouse' => $idwarehouse, 'notrigger' => $notrigger);
+			$reshook = $hookmanager->executeHooks('beforeValidate', $parameters, $this, $hookaction);
+			if ($reshook < 0) {
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		// Check parameters
