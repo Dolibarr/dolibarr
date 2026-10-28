@@ -383,49 +383,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 				}
 
-				// Public note and Tracking code
-				if (!empty($object->note_public) || !empty($object->tracking_number)) {
+				// Public note
+				if (!empty($object->note_public)) {
 					$tab_top_alt = $tab_top;
 
 					//$tab_top_alt += 1;
 
-					// Tracking number
-					if (!empty($object->tracking_number)) {
-						$height_trackingnumber = 4;
-
-						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
-						$tab_top_alt = $pdf->GetY();
-
-						$object->getUrlTrackingStatus($object->tracking_number);
-						if (!empty($object->tracking_url)) {
-							if ($object->shipping_method_id > 0) {
-								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-								$label = '';
-								if ($object->tracking_url != $object->tracking_number) {
-									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								}
-								$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
-								//var_dump($object->tracking_url != $object->tracking_number);exit;
-								if ($object->tracking_url != $object->tracking_number) {
-									$label .= " : ";
-									$label .= $object->tracking_url;
-								}
-
-								$height_trackingnumber += 4;
-								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
-							}
-						}
-						$tab_top = $pdf->GetY();
-					}
-
-					// Notes
-					if (!empty($object->note_public)) {
-						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
-					}
+					$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
@@ -833,23 +798,11 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$totalQty += $line->qty;
 			}
 		}
-		// Set trueVolume and volume_units not currently stored into database
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
-			$object->volume_units = $object->size_units * 3;
-		}
-
 		if (!empty($totalWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		}
 		if (!empty($totalVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		}
-		if (!empty($object->trueWeight)) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		}
-		if (!empty($object->trueVolume)) {
-			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 		}
 
 		$pdf->SetFillColor(255, 255, 255);
@@ -1138,7 +1091,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			'@phan-var-force CommonObject $linkedobject';
 			/** @var CommonObject $linkedobject */
 			$result = $linkedobject->fetch($origin_id);
-			if ($result >= 0) {
+			if ($result > 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);

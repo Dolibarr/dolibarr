@@ -105,6 +105,10 @@ if ($object instanceof CommonObject) {
 
 	$fieldManager = new FieldsManager($db);
 	$fieldInfos = $fieldManager->getFieldsInfos($objectkey, $object, $extrafields, $mode);
+	// The options are returned only for a field the user can see in this mode, as in the forms (not for a hidden field)
+	if (!is_object($fieldInfos) || empty($fieldInfos->visible)) {
+		httponly_accessforbidden('Field '.$objectkey.' is not visible');
+	}
 	$field = $fieldManager->getFieldClass($fieldInfos->type);
 	if (isset($field)) {
 		if (method_exists($field, 'getOptions')) {
@@ -112,6 +116,9 @@ if ($object instanceof CommonObject) {
 			$fieldInfos->optionsSqlLimit = $limit;
 			if ($dependencyvalue !== '') {
 				$fieldInfos->optionsSqlDependencyValue = $dependencyvalue;
+			}
+			if ($search !== '') {
+				$fieldInfos->optionsSqlSearch = $search;
 			}
 
 			/**

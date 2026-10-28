@@ -89,15 +89,13 @@ if ($id > 0 || $ref) {
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-// include comment actions (after security check to prevent IDOR)
-include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
-
 
 /*
  * Actions
  */
 
-// None
+// include comment actions (after security check to prevent IDOR)
+include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 
 /*

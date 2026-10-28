@@ -135,8 +135,20 @@ if ($action == 'update_external') {
 
 	$user_id = GETPOSTINT("AI_MCP_USER_ID");
 	if (GETPOSTISSET('AI_MCP_USER_ID')) {
-		$res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
-		if ($res <= 0) {
+		if ($user_id > 0) {
+			$res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
+		} else {
+			$res = dolibarr_del_const($db, "AI_MCP_USER_ID", $conf->entity);
+		}
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
+	// Checkbox has its own form, flagged by a hidden field because an unchecked checkbox is not posted
+	if (GETPOSTISSET('AI_MCP_BEHIND_BASIC_AUTH_FORM')) {
+		$res = dolibarr_set_const($db, "AI_MCP_BEHIND_BASIC_AUTH", GETPOSTINT("AI_MCP_BEHIND_BASIC_AUTH"), 'int', 0, '', $conf->entity);
+		if ($res < 0) {
 			$error++;
 		}
 	}
@@ -352,10 +364,11 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// Service User
 	print '<tr class="oddeven">';
-	print '<td>Service User <span class="fa fa-info-circle" title="' . $langs->trans("UserPermissionsTooltip") . '"></span></td>';
+	print '<td class="fieldrequired">Service User '.img_picto($langs->trans("UserPermissionsTooltip"), 'info').'</td>';
 	print '<td>';
 	print '<div style="display: flex; align-items: center;">';
-	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID'), 'AI_MCP_USER_ID', 1);
+	// Use -1 when not set, so select_dolusers() does not preselect the current user
+	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID', -1), 'AI_MCP_USER_ID', 1);
 	print ' <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Save").'" style="margin-left: 20px;">';
 	print '</div>';
 	print '<span class="opacitymedium small">' . $langs->trans("DedicatedUserRecommendation") . '</span>';
@@ -364,19 +377,23 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// API Key
 	print '<tr class="oddeven">';
-	print '<td>MCP API Key</td>';
+	print '<td class="fieldrequired">MCP API Key</td>';
 	print '<td>';
 	if ($apiKey) {
 		print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-		print ' <a class="button small smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("Generate")).'">'.img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"').'</a>';
 	} else {
 		print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-		print ' <a class="button small smallpaddingimp" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
+		print ' <a href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '" title="' . dol_escape_htmltag($langs->trans("Generate")) . '">' . img_picto($langs->transnoentities("Generate"), 'refresh', 'class="linkobject paddingleft"') . '</a>';
 	}
 	print '</td>';
 	print '</tr>';
 
 	$endpoint = dol_buildpath('/ai/server/mcp_server.php', 3);
+	// Name of the MCP server in the configuration examples: the database name, restricted to safe chars for a command line
+	$mcpservername = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $conf->db->name);
+	// Name of the environment variable holding the key, suffixed with the database name so several instances can share the same .env file
+	$mcpapikeyenvname = 'DOLIBARR_MCP_API_KEY_'.dol_strtoupper(preg_replace('/[^a-zA-Z0-9_]/', '_', $conf->db->name));
 
 	print '<tr class="oddeven">';
 	print '<td>MCP Endpoint URL</td>';
@@ -393,12 +410,56 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// Configuration Examples
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
-	print '<strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
+
+	// Server behind a HTTP Basic authentication: the Authorization header is then taken, so the key goes into the DOLAPIKEY header
+	$behindbasicauth = getDolGlobalInt('AI_MCP_BEHIND_BASIC_AUTH');
+	$basicauthplaceholder = 'BASE64_OF_LOGIN:PASSWORD';
+	// If this page is itself behind the Basic authentication, reuse the credentials sent by the browser to fill the examples
+	$basicauthvalue = $basicauthplaceholder;
+	$authheader = empty($_SERVER['HTTP_AUTHORIZATION']) ? (empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) ? '' : $_SERVER['REDIRECT_HTTP_AUTHORIZATION']) : $_SERVER['HTTP_AUTHORIZATION'];
+	$reg = array();
+	if (preg_match('/^Basic\s+([a-zA-Z0-9+\/=]+)$/i', $authheader, $reg)) {
+		$basicauthvalue = $reg[1];
+	} elseif (!empty($_SERVER['PHP_AUTH_USER'])) {
+		$basicauthvalue = base64_encode($_SERVER['PHP_AUTH_USER'].':'.(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']));
+	}
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update_external">';
+	print '<input type="hidden" name="AI_MCP_BEHIND_BASIC_AUTH_FORM" value="1">';
+	print '<input type="checkbox" id="AI_MCP_BEHIND_BASIC_AUTH" name="AI_MCP_BEHIND_BASIC_AUTH" value="1"'.($behindbasicauth ? ' checked' : '').' onchange="this.form.submit();">';
+	print ' <label for="AI_MCP_BEHIND_BASIC_AUTH">'.$form->textwithpicto($langs->trans("MCPServerBehindBasicAuth"), $langs->trans("MCPServerBehindBasicAuthHelp", $basicauthplaceholder)).'</label>';
+	print '</form>';
+	print '<br>';
+
+	// Command line to declare the MCP server into Mistral Vibe, the key being read from its .env file
+	print '<strong>' . $langs->trans("MistralVibeConfig") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	if ($behindbasicauth) {
+		echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --header \'Authorization=Basic '.$basicauthvalue.'\' --header \'DOLAPIKEY='.($apiKey ? $apiKey : "YOUR_KEY_HERE").'\'');
+	} else {
+		echo htmlspecialchars('vibe mcp add '.$mcpservername.' --url '.$endpoint.' --transport streamable-http --api-key-env '.$mcpapikeyenvname."\n\n");
+		echo htmlspecialchars($langs->transnoentitiesnoconv("MistralVibeConfigEnv", '~/.vibe/.env')."\n");
+		echo htmlspecialchars($mcpapikeyenvname.'="'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	}
+	print '</pre>';
+
+	// Command line to declare the MCP server into Claude Code
+	print '<br><strong>' . $langs->trans("ClaudeCodeConfig") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
+	if ($behindbasicauth) {
+		echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Basic '.$basicauthvalue.'" --header "DOLAPIKEY: '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	} else {
+		echo htmlspecialchars('claude mcp add --transport http '.$mcpservername.' '.$endpoint.' --header "Authorization: Bearer '.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"');
+	}
+	print '</pre>';
+
+	print '<br><strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px; white-space: break-spaces;">';
 	echo htmlspecialchars('
 	{
 	  "mcpServers": {
-	    "dolibarr": {
+	    "'.$mcpservername.'": {
 	      "command": "node",
 	      "args": ["/path/to/mcp-bridge.js"],
 	      "env": {

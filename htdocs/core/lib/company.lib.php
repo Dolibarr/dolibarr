@@ -208,7 +208,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')
 	) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/consumption.php', ['socid' => $object->id]);
-		$head[$h][1] = $langs->trans("Referers");
+		$head[$h][1] = $langs->trans("ReferringItems");
 		$head[$h][2] = 'consumption';
 		$h++;
 	}
@@ -1451,6 +1451,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+	$showuserlogin = (!empty($showuserlogin) || !empty($arrayfields['u.user']['checked'])) ? 1 : 0;
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 

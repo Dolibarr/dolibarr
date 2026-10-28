@@ -729,7 +729,8 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	foreach ($lines as $i => $line) {
 		if (strpos($line, $start) !== false) {
 			// Copy lines until the end on array
-			while (($line = $lines[++$i]) !== false) {
+			while (isset($lines[++$i])) {
+				$line = $lines[$i];
 				if (strpos($line, $end) !== false) {
 					break;
 				}

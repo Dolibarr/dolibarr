@@ -333,6 +333,7 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+
 		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
@@ -343,6 +344,9 @@ class MyObject extends CommonObject
 			$line->fetch_optionals();
 		}
 		//END MODULEBUILDER LINES
+
+		$fromref = (property_exists($object, 'ref') ? $object->ref : '');	// Save ref of source object before it is overwritten
+
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -380,6 +384,8 @@ class MyObject extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $fromid;
+		$object->context['createfromclone_fromref'] = $fromref;
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
@@ -403,6 +409,8 @@ class MyObject extends CommonObject
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {

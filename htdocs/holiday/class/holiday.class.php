@@ -133,6 +133,11 @@ class Holiday extends CommonObject
 	public $fk_user_approve;
 
 	/**
+	 * @var int 	ID of user that has approved, as read by dol_print_object_info()
+	 */
+	public $user_approve_id;
+
+	/**
 	 * @var int 	Date for refuse
 	 */
 	public $date_refuse = 0;
@@ -172,6 +177,9 @@ class Holiday extends CommonObject
 	 */
 	public $holiday = array();
 
+	/**
+	 * @var array<mixed>	Not filled by core
+	 */
 	public $events = array();
 
 	/**
@@ -1029,6 +1037,61 @@ class Holiday extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 *	Send the approval email to the user who requested the leave
+	 *
+	 *  @return int			1 if sent, 0 if the requester has no email, <0 if KO
+	 */
+	public function sendApprovalEmail()
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$langs->load('holiday');
+
+		$recipient = new User($this->db);
+		$recipient->fetch($this->fk_user);
+		if (empty($recipient->email)) {
+			dol_syslog(get_class($this)."::sendApprovalEmail user that requested the leave has no email, so no email is sent");
+			return 0;
+		}
+
+		$validator = new User($this->db);
+		$validator->fetch($this->fk_validator);
+
+		// Not the validator's own address: it may belong to another company and be refused by the mail server.
+		$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+		$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+			$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		}
+		$subject = '['.$societeName.'] '.$langs->transnoentitiesnoconv("HolidaysValidated");
+
+		$link = dol_buildpath('/holiday/card.php', 3).'?id='.$this->id;
+
+		$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".dol_escape_htmltag($recipient->firstname).",</p>\n";
+		$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($this->date_debut, 'day'), dol_print_date($this->date_fin, 'day'))."</p>\n";
+		$message .= "<ul>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dol_escape_htmltag(dolGetFirstLastname($validator->firstname, $validator->lastname))."</li>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
+		$message .= "</ul>\n";
+
+		$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+		$trackid = 'leav'.$this->id;
+
+		$mail = new CMailFile($subject, $recipient->email, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
+		if (!$mail->sendfile()) {
+			$this->error = $mail->error;
+			$this->errors = $mail->errors;
+			dol_syslog(get_class($this)."::sendApprovalEmail id=".$this->id." ".$this->error, LOG_WARNING);
+			return -1;
+		}
+
+		return 1;
 	}
 
 	/**
@@ -2472,6 +2535,7 @@ class Holiday extends CommonObject
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
 						$this->fk_user_approve = $obj->fk_user_approval_done;
+						$this->user_approve_id = $obj->fk_user_approval_done;
 					}
 				}
 			}

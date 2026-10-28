@@ -329,13 +329,9 @@ if (!empty($hashp) && $hashp != 'shared') {
 
 // Check permission on per object basis
 if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
-	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-
-	if (is_object($object)) {
-		$accessallowed = restrictedArea($user, $modulepart, $object);
-	}
 	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
+	$accessallowed = checkUserAccessToDocumentObject($user, $modulepart, $original_file, 'read');
 }
 
 // Security:
@@ -386,7 +382,7 @@ if ($modulepart == 'barcode') {
 			// we must check the securekey that protet against forging url
 			if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 				$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$id.'-'.$login, 'md5');
-				if ($encodedsecurekey != GETPOST('securekey')) {
+				if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 					$code = 'badvalueforsecurekey';
 				}
 			}

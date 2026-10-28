@@ -1282,6 +1282,9 @@ if ($nboftargetok) {
 			echo "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
 			@unlink("$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
 
+			echo "Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
+			@unlink("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss");
+
 			if ($OS === 'windows') {
 				echo "Check that ISCC.exe is in your PATH.\n";
 			} else {
@@ -1305,6 +1308,9 @@ if ($nboftargetok) {
 			$cmd = '';
 			if ($OS === 'windows') {
 				$cmd = "ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+			} else {
+				// On Linux or macOS, ISCC.exe must be a wrapper script into the PATH that calls Wine (Z: drive must point to /)
+				$cmd = "ISCC.exe \"Z:$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			if ($cmd) {
 				echo "$cmd\n";
@@ -1315,9 +1321,6 @@ if ($nboftargetok) {
 			// Move to final dir
 			echo "Move \"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
 			@rename("$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe", "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
-
-			echo "Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
-			@unlink("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss");
 
 			continue;
 		}

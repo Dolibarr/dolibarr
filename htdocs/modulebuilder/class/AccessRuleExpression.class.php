@@ -32,7 +32,7 @@ interface AccessRuleExpression
 	/**
 	 * Render the node as a PHP boolean expression, composite nodes being wrapped in parentheses.
 	 *
-	 * @return string
+	 * @return string	PHP boolean expression
 	 */
 	public function toPhp(): string;
 

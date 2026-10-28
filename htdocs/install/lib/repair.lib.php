@@ -156,3 +156,110 @@ function clean_data_ecm_directories()
 
 	return 1;
 }
+
+/**
+ * Check an entity's ECM index against the filesystem, optionally removing missing-file entries.
+ * The caller must validate the entity and, for confirmed requests, the installer CSRF token.
+ *
+ * @param DoliDB $db Database handler
+ * @param int $entity Entity to repair (without shared entities)
+ * @param string $documentroot Global documents directory; ECM paths are already relative to it
+ * @param bool $confirmed Remove missing-file index entries
+ * @param int $maxdelete Maximum number of entries to remove
+ * @return array{processed:int,missing:int,deleted:int,skipped:int,limitreached:bool,entries:list<array{id:int,path:string}>,error:string}
+ */
+function repairEcmFiles($db, $entity, $documentroot, $confirmed = false, $maxdelete = 100)
+{
+	$report = array('processed' => 0, 'missing' => 0, 'deleted' => 0, 'skipped' => 0, 'limitreached' => false, 'entries' => array(), 'error' => '');
+	if ($entity <= 0 || $maxdelete <= 0) {
+		$report['error'] = 'ErrorWrongParameters';
+		return $report;
+	}
+	$realroot = realpath(dol_osencode($documentroot));
+	if ($realroot === false || !dol_is_dir($documentroot) || !is_readable(dol_osencode($documentroot))) {
+		$report['error'] = 'RepairEcmDirectoryUnavailable';
+		return $report;
+	}
+	$rootprefix = rtrim(str_replace('\\', '/', $realroot), '/').'/';
+	$sql = "SELECT rowid, filename, filepath FROM ".$db->prefix()."ecm_files";
+	$sql .= " WHERE entity = ".((int) $entity)." ORDER BY rowid ASC";
+	$resql = $db->query($sql);
+	if (!$resql) {
+		$report['error'] = 'RepairEcmDatabaseError';
+		return $report;
+	}
+	$candidates = array();
+	while (is_object($obj = $db->fetch_object($resql))) {
+		$report['processed']++;
+		$relativepath = str_replace('\\', '/', (string) $obj->filepath);
+		$filename = (string) $obj->filename;
+		// Never interpret an unsafe or inaccessible indexed path as a missing file.
+		if ($relativepath === '' || preg_match('~^/|(^|/)\.\.?(/|$)|[\x00-\x1f:]~', $relativepath)
+			|| $filename === '' || $filename === '.' || $filename === '..' || preg_match('~[\\\\/\x00-\x1f:]~', $filename)) {
+			$report['skipped']++;
+			continue;
+		}
+		$directory = $documentroot.'/'.$relativepath;
+		$realdirectory = realpath(dol_osencode($directory));
+		if ($realdirectory === false || !is_readable(dol_osencode($directory))
+			|| strpos(rtrim(str_replace('\\', '/', $realdirectory), '/').'/', $rootprefix) !== 0) {
+			$report['skipped']++;
+			continue;
+		}
+		$filetocheck = $directory.'/'.$filename;
+		if (dol_is_file($filetocheck) || dol_is_file($filetocheck.'.noexe')) {
+			continue;
+		}
+		if (dol_is_dir($filetocheck) || dol_is_link($filetocheck) || dol_is_link($filetocheck.'.noexe')) {
+			$report['skipped']++;
+			continue;
+		}
+		$report['missing']++;
+		if (count($candidates) >= $maxdelete) {
+			$report['limitreached'] = true;
+			break;
+		}
+		$candidates[] = $obj;
+		$report['entries'][] = array('id' => (int) $obj->rowid, 'path' => $relativepath.'/'.$filename);
+	}
+	$db->free($resql);
+	if (!$confirmed || !$candidates) {
+		return $report;
+	}
+	if (!$db->begin()) {
+		$report['error'] = 'RepairEcmDatabaseError';
+		return $report;
+	}
+	foreach ($candidates as $candidate) {
+		// Keep an entry if another process has restored its file or changed its indexed path.
+		$filetocheck = $documentroot.'/'.$candidate->filepath.'/'.$candidate->filename;
+		$directory = dirname($filetocheck);
+		$realdirectory = realpath(dol_osencode($directory));
+		if ($realdirectory === false || !is_readable(dol_osencode($directory))
+			|| strpos(rtrim(str_replace('\\', '/', $realdirectory), '/').'/', $rootprefix) !== 0
+			|| dol_is_link($filetocheck) || dol_is_link($filetocheck.'.noexe') || dol_is_dir($filetocheck)) {
+			$report['skipped']++;
+			continue;
+		}
+		if (dol_is_file($filetocheck) || dol_is_file($filetocheck.'.noexe')) {
+			continue;
+		}
+		$sql = "DELETE FROM ".$db->prefix()."ecm_files WHERE rowid = ".((int) $candidate->rowid);
+		$sql .= " AND entity = ".((int) $entity);
+		$sql .= " AND filepath = '".$db->escape($candidate->filepath)."' AND filename = '".$db->escape($candidate->filename)."'";
+		$result = $db->query($sql);
+		if (!$result) {
+			$db->rollback();
+			$report['deleted'] = 0;
+			$report['error'] = 'RepairEcmDatabaseError';
+			return $report;
+		}
+		$report['deleted'] += $db->affected_rows($result);
+	}
+	if (!$db->commit()) {
+		$db->rollback();
+		$report['deleted'] = 0;
+		$report['error'] = 'RepairEcmDatabaseError';
+	}
+	return $report;
+}

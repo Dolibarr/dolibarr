@@ -903,9 +903,9 @@ if (empty($reshook)) {
 				continue; // For some pages, department buyer is not mandatory
 			}
 			// Discard check of mandatory fields for other fields
-			$notmandatoryarray = array('localtax1', 'localtax2', 'color', 'formula', 'dayrule', 'einvoice_vatex');
+			$notmandatoryarray = array('localtax1', 'localtax2', 'color', 'formula', 'dayrule', 'einvoice_vatex', 'phone_code', 'trunk_prefix');
 			foreach ($notmandatoryarray as $notmandatory) {
-				if (!GETPOST($notmandatory)) {
+				if ($value == $notmandatory && !GETPOST($notmandatory)) {
 					continue 2;
 				}
 			}
@@ -2382,7 +2382,7 @@ if ($id > 0) {
 							if (empty($arrayfields[$value]['checked'])) {
 								$showfield = 0; // Column was not selected to be displayed
 							}
-							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
 							if ($value == 'entity') {
