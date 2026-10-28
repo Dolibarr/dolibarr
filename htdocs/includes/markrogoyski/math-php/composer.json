@@ -1,0 +1,32 @@
+{
+  "name": "markrogoyski/math-php",
+  "type": "library",
+  "description": "Math Library for PHP. Features descriptive statistics and regressions; Continuous and discrete probability distributions; Linear algebra with matrices and vectors, Numerical analysis; special mathematical functions; Algebra",
+  "keywords": ["math", "mathematics", "probability", "combinatorics", "statistics", "distributions", "regressions", "linear algebra", "matrix", "algebra", "numerical analysis"],
+  "homepage": "https://github.com/markrogoyski/math-php/",
+  "require": {
+    "php": ">=7.2.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": { "MathPHP\\": "src/" }
+  },
+  "authors": [
+    {
+      "name": "Mark Rogoyski",
+      "role": "Lead developer",
+      "email": "mark@rogoyski.com",
+      "homepage": "https://github.com/markrogoyski"
+    },
+    {
+      "name": "Kevin Nowaczyk",
+      "role": "Developer",
+      "homepage": "https://github.com/Beakerboy"
+    },
+    {
+      "name": "MathPHP Community of Contributors",
+      "homepage": "https://github.com/markrogoyski/math-php/graphs/contributors"
+    }
+  ],
+  "license": "MIT"
+}

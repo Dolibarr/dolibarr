@@ -337,6 +337,8 @@ if (empty($reshook)) {
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 			$object->job = GETPOST("job", 'alphanohtml');
+			$object->country_job_id  = GETPOSTINT('country_job_id');
+ 			$object->state_job_id = GETPOSTINT('state_job_id');
 			$object->signature = GETPOST("signature", 'restricthtml');
 			// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
 			// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
@@ -545,7 +547,11 @@ if (empty($reshook)) {
 
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 				$object->job = GETPOST("job", 'alphanohtml');
+				$object->country_job_id  = GETPOSTINT('country_job_id');
+ 				$object->state_job_id = GETPOSTINT('state_job_id');
 				$object->signature = GETPOST("signature", 'restricthtml');
+
+
 				// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
 				// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
 				// Refuse the save so the literal does not end up persisted and later sent as an
@@ -1379,7 +1385,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Country
 	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country((GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id), 'country_id');
+	print $form->select_country((GETPOST('state_job_id') != '' ? GETPOST('state_job_id') : $object->state_job_id), 'state_job_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -1389,7 +1395,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!getDolGlobalString('USER_DISABLE_STATE')) {
 		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
+		print $formcompany->select_state_ajax('state_job_id', $object->state_id, $object->state_job_id, 'state_id');
 		print '</td></tr>';
 	}
 
@@ -1561,6 +1567,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
+	print '</td></tr>';
+
+	//Country of the position
+	print '<tr><td>'.$form->editfieldkey('Country', 'country_job_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
+	print $form->select_country(GETPOSTINT('country_job_id'), 'country_job_id');
+	if ($user->admin) {
+	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// Department / Province / State of the position
+	print '<tr><td>'.$form->editfieldkey('State', 'state_job_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+	print img_picto('', 'state', 'class="pictofixedwidth"');
+	print $formcompany->select_state_ajax('country_id_job', GETPOSTINT('state_job_id'), GETPOSTINT('state_job_id'), 'state_job_id');
 	print '</td></tr>';
 
 	if ($permissiontoseesalary) {
@@ -3212,6 +3233,24 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print dol_escape_htmltag($object->job);
 			}
 			print '</td></tr>';
+
+			//Country of the position			
+			print '<tr><td>'.$form->editfieldkey('Country', 'country_job_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
+			print $form->select_country(GETPOSTINT('country_job_id')?GETPOSTINT('country_job_id'):$object->country_job_id, 'country_job_id');
+			if (!$user->admin) {
+			
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+			print '</td></tr>';
+
+			// Department / Province / State of the position
+			print '<tr><td>'.$form->editfieldkey('State', 'state_job_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'state', 'class="pictofixedwidth"');
+			print $formcompany->select_state_ajax('country_job_id', GETPOSTINT('state_job_id')?GETPOSTINT('state_job_id'):$object->state_job_id, GETPOSTINT('country_job_id'), 'state_job_id');
+			print '</td></tr>';
+			
+
 
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';

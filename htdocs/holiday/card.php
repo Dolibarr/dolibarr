@@ -264,7 +264,7 @@ if (empty($reshook)) {
 		$tmpUser->fetch($fuserid);
 
 		// If there is no Business Days within request
-		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id, $tmpUser->id);
+		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id, $tmpUser);
 		if ($nbopenedday < 0.5) {
 			setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 			$error++;
@@ -409,7 +409,7 @@ if (empty($reshook)) {
 				$tmpUser->fetch($fuserid);
 
 				// If there is no Business Days within request
-				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id, $tmpUser->id);
+				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id, $tmpUser);
 				if ($nbopenedday < 0.5) {
 					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
 					$error++;
@@ -553,7 +553,7 @@ if (empty($reshook)) {
 						$tmpUser = new User($db);
 						$tmpUser->fetch($object->fk_user);
 
-						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id, $object->fk_user);
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id, $tmpUser);
 
 						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
@@ -669,7 +669,7 @@ if (empty($reshook)) {
 				$tmpUser->fetch($object->fk_user);
 
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id, $object->fk_user);
+				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id, $tmpUser);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
@@ -890,7 +890,7 @@ if (empty($reshook)) {
 				$tmpUser->fetch($object->fk_user);
 
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id, $object->fk_user);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id, $tmpUser);
 
 				if (!$alreadydebited) {
 					$nbopenedday = 0;
@@ -1436,7 +1436,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, $userRequest->country_id, $object->fk_user);
+				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, $userRequest->country_id, $userRequest);
 				print '</td>';
 				print '</tr>';
 

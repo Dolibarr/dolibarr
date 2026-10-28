@@ -151,6 +151,15 @@ class User extends CommonObject
 	public $job;
 
 	/**
+  	* @var int ID of the job location's country
+ 	*/
+	public $country_job_id;
+
+	/**
+  	* @var int ID of the department/province of the job position
+ 	*/
+	public $state_job_id;
+	/**
 	 * @var string user signature
 	 */
 	public $signature;
@@ -584,6 +593,7 @@ class User extends CommonObject
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " u.national_registration_number,";
 		$sql .= " u.ref_employee,";
+		$sql .= " u.country_job_id , u.state_job_id,";
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state,";
 		$sql .= " s.label as label_establishment, u.fk_establishment";
@@ -702,6 +712,8 @@ class User extends CommonObject
 				$this->user_modification_id = $obj->user_modification_id;
 
 				$this->job = $obj->job;
+				$this->state_job_id = $obj->state_job_id;
+ 				$this->country_job_id  = $obj->country_job_id;
 				$this->signature = $obj->signature;
 				$this->admin = $obj->admin;
 				$this->note_public = $obj->note_public;
@@ -2420,6 +2432,8 @@ class User extends CommonObject
 		$sql .= ", personal_email = '".$this->db->escape($this->personal_email)."'";
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", job = '".$this->db->escape($this->job)."'";
+		$sql .= ", state_job_id = ".($this->state_job_id > 0 ? (int) $this->state_job_id : "NULL");
+ 		$sql .= ", country_job_id = ".($this->country_job_id  > 0 ? (int) $this->country_job_id  : "NULL");
 		$sql .= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql .= ", accountancy_code_user_general = '".$this->db->escape($this->accountancy_code_user_general)."'";
 		$sql .= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
