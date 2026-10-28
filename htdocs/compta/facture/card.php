@@ -1209,12 +1209,21 @@ if (empty($reshook)) {
 		$discountcheck = new DiscountAbsolute($db);
 		$result = $discountcheck->fetch(0, $object->id);
 
+		// The conditions are the same than the ones used to show the button converttoreduc (the button is not a protection)
 		$canconvert = 0;
-		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+		$sumofpaymentforconvert = (float) $object->getSommePaiement();
+		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id) && $object->status > Facture::STATUS_DRAFT) {
+			// We can convert a deposit into discount if it is paid (the amount paid, with credit notes and deposits used, must match the amount of the deposit, unless the hidden option is set) and not already converted
+			$sumofpaymentallforconvert = $sumofpaymentforconvert + (float) $object->getSumCreditNotesUsed() + (float) $object->getSumDepositsUsed();
+			if (price2num($object->total_ttc, 'MT') <= price2num($sumofpaymentallforconvert, 'MT') || getDolGlobalInt('DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID')) {
+				$canconvert = 1;
+			}
 		}
-		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->paye == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not paid back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && empty($discountcheck->id)) {
+			$canconvert = 1; // we can convert a validated credit note into discount if it is not paid back and not already converted
+			if ($object->type == Facture::TYPE_CREDIT_NOTE && price2num($sumofpaymentforconvert, 'MT') != 0 && !getDolGlobalString('INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED')) {
+				$canconvert = 0; // A credit note already partially refunded can be converted only if INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED is set (the remaining amount only is converted)
+			}
 		}
 
 		if ($canconvert) {
@@ -1461,6 +1470,8 @@ if (empty($reshook)) {
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
 			}
+		} elseif (empty($discountcheck->id)) {
+			setEventMessages($langs->trans('ErrorInvoiceCantBeConvertedToDiscountInThisState'), null, 'errors');
 		}
 	} elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		// Delete payment

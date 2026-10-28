@@ -175,6 +175,7 @@ ErrorInvoiceReplacedAlreadyInAccountancy=Error, invoice %s has already been tran
 ErrorPointOfTaxOfValidatedInvoiceCantBeChanged=Error, the point of tax date of invoice %s can't be changed once the invoice is validated. Set the invoice back to draft or create a credit note.
 ErrorDiscountAlreadyUsed=Error, discount already used
 ErrorCantSplitAUsedDiscount=Error, a discount that is already used cannot be split
+ErrorInvoiceCantBeConvertedToDiscountInThisState=Error, this invoice can't be converted into a discount in its current state
 ErrorDiscountNotSameCompany=Error, this discount does not belong to the third party of the invoice
 ErrorInvoiceAvoirMustBeNegative=Error, correct invoice must have a negative amount
 ErrorInvoiceOfThisTypeMustBePositive=Error, this type of invoice must have an amount excluding tax positive (or null)
