@@ -1903,12 +1903,6 @@ class BonPrelevement extends CommonObject
 	{
 		global $conf, $langs, $mysoc;
 
-		if ($type == 'bank-transfer') {
-			$this->sepa_schema_version = (getDolGlobalString('PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION') == '9' ? '9' : '3');
-		} else {
-			$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
-		}
-
 		if ($type !== 'bank-transfer') {
 			$format = strtoupper($format);
 			if (!in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
@@ -1922,6 +1916,14 @@ class BonPrelevement extends CommonObject
 		// Clean params
 		if (empty($fk_bank_account)) {
 			$fk_bank_account = ($type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+		}
+
+		if ($type == 'bank-transfer') {
+			$account = new Account($this->db);
+			$account->fetch($fk_bank_account);
+			$this->sepa_schema_version = $account->getSepaTransferSchemaVersion();
+		} else {
+			$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
 		}
 
 		$result = 0;

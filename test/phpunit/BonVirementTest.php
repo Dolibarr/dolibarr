@@ -647,6 +647,46 @@ class BonVirementTest extends CommonClassTest
 	}
 
 	/**
+	 * testFormatOfTheBankAccount
+	 *
+	 * The file uses the format of the bank account it is issued from, whatever the format of the setup.
+	 *
+	 * @return void
+	 */
+	public function testFormatOfTheBankAccount()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->setCompanyAddressForVersion9();
+
+		$account = new Account($db);
+		$account->ref = 'BONVIR-SEPA3';
+		$account->label = 'BonVirementTest pain.001.001.03';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$account->iban = 'FR7630001007941234567891058';
+		$account->bic = self::BIC;
+		$account->owner_name = 'TestCorp';
+		$account->currency_code = 'EUR';
+		$account->sepa_transfer_schema_version = '3';
+		$this->assertGreaterThan(0, $account->create($user), $account->errorsToString());
+
+		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$demAId = $this->createPaymentRequest($facA, 100.0);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array($demAId), $account->id);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error.' '.implode(', ', $bon->invoice_in_error));
+
+		$this->assertStringContainsString('urn:iso:std:iso:20022:tech:xsd:pain.001.001.03', (string) file_get_contents($bon->filename));
+		$this->assertSepaXmlValid($bon->filename);
+	}
+
+	/**
 	 * testVersion9RefusesIncompleteAddress
 	 *
 	 * pain.001.001.09 needs the town and the country of every party: the order is not created and the error
