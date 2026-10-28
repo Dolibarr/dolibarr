@@ -611,7 +611,27 @@ if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 's
 
 	if (!$error) {
 		$db->commit();
-		$action = 'objectcreated';
+
+		// Redirect to the card of the created object (or of the invoice the file has been attached to).
+		// The confirmation message is shown on the card by setEventMessages().
+		$urltocreatedobject = DOL_URL_ROOT.'/fourn/facture/card.php?id='.$createdobject->id;
+		if ($createdobject instanceof Salary) {
+			$urltocreatedobject = DOL_URL_ROOT.'/salaries/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("SalaryCreatedFromFile"), null, 'mesgs');
+		} elseif ($createdobject instanceof ChargeSociales) {
+			$urltocreatedobject = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("SocialContributionCreatedFromFile"), null, 'mesgs');
+		} elseif ($createdobject instanceof ExpenseReport) {
+			$urltocreatedobject = DOL_URL_ROOT.'/expensereport/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("ExpenseAddedFromFile"), null, 'mesgs');
+		} elseif ($attachtoexistinginvoice) {
+			setEventMessages($langs->trans("FileAttachedToExistingInvoice"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("DraftInvoiceCreatedFromFile"), null, 'mesgs');
+		}
+		header("Location: ".dol_buildpath($urltocreatedobject, 1));
+		$db->close();
+		exit;
 	} else {
 		$db->rollback();
 		$createdobject = null;
@@ -725,7 +745,7 @@ if (empty($action)) {
 		<div>'.$langs->trans("UserPaySlip").'<br><br>';
 
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : -1, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		$uploadform .= '<br>';
 
@@ -871,11 +891,8 @@ if ($action == 'uploadfile') {
 									$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
 									$("#processing-duration").val(durationofprocessing);
 
-									// Submit the form
-									//$("#form-result").submit();
-
-									// or show the button Next
-									$("#form-result-submit").show();
+									// Submit the form directly to show the summary of the analysis (instead of showing the button Next)
+									$("#form-result").submit();
 								} else {
 									console.log("We received an error");
 									$("span.blink").remove();
