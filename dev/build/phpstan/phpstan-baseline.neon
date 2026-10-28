@@ -819,7 +819,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
+			count: 2
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
