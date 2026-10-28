@@ -108,7 +108,7 @@ function getListOfAIServices()
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'mistral-ocr-latest'),         // Model of the Mistral OCR endpoint, used to parse documents (PDF, images, ...)
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
