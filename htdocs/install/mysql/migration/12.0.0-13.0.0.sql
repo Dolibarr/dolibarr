@@ -471,6 +471,10 @@ ALTER TABLE llx_livraison RENAME TO llx_delivery;
 ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
 ALTER TABLE llx_livraisondet RENAME TO llx_deliverydet;
 ALTER TABLE llx_livraisondet_extrafields RENAME TO llx_deliverydet_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_rowid_seq RENAME TO llx_delivery_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_extrafields_rowid_seq RENAME TO llx_delivery_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_rowid_seq RENAME TO llx_deliverydet_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_extrafields_rowid_seq RENAME TO llx_deliverydet_extrafields_rowid_seq;
 
 -- rename index
 ALTER TABLE llx_delivery DROP INDEX idx_livraison_uk_ref;

@@ -333,7 +333,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array<int,array{val:string,type:int<-1,1>}>|false		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -363,7 +363,8 @@ class ImportXlsx extends ModeleImports
 				$val = $dateValue->format('Y-m-d H:i:s');
 			}
 
-			$array[$col]['val'] = trim($val);
+			// getValue() returns null on an empty cell, and trim(null) is deprecated since PHP 8.1.
+			$array[$col]['val'] = trim((string) $val);
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;

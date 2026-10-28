@@ -24,8 +24,11 @@
  *      \remarks    To run this script as CLI: phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning
 if (!isset($_SERVER['HTTP_HOST'])) {
@@ -33,7 +36,6 @@ if (!isset($_SERVER['HTTP_HOST'])) {
 }
 
 require_once dirname(__FILE__).'/../../htdocs/dav/dav.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Ensure constants are defined for tests
 if (!defined('CDAV_URI_KEY')) {
@@ -43,7 +45,7 @@ if (!defined('CDAV_CONTACT_TAG')) {
 	define('CDAV_CONTACT_TAG', '');
 }
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -169,7 +171,8 @@ class DAVLibTest extends CommonClassTest
 			$this->assertSame(8, strlen($expectedKey), "CDAV_URI_KEY for host '$host' should be 8 characters");
 
 			// Check that the generated key is alphanumeric (hex)
-			$this->assertMatchesRegularExpression('/^[0-9a-f]{8}$/', $expectedKey, "CDAV_URI_KEY for host '$host' should be hex");
+			$match = preg_match('/^[0-9a-f]{8}$/', $expectedKey);
+			$this->assertSame(1, $match, "CDAV_URI_KEY for host '$host' should be hex");
 		}
 
 		print __METHOD__." OK\n";

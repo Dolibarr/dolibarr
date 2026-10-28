@@ -162,13 +162,6 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '-2';
 }
-$search_orderday = '';
-$search_ordermonth = '';
-$search_orderyear = '';
-$search_deliveryday = '';
-$search_deliverymonth = '';
-$search_deliveryyear = '';
-
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
 $diroutputmassaction = $conf->order->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -268,7 +261,9 @@ $arrayfields = array(
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'c.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
-
+if ($user->socid) {
+	unset($arrayfields['c.note_private']);
+}
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook > 0) {
@@ -419,8 +414,8 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php. Create bills from orders.
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -437,6 +432,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
+		$reuseNotesOnCreateFrom = getDolGlobalString('FACTURE_REUSE_NOTES_ON_CREATE_FROM');
 
 		$currentIndex = 0;
 		foreach ($orders as $id_order) {
@@ -456,10 +452,21 @@ if (empty($reshook)) {
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
+			$notesUpdated = false;
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
+				if ($reuseNotesOnCreateFrom) {
+					if (!empty($cmd->note_public)) {
+						$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $cmd->note_public);
+						$notesUpdated = true;
+					}
+					if (!empty($cmd->note_private)) {
+						$objecttmp->note_private = dol_concatdesc($objecttmp->note_private, $cmd->note_private);
+						$notesUpdated = true;
+					}
+				}
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $cmd->socid;
@@ -471,12 +478,17 @@ if (empty($reshook)) {
 				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
-				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				if (isModEnabled('multicurrency')) {
+					$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				}
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
+				$objecttmp->note_public = $objecttmp->getDefaultCreateValueFor('note_public', ($reuseNotesOnCreateFrom ? $cmd->note_public : null));
+				$objecttmp->note_private = $objecttmp->getDefaultCreateValueFor('note_private', ($reuseNotesOnCreateFrom ? $cmd->note_private : null));
+
+				if (!$reuseNotesOnCreateFrom && empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -494,6 +506,8 @@ if (empty($reshook)) {
 				$res = $objecttmp->create($user);
 
 				if ($res > 0) {
+					$objecttmp->user_creation_id = $user->id;
+
 					$nb_bills_created++;
 					$lastref = $objecttmp->ref;
 					$lastid = $objecttmp->id;
@@ -682,9 +696,15 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
+			if (!$reuseNotesOnCreateFrom && $currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					$errors[] = $objecttmp->error;
+				}
+			} elseif ($notesUpdated && $objecttmp->update($user) < 0) {
+				$error++;
+				$errors[] = $objecttmp->error;
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -779,24 +799,6 @@ if (empty($reshook)) {
 			if ($search_option) {
 				$param .= "&search_option=".urlencode($search_option);
 			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
-			}
 			if ($search_id) {
 				$param .= '&search_id='.urlencode((string) $search_id);
 			}
@@ -864,8 +866,8 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
-					if (!empty($objecttmp->fk_warehouse)) {
-						$idwarehouse = $objecttmp->fk_warehouse;
+					if (!empty($objecttmp->warehouse_id)) {
+						$idwarehouse = $objecttmp->warehouse_id;
 					} else {
 						$idwarehouse = 0;
 					}
@@ -1041,9 +1043,9 @@ if ($socid > 0) {
 }
 // Restriction on sale representative
 if (empty($user->socid) && !$permissiontoreadallthirdparty) {
-	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	$sql .= " AND (".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $user->id);
 	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
-		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('c.fk_soc', $db->sanitize(implode(',', $userschilds)));
 	}
 	$sql .= ")";
 }
@@ -1210,9 +1212,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 
@@ -2581,8 +2583,10 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
 			print dolPrintLabel($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

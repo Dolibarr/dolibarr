@@ -70,6 +70,10 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
+// Enable/Disable logging of webhook calls (trace of calls saved into the webhook history table)
+$item = $formSetup->newItem('WEBHOOK_ENABLE_CALL_LOGS');
+$item->setAsYesNo();
+
 $setupnotempty = count($formSetup->items);
 
 
@@ -155,11 +159,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = webhookAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
-print '<br>';
-
 // Setup page goes here
-print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</span><br><br>';
+print '<div class="info">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</div>';
 
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

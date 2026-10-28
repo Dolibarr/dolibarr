@@ -75,6 +75,7 @@ if (!$sortfield) {
 }
 
 $section = GETPOST("section", 'alpha') ? GETPOST("section", 'alpha') : GETPOST("relativedir", 'alpha');
+$section = dol_sanitizePathName($section);	// Protect against path traversal ('..' is not removed by 'alpha' filter)
 if (!$section) {
 	dol_print_error(null, "ErrorSectionParamNotDefined");
 	exit;
@@ -132,10 +133,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 			$langs->load("errors");
 			if ($resupload < 0) {	// Unknown error
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
-				// Files infected by a virus
-				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else { // Known error
+			} else { // Known error, $resupload is a translation key
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
@@ -161,7 +159,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload)
 }
 
 // Remove dir
-if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) {
+if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoadd) {	// Same permission than the Delete button and than ecm/index.php
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') {
 		$backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
@@ -265,9 +263,14 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
 	} else {
-		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+		$oldrelparentdir = dol_sanitizePathName(GETPOST('oldrelparentdir', 'alpha'));
+		$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
+		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.$oldrelparentdir.'/'.$newlabel;
+		if ($newlabel === '') {
+			$error++;
+		}
 
-		$result = @rename($olddir, $newdir);
+		$result = ($error ? false : @rename($olddir, $newdir));
 		if (!$result) {
 			$langs->load('errors');
 			setEventMessages($langs->trans('ErrorFailToRenameDir', $olddir, $newdir), null, 'errors');
@@ -276,7 +279,7 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 
 		if (!$error) {
 			// Set new value after renaming
-			$relativepath = GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+			$relativepath = $oldrelparentdir.'/'.$newlabel;
 			$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 			$section = $relativepath;
 		}
@@ -481,7 +484,7 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	if ($backtopage) {
 		$paramsdelete['backtopage'] = $backtopage;
 	}
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd);
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

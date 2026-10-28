@@ -25,7 +25,7 @@ $url = $context->getControllerUrl($context->controller). '&id=' . $formCard->obj
 if ($formCard->action != 'presend' && $formCard->action != 'editline') { ?>
 <div id="actions_buttons"><?php
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalAddMoreActionsButtons', $parameters, $context);
 if ($reshook < 0) {
 	$context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } elseif (empty($reshook)) {

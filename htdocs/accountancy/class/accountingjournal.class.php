@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI                     <support@open-dsi.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Janniaux          <alexandre.janniaux@gmail.com>
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -424,7 +426,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		if (!isModEnabled('asset')) {
 			return array();
@@ -511,6 +513,11 @@ class AccountingJournal extends CommonObject
 		}
 
 		$disposal_ref = $langs->transnoentitiesnoconv('AssetDisposal');
+		// VAT rate of a disposal: option ASSET_DISPOSAL_VAT, else default VAT rate of the company country
+		$disposal_vat = (float) price2num(getDolGlobalString('ASSET_DISPOSAL_VAT'));
+		if (!($disposal_vat > 0)) {
+			$disposal_vat = (float) price2num(preg_replace('/\s*\(.*\)/', '', (string) get_default_tva($mysoc, $mysoc)));
+		}
 		$journal = $this->code;
 		$journal_label = $this->label;
 		$journal_label_formatted = $langs->transnoentities($journal_label);
@@ -615,7 +622,6 @@ class AccountingJournal extends CommonObject
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? getDolGlobalInt('ASSET_DISPOSAL_VAT') : 20;
 
 					// Get accountancy codes
 					//---------------------------
@@ -747,7 +753,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getDiscountCustomer(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -773,6 +779,11 @@ class AccountingJournal extends CommonObject
 		} else {
 			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
 		}
+		// Add SQL restrictions from hooks (context accountingjournaldao), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('accountingjournaldao'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND f.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
 			$sql .= " AND f.date_closing >= '".$this->db->idate($date_start)."' AND f.date_closing <= '".$this->db->idate($date_end)."'";
@@ -1056,7 +1067,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getDiscountSupplier(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -1082,6 +1093,11 @@ class AccountingJournal extends CommonObject
 		} else {
 			$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.",".FactureFournisseur::TYPE_SITUATION.")";
 		}
+		// Add SQL restrictions from hooks (context accountingjournaldao), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('accountingjournaldao'));
+		$parameters = array('invoicealias' => 'ff', 'issupplier' => 1, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND ff.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
 			$sql .= " AND ff.date_closing >= '".$this->db->idate($date_start)."' AND ff.date_closing <= '".$this->db->idate($date_end)."'";
@@ -1508,6 +1524,7 @@ class AccountingJournal extends CommonObject
 					$this->db->rollback();
 
 					if ($error >= $max_nb_errors) {
+						$langs->load('errors');
 						$this->errors[] = $langs->trans("ErrorTooManyErrorsProcessStopped");
 						break; // Break in the foreach
 					}

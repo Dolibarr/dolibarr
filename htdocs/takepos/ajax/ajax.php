@@ -3,6 +3,7 @@
  * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +135,22 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 				$prod->price_formated = price(price2num(empty($prod->multiprices[$pricelevel]) ? $prod->price : $prod->multiprices[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
 				$prod->price_ttc_formated = price(price2num(empty($prod->multiprices_ttc[$pricelevel]) ? $prod->price_ttc : $prod->multiprices_ttc[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
 
+				// Add entries to product from hooks, like the 'search' action below does for its rows.
+				// Browsing a category returns product objects, so the values returned by hooks are set as
+				// properties. Existing properties are never overwritten.
+				// The search action hands hooks an object carrying rowid: expose it here too, so a module
+				// written for that action also works when a category is browsed.
+				$prod->rowid = $prod->id;
+				$parameters = array();
+				$parameters['row'] = array('rowid' => $prod->id, 'object' => 'product');
+				$parameters['obj'] = $prod;
+				$hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
+				foreach ($hookmanager->resArray as $key => $val) {
+					if (!isset($prod->$key)) {
+						$prod->$key = $val;
+					}
+				}
+
 				$res[] = $prod;
 			}
 		}
@@ -239,7 +256,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 						$ig = '../public/theme/common/nophoto.png';
 						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
-							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+							$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 							$match = array();
 							preg_match('@src="([^"]+)"@', $image, $match);
@@ -357,7 +374,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		while ($obj = $db->fetch_object($resql)) {
 			$objProd = new Product($db);
 			$objProd->fetch($obj->rowid);
-			$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+			$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 			$match = array();
 			preg_match('@src="([^"]+)"@', $image, $match);
@@ -392,7 +409,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			$parameters = array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			$reshook = $hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
 			if ($reshook > 0) {
 				// replace
 				if (count($hookmanager->resArray)) {
@@ -434,7 +451,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
 		}
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
 	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
@@ -449,11 +466,19 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		$resultinccounter = 0;
 		$templateidtouse = 0;
 
+		/*
 		$url = DOL_URL_ROOT."/blockedlog/ajax/block-add.php?id=".((int) $object->id).'&element='.urlencode($object->element)."&action=DOC_PREVIEW&token=".newToken();
 
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 
 		if ((string) $result['http_code'] == '200') {
+		*/
+		// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
+
+		// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
+		$result = $object->call_trigger('DOC_PREVIEW', $user);
+
+		if ($result >= 0) {
 			$resultinccounter++;
 			$object->pos_print_counter++;	// increase counter to match the change in database
 
@@ -464,7 +489,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			// Send to printer
 			$printer->sendToPrinter($object, $templateidtouse, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		} else {
-			print 'Failed to update print counter for object ID='.$object->id;
+			print 'Failed to update print counter for object ID='.$object->id.' so we refuse to print.';
 		}
 	}
 } elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
@@ -476,6 +501,11 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if ($id > 0) {
 		$object->fetch($id);
 	}
+
+	// Remove sensitive internal properties before serialization to avoid
+	// leaking the database connection parameters and the schema metadata.
+	unset($object->db);
+	unset($object->fields);
 
 	echo json_encode($object);
 } elseif ($action == 'thecheck' && $user->hasRight('takepos', 'run')) {

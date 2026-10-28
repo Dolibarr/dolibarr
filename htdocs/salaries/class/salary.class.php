@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -234,7 +234,8 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		if (!dol_strlen($model)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
 			return 0;
 		}
 
@@ -253,17 +254,30 @@ class Salary extends CommonObject
 				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
 				$result = $module->writeFile($this, $outputlangs);
 				if ($result > 0) {
+					// Index file in database, as commonGenerateDocument() does
+					if (!empty($module->result['fullpath'])) {
+						if (dol_is_file($module->result['fullpath'])) {
+							$this->indexFile($module->result['fullpath'], (empty($module->update_main_doc_field) ? 0 : 1));
+						}
+					} else {
+						dol_syslog('Method ->writeFile was called on object '.get_class($module).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
+
 					return 1;
 				} else {
-					setEventMessages($module->error, $module->errors, 'errors');
+					$this->error = $module->error;
+					$this->errors = $module->errors;
 					return 0;
 				}
 			} else {
-				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
 				return 0;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
 			return 0;
 		}
 	}
@@ -280,11 +294,11 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
+		$this->amount = trim((string) $this->amount);
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
+		$this->note_private = trim((string) $this->note_private);
+		$this->note_public = trim((string) $this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -301,7 +315,7 @@ class Salary extends CommonObject
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " fk_projet=".((int) $this->fk_project).",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
@@ -477,9 +491,9 @@ class Salary extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
+		$this->amount = price2num(trim((string) $this->amount));
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -527,7 +541,7 @@ class Salary extends CommonObject
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".($this->salary > 0 ? ((float) $this->salary) : "null");
 		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
 		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
@@ -613,16 +627,16 @@ class Salary extends CommonObject
 		$langs->loadLangs(['salaries']);
 
 		// Complete datas
-		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+		if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+			// Load the totalpaid field
+			$this->totalpaid = $this->getSommePaiement(0);
 		}
 
 		$datas = [];
 
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
-		if (isset($this->status) && isset($this->alreadypaid)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		if (isset($this->status) && isset($this->totalpaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -953,7 +967,7 @@ class Salary extends CommonObject
 			}
 			$return .= '</span>';
 		}
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

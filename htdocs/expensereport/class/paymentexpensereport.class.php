@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
@@ -141,10 +142,11 @@ class PaymentExpenseReport extends CommonObject
 	 *  Create payment of expense report into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
+	 *  @param      User		$user   	User making payment
+	 *  @param      int<0,1>	$notrigger	1=Disable triggers
 	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -219,6 +221,15 @@ class PaymentExpenseReport extends CommonObject
 			} else {
 				$error++;
 			}
+		}
+
+		if ($totalamount != 0 && !$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTEXPENSEREPORT_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if ($totalamount != 0 && !$error) {
@@ -360,6 +371,15 @@ class PaymentExpenseReport extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTEXPENSEREPORT_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -389,6 +409,18 @@ class PaymentExpenseReport extends CommonObject
 
 		$this->db->begin();
 
+		if ($this->bank_line > 0) {
+			$accline = new AccountLine($this->db);
+			$result = $accline->fetch($this->bank_line);
+			if ($result > 0) {
+				$result = $accline->delete($user);
+				if ($result < 0) {
+					$this->errors[] = $accline->error;
+					$error++;
+				}
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
 			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
@@ -411,6 +443,15 @@ class PaymentExpenseReport extends CommonObject
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTEXPENSEREPORT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback

@@ -117,49 +117,49 @@ class modProduct extends DolibarrModules
 		$this->rights_class = 'produit';
 		$r = 0;
 
-		$this->rights[$r][0] = 31; // id de la permission
-		$this->rights[$r][1] = 'Read products'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 31; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read products'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
-		$this->rights[$r][0] = 32; // id de la permission
-		$this->rights[$r][1] = 'Create/modify products'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 32; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/modify products'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
-		$this->rights[$r][0] = 33; // id de la permission
-		$this->rights[$r][1] = 'Read prices products'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 33; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read prices products'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'product_advance';
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
-		$this->rights[$r][0] = 35; // id de la permission
-		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 35; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read supplier prices'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'product_advance';
 		$this->rights[$r][5] = 'read_supplier_prices';
 		$r++;
 
 		// EN: Advanced permission to write supplier prices
-		$this->rights[$r][0] = 36; // id de la permission
-		$this->rights[$r][1] = 'Write supplier prices'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 36; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Write supplier prices'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'product_advance';
 		$this->rights[$r][5] = 'write_supplier_prices';
 		$r++;
 
-		$this->rights[$r][0] = 34; // id de la permission
-		$this->rights[$r][1] = 'Delete products'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 34; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete products'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
@@ -390,7 +390,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.((int) $conf->entity); // export prices only for the current entity
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price_extrafields as extra ON pr.rowid = extra.fk_object';
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
-			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
+			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('productprice').'))'; // export only latest prices not full history
 			// $this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
 			global $keyforselect, $keyforelement, $keyforaliasextra;
 			$keyforselect = 'product_price';
@@ -703,17 +703,10 @@ class modProduct extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 		// field order as per structure of table llx_product
@@ -896,17 +889,10 @@ class modProduct extends DolibarrModules
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND  elementtype = 'product_fournisseur_price' AND entity IN (0, ".((int) $conf->entity).")";
-			$resql = $this->db->query($sql);
-			if ($resql) {    // This can fail when class is used on old database (during migration for example)
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'product_fournisseur_price';
+			$keyforelement = 'product';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 			// Add some field automatically (if they are not yet provided explicitly)
 			$this->import_fieldshidden_array[$r] = array(
@@ -995,17 +981,10 @@ class modProduct extends DolibarrModules
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product_price' AND entity IN (0, ".((int) $conf->entity).")";
-			$resql = $this->db->query($sql);
-			if ($resql) {    // This can fail when class is used on old database (during migration for example)
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'product_price';
+			$keyforelement = 'product';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 			$this->import_regex_array[$r] = array(

@@ -131,7 +131,7 @@ if ($object->id) {
 	$head = contact_prepare_head($object);
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -143,7 +143,7 @@ if ($object->id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
