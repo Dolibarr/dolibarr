@@ -126,19 +126,6 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= $langs->trans("Disabled");
 			}
 		}
-		if (GETPOSTISSET("filter_status")) {
-			if (strlen($addDescription) > 0) {
-				$addDescription .= ";";
-			}
-			$addDescription .= $langs->trans("Status")."=";
-			if (GETPOST("filter_status") == '1') {
-				$addFilter .= " AND s.status=1";
-				$addDescription .= $langs->trans("Enabled");
-			} elseif (GETPOST("filter_status") == '0') {
-				$addFilter .= " AND s.status=0";
-				$addDescription .= $langs->trans("Disabled");
-			}
-		}
 		if (GETPOST('default_lang', 'alpha') && GETPOST('default_lang', 'alpha') != '-1') {
 			$addFilter .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
 			$addDescription = $langs->trans('DefaultLang')."=";

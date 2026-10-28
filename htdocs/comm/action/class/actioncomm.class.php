@@ -319,6 +319,11 @@ class ActionComm extends CommonObject
 	public $icalcolor;
 
 	/**
+	 * @var array<string,string|array<int,string>> Details of an event coming from an external ical file (description, organizer, attendees, url, categories, geo)
+	 */
+	public $icaldetails = array();
+
+	/**
 	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams;
@@ -518,7 +523,7 @@ class ActionComm extends CommonObject
 		}
 
 		// Clean parameters
-		$this->label = dol_trunc(trim($this->label), 128);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
@@ -980,6 +985,12 @@ class ActionComm extends CommonObject
 				$this->transparency			= $obj->transparency;
 
 				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
+				if (!empty($obj->socname)) {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+					$this->thirdparty = new Societe($this->db);
+					$this->thirdparty->id = $obj->fk_soc;
+					$this->thirdparty->name = $obj->socname;
+				}
 				$this->contact_id = $obj->fk_contact; // To have fetch_contact method working
 				$this->fk_project = $obj->fk_project; // To have fetch_projet method working
 
@@ -1116,6 +1127,44 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *    Return the ids of all the events of the recurring series the current event belongs to.
+	 *    A recurring event is not a master event with occurrences: it is N independent records of
+	 *    llx_actioncomm sharing the same recurid. So an action that must apply to the whole series
+	 *    has to load the ids of the other events first.
+	 *
+	 *    @return   int[]|int<-1,-1>			Ids of the events sorted by date, empty array if the
+	 *    									event is not part of a series, -1 if KO
+	 */
+	public function getIdsOfRecurringSerie()
+	{
+		if (empty($this->recurid)) {
+			return array();
+		}
+
+		$sql = "SELECT a.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.recurid = '".$this->db->escape($this->recurid)."'";
+		$sql .= " AND a.entity IN (".getEntity('agenda').")";
+		$sql .= " ORDER BY a.datep ASC, a.id ASC";
+
+		dol_syslog(get_class($this)."::getIdsOfRecurringSerie", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$ids = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$ids[] = (int) $obj->id;
+		}
+		$this->db->free($resql);
+
+		return $ids;
+	}
+
+	/**
 	 *    Delete event from database
 	 *
 	 *    @param	User		$user			User making the delete
@@ -1223,7 +1272,7 @@ class ActionComm extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->note_private = dol_htmlcleanlastbr(trim(!isset($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;
@@ -1590,7 +1639,10 @@ class ActionComm extends CommonObject
 		global $conf, $langs;
 
 		if (empty($load_state_board)) {
-			$sql = "SELECT a.id, a.datep as dp";
+			// The count and the number of late events are computed by the database instead of reading every event to do. An event
+			// is late when it has a date and that date is before now minus the warning delay (the rule of hasDelay()).
+			$sql = "SELECT COUNT(a.id) as nb,";
+			$sql .= " SUM(CASE WHEN a.datep IS NOT NULL AND a.datep < '".$this->db->idate(dol_now() - $conf->agenda->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		} else {
 			$this->nb = array();
 			$sql = "SELECT count(a.id) as nb";
@@ -1627,7 +1679,6 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			$response = null;  // Ensure the variable is defined
 			if (empty($load_state_board)) {
-				$agenda_static = new ActionComm($this->db);
 				$response = new WorkboardResponse();
 				$response->warning_delay = $conf->agenda->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ActionsToDo");
@@ -1638,14 +1689,10 @@ class ActionComm extends CommonObject
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
 
-				while ($obj = $this->db->fetch_object($resql)) {
-					'@phan-var-force WorkboardResponse $response
-					 @phan-var-force ActionComm $agenda_static';
-					$response->nbtodo++;
-					$agenda_static->datep = $this->db->jdate($obj->dp);
-					if ($agenda_static->hasDelay()) {
-						$response->nbtodolate++;
-					}
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$response->nbtodo = (int) $obj->nb;
+					$response->nbtodolate = (int) $obj->nblate;
 				}
 			} else {
 				$obj = $this->db->fetch_object($resql);
@@ -1803,8 +1850,9 @@ class ActionComm extends CommonObject
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
-		if (!empty($this->label)) {
-			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($this->label);
+		$translatedlabel = $this->getTranslatedLabel();
+		if (!empty($translatedlabel)) {
+			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($translatedlabel);
 		}
 		if (!empty($labeltype)) {
 			$datas['labeltype'] = '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
@@ -1914,7 +1962,7 @@ class ActionComm extends CommonObject
 			$option = 'nolink';
 		}
 
-		$label = $this->label;
+		$label = $this->getTranslatedLabel();
 
 		$result = '';
 
@@ -1990,13 +2038,13 @@ class ActionComm extends CommonObject
 				if (empty($this->label)) {
 					$label = $labeltype;
 				} else {
-					$label = $this->label;
+					$label = $this->getTranslatedLabel();
 				}
 			}
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
+				$labelshort = dol_trunc(empty($label) ? $labeltype : $label, $maxlength);
 			}
 		}
 
@@ -2026,6 +2074,22 @@ class ActionComm extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return the label translated with current user language when the event was created from a known automatic trigger.
+	 *
+	 * @return string
+	 */
+	public function getTranslatedLabel()
+	{
+		global $langs;
+
+		if ($this->code == 'AC_COMPANY_CREATE' && !empty($this->thirdparty->name)) {
+			return $langs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
+		}
+
+		return $this->label;
 	}
 
 	/**
@@ -2512,7 +2576,7 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					if (!empty($filters['module']) && $filters['module'] != 'project@eventorganization') {
+					if (empty($filters['module']) || $filters['module'] != 'project@eventorganization') {
 						$event['assignedUsers'] = $assignedUserArray;
 					}
 
@@ -2791,7 +2855,7 @@ class ActionComm extends CommonObject
 	 */
 	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . " WHERE elementtype = 'product' AND fk_element = ".((int) $origin_id);
 		// using $dbs, not $this->db because function is static
 		if (!$dbs->query($sql)) {
 			//$this->errors = $dbs->lasterror();
@@ -2927,13 +2991,20 @@ class ActionComm extends CommonObject
 			$to = null;  // Ensure 'to' is defined for static analysis
 
 			while ($obj = $this->db->fetch_object($resql)) {
+				// Error status for the reminder being processed in this iteration. $error (the cumulative counter for
+				// the whole run) must not be used to gate this per-reminder processing: once any single reminder fails
+				// (ex: a user with no email on file), it would otherwise stay non-zero for the rest of the loop and
+				// silently defer every other due reminder to the next cron run.
+				$errorforreminder = 0;
+
 				$res = $actionCommReminder->fetch($obj->id);
 				if ($res < 0) {
 					$error++;
+					$errorforreminder++;
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error) {
+				if (!$errorforreminder) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
@@ -2965,10 +3036,12 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
+								$errorforreminder++;
 							}
 						} else {
 							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+							$errorforreminder++;
 						}
 
 						// Sender
@@ -2976,9 +3049,10 @@ class ActionComm extends CommonObject
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
+							$errorforreminder++;
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							// Errors Recipient
 							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
@@ -2991,10 +3065,11 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
 								$error++;
+								$errorforreminder++;
 							}
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
 
 							$res = $actionCommReminder->update($user);
@@ -3019,6 +3094,7 @@ class ActionComm extends CommonObject
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
+						$errorforreminder++;
 					}
 				}
 			}

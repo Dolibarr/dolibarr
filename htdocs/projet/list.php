@@ -362,12 +362,14 @@ if ($mode == 'kanbangroupby' && $groupby) {
 				$i = 1;
 				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
 					$objp = $db->fetch_object($resql);
-					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					// Same label as in the lead status selector: translation of OppStatus<code>, else label of dictionary
+					$labeloppstatus = ($langs->transnoentitiesnoconv("OppStatus".$objp->code) != "OppStatus".$objp->code ? $langs->transnoentitiesnoconv("OppStatus".$objp->code) : $objp->label);
+					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					// If this is a group code that need to be collapsed
 					if ($objp->code == 'WON') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					} elseif ($objp->code == 'LOST') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					}
 
 					$i++;
@@ -1010,8 +1012,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
-
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
@@ -1162,11 +1162,17 @@ if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 if (!empty($search_category_user_array)) {
+	if ($searchCategoryUserOperator) {
+		$param .= '&search_category_user_operator='.((int) $searchCategoryUserOperator);
+	}
 	foreach ($search_category_user_array as $tmpval) {
 		$param .= '&search_category_user_list[]='.urlencode($tmpval);
 	}
 }
 if (!empty($search_category_array)) {
+	if ($searchCategoryProjectOperator) {
+		$param .= '&search_category_project_operator='.((int) $searchCategoryProjectOperator);
+	}
 	foreach ($search_category_array as $tmpval) {
 		$param .= '&search_category_project_list[]='.urlencode($tmpval);
 	}
@@ -1266,6 +1272,9 @@ if ($search_login) {
 if ($search_import_key) {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_omitChildren) {
+	$param .= '&search_omitChildren=on';
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1273,6 +1282,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
+// Use Post/Redirect/Get for filter submissions so browser history contains a
+// reconstructible GET request instead of a POST that requires confirmation.
+$filterSearchSubmitted = GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha');
+$filterResetSubmitted = GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($filterSearchSubmitted || $filterResetSubmitted)) {
+	$redirectUrl = dolBuildUrl($_SERVER['PHP_SELF'], array(
+		'formfilteraction' => 'list',
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+	));
+	$redirectUrl .= $param;
+	if ($filterResetSubmitted && $search_status == -1) {
+		$redirectUrl .= '&search_status=-1';
+	}
+	header('Location: '.$redirectUrl, true, 303);
+	exit;
+}
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -2357,8 +2386,12 @@ while ($i < $imaxinloop) {
 					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
 				}
 			}
-			print '<td class="center tdoverflowmax150" title="'.$s.'">';
-			print $s;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTMLForAttribute($s).'">';
+			if ($s) {
+				print '<span class="badge badge-oppstatus">';
+				print dolPrintHTML($s);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

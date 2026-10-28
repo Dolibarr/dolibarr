@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-Permission23101 =geplante Aufgabe einsehen
-Permission23102 =Erstelle/ändere geplanten Job
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
 CronList=Geplante Aufträge
 CronDelete=cronjobs löschen

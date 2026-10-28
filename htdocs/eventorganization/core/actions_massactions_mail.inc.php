@@ -98,27 +98,21 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofselectedid = array();
 	$listofselectedref = array();
 	require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
-	$attendee = new ConferenceOrBoothAttendee($db);
 	$objecttmp = new $objectclass($db);
 	'@phan-var-force CommonObject $objecttmp';
 
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result > 0) {
-			$attendees = $attendee->fetchAll();
-			if (is_array($attendees) && count($attendees) > 0) {
-				foreach ($attendees as $attmail) {
-					if (!empty($attmail->email)) {
-						$attmail->fetch_thirdparty();
-						$listofselectedid[$attmail->email] = $attmail;
-						$listofselectedref[$attmail->email] = $objecttmp;
-					}
-				}
-			}
+		if ($result > 0 && $objecttmp instanceof ConferenceOrBoothAttendee && !empty($objecttmp->email)) {
+			$attendee = clone $objecttmp;
+			$attendee->fetch_thirdparty();
+			$listofselectedid[$attendee->email] = $attendee;
+			$listofselectedref[$attendee->email] = $attendee;
 		}
 	}
 	'@phan-var-force CommonObject $objecttmp';
-	'@phan-var-force array<string,CommonObject> $listofselectedref';
+	'@phan-var-force array<string,ConferenceOrBoothAttendee> $listofselectedid';
+	'@phan-var-force array<string,ConferenceOrBoothAttendee> $listofselectedref';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {

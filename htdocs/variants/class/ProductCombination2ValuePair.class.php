@@ -200,7 +200,7 @@ class ProductCombination2ValuePair
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
-        c.rowid,
+        c2v.rowid,
         c2v.fk_prod_attr_val,
         c2v.fk_prod_attr,
         c2v.fk_prod_combination

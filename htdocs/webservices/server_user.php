@@ -622,7 +622,9 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 								$key = 'contact_options_'.$key;
 								$key = substr($key, 8); // Remove 'contact_' prefix
-								$contact->array_options[$key] = $thirdpartywithuser[$key];
+								if (isset($thirdpartywithuser[$key])) {
+									$contact->array_options[$key] = $thirdpartywithuser[$key];
+								}
 							}
 						}
 
@@ -640,7 +642,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
 								if ($thirdpartywithuser['group_id'] > 0) {
-									$edituser->SetInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
+									$edituser->setInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
 								}
 							} else {
 								$error++;

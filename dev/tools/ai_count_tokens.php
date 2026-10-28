@@ -1,15 +1,32 @@
 #!/usr/bin/env php
 <?php
-/**
- * count_tokens.php
+/*
+ * Copyright (C) 2026 	Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
- * Usage:strpos($relativePathUnix, $dir . '/') === 0
- *   php count_tokens.php toto/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * ai_count_tokens.php
+ *
+ * Usage:
+ *   php ai_count_tokens.php toto/
  *
  * Estimate :
  *   ~1 token for 3.5 chars
  *
- * This is not exactly the tokenizer of Claude.
+ * This is not exactly the tokenizer of Claude or Mistral, but it's a good approximation.
  */
 
 if ($argc < 2) {
@@ -32,7 +49,8 @@ $excludedDirs = [
 	'.idea',
 	'.phan',
 	'.settings',
-	'.txs',
+	'.tx',
+	'.vibe',
 	'.vscode',
 	'vendor',
 	'documents',
@@ -80,11 +98,34 @@ $totalFiles = 0;
 
 $files = [];
 
-$iterator = new RecursiveIteratorIterator(
+$excludedDirs = array_map(function ($dir) {
+	return trim(str_replace('\\', '/', $dir), '/');
+}, $excludedDirs);
+
+// Prune excluded dirs before descending into them (also avoids errors on unreadable dirs like documents/)
+$filter = new RecursiveCallbackFilterIterator(
 	new RecursiveDirectoryIterator(
 		$root,
 		FilesystemIterator::SKIP_DOTS
-	)
+	),
+	function ($current) use ($root, $excludedDirs) {
+		if (!$current->isDir()) {
+			return true;
+		}
+		$relativePathUnix = str_replace(DIRECTORY_SEPARATOR, '/', str_replace($root . DIRECTORY_SEPARATOR, '', $current->getPathname()));
+		foreach ($excludedDirs as $dir) {
+			if ($relativePathUnix === $dir || strpos($relativePathUnix, $dir . '/') === 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+);
+
+$iterator = new RecursiveIteratorIterator(
+	$filter,
+	RecursiveIteratorIterator::LEAVES_ONLY,
+	RecursiveIteratorIterator::CATCH_GET_CHILD	// Skip unreadable dirs instead of throwing
 );
 
 foreach ($iterator as $file) {
@@ -101,7 +142,6 @@ foreach ($iterator as $file) {
 	$excluded = false;
 
 	foreach ($excludedDirs as $dir) {
-		$dir = trim(str_replace('\\', '/', $dir), '/');
 		if (
 			$relativePathUnix === $dir ||
 			strpos($relativePathUnix, $dir . '/') === 0
@@ -122,11 +162,11 @@ foreach ($iterator as $file) {
 		continue;
 	}
 
-	// Taille
+	// Size
 	$content = @file_get_contents($path);
 
 	if ($content === false) {
-		echo "Impossible de lire : {$relativePath}\n";
+		echo "Could not read : {$relativePath}\n";
 		continue;
 	}
 
@@ -195,7 +235,7 @@ function formatNumber(int $number): string
 
 echo "\n";
 echo "========================================\n";
-echo "       ESTIMATION TOKENS CLAUDE\n";
+echo "       TOKEN ESTIMATION\n";
 echo "========================================\n\n";
 
 echo "Project      : {$root}\n";
@@ -205,11 +245,11 @@ echo "Size         : " . formatBytes($totalChars) . "\n";
 echo "Tokens       : " . formatNumber($totalTokens) . "\n";
 echo "\n";
 
-echo "Ratio used : 1 token / 3,5 caractères\n";
+echo "Ratio used: 1 token / 3.5 chars\n";
 echo "\n";
 
 echo "----------------------------------------\n";
-echo "TOP 20 DES FICHIERS\n";
+echo "TOP 20 FILES\n";
 echo "----------------------------------------\n\n";
 
 foreach (array_slice($files, 0, 20) as $file) {

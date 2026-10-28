@@ -79,7 +79,7 @@ $num = 0;
 $error = 0;
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
 if (!isModEnabled('societe')) {
@@ -189,6 +189,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
 			$action = '';
 		}

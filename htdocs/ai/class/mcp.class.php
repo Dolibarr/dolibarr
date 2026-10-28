@@ -222,6 +222,17 @@ class McpHandler
 				$toolInstance = new $className($this->db, $this->user, $this->conf);
 
 				if ($toolInstance instanceof McpTool) {
+					// When the API bridge is on, it replaces the other native tools (they would
+					// duplicate what the API endpoints already offer). System tools are kept
+					// because parse_intent.php needs them to drive the conversation.
+					if (!in_array($basename, ['api_bridge', 'coffeemaker', 'conversation', 'email_cleaner', 'navigation', 'reports'])
+						&& !$this->isSystemTool($toolInstance)) {
+						continue;
+					}
+					// Easter egg tool family is loaded only when its hidden option is set
+					if ($basename == 'coffeemaker' && !getDolGlobalInt('AI_COFFEE_EASTER_EGG')) {
+						continue;
+					}
 					$this->registerTool($basename, $toolInstance);
 				} else {
 					dol_syslog("[McpHandler] Tool class '{$className}' does not extend McpTool.", LOG_ERR);
@@ -335,6 +346,9 @@ class McpHandler
 				if (empty($def['categories'])) {
 					$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
 				}
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
 				$schema[] = $def;
 			}
 		}
@@ -364,6 +378,10 @@ class McpHandler
 
 			foreach ($tool->getDefinitions() as $def) {
 				$name = isset($def['name']) ? $def['name'] : '';
+
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
 
 				if ($isSystem) {
 					// Always include system tools but tag them so parse_intent.php
@@ -438,6 +456,10 @@ class McpHandler
 			foreach ($tool->getDefinitions() as $def) {
 				$name = isset($def['name']) ? $def['name'] : '';
 
+				if (!empty($def['inputSchema']) && is_array($def['inputSchema'])) {
+					$def['inputSchema'] = self::normalizeInputSchema($def['inputSchema']);
+				}
+
 				// Check is_system flag in the definition array itself.
 				// This is set directly in conversation.class.php getDefinitions()
 				// and works even if the isSystem() class method is not yet deployed.
@@ -469,6 +491,20 @@ class McpHandler
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Normalize a tool input schema to ensure broad compatibility with LLM
+	 * function-calling APIs (e.g. Google Gemini, Claude, OpenAI).
+	 *
+	 * Delegates to McpTool::normalizeInputSchema().
+	 *
+	 * @param array<string, mixed> $schema Input schema to normalize
+	 * @return array<string, mixed> Normalized input schema
+	 */
+	public static function normalizeInputSchema(array $schema): array
+	{
+		return McpTool::normalizeInputSchema($schema);
 	}
 
 	/**
@@ -506,6 +542,67 @@ class McpHandler
 
 		return '';
 	}
+	/**
+	 * Stop a write until it is confirmed, on the MCP multi-round-trip pattern.
+	 *
+	 * Returns null when the call may proceed: the tool writes nothing, or the
+	 * caller presented a valid confirmation. Otherwise returns what the caller
+	 * gets instead of the write.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being executed.
+	 * @param array<string,mixed> $args Arguments, carrying requestState on the second leg.
+	 * @return array<string,mixed>|null Response to return, or null to proceed.
+	 */
+	private function checkWriteConfirmation($tool, $toolName, array $args)
+	{
+		if (!method_exists($tool, 'writeConfirmationPreview')) {
+			return null;
+		}
+		$preview = (string) $tool->writeConfirmationPreview($toolName, $args);
+		if ($preview === McpTool::NO_WRITE) {
+			return null;	// read tool
+		}
+
+		// A write bound to fail is refused before the user is asked to approve it.
+		if (method_exists($tool, 'writePrecheck')) {
+			$refused = (string) $tool->writePrecheck($toolName, $args);
+			if ($refused !== '') {
+				return array('error' => $refused);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';
+		$gate = new AiWriteConfirmation($this->db);
+
+		$state = isset($args['requestState']) ? (string) $args['requestState'] : '';
+		if ($state !== '') {
+			if ($gate->consume($this->user, $toolName, $args, $state)) {
+				return null;	// confirmed: the write runs
+			}
+
+			return array('error' => $gate->error);
+		}
+
+		$issued = $gate->issue($this->user, $toolName, $args, $preview);
+		if ($issued === '') {
+			return array('error' => $gate->error);
+		}
+
+		return array(
+			'resultType' => 'input_required',
+			'inputRequests' => array(
+				array(
+					'type' => 'confirmation',
+					// The chat shows the sentence as HTML, an MCP client as text:
+					// no "&rarr;" or "&euro;" there, and accented names as written.
+					'prompt' => ($this->toolcontext === self::CTX_MCP_SERVER) ? dol_html_entity_decode($preview, ENT_QUOTES | ENT_HTML5) : $preview
+				)
+			),
+			'requestState' => $issued
+		);
+	}
+
 	/**
 	 * Execute a specific tool by its name.
 	 *
@@ -569,6 +666,13 @@ class McpHandler
 				return array('error' => ($missingRight === 'undeclared')
 					? "Tool '".$toolName."' cannot run: it declares no required rights."
 					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
+			// Writes do not execute on the first call: the caller gets a preview and
+			// a confirmation state, and comes back with it. Reads are unaffected.
+			$pending = $this->checkWriteConfirmation($toolInstance, $toolName, $args);
+			if ($pending !== null) {
+				return $pending;
 			}
 
 			$result = $toolInstance->execute($toolName, $args);

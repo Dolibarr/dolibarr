@@ -198,6 +198,8 @@ if ($action == 'confirm_delete') {
 			$callbacktodel .= '/core/modules/oauth/microsoft_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT2') {
 			$callbacktodel .= '/core/modules/oauth/microsoft2_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_MICROSOFTAPP') {
+			$callbacktodel .= '/core/modules/oauth/microsoftapp_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_GENERIC') {
 			$callbacktodel .= '/core/modules/oauth/generic_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		}
@@ -399,14 +401,16 @@ if (count($listinsetup) > 0) {
 		print '</tr>';
 
 		if ($supported) {
-			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
-			print '<tr class="oddeven value">';
-			print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
-			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
-			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
-			print '</td>';
-			print '<td></td>';
-			print '</tr>';
+			if ($keyforsupportedoauth2array != 'OAUTH_MICROSOFTAPP_NAME') {
+				$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
+				print '<tr class="oddeven value">';
+				print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
+				print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
+				print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
+				print '</td>';
+				print '<td></td>';
+				print '</tr>';
+			}
 
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
@@ -440,12 +444,15 @@ if (count($listinsetup) > 0) {
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
 		print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
+		if (getDolGlobalString($key[2])) {
+			print showEyeForField('eye'.$key[2], $key[2]);
+		}
 		print '</td>';
 		print '<td></td>';
 		print '</tr>';
 
 		// Tenant
-		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2' || $keybeforeprovider == 'MICROSOFT3') {
+		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2' || $keybeforeprovider == 'MICROSOFT3' || $keybeforeprovider == 'MICROSOFTAPP') {
 			print '<tr class="oddeven value">';
 			print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_TENANT").'</label></td>';
 			print '<td><input type="text" size="100" id="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" name="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" value="'.getDolGlobalString('OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT').'">';

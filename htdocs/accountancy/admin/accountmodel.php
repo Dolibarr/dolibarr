@@ -55,7 +55,7 @@ if (isModEnabled('accounting')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
+$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'holiday', 'hrm', 'resource'));
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -234,6 +234,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$_POST = array('id' => $id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
 				dol_print_error($db);

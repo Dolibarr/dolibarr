@@ -1350,16 +1350,19 @@ class DolGraph
 				if ($i > 0) {
 					$this->stringtoshow .= ', ' . "\n";
 				}
-				if (is_array($this->datacolor[$i])) {
-					$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')'; // If datacolor is array(R, G, B)
-				} else {
-					$tmp = str_replace('#', '', $this->datacolor[$i]);
+				$datacolor_item = isset($this->datacolor[$i]) ? $this->datacolor[$i] : null;
+				if (is_array($datacolor_item)) {
+					$color = 'rgb(' . $datacolor_item[0] . ', ' . $datacolor_item[1] . ', ' . $datacolor_item[2] . ')'; // If datacolor is array(R, G, B)
+				} elseif ($datacolor_item !== null) {
+					$tmp = str_replace('#', '', $datacolor_item);
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
 						$color = 'rgba(0,0,0,.0)'; // If $val is '-123'
 					} else {
 						$color = "#" . $tmp; // If $val is '123' or '#123'
 					}
+				} else {
+					$color = '#888888';
 				}
 				$this->stringtoshow .= "'" . $color . "'";
 				$i++;
@@ -1373,7 +1376,7 @@ class DolGraph
 					if ($i > 0) {
 						$this->stringtoshow .= ', ' . "\n";
 					}
-					if ($this->datacolor !== null) {
+					if ($this->datacolor !== null && isset($this->datacolor[$i])) {
 						$datacolor_item = $this->datacolor[$i];
 					} else {
 						$datacolor_item = null;
