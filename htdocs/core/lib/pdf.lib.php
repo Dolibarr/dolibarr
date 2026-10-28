@@ -3380,6 +3380,7 @@ function pdf_render_subtotals(
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
+	$prevDesc = $object->lines[$i]->desc;
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
@@ -3423,6 +3424,8 @@ function pdf_render_subtotals(
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 
 	$generator->cols['desc']['content']['align'] = $prevAlign;
+	// The text "Subtotal of ..." must not stay in the line: a second generation of the document would prefix it again
+	$object->lines[$i]->desc = $prevDesc;
 }
 
 
