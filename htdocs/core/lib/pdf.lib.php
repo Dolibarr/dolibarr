@@ -1322,7 +1322,7 @@ function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($account->getBankFieldLabel($val)), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}

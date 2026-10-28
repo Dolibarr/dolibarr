@@ -53,6 +53,32 @@ $langs->load("main");
 class BankAccountTest extends CommonClassTest
 {
 	/**
+	 * Test country-specific bank account fields and labels.
+	 *
+	 * @return void
+	 */
+	public function testNorthAmericanBankAccountFieldsAndLabels()
+	{
+		global $db;
+
+		$account = new Account($db);
+		$account->country_code = 'CA';
+
+		$this->assertSame(3, $account->useDetailedBBAN());
+		$this->assertSame(array('BankCode', 'DeskCode', 'BankAccountNumber'), $account->getFieldsToShow());
+		$this->assertSame('InstitutionNumber', $account->getBankFieldLabel('BankCode'));
+		$this->assertSame('TransitNumber', $account->getBankFieldLabel('DeskCode'));
+
+		$account->country_code = 'FR';
+		$this->assertSame(1, $account->useDetailedBBAN());
+
+		$account->country_code = 'US';
+		$this->assertSame(2, $account->useDetailedBBAN());
+		$this->assertSame(array('BankCode', 'BankAccountNumber'), $account->getFieldsToShow());
+		$this->assertSame('ABARoutingNumber', $account->getBankFieldLabel('BankCode'));
+	}
+
+	/**
 	 * testBankAccountCreate
 	 *
 	 * @return  int
