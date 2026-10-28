@@ -417,7 +417,7 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
+	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php. Create bills from orders.
 		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
