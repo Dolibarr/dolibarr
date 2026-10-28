@@ -68,7 +68,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	string	$selectid	Preselected journal code
+	 * @param	int|string	$selectid	Preselected journal rowid or code (depends on $select_in)
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
@@ -349,7 +349,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   		$selectid          	Preselected id of accounting accounts (depends on $select_in)
+	 * @param int|string		$selectid          	Preselected id of accounting accounts (depends on $select_in)
 	 * @param string   		$htmlname          	Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int|string    $showempty         	1=Add an empty field, 2=Add an empty field+'None' field
 	 * @param array    		$event             	Event options

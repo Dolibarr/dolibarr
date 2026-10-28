@@ -9282,7 +9282,7 @@ abstract class CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  bool|int<0,1> $notrigger false or 0=launch triggers after, true or 1=disable triggers
 	 * @return int             <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = false)
@@ -9566,7 +9566,7 @@ abstract class CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      	User that modifies
-	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @param  bool|int<0,1> $notrigger 	false or 0=launch triggers after, true or 1=disable triggers
 	 * @return int             	<0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
@@ -9669,7 +9669,7 @@ abstract class CommonObject
 	 * Delete object in database
 	 *
 	 * @param 	User 	$user       			User that deletes
-	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
+	 * @param 	bool|int<0,1> 	$notrigger  			false or 0=launch triggers after, true or 1=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
 	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */

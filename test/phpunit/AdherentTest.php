@@ -216,6 +216,9 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$localobject=new Adherent($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
+		if ($result < 0) {
+			print $localobject->error."\n";
+		}
 		$this->assertLessThan($result, 0);
 		return $localobject;
 	}
