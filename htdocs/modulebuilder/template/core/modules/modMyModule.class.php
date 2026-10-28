@@ -512,6 +512,7 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER DOCUMENT MODELS */
 		/* END MODULEBUILDER DOCUMENT MODELS */
 
+		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';

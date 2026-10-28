@@ -1585,6 +1585,10 @@ function setModuleBuilderDescriptorDocModelEntry(string $content, string $object
 
 	return preg_replace_callback(
 		getModuleBuilderDescriptorDocModelZonePattern(),
+		/**
+		 * @param	array<int, string>	$matches	Captured BEGIN marker line, zone body and END marker
+		 * @return	string
+		 */
 		function (array $matches) use ($entryPattern, $objectName, $includeRef, $includeDoc): string {
 			$indent = array();
 			preg_match('/^\h*/', $matches[3], $indent);
@@ -1611,6 +1615,10 @@ function removeModuleBuilderDescriptorDocModelEntry(string $content, string $obj
 
 	return preg_replace_callback(
 		getModuleBuilderDescriptorDocModelZonePattern(),
+		/**
+		 * @param	array<int, string>	$matches	Captured BEGIN marker line, zone body and END marker
+		 * @return	string
+		 */
 		function (array $matches) use ($entryPattern): string {
 			return $matches[1].preg_replace($entryPattern, '', $matches[2]).$matches[3];
 		},
