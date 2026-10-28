@@ -25,14 +25,14 @@ jobs:
       - name: Run PHPStan with repo config (baseline included)
         continue-on-error: true
         run: |
-          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan.neon.dist > td_dump_with_baseline.txt 2>&1 || true
+          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit 7G --error-format=github -c phpstan.neon.dist > td_dump_with_baseline.txt 2>&1 || true
           cat td_dump_with_baseline.txt
 
       - name: Run PHPStan without baseline
         continue-on-error: true
         run: |
           sed '/phpstan-baseline.neon/d' phpstan.neon.dist > phpstan_apstats.neon
-          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_dump_nobaseline.txt 2>&1 || true
+          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_dump_nobaseline.txt 2>&1 || true
           cat td_dump_nobaseline.txt
 
       - name: Commit dumps
