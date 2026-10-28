@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
@@ -241,8 +242,8 @@ if (empty($reshook)) {
 	$uploaddir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {   // Create bills from sendings.
-		$sendings = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills') {   // Create bills from sendings.
+		$sendings = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
@@ -361,10 +362,15 @@ if (empty($reshook)) {
 					$num = count($lines);
 
 					for ($i = 0; $i < $num; $i++) {
+						// A standalone shipment line (SHIPMENT_STANDALONE) has no price nor VAT: use the selling price of the product for this customer
+						if (empty($expd->origin_id)) {
+							shippingSetStandaloneLineSellPrice($lines[$i], $expd->thirdparty);
+						}
+
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
+							$desc = dol_concatdesc($desc, (!empty($expd->origin_id) ? $langs->trans("Order").': '.$expdCmdSrc->ref. ' - ' : '').$langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
 
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
@@ -631,30 +637,24 @@ if (empty($reshook)) {
 	}
 
 	// If massaction is close
-	if ($massaction == 'classifyclose') {
+	if ($massaction == 'classifyclose' && $permissiontoadd) {
 		$error = 0;
 		$selectids = GETPOST('toselect', 'array:int');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);
 			$result = $object->setClosed();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		$massaction = $action = 'classifyclose';
 
-		if ($result < 0) {
-			$error++;
-		}
-
-
 		if (!$error) {
-			$db->commit();
-
 			setEventMessage($langs->trans("Close Done"));
 			header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		} else {
-			$db->rollback();
 			exit;
 		}
 	}
@@ -813,9 +813,9 @@ if ($search_all) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('e.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('e.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -1052,9 +1052,11 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if ($user->hasRight('expedition', 'creer')) {
+	$arrayofmassactions['classifyclose'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close");
+}
 if ($user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }
@@ -1072,7 +1074,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars i
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expedition/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create', '', $user->hasRight('expedition', 'creer'));
 
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1551,7 +1553,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $object->getNomUrl(1);
+			print $object->getNomUrl(1, '', 0, 0, 0, -1, 1);
 			$filedir = ($conf->expedition->multidir_output[$object->entity ?? $conf->entity] ? $conf->expedition->multidir_output[$object->entity ?? $conf->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);

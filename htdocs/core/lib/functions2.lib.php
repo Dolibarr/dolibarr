@@ -101,7 +101,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
+				if (dol_substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(dol_substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -465,8 +465,8 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Reconciliation
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
-		'@phan-var-force Account $object';
+	if (!empty($object->user_rappro) || !empty($object->fk_user_rappro) || !empty($object->date_rappro)) {
+		'@phan-var-force AccountLine $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -486,7 +486,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->fk_user_rappro ? $object->fk_user_rappro : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -2671,8 +2671,13 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
-	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts') {
+	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts' || $moduleobject == 'variouspayments') {
 		$moduledirforclass = 'compta/bank';
+	} elseif (in_array($moduleobject, array('vatpayments', 'localtaxes', 'socialcontributions'))) {
+		// The tax module exposes its API classes from htdocs/tax/class/ (its module dir),
+		// even though the business classes live under compta/tva, compta/localtax and
+		// compta/sociales. The API Explorer discovers them there via the default 'tax' dir.
+		$moduledirforclass = 'tax';
 	} elseif ($moduleobject == 'category' || $moduleobject == 'categorie') {
 		$moduledirforclass = 'categories';
 	} elseif ($moduleobject == 'order' || $moduleobject == 'orders') {
@@ -2693,6 +2698,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fourn';
 	} elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
 		$moduledirforclass = 'fichinter';
+	} elseif ($moduleobject == 'cronjobs') {
+		$moduledirforclass = 'cron';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {
@@ -2701,7 +2708,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif ($moduleobject == 'paiements') {
 		$moduledirforclass = 'compta/facture';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments', 'websites'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	} elseif ($moduleobject == 'paymentsalaries') {
 		$moduledirforclass = 'salaries';
@@ -2711,6 +2718,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
+	} elseif ($moduleobject == 'resources' || $moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;
@@ -3110,12 +3119,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 
@@ -3175,17 +3188,17 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						}
 						?>
 						hash_algo: 'dol_hash-<?php echo $algo; ?>',
-						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+						hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>,
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
 						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
 						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						instance_entity: '<?php echo (int) $conf->entity; ?>',
-						dbtype: '<?php echo dol_escape_js($db->type); ?>',
-						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
-						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
-						db_version: '<?php echo dol_escape_js(version_db()); ?>',
-						distrib: '<?php echo dol_escape_js($distrib); ?>',
+						dbtype: <?php echo "'".dol_escape_js($db->type)."'"; ?>,
+						php_version: <?php echo "'".dol_escape_js(phpversion())."'"; ?>,
+						os_version: <?php echo "'".dol_escape_js(version_os('smr'))."'"; ?>,
+						db_version: <?php echo "'".dol_escape_js(version_db())."'"; ?>,
+						distrib: <?php echo "'".dol_escape_js($distrib)."'"; ?>,
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
@@ -3195,7 +3208,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavefirstok ?>', token: '<?php echo currentToken(); ?>' },	// for update
+								data: { action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3205,7 +3218,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavelastko ?>', token: '<?php echo currentToken(); ?>' },
+								data: { action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});

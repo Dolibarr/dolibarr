@@ -18,12 +18,25 @@ Create and maintain Hurl tests for Dolibarr ERP/CRM. Use when asked to create, w
 
 **NOTE**: Hurl uses Rust regex syntax, which does not support negative lookaheads (`(?!...)`). Use character class exclusions like `[^X]` instead.
 
+
 ## When to Use
 - User asks to create hurl tests for Dolibarr
 - User asks to fix failing hurl tests
 - Working with test/hurl directory
 - Need to test Dolibarr GUI or API endpoints
 - User mentions "hurl test" or "hurl tests"
+
+
+## Relationship with AGENTS.md
+
+The instructions in this file are **complementary to** the instructions defined in `AGENTS.md`.
+
+- `AGENTS.md` contains the general instructions and rules for the project.
+- `SKILLS.md` contains additional instructions specific to skills.
+- Unless explicitly stated otherwise, the instructions from both files apply.
+- `SKILLS.md` does not replace or override `AGENTS.md`.
+- If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
+
 
 ## Dolibarr Hurl Test Conventions
 
@@ -189,14 +202,14 @@ body not contains "Warning: [^I]"
 
 ### Running Tests
 
-#### Using run_with_server.sh
+#### Using run.sh
 The recommended way to run hurl tests locally:
 ```bash
 # Run specific test path
-test/hurl/run_with_server.sh gui/fourn/commande
+test/hurl/run.sh gui/fourn/commande
 
 # Run with custom port
-test/hurl/run_with_server.sh --port=9000 gui/fourn/commande
+test/hurl/run.sh --port=9000 gui/fourn/commande
 ```
 
 #### Using run.sh Directly

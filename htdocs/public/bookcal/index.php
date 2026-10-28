@@ -63,7 +63,7 @@ if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
 
-$langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
+$langs->loadLangs(array("main", "other", "dict", "agenda", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
@@ -290,7 +290,7 @@ llxHeaderVierge('BookingCalendar');
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
 if ($object->status == $object::STATUS_DRAFT) {
-	$langs->trans("errors");
+	$langs->load("errors");
 	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
 }
 
@@ -421,8 +421,8 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate((int) $value->start);
-				$endarray = dol_getdate((int) $value->end);
+				$startarray = dol_getdate((int) $value->date_start);
+				$endarray = dol_getdate((int) $value->date_end);
 				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);

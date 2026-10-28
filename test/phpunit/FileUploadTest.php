@@ -25,8 +25,8 @@
  *					code reads php://input when the file is not a real http upload.
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/fileupload.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
@@ -34,7 +34,6 @@ require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');

@@ -61,6 +61,25 @@ if ($user->socid > 0) {
 }
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
+// restrictedArea() called without a feature2 only checks that the salaries read permission
+// exists, and checkUserAccessToObject() lists 'salaries' among the features tested on the
+// entity alone, so neither of them looks at who the salary belongs to. Without the check
+// below, any holder of salaries->read lists, adds and deletes the payments of a colleague.
+// Same condition as salaries/card.php, the screen this page is reached from.
+if ($object->id > 0) {
+	$childids = $user->getAllChildIds(1);
+	$canread = 0;
+	if ($user->hasRight('salaries', 'readall')) {
+		$canread = 1;
+	}
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
 
 /*
  * Actions
@@ -167,7 +186,6 @@ $sumpaid = 0.0;
 // Payment creation form
 if ($action == 'create') {
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
-	$salary->fk_typepayment = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';

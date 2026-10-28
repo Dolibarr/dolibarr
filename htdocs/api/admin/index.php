@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,8 +93,8 @@ if ($action == 'setdisablecompression') {
 	}
 }
 
-// Disable compression mode
-if ($action == 'setenablecount' && !empty($dolibarr_api_count_always_enabled)) {
+// Enable/disable the counting of API calls (only when not forced from conf.php)
+if ($action == 'setenablecount' && empty($dolibarr_api_count_always_enabled)) {
 	if (dolibarr_set_const($db, 'API_ENABLE_COUNT_CALLS', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
 		dol_print_error($db);
 	}

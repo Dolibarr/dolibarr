@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018		Destailleur Laurent	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@
  *      \remarks    To run this script as CLI: phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Define HTTP_HOST before loading dav.lib.php to avoid warning
 if (!isset($_SERVER['HTTP_HOST'])) {
@@ -35,7 +35,6 @@ if (!isset($_SERVER['HTTP_HOST'])) {
 
 require_once dirname(__FILE__).'/../../htdocs/dav/dav.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/dav/dav.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 // Ensure constants are defined for tests
 if (!defined('CDAV_URI_KEY')) {
@@ -266,7 +265,7 @@ class CDavLibTest extends CommonClassTest
 		$cdavlib = new CdavLib($user, $db, $langs);
 
 		if ($db->type != 'mysqli') {
-			return;
+			$this->markTestSkipped('This test is only implemented for MySQL/MariaDB.');
 		}
 
 		// Start a transaction for database operations
@@ -274,7 +273,7 @@ class CDavLibTest extends CommonClassTest
 
 		try {
 			// Check if user has permission to read agenda
-			if (empty($user->rights->agenda->myactions->read)) {
+			if (!$user->hasRight('agenda', 'myactions', 'read')) {
 				$this->markTestSkipped('User does not have permission to read agenda (myactions->read)');
 			}
 

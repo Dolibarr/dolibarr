@@ -78,6 +78,11 @@ class WebsitePage extends CommonObject
 	public $pageurl;
 
 	/**
+	 * @var string	Full url of page, set by the wrapper of website templates to build the RSS feed
+	 */
+	public $fullpageurl;
+
+	/**
 	 * @var string 		Alias alt
 	 */
 	public $aliasalt;
@@ -230,7 +235,7 @@ class WebsitePage extends CommonObject
 		'fk_page'        => array('type' => 'integer', 'label' => 'ParentPageId', 'enabled' => 1, 'visible' => 1, 'notnull' => -1, 'position' => 45, 'searchall' => 0, 'foreignkey' => 'website.rowid'),
 		'allowed_in_frames'   => array('type' => 'integer', 'label' => 'AllowedInFrames', 'enabled' => 1, 'visible' => -1, 'position' => 48, 'searchall' => 0, 'default' => '0'),
 		'htmlheader'     => array('type' => 'html', 'label' => 'HtmlHeader', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'searchall' => 0),
-		'content'        => array('type' => 'mediumtext', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
+		'content'        => array('type' => 'html', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
 		'grabbed_from'   => array('type' => 'varchar(255)', 'label' => 'GrabbedFrom', 'enabled' => 1, 'visible' => 1, 'index' => 1, 'position' => 400, 'comment' => 'URL page content was grabbed from'),
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
@@ -262,9 +267,10 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User		$user      User that creates
 	 * @param  int<0,1> $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  string[] $phpwrappers	PHP code strings added by the application itself (like header and footer containers), allowed even without permission writephp
 	 * @return int      	       Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0, $phpwrappers = array())
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -297,7 +303,14 @@ class WebsitePage extends CommonObject
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			$phpcontent = dolKeepOnlyPhpCode($this->content);
+			// PHP wrappers added by the application itself (parameter $phpwrappers) are excluded from this test
+			$contenttocheck = (string) $this->content;
+			if (is_array($phpwrappers)) {
+				foreach ($phpwrappers as $wrapper) {
+					$contenttocheck = str_replace((string) $wrapper, '', $contenttocheck);
+				}
+			}
+			$phpcontent = dolKeepOnlyPhpCode($contenttocheck);
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
@@ -396,10 +409,10 @@ class WebsitePage extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				$this->fk_website = $obj->fk_website;
-				$this->type_container = $obj->type_container;
+				$this->fk_website = (int) $obj->fk_website;
+				$this->type_container = dol_sanitizeKeyCode($obj->type_container);
 
-				$this->pageurl = $obj->pageurl;
+				$this->pageurl = preg_replace('/[^\w_-]+/', '', $obj->pageurl);		// Sanitize page url
 				$this->ref = $obj->pageurl;
 				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 
@@ -412,7 +425,7 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
-				$this->status = $obj->status;
+				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);

@@ -187,6 +187,9 @@ $arrayfields = array(
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -774,7 +777,7 @@ while ($i < $imaxinloop) {
 
 		// Label payment
 		if ($arrayfields['label']['checked']) {
-			print '<td class="tdoverflowmax150" title="'.$variousstatic->label.'">'.$variousstatic->label."</td>";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($variousstatic->label).'"><span class="spantitle">'.dolPrintHTML($variousstatic->label)."</span></td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

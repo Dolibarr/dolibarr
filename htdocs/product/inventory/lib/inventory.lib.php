@@ -2,6 +2,7 @@
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,17 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 	);
 
 	$h = 2;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->stock->multidir_output[$inventory->entity ? $inventory->entity : $conf->entity].'/inventory/'.dol_sanitizeFileName((string) $inventory->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$head[$h][0] = dol_buildpath('/product/inventory/inventory_document.php?id='.$inventory->id.$get, 1);
+	$head[$h][1] = $langs->trans('Documents');
+	if ($nbFiles > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
+	}
+	$head[$h][2] = 'document';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory');
 	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory', 'remove');
