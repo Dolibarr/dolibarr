@@ -139,23 +139,18 @@ class mod_payment_cicada extends ModeleNumRefPayments
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as val";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".((int) $conf->entity);
 
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$max = intval($obj->max);
-			} else {
-				$max = 0;
-			}
-		} else {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$max = getNextValueCounter($db, $sql, array('table' => 'paiement', 'field' => 'ref', 'mask' => '', 'mode' => 'next', 'counter' => 'main'));
+		if ($max === false) {
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			return -1;
 		}
+		$max = intval($max);
 
 		//$date=time();
 		$date = $object->datepaye;

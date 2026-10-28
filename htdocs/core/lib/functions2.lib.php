@@ -786,6 +786,43 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
 }
 
 /**
+ * Read a numbering counter for get_next_value().
+ * Modules can provide the value with hook 'getNextValueCounter' (context 'numbering'), for example to serialize
+ * concurrent numbering with a lock or to read the counter on another database connection (cluster).
+ *
+ * @param	DoliDB					$db				Database handler
+ * @param	string					$sql			SQL request returning the counter into column 'val'
+ * @param	array<string,mixed>		$parameters		Context for hook: 'table', 'field', 'mask', 'mode', 'counter' ('main' or 'refclient')
+ * @return	string|int|null|false					Counter value (null if no record found), false if error
+ */
+function getNextValueCounter($db, $sql, $parameters)
+{
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$hookmanager->initHooks(array('numbering'));
+		$parameters['sql'] = $sql;
+		$reshook = $hookmanager->executeHooks('getNextValueCounter', $parameters);
+		if ($reshook < 0) {
+			dol_syslog("functions2::getNextValueCounter hook error: ".$hookmanager->error, LOG_ERR);
+			return false;
+		}
+		if ($reshook > 0) {
+			return (isset($hookmanager->resArray['counter']) ? $hookmanager->resArray['counter'] : null);
+		}
+	}
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		return false;
+	}
+	$obj = $db->fetch_object($resql);
+
+	return ($obj ? $obj->val : null);
+}
+
+/**
  * Return last or next value for a mask (according to area we should not reset)
  *
  * @param   DoliDB			$db				Database handler
@@ -1185,12 +1222,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	//print $sql.'<br>';
 	dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$counter = $obj->val;
-	} else {
-		dol_print_error($db);
+	$counter = getNextValueCounter($db, $sql, array('table' => $table, 'field' => $field, 'mask' => $mask, 'mode' => $mode, 'counter' => 'main'));
+	if ($counter === false) {
+		return 'ErrorFailedToReadCounter';
 	}
 
 	// Check if we must force counter to maskoffset
@@ -1308,12 +1342,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql .= " AND (SUBSTRING(".$field.", ".(strpos($maskwithnocode, $maskrefclient) + 1).", ".dol_strlen($maskrefclient_maskclientcode).") = '".$db->escape($maskrefclient_clientcode)."')";
 
 			dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
-			$maskrefclient_resql = $db->query($maskrefclient_sql);
-			if ($maskrefclient_resql) {
-				$maskrefclient_obj = $db->fetch_object($maskrefclient_resql);
-				$maskrefclient_counter = $maskrefclient_obj->val;
-			} else {
-				dol_print_error($db);
+			$maskrefclient_counter = getNextValueCounter($db, $maskrefclient_sql, array('table' => $table, 'field' => $field, 'mask' => $mask, 'mode' => $mode, 'counter' => 'refclient'));
+			if ($maskrefclient_counter === false) {
+				return 'ErrorFailedToReadCounter';
 			}
 
 			if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i', $maskrefclient_counter)) {

@@ -118,24 +118,19 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		// First, we get the max value (response immediate car champ indexe)
 		$posindice = strlen($prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(".$db->sanitize($field)." FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(".$db->sanitize($field)." FROM ".((int) $posindice).") AS SIGNED)) as val"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$max = intval($obj->max);
-			} else {
-				$max = 0;
-			}
-		} else {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$max = getNextValueCounter($db, $sql, array('table' => 'societe', 'field' => $field, 'mask' => '', 'mode' => 'next', 'counter' => 'main'));
+		if ($max === false) {
 			return -1;
 		}
+		$max = intval($max);
 
 		$date	= dol_now();
 		$yymm	= dol_print_date($date, "%y%m", 'tzuserrel');
