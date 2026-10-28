@@ -1,2 +1,6 @@
-Error: Dolibarr config file content seems to be not correctly defined (dolibarr_main_document_root can't be unknown).<br>
-Please run dolibarr setup by calling page <b>/install</b>.<br>
+::error file=htdocs/core/modules/oauth/stripelive_oauthcallback.php,line=147,col=0::Strict comparison using === between null and null will always evaluate to true.
+::error file=htdocs/core/modules/oauth/stripelive_oauthcallback.php,line=178,col=0::Strict comparison using === between null and null will always evaluate to true.
+::error file=htdocs/opensurvey/class/opensurveysondage.class.php,line=73,col=0::PHPDoc type array<array<string, int|string>> of property Opensurveysondage::$lines is not covariant with PHPDoc type array<CommonObject|stdClass> of overridden property CommonObject::$lines.
+::error file=htdocs/webportal/class/webportalmember.class.php,line=315,col=0::Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
+::error file=htdocs/webportal/class/webportalorder.class.php,line=236,col=0::Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
+::error file=htdocs/webportal/class/webportalpropal.class.php,line=230,col=0::Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
