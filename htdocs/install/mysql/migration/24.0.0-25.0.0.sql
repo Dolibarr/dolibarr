@@ -560,3 +560,11 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
 -- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
+
+-- Link a various payment to a thirdparty (optional) & add index and contraint
+ALTER TABLE llx_payment_various ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_projet;
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_datep (datep);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
+ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

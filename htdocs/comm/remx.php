@@ -96,16 +96,27 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 		$error++;
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
-	if (empty($splitamounts)) {
+	// A discount already used (as a discount on a line, as a credit note or as a deposit) can't be split: the original would not be deleted.
+	if (!$error && ($discount->fk_facture_line || $discount->fk_facture || $discount->fk_invoice_supplier_line || $discount->fk_invoice_supplier)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
+	}
+	if (!$error && empty($splitamounts)) {
 		$error++;
 		setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
 	}
 	if (!$error) {
 		$totalsplitted = 0;
 		foreach ($splitamounts as $key => $value) {
-			$totalsplitted += (float) $value;
+			// A negative part would force another one to be larger than the original discount so the sum still matches.
+			if ((float) price2num($value) < 0) {
+				$error++;
+				setEventMessages($langs->trans("AmountMustBePositive"), null, 'errors');
+				break;
+			}
+			$totalsplitted += (float) price2num($value);
 		}
-		if ($totalsplitted != (float) $discount->amount_ttc) {
+		if (!$error && price2num($totalsplitted, 'MT') != price2num($discount->amount_ttc, 'MT')) {
 			$error++;
 			setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
 		}
@@ -116,7 +127,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 
 		$discountnumber = 0;
 		foreach ($splitamounts as $key => $value) {
-			if ((float) $value == 0) {
+			if ((float) price2num($value) == 0) {
 				continue;
 			}
 			$discountnumber++;
@@ -149,7 +160,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			// Calculate localtaxes and VAT amounts
 			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx, $newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $newdiscount->localtax1_type, $newdiscount->localtax2_type);
 
-			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+			$newdiscount->multicurrency_amount_ttc = (float) price2num($value) * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
 			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
 			$newdiscount->multicurrency_amount_tva = price2num($newdiscount->multicurrency_amount_ttc - $newdiscount->multicurrency_amount_ht);
 
@@ -205,7 +216,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$error++;
 		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
 	}
-	if (!$error && $discount->fk_facture_line) {
+	if (!$error && ($discount->fk_facture_line || $discount->fk_facture || $discount->fk_invoice_supplier_line || $discount->fk_invoice_supplier)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
 	}

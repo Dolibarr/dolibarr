@@ -3973,6 +3973,10 @@ div.login a:hover {
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 15px; }
 div.login_block_tools { padding-top: 0px; }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 
 .topnav div.login_block_user {
 	display: inline-block;
@@ -6755,6 +6759,15 @@ span#morelines {
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
 }
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
+}
 .websitebar .button, .websitebar .buttonDelete
 {
 	padding: 2px 4px 2px 4px !important;
@@ -9525,7 +9538,8 @@ table.jPicker {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 
