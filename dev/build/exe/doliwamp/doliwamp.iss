@@ -80,7 +80,7 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache2.4.51\logs"
+Name: "{app}\bin\apache\apache2.4.65\logs"
 
 [Files]
 ; Stop/start
@@ -100,10 +100,10 @@ Source: "dev\build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignorev
 
 ; Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.4.51, php 7.4.26, mariadb10.6.5 (wampserver3.2.6_x64.exe)
-Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\php\php7.4.26\*.*"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+; Value OK: apache 2.4.65, php 8.4.27 (windows.php.net TS x64, fix of CVE-2026-109618/109619), mariadb11.4.9 (wampserver3.4.0_x64.exe)
+Source: "C:\wamp64\bin\apache\apache2.4.65\*.*"; DestDir: "{app}\bin\apache\apache2.4.65"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\php\php8.4.27\*.*"; DestDir: "{app}\bin\php\php8.4.27"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\mariadb\mariadb11.4.9\*.*"; DestDir: "{app}\bin\mariadb\mariadb11.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 
 ; Mysql data files (does not overwrite if exists)
 ; We must copy them because the tool mysql_install_db.exe to generate them at first install does not return to prompt so make install hang
@@ -118,10 +118,10 @@ Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".
 
 ; Config files
 Source: "dev\build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "dev\build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.65\conf"; Flags: ignoreversion;
 Source: "dev\build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
-Source: "dev\build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
-Source: "dev\build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb11.4.9"; Flags: ignoreversion;
+Source: "dev\build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php8.4.27"; Flags: ignoreversion;
 Source: "dev\build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "dev\build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "dev\build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -184,7 +184,6 @@ var destFileA: String;
 var srcContents: String;
 var browser: String;
 var mysqlVersion: String;
-var phpDllCopy: String;
 var batFile: String;
 
 var mysmtp: String;
@@ -207,17 +206,16 @@ begin
   begin
 
 	//----------------------------------------------
-	// Test if msvcr110 DLL has been installed
+	// Test if VC++ 2015-2022 redistributable DLLs has been installed (required by Apache, PHP and MariaDB)
 	//----------------------------------------------
 
-	if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
+	if not FileExists ('c:/windows/system32/vcruntime140.dll') and not FileExists ('c:/windows/sysWOW64/vcruntime140.dll') and not FileExists ('c:/winnt/system32/vcruntime140.dll') and not FileExists ('c:/winnt/sysWOW64/vcruntime140.dll') then
 	begin
 	    // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept
 	    Result := MsgBox(CustomMessage('DLLMissing')+#13#13+CustomMessage('ContinueAnyway'), mbConfirmation, MB_YESNO) = IDYES;
 
 	end;
-	// Pb seems similar with msvcp110.dll
-	//vcredist_x64.exe
+	// vcredist_x64.exe
 
   end;
 
@@ -227,9 +225,9 @@ procedure InitializeWizard();
 begin
 
   //version des applis, a modifier pour chaque version de WampServer 2
-  apacheVersion := '2.4.51';
-  phpVersion := '7.4.26' ;
-  mysqlVersion := '10.6.5';
+  apacheVersion := '2.4.65';
+  phpVersion := '8.4.27' ;
+  mysqlVersion := '11.4.9';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -345,6 +343,7 @@ var datadir: String;
 var exedirold: String;
 var exedirnew: String;
 var themessage: String;
+var FindRec: TFindRec;
 begin
 
    res := True;
@@ -390,24 +389,18 @@ begin
     //----------------------------------------------
     // Copie des dll de php vers apache
     //----------------------------------------------
-	// TODO Update this list when changing PHP/Apache versions
+	// Copy all DLL files of the PHP directory into the Apache bin directory so that php extensions can find them
 
-    phpDllCopy := 'libssh2.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuuc66.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuin66.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icuio66.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'icudt66.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'libsasl.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'php7apache2_4.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'php7ts.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+    if FindFirst(pathWithSlashes+'/bin/php/php'+phpVersion+'/*.dll', FindRec) then
+    begin
+        try
+            repeat
+                filecopy(pathWithSlashes+'/bin/php/php'+phpVersion+'/'+FindRec.Name, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+FindRec.Name, False);
+            until not FindNext(FindRec);
+        finally
+            FindClose(FindRec);
+        end;
+    end;
 
 
     // Remove lock file
@@ -1026,7 +1019,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mariadb\mariadb10.6.5\*.*"
+Type: files; Name: "{app}\bin\mariadb\mariadb11.4.9\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
