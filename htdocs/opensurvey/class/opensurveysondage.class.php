@@ -68,9 +68,9 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Lines of the survey - Note: the type differs from CommonObjectLine[] !
 	 *
-	 * @var array<array{id_users:int,nom:string,responses:string}>
+	 * @var array<array{id_users:int,nom:string,reponses:string}>
 	 */
-	public $lines;
+	public $lines; // @phpstan-ignore-line
 
 	/**
 	 *  'type' field format:
