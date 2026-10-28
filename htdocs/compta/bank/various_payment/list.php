@@ -180,7 +180,7 @@ if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
 $arrayfields = array(
 	'ref'			=> array('label' => "Ref", 'checked' => '1', 'position' => 100),
 	'label'			=> array('label' => "Label", 'checked' => '1', 'position' => 110),
-	'company'       => array('label' => 'ThirdParty', 'checked' => 1, 'position' => 115, 'enabled' => (string) (int) getDolGlobalInt('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')),
+	'company'       => array('label' => 'ThirdParty', 'checked' => '1', 'position' => 115, 'enabled' => (string) (int) getDolGlobalInt('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')),
 	'datep'			=> array('label' => "DatePayment", 'checked' => '1', 'position' => 120),
 	'datev'			=> array('label' => "DateValue", 'checked' => '-1', 'position' => 130),
 	'type'			=> array('label' => "PaymentMode", 'checked' => '1', 'position' => 140),
