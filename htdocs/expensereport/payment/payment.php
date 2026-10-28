@@ -131,7 +131,17 @@ if ($action == 'add_payment' && $permissiontoadd) {
 		}
 		// A payment can't be higher than the remainder to pay
 		$remaintopay = (float) price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
-		if (!$error && (float) price2num(array_sum($amounts), 'MT') > $remaintopay) {
+		$multicurrency_remaintopay = (float) price2num($expensereport->multicurrency_total_ttc - $expensereport->getSumPayments(1), 'MT');
+		$multicurrency_amount = (float) price2num(array_sum($amounts), 'MT');
+		if ($expensereport->isInForeignCurrency()) {
+			if (!$error && $multicurrency_amount > $multicurrency_remaintopay) {
+				$error++;
+				setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
+			}
+			foreach ($amounts as $key => $value) {
+				$amounts[$key] = ($multicurrency_amount == $multicurrency_remaintopay ? $remaintopay : (float) price2num($value / $expensereport->getMulticurrencyRate(), 'MT'));
+			}
+		} elseif (!$error && $multicurrency_amount > $remaintopay) {
 			$error++;
 			setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
 		}
@@ -150,6 +160,9 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			$payment->num_payment    = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
 			$payment->fk_bank        = $accountid;
+			$payment->multicurrency_amount = $multicurrency_amount;
+			$payment->multicurrency_code = $expensereport->multicurrency_code;
+			$payment->bank_amount    = (float) price2num(GETPOST('bank_amount', 'alpha'), 'MT');
 
 			if (!$error) {
 				$paymentid = $payment->create($user);
@@ -170,7 +183,11 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			if (!$error) {
 				$payment->fetch($paymentid);
 				// Set the expense report as paid when the sum of all its payments (not only this one) reaches its total
-				$remaintopay = price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				if ($expensereport->isInForeignCurrency()) {
+					$remaintopay = price2num($expensereport->multicurrency_total_ttc - $expensereport->getSumPayments(1), 'MT');
+				} else {
+					$remaintopay = price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				}
 				if ($remaintopay <= 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
 					if (!($result > 0)) {
@@ -209,7 +226,8 @@ if ($action == 'create' || empty($action)) {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($id, $ref);
 
-	$total = $expensereport->total_ttc;
+	$currency = ($expensereport->isInForeignCurrency() ? $expensereport->multicurrency_code : $conf->currency);
+	$total = ($expensereport->isInForeignCurrency() ? $expensereport->multicurrency_total_ttc : $expensereport->total_ttc);
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
@@ -245,21 +263,11 @@ if ($action == 'create' || empty($action)) {
 	print '<table class="border centpercent">'."\n";
 
 	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($expensereport->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($total, 0, $langs, 1, -1, -1, $currency).'</span></td></tr>';
 
-	$sql = "SELECT sum(p.amount) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
-	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
-	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
-	$sumpaid = 0;
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
-		$db->free($resql);
-	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td><span class="amount">'.price($sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td><span class="amount">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+	$sumpaid = $expensereport->getSumPayments($expensereport->isInForeignCurrency() ? 1 : 0);
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td><span class="amount">'.price($sumpaid, 0, $langs, 1, -1, -1, $currency).'</span></td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td><span class="amount">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $currency).'</span></td></tr>';
 
 	print '</table>';
 
@@ -292,6 +300,11 @@ if ($action == 'create' || empty($action)) {
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : 0, "accountid", 0, '', 2); // Show open bank account list
 		print '</td></tr>';
+
+		print '<tr>';
+		print '<td>'.$form->textwithpicto($langs->trans('AmountDebitedFromBankAccount'), $langs->trans('AmountDebitedFromBankAccountHelp', $currency)).'</td>';
+		print '<td colspan="2"><input type="text" class="width75" name="bank_amount" value="'.dol_escape_htmltag(GETPOST('bank_amount', 'alpha')).'"></td>';
+		print '</tr>';
 	}
 
 	// Number
@@ -333,17 +346,17 @@ if ($action == 'create' || empty($action)) {
 		print '<tr class="oddeven">';
 
 		print '<td>'.$expensereport->getNomUrl(1)."</td>";
-		print '<td class="right">'.price($objp->total_ttc)."</td>";
-		print '<td class="right">'.price($sumpaid)."</td>";
-		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
+		print '<td class="right">'.price($total, 0, $langs, 1, -1, -1, $currency)."</td>";
+		print '<td class="right">'.price($sumpaid, 0, $langs, 1, -1, -1, $currency)."</td>";
+		print '<td class="right">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $currency)."</td>";
 		print '<td class="center">';
-		if ($sumpaid < $objp->total_ttc) {
+		if ($sumpaid < $total) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($total - $sumpaid)."'"); // autofill remainder amount
 			}
-			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
+			$remaintopay = $total - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
 			print '<input type="text" class="width75" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST($namef).'">';
 		} else {
@@ -353,7 +366,7 @@ if ($action == 'create' || empty($action)) {
 
 		print "</tr>\n";
 
-		$total_ttc += $objp->total_ttc;
+		$total_ttc += $total;
 		$totalrecu += $sumpaid;
 		$i++;
 	}

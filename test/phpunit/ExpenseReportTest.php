@@ -354,6 +354,72 @@ class ExpenseReportTest extends CommonClassTest
 	}
 
 	/**
+	 * testExpenseReportPaymentInCurrency
+	 *
+	 * A payment settles the expense report in its currency. From an account in that currency the bank gets the amount
+	 * of the payment, from an account in another currency it gets the amount really debited, that is required.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportPaymentInCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$expensereport->multicurrency_code = 'USD';
+		$expensereport->multicurrency_tx = 0.8;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+
+		$accountusd = $this->createBankAccount('USD');
+		$accountcompany = $this->createBankAccount($conf->currency);
+
+		$payment = new PaymentExpenseReport($db);
+		$payment->fk_expensereport = $expensereport->id;
+		$payment->datep = dol_now();
+		$payment->amounts = array($user->id => 50);
+		$payment->multicurrency_amount = 40;
+		$payment->multicurrency_code = 'USD';
+		$payment->fk_typepayment = 2;
+		$this->assertGreaterThan(0, $payment->create($user), (string) $payment->error);
+		$this->assertGreaterThan(0, $payment->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountusd, '', ''), (string) $payment->error);
+
+		$resql = $db->query("SELECT b.amount, b.amount_main_currency FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."payment_expensereport as p WHERE p.fk_bank = b.rowid AND p.rowid = ".((int) $payment->id));
+		$bankline = $db->fetch_object($resql);
+		$this->assertEquals(-40, (float) $bankline->amount, 'The USD account is debited of the USD of the payment');
+		$this->assertEquals(-50, (float) $bankline->amount_main_currency);
+		$this->assertEquals(40, (float) $expensereport->getSumPayments(1));
+		$this->assertEquals(50, (float) $expensereport->getSumPayments());
+
+		$payment2 = new PaymentExpenseReport($db);
+		$payment2->fk_expensereport = $expensereport->id;
+		$payment2->datep = dol_now();
+		$payment2->amounts = array($user->id => 25);
+		$payment2->multicurrency_amount = 20;
+		$payment2->multicurrency_code = 'USD';
+		$payment2->fk_typepayment = 2;
+		$this->assertGreaterThan(0, $payment2->create($user), (string) $payment2->error);
+		$this->assertLessThan(0, $payment2->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountcompany, '', ''), 'The amount debited is required from an account in another currency');
+
+		$payment2->bank_amount = 26.5;
+		$this->assertGreaterThan(0, $payment2->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountcompany, '', ''), (string) $payment2->error);
+		$resql = $db->query("SELECT b.amount, b.amount_main_currency FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."payment_expensereport as p WHERE p.fk_bank = b.rowid AND p.rowid = ".((int) $payment2->id));
+		$bankline = $db->fetch_object($resql);
+		$this->assertEquals(-26.5, (float) $bankline->amount, 'The company currency account is debited of the amount really debited');
+		$this->assertNull($bankline->amount_main_currency);
+	}
+
+	/**
 	 * testExpenseReportSetMulticurrencyCodeUsesRateOfStartDate
 	 *
 	 * Changing the currency of a draft takes the same rate as at creation, and the currency and the rate are only changed on a draft.
@@ -414,5 +480,28 @@ class ExpenseReportTest extends CommonClassTest
 		$expensereport->fetch($expensereport->id);
 		$this->assertEquals('XTS', $expensereport->multicurrency_code);
 		$this->assertEquals(2, (float) $expensereport->multicurrency_tx);
+	}
+
+	/**
+	 * Create a bank account in a currency
+	 *
+	 * @param	string	$currency	Currency code
+	 * @return	int					Id of the bank account
+	 */
+	private function createBankAccount(string $currency): int
+	{
+		global $user, $db;
+
+		$account = new Account($db);
+		$account->ref = 'ER'.$currency.substr(uniqid(), -6);
+		$account->label = 'ExpenseReportTest '.$currency;
+		$account->type = Account::TYPE_CURRENT;
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$account->currency_code = $currency;
+		$id = $account->create($user);
+		$this->assertGreaterThan(0, $id, $account->errorsToString());
+
+		return $id;
 	}
 }

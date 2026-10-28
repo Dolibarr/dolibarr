@@ -160,4 +160,6 @@ TF_TRIP=Transportation
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
 NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport
+AmountDebitedFromBankAccount=Amount debited from the bank account
+AmountDebitedFromBankAccountHelp=Required when the bank account is not in %s: the amount that left the account, in the currency of the account.
 ErrorExpenseReportCurrencyChangeOnlyInDraft=The currency and the rate of an expense report can only be changed while it is a draft.
