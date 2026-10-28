@@ -1120,15 +1120,18 @@ class Utils
 	{
 		global $db, $langs;
 		global $errormsg;
+		global $dolibarr_main_db_character_set;
 
-		// Set to UTF-8
+		// Set to UTF-8. Use utf8mb4 when the database uses it, as with utf8 the 4-byte
+		// characters (emojis...) are read as '?' and are lost when the dump is restored.
+		$charset = ($dolibarr_main_db_character_set == 'utf8mb4' ? 'utf8mb4' : 'utf8');
 		if (is_a($db, 'DoliDBMysqli')) {
 			/** @var DoliDBMysqli $db */
-			$db->db->set_charset('utf8');
+			$db->db->set_charset($charset);
 		} else {
 			/** @var DoliDB $db */
-			$db->query('SET NAMES utf8');
-			$db->query('SET CHARACTER SET utf8');
+			$db->query('SET NAMES '.$db->sanitize($charset));
+			$db->query('SET CHARACTER SET '.$db->sanitize($charset));
 		}
 
 		//get all of the tables
@@ -1162,7 +1165,7 @@ class Utils
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES ".$charset." */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -1200,7 +1203,7 @@ class Utils
 				fwrite($handle, "DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
 			}
 			fwrite($handle, "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-			fwrite($handle, "/*!40101 SET character_set_client = utf8 */;\n");
+			fwrite($handle, "/*!40101 SET character_set_client = ".$charset." */;\n");
 			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {
