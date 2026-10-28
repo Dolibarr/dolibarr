@@ -1,5 +1,0 @@
-Tip: This CI run was slow because it analysed your whole project from scratch - there was no result cache.
-Persist PHPStan's result cache directory between CI runs to make your pipeline dramatically faster.
-Only changed files and their dependencies are re-analysed, so most runs finish in a fraction of the time.
-Learn how to set it up: https://phpstan.org/user-guide/result-cache
-
