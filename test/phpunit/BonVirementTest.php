@@ -62,6 +62,12 @@ class BonVirementTest extends CommonClassTest
 	const IBAN_B_SPECIFIC = 'FR7630001007941234567890961'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
 	const XSD_PAIN_001    = __DIR__.'/../assets/xsd/pain.001.001.03.xsd';
+	const XSD_PAIN_001_V9 = __DIR__.'/../assets/xsd/pain.001.001.09.xsd';
+	const XSD_PAIN_001_V9_CH = __DIR__.'/../assets/xsd/pain.001.001.09.ch.03.xsd';
+	const IBAN_CH         = 'CH9300762011623852957';
+	const QRIBAN_CH       = 'CH4431999123000889012';
+	const QRREFERENCE     = '210000000003139471430009017';
+	const BIC_CH          = 'UBSWCHZH80A';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -81,6 +87,8 @@ class BonVirementTest extends CommonClassTest
 	protected static $ribBSpecificId = 0;
 	/** @var int Row ID of the issuer bank account (llx_bank_account) */
 	protected static $fkBankAccount = 0;
+	/** @var array<string,?string> Constants changed by setCompanyAddressForVersion9(), with the value to restore */
+	private $savedConstants = array();
 
 	/**
 	 * setUpBeforeClass
@@ -194,6 +202,27 @@ class BonVirementTest extends CommonClassTest
 
 		// This const is tested in prelevement_check_config(), it SHOULD be set.
 		$this->savconf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT = self::$fkBankAccount;
+	}
+
+	/**
+	 * End phpunit tests
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		global $conf;
+
+		foreach ($this->savedConstants as $name => $value) {
+			if ($value === null) {
+				unset($conf->global->$name);
+			} else {
+				$conf->global->$name = $value;
+			}
+		}
+		$this->savedConstants = array();
+
+		parent::tearDown();
 	}
 
 	/**
@@ -562,9 +591,175 @@ class BonVirementTest extends CommonClassTest
 		$this->assertSepaXmlValid($bon->filename);
 	}
 
+	/**
+	 * testGenerateWithSepaSchemaVersion9
+	 *
+	 * With PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION=9 the file is a pain.001.001.09 that passes the ISO and the
+	 * Swiss SPS schemas, a long street continues on a second AdrLine and an invoice paid to a QR-IBAN carries its
+	 * QR reference.
+	 *
+	 * @return void
+	 */
+	public function testGenerateWithSepaSchemaVersion9()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->setCompanyAddressForVersion9();
+
+		$longstreet = 'Avenue de la Gare 12 Batiment B troisieme etage porte de gauche apres l ascenseur';
+		$socidC = $this->createSwissSupplier('BonVirementTest CompanyC', $longstreet, self::IBAN_CH);
+		$socidD = $this->createSwissSupplier('BonVirementTest CompanyD', 'Rue du Lac 1', self::QRIBAN_CH);
+
+		$facC = $this->createValidatedSupplierInvoice($socidC, 150.0);
+		$facD = $this->createValidatedSupplierInvoice($socidD, 250.0);
+		$facD->payment_reference = self::QRREFERENCE;
+		$this->assertGreaterThan(0, $facD->update($user), 'FactureFournisseur::update() failed: '.$facD->error);
+
+		$demCId = $this->createPaymentRequest($facC, 150.0);
+		$demDId = $this->createPaymentRequest($facD, 250.0);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array($demCId, $demDId), self::$fkBankAccount);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error.' '.implode(', ', $bon->invoice_in_error));
+
+		$this->assertXmlValidAgainst($bon->filename, self::XSD_PAIN_001_V9);
+		$this->assertXmlValidAgainst($bon->filename, self::XSD_PAIN_001_V9_CH);
+
+		$xml = simplexml_load_file($bon->filename);
+		$xml->registerXPathNamespace('ns', 'urn:iso:std:iso:20022:tech:xsd:pain.001.001.09');
+
+		$this->assertCount(1, $xml->xpath('//ns:PmtInf/ns:ReqdExctnDt/ns:Dt'));
+		$this->assertCount(1, $xml->xpath('//ns:DbtrAgt/ns:FinInstnId/ns:BICFI'));
+
+		$adrlines = $xml->xpath('//ns:CdtTrfTxInf[ns:CdtrAcct/ns:Id/ns:IBAN="'.self::IBAN_CH.'"]/ns:Cdtr/ns:PstlAdr/ns:AdrLine');
+		$this->assertCount(2, $adrlines, 'A street longer than 70 chars must continue on a second AdrLine');
+		$this->assertSame('Avenue de la Gare 12 Batiment B troisieme etage porte de gauche apres', (string) $adrlines[0]);
+		$this->assertSame('l ascenseur', (string) $adrlines[1]);
+
+		$qrr = $xml->xpath('//ns:CdtTrfTxInf[ns:CdtrAcct/ns:Id/ns:IBAN="'.self::QRIBAN_CH.'"]/ns:RmtInf/ns:Strd/ns:CdtrRefInf');
+		$this->assertCount(1, $qrr, 'The invoice paid to a QR-IBAN must carry its QR reference');
+		$this->assertSame('QRR', (string) $qrr[0]->Tp->CdOrPrtry->Prtry);
+		$this->assertSame(self::QRREFERENCE, (string) $qrr[0]->Ref);
+	}
+
+	/**
+	 * testVersion9RefusesIncompleteAddress
+	 *
+	 * pain.001.001.09 needs the town and the country of every party: the order is not created and the error
+	 * links to the edit page of the supplier to complete.
+	 *
+	 * @return void
+	 */
+	public function testVersion9RefusesIncompleteAddress()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->setCompanyAddressForVersion9();
+
+		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$demAId = $this->createPaymentRequest($facA, 100.0);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array($demAId), self::$fkBankAccount);
+
+		$this->assertLessThan(0, $result, 'The order must not be created when the address of a supplier has no town');
+		$this->assertArrayHasKey('soc'.self::$socidA, $bon->invoice_in_error);
+		$this->assertStringContainsString('/societe/card.php?socid='.self::$socidA.'&action=edit', $bon->invoice_in_error['soc'.self::$socidA]);
+	}
+
+	/**
+	 * testQRIBANNeedsQRReference
+	 *
+	 * A QR-IBAN only accepts payments with a QR reference, whatever the file format.
+	 *
+	 * @return void
+	 */
+	public function testQRIBANNeedsQRReference()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$socidD = $this->createSwissSupplier('BonVirementTest CompanyD', 'Rue du Lac 1', self::QRIBAN_CH);
+		$facD = $this->createValidatedSupplierInvoice($socidD, 250.0);
+		$demDId = $this->createPaymentRequest($facD, 250.0);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array($demDId), self::$fkBankAccount);
+
+		$this->assertLessThan(0, $result, 'The order must not be created when an invoice paid to a QR-IBAN has no QR reference');
+		$this->assertArrayHasKey('invoice'.$facD->id, $bon->invoice_in_error);
+		$this->assertStringContainsString('/fourn/facture/card.php?facid='.$facD->id, $bon->invoice_in_error['invoice'.$facD->id]);
+	}
+
 	// ---------------------------------------------------------------------------
 	// Private helpers
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Selects pain.001.001.09 and gives the company the town and country it needs, for the current test only.
+	 *
+	 * @return void
+	 */
+	private function setCompanyAddressForVersion9(): void
+	{
+		global $conf;
+
+		$values = array(
+			'PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION' => '9',
+			'MAIN_INFO_SOCIETE_TOWN' => 'Paris',
+			'MAIN_INFO_SOCIETE_COUNTRY' => '1:FR:France',
+		);
+		foreach ($values as $name => $value) {
+			$this->savedConstants[$name] = $conf->global->$name ?? null;
+			$conf->global->$name = $value;
+		}
+	}
+
+	/**
+	 * Creates a Swiss supplier with a full address and a default bank account.
+	 *
+	 * @param string $name   Name of the supplier
+	 * @param string $street Street address
+	 * @param string $iban   IBAN of its default bank account
+	 * @return int Row ID of the supplier
+	 */
+	private function createSwissSupplier(string $name, string $street, string $iban): int
+	{
+		global $user, $db;
+
+		$soc = new Societe($db);
+		$soc->name = $name;
+		$soc->fournisseur = 1;
+		$soc->code_fournisseur = -1;
+		$soc->address = $street;
+		$soc->zip = '1003';
+		$soc->town = 'Lausanne';
+		$soc->country_id = 6; // Switzerland
+		$socid = (int) $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Societe::create() failed: '.$soc->error);
+
+		$rib = new CompanyBankAccount($db);
+		$rib->socid = $socid;
+		$rib->type = 'ban';
+		$rib->iban = $iban;
+		$rib->bic = self::BIC_CH;
+		$rib->default_rib = 1;
+		$this->assertGreaterThan(0, $rib->create($user), 'CompanyBankAccount::create() failed: '.$rib->error);
+		$rib->update($user);
+
+		return $socid;
+	}
 
 	/**
 	 * Creates and validates a supplier invoice for a given company and amount.
@@ -633,15 +828,27 @@ class BonVirementTest extends CommonClassTest
 	 */
 	private function assertSepaXmlValid(string $filename): void
 	{
+		$this->assertXmlValidAgainst($filename, self::XSD_PAIN_001);
+	}
+
+	/**
+	 * Asserts that a generated XML file validates against an XSD schema.
+	 *
+	 * @param string $filename Path to the XML file
+	 * @param string $xsd      Path to the XSD schema
+	 * @return void
+	 */
+	private function assertXmlValidAgainst(string $filename, string $xsd): void
+	{
 		$this->assertFileExists($filename, 'SEPA XML file does not exist: '.$filename);
-		$this->assertFileExists(self::XSD_PAIN_001, 'XSD schema file not found: '.self::XSD_PAIN_001);
+		$this->assertFileExists($xsd, 'XSD schema file not found: '.$xsd);
 
 		$dom = new DOMDocument();
 		$loaded = $dom->load($filename);
 		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$filename);
 
 		libxml_use_internal_errors(true);
-		$valid = $dom->schemaValidate(self::XSD_PAIN_001);
+		$valid = $dom->schemaValidate($xsd);
 		$errors = libxml_get_errors();
 		libxml_clear_errors();
 		libxml_use_internal_errors(false);
@@ -650,7 +857,7 @@ class BonVirementTest extends CommonClassTest
 		foreach ($errors as $error) {
 			$messages[] = trim($error->message).' (line '.$error->line.')';
 		}
-		$this->assertTrue($valid, 'SEPA XML does not validate against pain.001.001.03 XSD: '.implode('; ', $messages));
+		$this->assertTrue($valid, 'SEPA XML does not validate against '.basename($xsd).': '.implode('; ', $messages));
 	}
 
 	/**
