@@ -12232,7 +12232,7 @@ class Form
 
 		$out = '';
 		$sql = "SELECT rowid, label FROM " . $this->db->prefix() . "c_exp_tax_cat WHERE active = 1";
-		$sql .= " AND entity IN (0," . getEntity('exp_tax_cat') . ")";
+		$sql .= " AND entity IN (0," . getEntity('c_exp_tax_cat') . ")";
 		if (!empty($excludeid)) {
 			$sql .= " AND rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeid)) . ")";
 		}
@@ -12318,11 +12318,11 @@ class Form
 	 */
 	public function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$out = '';
 		$sql = "SELECT rowid, range_ik FROM " . $this->db->prefix() . "c_exp_tax_range";
-		$sql .= " WHERE entity = " . ((int) $conf->entity) . " AND active = 1";
+		$sql .= " WHERE entity IN (0," . getEntity('c_exp_tax_range') . ") AND active = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
