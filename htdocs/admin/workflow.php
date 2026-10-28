@@ -28,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // security check
 if (!$user->admin) {
@@ -53,6 +52,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
+$reg = array();
 if (preg_match('/set(.*)/', $action, $reg)) {
 	if (!dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0) {
 		dol_print_error($db);
@@ -264,7 +264,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("WorkflowDesc").'</span>';
+print '<div class="info">'.$langs->trans("WorkflowDesc").'</div>';
 print '<br>';
 print '<br>';
 

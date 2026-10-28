@@ -19,7 +19,6 @@ When running bash commands, keep them plain so they can be auto-approved:
 
 [tools.bash]
 permission = "always"
-deny = ["rm -rf *", "sudo *"]
 allowlist = [
     "awk",
     "actionlint",
@@ -93,6 +92,8 @@ allowlist = [
     "xxd",
 ]
 denylist = [
+    "rm -rf *",
+    "sudo *",
     "gdb",
     "pdb",
     "passwd",
@@ -108,10 +109,6 @@ denylist = [
     "screen",
     "tmux"
 ]
-
-[tools.grep]
-permission = "always"
-allowlist = ["/tmp/**"]
 
 [tools.read_file]
 permission = "always"

@@ -594,7 +594,7 @@ class Delivery extends CommonObject
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
 			$line->label             = $expedition->lines[$i]->label;
 			$line->description       = $expedition->lines[$i]->description;
-			$line->qty               = $expedition->lines[$i]->qty_shipped;
+			$line->qty               = ($expedition->origin_id > 0 ? $expedition->lines[$i]->qty_shipped : $expedition->lines[$i]->qty);	// A line of a standalone shipment (SHIPMENT_STANDALONE) has no qty_shipped
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
 			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
 				$line->array_options = $expedition->lines[$i]->array_options;
@@ -874,10 +874,10 @@ class Delivery extends CommonObject
 		$sql .= " cd.qty as qty_asked, cd.label as custom_label, cd.fk_unit,";
 		$sql .= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc,";
 		$sql .= " p.weight, p.weight_units,  p.width, p.width_units, p.length, p.length_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."deliverydet as ld";
+		$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ld.fk_origin_line";	// No order line for a delivery receipt of a standalone shipment (SHIPMENT_STANDALONE)
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
-		$sql .= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql .= " AND ld.fk_delivery = ".((int) $this->id);
+		$sql .= " WHERE ld.fk_delivery = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -892,6 +892,7 @@ class Delivery extends CommonObject
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
 				$line->description	= $obj->description;
+				$line->desc = $obj->description;	// Read first by pdf_getlinedesc(), before the multilingual product description
 				$line->fk_product 	= $obj->fk_product;
 				$line->qty_asked 	= $obj->qty_asked;
 				$line->qty_shipped	= $obj->qty_shipped;

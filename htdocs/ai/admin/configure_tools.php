@@ -118,6 +118,9 @@ if (!empty($unfilteredSchema) && is_array($unfilteredSchema)) {
 
 $rawAst     = getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS');
 $rawMcp     = getDolGlobalString('AI_MCP_SERVER_ALLOWED_TOOLS');
+// When the chat assistant or the MCP server is disabled, its active switches are dimmed: they have no effect
+$astEnabled = getDolGlobalBool('AI_ASSISTANT_ENABLED');
+$mcpEnabled = getDolGlobalBool('AI_MCP_ENABLED');
 $astAllowed = McpHandler::resolveAllowList($rawAst, $allDiscoveredTools);
 $mcpAllowed = McpHandler::resolveAllowList($rawMcp, $allDiscoveredTools);
 
@@ -156,7 +159,9 @@ if ($action == 'addrights' || $action == 'delrights') {
 		}
 	}
 
-	header('Location: ' . $_SERVER['PHP_SELF']);
+	// Keep page_y (added by the .reposition links) so the scroll position is restored after redirect
+	$page_y = GETPOSTINT('page_y');
+	header('Location: ' . $_SERVER['PHP_SELF'] . ($page_y > 0 ? '?page_y=' . $page_y : ''));
 	exit;
 }
 
@@ -204,7 +209,7 @@ $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 
 print '<!-- Tools quick setup -->';
-print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '</div>';
+print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '<br>' . $langs->trans("ToolAccessControlHelp2") . '</div>';
 
 print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
@@ -232,7 +237,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="toolsTable">';
 print '<tr class="liste_titre">';
-print '<td class="tdoverflowmax200" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
+print '<td class="tdoverflowmax250" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
 print '<td class="hideonsmartphone">' . $langs->trans('ToolDescription') . '</td>';
 print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('ChatAssistant') . '</td>';
@@ -273,7 +278,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '<tr class="oddeven group-' . $groupId . '" data-tool-name="' . dol_escape_htmltag($name) . '" data-tool-type="' . $type . '">';
 
 			// Tool
-			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax200">';
+			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax250">';
 			print '<strong>' . dol_escape_htmltag($name) . '</strong>';
 			if ($isSystem) {
 				print '<br><span class="badgeneutral">' . $langs->trans('System') . '</span>';
@@ -302,7 +307,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-ast-link reposition' . $lockCssClass . '" href="' . $urlAst . '">';
+				print '<a class="ctx-ast-link reposition' . $lockCssClass . (($isAstOn && !$astEnabled) ? ' opacitymedium' : '') . '" href="' . $urlAst . '">';
 				print img_picto($langs->trans($isAstOn ? 'Remove' : 'Add'), $pictoAst, '', 0, 0, 0, '', !$isAstOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}
@@ -321,7 +326,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-mcp-link reposition' . $lockCssClass . '" href="' . $urlMcp . '">';
+				print '<a class="ctx-mcp-link reposition' . $lockCssClass . (($isMcpOn && !$mcpEnabled) ? ' opacitymedium' : '') . '" href="' . $urlMcp . '">';
 				print img_picto($langs->trans($isMcpOn ? 'Remove' : 'Add'), $pictoMcp, '', 0, 0, 0, '', !$isMcpOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}

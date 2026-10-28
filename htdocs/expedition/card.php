@@ -228,6 +228,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -1526,6 +1534,12 @@ if ($action == 'create' && $usercancreate) {
 			print '</td>';
 		}
 		print '</tr>'."\n";
+
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'">';
+		print '</td></tr>'."\n";
 
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {

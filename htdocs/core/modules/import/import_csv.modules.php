@@ -208,7 +208,14 @@ class ImportCsv extends ModeleImports
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 
-		ini_set('auto_detect_line_endings', 1); // For MAC compatibility
+		// fgetcsv() only accepts one byte for the separator and for the enclosure (it throws a ValueError otherwise)
+		foreach (array('separator' => $this->separator, 'enclosure' => $this->enclosure) as $name => $value) {
+			if (strlen((string) $value) != 1) {
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorBadValueForParameter", (string) $value, $name);
+				return -1;
+			}
+		}
 
 		$handle = fopen(dol_osencode($file), "r");
 		if (!$handle) {
@@ -216,7 +223,15 @@ class ImportCsv extends ModeleImports
 			$this->error = $langs->trans("ErrorFailToOpenFile", $file);
 			$ret = -1;
 		} else {
+			// Skip the UTF-8 BOM that Excel adds at the beginning of a file, or it would be part of the first value
+			if (fread($handle, 3) !== "\xEF\xBB\xBF") {
+				rewind($handle);
+			}
 			$this->handle = $handle;
+			// Skip the UTF-8 BOM that Excel adds at the beginning of a file, or it would be part of the first value
+			if (fread($this->handle, 3) !== "\xEF\xBB\xBF") {
+				rewind($this->handle);
+			}
 			$this->file = $file;
 		}
 
@@ -260,7 +275,7 @@ class ImportCsv extends ModeleImports
 	public function import_read_record()
 	{
 		// phpcs:enable
-		$arrayres = fgetcsv($this->handle, 100000, $this->separator, $this->enclosure, $this->escape);
+		$arrayres = fgetcsv($this->handle, 0, $this->separator, $this->enclosure, $this->escape);
 
 		// End of file
 		if ($arrayres === false) {

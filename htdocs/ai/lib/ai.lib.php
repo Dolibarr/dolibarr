@@ -46,7 +46,7 @@ function getListOfAIFeatures()
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
 		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
-		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+		'textrephraser' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
 
@@ -102,13 +102,13 @@ function getListOfAIServices()
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => array('default' => 'mistral-small-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'textgeneration' => array('default' => 'mistral-medium-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
 			'imagegeneration' => array('default' => 'na'),
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'pixtral-12b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
@@ -524,6 +524,23 @@ function getListForAIRephraseStyle()
 }
 
 /**
+ * Return a user-friendly error message from the error array returned by Ai::generateContent()
+ *
+ * @param	array{error:bool,message:string,curl_error_no?:int,service?:string,model?:string}	$result		Error array returned by generateContent()
+ * @return	string																		Error message
+ */
+function getAIErrorMessage($result)
+{
+	global $langs;
+
+	if (!empty($result['curl_error_no']) && $result['curl_error_no'] == 28) {	// CURLE_OPERATION_TIMEDOUT
+		$langs->load("errors");
+		return $langs->transnoentitiesnoconv("ErrorAIServiceTimeout", (empty($result['model']) ? (empty($result['service']) ? '?' : $result['service']) : $result['model']));
+	}
+	return (empty($result['message']) ? 'Unknown error from AI service' : $result['message']);
+}
+
+/**
  * Prepare admin pages header
  *
  * @return array<array{0:string,1:string,2:string}>
@@ -754,7 +771,9 @@ function aiSuggestClosestModel($missing, array $models)
 	$bestScore = -1.0;
 	foreach ($models as $cand) {
 		$pct = 0.0;
-		similar_text(strtolower($missing), strtolower($cand), $pct);
+		if (similar_text(strtolower($missing), strtolower($cand), $pct) === 0) {
+			$pct = 0.0;	// nothing in common
+		}
 		$score = $pct;
 		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
 			$score += 15.0;	// same family beats a slightly closer string of another family
@@ -777,7 +796,7 @@ function getAiChatAssistantConfig()
 {
 	global $conf, $langs, $user;
 
-	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
+	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
@@ -797,6 +816,7 @@ function getAiChatAssistantConfig()
 		'HistoryCleared',
 		'Send',
 		'TypeYourQuestion',
+		'VersionExperimental',
 
 		// Placeholders & Status
 		'TypeOrSpeak',
@@ -843,13 +863,31 @@ function getAiChatAssistantConfig()
 		'AIContextPinOn',
 		'AIContextPinOff',
 		'AIContextCounter',
+		'AIContextLabel',
+		'AIContextTokens',
 		'AIContextAuto',
 		'AIContextAutoTitle',
 		'AIContextClear',
+		'None',
 		'AIContextClearTitle',
 		'AIContextAll',
 		'AIContextAllTitle',
 		'AIContextAttachmentOnly',
+
+		// Conversation history
+		'AIHistory',
+		'AINewConversation',
+		'AIHistoryToday',
+		'AIHistoryYesterday',
+		'AIHistoryLast7Days',
+		'AIHistoryOlder',
+		'AIHistoryDelete',
+		'AIHistoryRename',
+		'AIHideConversations',
+		'AIShowConversations',
+		'AIYou',
+		'AIAssistant',
+		'AIHistoryEmpty',
 
 		// Actions & Dialogs
 		'YesProceed',
@@ -859,12 +897,32 @@ function getAiChatAssistantConfig()
 		'ExecutingTool',
 		'FetchingData',
 		'AISearchDoneNowPreparingAction',
+		'AIRetry',
 		'GeneratingLink',
 		'Found',
 		'File',
 		'Preview',
 		'TypeResponse',
 		'AINoneOfThese',
+		'AICmdFreeText',
+		'Run',
+		'NoResults',
+		'AIPaletteHint',
+		'AIPaletteRunHint',
+		'AIMentionThirdpartyHint',
+		'AIMentionProductHint',
+		'AIHelpCommands',
+		'AIHelpPalette',
+		'AIHelpInternal',
+		'AIHelpHelp',
+		'AIHelpClear',
+		'AIHelpStatus',
+		'AIHelpTools',
+		'AIHelpMentions',
+		'AIHelpMentionThirdparty',
+		'AIHelpMentionProduct',
+		'AIHelpFreeText',
+		'AIPaletteMore',
 		'OpenVerb',
 		'AIPdfReport',
 
@@ -896,8 +954,12 @@ function getAiChatAssistantConfig()
 	// keep the placeholders intact for the JS .replace() calls.
 	$ai_translations['AIContextCounter'] = $langs->transnoentitiesnoconv('AIContextCounter', '%s', '%s', '%s');
 	$ai_translations['AIContextAuto'] = $langs->transnoentitiesnoconv('AIContextAuto', '%s');
+	$ai_translations['AIContextTokens'] = $langs->transnoentitiesnoconv('AIContextTokens', '%s');
 	$ai_translations['AIContextAutoTitle'] = $langs->transnoentitiesnoconv('AIContextAutoTitle', '%s');
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
+	$ai_translations['ErrorFieldRequired'] = $langs->transnoentitiesnoconv('ErrorFieldRequired', '%s');
+	$ai_translations['AIPaletteBadJson'] = $langs->transnoentitiesnoconv('AIPaletteBadJson', '%s');
+	$ai_translations['AIPaletteTypeToSearch'] = $langs->transnoentitiesnoconv('AIPaletteTypeToSearch', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
 		"CloudVoiceRequiresSecureContext",
@@ -913,8 +975,18 @@ function getAiChatAssistantConfig()
 		$userinitial = dol_strtoupper(dol_substr($namesource, 0, 1));
 	}
 
+	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultmode === 'native') {	// Old value saved by the setup page, now 'cloud'
+		$defaultmode = 'cloud';
+	}
+	// The whisper option is not rendered without the experimental features: fall back
+	// to the default text mode so the JS never selects a value missing from the combo.
+	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
+		$defaultmode = '';
+	}
+
 	return array(
-		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
+		'mode' => $defaultmode,
 		'labels' => $ai_translations,
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
@@ -926,7 +998,11 @@ function getAiChatAssistantConfig()
 		// Off (0) until an administrator decides otherwise: past answers carry
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// The "/" palette of the chat input, always on.
+		'palette' => 1,
+		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
+		'paletteApiTools' => getDolGlobalInt('AI_PALETTE_API_TOOLS', 0),
 		// Fast/Balanced/Deep presets of the model picker: mapped onto the provider
 		// model list by a name heuristic that is not reliable, so hidden by default.
 		'modelPresets' => getDolGlobalInt('AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY', 0),
@@ -942,6 +1018,9 @@ function getAiChatAssistantConfig()
 		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
 		'token' => newToken(),
 		'userInitial' => $userinitial,
+		// Key of the conversation kept in the browser sessionStorage, so the chat
+		// survives a page change (popover <-> full page) for this user and entity only.
+		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
 	);
 }
 
@@ -951,9 +1030,10 @@ function getAiChatAssistantConfig()
  * fragment (ai/assistant/popover.php) so both render the exact same chat.
  *
  * @param	string	$mode	'page' for the standalone full page, 'popover' for the topbar popover fragment
+ * @param	int		$openconversation	Conversation id to reopen on load (page mode only, 0 = none)
  * @return	string			HTML content
  */
-function getAiChatAssistantHtml($mode = 'page')
+function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 {
 	global $langs, $user, $conf;
 
@@ -966,6 +1046,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= ' data-ai-config="'.dol_escape_htmltag(json_encode(getAiChatAssistantConfig())).'"';
 	if ($mode === 'page') {
 		$out .= ' data-ai-autoinit="1"';
+		if ((int) $openconversation > 0) {
+			// Conversation to reopen on load (popover -> full page hand-over)
+			$out .= ' data-ai-open-conversation="'.((int) $openconversation).'"';
+		}
 	}
 	$out .= '>';
 
@@ -975,13 +1059,21 @@ function getAiChatAssistantHtml($mode = 'page')
 		// In the popover the title links to the full standalone page
 		$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
 		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+		$out .= '<span class="chat-header-text">';
 		$out .= '<h2>'.$title.'</h2>';
+		// Provider in use under the title, as on the full page
+		$aiprovider = getAiAssistantProviderLabel();
+		if ($aiprovider !== '') {
+			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
+		}
+		$out .= '</span>';
 	} else {
 		// Full page: assistant identity (avatar + title + current LLM model)
 		$out .= '<div class="chat-header-id">';
-		$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
+		// Same picto as the title of the popover (no avatar box)
+		//$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
 		$out .= '<span class="chat-header-text">';
-		$out .= '<span class="chat-header-title">'.$langs->trans("AIAssistant").'</span>';
+		$out .= '<span class="chat-header-title hideonsmartphone">'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</span>';
 		$aiprovider = getAiAssistantProviderLabel();
 		if ($aiprovider !== '') {
 			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
@@ -1003,23 +1095,31 @@ function getAiChatAssistantHtml($mode = 'page')
 	if ($defaultModel !== '') {
 		$autoLabel .= ' ('.$defaultModel.')';
 	}
-	$out .= '<option value="">'.dol_escape_htmltag($autoLabel).'</option>';
+	$out .= '<option value="" data-picto="ai-picto-sparkle">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	//$out .= ajax_combobox("model-select");
 
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
-	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
-	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
-	$out .= '<option value="whisper">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
+	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
+	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
+		$out .= '<option value="whisper" data-picto="fa fa-microphone" data-experimental="1">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	}
 	// Note: the legacy 'local_docs'/'cloud_docs' selector modes are gone — documents
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).
 	$out .= '</select>';
-	// Clear Button
-	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
-	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
+	// Clear button: with the conversations kept, it just starts a new one (the
+	// current one stays in the list). "Reset" is a core key translated everywhere
+	// with the right meaning ("Vider" in French, where "Clear" came out as "Clair").
+	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("AINewConversation")).'">';
+	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Reset").'</span>';
 	$out .= '</button>';
+	// Past conversations (list / reopen / delete), on the page and in the popover alike.
+	$out .= '<button type="button" id="ai-history-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIHistory")).'"><i class="fa fa-history"></i></button>';
 	if ($mode === 'popover') {
 		// Window controls of the popover (handled by the bootstrap JS in main.inc.php).
 		// The expand button opens the standalone full page (/ai/assistant/index.php)
@@ -1029,6 +1129,23 @@ function getAiChatAssistantHtml($mode = 'page')
 	}
 	$out .= '</div>';
 	$out .= '</div>';
+
+	if ($mode === 'page') {
+		// Full page: under the header, a permanent left column lists the past
+		// conversations (like the mainstream chat applications) next to the chat itself.
+		// The popover keeps its history button + panel and a flat layout.
+		$out .= '<div class="ai-chat-body">';
+		$out .= '<aside id="ai-history-sidebar" class="ai-history-sidebar" aria-label="'.dol_escape_htmltag($langs->trans("AIHistory")).'">';
+		$out .= '<div class="ai-sidebar-head">';
+		$out .= '<button type="button" id="ai-new-chat" class="ai-sidebar-new"><i class="fa fa-plus"></i> '.$langs->trans("AINewConversation").'</button>';
+		$out .= '<button type="button" id="ai-sidebar-collapse" class="ai-sidebar-collapse" title="'.dol_escape_htmltag($langs->trans("AIHideConversations")).'"><i class="fa fa-angle-double-left"></i></button>';
+		$out .= '</div>';
+		$out .= '<div id="ai-sidebar-list" class="ai-sidebar-list"><div class="opacitymedium ai-sidebar-empty">…</div></div>';
+		$out .= '</aside>';
+		// Shown only while the column is collapsed: reopens it from the left edge
+		$out .= '<button type="button" id="ai-sidebar-expand" class="ai-sidebar-expand" title="'.dol_escape_htmltag($langs->trans("AIShowConversations")).'"><i class="fa fa-angle-double-right"></i></button>';
+		$out .= '<div class="ai-chat-main">';
+	}
 
 	// Chat History
 	$out .= '<div id="chat-history" class="chat-history">';
@@ -1094,6 +1211,11 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '</div>';
 
 	$out .= '<div id="status-bar"></div>';
+
+	if ($mode === 'page') {
+		$out .= '</div>'; // .ai-chat-main
+		$out .= '</div>'; // .ai-chat-body
+	}
 
 	$out .= '</div>';
 
@@ -1396,11 +1518,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$forms[] = dol_substr($norm, 0, dol_strlen($norm) - 2);
 		}
 		foreach (array_unique($forms) as $w) {
-			$sql .= " OR s.nom LIKE '%".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($w))."%'";
+			$sql .= " OR s.nom LIKE '".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '".$db->escape($db->escapeforlike($w))."%'";
 		}
 	}
 	$sql .= ")";
-	$sql .= " LIMIT 2000";
+	$sql .= " LIMIT 1000";
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
@@ -1564,6 +1686,61 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 }
 
 /**
+ * Set aside the documents a chat message carries, so what is done to the request
+ * (third parties resolved to their ids) is never done to the document itself.
+ * The chat wraps each attached document between the DocContextIntro and
+ * DocContextOutro texts, in the language of the user: they are matched in that
+ * language and in English.
+ *
+ * @param	string		$text	Message as received
+ * @param	Translate	$langs	Language of the user
+ * @return	array{text:string, blocks:array<string,string>}	The message with a placeholder per document, and the documents by placeholder
+ */
+function aiExtractDocumentBlocks($text, $langs)
+{
+	$out = array('text' => (string) $text, 'blocks' => array());
+	$intros = array_unique(array($langs->transnoentitiesnoconv('DocContextIntro'), 'Document Content:'));
+	$outros = array_unique(array($langs->transnoentitiesnoconv('DocContextOutro'), 'End of document'));
+	$introRe = array();
+	foreach ($intros as $v) {
+		$introRe[] = preg_quote((string) $v, '/');
+	}
+	$outroRe = array();
+	foreach ($outros as $v) {
+		$outroRe[] = preg_quote((string) $v, '/');
+	}
+	$introRe = implode('|', $introRe);
+	$outroRe = implode('|', $outroRe);
+	$m = array();
+	if (!preg_match_all('/(?:'.$introRe.')\s.*?---\s*(?:'.$outroRe.')\s*---/su', $out['text'], $m)) {
+		return $out;
+	}
+	foreach ($m[0] as $i => $block) {
+		$mark = "\x02DOC".$i."\x02";
+		$pos = strpos($out['text'], $block);
+		if ($pos === false) {
+			continue;
+		}
+		$out['text'] = substr($out['text'], 0, $pos).$mark.substr($out['text'], $pos + strlen($block));
+		$out['blocks'][$mark] = $block;
+	}
+
+	return $out;
+}
+
+/**
+ * Put back, unchanged, the documents set aside by aiExtractDocumentBlocks().
+ *
+ * @param	string					$text	Message with placeholders
+ * @param	array<string,string>	$blocks	Documents by placeholder
+ * @return	string							Message with its documents
+ */
+function aiRestoreDocumentBlocks($text, array $blocks)
+{
+	return empty($blocks) ? (string) $text : strtr((string) $text, $blocks);
+}
+
+/**
  * Every form of the third party names found in a text or carried by a tool
  * result, to mask with PrivacyGuard::maskNames(): the words as written, the
  * names and trade names of the matching third parties, and the values of the
@@ -1611,4 +1788,437 @@ function aiThirdpartyNamesToMask($db, $user, $text, $stopwords = array(), $data 
 			return $n !== '';
 		}
 	)));
+}
+
+/**
+ * Unit id from the word a user used for it: code, short label or label, in the
+ * user's language, singular or plural ("piece", "pieces", "pcs").
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	string	$name	Unit as written
+ * @return	int				Rowid of the unit, 0 when none or several match
+ */
+function aiUnitIdFromName($db, $name)
+{
+	global $langs;
+	static $unitNames = null;
+
+	$want = dol_strtolower(trim((string) $name));
+	if ($want === '') {
+		return 0;
+	}
+	if (is_numeric($want)) {
+		return (int) $want;
+	}
+	if ($unitNames === null) {
+		// Read the dictionary once per request, not once per line.
+		$langs->load('products');
+		$unitNames = array();
+		$resql = $db->query("SELECT rowid, code, label, short_label FROM ".$db->prefix()."c_units WHERE active = 1 LIMIT 500");
+		while ($resql && ($obj = $db->fetch_object($resql))) {
+			$names = array(dol_strtolower((string) $obj->code), dol_strtolower((string) $obj->short_label), dol_strtolower((string) $obj->label), dol_strtolower($langs->transnoentitiesnoconv((string) $obj->label)));
+			if ($obj->code === 'P') {
+				$names[] = 'pc';
+				$names[] = 'pcs';
+			}
+			$unitNames[(int) $obj->rowid] = $names;
+		}
+	}
+	$forms = array_unique(array($want, (string) preg_replace('/s$/', '', $want), (string) preg_replace('/es$/', '', $want)));
+	$ids = array();
+	foreach ($unitNames as $rowid => $names) {
+		if (array_intersect($forms, $names)) {
+			$ids[$rowid] = true;
+		}
+	}
+
+	return count($ids) === 1 ? (int) key($ids) : 0;
+}
+
+/**
+ * Read a one-line document command of the chat palette, e.g.
+ * "AI SOLUTION 4 pieces popularpt 10; 2 widget" or, on a card, "4 popularpt 10".
+ *
+ * Everything before the first number is the third party (empty = the one of
+ * the page). Then one line per group, groups separated by ";" or by ", "
+ * before a number: quantity, an optional unit ("pieces", "kg"), the product
+ * (ref or label, several words allowed), an optional unit price. Decimals may
+ * use a dot or a comma ("10,50"). "ref:XYZ" anywhere gives the supplier's own
+ * document number.
+ *
+ * With a user, lines written one after the other without ";" ("4 pieces
+ * popularpt 2 pieces widget") are told apart too, but only when the words do
+ * not name a product as a whole and each part names one.
+ *
+ * @param	DoliDB		$db		Database handler (units dictionary, products)
+ * @param	string		$text	Command text, without the command name
+ * @param	User|null	$user	User the products are searched for, null to split on ";" only
+ * @param	string		$side	'sell' (customer documents) or 'buy' (supplier documents)
+ * @return	array{name:string, ref:string, lines:array<int, array<string, mixed>>, error:string}
+ */
+function aiParseDocumentCommand($db, $text, $user = null, $side = 'sell')
+{
+	$out = array('name' => '', 'ref' => '', 'lines' => array(), 'error' => '');
+	$text = trim((string) $text);
+	$m = array();
+	if (preg_match('/(?:^|\s)ref:(\S+)/i', $text, $m)) {
+		$out['ref'] = $m[1];
+		$text = trim((string) preg_replace('/(?:^|\s)ref:\S+/i', ' ', $text));
+	}
+	// A product in quotes ("23", "Blue widget", as the suggestions write a ref
+	// that is a number or holds spaces) is one product: never a quantity, a
+	// price or two words.
+	$asName = array();
+	$asProduct = array();
+	if (preg_match_all('/"([^"]+)"/', $text, $m) > 0) {
+		foreach ($m[0] as $i => $whole) {
+			$mark = "\x01".$i."\x01";
+			$text = str_replace($whole, $mark, $text);
+			$asName[$mark] = trim($m[1][$i]);
+			$asProduct[$mark] = '"'.trim($m[1][$i]).'"';
+		}
+	}
+	$num = '\d+(?:[.,]\d+)?';
+	if (!preg_match('/(?:^|\s)('.$num.')(?=\s|$)/', $text, $m, PREG_OFFSET_CAPTURE)) {
+		$out['name'] = strtr($text, $asName);
+		$out['error'] = 'nolines';
+		return $out;
+	}
+	$start = (int) $m[1][1];
+	$out['name'] = trim(strtr(substr($text, 0, $start), $asName));
+	$rest = substr($text, $start);
+	foreach (preg_split('/\s*;\s*|,\s+(?=\d)/', $rest) ?: array() as $group) {
+		$tokens = preg_split('/\s+/', trim((string) $group), -1, PREG_SPLIT_NO_EMPTY) ?: array();
+		foreach (aiParseDocumentGroup($db, $tokens, $asProduct, $user, $side) as $line) {
+			$out['lines'][] = $line;
+		}
+	}
+	if (empty($out['lines'])) {
+		$out['error'] = 'nolines';
+	}
+
+	return $out;
+}
+
+/**
+ * Lines of one group of a document command: quantity, optional unit, product,
+ * optional unit price. Several lines written without ";" are split here when
+ * a user is given (see aiParseDocumentCommand()).
+ *
+ * @param	DoliDB					$db			Database handler
+ * @param	string[]				$tokens		Words of the group
+ * @param	array<string, string>	$asProduct	Quoted products set aside: mark => "name"
+ * @param	User|null				$user		User the products are searched for, null to never split
+ * @param	string					$side		'sell' or 'buy'
+ * @return	array<int, array<string, mixed>>	Lines, none when the group is not a line
+ */
+function aiParseDocumentGroup($db, array $tokens, array $asProduct, $user, $side)
+{
+	$num = '/^\d+(?:[.,]\d+)?$/';
+	if (empty($tokens) || !preg_match($num, $tokens[0])) {
+		return array();
+	}
+	$line = array('qty' => (float) str_replace(',', '.', array_shift($tokens)));
+	if (count($tokens) >= 2 && preg_match($num, (string) end($tokens))) {
+		$line['subprice'] = (float) str_replace(',', '.', (string) array_pop($tokens));
+	}
+	if (count($tokens) >= 2 && aiUnitIdFromName($db, $tokens[0]) > 0) {
+		$line['unit'] = array_shift($tokens);
+	}
+	if (empty($tokens)) {
+		return array();
+	}
+	$line['product_ref'] = strtr(implode(' ', $tokens), $asProduct);
+
+	// "4 popularpt 2 pieces widget": a number followed by a word, after the
+	// product, may start the next line. Only when the words are no product as
+	// a whole ("Widget 2 XL" stays one) and every part is one.
+	if ($user !== null && count($tokens) >= 3 && !aiDocumentProductExists($db, $user, $line['product_ref'], $side)) {
+		$n = count($tokens);
+		for ($i = 1; $i < $n - 1; $i++) {
+			if (!preg_match($num, $tokens[$i]) || preg_match($num, $tokens[$i + 1])) {
+				continue;
+			}
+			$left = array_slice($tokens, 0, $i);
+			$first = $line;
+			unset($first['subprice']);
+			if (count($left) >= 2 && preg_match($num, (string) end($left))) {
+				$first['subprice'] = (float) str_replace(',', '.', (string) array_pop($left));
+			}
+			$first['product_ref'] = strtr(implode(' ', $left), $asProduct);
+			if (!aiDocumentProductExists($db, $user, $first['product_ref'], $side)) {
+				continue;
+			}
+			$right = array_slice($tokens, $i);
+			if (isset($line['subprice'])) {
+				$right[] = (string) $line['subprice'];	// the price at the end belongs to the last line
+			}
+			$more = aiParseDocumentGroup($db, $right, $asProduct, $user, $side);
+			$allFound = !empty($more);
+			foreach ($more as $next) {
+				if (!aiDocumentProductExists($db, $user, (string) $next['product_ref'], $side)) {
+					$allFound = false;
+					break;
+				}
+			}
+			if ($allFound) {
+				return array_merge(array($first), $more);
+			}
+		}
+	}
+
+	return array($line);
+}
+
+/**
+ * Whether the words of a command line name at least one product the user may
+ * put on that kind of document.
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	User	$user	User
+ * @param	string	$typed	Product as typed ("#" and quotes allowed)
+ * @param	string	$side	'sell' or 'buy'
+ * @return	bool
+ */
+function aiDocumentProductExists($db, $user, $typed, $side)
+{
+	$search = trim(str_replace('"', ' ', ltrim((string) $typed, '#')));
+
+	return $search !== '' && !empty(aiFindProducts($db, $user, $search, $side, 1));
+}
+
+/**
+ * Products of the catalogue matching what a user typed: every word must be in
+ * the ref or the label, in any order. A product whose ref or label is exactly
+ * the text comes first. Only products the user may read, on sale (or on
+ * purchase for a supplier document).
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	User	$user		User
+ * @param	string	$text		What was typed
+ * @param	string	$side		'sell' (customer documents) or 'buy' (supplier documents)
+ * @param	int		$limit		Rows to return
+ * @return	array<int, array{id:int, ref:string, label:string, price:float, fk_unit:int, stock:float, exact:bool}>
+ */
+function aiFindProducts($db, $user, $text, $side = 'sell', $limit = 10)
+{
+	$types = array();
+	if ($user->hasRight('produit', 'lire')) {
+		$types[] = 0;
+	}
+	if ($user->hasRight('service', 'lire')) {
+		$types[] = 1;
+	}
+	$words = preg_split('/\s+/', trim((string) $text), -1, PREG_SPLIT_NO_EMPTY) ?: array();
+	if (empty($types) || empty($words)) {
+		return array();
+	}
+	$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock";
+	$sql .= " FROM ".$db->prefix()."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.fk_product_type IN (".$db->sanitize(implode(',', $types)).")";
+	$sql .= ($side === 'buy') ? " AND p.tobuy = 1" : " AND p.tosell = 1";
+	foreach (array_slice($words, 0, 6) as $w) {
+		$like = $db->escape($db->escapeforlike($w));
+		$sql .= " AND (p.ref LIKE '%".$like."%' OR p.label LIKE '%".$like."%')";
+	}
+	$sql .= " ORDER BY p.ref";
+	$sql .= " LIMIT 200";
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
+		return array();
+	}
+	$want = dol_strtolower(trim((string) $text));
+	$exact = array();
+	$other = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$row = array('id' => (int) $obj->rowid, 'ref' => (string) $obj->ref, 'label' => (string) $obj->label, 'price' => (float) $obj->price, 'fk_unit' => (int) $obj->fk_unit, 'stock' => (float) $obj->stock, 'exact' => false);
+		if (dol_strtolower($row['ref']) === $want || dol_strtolower($row['label']) === $want) {
+			$row['exact'] = true;
+			$exact[] = $row;
+		} else {
+			$other[] = $row;
+		}
+	}
+	$db->free($resql);
+
+	return array_slice(array_merge($exact, $other), 0, $limit);
+}
+
+/**
+ * Products of a third party's latest documents, newest first: what is most
+ * likely to be sold (or bought) again.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	User	$user		User
+ * @param	int		$socid		Third party
+ * @param	string	$side		'sell' (customer invoices) or 'buy' (supplier invoices)
+ * @param	int		$limit		Rows to return
+ * @return	array<int, array{id:int, ref:string, label:string, price:float, fk_unit:int, stock:float, exact:bool}>
+ */
+function aiRecentProducts($db, $user, $socid, $side = 'sell', $limit = 8)
+{
+	if ($socid <= 0 || !$user->hasRight($side === 'buy' ? 'fournisseur' : 'facture', $side === 'buy' ? 'facture' : 'lire', $side === 'buy' ? 'lire' : '')
+		|| (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
+		return array();
+	}
+	// What a third party bought is only told to a user who may see that third
+	// party: same check as the REST API (sales representative, external user).
+	if (!checkUserAccessToObject($user, array('societe'), (int) $socid, '', '', 'fk_soc', 'rowid')) {
+		return array();
+	}
+	$doc = ($side === 'buy') ? 'facture_fourn' : 'facture';
+	$det = ($side === 'buy') ? 'facture_fourn_det' : 'facturedet';
+	$link = ($side === 'buy') ? 'fk_facture_fourn' : 'fk_facture';
+	$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock, MAX(f.rowid) as lastdoc";
+	$sql .= " FROM ".$db->prefix().$db->sanitize($det)." as d";
+	$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($doc)." as f ON f.rowid = d.".$db->sanitize($link);
+	$sql .= " INNER JOIN ".$db->prefix()."product as p ON p.rowid = d.fk_product";
+	$sql .= " WHERE f.fk_soc = ".((int) $socid);
+	$sql .= " AND f.entity IN (".getEntity($side === 'buy' ? 'supplier_invoice' : 'invoice').")";
+	$sql .= ($side === 'buy') ? " AND p.tobuy = 1" : " AND p.tosell = 1";
+	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.fk_unit, p.stock";
+	$sql .= " ORDER BY lastdoc DESC";
+	$sql .= " LIMIT ".((int) $limit);
+	$resql = $db->query($sql);
+	$out = array();
+	while ($resql && ($obj = $db->fetch_object($resql))) {
+		$out[] = array('id' => (int) $obj->rowid, 'ref' => (string) $obj->ref, 'label' => (string) $obj->label, 'price' => (float) $obj->price, 'fk_unit' => (int) $obj->fk_unit, 'stock' => (float) $obj->stock, 'exact' => false);
+	}
+
+	return $out;
+}
+
+/**
+ * Plain name of a tool for the palette of the chat: "Get invoice" rather than
+ * api_invoices_get. A bridge tool is named from what it does (list, get,
+ * create...) and the record it works on, in the user's language when Dolibarr
+ * has a word for that record; any other tool from its own name.
+ *
+ * @param	Translate							$langs	Languages, in the user's language
+ * @param	string								$name	Tool name
+ * @param	array{endpoint:string,method:string,suffix:string,label:string}|null	$route	Route of a bridge tool, null for another tool
+ * @return	string									Plain name
+ */
+function aiPaletteToolTitle($langs, $name, $route)
+{
+	if (empty($route)) {
+		return dol_ucfirst(str_replace('_', ' ', (string) $name));
+	}
+
+	// The word Dolibarr already translates for the record: lang file, one, several.
+	$nouns = array(
+		'invoices' => array('bills', 'Invoice', 'Invoices'),
+		'supplier_invoices' => array('bills', 'SupplierInvoice', 'BillsSuppliers'),
+		'orders' => array('orders', 'Order', 'Orders'),
+		'supplier_orders' => array('orders', 'SupplierOrder', 'SuppliersOrders'),
+		'proposals' => array('propal', 'Proposal', 'Proposals'),
+		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
+		'products' => array('products', 'Product', 'Products'),
+		'projects' => array('main', 'Project', 'Projects'),
+		'tasks' => array('projects', 'Task', 'Tasks'),
+		'tickets' => array('ticket', 'Ticket', 'Tickets'),
+		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
+		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),
+		'categories' => array('main', 'Category', 'Categories'),
+		'interventions' => array('interventions', 'Intervention', 'Interventions'),
+		'contracts' => array('contracts', 'Contract', 'Contracts'),
+		'shipments' => array('sendings', 'Shipment', 'Shipments'),
+		'receptions' => array('receptions', 'Reception', 'Receptions'),
+		'members' => array('members', 'Member', 'Members'),
+		'expensereports' => array('main', 'ExpenseReport', 'ExpenseReports'),
+		'bankaccounts' => array('banks', 'BankAccount', 'BankAccounts'),
+		'donations' => array('donations', 'Donation', 'Donations'),
+		'agendaevents' => array('main', 'Event', 'Events'),
+		'holidays' => array('holiday', 'Holiday', 'Holidays'),
+		'users' => array('main', 'User', 'Users'),
+		'supplier_proposals' => array('supplier_proposal', 'SupplierProposalShort', 'SupplierProposalsShort'),
+		'boms' => array('mrp', 'BillOfMaterials', 'Bom'),
+		'mos' => array('mrp', 'ManufacturingOrder', 'MOs'),
+		'workstations' => array('mrp', 'Workstation', 'Workstations'),
+		'productlots' => array('productbatch', 'Batch', ''),
+		'memberstypes' => array('members', 'MemberType', 'MembersTypes'),
+		'subscriptions' => array('members', 'Subscription', 'Subscriptions'),
+		'partnerships' => array('partnership', 'Partnership', 'Partnerships'),
+		'multicurrencies' => array('main', 'Currency', ''),
+		'socialcontributions' => array('compta', 'SocialContribution', 'SocialContributions'),
+		'vatpayments' => array('compta', 'VATDeclaration', 'VATDeclarations'),
+		'variouspayments' => array('banks', 'VariousPayment', 'VariousPayments')
+	);
+	$endpoint = (string) $route['endpoint'];
+	// Otherwise the label of the whitelist entry, without its explanation in brackets.
+	$several = trim((string) preg_replace('/\s*\(.*\)\s*$/', '', (string) $route['label']));
+	$several = ($several !== '') ? $several : str_replace('_', ' ', $endpoint);
+	$one = (string) preg_replace(array('/ies$/', '/(?<!s)s$/'), array('y', ''), $several);
+	if (isset($nouns[$endpoint])) {
+		$langs->load($nouns[$endpoint][0]);
+		$one = $langs->transnoentitiesnoconv($nouns[$endpoint][1]);
+		if ($nouns[$endpoint][2] !== '') {
+			$several = $langs->transnoentitiesnoconv($nouns[$endpoint][2]);
+		}
+	}
+	$one = dol_strtolower($one);
+	$several = dol_strtolower($several);
+
+	$verbs = array(
+		'list' => array('AIToolTitleList', $several),
+		'get' => array('AIToolTitleGet', $one),
+		'get_by_ref' => array('AIToolTitleGetByRef', $one),
+		'get_by_email' => array('AIToolTitleGetByEmail', $one),
+		'get_by_barcode' => array('AIToolTitleGetByBarcode', $one),
+		'get_by_code' => array('AIToolTitleGetByCode', $one),
+		'get_by_track_id' => array('AIToolTitleGetByTrackId', $one),
+		'get_by_thirdparty' => array('AIToolTitleGetByThirdparty', $one),
+		'create' => array('AIToolTitleCreate', $one),
+		'update' => array('AIToolTitleUpdate', $one),
+		'delete' => array('AIToolTitleDelete', $one),
+		'validate' => array('AIToolTitleValidate', $one),
+		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'add_line' => array('AIToolTitleAddLine', $one)
+	);
+	$langs->load('other');
+	$suffix = (string) $route['suffix'];
+	if (isset($verbs[$suffix])) {
+		return dol_ucfirst($langs->transnoentitiesnoconv($verbs[$suffix][0], $verbs[$suffix][1]));
+	}
+
+	// Anything else ("payments_list", "lines"...): the record, then what is read,
+	// in the user's language when Dolibarr has the word.
+	$what = (string) preg_replace(array('/_list$/', '/^get_/'), '', $suffix);
+	$words = array(
+		'contacts' => array('companies', 'Contacts'),
+		'payments' => array('bills', 'Payments'),
+		'lines' => array('withdrawals', 'Lines'),
+		'categories' => array('main', 'Categories'),
+		'supplier_categories' => array('categories', 'SuppliersCategoriesShort'),
+		'stock' => array('stocks', 'Stock'),
+		'timespent' => array('projects', 'TimeSpent'),
+		'discounts' => array('bills', 'Discounts'),
+		'sales_representatives' => array('commercial', 'SalesRepresentatives'),
+		'shipments' => array('sendings', 'Shipments'),
+		'subscriptions' => array('members', 'Subscriptions')
+	);
+	if (isset($words[$what])) {
+		$langs->load($words[$what][0]);
+		$what = dol_strtolower($langs->transnoentitiesnoconv($words[$what][1]));
+	} else {
+		$what = str_replace('_', ' ', $what);
+	}
+
+	return dol_ucfirst($langs->transnoentitiesnoconv('AIToolTitleOther', $one, $what));
+}
+
+/**
+ * Description of a tool for the palette: without the sentence every generated
+ * bridge tool repeats, which says nothing to the person choosing.
+ *
+ * @param	string	$description	Description the model gets
+ * @return	string					Description to show
+ */
+function aiPaletteToolDescription($description)
+{
+	$text = (string) preg_replace('/\s*through the Dolibarr REST API \(auto-generated tool\)\.?/i', '', (string) $description);
+
+	return trim((string) preg_replace('/\s{2,}/', ' ', $text));
 }

@@ -182,6 +182,9 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string 	Label of the payment terms, used when there is no label for documents
+	 */
 	public $cond_reglement_label;
 
 	/**
@@ -189,7 +192,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public $mode_reglement_code;
 	/**
-	 * @deprecated Use $mode_reglement_code
+	 * @deprecated 	Use $mode_reglement_code
 	 * @var string	Mode reglement
 	 */
 	public $mode_reglement;
@@ -631,7 +634,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -861,7 +865,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1051,9 +1056,11 @@ class SupplierProposal extends CommonObject
 			$this->ref_fourn = $this->ref_supplier; // Backward compatibility for legacy usages.
 		}
 
-		// Multicurrency
-		if (!empty($this->multicurrency_code)) {
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+		} elseif (!empty($this->multicurrency_code)) {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = getDolCurrency();
@@ -1557,6 +1564,65 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
+	 *  Update the header fields of the price request that can be edited without a dedicated action
+	 *
+	 *  @param	User	$user		Object user that modify
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function update($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET";
+		$sql .= " fk_projet = ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_cond_reglement = ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+		$sql .= ", fk_mode_reglement = ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+		$sql .= ", fk_account = ".($this->fk_account > 0 ? ((int) $this->fk_account) : "null");
+		$sql .= ", fk_shipping_method = ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
+		$sql .= ", date_livraison = ".($this->delivery_date ? "'".$this->db->idate($this->delivery_date)."'" : "null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PROPOSAL_SUPPLIER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if ($error) {
+			$this->error = implode(', ', $this->errors);
+			$this->db->rollback();
+			return -1 * $error;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
+
+	/**
 	 *  Set status to validated
 	 *
 	 *  @param	User	$user       Object user that validate
@@ -1908,7 +1974,7 @@ class SupplierProposal extends CommonObject
 	 *	Update ProductFournisseur
 	 *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		Product $product				contain information to update
+	 * 	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User	$user					Object user
 	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
@@ -1931,7 +1997,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Create Price Fournisseur
 	 *
-	 *	@param		ProductFournisseur 	$product	Object Product TODO: Determine the correct type
+	 *	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User				$user		Object user
 	 *	@return     int								Return integer <0 if KO, >0 if OK
 	 */

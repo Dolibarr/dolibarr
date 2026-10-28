@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2026  Charlene Benke              <charlene@patas-monkey.com>
- * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
+ * Copyright (C) 2023-2026  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Nick Fragoulis
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
@@ -97,6 +97,7 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 $cancel    = GETPOST('cancel', 'alpha');
+$date_com = GETPOSTISSET('re') && GETPOST('re', 'alphanohtml') === '' ? '' : dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -1144,6 +1145,14 @@ if (empty($reshook)) {
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$ht = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -1402,11 +1411,14 @@ if (empty($reshook)) {
 	}
 
 	// Force mandatory order method
-	if ($action == 'commande') {	// Test on permission not required here
+	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder) {
 		$methodecommande = GETPOSTINT('methodecommande');
 
 		if ($cancel) {
 			$action = '';
+		} elseif (!$date_com) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderDate")), null, 'errors');
+			$action = 'createorder';
 		} elseif ($methodecommande <= 0 && !getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
 			$action = 'createorder';
@@ -1416,7 +1428,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder) {
 		$db->begin();
 		$object->context["sendmanualtriggers"] = GETPOST("manual_trigger_send");
-		$result = $object->commande($user, GETPOSTINT("datecommande"), GETPOSTINT("methode"), GETPOST('comment'));
+		$result = $object->commande($user, $date_com, GETPOSTINT('methodecommande'), GETPOST('comment'));
 		if ($result > 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -2389,7 +2401,7 @@ if ($action == 'create') {
 		}
 		*/
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.((int) $object->id), $langs->trans('DeleteSupplierOrder'), $langs->trans('ConfirmDeleteSupplierOrder'), 'confirm_delete', $arrayAjouts, 0, 2, $heightModal, $widthModal);
 	}
 
 	// Clone confirmation
@@ -2400,7 +2412,7 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter))
 		);
 		// Payment incomplete. Requesting reason: discount or other?
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSupplierOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirm validation
@@ -2418,7 +2430,7 @@ if ($action == 'create') {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		} else {
-			$text = $langs->trans('ConfirmValidateOrder', $newref);
+			$text = $langs->trans('ConfirmValidateSupplierOrder', $newref);
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
@@ -2426,7 +2438,7 @@ if ($action == 'create') {
 				$text .= $notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateSupplierOrder'), $text, 'confirm_valid', '', 0, 1);
 		}
 	}
 
@@ -2501,16 +2513,20 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", $formquestion, 0, 1);
 	}
 
-	// Confirmation de l'envoi de la commande
-	if ($action == 'commande') {
-		$formquestion = array();
-		$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	// Confirm placing the supplier order
+	if ($action == 'createorder' && $usercanorder && $object->status == CommandeFournisseur::STATUS_ACCEPTED) {
+		ob_start();
+		$formorder->selectInputMethod(GETPOST('methodecommande'), 'methodecommande', 1);
+		$inputmethod = ob_get_clean();
+		$formquestion = array(
+			array('type' => 'date', 'name' => 're', 'label' => $langs->trans('OrderDate'), 'value' => GETPOSTISSET('reday') ? ($date_com ?: -1) : dol_now(), 'datenow' => 1, 'tdclass' => 'fieldrequired'),
+			array('type' => 'other', 'name' => 'methodecommande', 'label' => $langs->trans('OrderMode'), 'value' => $inputmethod, 'tdclass' => getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL') ? '' : 'fieldrequired'),
+			array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans('Comment'), 'value' => dol_escape_htmltag(GETPOST('comment')), 'morecss' => 'quatrevingtpercent')
+		);
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
-			$text = '';
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('ORDER_SUPPLIER_SUBMIT', $object->socid, $object);
+			$formquestion['text'] = $notify->confirmMessage('ORDER_SUPPLIER_SUBMIT', $object->socid, $object);
 		}
 		if (isModEnabled('webhook')) {
 			require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
@@ -2519,7 +2535,7 @@ if ($action == 'create') {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'manual_trigger_send', 'label' => $langs->trans("QuestionSendManualTrigger"));
 			}
 		}
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".GETPOST("methodecommande")."&comment=".urlencode(GETPOST("comment")), $langs->trans("MakeOrder"), $langs->trans("ConfirmMakeOrder", dol_print_date($date_com, 'day')), "confirm_commande", $formquestion, 0, 2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('MakeOrder'), '', 'confirm_commande', $formquestion, 0, 2, 0, 600, 0, 'ToOrder', 'Cancel');
 	}
 
 	// Confirmation to delete line
@@ -3203,7 +3219,7 @@ if ($action == 'create') {
 
 				if ($object->status == CommandeFournisseur::STATUS_ACCEPTED) {
 					if ($usercanorder) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=createorder&token='.newToken().'#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=createorder&token='.newToken().'">'.$langs->trans("MakeOrder").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
 					}
@@ -3253,7 +3269,7 @@ if ($action == 'create') {
 				// Cancel
 				if ($object->status == CommandeFournisseur::STATUS_ACCEPTED) {
 					if ($usercanorder) {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel&amp;token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel&amp;token='.newToken().'">'.$langs->trans("CancelSupplierOrder").'</a>';
 					}
 				}
 
@@ -3268,39 +3284,6 @@ if ($action == 'create') {
 			}
 
 			print "</div>";
-		}
-
-		if ($usercanorder && $object->status == CommandeFournisseur::STATUS_ACCEPTED && $action == 'createorder') {
-			// Set status to ordered (action=commande)
-			print '<!-- form to record supplier order -->'."\n";
-			print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="POST">';
-
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden"	name="action" value="commande">';
-			print load_fiche_titre($langs->trans("ToOrder"), '', '');
-			print '<table class="noborder centpercent">';
-			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
-			print '<tr><td class="fieldrequired">'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-			print $form->selectDate($date_com ?: '', '', 0, 0, 0, "commande", 1, 1);
-			print '</td></tr>';
-
-			// Force mandatory order method
-			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input class="quatrevingtpercent" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
-
-			print '<tr><td class="center" colspan="2">';
-			print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
-			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-			print '</td></tr>';
-			print '</table>';
-
-			print '</form>';
-			print "<br>";
 		}
 
 		// Select mail models is same action as presend
@@ -3383,7 +3366,7 @@ if ($action == 'create') {
 
 		// Presend form
 		$modelmail = 'order_supplier_send';
-		$defaulttopic = 'SendOrderRef';
+		$defaulttopic = 'SendSupplierOrderRef';
 		$diroutput = getMultidirOutput($object);
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sord'.$object->id;

@@ -18,6 +18,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,11 +186,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @var integer
 	 */
 	public $date_echeance;
-
-	/**
-	 * @var ?int
-	 */
-	public $date_pointoftax;
 
 	/**
 	 * @var float
@@ -1286,6 +1282,12 @@ class FactureFournisseur extends CommonInvoice
 			$this->tms = dol_now();
 		}
 
+		// The point of tax date of a validated invoice can't be changed
+		if ($this->checkPointOfTaxNotChanged() < 0) {
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
@@ -2288,7 +2290,7 @@ class FactureFournisseur extends CommonInvoice
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
+			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise, $this->multicurrency_code);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2501,7 +2503,7 @@ class FactureFournisseur extends CommonInvoice
 			$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_devise);
+		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_devise, $this->multicurrency_code);
 		$total_ht = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -2548,7 +2550,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		$line->desc = $desc;
-
+		$line->description = $desc;
 		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 
 		$line->subprice = ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -3589,10 +3591,11 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'invoice_supplier_send')
 	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
-	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @param	string		$forcerecipient		Forced recipients (mandatory). A list of values separated by ';' among: a fixed email, 'thirdpartyemail' (email of thirdparty),
+	 *  										'internalfollowingcontact' (internal contacts of supplier invoice of type SALESREPFOLL), 'salesrepresentative' (emails of sales representatives of thirdparty).
 	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsRemindersOnSupplierInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = '')
+	public function sendEmailsRemindersOnSupplierInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $datetouse = 'duedate', $forcerecipient = 'internalfollowingcontact')
 	{
 		global $conf, $langs, $user;
 
@@ -3613,6 +3616,24 @@ class FactureFournisseur extends CommonInvoice
 			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
 		}
+
+		// Build list of forced recipients (separator is ';' because cron splits parameters on ',')
+		$arrayforcerecipient = array();
+		foreach (explode(';', (string) $forcerecipient) as $tmpvalue) {
+			$tmpvalue = trim($tmpvalue);
+			if ($tmpvalue !== '') {
+				if (!in_array($tmpvalue, array('thirdpartyemail', 'internalfollowingcontact', 'salesrepresentative')) && !isValidEmail($tmpvalue)) {
+					$this->output .= 'Bad value "'.$tmpvalue.'" for parameter forcerecipient. Must be an email, "thirdpartyemail", "internalfollowingcontact" or "salesrepresentative"';
+					return 0;
+				}
+				$arrayforcerecipient[] = $tmpvalue;
+			}
+		}
+		if (empty($arrayforcerecipient)) {
+			$this->output .= 'Parameter forcerecipient is mandatory. Must be a list of values separated by ";" among an email, "thirdpartyemail", "internalfollowingcontact" or "salesrepresentative"';
+			return 0;
+		}
+		$forcerecipient = implode(';', $arrayforcerecipient);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -3725,33 +3746,46 @@ class FactureFournisseur extends CommonInvoice
 
 					// Recipient
 					$to = array();
-					if ($forcerecipient) {	// If a recipient was forced
-						$to = array($forcerecipient);
-					} else {
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'internal', 0, 'SALESREPFOLL');
-							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-								foreach ($tmparraycontact as $data_email) {
-									if (!empty($data_email['email'])) {
-										$to[] = $data_email['email'];
+					$res = $tmpinvoice->fetch_thirdparty();
+					$recipient = $tmpinvoice->thirdparty;
+					if ($res > 0) {
+						foreach ($arrayforcerecipient as $tmpforcerecipient) {
+							if ($tmpforcerecipient == 'thirdpartyemail') {
+								if (!empty($recipient->email)) {
+									$to[] = $recipient->email;
+								}
+							} elseif ($tmpforcerecipient == 'internalfollowingcontact') {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'internal', 0, 'SALESREPFOLL');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $data_email['email'];
+										}
 									}
 								}
+							} elseif ($tmpforcerecipient == 'salesrepresentative') {
+								$tmparraysalesrep = $recipient->getSalesRepresentatives($user);
+								if (is_array($tmparraysalesrep)) {
+									foreach ($tmparraysalesrep as $salesrep) {
+										if (!empty($salesrep['email']) && !empty($salesrep['status'])) {
+											$to[] = $salesrep['email'];
+										}
+									}
+								}
+							} else {	// A fixed email
+								$to[] = $tmpforcerecipient;
 							}
-							if (empty($to) && !empty($recipient->email)) {
-								$to[] = $recipient->email;
-							}
-							if (empty($to)) {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for supplier invoice or customer.";
-								$error++;
-								$errorforinvoice++;
-							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						}
+						$to = array_values(array_unique(array_filter($to)));
+						if (empty($to)) {
+							$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email found for recipients ".$forcerecipient.".";
 							$error++;
 							$errorforinvoice++;
 						}
+					} else {
+						$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+						$error++;
+						$errorforinvoice++;
 					}
 
 					// Sender
