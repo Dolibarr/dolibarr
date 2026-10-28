@@ -705,7 +705,7 @@ if ($object->id > 0) {
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
-	// Thirdparty - optionnal
+	// Thirdparty - optional
 	if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 		if ($object->fk_soc > 0) {
