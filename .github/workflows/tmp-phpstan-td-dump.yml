@@ -1,0 +1,44 @@
+name: tmp phpstan td dump
+
+on:
+  push:
+    branches:
+      - tmp-phpstan-td-dump2
+
+permissions:
+  contents: write
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: phpstan:2.2.14
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml, mcrypt
+
+      - name: Run PHPStan with repo config (baseline included)
+        continue-on-error: true
+        run: |
+          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan.neon.dist > td_dump_with_baseline.txt 2>&1 || true
+          cat td_dump_with_baseline.txt
+
+      - name: Run PHPStan without baseline
+        continue-on-error: true
+        run: |
+          sed '/phpstan-baseline.neon/d' phpstan.neon.dist > phpstan_apstats.neon
+          phpstan analyse --level 9 --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_dump_nobaseline.txt 2>&1 || true
+          cat td_dump_nobaseline.txt
+
+      - name: Commit dumps
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add td_dump_with_baseline.txt td_dump_nobaseline.txt
+          git commit -m "TMP: add phpstan technical debt dumps"
+          git push
