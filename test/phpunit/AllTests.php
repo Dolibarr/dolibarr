@@ -175,6 +175,8 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/FormSetupTest.php';
+		$suite->addTestSuite('FormSetupTest');
 		require_once dirname(__FILE__).'/RestlerAutoLoaderTest.php';
 		$suite->addTestSuite('RestlerAutoLoaderTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
