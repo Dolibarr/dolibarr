@@ -19,15 +19,15 @@
  * \file    test/phpunit/ModuleBuilderTemplateConventionsTest.php
  * \ingroup modulebuilder
  * \brief   PHPUnit test for ModuleBuilder template conventions: status labels derived from
- *          arrayofkeyval, normalized trigger naming (MYMODULE_MYOBJECT_ACTION), and card action
- *          markers that must survive the generation time block removal.
+ *          arrayofkeyval, normalized trigger naming (MYMODULE_MYOBJECT_ACTION), card action
+ *          markers that must survive the generation time block removal, and access policy block.
  */
 
 global $conf, $user, $langs, $db, $mysoc;
 
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/AccessPolicyConfig.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -260,7 +260,7 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		}
 
 		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
-		$this->assertMatchesRegularExpression('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated, 'Re-Open button is still commented out after activation');
+		$this->assertSame(1, preg_match('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated), 'Re-Open button is still commented out after activation');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
 	}
 
@@ -308,5 +308,177 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		$class = file_get_contents(self::CLASS_TPL);
 		$this->assertSame(1, preg_match_all('/^\h*\/\/ BEGIN MODULEBUILDER RIGHTSCONFIG$/m', $class));
 		$this->assertSame(1, preg_match_all('/^\h*\/\/ END MODULEBUILDER RIGHTSCONFIG$/m', $class));
+	}
+
+	/**
+	 * Copy a template into a temporary file, so the generation functions can work on it.
+	 *
+	 * @param	string	$tpl	Path of the template
+	 * @return	string			Path of the temporary copy
+	 */
+	private function copyTemplateToTempFile($tpl)
+	{
+		$tmpfile = $this->createTempPhpFile();
+		copy($tpl, $tmpfile);
+		return $tmpfile;
+	}
+
+	/**
+	 * Create an empty temporary .php file, removed at the end of the test.
+	 *
+	 * @return	string	Path of the file
+	 */
+	private function createTempPhpFile()
+	{
+		$basefile = tempnam(sys_get_temp_dir(), 'mbaccesspolicy');
+		unlink($basefile);
+		return $basefile.'.php';
+	}
+
+	/**
+	 * Return the templates holding an ACCESSPOLICY block.
+	 *
+	 * @return	string[]
+	 */
+	private function getAccessPolicyTemplates()
+	{
+		$templates = array(self::CLASS_TPL);
+		foreach (getModuleBuilderAccessPolicyPages() as $page) {
+			$templates[] = __DIR__.'/../../htdocs/modulebuilder/template/'.$page;
+		}
+		return $templates;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testAccessPolicyBlockIsPresentOnceInEachTemplate()
+	{
+		foreach ($this->getAccessPolicyTemplates() as $tpl) {
+			$this->assertSame(1, preg_match_all(getModuleBuilderAccessPolicyBlockPattern(), file_get_contents($tpl)), 'Expected one ACCESSPOLICY block in '.basename($tpl));
+		}
+	}
+
+	/**
+	 * Without policy the generated code must be the template code: only the marker lines go away.
+	 *
+	 * @return void
+	 */
+	public function testTemplatesAreUnchangedWithoutAccessPolicy()
+	{
+		foreach ($this->getAccessPolicyTemplates() as $tpl) {
+			$tmpfile = $this->copyTemplateToTempFile($tpl);
+			$result = ($tpl === self::CLASS_TPL) ? applyModuleBuilderAccessPolicyToClass($tmpfile, null) : applyModuleBuilderAccessPolicyToPage($tmpfile, null);
+			$generated = file_get_contents($tmpfile);
+			unlink($tmpfile);
+
+			$expected = preg_replace('/^\h*\/\/ (BEGIN|END) MODULEBUILDER ACCESSPOLICY\R/m', '', file_get_contents($tpl));
+			$this->assertSame(1, $result, 'Failed to resolve the block of '.basename($tpl));
+			$this->assertSame($expected, $generated, basename($tpl).' differs from the template without policy');
+		}
+	}
+
+	/**
+	 * With a policy every page computes the read access with the same block and stays parsable.
+	 *
+	 * @return void
+	 */
+	public function testPagesApplyTheSameAccessPolicy()
+	{
+		$policy = AccessPolicyConfig::fromAlternatives(array(array('isAdmin'), array('canReadObject', 'isInternalUser')), 'ErrorForbidden');
+		$block = renderModuleBuilderAccessPolicyBlock($policy);
+
+		foreach (getModuleBuilderAccessPolicyPages() as $page) {
+			$tmpfile = $this->copyTemplateToTempFile(__DIR__.'/../../htdocs/modulebuilder/template/'.$page);
+			$result = applyModuleBuilderAccessPolicyToPage($tmpfile, $policy);
+			$generated = file_get_contents($tmpfile);
+			unlink($tmpfile);
+
+			$this->assertSame(1, $result, 'Failed to apply the policy to '.$page);
+			$this->assertSame(1, substr_count($generated, $block), 'Policy block missing in '.$page);
+			$this->assertStringNotContainsString('MODULEBUILDER ACCESSPOLICY', $generated, 'Marker left in '.$page);
+			$this->assertStringNotContainsString('//restrictedArea(', $generated, 'Commented snippets left in '.$page);
+			$this->assertSame(1, preg_match('/^if \(!\$permissiontoread\) \{\R\taccessforbidden\(\);/m', $generated), 'Default deny removed from '.$page);	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
+			$this->assertLessThan(strpos($generated, 'if (!$permissiontoread) {'."\n\taccessforbidden();"), strpos($generated, $block), 'Policy computed after the deny in '.$page);
+			$this->assertPhpSourceIsParsable($generated, $page.' is not parsable with an access policy');
+		}
+	}
+
+	/**
+	 * The generated class keeps the serialized policy, which loads back into the same policy.
+	 *
+	 * @return void
+	 */
+	public function testClassKeepsSerializedAccessPolicy()
+	{
+		$policy = AccessPolicyConfig::fromAlternatives(array(array('isAdmin'), array('canReadObject')));
+
+		$tmpfile = $this->copyTemplateToTempFile(self::CLASS_TPL);
+		$result = applyModuleBuilderAccessPolicyToClass($tmpfile, $policy);
+		$generated = file_get_contents($tmpfile);
+		unlink($tmpfile);
+
+		$matches = array();
+		$this->assertSame(1, $result);
+		$this->assertSame(1, preg_match('/^\tpublic \$accesspolicy = \'([^\']*)\';$/m', $generated, $matches), 'Property not generated');
+		$this->assertSame($policy->toJson(), AccessPolicyConfig::fromJson($matches[1])->toJson());
+		$this->assertPhpSourceIsParsable($generated, 'Class is not parsable with an access policy');
+	}
+
+	/**
+	 * A file without exactly one block must make the generation fail, not silently keep the default check.
+	 *
+	 * @return void
+	 */
+	public function testApplyFailsWhenTheBlockIsMissing()
+	{
+		$tmpfile = $this->createTempPhpFile();
+		file_put_contents($tmpfile, "<?php\n\$permissiontoread = 1;\n");
+		$result = applyModuleBuilderAccessPolicyToPage($tmpfile, AccessPolicyConfig::fromAlternatives(array(array('isAdmin'))));
+		unlink($tmpfile);
+
+		$this->assertSame(-1, $result);
+	}
+
+	/**
+	 * The policy stored in a generated class is what the pages generated later must follow.
+	 *
+	 * @return void
+	 */
+	public function testStoredAccessPolicyIsReadBackFromTheClass()
+	{
+		$policy = AccessPolicyConfig::fromAlternatives(array(array('isAdmin'), array('canReadObject', 'isInternalUser')), 'ErrorForbidden');
+
+		$tmpfile = $this->copyTemplateToTempFile(self::CLASS_TPL);
+		applyModuleBuilderAccessPolicyToClass($tmpfile, null);
+		$withoutpolicy = getModuleBuilderAccessPolicyFromClassFile($tmpfile);
+		unlink($tmpfile);
+
+		$tmpfile = $this->copyTemplateToTempFile(self::CLASS_TPL);
+		applyModuleBuilderAccessPolicyToClass($tmpfile, $policy);
+		$stored = getModuleBuilderAccessPolicyFromClassFile($tmpfile);
+		unlink($tmpfile);
+
+		$this->assertNull($withoutpolicy);
+		$this->assertNotNull($stored);
+		$this->assertSame($policy->toJson(), $stored->toJson());
+	}
+
+	/**
+	 * A tampered stored policy must stop the generation, not fall back to the default check.
+	 *
+	 * @return void
+	 */
+	public function testTamperedStoredAccessPolicyIsRejected()
+	{
+		$tmpfile = $this->createTempPhpFile();
+		file_put_contents($tmpfile, "<?php\nclass MyObject\n{\n\tpublic \$accesspolicy = '{\"expression\":{\"type\":\"predicate\",\"name\":\"isRoot\"}}';\n}\n");
+
+		try {
+			$this->expectException(InvalidArgumentException::class);
+			getModuleBuilderAccessPolicyFromClassFile($tmpfile);
+		} finally {
+			unlink($tmpfile);
+		}
 	}
 }

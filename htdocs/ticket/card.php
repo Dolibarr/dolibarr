@@ -126,7 +126,8 @@ if (GETPOST('modelselected', 'alpha')) {
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 $res = 0;
-if ($id || $track_id || $ref) {
+// Must not load on add: the posted ref may now belong to another ticket.
+if (($id || $track_id || $ref) && $action != 'add') {
 	$res = $object->fetch($id, $ref, $track_id);
 	if ($res >= 0) {
 		$id = $object->id;
@@ -359,7 +360,6 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			$action = $ifErrorAction;
@@ -1595,8 +1595,6 @@ if ($action == 'create' || $action == 'presend') {
 
 			$formticket->action = $action;
 			$formticket->track_id = $object->track_id;
-			$formticket->ref = $object->ref;
-			$formticket->id = $object->id;
 			$formticket->trackid = 'tic'.$object->id;
 
 			$formticket->withfile = 2;

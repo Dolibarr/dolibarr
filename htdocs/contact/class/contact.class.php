@@ -126,7 +126,7 @@ class Contact extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => 3, 'position' => 40),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 45, 'showoncombobox' => 1, 'searchall' => 1),
-		'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
+		//'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 50, 'showoncombobox' => 1, 'searchall' => 1),
 		'poste' => array('type' => 'varchar(80)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => -1, 'position' => 52),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
@@ -505,8 +505,6 @@ class Contact extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 		$now = dol_now();
 
@@ -1047,7 +1045,10 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->loadLangs(array("dict", "companies"));
+		// $langs may be null when called from a page with NOREQUIRETRAN (like viewimage.php)
+		if (is_object($langs)) {
+			$langs->loadLangs(array("dict", "companies"));
+		}
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut as status, c.zip, c.town,";
@@ -1135,7 +1136,7 @@ class Contact extends CommonObject
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
-				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$transcode = (is_object($langs) ? $langs->trans('StatusProspect'.$obj->fk_stcommcontact) : 'StatusProspect'.$obj->fk_stcommcontact);
 				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
 				$this->statut_commercial = $label_sale_status; // libelle statut commercial

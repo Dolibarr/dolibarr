@@ -958,7 +958,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
@@ -1428,7 +1428,7 @@ class Adherent extends CommonObject
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
 						if (is_int($result) && $result < 0) {
 							$this->error = $luser->error;
@@ -1689,7 +1689,7 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
+				if (is_object($langs) && $langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {	// $langs may be null with NOREQUIRETRAN
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
 				} else {
 					$this->country = $obj->country;
@@ -2630,7 +2630,7 @@ class Adherent extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ($withpictoimg != 2 ? 'class="pictofixedwidth"' : '').' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">';

@@ -348,7 +348,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 		$now = dol_now();
 
-		$label = $this->label ?? $this->libelle;
+		$label = empty($this->label) ? $this->libelle : $this->label;
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
@@ -1419,6 +1419,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$this->db->begin();
 
+				$errorforinvoice = 0;
 				$invoiceidgenerated = 0;
 
 				$new_fac_fourn = null;
@@ -1454,17 +1455,19 @@ class FactureFournisseurRec extends CommonInvoice
 					if ($invoiceidgenerated <= 0) {
 						$this->setErrorsFromObject($new_fac_fourn);
 						$error++;
+						$errorforinvoice++;
 					}
-					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
+					if (!$errorforinvoice && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
 						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
 							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 
-					if (!$error && $facturerec->generate_pdf) {
+					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$laststep = "Refresh ".$new_fac_fourn->id;
 						$new_fac_fourn->fetch($new_fac_fourn->id);
@@ -1473,6 +1476,7 @@ class FactureFournisseurRec extends CommonInvoice
 						if ($result < 0) {
 							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 				} else {
@@ -1482,7 +1486,9 @@ class FactureFournisseurRec extends CommonInvoice
 					dol_syslog('createRecurringInvoices Failed to load invoice template with id=' .$line->rowid. ', entity=' .$conf->entity);
 				}
 
-				if (!$error && $invoiceidgenerated >= 0) {
+				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error), so that a failure on one template does not cancel the templates processed after it.
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above, in which case $new_fac_fourn is still null.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$facturerec->nb_gen_done++;
 					$facturerec->date_last_gen = dol_now();
 					$nextDate = $facturerec->getNextDate();
@@ -2081,5 +2087,24 @@ class FactureFournisseurRec extends CommonInvoice
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Check if user has a permission on template supplier invoices
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'create') {
+			$mode = 'write';
+		}
+		if (!in_array($mode, array('read', 'write', 'delete'))) {
+			return false;
+		}
+
+		return (bool) $user->hasRight("fournisseur", "facture", $mode);
 	}
 }

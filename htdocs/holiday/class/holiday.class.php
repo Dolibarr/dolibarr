@@ -133,6 +133,11 @@ class Holiday extends CommonObject
 	public $fk_user_approve;
 
 	/**
+	 * @var int 	ID of user that has approved, as read by dol_print_object_info()
+	 */
+	public $user_approve_id;
+
+	/**
 	 * @var int 	Date for refuse
 	 */
 	public $date_refuse = 0;
@@ -172,6 +177,9 @@ class Holiday extends CommonObject
 	 */
 	public $holiday = array();
 
+	/**
+	 * @var array<mixed>	Not filled by core
+	 */
 	public $events = array();
 
 	/**
@@ -788,7 +796,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -918,7 +926,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1032,6 +1040,61 @@ class Holiday extends CommonObject
 	}
 
 	/**
+	 *	Send the approval email to the user who requested the leave
+	 *
+	 *  @return int			1 if sent, 0 if the requester has no email, <0 if KO
+	 */
+	public function sendApprovalEmail()
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$langs->load('holiday');
+
+		$recipient = new User($this->db);
+		$recipient->fetch($this->fk_user);
+		if (empty($recipient->email)) {
+			dol_syslog(get_class($this)."::sendApprovalEmail user that requested the leave has no email, so no email is sent");
+			return 0;
+		}
+
+		$validator = new User($this->db);
+		$validator->fetch($this->fk_validator);
+
+		// Not the validator's own address: it may belong to another company and be refused by the mail server.
+		$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+		$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+			$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		}
+		$subject = '['.$societeName.'] '.$langs->transnoentitiesnoconv("HolidaysValidated");
+
+		$link = dol_buildpath('/holiday/card.php', 3).'?id='.$this->id;
+
+		$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".dol_escape_htmltag($recipient->firstname).",</p>\n";
+		$message .= "<p>".$langs->transnoentities("HolidaysValidatedBody", dol_print_date($this->date_debut, 'day'), dol_print_date($this->date_fin, 'day'))."</p>\n";
+		$message .= "<ul>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dol_escape_htmltag(dolGetFirstLastname($validator->firstname, $validator->lastname))."</li>\n";
+		$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
+		$message .= "</ul>\n";
+
+		$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+		$trackid = 'leav'.$this->id;
+
+		$mail = new CMailFile($subject, $recipient->email, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
+		if (!$mail->sendfile()) {
+			$this->error = $mail->error;
+			$this->errors = $mail->errors;
+			dol_syslog(get_class($this)."::sendApprovalEmail id=".$this->id." ".$this->error, LOG_WARNING);
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
 	 *	Update database
 	 *
 	 *  @param	?User		$user			User that modify
@@ -1043,6 +1106,9 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
+		if ($this->status == self::STATUS_REFUSED || $this->status == self::STATUS_APPROVED) {
+			$checkBalance = 0;	// No balance check to refuse a request, nor on an approved request (its days are already debited)
+		}
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -1052,7 +1118,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1198,11 +1264,19 @@ class Holiday extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		// Delete extrafields before the leave request
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		if (!$error) {
@@ -1719,10 +1793,20 @@ class Holiday extends CommonObject
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
 			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
-			// the first time. Treat an empty value as "start from now" (like define_holiday.php does) instead of a very
-			// old date, otherwise the catch-up loop below would credit every user with years of monthly accrual at once.
+			// the first time. Treat an empty value as "start from now" instead of a very old date, otherwise the catch-up
+			// loop below would credit every user with years of monthly accrual at once. Store it, because the loop is the
+			// only other place that writes it: an empty value would stay empty and no month would ever be credited.
 			if (empty($stringInDBForLastUpdate)) {
 				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+				$sql .= " value = '".$this->db->escape($stringInDBForLastUpdate)."'";
+				$sql .= " WHERE name = 'lastUpdate'";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
 			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
@@ -1800,7 +1884,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
+						$nbDaysToDeduct = (float) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -2451,6 +2535,7 @@ class Holiday extends CommonObject
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
 						$this->fk_user_approve = $obj->fk_user_approval_done;
+						$this->user_approve_id = $obj->fk_user_approval_done;
 					}
 				}
 			}

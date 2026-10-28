@@ -46,7 +46,9 @@ export function initAiAssistant(container) {
 
     // Absolute endpoint URL: the chat may run injected into any Dolibarr page
     // (topbar popover), so relative URLs would resolve against the wrong path.
-    const epUrl = (file) => (config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : '');
+    // Resolved against location.origin (never contains user:pass@): fetch() rejects URLs
+    // with credentials, which a page loaded as http://user:pass@host/ (e.g. DoliDroid) would give.
+    const epUrl = (file) => new URL((config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : ''), window.location.origin).href;
 
     // 2. Select DOM Elements (scoped to the container so several chat instances
     // can coexist on the same page, e.g. popover opened over the standalone page)
@@ -78,12 +80,66 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Third parties the user picked when a name fitted several: phrase -> id,
+    // 0 = none of them. They answer the request they were asked for only, the next
+    // question asks again.
+    let thirdpartyChoices = {};
+    let lastSent = null;          // { sentQuery, query } of the last request, resent once a choice is made
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+
+    // --- Conversation persistence (storage is separate from the model context:
+    // reopening restores the bubbles, only PINNED messages are ever resent). ---
+    let conversationId = 0;          // 0 = the next message starts a new conversation
+    let restoringHistory = false;    // guard: reopening or restoring must not re-save messages
+    let persistQueue = Promise.resolve();   // keeps message order server-side
+
+    // Every change of the current conversation goes through here, so the
+    // "open in full page" button always carries it along (popover -> page
+    // used to start from a blank chat).
+    function setConversationId(id) {
+        const changed = (conversationId !== id);
+        conversationId = id;
+        if (changed) renderSidebar();
+        // Remember the conversation in progress in this browser, so the popover
+        // on the next page (or the full page) resumes it instead of a blank chat.
+        try { if (id) localStorage.setItem('aiCurrentConversation', String(id)); else localStorage.removeItem('aiCurrentConversation'); } catch (e) { /* no storage: nothing to resume */ }
+        const expand = container.querySelector('#ai-expand-btn');
+        if (expand && (expand.dataset.fullscreenBase || expand.dataset.fullscreenUrl)) {
+            if (!expand.dataset.fullscreenBase) expand.dataset.fullscreenBase = expand.dataset.fullscreenUrl;
+            const base = expand.dataset.fullscreenBase;
+            expand.dataset.fullscreenUrl = base + (id ? (base.indexOf('?') >= 0 ? '&' : '?') + 'conv=' + encodeURIComponent(id) : '');
+        }
+    }
+
+    function chatHistoryApi(payload) {
+        return fetch(epUrl('../ajax/chat_history.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then((r) => r.json());
+    }
+
+    function persistMessage(div, type, rawText, html) {
+        persistQueue = persistQueue.then(() => chatHistoryApi({
+            action: 'save', id: conversationId,
+            role: (type === 'bot') ? 'assistant' : 'user',
+            raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
+            pinned: (div.dataset.ctx === 'on') ? 1 : 0,
+            error: div.dataset.aiError ? 1 : 0
+        }).then((res) => {
+            if (res && res.id) { setConversationId(res.id); delete previewCache[res.id]; }
+            if (res && res.message_id) div.dataset.msgId = String(res.message_id);
+        })).catch(() => { /* history is best-effort, the chat must never break on it */ });
+    }
     // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
     // the per-file/total size caps live server-side too.
     const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
+    // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
+    const HISTORY_KEY = config.historyKey || '';
+    const HISTORY_MAX_MSGS = 20;
+    // "All" mode of the context bar: every exchange, including the next ones, travels as context
+    let contextAllMode = false;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -136,6 +192,10 @@ export function initAiAssistant(container) {
     // Initialize the model picker (presets + dynamic provider model list)
     initModelPicker();
 
+    // Apply the select2 look of the other Dolibarr combos on the model and mode lists
+    initSelect2Combo(modelSelect, true);
+    initSelect2Combo(engineSelect, false);
+
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
     container.addEventListener('triggerPdf', () => {
@@ -164,10 +224,23 @@ export function initAiAssistant(container) {
     // Attach the auto-resize listener to the input
     if (input) {
         input.addEventListener('input', autoResizeInput);
+        // "/" at the start of the input opens the tool palette, filtered as the user types.
+        input.addEventListener('input', () => {
+            const v = input.value;
+            const mention = mentionTarget();
+            if (mention) {
+                mentionSuggest(mention);    // "@" or "#" being typed, in a command or a question
+            } else if (paletteWanted(v) || paletteLocalTyped(v)) {
+                paletteOpen(v.slice(1));
+            } else if (container.querySelector('.ai-palette-list')) {
+                paletteClose();
+            }
+        });
     }
 
     // Handle Submit (Enter) vs New Line (Shift+Enter)
     input.addEventListener('keydown', (e) => {
+        if (paletteKey(e)) return;
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 // Shift+Enter: Allow new line (default behavior), just ensure resize happens
@@ -211,22 +284,53 @@ export function initAiAssistant(container) {
         }
     }
 
-    // Clear Chat History
-    clearBtn.addEventListener('click', () => {
-        if (confirm(t('ClearChatHistoryTitle'))) {
-            // Remove conversation messages; keep the welcome element so it can be
-            // shown again on the full page (the popover has no welcome screen).
-            chat.querySelectorAll('.msg').forEach((n) => n.remove());
-            if (welcome) {
-                welcome.style.display = '';
-            } else {
-                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
-            }
-            lastResult = { data: null, tool: '', query: '' };
-            clarificationContext = null;
-            input.focus();
+    // Reset the chat display and state: used by startNewConversation() (Clear button, "/new" and "/clear" commands)
+    function clearConversation(fromOtherInstance = false) {
+        // Remove conversation messages; keep the welcome element so it can be
+        // shown again on the full page (the popover has no welcome screen).
+        chat.querySelectorAll('.msg').forEach((n) => n.remove());
+        if (welcome) {
+            welcome.style.display = '';
+        } else {
+            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+        }
+        lastResult = { data: null, tool: '', query: '' };
+        clarificationContext = null;
+        thirdpartyChoices = {};
+        contextAllMode = false;
+        if (HISTORY_KEY) {
+            try {
+                sessionStorage.removeItem(HISTORY_KEY);
+                sessionStorage.removeItem(HISTORY_KEY + '_all');
+            } catch (e) { /* ignore */ }
+        }
+        updateContextBar();
+        if (fromOtherInstance) return;
+        // The other chat of the page (popover over the full page) shows the same conversation: clear it too.
+        document.dispatchEvent(new CustomEvent('aiChatCleared', { detail: { key: HISTORY_KEY, source: container } }));
+        input.focus();
+    }
+
+    document.addEventListener('aiChatCleared', (ev) => {
+        if (ev.detail && ev.detail.source !== container && ev.detail.key === HISTORY_KEY) {
+            clearConversation(true);
+            setConversationId(0);
         }
     });
+
+    // Clear Chat History
+    // Leave the current conversation (it stays in the history) and start a
+    // blank one: the Clear button and the sidebar's "New conversation" share it.
+    // The bubbles, the copy kept by this tab and the pending states go through
+    // the shared reset; the server-side conversation simply stays in the list.
+    function startNewConversation() {
+        clearConversation();
+        setConversationId(0);
+        refreshContext();
+        input.focus();
+    }
+    // Non-destructive since the conversation stays in the history: no confirm.
+    clearBtn.addEventListener('click', () => startNewConversation());
 
     // Handle Engine Switching
     engineSelect.addEventListener('change', () => {
@@ -491,11 +595,13 @@ export function initAiAssistant(container) {
         let saved = '';
         try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
 
-        const presets = [
+        // Presets rely on a name heuristic (see resolveModel): only offered when
+        // AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY is on.
+        const presets = parseInt(config.modelPresets || 0, 10) ? [
             ['preset:fast', '⚡ ' + t('AIModelFast')],
             ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
             ['preset:deep', '🧠 ' + t('AIModelDeep')]
-        ];
+        ] : [];
         presets.forEach(([val, label]) => {
             const o = document.createElement('option');
             o.value = val; o.textContent = label;
@@ -506,6 +612,7 @@ export function initAiAssistant(container) {
             if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
                 modelSelect.value = saved;
             }
+            refreshSelect2Combo(modelSelect);
         };
         applySaved();
 
@@ -514,14 +621,16 @@ export function initAiAssistant(container) {
             .then((j) => {
                 modelList = (j && j.models) || [];
                 if (modelList.length) {
-                    const grp = document.createElement('optgroup');
-                    grp.label = '──';
+                    // Disabled separator line rather than an <optgroup>: browsers
+                    // indent optgroup entries, keep models aligned with 'Auto'.
+                    const sep = document.createElement('option');
+                    sep.disabled = true; sep.textContent = '──────────';
+                    modelSelect.appendChild(sep);
                     modelList.forEach((id) => {
                         const o = document.createElement('option');
                         o.value = id; o.textContent = id;
-                        grp.appendChild(o);
+                        modelSelect.appendChild(o);
                     });
-                    modelSelect.appendChild(grp);
                     // Saved model no longer offered by the provider: fall back to
                     // Auto, forget the stale choice, and tell the user ONCE (so the
                     // picker never looks silently ignored, cf. review on #39878).
@@ -538,6 +647,54 @@ export function initAiAssistant(container) {
         modelSelect.addEventListener('change', () => {
             try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
         });
+    }
+
+    /**
+     * Turn a native <select> into a select2 combo with the same options as ajax_combobox().
+     * Does nothing when select2 is not loaded (the native select keeps its own pill style).
+     *
+     * @param {HTMLSelectElement} sel        Select element
+     * @param {boolean}           withSearch Show the search field in the dropdown
+     */
+    function initSelect2Combo(sel, withSearch) {
+        if (!sel || !window.jQuery || !window.jQuery.fn.select2) return;
+        const $sel = window.jQuery(sel);
+        // Show the picto declared into the data-picto attribute of the option before its label
+        const withPicto = (data) => {
+            const picto = data.element ? data.element.getAttribute('data-picto') : '';
+            const experimental = data.element ? data.element.getAttribute('data-experimental') : '';
+            if (!picto) return data.text;
+            const span = window.jQuery('<span></span>').text(data.text).prepend(window.jQuery('<span class="pictofixedwidth"></span>').addClass(picto));
+            if (experimental) {
+                span.append(window.jQuery('<span class="opacitymedium paddingleft"></span>').text('(' + t('VersionExperimental') + ')'));
+            }
+            return span;
+        };
+        $sel.select2({
+            dir: 'ltr',
+            width: 'resolve',
+            minimumResultsForSearch: withSearch ? 0 : Infinity,
+            language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+            theme: 'default',
+            dropdownCssClass: 'dol-dropdown-dialog dol-dropdown-dialogmono',
+            templateResult: withPicto,
+            templateSelection: withPicto,
+            // Keep the dropdown inside the chat, so a click into it is not seen as a click outside the popover
+            dropdownParent: window.jQuery(container)
+        });
+        // select2 fires a jQuery 'change' only, relay it to the native listeners of the select
+        $sel.on('select2:select', () => sel.dispatchEvent(new Event('change')));
+    }
+
+    /**
+     * Refresh the displayed value of a select2 combo after a programmatic change of the select.
+     *
+     * @param {HTMLSelectElement} sel Select element
+     */
+    function refreshSelect2Combo(sel) {
+        if (sel && window.jQuery && window.jQuery(sel).data('select2')) {
+            window.jQuery(sel).trigger('change.select2');
+        }
     }
 
     /**
@@ -962,6 +1119,7 @@ export function initAiAssistant(container) {
             } else {
                 alert(t('BrowserNotSupported'));
                 engineSelect.value = 'text';
+                refreshSelect2Combo(engineSelect);
                 updateInterfaceMode('text');
             }
         } else if (mode === 'whisper') {
@@ -1239,6 +1397,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
+    // A server failure (HTTP 5xx) may be transient: offer a button that runs the same request again.
+    function retryActionsFor(result, onRetry) {
+        if (!result || !result.error || !(parseInt(result.http_status, 10) >= 500)) return null;
+        return [{ text: t('AIRetry'), icon: 'fa-redo', onclick: (ev) => { ev.currentTarget.closest('.msg-actions').remove(); onRetry(); } }];
+    }
+
     function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
@@ -1251,6 +1415,8 @@ export function initAiAssistant(container) {
             const bubble = document.createElement('div');
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
+            // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
+            if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
             // Context pin: the last AUTO_CONTEXT exchanges follow the model by
             // default (sliding window), the user pins older ones explicitly or
@@ -1258,6 +1424,7 @@ export function initAiAssistant(container) {
             if (rawText) {
                 div.dataset.aiRaw = String(rawText).slice(0, 4000);
                 div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                if (contextAllMode && !restoringHistory && !div.dataset.aiError) div.dataset.ctx = 'on';
                 const pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
@@ -1266,8 +1433,12 @@ export function initAiAssistant(container) {
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
                     toggleContextPin(div);
+                    persistPinState(div);
                 };
                 bubble.appendChild(pin);
+                if (!restoringHistory) {
+                    persistMessage(div, type, rawText, html);
+                }
             }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
@@ -1280,6 +1451,59 @@ export function initAiAssistant(container) {
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
         if (div.dataset.aiRaw) refreshContext();
+        else saveChatHistory();
+    }
+
+    // Keep the user/bot bubbles in sessionStorage so the conversation survives a
+    // page change (popover -> full page, or any navigation) in the same tab.
+    // Action buttons and pending confirmations are not kept: they cannot be replayed.
+    function saveChatHistory() {
+        if (!HISTORY_KEY || restoringHistory) return;
+        const msgs = Array.from(chat.querySelectorAll('.msg.user, .msg.bot'))
+            .filter((m) => !m.classList.contains('typing-indicator'))
+            .slice(-HISTORY_MAX_MSGS)
+            .map((m) => {
+                const bubble = m.querySelector('.msg-bubble');
+                if (!bubble) return null;
+                const clone = bubble.cloneNode(true);
+                // Pins are rebuilt on restore; charts are canvases that cannot be serialized.
+                clone.querySelectorAll('.ctx-pin, .msg-actions, .chat-chart-wrap').forEach((n) => n.remove());
+                return {
+                    type: m.classList.contains('user') ? 'user' : 'bot',
+                    html: clone.innerHTML,
+                    raw: m.dataset.aiRaw || '',
+                    ctx: m.dataset.ctx || '',
+                    error: m.dataset.aiError ? 1 : 0
+                };
+            })
+            .filter(Boolean);
+        try {
+            if (msgs.length) sessionStorage.setItem(HISTORY_KEY, JSON.stringify(msgs));
+            else sessionStorage.removeItem(HISTORY_KEY);
+            if (contextAllMode) sessionStorage.setItem(HISTORY_KEY + '_all', '1');
+            else sessionStorage.removeItem(HISTORY_KEY + '_all');
+        } catch (e) { /* private mode or quota exceeded: the chat just won't survive a page change */ }
+    }
+
+    function restoreChatHistory() {
+        if (!HISTORY_KEY) return;
+        let msgs = [];
+        try { msgs = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) { msgs = []; }
+        if (!Array.isArray(msgs)) return;
+        // A question left without answer (page changed while waiting) is dropped.
+        while (msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
+        if (!msgs.length) return;
+        try { contextAllMode = (sessionStorage.getItem(HISTORY_KEY + '_all') === '1'); } catch (e) { contextAllMode = false; }
+        if (welcome) welcome.style.display = 'none';
+        restoringHistory = true;
+        msgs.forEach((m) => {
+            if (!m || (m.type !== 'user' && m.type !== 'bot')) return;
+            appendMsg(m.type, String(m.html || ''), null, m.raw || null, { error: !!m.error });
+            const div = chat.lastElementChild;
+            if (div && m.ctx) div.dataset.ctx = m.ctx;
+        });
+        restoringHistory = false;
+        refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1326,9 +1550,703 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
+    // Several third parties fit a name the user wrote, and the privacy guard
+    // keeps names away from the provider: the server asked before sending
+    // anything. The same request goes again with the choice.
+    function handleThirdpartyChoice(question, choice, onPick) {
+        const pick = (id) => {
+            const msg = chat.lastElementChild;
+            if (msg && msg.classList.contains('clarification')) msg.remove();
+            if (onPick) {
+                onPick(choice.phrase, id);   // a palette command runs again with the choice
+                return;
+            }
+            thirdpartyChoices[choice.phrase] = id;
+            if (lastSent) handleQuery(lastSent);
+        };
+        const actions = (choice.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-building', onclick: () => pick(o.id) }));
+        actions.push({ text: t('AINoneOfThese'), icon: 'fa-times', onclick: () => pick(0) });
+        appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(question)}</div>`, actions);
+    }
+
     function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
         appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
+    }
+
+    // =========================================================================
+    // TOOL PALETTE ("/")
+    // =========================================================================
+    // "/" at the start of the input lists the tools this user may run (the same
+    // list the model gets, from list_tools.php), filtered as the user types.
+    // Picking one opens a form built from the tool's own schema, filled in from
+    // the page being viewed. Run calls the tool directly: no AI provider is
+    // involved. A write still stops at the confirmation, as in the chat.
+
+    // Tool family (api_<family>_...) and documents module part of each page element.
+    const PALETTE_FAMILY = {
+        facture: 'invoices', societe: 'thirdparties', product: 'products', propal: 'proposals', commande: 'orders',
+        project: 'projects', contrat: 'contracts', ticket: 'tickets', invoice_supplier: 'supplier_invoices',
+        order_supplier: 'supplier_orders', supplier_proposal: 'supplier_proposals', shipping: 'shipments',
+        reception: 'receptions', fichinter: 'interventions', expensereport: 'expensereports', stock: 'warehouses',
+        categorie: 'categories', action: 'agendaevents'
+    };
+    const PALETTE_MODULEPART = {
+        facture: 'invoice', invoice_supplier: 'supplier_invoice', commande: 'order', order_supplier: 'supplier_order',
+        propal: 'propal', supplier_proposal: 'supplier_proposal', shipping: 'shipment', societe: 'societe',
+        product: 'product', contrat: 'contract', fichinter: 'ficheinter', project: 'project', ticket: 'ticket'
+    };
+    // A module dashboard (index page, see actions_ai printCommonFooter): the
+    // API families of that module.
+    const PALETTE_DASHBOARD = {
+        'thirdparties': ['thirdparties', 'contacts'], 'customer invoices': ['invoices'], 'supplier invoices': ['supplier_invoices'],
+        'sales orders': ['orders'], 'supplier orders': ['supplier_orders'], 'commercial proposals': ['proposals'],
+        'supplier proposals': ['supplier_proposals'], 'products and services': ['products'],
+        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'tasks'], 'contracts': ['contracts'],
+        'interventions': ['interventions'], 'tickets': ['tickets'], 'shipments': ['shipments'], 'receptions': ['receptions'],
+        'members': ['members', 'subscriptions'], 'donations': ['donations'], 'expense reports': ['expensereports'],
+        'agenda': ['agendaevents'], 'manufacturing': ['mos', 'boms']
+    };
+    let paletteTools = null;
+
+    // "/tools" stays the debug command of the chat; any other "/..." line is the palette.
+    // Commands the chat answers by itself (sendMessage): never caught by the palette.
+    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help'];
+
+    // Commands of the chat shown in the palette (run by handleQuery()), with their label key.
+    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus'], ['tools', 'AIHelpTools']];
+    // The whole name of one of them typed: the palette stays open on it until Enter.
+    function paletteLocalTyped(v) {
+        return typeof v === 'string' && PALETTE_LOCALS.some((l) => v.trim().toLowerCase() === '/' + l[0]);
+    }
+
+    function paletteWanted(v) {
+        if (!config.palette) return false;   // switched off in the setup: everything goes to the AI
+        return typeof v === 'string' && v.indexOf('/') === 0 && v.indexOf('\n') === -1
+            && CHAT_LOCAL_COMMANDS.indexOf(v.trim().toLowerCase()) === -1;
+    }
+
+    // The page being viewed, as the page footer emitted it (window.aiPageContext):
+    // a card gives its record; a list gives its kind of record, and the row the
+    // user ticked when exactly one is ticked (read now: ticks change after load).
+    function paletteContext() {
+        const c = window.aiPageContext;
+        if (c && !c.element && PALETTE_DASHBOARD[c.dashboard]) {
+            return { element: '', id: 0, ref: '', socid: 0, family: '', families: PALETTE_DASHBOARD[c.dashboard], dashboard: true };
+        }
+        if (!c || !c.element) return null;
+        let id = parseInt(c.id, 10) || 0;
+        let ref = String(c.ref || '');
+        let socid = (c.element === 'societe') ? id : (parseInt(c.socid, 10) || 0);
+        if (c.list) {
+            const ticked = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                .map((cb) => parseInt(cb.value, 10)).filter((n) => n > 0);
+            id = (ticked.length === 1) ? ticked[0] : 0;
+            ref = '';
+            socid = (c.element === 'societe') ? id : 0;   // a ticked invoice's customer is not on the page data
+        }
+        const family = PALETTE_FAMILY[c.element] || '';
+        return { element: String(c.element), id: id, ref: ref, socid: socid, family: family, families: family ? [family] : [], dashboard: false };
+    }
+
+    // 0 = a tool of this card (or of this dashboard's module), 1 = its files,
+    // 2 = takes this card's third party, 3 = anything else.
+    function paletteRank(tool, ctx) {
+        if (!ctx) return 3;
+        if (ctx.families.some((f) => tool.name.indexOf('api_' + f + '_') === 0)) return 0;
+        if (tool.name === 'api_documents_objects_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
+        const p = tool.properties || {};
+        if (ctx.socid && (p.socid || p.thirdparty_ids)) return 2;
+        return 3;
+    }
+
+    // How well a tool fits the words typed: 0 = its plain name or API name starts
+    // with them, 1 = they are inside its plain name or API name, 2 = only in its
+    // description, 3 = not at all. Every word typed must be found.
+    function paletteMatch(tool, f) {
+        const title = (tool.title || '').toLowerCase();
+        const name = tool.name.toLowerCase();
+        const short = name.replace(/^api_/, '');
+        const desc = (tool.description || '').toLowerCase();
+        let worst = 0;
+        for (const w of f.split(/\s+/).filter(Boolean)) {
+            let m = 3;
+            if (title.indexOf(w) === 0 || short.indexOf(w) === 0 || name.indexOf(w) === 0) m = 0;
+            else if (title.indexOf(w) !== -1 || name.indexOf(w) !== -1) m = 1;
+            else if (desc.indexOf(w) !== -1) m = 2;
+            worst = Math.max(worst, m);
+        }
+        return worst;
+    }
+
+    // Reading one record first, then other reads, writes last.
+    // On a dashboard there is no record yet: the module's main family first, and
+    // in each family creating a record, then the list of them, then the other
+    // lists and reads, the other writes last.
+    function paletteKind(tool, ctx) {
+        if (ctx && ctx.dashboard) {
+            const fi = ctx.families.findIndex((f) => tool.name.indexOf('api_' + f + '_') === 0);
+            if (fi === -1) return 100;
+            const fam = ctx.families[fi];
+            let k = 3;
+            if (tool.name === 'api_' + fam + '_create') k = 0;
+            else if (tool.name === 'api_' + fam + '_list') k = 1;
+            else if (/_list$/.test(tool.name)) k = 2;
+            else if (/_(create|update|delete|add|remove|validate|pay|send)(_|$)/.test(tool.name)) k = 4;
+            return fi * 10 + k;
+        }
+        if (/_(create|update|delete|add|remove|validate|pay|send)(_|$)/.test(tool.name)) return 2;
+        return /_get$/.test(tool.name) ? 0 : 1;
+    }
+
+    let paletteCommands = null;
+
+    // The commands this user may run (command.php), then the raw API tools only
+    // when the administrator shows them (AI_PALETTE_API_TOOLS: testing, advanced use).
+    let paletteLoading = null;
+    function paletteLoad() {
+        // One load for every caller: typing, Enter and Send may all ask at once.
+        if (!paletteLoading) {
+            paletteLoading = (async () => {
+                let cmds = [];
+                let tools = [];
+                try {
+                    const r = await fetch(epUrl('command.php') + '&action=list', { credentials: 'same-origin' });
+                    const j = await aiJson(r);
+                    cmds = (j && Array.isArray(j.commands)) ? j.commands : [];
+                } catch (e) { /* no commands: the list stays empty */ }
+                if (config.paletteApiTools) {
+                    try {
+                        const r = await fetch(epUrl('list_tools.php'), { credentials: 'same-origin' });
+                        const j = await aiJson(r);
+                        tools = (j && Array.isArray(j.tools)) ? j.tools : [];
+                    } catch (e) { /* idem */ }
+                }
+                paletteCommands = cmds;
+                paletteTools = tools;
+                return tools;
+            })();
+        }
+        return paletteLoading;
+    }
+
+    // "/invoice AI SOLUTION 4 popularpt 10" -> { cmd, text } when "invoice" is a command.
+    function paletteParseCommand(v) {
+        const m = /^\/(\S+)(?:\s+([\s\S]*))?$/.exec(String(v || '').trim());
+        if (!m || !paletteCommands) return null;
+        const cmd = paletteCommands.find((c) => c.name === m[1].toLowerCase());
+        return cmd ? { cmd: cmd, text: (m[2] || '').trim(), typedSpace: /\s/.test(String(v).replace(/^\s+/, '')) } : null;
+    }
+
+    // What the page says, with the rows ticked right now.
+    function paletteCommandContext() {
+        const c = window.aiPageContext || {};
+        const out = { element: c.element || '', id: parseInt(c.id, 10) || 0, socid: parseInt(c.socid, 10) || 0 };
+        if (c.list) {
+            out.list = 1;
+            out.ids = Array.isArray(c.ids) ? c.ids : [];
+            out.selected = Array.from(document.querySelectorAll('.checkforselect:checked')).map((cb) => parseInt(cb.value, 10)).filter((n) => n > 0);
+        }
+        return out;
+    }
+
+    // Run a command: no AI provider. A draft stops at the same confirmation as
+    // the chat; a name that fits several third parties brings the choice card.
+    async function runCommand(cmd, text, choices, productChoices) {
+        paletteClose();
+        input.value = '';
+        autoResizeInput();
+        if (welcome) welcome.style.display = 'none';
+        if (!choices && !productChoices) appendMsg('user', escapeHtml('/' + cmd + (text ? ' ' + text : '')), null, '/' + cmd + (text ? ' ' + text : ''));
+        appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} /${escapeHtml(cmd)}...`);
+        const loadingMsg = chat.lastElementChild;
+        input.disabled = true;
+        try {
+            const res = await fetch(epUrl('command.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: cmd, text: text, context: paletteCommandContext(), thirdparty_choices: choices || {}, product_choices: productChoices || {} })
+            });
+            const r = await aiJson(res);
+            loadingMsg.remove();
+            if (r && r.arguments && r.arguments.thirdparty_choice) {
+                handleThirdpartyChoice(r.arguments.question || '', r.arguments.thirdparty_choice, (phrase, id) => {
+                    if (!id) { appendMsg('system', t('ActionCancelled')); return; }
+                    runCommand(cmd, text, Object.assign({}, choices || {}, { [phrase]: id }), productChoices);
+                });
+            } else if (r && r.arguments && r.arguments.product_choice) {
+                // A product the line does not name uniquely: pick it, or keep the words as free text.
+                const pc = r.arguments.product_choice;
+                const again = (id) => {
+                    const msg = chat.lastElementChild;
+                    if (msg && msg.classList.contains('clarification')) msg.remove();
+                    runCommand(cmd, text, choices || {}, Object.assign({}, productChoices || {}, { [pc.key]: id }));
+                };
+                const actions = (pc.options || []).map((o) => ({ text: escapeHtml(o.label), icon: 'fa-cube', onclick: () => again(o.id) }));
+                actions.push({ text: escapeHtml(t('AICmdFreeText')), icon: 'fa-font', onclick: () => again(0) });
+                actions.push({ text: escapeHtml(t('Cancel')), icon: 'fa-times', onclick: () => {
+                    const msg = chat.lastElementChild;
+                    if (msg && msg.classList.contains('clarification')) msg.remove();
+                    appendMsg('system', t('ActionCancelled'));
+                } });
+                appendMsg('clarification', `<div style="font-weight:600">${escapeHtml(r.arguments.question || '')}</div>`, actions);
+            } else if (r && r.error) {
+                appendMsg('error', escapeHtml(String(r.error)));
+            } else if (r && r.totals) {
+                const rows = (r.totals.rows || []).map((row) => `<tr><td>${escapeHtml(row[0])}</td><td class="right"><strong>${escapeHtml(row[1])}</strong></td></tr>`).join('');
+                appendMsg('bot', `<div style="font-weight:600">${escapeHtml(r.totals.title || '')}</div><table class="ai-cmd-totals">${rows}</table>`, null, (r.totals.title || '') + ': ' + (r.totals.rows || []).map((row) => row[0] + ' ' + row[1]).join(', '));
+            } else if (r && r.result && r.result.resultType === 'input_required' && r.result.requestState) {
+                const prompt = (r.result.inputRequests && r.result.inputRequests[0] && r.result.inputRequests[0].prompt) || '';
+                const held = { tool: r.tool, arguments: Object.assign({}, r.arguments || {}, { requestState: r.result.requestState }) };
+                handleConfirmation(prompt, '', { tool: 'ask_for_confirmation', arguments: { action: prompt, original_intent: held } });
+            } else if (r && r.result) {
+                appendMsg('bot', formatResult(r.result, false, r.tool || ''), null, contextSnippetOf(r.result, r.tool || ''));
+            }
+        } catch (e) {
+            loadingMsg.remove();
+            appendMsg('error', t('NetworkError') + ': ' + e.message);
+        }
+        input.disabled = false;
+        input.focus();
+    }
+
+    function paletteClose() {
+        container.querySelectorAll('.ai-palette').forEach((el) => el.remove());
+    }
+
+    function paletteMount(box) {
+        paletteClose();
+        const pill = container.querySelector('.chat-input-pill');
+        if (pill && pill.parentNode) pill.parentNode.insertBefore(box, pill);
+    }
+
+    async function paletteOpen(filter) {
+        const tools = await paletteLoad();
+        if (!paletteWanted(input.value) && !paletteLocalTyped(input.value) && input.value !== '') return;   // the user moved on meanwhile
+        const typed = paletteParseCommand(input.value);
+        if (typed && typed.typedSpace) {
+            // A command and its words: how to write it, and what fits the word
+            // being typed (the third party, then each product). Enter runs it.
+            paletteSuggest(typed);
+            return;
+        }
+        const ctx = paletteContext();
+        const f = (filter || '').toLowerCase().trim();
+        // Commands of the chat itself, run by handleQuery(). Nothing typed: only them,
+        // plus a line pointing to /help for the commands and tools that need no AI.
+        const locals = PALETTE_LOCALS.filter((l) => !f || l[0].indexOf(f) === 0);
+        const cmds = f ? (paletteCommands || []).filter((c) => c.name.indexOf(f) === 0) : [];
+        // Typed: only the tools whose name starts with what is typed.
+        const list = tools
+            .filter((tl) => f && paletteMatch(tl, f) === 0)
+            .sort((a, b) => {
+                const ra = paletteRank(a, ctx);
+                const rb = paletteRank(b, ctx);
+                // Reads before writes only among the page's own tools; the rest stays alphabetical.
+                return (ra - rb) || (f ? paletteMatch(a, f) - paletteMatch(b, f) : 0) || (ra <= 1 ? paletteKind(a, ctx) - paletteKind(b, ctx) : 0) || a.name.localeCompare(b.name);
+            })
+            .slice(0, 12);
+        const box = document.createElement('div');
+        box.className = 'ai-palette ai-palette-list';
+        let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteHint'))}</div>`;
+        const items = locals.map((l) => `<div class="ai-palette-item" data-local="/${escapeHtml(l[0])}"><strong>/${escapeHtml(l[0])}</strong> <span class="opacitymedium">${escapeHtml(t(l[1]))}</span></div>`)
+            .concat(cmds.map((c) => `<div class="ai-palette-item" data-cmd="${escapeHtml(c.name)}"><strong>/${escapeHtml(c.name)}</strong> <span class="opacitymedium">${escapeHtml(c.label)}</span></div>`)
+            .concat(list.map((tl) => `<div class="ai-palette-item ai-palette-api" data-tool="${escapeHtml(tl.name)}"><strong>${escapeHtml(tl.title || tl.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tl.name)}</span> <span class="opacitymedium">${escapeHtml(tl.description || '')}</span></div>`)));
+        html += items.length ? items.join('').replace('class="ai-palette-item', 'class="ai-palette-item selected') : `<div class="ai-palette-empty opacitymedium">${escapeHtml(t('NoResults'))}</div>`;
+        if (!f) html += `<div class="ai-palette-hint opacitymedium">${escapeHtml(t('AIPaletteMore'))}</div>`;
+        box.innerHTML = html;
+        paletteMount(box);
+        // mousedown, not click: the input keeps its focus.
+        box.querySelectorAll('.ai-palette-item').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); palettePick(el); }));
+    }
+
+    // A command: write its name in the input (and run it when it needs no words);
+    // an API tool: its form.
+    function palettePick(el) {
+        if (el.dataset.local) {
+            paletteClose();
+            input.value = el.dataset.local;
+            handleQuery();
+            return;
+        }
+        if (el.dataset.cmd) {
+            if (el.dataset.cmd === 'total') {
+                runCommand('total', '');
+                return;
+            }
+            input.value = '/' + el.dataset.cmd + ' ';
+            input.focus();
+            paletteOpen(el.dataset.cmd);
+            return;
+        }
+        paletteForm(el.dataset.tool);
+    }
+
+    // "@" then a name suggests third parties (customers and suppliers), "#" then a
+    // ref or a label suggests products, in a command or in a question to the AI.
+    // Only at the start of a word, so an email address (nick@example.com) or a
+    // number sign inside a word never opens it.
+    function mentionTarget() {
+        if (!input) return null;   // also with the palette off: suggestions only, nothing runs
+        const pos = input.selectionStart;
+        if (pos !== input.selectionEnd) return null;
+        const before = String(input.value).slice(0, pos);
+        const m = /(^|\s)([@#])([^@#\n]*)$/.exec(before);
+        if (!m) return null;
+        const q = m[3];
+        if (/\s{2,}$/.test(q) || q.split(/\s+/).length > 6) return null;   // the user went on writing
+        return { kind: m[2] === '@' ? 'thirdparty' : 'product', start: pos - q.length - 1, end: pos, q: q };
+    }
+
+    let mentionTimer = null;
+    let mentionState = null;
+    function mentionSuggest(target) {
+        const typed = paletteWanted(input.value) ? paletteParseCommand(input.value) : null;
+        const hint = t(target.kind === 'thirdparty' ? 'AIMentionThirdpartyHint' : 'AIMentionProductHint');
+        const render = (items) => {
+            const box = document.createElement('div');
+            box.className = 'ai-palette ai-palette-list ai-palette-mention';
+            let html = `<div class="ai-palette-hint opacitymedium">${escapeHtml(hint)}</div>`;
+            html += (items || []).map((it, i) => `<div class="ai-palette-item ai-palette-sugg${i === 0 ? ' selected' : ''}" data-value="${escapeHtml(it.value)}" data-ref="${escapeHtml(it.ref || it.value)}"><strong>${escapeHtml(it.label)}</strong> <span class="opacitymedium">${escapeHtml(it.detail || '')}</span></div>`).join('');
+            box.innerHTML = html;
+            mentionState = { target: target, inCommand: !!typed, count: (items || []).length };
+            paletteMount(box);
+            box.querySelectorAll('.ai-palette-sugg').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); mentionPick(el); }));
+        };
+        clearTimeout(mentionTimer);   // a pending request must never draw over a newer state
+        if (target.q.trim().length < 2) {
+            render([]);
+            return;
+        }
+        mentionTimer = setTimeout(async () => {
+            const url = epUrl('command.php') + '&action=suggest&kind=' + target.kind + '&q=' + encodeURIComponent(target.q.trim())
+                + '&cmd=' + encodeURIComponent(typed ? typed.cmd.name : '') + '&name=&socid=0';
+            const asked = input.value;
+            try {
+                const r = await aiJson(await fetch(url, { credentials: 'same-origin' }));
+                if (input.value !== asked) return;   // the user kept typing: a newer request follows
+                render(r.items || []);
+            } catch (e) {
+                render([]);
+            }
+        }, 180);
+    }
+
+    // The picked name or product in place of "@..." / "#...". A command line
+    // takes what its parser reads (a product with a numeric ref as #id); a
+    // question takes the ref as the user would write it.
+    function mentionPick(el) {
+        const st = mentionState;
+        if (!st) return;
+        const value = st.inCommand ? el.dataset.value : el.dataset.ref;
+        const v = input.value;
+        const after = v.slice(st.target.end).replace(/^\s+/, '');
+        const head = v.slice(0, st.target.start) + value + ' ';
+        input.value = head + after;
+        input.focus();
+        input.setSelectionRange(head.length, head.length);
+        mentionState = null;
+        paletteClose();
+        if (paletteWanted(input.value)) paletteOpen(input.value.slice(1));
+        autoResizeInput();
+    }
+
+    // Keys while suggestions for "@" or "#" are shown. Returns true when handled.
+    function mentionKey(e) {
+        const box = container.querySelector('.ai-palette-mention');
+        if (!box) return false;
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            mentionState = null;
+            paletteClose();
+            return true;
+        }
+        const items = Array.from(box.querySelectorAll('.ai-palette-sugg'));
+        const idx = items.findIndex((el) => el.classList.contains('selected'));
+        if ((e.key === 'Enter' || e.key === 'Tab') && !e.shiftKey && idx >= 0) {
+            e.preventDefault();
+            mentionPick(items[idx]);
+            return true;
+        }
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && items.length) {
+            e.preventDefault();
+            if (idx >= 0) items[idx].classList.remove('selected');
+            const next = idx < 0 ? 0 : (idx + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+            items[next].classList.add('selected');
+            items[next].scrollIntoView({ block: 'nearest' });
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey) paletteClose();   // nothing to pick: Enter sends as usual
+        return false;
+    }
+
+    // Where the cursor is in a document command, and what to suggest there:
+    // before the first number the third party, after a quantity the product.
+    function paletteSuggestTarget(typed) {
+        if (typed.cmd.name === 'total') return null;
+        const text = String(input.value).replace(/^\s*\/\S+\s+/, '');
+        if (input.selectionStart !== input.value.length) return null;   // only while typing at the end
+        const firstNum = /(^|\s)\d+(?:[.,]\d+)?(?=\s|$)/.exec(text);
+        if (!firstNum) {
+            return text.trim().length >= 2 ? { kind: 'thirdparty', q: text.trim(), name: '' } : null;
+        }
+        const name = text.slice(0, firstNum.index).trim();
+        const groups = text.slice(firstNum.index).split(/\s*;\s*|,\s+(?=\d)/);
+        const group = groups[groups.length - 1];
+        const m = /^\s*\d+(?:[.,]\d+)?(\s+[\s\S]*)?$/.exec(group);
+        if (!m) return null;
+        const rest = m[1] || '';
+        if (rest === '') return null;                                  // the quantity is still being typed
+        if (/^\s*#?"[^"]+"\s/.test(rest)) return null;                // a product already picked, in quotes
+        const words = rest.trim().split(/\s+/).filter((w) => w !== '');
+        if (words.length && /^\d+(?:[.,]\d+)?$/.test(words[words.length - 1])) return null;   // the price is being typed
+        return { kind: 'product', q: rest.replace(/^\s+/, ''), name: name };
+    }
+
+    let paletteSuggestTimer = null;
+    let paletteSuggestState = null;
+    function paletteSuggest(typed) {
+        const target = paletteSuggestTarget(typed);
+        const render = (items, consumed) => {
+            const box = document.createElement('div');
+            box.className = 'ai-palette ai-palette-list ai-palette-cmdhint';
+            let html = `<div class="ai-palette-hint opacitymedium"><strong>${escapeHtml(typed.cmd.syntax)}</strong> - ${escapeHtml(t('AIPaletteRunHint'))}</div>`;
+            html += (items || []).map((it, i) => `<div class="ai-palette-item ai-palette-sugg${i === 0 ? ' selected' : ''}" data-value="${escapeHtml(it.value)}"><strong>${escapeHtml(it.label)}</strong> <span class="opacitymedium">${escapeHtml(it.detail || '')}</span></div>`).join('');
+            box.innerHTML = html;
+            paletteSuggestState = { kind: target ? target.kind : '', consumed: consumed || '', count: (items || []).length };
+            paletteMount(box);
+            box.querySelectorAll('.ai-palette-sugg').forEach((el) => el.addEventListener('mousedown', (ev) => { ev.preventDefault(); paletteSuggestPick(el.dataset.value); }));
+        };
+        clearTimeout(paletteSuggestTimer);   // a pending request must never draw over a newer state
+        if (!target) {
+            render([], '');
+            return;
+        }
+        paletteSuggestTimer = setTimeout(async () => {
+            const ctx = paletteCommandContext();
+            const socid = (ctx.element === 'societe') ? ctx.id : ctx.socid;
+            const url = epUrl('command.php') + '&action=suggest&cmd=' + encodeURIComponent(typed.cmd.name) + '&kind=' + target.kind
+                + '&q=' + encodeURIComponent(target.q) + '&name=' + encodeURIComponent(target.name) + '&socid=' + (target.name ? 0 : (socid || 0));
+            const asked = input.value;
+            try {
+                const r = await aiJson(await fetch(url, { credentials: 'same-origin' }));
+                if (input.value !== asked) return;   // the user kept typing: a newer request follows
+                render(r.items || [], r.consumed || '');
+            } catch (e) {
+                render([], '');
+            }
+        }, 180);
+    }
+
+    // Put the picked suggestion in place of the words it stands for.
+    function paletteSuggestPick(value) {
+        const st = paletteSuggestState || { kind: '', consumed: '' };
+        let v = input.value;
+        if (st.kind === 'thirdparty') {
+            v = v.replace(/^(\s*\/\S+\s+)[\s\S]*$/, '$1' + value.replace(/\$/g, '$$$$') + ' ');
+        } else {
+            const tail = st.consumed;
+            const trimmed = v.replace(/\s+$/, '');
+            v = (tail && trimmed.toLowerCase().endsWith(tail.toLowerCase()))
+                ? trimmed.slice(0, trimmed.length - tail.length) + value + ' '
+                : trimmed + ' ' + value + ' ';
+        }
+        input.value = v;
+        input.focus();
+        input.setSelectionRange(v.length, v.length);
+        paletteOpen(v.slice(1));
+    }
+
+    // Keys while the palette is open. Returns true when the key was handled.
+    function paletteKey(e) {
+        if (mentionKey(e)) return true;
+        const list = container.querySelector('.ai-palette-list');
+        const form = container.querySelector('.ai-palette-form');
+        if (e.key === 'Escape' && (list || form)) {
+            e.preventDefault();
+            paletteClose();
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey && paletteWanted(input.value)) {
+            if (paletteCommands === null) {
+                // Typed faster than the command list arrived: decide once it is here.
+                e.preventDefault();
+                paletteLoad().then(() => {
+                    const later = paletteParseCommand(input.value);
+                    if (later && (later.text !== '' || later.cmd.name === 'total')) runCommand(later.cmd.name, later.text);
+                    else paletteOpen(input.value.slice(1));
+                });
+                return true;
+            }
+            const typed = paletteParseCommand(input.value);
+            const sel = container.querySelector('.ai-palette-sugg.selected');
+            if (sel && paletteSuggestState && sel.dataset.value.toLowerCase() !== String(paletteSuggestState.consumed).trim().toLowerCase()) {
+                e.preventDefault();
+                paletteSuggestPick(sel.dataset.value);
+                return true;
+            }
+            if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
+                e.preventDefault();
+                runCommand(typed.cmd.name, typed.text);
+                return true;
+            }
+        }
+        if (e.key === 'Tab' && !e.shiftKey) {
+            const sel = container.querySelector('.ai-palette-sugg.selected');
+            if (sel) {
+                e.preventDefault();
+                paletteSuggestPick(sel.dataset.value);
+                return true;
+            }
+        }
+        if (!list) {
+            if (e.key === 'Enter' && !e.shiftKey && paletteWanted(input.value)) {
+                e.preventDefault();   // never send "/something" to the model
+                paletteOpen(input.value.slice(1));
+                return true;
+            }
+            return false;
+        }
+        const items = Array.from(list.querySelectorAll('.ai-palette-item'));
+        let idx = items.findIndex((el) => el.classList.contains('selected'));
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!items.length) return true;
+            if (idx >= 0) items[idx].classList.remove('selected');
+            idx = (idx + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+            items[idx].classList.add('selected');
+            items[idx].scrollIntoView({ block: 'nearest' });
+            return true;
+        }
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (idx >= 0) palettePick(items[idx]);
+            return true;
+        }
+        return false;
+    }
+
+    // The value a field starts with, read from the card being viewed. Only what
+    // the page itself shows; the user can change it before running.
+    function palettePrefill(tool, pname, ctx) {
+        if (!ctx) return '';
+        const own = paletteRank(tool, ctx) <= 1;   // the card's own tools and its files
+        if (pname === 'id' && own && ctx.id) return String(ctx.id);
+        if (pname === 'ref' && own && ctx.ref) return ctx.ref;
+        if (pname === 'modulepart' && tool.name === 'api_documents_objects_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
+        if ((pname === 'socid' || pname === 'thirdparty_ids') && ctx.socid) return String(ctx.socid);
+        return '';
+    }
+
+    function paletteForm(name) {
+        const tool = (paletteTools || []).find((tl) => tl.name === name);
+        if (!tool) return;
+        const ctx = paletteContext();
+        let rows = '';
+        for (const pname in (tool.properties || {})) {
+            const pdef = tool.properties[pname];
+            const req = (tool.required || []).indexOf(pname) !== -1;
+            const val = palettePrefill(tool, pname, ctx);
+            const nm = escapeHtml(pname);
+            const help = escapeHtml(pdef.description || '');
+            let field;
+            if (pdef.enum && pdef.enum.length) {
+                field = `<select name="${nm}" data-type="string">${req ? '' : '<option value=""></option>'}${pdef.enum.map((o) => `<option${String(o) === val ? ' selected' : ''}>${escapeHtml(String(o))}</option>`).join('')}</select>`;
+            } else if (pdef.type === 'boolean') {
+                field = `<select name="${nm}" data-type="boolean"><option value=""></option><option value="true">true</option><option value="false">false</option></select>`;
+            } else if (pdef.type === 'array' || pdef.type === 'object') {
+                // A list of records (invoice lines): JSON, with the record's fields as the example.
+                const example = (pdef.items && pdef.items.length) ? '[{' + pdef.items.map((k) => `"${k}": ""`).join(', ') + '}]' : (pdef.type === 'array' ? '[]' : '{}');
+                field = `<textarea name="${nm}" data-type="json" rows="2" placeholder="${escapeHtml(example)}" title="${help}"></textarea>`;
+            } else {
+                const num = (pdef.type === 'integer' || pdef.type === 'number');
+                field = `<input type="${num ? 'number' : 'text'}"${pdef.type === 'number' ? ' step="any"' : ''} name="${nm}" data-type="${escapeHtml(pdef.type || 'string')}" value="${escapeHtml(val)}" placeholder="${help}">`;
+            }
+            rows += `<label class="ai-palette-row" title="${help}"><span>${nm}${req ? ' *' : ''}</span>${field}</label>`;
+        }
+        const box = document.createElement('div');
+        box.className = 'ai-palette ai-palette-form';
+        box.innerHTML = `<div class="ai-palette-title"><strong>${escapeHtml(tool.title || tool.name)}</strong> <span class="ai-palette-apiname">${escapeHtml(tool.name)}</span> <span class="opacitymedium">${escapeHtml(tool.description || '')}</span></div>`
+            + rows
+            + `<div class="ai-palette-error ai-hidden"></div>`
+            + `<div class="ai-palette-actions"><button type="button" class="msg-action-btn primary ai-palette-run"><span class="fa fa-play"></span> ${escapeHtml(t('Run'))}</button> <button type="button" class="msg-action-btn ai-palette-cancel"><span class="fa fa-times"></span> ${escapeHtml(t('Cancel'))}</button></div>`;
+        paletteMount(box);
+        input.value = '';
+        autoResizeInput();
+        const first = box.querySelector('[name]');
+        if (first) first.focus();
+        box.querySelector('.ai-palette-cancel').addEventListener('click', () => { paletteClose(); input.focus(); });
+        box.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Escape') { ev.preventDefault(); paletteClose(); input.focus(); }
+            if (ev.key === 'Enter' && ev.target.tagName !== 'TEXTAREA') { ev.preventDefault(); box.querySelector('.ai-palette-run').click(); }
+        });
+        box.querySelector('.ai-palette-run').addEventListener('click', () => {
+            const errBox = box.querySelector('.ai-palette-error');
+            const args = {};
+            let problem = '';
+            box.querySelectorAll('[name]').forEach((el) => {
+                if (problem) return;
+                const v = el.value.trim();
+                const pname = el.getAttribute('name');
+                if (v === '') {
+                    if ((tool.required || []).indexOf(pname) !== -1) problem = t('ErrorFieldRequired').replace('%s', pname);
+                    return;
+                }
+                const type = el.dataset.type;
+                if (type === 'json') {
+                    try { args[pname] = JSON.parse(v); } catch (e) { problem = t('AIPaletteBadJson').replace('%s', pname); }
+                } else if (type === 'integer') {
+                    args[pname] = parseInt(v, 10);
+                } else if (type === 'number') {
+                    args[pname] = parseFloat(v);
+                } else if (type === 'boolean') {
+                    args[pname] = (v === 'true');
+                } else {
+                    args[pname] = v;
+                }
+            });
+            if (problem) {
+                errBox.textContent = problem;
+                errBox.classList.remove('ai-hidden');
+                return;
+            }
+            paletteClose();
+            runToolDirect(tool.name, args);
+        });
+    }
+
+    // Run a tool picked in the palette, with no model in the loop. A write answers
+    // input_required: the same confirmation as the chat's is shown, carrying the
+    // state that completes it, so the gate is never bypassed.
+    async function runToolDirect(name, args) {
+        if (welcome) welcome.style.display = 'none';
+        appendMsg('user', escapeHtml('/' + name), null, '/' + name + ' ' + JSON.stringify(args));
+        appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${escapeHtml(name)}...`);
+        const loadingMsg = chat.lastElementChild;
+        input.disabled = true;
+        try {
+            const res = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool: name, arguments: args })
+            });
+            const result = await aiJson(res);
+            loadingMsg.remove();
+            if (result && result.resultType === 'input_required' && result.requestState) {
+                const prompt = (result.inputRequests && result.inputRequests[0] && result.inputRequests[0].prompt) || '';
+                const held = { tool: name, arguments: Object.assign({}, args, { requestState: result.requestState }) };
+                handleConfirmation(prompt, '', { tool: 'ask_for_confirmation', arguments: { action: prompt, original_intent: held } });
+            } else if (result && result.error) {
+                appendMsg('error', escapeHtml(String(result.error)));
+            } else {
+                lastResult = { data: result, tool: name, query: '' };
+                appendMsg('bot', formatResult(result, false, name), null, contextSnippetOf(result, name));
+                resolveThirdpartyNames(chat.lastElementChild);
+            }
+        } catch (e) {
+            loadingMsg.remove();
+            appendMsg('error', t('NetworkError') + ': ' + e.message);
+        }
+        input.disabled = false;
+        input.focus();
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1343,8 +2261,9 @@ export function initAiAssistant(container) {
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
         // A write tool sends a full sentence describing what it would write; it
-        // is the question itself, not a verb to slot into another sentence.
-        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        // is the question itself, not a verb to slot into another sentence. More
+        // than 2 words is a sentence too: a label may follow its final dot.
+        const isSentence = typeof action === 'string' && (/[.!?]\s*$/.test(action.trim()) || action.trim().split(/\s+/).length > 2);
         let messageHtml;
         if (isSentence) {
             messageHtml = `<strong>${action}</strong>`;
@@ -1409,7 +2328,11 @@ export function initAiAssistant(container) {
         // (contextBubbles, not pastContextBubbles: at this point the question
         // is the trailing bubble, which the latter leaves out on purpose.)
         const asked = contextBubbles().filter((m) => m.dataset.aiRole === 'user').pop();
-        if (asked) asked.dataset.aiError = '1';
+        if (asked) {
+            asked.dataset.aiError = '1';
+            // Persisted, so a reopened conversation keeps it out of the window too
+            if (asked.dataset.msgId) chatHistoryApi({ action: 'pin', message_id: parseInt(asked.dataset.msgId, 10), pinned: (asked.dataset.ctx === 'on') ? 1 : 0, error: 1 }).catch(() => {});
+        }
         if (confirmationRecognition) try { confirmationRecognition.stop(); } catch (e) { }
         const msg = chat.lastElementChild;
         if (msg && msg.classList.contains('confirmation')) msg.remove();
@@ -1466,7 +2389,9 @@ export function initAiAssistant(container) {
             }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
+            const failedIntent = pendingIntent;
+            const retry = retryActionsFor(result, () => { pendingIntent = failedIntent; executePendingIntent(); });
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), retry, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
@@ -1478,6 +2403,228 @@ export function initAiAssistant(container) {
     // expired, the endpoints answer with the HTML login form (HTTP 200), which
     // used to surface as a cryptic "Unexpected token '<'" network error: detect
     // that case and tell the user to sign back in instead.
+    // --- Conversation history panel (list / reopen / delete) ---
+    const historyBtn = container.querySelector('#ai-history-btn');
+    const pageSidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    if (historyBtn && pageSidebar) {
+        // Full page: the header button shows / hides the conversations column.
+        historyBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setSidebarCollapsed(!container.classList.contains('sidebar-collapsed')); });
+    } else if (historyBtn) {
+        historyBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const existing = container.querySelector('#ai-history-panel');
+            if (existing) { existing.remove(); return; }
+            const panel = document.createElement('div');
+            panel.id = 'ai-history-panel';
+            panel.innerHTML = '<div class="opacitymedium">…</div>';
+            historyBtn.insertAdjacentElement('afterend', panel);
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                if (!items.length) { panel.innerHTML = '<div class="opacitymedium">' + t('AIHistoryEmpty') + '</div>'; return; }
+                panel.innerHTML = '';
+                items.forEach((c) => {
+                    const row = document.createElement('div');
+                    row.className = 'ai-history-item';
+                    row.innerHTML = '<span class="ai-history-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<span class="ai-history-meta">' + escapeHtml(c.date) + ' · ' + c.nb + '</span>'
+                        + '<button type="button" class="ai-history-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-history-del" title="' + escapeHtml(t('AIHistoryDelete')) + '">&times;</button>';
+                    row.querySelector('.ai-history-ren').onclick = (e2) => {
+                        e2.stopPropagation();
+                        startRenameRow(row, c, '.ai-history-title', (saved) => {
+                            // Keep the panel open: put the title span back with the new text
+                            const inp = row.querySelector('input');
+                            const span = document.createElement('span');
+                            span.className = 'ai-history-title';
+                            span.textContent = saved || c.title || '…';
+                            if (inp) inp.replaceWith(span);
+                        });
+                    };
+                    row.querySelector('.ai-history-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
+                    };
+                    row.onclick = () => { panel.remove(); loadConversation(c.id); };
+                    attachConversationPreview(row, c);
+                    panel.appendChild(row);
+                });
+            }).catch(() => { panel.innerHTML = '<div class="opacitymedium">' + t('AIError') + '</div>'; });
+        });
+        // Any click outside closes the panel
+        document.addEventListener('click', (ev) => {
+            const panel = container.querySelector('#ai-history-panel');
+            if (panel && !panel.contains(ev.target) && ev.target !== historyBtn && !panel.querySelector('input')) panel.remove();
+        });
+    }
+
+    // --- Hover preview of a past conversation (column and popover panel alike):
+    // the whole thread, fetched once per conversation and cached, shown in a
+    // floating card next to the hovered row. ---
+    const previewCache = {};
+    let previewEl = null;
+    let previewTimer = null;
+    function hideConversationPreview() {
+        clearTimeout(previewTimer);
+        if (previewEl) { previewEl.remove(); previewEl = null; }
+    }
+    function showConversationPreview(row, c, messages) {
+        hideConversationPreview();
+        const card = document.createElement('div');
+        card.className = 'ai-conv-preview';
+        let html = '<div class="ai-conv-preview-head">' + escapeHtml(c.date || '') + ' · ' + escapeHtml(String(c.nb || messages.length)) + '</div>';
+        messages.forEach((m) => {
+            const who = (m.role === 'assistant') ? t('AIAssistant') : t('AIYou');
+            const text = String(m.raw || '').replace(/\s+/g, ' ').trim();
+            html += '<div class="ai-conv-preview-msg ' + (m.role === 'assistant' ? 'bot' : 'user') + '"><b>' + escapeHtml(who) + '</b> ' + escapeHtml(text.length > 300 ? text.slice(0, 300) + '…' : text) + '</div>';
+        });
+        card.innerHTML = html;
+        document.body.appendChild(card);
+        // Next to the row: right of a column row, left of a popover panel row; clamped to the viewport.
+        const r = row.getBoundingClientRect();
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+        let left = (row.closest('#ai-history-sidebar')) ? r.right + 8 : r.left - cw - 8;
+        if (left + cw > vw - 8) left = vw - cw - 8;
+        if (left < 8) left = 8;
+        let top = r.top;
+        if (top + ch > vh - 8) top = Math.max(8, vh - ch - 8);
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+        previewEl = card;
+    }
+    // Rename in place (column and popover panel): the title span turns into an
+    // input; Enter / blur saves through the ownership-checked 'rename' action,
+    // Esc cancels; onDone(savedTitle|null) lets the caller refresh its list.
+    function startRenameRow(row, c, titleSelector, onDone) {
+        hideConversationPreview();
+        const span = row.querySelector(titleSelector);
+        if (!span || row.querySelector('input')) return;
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'ai-sidebar-rename'; inp.value = c.title || ''; inp.maxLength = 250;
+        span.replaceWith(inp);
+        inp.focus(); inp.select();
+        let done = false;
+        const finish = (save) => {
+            if (done) return; done = true;
+            const v = inp.value.trim();
+            if (save && v && v !== c.title) {
+                chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; onDone(c.title); }).catch(() => onDone(null));
+            } else { onDone(null); }
+        };
+        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+        inp.addEventListener('blur', () => finish(true));
+        inp.addEventListener('click', (ec) => ec.stopPropagation());
+    }
+
+    function attachConversationPreview(row, c) {
+        row.addEventListener('mouseenter', () => {
+            clearTimeout(previewTimer);
+            previewTimer = setTimeout(() => {
+                if (previewCache[c.id]) { showConversationPreview(row, c, previewCache[c.id]); return; }
+                chatHistoryApi({ action: 'load', id: c.id }).then((res) => {
+                    if (!res || !res.messages) return;
+                    previewCache[c.id] = res.messages;
+                    if (row.matches(':hover')) showConversationPreview(row, c, res.messages);
+                }).catch(() => {});
+            }, 350);
+        });
+        row.addEventListener('mouseleave', hideConversationPreview);
+        row.addEventListener('click', hideConversationPreview);
+    }
+
+    // --- Full page: permanent conversations column (like the mainstream chat applications) ---
+    // The popover has no room for it and keeps the button + panel above.
+    const sidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    let sidebarTimer = null;
+    function renderSidebar() {
+        if (!sidebar) return;
+        // Coalesce bursts (a save + an id change) into one listing call.
+        clearTimeout(sidebarTimer);
+        sidebarTimer = setTimeout(() => {
+            const list = sidebar.querySelector('#ai-sidebar-list');
+            if (!list) return;
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                list.innerHTML = '';
+                if (!items.length) { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIHistoryEmpty') + '</div>'; return; }
+                // Group by age, client-side from the raw timestamp
+                const now = new Date(); const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+                const groupOf = (ts) => (ts >= startOfToday ? 'AIHistoryToday' : ts >= startOfToday - 86400 ? 'AIHistoryYesterday' : ts >= startOfToday - 7 * 86400 ? 'AIHistoryLast7Days' : 'AIHistoryOlder');
+                let lastGroup = '';
+                items.forEach((c) => {
+                    const g = groupOf(c.ts || 0);
+                    if (g !== lastGroup) {
+                        const h = document.createElement('div');
+                        h.className = 'ai-sidebar-group';
+                        h.textContent = t(g);
+                        list.appendChild(h);
+                        lastGroup = g;
+                    }
+                    const row = document.createElement('div');
+                    row.className = 'ai-sidebar-item' + (c.id === conversationId ? ' active' : '');
+                    row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
+                    const startRename = (e2) => { e2.stopPropagation(); startRenameRow(row, c, '.ai-sidebar-title', () => renderSidebar()); };
+                    row.querySelector('.ai-sidebar-ren').onclick = startRename;
+                    row.addEventListener('dblclick', startRename);
+                    row.querySelector('.ai-sidebar-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => {
+                            if (conversationId === c.id) startNewConversation(); else renderSidebar();
+                        }).catch(() => {});
+                    };
+                    row.onclick = () => { if (c.id !== conversationId) loadConversation(c.id); };
+                    attachConversationPreview(row, c);
+                    list.appendChild(row);
+                });
+            }).catch(() => { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIError') + '</div>'; });
+        }, 150);
+    }
+    // Collapsible: "<<" in the column hides it, the header history button
+    // brings it back; the choice is remembered per browser. Narrow screens
+    // start collapsed (the column would eat the chat).
+    function setSidebarCollapsed(collapsed) {
+        if (!sidebar) return;
+        container.classList.toggle('sidebar-collapsed', collapsed);
+        if (historyBtn) historyBtn.title = collapsed ? t('AIShowConversations') : t('AIHideConversations');
+        try { localStorage.setItem('aiSidebarCollapsed', collapsed ? '1' : '0'); } catch (e) { /* private mode: no memory, no harm */ }
+    }
+    if (sidebar) {
+        const newBtn = sidebar.querySelector('#ai-new-chat');
+        if (newBtn) newBtn.addEventListener('click', () => startNewConversation());
+        const collapseBtn = sidebar.querySelector('#ai-sidebar-collapse');
+        if (collapseBtn) collapseBtn.addEventListener('click', () => setSidebarCollapsed(true));
+        const expandBtn = container.querySelector('#ai-sidebar-expand');
+        if (expandBtn) expandBtn.addEventListener('click', () => setSidebarCollapsed(false));
+        let stored = null;
+        try { stored = localStorage.getItem('aiSidebarCollapsed'); } catch (e) { stored = null; }
+        setSidebarCollapsed(stored === null ? (window.innerWidth <= 900) : stored === '1');
+        renderSidebar();
+    }
+
+    function loadConversation(id) {
+        chatHistoryApi({ action: 'load', id: id }).then((res) => {
+            if (!res || !res.messages) return;
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) welcome.style.display = 'none';
+            restoringHistory = true;
+            res.messages.forEach((m) => {
+                const html = m.html || escapeHtml(m.raw).replace(/\n/g, '<br>');
+                appendMsg(m.role === 'assistant' ? 'bot' : 'user', html, null, m.raw);
+                const div = chat.lastElementChild;
+                if (div) {
+                    div.dataset.msgId = String(m.id);
+                    if (m.pinned) div.dataset.ctx = 'on';
+                    if (m.error) div.dataset.aiError = '1';   // stays out of the window on reopen too
+                }
+            });
+            restoringHistory = false;
+            setConversationId(res.id);
+            refreshContext();
+        }).catch(() => {});
+    }
+
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
     function contextSnippetOf(result, toolName) {
@@ -1539,6 +2686,14 @@ export function initAiAssistant(container) {
             }
         });
         updateContextBar();
+        saveChatHistory();
+    }
+
+    // Persist the explicit pin so it survives a reopen (the window itself is
+    // recomputed on reopen, not stored). Best-effort, like the rest of history.
+    function persistPinState(div) {
+        if (!div.dataset.msgId) return;
+        chatHistoryApi({ action: 'pin', message_id: parseInt(div.dataset.msgId, 10), pinned: (div.dataset.ctx === 'on') ? 1 : 0 }).catch(() => {});
     }
 
     // One click flips the bubble: inside the window it toggles between "follows
@@ -1553,8 +2708,16 @@ export function initAiAssistant(container) {
 
     function collectPinnedContext() {
         return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
-            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '', id: parseInt(m.dataset.msgId, 10) || 0 }))
             .filter((p) => p.text);
+    }
+
+    // What the server receives for the pinned turns: ids only for persisted
+    // messages (the text is rebuilt server-side from the stored conversation,
+    // so the client is not trusted for what was said); the inline text is kept
+    // only for a message that has no row yet (history disabled or save in flight).
+    function pinnedContextPayload() {
+        return collectPinnedContext().map((p) => (p.id ? { id: p.id } : { role: p.role, text: p.text }));
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
@@ -1577,18 +2740,19 @@ export function initAiAssistant(container) {
         }
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
-        const isDefault = past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
-            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+        const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
-            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+            ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
+            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {
                 ev.preventDefault();
                 // Auto = back to the default: every bubble follows the window again.
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
+                contextAllMode = false;
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1597,7 +2761,9 @@ export function initAiAssistant(container) {
             all.onclick = (ev) => {
                 ev.preventDefault();
                 // All = every past exchange pinned for good (the bar shows the price).
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
+                // The next exchanges are pinned too, until Auto or Clear is chosen.
+                contextAllMode = true;
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1608,7 +2774,8 @@ export function initAiAssistant(container) {
                 // Clear = nothing goes back with the NEXT question: recent bubbles
                 // are excluded, older pins dropped. New exchanges re-enter the
                 // window on their own afterwards.
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
+                contextAllMode = false;
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1626,14 +2793,78 @@ export function initAiAssistant(container) {
         }
     }
 
-    async function handleQuery() {
-        const query = input.value.trim();
-        const readyDocs = attachedDocs.filter((d) => !d.error);
-        if (!query && !readyDocs.length) return;
+    async function handleQuery(resend) {
+        // A resend (after the user picked a third party) posts the same request
+        // again, without a second bubble.
+        const isResend = !!(resend && typeof resend.sentQuery === 'string');
+        const query = isResend ? resend.query : input.value.trim();
+        if (!isResend && paletteWanted(query)) {
+            // A tool or a command, not a question for the model.
+            paletteLoad().then(() => {
+                const typed = paletteParseCommand(query);
+                if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
+                    runCommand(typed.cmd.name, typed.text);
+                } else {
+                    paletteOpen(query.slice(1));
+                }
+            });
+            return;
+        }
+        const readyDocs = isResend ? [] : attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length && !isResend) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
+        // "/new" and "/clear" are handled locally (no AI call): same as the Clear button.
+        if ((query.toLowerCase() === '/new' || query.toLowerCase() === '/clear') && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            startNewConversation();
+            return;
+        }
+
+        // "/help" is answered locally (no AI call): the commands this user may run,
+        // the internal ones and the "@" / "#" suggestions. No raw text: never sent as context.
+        if (query.toLowerCase() === '/help' && !readyDocs.length) {
+            input.value = '';
+            input.style.height = '44px';
+            appendMsg('user', escapeHtml(query));
+            await paletteLoad();
+            const line = (syntax, label, inline) => '<li><strong><code>' + escapeHtml(syntax) + '</code></strong>' + (inline ? ' : ' : '<br>') + escapeHtml(label) + '</li>';
+            let html = '<div class="small"><b>' + escapeHtml(t('AIHelpInternal')) + '</b><ul>';
+            html += line('/help', t('AIHelpHelp'), true);
+            html += line('/new, /clear', t('AIHelpClear'), true);
+            html += line('/status', t('AIHelpStatus'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpMentions')) + '</b><ul>';
+            html += line('@', t('AIHelpMentionThirdparty'), true);
+            html += line('#', t('AIHelpMentionProduct'), true);
+            html += '</ul><b>' + escapeHtml(t('AIHelpCommands')) + '</b><ul>';
+            (paletteCommands || []).forEach((c) => { html += line(c.syntax || ('/' + c.name), c.label || ''); });
+            html += line('/...', t('AIHelpPalette'));
+            html += '</ul>' + escapeHtml(t('AIHelpFreeText')) + '</div>';
+            appendMsg('bot', html);
+            input.focus();
+            return;
+        }
+
+        // "/status" is answered locally (no AI call): statistics of the whole
+        // conversation (the bar above the input already shows the selected
+        // context). Both bubbles have no raw text so they never travel as context.
+        if (query.toLowerCase() === '/status' && !readyDocs.length) {
+            const whole = pastContextBubbles().map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }));
+            const stats = t('AIContextCounter')
+                .replace('%s', String(whole.filter((p) => p.role === 'user').length))
+                .replace('%s', String(whole.length))
+                .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
+            appendMsg('user', escapeHtml(query));
+            appendMsg('bot', escapeHtml(stats));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
+
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
-        let sentQuery = query;
+        let sentQuery = isResend ? resend.sentQuery : query;
         let displayHtml = escapeHtml(query);
         if (readyDocs.length) {
             // One wrapped context block per document, so each keeps its own
@@ -1646,79 +2877,128 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
-        clearChip();
+        if (!isResend) {
+            appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+            clearChip();
+        }
+        lastSent = { sentQuery: sentQuery, query: query };
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
-        const loadingMsg = chat.lastElementChild;
+        let loadingMsg = chat.lastElementChild;
         try {
             const chosenModel = resolveModel();
-            const intentRes = await fetch(epUrl('parse_intent.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                // Page context (set by the printCommonFooter hook on card pages)
-                // lets the server resolve "this invoice" - it re-validates the
-                // ids against the user's rights before trusting them.
-                body: JSON.stringify(Object.assign(
-                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
-                    (function () {
-                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
-                        return pinned.length ? { history: pinned } : {};
-                    })(),
-                    (function () {
-                        const ctx = window.aiPageContext;
-                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
-                        // On list pages, the mass-action checkboxes carry the row
-                        // ids: checked ones are the user's live selection.
-                        if (ctx.list) {
-                            // The mass-action checkboxes carry rowids by core
-                            // convention on every list - a uniform source that
-                            // sidesteps the per-list SQL alias zoo server-side.
-                            const all = Array.from(document.querySelectorAll('.checkforselect'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
-                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
-                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
-                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
-                            if (sel.length) ctx.selected = sel;
-                        }
-                        return { context: ctx };
-                    })()
-                ))
-            });
-            const intent = await aiJson(intentRes);
-            loadingMsg.remove();
-            if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+            // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+            const pinned = pinnedContextPayload();
+            // Result of the read flagged needs_followup, sent back on the second round.
+            let followupSnippet = null;
+            let followupResult = null;
+            // The third parties the user picked, for every round of this request.
+            const sentChoices = Object.assign({}, thirdpartyChoices);
+            // Two rounds at most: the server never flags a followup round itself.
+            for (let round = 0; round < 2; round++) {
+                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                const intentRes = await fetch(epUrl('parse_intent.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    // Page context (set by the printCommonFooter hook on card pages)
+                    // lets the server resolve "this invoice" - it re-validates the
+                    // ids against the user's rights before trusting them.
+                    body: JSON.stringify(Object.assign(
+                        chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                        (function () {
+                            // followup_result: only to name the object in the confirmation, never sent to the model.
+                            if (followupSnippet) return { history: pinned.concat([{ role: 'assistant', text: followupSnippet }]), followup: 1, followup_result: followupResult };
+                            return pinned.length ? { history: pinned } : {};
+                        })(),
+                        (function () {
+                            const ctx = window.aiPageContext;
+                            if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                            // On list pages, the mass-action checkboxes carry the row
+                            // ids: checked ones are the user's live selection.
+                            if (ctx.list) {
+                                // The mass-action checkboxes carry rowids by core
+                                // convention on every list - a uniform source that
+                                // sidesteps the per-list SQL alias zoo server-side.
+                                const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                                if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                                const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                                if (sel.length) ctx.selected = sel;
+                            }
+                            return { context: ctx };
+                        })()
+                    ))
+                });
+                const intent = await aiJson(intentRes);
+                loadingMsg.remove();
+                // Choices answer this request only: once it went through, the next question asks again.
+                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
+                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+                    // Debug output of /tools, built and escaped server side: shown as is,
+                    // never sent back as context. Only for that query: an 'html' argument
+                    // coming from the model is never trusted.
+                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
+                }
+                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'generate_navigation_url') {
+                    appendMsg('system', t('GeneratingLink'));
+                    const loadingNav = chat.lastElementChild;
+                    const navRes = await fetch(epUrl('execute_tool.php'), {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(intent)
+                    });
+                    const nav = await aiJson(navRes);
+                    loadingNav.remove();
+                    if (nav.error) { appendMsg('error', nav.error); }
+                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                    input.disabled = false; input.focus(); return;
+                }
 
-            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'generate_navigation_url') {
-                appendMsg('system', t('GeneratingLink'));
-                const loadingNav = chat.lastElementChild;
-                const navRes = await fetch(epUrl('execute_tool.php'), {
+                appendMsg('system', t('FetchingData'));
+                const loadingData = chat.lastElementChild;
+                const toolRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await aiJson(navRes);
-                loadingNav.remove();
-                if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                input.disabled = false; input.focus(); return;
+                const result = await aiJson(toolRes);
+                loadingData.remove();
+                // The read only fetched the ids the asked action needs: hand its result
+                // back to the model instead of showing it, and let it perform the action.
+                if (!round && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+                    appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
+                    followupSnippet = contextSnippetOf(result, intent.tool);
+                    followupResult = result;
+                    continue;
+                }
+                // A write tool does not write on its first call: it answers with the
+                // sentence to confirm and a requestState. Ask the user, the write runs
+                // when executePendingIntent() sends the state back.
+                if (result && result.resultType === 'input_required' && result.requestState) {
+                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+                    const confirmed = Object.assign({}, intent, {
+                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+                    });
+                    delete confirmed.needs_followup;
+                    delete confirmed.resolved_label;
+                    // The id came from a search the user never saw: say which object it is.
+                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
+                    input.disabled = false; input.focus(); return;
+                }
+                lastResult = { data: result, tool: intent.tool, query: query };
+                const failedRequest = lastSent;
+                const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
+                appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
+                resolveThirdpartyNames(chat.lastElementChild);
+                break;
             }
-
-            appendMsg('system', t('FetchingData'));
-            const loadingData = chat.lastElementChild;
-            const toolRes = await fetch(epUrl('execute_tool.php'), {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(intent)
-            });
-            const result = await aiJson(toolRes);
-            loadingData.remove();
-            lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
-            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
@@ -1762,7 +3042,9 @@ export function initAiAssistant(container) {
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
-        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva',
+		'opp_amount', 'price_booth', 'price_registration'
+		]);
     const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
 
     function fieldLabel(k) {
@@ -1774,14 +3056,15 @@ export function initAiAssistant(container) {
         const n = parseFloat(v);
         if (isNaN(n)) return v;
         try {
-            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+            return price(n, 'MT');
         } catch (e) { return n.toFixed(2); }
     }
+    // Reduced date format, like dol_print_date(..., 'dayreduceformat'): year on 2 digits to save space in chat tables.
     function fmtDate(v) {
         const n = parseInt(v, 10);
         if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
         try {
-            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+            return new Intl.DateTimeFormat(config.locale || undefined, { day: '2-digit', month: '2-digit', year: '2-digit' }).format(new Date(n * 1000));
         } catch (e) { return v; }
     }
     // Which Dolibarr card a tool's rows open; %id% replaced per row.
@@ -1864,6 +3147,7 @@ export function initAiAssistant(container) {
                     c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
+            saveChatHistory();
         } catch (e) { /* names stay as ids */ }
     }
 
@@ -1916,7 +3200,7 @@ export function initAiAssistant(container) {
             content += '<div class="chat-object"><ul>';
             let nested = '';
             for (const [key, value] of Object.entries(data)) {
-                if (key === 'url') continue;
+                if (key === 'url' || key === 'chart') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
                 // A list inside the answer is the answer: a tool that wraps its rows
                 // in {count, offset, limit, results} would otherwise show only the
@@ -1927,13 +3211,18 @@ export function initAiAssistant(container) {
             }
             content += '</ul></div>';
             content += nested;
+            if (data.chart && Array.isArray(data.chart.labels) && Array.isArray(data.chart.datasets)) {
+                const cid = 'ai-chart-' + Math.random().toString(36).slice(2, 10);
+                content += `<div class="chat-chart-wrap"><canvas id="${cid}"></canvas></div>`;
+                setTimeout(() => aiRenderChart(cid, data.chart, config.urlRoot || config.baseUrl || ''), 0);
+            }
         }
         else { return String(data); }
 
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fas fa-file-pdf"></span> ${t('DownloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('AIPdfReport')}"><span class="fas fa-file-pdf"></span> ${t('AIPdfReport')}</button>`;
             } else if (isObject && objectUrl) {
                 toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fas fa-external-link-alt"></span> ${t('OpenVerb')}</a>`;
             }
@@ -1941,6 +3230,43 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+
+    // Resume the conversation in progress: the id in the URL (popover -> full
+    // page hand-over) wins, else the one this browser was last in (full page ->
+    // popover, or the popover reopened on another page). Ownership is
+    // re-checked server-side on load; a deleted one simply stays blank. Without a
+    // server-side conversation, the copy this tab kept across pages is restored.
+    let openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
+    if (!openConv) { try { openConv = parseInt(localStorage.getItem('aiCurrentConversation'), 10) || 0; } catch (e) { openConv = 0; } }
+    if (openConv > 0) {
+        loadConversation(openConv);
+    } else {
+        restoreChatHistory();
+    }
+}
+
+// Renders a report chart payload ({type, labels, datasets}) on a canvas using the
+// bundled Chart.js ESM build — imported lazily so the chat carries no extra cost
+// until a tool actually returns a chart.
+async function aiRenderChart(canvasId, chartCfg, urlRoot) {
+    const el = document.getElementById(canvasId);
+    if (!el) return;
+    try {
+        // Resolved against location.origin so the URL never inherits user:pass@ from the page (e.g. DoliDroid)
+        const mod = await import(new URL(urlRoot + '/includes/nnnick/chartjs/dist/chart.esm.js', window.location.origin).href);
+        const Chart = mod.Chart || mod.default;
+        if (!Chart) return;
+        el.parentElement.classList.add('chat-chart-ready');
+        new Chart(el, {
+            type: chartCfg.type || 'bar',
+            data: { labels: chartCfg.labels, datasets: chartCfg.datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: chartCfg.datasets.length > 1 } }
+            }
+        });
+    } catch (e) { /* chart is optional sugar: the table is already rendered */ }
 }
 
 // Auto-init for server-rendered containers (standalone page mode). The topbar

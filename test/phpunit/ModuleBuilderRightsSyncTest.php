@@ -23,14 +23,16 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/PermissionsBlock.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncService.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
  * Class for PHPUnit tests

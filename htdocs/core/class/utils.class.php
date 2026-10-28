@@ -232,6 +232,24 @@ class Utils
 
 
 	/**
+	 *  Return the -p parameter of mysqldump with the password, escaped to be used in a shell command line.
+	 *
+	 *  @param	string	$password	Password of the database
+	 *  @return	string				Parameter, like -p"password" on Windows and -p'password' otherwise
+	 */
+	public function getShellPasswordParam($password)
+	{
+		if (preg_match('/^win/i', PHP_OS)) {
+			// Behavior kept as it was on Windows
+			return '-p"'.str_replace(array('"', '`', '$'), array('\\"', '\\`', '\\$'), $password).'"';
+		}
+
+		// Inside double quotes, a shell still interprets \, $ and ` so we use single quotes
+		return '-p'.escapeshellarg($password);
+	}
+
+
+	/**
 	 *  Make a backup of database
 	 *  CAN BE A CRON TASK
 	 *
@@ -334,6 +352,15 @@ class Utils
 					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
 					return -1;
 				}
+				// In low memory mode, the output of the dump is piped into an OS compressor that must be allowed too
+				$compressorcommands = array('gz' => 'gzip', 'bz' => 'bzip2', 'zstd' => 'zstd');
+				if ($lowmemorydump && !empty($compressorcommands[$compression]) && !in_array($compressorcommands[$compression], $arrayofallowedcommand)) {
+					$langs->loadLangs(array("admin", "errors"));
+					dol_syslog("Compression command ".$compressorcommands[$compression]." is not inside the allowed commands", LOG_WARNING);
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('NotAvailableCommandNotAllowed', $compressorcommands[$compression]);
+					return -1;
+				}
 			}
 
 			// Parameters execution
@@ -349,7 +376,9 @@ class Utils
 			if (!empty($dolibarr_main_db_port)) {
 				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
-			if (GETPOST("use_transaction", "alpha")) {
+			// The default (scheduled job) uses a transaction too, as the form does, instead of locking
+			// all the tables, which blocks every write into the database during the backup.
+			if (GETPOST("use_transaction", "alpha") || $usedefault) {
 				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
@@ -411,7 +440,7 @@ class Utils
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
 				$paramcrypted .= ' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
-				$paramclear .= ' -p"'.str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass).'"';
+				$paramclear .= ' '.$this->getShellPasswordParam($dolibarr_main_db_pass);
 			}
 
 			$handle = '';
@@ -1178,15 +1207,18 @@ class Utils
 	{
 		global $db, $langs;
 		global $errormsg;
+		global $dolibarr_main_db_character_set;
 
-		// Set to UTF-8
+		// Set to UTF-8. Use utf8mb4 when the database uses it, as with utf8 the 4-byte
+		// characters (emojis...) are read as '?' and are lost when the dump is restored.
+		$charset = ($dolibarr_main_db_character_set == 'utf8mb4' ? 'utf8mb4' : 'utf8');
 		if (is_a($db, 'DoliDBMysqli')) {
 			/** @var DoliDBMysqli $db */
-			$db->db->set_charset('utf8');
+			$db->db->set_charset($charset);
 		} else {
 			/** @var DoliDB $db */
-			$db->query('SET NAMES utf8');
-			$db->query('SET CHARACTER SET utf8');
+			$db->query('SET NAMES '.$db->sanitize($charset));
+			$db->query('SET CHARACTER SET '.$db->sanitize($charset));
 		}
 
 		//get all of the tables
@@ -1209,6 +1241,11 @@ class Utils
 			return -1;
 		}
 
+		// Read all the tables inside one transaction, so the dump is a consistent snapshot of the
+		// database even if data is changed during the backup (same as mysqldump --single-transaction).
+		// Only reads (SHOW CREATE TABLE, SELECT) are done inside it.
+		$db->begin();
+
 		// Print headers and global mysql config vars
 		$sqlhead = '';
 		$sqlhead .= "-- ".$db::LABEL." dump via php with Dolibarr ".DOL_VERSION."
@@ -1220,7 +1257,7 @@ class Utils
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES ".$charset." */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -1258,7 +1295,7 @@ class Utils
 				fwrite($handle, "DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
 			}
 			fwrite($handle, "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-			fwrite($handle, "/*!40101 SET character_set_client = utf8 */;\n");
+			fwrite($handle, "/*!40101 SET character_set_client = ".$charset." */;\n");
 			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {
@@ -1344,6 +1381,8 @@ class Utils
 		fwrite($handle, $sqlfooter);
 
 		fclose($handle);
+
+		$db->commit();
 
 		return 1;
 	}

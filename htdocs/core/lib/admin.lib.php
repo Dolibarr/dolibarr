@@ -39,6 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 function versiontostring($versionarray)
 {
+	// Replace negative values (dev versions) with 0
+	foreach ($versionarray as $key => $val) {
+		if ((int) $val < 0) {
+			$versionarray[$key] = 0;
+		}
+	}
+
 	$string = '?';
 	if (isset($versionarray[0])) {
 		$string = $versionarray[0];

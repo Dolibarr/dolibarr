@@ -955,6 +955,32 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$event->label = $savlabel;
 							}
 
+							// Details of an event of an external calendar, into a tooltip
+							if ($event->type_code == 'ICALEVENT' && !empty($event->icaldetails)) {
+								$tooltip = '';
+								if (!empty($event->icaldetails['description'])) {
+									$tooltip .= '<b>'.$langs->trans("Description").'</b>: '.implode('<br>', array_map('dol_escape_htmltag', (array) preg_split('/\r\n|\n|\r/', dol_trunc($event->icaldetails['description'], 500)))).'<br>';
+								}
+								if (!empty($event->icaldetails['organizer'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventOrganizer").'</b>: '.dol_escape_htmltag($event->icaldetails['organizer']).'<br>';
+								}
+								if (!empty($event->icaldetails['attendees']) && is_array($event->icaldetails['attendees'])) {
+									$tooltip .= '<b>'.$langs->trans("ExtEventAttendees").'</b>: '.dol_escape_htmltag(dol_trunc(implode(', ', $event->icaldetails['attendees']), 300)).'<br>';
+								}
+								if (!empty($event->icaldetails['categories'])) {
+									$tooltip .= '<b>'.$langs->trans("Categories").'</b>: '.dol_escape_htmltag($event->icaldetails['categories']).'<br>';
+								}
+								if (!empty($event->icaldetails['url']) && preg_match('/^https?:\/\//i', $event->icaldetails['url'])) {
+									$tooltip .= '<b>'.$langs->trans("Link").'</b>: '.dol_escape_htmltag(dol_trunc($event->icaldetails['url'], 100)).'<br>';
+								}
+								if (!empty($event->icaldetails['geo']) && preg_match('/^(-?[0-9.]+);(-?[0-9.]+)$/', $event->icaldetails['geo'])) {
+									$tooltip .= '<b>'.$langs->trans("Position").'</b>: '.dol_escape_htmltag(str_replace(';', ', ', $event->icaldetails['geo'])).'<br>';
+								}
+								if ($tooltip) {
+									$titletoshow = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltip, 1, 1).'">'.$titletoshow.'</span>';
+								}
+							}
+
 							// Loop on each assigned user
 							$listofusertoshow = '';
 							$posuserassigned = 0;

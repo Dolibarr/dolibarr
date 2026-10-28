@@ -1361,13 +1361,7 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'u.salary';
 			}
-			if (!isset($totalarray['val'])) {
-				$totalarray['val'] = array();
-			}
-			if (!isset($totalarray['val']['u.salary'])) {
-				$totalarray['val']['u.salary'] = 0;
-			}
-			$totalarray['val']['u.salary'] += $obj->salary;
+			$totalarray['val']['u.salary'] = (float) $totalarray['val']['u.salary'] + (float) $obj->salary;
 		}
 
 		// Hourly rate
