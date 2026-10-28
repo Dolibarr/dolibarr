@@ -999,7 +999,7 @@ class pdf_squille extends ModelePdfReception
 			$classname = 'CommandeFournisseur';
 			$linkedobject = new $classname($this->db);
 			$result = $linkedobject->fetch($origin_id);
-			if ($result >= 0) {
+			if ($result > 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
