@@ -104,15 +104,7 @@ function tax_prepare_head(ChargeSociales $object)
  * @param DoliDB $db Database handle
  * @param resource|object $resql Invoice report result
  * @param 'sell'|'buy' $direction Invoice direction
- * @return array<int,array{
- *     rowid:int,company_id:int,rate:string,dtype:int|string,facid:int|string,total_ht:float|int|string|null,
- *     total_vat:float|int|string|null,total_ttc:float|int|string|null,total_localtax1:float|int|string|null,total_localtax2:float|int|string|null,
- *     descr:string|null,date_start:string|null,date_end:string|null,facnum:string,type:int|string,ftotal_ttc:float|int|string|null,datef:string|null,datep:string|null,
- *     company_name:string|null,company_alias:string|null,company_client:int|string|null,company_fournisseur:int|string|null,company_email:string|null,
- *     company_customer_code:string|null,company_supplier_code:string|null,company_customer_accounting_code:string|null,company_supplier_accounting_code:string|null,
- *     company_status:int|string|null,company_tva_intra:string|null,pid:int|string|null,pref:string|null,ptype:int|string|null,
- *     payment_id:int|string,payment_ref:string|null,payment_amount:float|int|string|null,vat_src_code?:string|null,pstatus?:int|string|null,pstatusbuy?:int|string|null
- * }>|int<-1,-1> Report rows, or -1 on error
+ * @return array<int,array{rowid:int,company_id:int,rate:string,dtype:int|string,facid:int|string,total_ht:float|int|string|null,total_vat:float|int|string|null,total_ttc:float|int|string|null,total_localtax1:float|int|string|null,total_localtax2:float|int|string|null,descr:string|null,date_start:string|null,date_end:string|null,facnum:string,type:int|string,ftotal_ttc:float|int|string|null,datef:string|null,datep:string|null,company_name:string|null,company_alias:string|null,company_client:int|string|null,company_fournisseur:int|string|null,company_email:string|null,company_customer_code:string|null,company_supplier_code:string|null,company_customer_accounting_code:string|null,company_supplier_accounting_code:string|null,company_status:int|string|null,company_tva_intra:string|null,pid:int|string|null,pref:string|null,ptype:int|string|null,payment_id:int|string,payment_ref:string|null,payment_amount:float|int|string|null,vat_src_code?:string|null,pstatus?:int|string|null,pstatusbuy?:int|string|null}>|int<-1,-1> Report rows, or -1 on error
  */
 function tax_get_invoice_lines($db, $resql, $direction)
 {
