@@ -166,7 +166,7 @@ if (!empty($showlinktoai)) {
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}
 	$format = '';
-	if (is_object($formmail) && !empty($formmail->withaiprompt)) {
+	if (!empty($formmail) && is_object($formmail) && !empty($formmail->withaiprompt)) {
 		$format = $formmail->withaiprompt;
 	}
 	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $format, $htmlname, $onlyenhancements, $aiprompt);
