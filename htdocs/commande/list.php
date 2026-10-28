@@ -478,7 +478,9 @@ if (empty($reshook)) {
 				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
-				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				if (isModEnabled('multicurrency')) {
+					$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				}
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}

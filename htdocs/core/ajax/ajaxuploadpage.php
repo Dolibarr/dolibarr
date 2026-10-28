@@ -328,9 +328,18 @@ if ($modulepart == 'invoice_supplier') {
 // TODO Move the convert code into an AJAX service and just output the JS code to call the ajax service to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
-	// pdftotext can only read PDF files, so for images we use docling that includes an OCR
-	$methodtotext = (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $fullpathoffile) ? 'docling' : '');
-	$result = dolDocToText($fullpathoffile, $methodtotext, 'fulltext');
+	// Call the tool able to convert the file into text: pdftotext for a PDF file, docling for an image (docling includes an OCR)
+	$methodtotext = '';
+	if (preg_match('/\.pdf$/i', $fullpathoffile)) {
+		$methodtotext = 'pdftotext';
+	} elseif (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $fullpathoffile)) {
+		$methodtotext = 'docling';
+	}
+
+	$result = array('error' => 0, 'message' => '', 'keywords' => '', 'content' => '', 'cmd' => '');
+	if (!empty($methodtotext)) {
+		$result = dolDocToText($fullpathoffile, $methodtotext, 'fulltext');
+	}
 	if (empty($result['error'])) {
 		// Remove the spaces used to align columns of tables, so more useful content is kept in the limit of chars sent to the AI
 		$fileContent = preg_replace('/[ \t]{2,}/', ' ', (string) $result['content']);
@@ -342,7 +351,7 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 		if (getDolGlobalString("AI_DEBUG")) {
 			dol_syslog("ajaxuploadpage.php Call AI service for step 'converttotext' (method=".$METHOD.", file=".$file.")", LOG_DEBUG, 0, '_ai');
 		}
-		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
+		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');		// Call AIservice from a text extracted from file.
 		// $result is an array of error messages or a string with answer
 		if (is_array($result)) {	// If array, there is an error
 			if (getDolGlobalString("AI_DEBUG")) {

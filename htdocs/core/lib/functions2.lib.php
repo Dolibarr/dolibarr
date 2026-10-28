@@ -3119,12 +3119,16 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	// Rule 3 CSV: If value contains separator, we must add "
-	if (preg_match('/'.$separator.'/', $newvalue)) {
+	if ($separator === '\\t') {
+		$separator = "\t";
+	}
+	if ($separator !== '' && strpos($newvalue, $separator) !== false) {
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
-	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software (= + - @), we must add "
+	// Note: in a character class, + - @ would be a range, so - is escaped. A number (like -5) is not a formula.
+	if (preg_match('/^\s*[=+\-@]/', $newvalue) && !is_numeric(trim($newvalue))) {
 		$addquote = 1;
 	}
 
