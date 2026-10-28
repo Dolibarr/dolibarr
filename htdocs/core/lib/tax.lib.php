@@ -98,6 +98,84 @@ function tax_prepare_head(ChargeSociales $object)
 
 
 /**
+ * Read invoice report rows and convert legacy situation amounts to incremental amounts.
+ * Previous progress and credit notes are loaded together, without a query per report row.
+ *
+ * @param DoliDB $db Database handle
+ * @param resource|object $resql Invoice report result
+ * @param 'sell'|'buy' $direction Invoice direction
+ * @return array<int,array<string,int|float|string|null>>|int<-1,-1> Report rows, or -1 on error
+ */
+function tax_get_invoice_lines($db, $resql, $direction)
+{
+	$rows = array();
+	$ids = array();
+	$applyRatio = $direction == 'sell' && getDolGlobalInt('INVOICE_USE_SITUATION') == 1;
+	if ($applyRatio) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	}
+	while ($row = $db->fetch_array($resql)) {
+		$rows[] = $row;
+		if ($applyRatio && (int) $row['type'] == Facture::TYPE_SITUATION) {
+			$ids[(int) $row['rowid']] = (int) $row['rowid'];
+		}
+	}
+	if (!$ids) {
+		return $rows;
+	}
+
+	$sql = 'SELECT d.rowid, d.fk_facture, d.fk_prev_id, d.situation_percent, f.situation_cycle_ref,';
+	$sql .= ' p.situation_percent as previous_progress, pf.rowid as previous_invoice_id,';
+	$sql .= ' COALESCE(c.credit_progress, 0) as credit_progress';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as d';
+	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'facture as f ON f.rowid = d.fk_facture';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as p ON p.rowid = d.fk_prev_id';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as pf ON pf.rowid = p.fk_facture';
+	$sql .= ' AND pf.entity = f.entity AND pf.situation_cycle_ref = f.situation_cycle_ref';
+	$sql .= ' LEFT JOIN (SELECT cd.fk_prev_id, cf.entity, cf.situation_cycle_ref, SUM(cd.situation_percent) as credit_progress';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as cf INNER JOIN '.MAIN_DB_PREFIX.'facturedet as cd ON cd.fk_facture = cf.rowid';
+	$sql .= ' WHERE cf.type = '.Facture::TYPE_CREDIT_NOTE.' AND cf.entity IN ('.$db->sanitize(getEntity('facture')).')';
+	$sql .= ' GROUP BY cd.fk_prev_id, cf.entity, cf.situation_cycle_ref) as c';
+	$sql .= ' ON c.fk_prev_id = d.fk_prev_id AND c.entity = f.entity AND c.situation_cycle_ref = f.situation_cycle_ref';
+	$sql .= ' WHERE d.rowid IN ('.$db->sanitize(implode(',', $ids)).')';
+	$sql .= ' AND f.entity IN ('.$db->sanitize(getEntity('facture')).') AND f.type = '.Facture::TYPE_SITUATION;
+	$result = $db->query($sql);
+	if (!$result) {
+		dol_print_error($db);
+		return -1;
+	}
+	$ratios = array();
+	while ($row = $db->fetch_array($result)) {
+		$previousProgress = 0.0;
+		if (!empty($row['situation_cycle_ref']) && !empty($row['fk_prev_id'])) {
+			if (empty($row['previous_invoice_id'])) {
+				dol_syslog(__FUNCTION__.': Invalid previous situation invoice', LOG_ERR);
+				$db->free($result);
+				return -1;
+			}
+			$previousProgress = (float) $row['previous_progress'] + (float) $row['credit_progress'];
+		}
+		$line = new FactureLigne($db);
+		$line->situation_percent = (float) $row['situation_percent'];
+		$ratios[(int) $row['rowid']] = $line->getSituationRatio($previousProgress);
+	}
+	$db->free($result);
+	foreach ($rows as &$row) {
+		$id = (int) $row['rowid'];
+		if (isset($ids[$id])) {
+			if (!isset($ratios[$id])) {
+				return -1;
+			}
+			foreach (array('total_ht', 'total_vat', 'total_ttc', 'total_localtax1', 'total_localtax2') as $field) {
+				$row[$field] = (float) price2num((float) $row[$field] * $ratios[$id], 'MT');
+			}
+		}
+	}
+	unset($row);
+	return $rows;
+}
+
+/**
  *  Look for collectable VAT clients in the chosen year (and month)
  *
  *  @param	'vat'|'localtax1'|'localtax2'	$type	Tax type, either 'vat', 'localtax1' or 'localtax2'
@@ -281,7 +359,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	if ($resql) {
 		$company_id = -1;
 		$oldrowid = '';
-		while ($assoc = $db->fetch_array($resql)) {
+		$rows = tax_get_invoice_lines($db, $resql, $direction);
+		if (!is_array($rows)) {
+			return -3;
+		}
+		foreach ($rows as $assoc) {
 			if (!isset($list[$assoc['company_id']]['totalht'])) {
 				$list[$assoc['company_id']]['totalht'] = 0;
 			}
@@ -370,7 +452,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
-		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount, '' as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
 		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
@@ -465,7 +547,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	if ($resql) {
 		$company_id = -1;
 		$oldrowid = '';
-		while ($assoc = $db->fetch_array($resql)) {
+		$rows = tax_get_invoice_lines($db, $resql, $direction);
+		if (!is_array($rows)) {
+			return -3;
+		}
+		foreach ($rows as $assoc) {
 			if (!isset($list[$assoc['company_id']]['totalht'])) {
 				$list[$assoc['company_id']]['totalht'] = 0;
 			}
@@ -821,7 +907,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if ($resql) {
 		$rate = -1;
 		$oldrowid = '';
-		while ($assoc = $db->fetch_array($resql)) {
+		$rows = tax_get_invoice_lines($db, $resql, $direction);
+		if (!is_array($rows)) {
+			return -3;
+		}
+		foreach ($rows as $assoc) {
 			$rate_key = $assoc['rate'];
 			if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
 				$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
@@ -911,7 +1001,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount, '' as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
@@ -1000,7 +1090,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if ($resql) {
 		$rate = -1;
 		$oldrowid = '';
-		while ($assoc = $db->fetch_array($resql)) {
+		$rows = tax_get_invoice_lines($db, $resql, $direction);
+		if (!is_array($rows)) {
+			return -3;
+		}
+		foreach ($rows as $assoc) {
 			$rate_key = $assoc['rate'];
 			if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
 				$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
