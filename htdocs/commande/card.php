@@ -289,9 +289,20 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
-		// Remove a product line
-		$result = $object->deleteLine($user, $lineid);
+	} elseif (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && $usercancreate) {
+		if ($action == 'confirm_massdellines') { // Test on permission already done
+			$result = 0;
+			$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+			foreach ($arrLines2del as $lineid) {
+				$result = $object->deleteLine($user, (int) $lineid);
+				if ($result <= 0) {
+					break;
+				}
+			}
+		} else {
+			// Remove line
+			$result = $object->deleteLine($user, $lineid);
+		}
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
@@ -316,6 +327,7 @@ if (empty($reshook)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		} else {
+			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
@@ -3026,7 +3038,15 @@ if ($action == 'create' && $usercancreate) {
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
-
+		if ($action == 'ask_massdellines') {
+			// Confirmation delete product/service lines
+			$lines2del = GETPOST('line_checkbox', 'array:int');
+			if (is_array($lines2del) && count($lines2del) > 0) {
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' . implode(',', $lines2del), $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
+			} else {
+				setEventMessage($langs->trans('NoRecordSelected'), 'warnings');
+			}
+		}
 		// Generate form to delete a subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
@@ -3564,7 +3584,7 @@ if ($action == 'create' && $usercancreate) {
 			/*
 			 * Form to add new line
 			 */
-			if ($object->status == Commande::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
+			if ($object->status == Commande::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'massdellines') {
 				if ($action != 'editline') {
 					// Add free products/services
 
@@ -3593,7 +3613,7 @@ if ($action == 'create' && $usercancreate) {
 		/*
 		 * Buttons for actions
 		 */
-		if ($action != 'presend' && $action != 'editline') {
+		if ($action != 'presend' && $action != 'editline' && $action != 'massdellines') {
 			print '<div class="tabsAction">';
 
 			$parameters = array();

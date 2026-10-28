@@ -308,31 +308,40 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
-		// Remove line
-		$result = $object->deleteLine($lineid);
-		// reorder lines
+	} elseif (($action == 'confirm_deleteline' || $action == 'confirm_massdellines') && $confirm == 'yes' && $usercancreate) {
+		if ($action == 'confirm_massdellines') { // Test on permission already done
+			$result = 0;
+			$arrLines2del = explode(',', GETPOST('lines2del', 'intcomma'));
+			foreach ($arrLines2del as $lineid) {
+				$result = $object->deleteLine((int) $lineid);
+				if ($result <= 0) {
+					break;
+				}
+			}
+		} else {
+			// Remove line
+			$result = $object->deleteLine($lineid);
+		}
 		if ($result > 0) {
+			// reorder lines
 			$object->line_order(true);
+			$ret = $object->fetch($id); // Reload to get new records
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		} else {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-
-		$ret = $object->fetch($id); // Reload to get new records
-		if ($ret > 0) {
-			$object->fetch_thirdparty();
-		}
-
-		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-			// Define output language
-			$outputlangs = $langs;
-			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$outputlangs = new Translate("", $conf);
-				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
 		// Delete line
@@ -3129,6 +3138,14 @@ if ($action == 'create') {
 	} elseif ($action == 'ask_deleteline') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+	} elseif ($action == 'ask_massdellines') {
+		// Confirmation delete product/service line
+		$lines2del = GETPOST('line_checkbox', 'array:int');
+		if (is_array($lines2del) && count($lines2del) > 0) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lines2del=' . implode(',', $lines2del), $langs->trans('ConfirmMassDeletion'), $langs->trans('ConfirmMassDeletionQuestion', count($lines2del)), 'confirm_massdellines', '', 0, 1);
+		} else {
+			setEventMessage($langs->trans('NoRecordSelected'), 'warnings');
+		}
 	} elseif ($action == 'ask_subtotal_deleteline') {
 		// Confirmation of removal of a subtotal line
 		$langs->load("subtotals");
@@ -3678,7 +3695,7 @@ if ($action == 'create') {
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'massdellines' && $action != 'editline')) {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
 
@@ -3687,7 +3704,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
+		if ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'massdellines') {
 			if ($action != 'editline') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -3703,7 +3720,7 @@ if ($action == 'create') {
 			}
 		}
 
-		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'massdellines' && $action != 'editline')) {
 			print '</table>';
 		}
 		print '</div>';
@@ -3726,7 +3743,7 @@ if ($action == 'create') {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		// modified by hook
 		if (empty($reshook)) {
-			if ($action != 'editline') {
+			if ($action != 'editline' && $action != 'massdellines') {
 				// Subtotal
 				if ($object->status == Propal::STATUS_DRAFT && isModEnabled('subtotals')
 					&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element)))) {
