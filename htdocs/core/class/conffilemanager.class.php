@@ -66,6 +66,7 @@ class ConfFileManager
 		'dolibarr_smarty_libs_dir'       => '',                                 // Smarty libraries directory, removed before Dolibarr 3.3
 		'dolibarr_pdf_force_fpdf'        => '',                                 // forced the FPDF generator instead of TCPDF, removed in Dolibarr 8.0
 		'dolibarr_allow_overwritekernel' => '',                                // allowed overwriting core files, removed before Dolibarr 3.3
+		'dolibarr_allow_download_external_modules' => 'dolibarr_allow_download_app', // renamed in Dolibarr 25.0
 	);
 
 	/**
@@ -138,9 +139,11 @@ class ConfFileManager
 			array('section' => 'Security', 'key' => 'dolibarr_main_csrf_with_token', 'default' => '', 'type' => 'string', 'mode' => $c, 'comment' => 'Force MAIN_SECURITY_CSRF_WITH_TOKEN (0,1,2,3) over the database value. See conf.php.example'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_disable_dns_get_record', 'default' => '', 'type' => 'string', 'mode' => $c, 'comment' => 'Force MAIN_DISABLE_DNS_GET_RECORD (0 or 1) over the database value. See conf.php.example'),
 			array('section' => 'Security', 'key' => 'dolibarr_api_count_always_enabled', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 so API call count can not be disabled from admin'),
+			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_password_generation_none', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 to forbid the \'none\' password generation model'),
 			array('section' => 'Security', 'key' => 'dolibarr_cron_allow_cli', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 to allow command lines in the internal Job scheduler'),
 			array('section' => 'Security', 'key' => 'dolibarr_mailing_limit_sendbyweb', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Hard limit for mailing sent by web (-1 to forbid)'),
 			array('section' => 'Security', 'key' => 'dolibarr_mailing_limit_sendbycli', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Hard limit for mailing sent by cli (-1 to forbid)'),
+			array('section' => 'Security', 'key' => 'dolibarr_mail_allow_unrestricted_smtp_target', 'default' => '', 'type' => 'string', 'mode' => $c, 'comment' => 'Accept any SMTP host and port, including private addresses. Keep unset unless required'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_stream_to_disable', 'default' => "array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib')", 'type' => 'raw', 'mode' => $s, 'comment' => 'PHP streams to disable (secure default written explicitly)'),
 			array('section' => 'Security', 'key' => 'dolibarr_website_allow_custom_php', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Allow PHP dynamic content into a website (0, 1 or 2)'),
 			array('section' => 'Security', 'key' => 'dolibarr_allow_localurl_for_webhooks', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Allow webhooks to use a local URL'),
@@ -155,7 +158,7 @@ class ConfFileManager
 			array('section' => 'Other', 'key' => 'dolibarr_main_limit_users', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Maximum number of users that can be created (0 = unlimited)'),
 			array('section' => 'Other', 'key' => 'dolibarr_main_limit_sessions_per_user', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Maximum concurrent sessions per user, database session handler only (0 = unlimited)'),
 			array('section' => 'Other', 'key' => 'dolibarr_strict_mode', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Enable PHP strict mode (dev only)'),
-			array('section' => 'Other', 'key' => 'dolibarr_allow_download_external_modules', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Allow downloading the zip of external modules from admin'),
+			array('section' => 'Other', 'key' => 'dolibarr_allow_download_app', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Allow downloading the zip of external modules and of the application files from admin'),
 			array('section' => 'Other', 'key' => 'dolibarr_main_distrib', 'default' => 'standard', 'type' => 'string', 'mode' => $s, 'comment' => 'Distribution name'),
 
 			// --- Paths ---
