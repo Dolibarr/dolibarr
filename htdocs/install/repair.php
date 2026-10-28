@@ -2024,7 +2024,9 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 
 	// Query to find all duplicate supplier orders
 	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
-	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf WHERE cf.entity = ".((int) $conf->entity)." GROUP BY cf.ref HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " ORDER BY rowid";
 
 	// Build a list of ref => []CommandeFournisseur
 	$duplicateSupplierOrders = [];
@@ -2051,6 +2053,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
+			$sql .= " AND cf.entity = ".((int) $conf->entity);
 			if (!$db->query($sql)) {
 				$err++;
 			}
