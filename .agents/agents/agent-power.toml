@@ -92,13 +92,8 @@ allowlist = [
     "xxd",
 ]
 denylist = [
-<<<<<<< HEAD
-    "rm -rf *",
-    "sudo *",
-=======
     "rm -rf",
     "sudo",
->>>>>>> branch '24.0' of git@github.com:Dolibarr/dolibarr.git
     "gdb",
     "pdb",
     "passwd",
