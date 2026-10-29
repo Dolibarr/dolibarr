@@ -1060,6 +1060,69 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Cancel an approved order that has not been sent to the vendor yet
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 * @param   string	$comment	Reason of the cancellation, added to the agenda event {@required false}
+	 *
+	 * @url POST    {id}/cancel
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order is not approved
+	 * @throws RestException 500 Error
+	 *
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "comment": ""
+	 * }
+	 */
+	public function cancel($id, $comment = '')
+	{
+		// Same right as checked by CommandeFournisseur::cancel(), which otherwise returns -1 without error message
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "commander")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same status as the one allowing the cancel button on the supplier order card
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_ACCEPTED) {
+			throw new RestException(405, 'Only approved supplier orders can be canceled');
+		}
+
+		if ((string) $comment !== '') {
+			$this->order->cancel_note = $comment;
+		}
+
+		$result = $this->order->cancel(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling Order: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order canceled (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
 	 * Receives the order, dispatches products.
 	 *
 	 * Example:

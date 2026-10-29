@@ -161,4 +161,60 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 
 		$this->getUrl('supplierorders/999999999/refuse', $test, 'POST', array("comment" => ""), 404);
 	}
+
+	/**
+	 * testRestSupplierOrderCancel
+	 *
+	 * @return int	Id of the canceled supplier order
+	 */
+	public function testRestSupplierOrderCancel()
+	{
+		$test = "Cancel supplier order";
+
+		$order_id = $this->createOrder($test);
+
+		// Only approved orders can be canceled
+		$this->getUrl('supplierorders/'.$order_id.'/cancel', "$test (draft)", 'POST', array("comment" => ""), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$this->getUrl('supplierorders/'.$order_id.'/cancel', "$test (validated)", 'POST', array("comment" => ""), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/approve', $test, 'POST', array("idwarehouse" => 0, "secondlevel" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/cancel', $test, 'POST', array("comment" => "Not needed anymore"));
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Cancel must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_CANCELED, $result['content']['status'] ?? null, "$test Order must be canceled");
+
+		return $order_id;
+	}
+
+	/**
+	 * testRestSupplierOrderCancelAgain
+	 *
+	 * @depends testRestSupplierOrderCancel
+	 *
+	 * @param int $order_id	Id of the canceled supplier order
+	 * @return void
+	 */
+	public function testRestSupplierOrderCancelAgain($order_id)
+	{
+		$test = "Cancel an already canceled supplier order";
+
+		$this->getUrl('supplierorders/'.$order_id.'/cancel', $test, 'POST', array("comment" => ""), 405);
+	}
+
+	/**
+	 * testRestSupplierOrderCancelNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderCancelNotFound()
+	{
+		$test = "Cancel a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/cancel', $test, 'POST', array("comment" => ""), 404);
+	}
 }
