@@ -310,6 +310,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			/** @var UserGroup $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+				$object->members = $object->listUsersForGroup('', 0);
 				$ldap = new Ldap();
 				$result = $ldap->connectBind();
 
