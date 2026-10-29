@@ -2004,24 +2004,18 @@ $( document ).ready(function() {
 	if ($resql) {
 		$max_sale = 0;
 		while ($obj = $db->fetch_object($resql)) {
-			echo '$("#shoppingcart").append(\'';
-			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser')).' - '.$obj->ref).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
-			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) {
 				$max_sale = str_replace("-", "", $num_sale);
 			}
-			echo '\\\'; invoiceid=\\\'';
-			echo $obj->rowid;
-			echo '\\\'; Refresh();">';
-			if ($placeid == $obj->rowid) {
-				echo '<span class="basketselected">';
-			} else {
-				echo '<span class="basketnotselected">';
-			}
-			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
-			echo '</span>';
-			echo '</a>\');';
+			// Build the HTML of the sale, then escape it once for the js string it is appended with
+			$htmlsale = '<a class="valignmiddle" title="'.dol_escape_htmltag($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser')).' - '.$obj->ref).'"';
+			$htmlsale .= ' onclick="place=\''.$num_sale.'\'; invoiceid=\''.$obj->rowid.'\'; Refresh();">';
+			$htmlsale .= '<span class="'.($placeid == $obj->rowid ? 'basketselected' : 'basketnotselected').'">';
+			$htmlsale .= '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
+			$htmlsale .= '</span>';
+			$htmlsale .= '</a>';
+			echo '$("#shoppingcart").append(\''.dol_escape_js($htmlsale, 1).'\');';
 		}
 		echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;

@@ -150,6 +150,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $remise;
 
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var int
+	 */
+	public $stockable_product;
 
 	/**
 	 *	Constructor

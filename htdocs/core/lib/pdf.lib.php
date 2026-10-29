@@ -1271,6 +1271,8 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
 
 /**
  *  Show bank information for PDF generation
+ *  The hook 'pdf_bank' can replace this block (return > 0). A hook that does it draws the block itself and gives the Y position
+ *  reached in $hookmanager->resArray['posy'] (if not set, the Y position received is returned).
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
@@ -1283,7 +1285,18 @@ function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$pos
  */
 function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
+	global $hookmanager;
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'curx' => $curx, 'cury' => $cury, 'onlynumber' => $onlynumber, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_bank', $parameters, $account, $action); // Note that $action and $account may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $cury;
+		}
+	}
 
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
@@ -3431,7 +3444,9 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());

@@ -92,8 +92,8 @@ allowlist = [
     "xxd",
 ]
 denylist = [
-    "rm -rf *",
-    "sudo *",
+    "rm -rf",
+    "sudo",
     "gdb",
     "pdb",
     "passwd",
