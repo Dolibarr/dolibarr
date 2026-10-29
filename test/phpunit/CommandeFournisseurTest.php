@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 
@@ -482,5 +483,75 @@ class CommandeFournisseurTest extends CommonClassTest
 		$order->delete($user);
 		$product1->delete($user);
 		$product2->delete($user);
+	}
+
+	/**
+	 * testUpdateLinkedBuyPrice
+	 *
+	 * @return	void
+	 */
+	public function testUpdateLinkedBuyPrice()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_LINKED_BUYPRICE_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product: '.$product->errorsToString());
+
+		// A customer order with a cost price of 10 on the product
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+		$commande->lines = array();
+		$commande->socid = $societe->id;
+		$this->assertGreaterThan(0, $commande->create($user), 'Failed to create customer order: '.$commande->errorsToString());
+		$commandelineid = $commande->addline('Line', 100, 1, 0, 0, 0, $productid);
+		$this->assertGreaterThan(0, $commandelineid, $commande->errorsToString());
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 10 WHERE rowid = ".((int) $commandelineid));
+
+		// A purchase order linked to it, with a line at 12 with 10% discount (net 10.8) on the product
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$order->socid = $societe->id;
+		$order->lines = array();
+		$line = new CommandeFournisseurLigne($db);
+		$line->desc = 'phpunit line';
+		$line->qty = 1;
+		$line->subprice = 12;
+		$line->remise_percent = 10;
+		$line->fk_product = $productid;
+		$order->lines[] = $line;
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+		$order->fetch($orderid);
+		$order->add_object_linked('commande', $commande->id);
+		$lineid = $order->lines[0]->id;
+
+		// The net unit price of the line is proposed as cost price on the customer order
+		$documents = $order->getLinkedBuyPriceDocuments($user, $lineid);
+		$this->assertEquals(array('commande'), array_keys($documents), 'The customer order has another cost price');
+		$this->assertEquals(10.8, price2num($documents['commande']['buyprice'], 'MU'), 'Cost price is the net unit price of the line');
+
+		$this->assertEquals(1, $order->updateLinkedBuyPrice($user, $lineid, array('commande' => 'on')), 'One line updated');
+		$obj = $db->fetch_object($db->query("SELECT buy_price_ht FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $commandelineid)));
+		$this->assertEquals(10.8, price2num($obj->buy_price_ht, 'MU'), 'Cost price saved on the line of the customer order');
+		$this->assertEquals(array(), $order->getLinkedBuyPriceDocuments($user, $lineid), 'Nothing is proposed once applied');
+
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+
+		$order->delete($user);
+		$commande->delete($user);
+		$product->delete($user);
 	}
 }

@@ -10954,7 +10954,7 @@ abstract class CommonObject
 
 	/**
 	 * Return the linked proposals, orders and invoices having, for the product of a line of this object, a cost price different from
-	 * the one saved on the line. Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
+	 * the one saved on the line (for a purchase order, the net unit price of the line). Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
 	 * user can not change cost prices, and documents that the user can not edit or access (rights, restriction on thirdparties) are ignored.
 	 *
 	 * @param	User		$user			User making change
@@ -10970,7 +10970,7 @@ abstract class CommonObject
 			return $documents;
 		}
 
-		$sql = "SELECT fk_product, buy_price_ht FROM ".$this->db->prefix().$this->table_element_line;
+		$sql = "SELECT fk_product, ".($this->element == 'order_supplier' ? "subprice * (1 - remise_percent / 100)" : "buy_price_ht")." as buy_price_ht FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		$line = ($resql ? $this->db->fetch_object($resql) : null);
