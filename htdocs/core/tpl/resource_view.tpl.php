@@ -65,6 +65,7 @@ print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 if ((array) $linked_resources && count($linked_resources) > 0) {
 	foreach ($linked_resources as $linked_resource) {
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
+		'@phan-var-force Dolresource $object_resource';
 
 		//$element_id = $linked_resource['rowid'];
 
