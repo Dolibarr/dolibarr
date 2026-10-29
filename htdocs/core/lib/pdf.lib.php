@@ -3431,7 +3431,9 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());

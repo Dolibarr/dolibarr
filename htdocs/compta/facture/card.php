@@ -652,6 +652,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			$object->fetch_thirdparty();
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -3258,6 +3259,7 @@ if (empty($reshook)) {
 
 				if ($result > 0) {
 					$ret = $object->fetch($id); // Reload to get new records
+					$object->fetch_thirdparty();
 					// Define output language and generate document
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
@@ -3764,6 +3766,7 @@ if (empty($reshook)) {
 
 			if ($result >= 0) {
 				$ret = $object->fetch($id); // Reload to get new records
+				$object->fetch_thirdparty();
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;

@@ -34,6 +34,8 @@ require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php';
 
 $langs->load("dict");
 
@@ -1090,5 +1092,41 @@ class ExpeditionTest extends CommonClassTest
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testStandaloneShipmentPdfReadsItsOwnContacts
+	 *
+	 * @return void
+	 */
+	public function testStandaloneShipmentPdfReadsItsOwnContacts()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = "ExpeditionTest Standalone Unittest";
+		$soc_id = $soc->create($user);
+		$this->assertGreaterThan(0, $soc_id, $soc->errorsToString());
+
+		$contact = new Contact($db);
+		$contact->socid = $soc_id;
+		$contact->lastname = "ExpeditionTest Standalone Contact";
+		$contact_id = $contact->create($user);
+		$this->assertGreaterThan(0, $contact_id, $contact->errorsToString());
+
+		$shipment = new Expedition($db);
+		$shipment->socid = $soc_id;
+		$shipment_id = $shipment->create($user);
+		$this->assertGreaterThan(0, $shipment_id, $shipment->errorsToString());
+		$shipment->fetch($shipment_id);
+		$this->assertGreaterThan(0, $shipment->add_contact($contact_id, 'SHIPPING', 'external'));
+		$shipment->fetch_origin();
+
+		$pdf = new pdf_espadon($db);
+		$this->assertEquals(array($contact_id), self::callMethod($pdf, 'getIdContactOfShipment', array($shipment, 'external', 'SHIPPING')));
 	}
 }
