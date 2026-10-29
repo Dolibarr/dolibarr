@@ -1858,6 +1858,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
+		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
+		if (isModEnabled('ai')) {
+			$titletoshow .= ' + ai';
+		}
+
 		print $titletoshow;
 		print '</title>';
 
