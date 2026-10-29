@@ -45,6 +45,9 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Lines are moved with a POST that must provide the token
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -65,12 +68,12 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
-	&& GETPOST('fk_element', 'aZ09', 3) && GETPOST('element_id', 'int', 3)) {
-	$roworder = GETPOST('roworder', 'alpha', 3);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
-	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOST('element_id', 'int', 3);
+if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
+	&& GETPOST('fk_element', 'aZ09', 2) && GETPOST('element_id', 'int', 2)) {
+	$roworder = GETPOST('roworder', 'alpha', 2);
+	$table_element_line = GETPOST('table_element_line', 'aZ09', 2);
+	$fk_element = GETPOST('fk_element', 'aZ09', 2);
+	$element_id = GETPOST('element_id', 'int', 2);
 
 	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 
