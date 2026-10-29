@@ -377,6 +377,7 @@ YouCanSubmitFile=You can upload the .zip file of module package from here:
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Browse to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version
+LastVersionOfBranch=Latest version of branch %s
 LastActivationDate=Latest activation date
 LastActivationAuthor=Latest activation author
 LastActivationIP=Latest activation IP
