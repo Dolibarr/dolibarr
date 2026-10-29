@@ -100,9 +100,10 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $error = 0;
 
-if ($action == 'update_extras' && $id > 0 && $projectstatic->id > 0) {
+// Only the edit form of the project block sends withproject=1, so an attribute of the task with the same code is not saved on the project
+$attribute_name = GETPOST('attribute', 'aZ09');
+if ($action == 'update_extras' && $id > 0 && $projectstatic->id > 0 && GETPOSTINT('withproject') && isset($extrafields->attributes[$projectstatic->table_element]['label'][$attribute_name])) {
 	$permissiontoeditprojectextra = $user->hasRight('projet', 'creer');
-	$attribute_name = GETPOST('attribute', 'aZ09');
 	if ($attribute_name && isset($extrafields->attributes[$projectstatic->table_element]['perms'][$attribute_name])) {
 		$savobject = $object;
 		$object = $projectstatic;
