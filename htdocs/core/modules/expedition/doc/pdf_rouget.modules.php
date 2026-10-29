@@ -1056,12 +1056,8 @@ class pdf_rouget extends ModelePdfExpedition
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of origin element if defined
-			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->origin_object)) {
-				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
-			}
-			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'internal', 'SALESREPFOLL');
+			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
@@ -1114,7 +1110,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
