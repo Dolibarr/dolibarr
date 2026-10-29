@@ -111,6 +111,58 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestSupplierOrderRefuse
+	 *
+	 * @return int	Id of the refused supplier order
+	 */
+	public function testRestSupplierOrderRefuse()
+	{
+		$test = "Refuse supplier order";
+
+		$order_id = $this->createOrder($test);
+
+		// A draft order is not waiting for approval
+		$this->getUrl('supplierorders/'.$order_id.'/refuse', "$test (draft)", 'POST', array("comment" => ""), 405);
+
+		$this->getUrl('supplierorders/'.$order_id.'/validate', $test, 'POST', array("idwarehouse" => 0, "notrigger" => 0));
+
+		$result = $this->getUrl('supplierorders/'.$order_id.'/refuse', $test, 'POST', array("comment" => "Prices too high"));
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Refuse must succeed");
+
+		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
+		$this->assertEquals(CommandeFournisseur::STATUS_REFUSED, $result['content']['status'] ?? null, "$test Order must be refused");
+
+		return $order_id;
+	}
+
+	/**
+	 * testRestSupplierOrderRefuseAgain
+	 *
+	 * @depends testRestSupplierOrderRefuse
+	 *
+	 * @param int $order_id	Id of the refused supplier order
+	 * @return void
+	 */
+	public function testRestSupplierOrderRefuseAgain($order_id)
+	{
+		$test = "Refuse an already refused supplier order";
+
+		$this->getUrl('supplierorders/'.$order_id.'/refuse', $test, 'POST', array("comment" => ""), 405);
+	}
+
+	/**
+	 * testRestSupplierOrderRefuseNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestSupplierOrderRefuseNotFound()
+	{
+		$test = "Refuse a supplier order that does not exist";
+
+		$this->getUrl('supplierorders/999999999/refuse', $test, 'POST', array("comment" => ""), 404);
+	}
+
+	/**
 	 * testRestSupplierOrderCancel
 	 *
 	 * @return int	Id of the canceled supplier order

@@ -4,6 +4,7 @@
  * Copyright (C) 2023-2026	Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for supplier invoices
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @property DoliDB $db
  * @access protected
@@ -61,6 +64,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Return an array with supplier invoice information
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of supplier invoice
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -93,6 +98,10 @@ class SupplierInvoices extends DolibarrApi
 	 * List invoices
 	 *
 	 * Get a list of supplier invoices
+	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
+	 * @since	21.0.0	Added pagination_data parameter
 	 *
 	 * @param string	$sortfield		  Sort field
 	 * @param string	$sortorder		  Sort order
@@ -224,6 +233,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param array $request_data Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
@@ -267,6 +278,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Update supplier invoice
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   	$id             	Id of supplier invoice to update
 	 * @param 	array 	$request_data  		Data
@@ -328,6 +341,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Delete supplier invoice
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param int   $id Supplier invoice ID
 	 *
 	 * @return array
@@ -368,6 +383,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Validate an invoice
+	 *
+	 * @since	6.0.0	Initial implementation
 	 *
 	 * @param   int $id             Invoice ID
 	 * @param   int $idwarehouse    Warehouse ID
@@ -419,6 +436,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Sets an invoice as draft
 	 *
+	 * @since	22.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Id of supplier invoice
 	 * @param   int     $idwarehouse    Warehouse ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -464,6 +483,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Get list of payments of a given supplier invoice
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of SupplierInvoice
 	 *
 	 * @url     GET {id}/payments
@@ -505,6 +526,9 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Add payment line to a specific supplier invoice with the remain to pay as amount.
+	 *
+	 * @since	11.0.0	Initial implementation
+	 * @since	19.0.0	Added amount parameter
 	 *
 	 * @param int     $id                               Id of invoice
 	 * @param int     $datepaye           {@from body}  Payment date        {@type timestamp}
@@ -616,6 +640,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Sets a supplier invoice as paid
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Supplier invoice ID
 	 * @param   string  $close_code     Optional close code (e.g. discount/escompte case)
 	 * @param   string  $close_note     Optional close note/comment
@@ -662,6 +688,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Sets a supplier invoice as unpaid
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Supplier invoice ID
 	 * @return  Object                  Object with cleaned properties
 	 *
@@ -705,6 +733,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Create a discount (credit available) from a supplier credit note, a supplier deposit or the excess paid on a supplier invoice
+	 *
+	 * @since	25.0.0	Initial implementation
 	 *
 	 * @param   int		$id				Supplier invoice ID
 	 * @return	Object					Object with cleaned properties
@@ -869,6 +899,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Note that this consumes the credit. The invoice is set to paid when nothing remains to pay.
 	 *
+	 * @since	25.0.0	Initial implementation
+	 *
 	 * @param int   $id            Id of supplier invoice
 	 * @param int   $discountid    Id of the available supplier credit
 	 * @return	int
@@ -939,6 +971,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Get lines of a supplier invoice
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of supplier invoice
 	 *
 	 * @url	GET {id}/lines
@@ -978,6 +1012,8 @@ class SupplierInvoices extends DolibarrApi
 	 * Note: socid = dolibarr_order_id, pu_ht = net price, remise = discount
 	 *
 	 * Example: {'socid': 1, 'qty': 1, 'pu_ht': 21.0, 'tva_tx': 25.0, 'fk_product': '1189', 'product_type': 0, 'remise_percent': 1.0, 'vat_src_code': None}
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param array $request_data   supplier invoice line data
@@ -1045,6 +1081,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Update a line to a given supplier invoice
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param int   $lineid         Id of line to update
@@ -1123,6 +1161,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Deletes a line of a given supplier invoice
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of supplier invoice
 	 * @param int   $lineid			Id of the line to delete
 	 *
@@ -1180,6 +1220,8 @@ class SupplierInvoices extends DolibarrApi
 	 * Add a discount line into a draft supplier invoice using an available supplier discount
 	 *
 	 * Note that this consumes the discount. A discount larger than the invoice must be split before, see POST thirdparties/{id}/splitdiscount/{discountid}.
+	 *
+	 * @since	25.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of supplier invoice
 	 * @param int   $discountid     Id of the available supplier discount
