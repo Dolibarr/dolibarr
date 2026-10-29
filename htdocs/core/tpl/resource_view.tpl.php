@@ -38,6 +38,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force string $element
 @phan-var-force int $element_id
 @phan-var-force string $resource_type
+@phan-var-force string $mode
 @phan-var-force array<array{rowid:int,resource_id:int,resource_type:string,busy:int<0,1>,mandatory:int<0,1>}> $linked_resources
 ';
 

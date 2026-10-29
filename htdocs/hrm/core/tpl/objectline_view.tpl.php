@@ -57,6 +57,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 '
+@phan-var-force int $i
 @phan-var-force EvaluationLine $line
 @phan-var-force Evaluation $this
 ';
