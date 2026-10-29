@@ -614,15 +614,15 @@ if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 's
 
 		// Redirect to the card of the created object (or of the invoice the file has been attached to).
 		// The confirmation message is shown on the card by setEventMessages().
-		$urltocreatedobject = DOL_URL_ROOT.'/fourn/facture/card.php?id='.$createdobject->id;
+		$urltocreatedobject = '/fourn/facture/card.php?id='.$createdobject->id;
 		if ($createdobject instanceof Salary) {
-			$urltocreatedobject = DOL_URL_ROOT.'/salaries/card.php?id='.$createdobject->id;
+			$urltocreatedobject = '/salaries/card.php?id='.$createdobject->id;
 			setEventMessages($langs->trans("SalaryCreatedFromFile"), null, 'mesgs');
 		} elseif ($createdobject instanceof ChargeSociales) {
-			$urltocreatedobject = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$createdobject->id;
+			$urltocreatedobject = '/compta/sociales/card.php?id='.$createdobject->id;
 			setEventMessages($langs->trans("SocialContributionCreatedFromFile"), null, 'mesgs');
 		} elseif ($createdobject instanceof ExpenseReport) {
-			$urltocreatedobject = DOL_URL_ROOT.'/expensereport/card.php?id='.$createdobject->id;
+			$urltocreatedobject = '/expensereport/card.php?id='.$createdobject->id;
 			setEventMessages($langs->trans("ExpenseAddedFromFile"), null, 'mesgs');
 		} elseif ($attachtoexistinginvoice) {
 			setEventMessages($langs->trans("FileAttachedToExistingInvoice"), null, 'mesgs');
@@ -1161,9 +1161,20 @@ if ($action == 'showsummary') {
 			if ($s) {
 				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
 			}
-			print $langs->trans("ChooseTheThirdPartyTouse").' ';
-			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen', '', '', 1, array(), false, array(), 1);
+			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', 'ChooseTheThirdPartyTouse', 1, 0, array(), 0, 'minwidth300 maxwidth400 disableautoopen', '', '', 1, array(), false, array(), 'supplier');
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
+			if ($user->hasRight('societe', 'creer')) {
+				$langs->load("companies");
+				// Back to the summary (the result of the AI analysis is read again from its JSON cache file), with the new thirdparty id
+				$paramsbacktosummary = array('action' => 'showsummary', 'modulepart' => $modulepart, 'originalfilename' => GETPOST('originalfilename', 'alphanohtml'), 'socid' => '--IDFORBACKTOPAGE--');
+				if (GETPOST('prodid', 'alpha') !== '') {
+					$paramsbacktosummary['prodid'] = GETPOST('prodid', 'alpha');
+				}
+				if (GETPOST('supplierref', 'alphanohtml') !== '') {
+					$paramsbacktosummary['supplierref'] = GETPOST('supplierref', 'alphanohtml');
+				}
+				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode(dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary)).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			}
 		} else {
 			print '<span class="valignmiddle">'.$langs->trans("WillUse").'</span> ';
 			print $tmpthirdparty->getNomUrl(1);
@@ -1187,7 +1198,6 @@ if ($action == 'showsummary') {
 		}
 
 		// Product ($prodid was already converted into a product id at top of page)
-		$prodtext = $langs->trans("RefOrLabel");
 
 		$tmpproduct = new Product($db);
 		print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
@@ -1218,10 +1228,57 @@ if ($action == 'showsummary') {
 		print $s;
 		print '<br><br>';
 		if (empty($tmpproduct->id)) {
-			print $langs->trans("ChooseTheProductTouse").' ';
-			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+			print $form->select_produits_fournisseurs(0, ($prodid > 0 ? 'idprod_'.$prodid : $prodid), 'prodid', '', '', array(), 1, 1, 'minwidth300 maxwidth400 disableautoopen', $langs->trans("ChooseTheProductOrServiceTouse"), 1);
 
 			// TODO On selection of product, refresh next section with the product price ref
+
+			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
+			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
+			// Back to the summary (the result of the AI analysis is read again from its JSON cache file).
+			// After creation, product card replaces --IDFORBACKTOPAGE-- with the new product id so it is preselected in the form
+			$paramsbacktosummary = array('action' => 'showsummary', 'modulepart' => $modulepart, 'originalfilename' => GETPOST('originalfilename', 'alphanohtml'));
+			if (GETPOSTINT('socid') > 0) {
+				$paramsbacktosummary['socid'] = GETPOSTINT('socid');
+			}
+			if (GETPOST('supplierref', 'alphanohtml') !== '') {
+				$paramsbacktosummary['supplierref'] = GETPOST('supplierref', 'alphanohtml');
+			}
+			$urlbacktocancel = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary);
+			$paramsbacktosummary['prodid'] = 'idprod_--IDFORBACKTOPAGE--';
+			$urlbacktoobject = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary);
+			if ($addproducton || $addserviceon) {
+				$langs->load("products");
+				if ($addproducton && $addserviceon) {
+					print ' <div id="dropdownAddProductAndService" class="dropdown inline-block">';
+					print '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
+					print '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+					print '</a>';
+					print '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
+					print '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'"> '.$langs->trans("NewProduct").'</a>';
+					print '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'"> '.$langs->trans("NewService").'</a>';
+					print '</div>';
+					print '</div>';
+					print '<script nonce="'.getNonce().'">
+					jQuery(document).ready(function() {
+						jQuery("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
+							console.log("toggle addproduct dropdown");
+							event.preventDefault();
+							jQuery("#dropdownAddProductAndService").toggleClass("open");
+						});
+						// Close the dropdown when clicking outside of it
+						jQuery(document).on("click", function(event) {
+							if (jQuery(event.target).closest("#dropdownAddProductAndService").length == 0) {
+								jQuery("#dropdownAddProductAndService").removeClass("open");
+							}
+						});
+					});
+					</script>';
+				} elseif ($addproducton) {
+					print ' <a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				} else {
+					print ' <a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				}
+			}
 		} else {
 			print $langs->trans("WillUse").' ';
 			print $tmpproduct->getNomUrl(1);
@@ -1296,7 +1353,7 @@ if ($action == 'showsummary') {
 			print '<input type="hidden" name="invoice_label" value="'.$invoiceindoc['invoice_label'].'">';
 		} else {
 			// The link is inserted after the translation, because trans() encodes the HTML of its parameters
-			print str_replace('__INVOICELINK__', $tmpinvoice->getNomUrl(1), $langs->trans("InvoiceSeemsToAlreadyExist", '__INVOICELINK__'));
+			print str_replace('__INVOICELINK__', $tmpinvoice->getNomUrl(1), $langs->trans("InvoiceSeemsToAlreadyExist", $tmpinvoice->ref_supplier, '__INVOICELINK__'));
 			print '<input type="hidden" name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
