@@ -823,7 +823,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(0, $splitline['account'], true);
 				$subledgeraccount = new AccountingAccount($db);
-				$subledgeraccount->fetch(0, $splitline['subledger'], true);
+				$subledgeraccount->fetch(0, $splitline['subledgeraccount'], true);
 
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
@@ -1367,7 +1367,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($splitline['account'])).'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($splitline['subledger'])).'"'.$sep;
+			print '"'.html_entity_decode($splitline['subledger']).'"'.$sep;
 			print '"'.csvClean(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
 			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'])).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
@@ -1800,7 +1800,7 @@ if (empty($action) || $action == 'view') {
 			}
 			print "</td>";
 			// Subledger account
-			print "<td>".length_accountg($splitline['subledger'])."</td>";
+			print "<td>".$splitline['subledger']."</td>";
 			print "<td>".$bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label.' - '.$splitline['label'], 1)."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
