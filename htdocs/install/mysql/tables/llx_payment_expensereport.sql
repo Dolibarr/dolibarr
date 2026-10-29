@@ -25,6 +25,7 @@ create table llx_payment_expensereport
   datep                   datetime,           -- payment date
   amount                  double(24,8) DEFAULT 0,
   multicurrency_amount    double(24,8) DEFAULT 0,    -- amount in the currency of the expense report
+  multicurrency_code      varchar(3),                -- currency of multicurrency_amount
   fk_typepayment          integer NOT NULL,
   num_payment             varchar(50),
   note                    text,
