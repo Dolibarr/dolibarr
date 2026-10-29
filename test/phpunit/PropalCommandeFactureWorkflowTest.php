@@ -234,8 +234,21 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		if (!isModEnabled('margin')) {
+			$this->markTestSkipped('Module margin disabled: cost prices can not be applied to linked documents.');
+		}
+
 		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		// The module Margin may not be enabled on the test database, so we enable it and give the right to change cost prices
+		$savmodmargin = $conf->modules['margin'] ?? null;
+		$conf->modules['margin'] = 'margin';
+		$savrightsmargins = isset($user->rights->margins) ? clone $user->rights->margins : null;
+		if (!isset($user->rights->margins)) {
+			$user->rights->margins = new stdClass();
+		}
+		$user->rights->margins->creer = 1;
 
 		$soc = new Societe($db);
 		$soc->name = 'PropalCommandeFactureWorkflowTest linked cost price Unittest';
@@ -307,6 +320,16 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 0;
 		$this->assertEquals(array(), $commande->getLinkedBuyPriceDocuments($user, $lineids['commande']), 'Nothing when the option is off');
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+		if ($savmodmargin === null) {
+			unset($conf->modules['margin']);
+		} else {
+			$conf->modules['margin'] = $savmodmargin;
+		}
+		if ($savrightsmargins === null) {
+			unset($user->rights->margins);
+		} else {
+			$user->rights->margins = $savrightsmargins;
+		}
 
 		$facture->delete($user);
 		$commande2->delete($user);
