@@ -377,6 +377,7 @@ YouCanSubmitFile=You can upload the .zip file of module package from here:
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Browse to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version
+LastVersionOfBranch=Latest version of branch %s
 LastActivationDate=Latest activation date
 LastActivationAuthor=Latest activation author
 LastActivationIP=Latest activation IP
@@ -1621,6 +1622,7 @@ InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified 
 ##### Supplier Orders #####
 SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
 SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.
+SupplierOrderUpdateBuyingPriceWhenOrdering=Suggest to update the supplier price and the cost price of the products when placing a purchase order for each prices on lines of the purchase order.
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models

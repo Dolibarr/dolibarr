@@ -66,6 +66,8 @@ $config['plugins'] = [
 $config['suppress_issue_types'] = [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
+		// TCPDF >= 6.11 marks the whole library deprecated, Dolibarr intentionally keeps using it (same as config.php)
+		'PhanDeprecatedClass',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is

@@ -358,6 +358,10 @@ create table llx_loan_change
 ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0 AFTER amount;
+UPDATE llx_payment_expensereport SET multicurrency_amount = amount WHERE multicurrency_amount = 0;
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_code varchar(3) AFTER multicurrency_amount;
+UPDATE llx_payment_expensereport SET multicurrency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = (SELECT entity FROM llx_expensereport WHERE rowid = llx_payment_expensereport.fk_expensereport)) WHERE multicurrency_code IS NULL;
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 
 -- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also

@@ -225,6 +225,9 @@ if (empty($reshook)) {
 			if ($id <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'create';
+			} else {
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			}
 		}
 	}
