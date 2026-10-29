@@ -408,10 +408,10 @@ class ToolThirdParty extends McpTool
 		// Country Handling
 		if (! empty($args['country_code'])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			// getCountry returns an array or false/0.
-			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], '1');
-			if ($info && isset($info['id'])) {
+			// Mode 'all' is the only one that returns an array with the id. Mode '1' returns the string "CODE - Label".
+			/** @var array{id:int,code:string,label:string}|string $info */
+			$info = getCountry($args['country_code'], 'all');
+			if (is_array($info) && !empty($info['id'])) {
 				$soc->country_id = (int) $info['id'];
 			}
 		}
@@ -514,10 +514,11 @@ class ToolThirdParty extends McpTool
 		if (!empty($args['country_code'])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
-			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], '1');
+			// Mode 'all' is the only one that returns an array with the id. Mode '1' returns the string "CODE - Label".
+			/** @var array{id:int,code:string,label:string}|string $info */
+			$info = getCountry($args['country_code'], 'all');
 
-			if ($info && isset($info['id'])) {
+			if (is_array($info) && !empty($info['id'])) {
 				$soc->country_id = (int) $info['id'];
 			}
 		}
