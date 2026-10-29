@@ -19,6 +19,7 @@ if (!defined('NOREQUIREDB')) {
 }
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/mysqli.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 // Restler unregisters existing loaders; keep PHPUnit's Composer loader available.
 call_user_func(
@@ -80,7 +81,14 @@ class SupplierOrdersLineApiTest extends CommonClassTest
 			$this->line->$field = $value;
 		}
 		$this->order->lines = array($this->line);
-		$this->api = new SupplierOrderLineApiFixture($this->order);
+		// putLine() reloads the updated line from the database: serve it from a mock
+		$database = $this->createMock(DoliDBMysqli::class);
+		$database->method('prefix')->willReturn('llx_');
+		$database->method('query')->willReturn(true);
+		$database->method('jdate')->willReturnArgument(0);
+		$database->method('fetch_object')->willReturn((object) array('rowid' => 7, 'fk_commande' => 42, 'description' => 'Reloaded line', 'qty' => 2, 'ref_supplier' => 'OLD', 'subprice' => '85.00', 'subprice_ttc' => 0, 'vat_src_code' => '', 'tva_tx' => 10, 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'localtax1_type' => '', 'localtax2_type' => '', 'remise' => 0, 'remise_percent' => 0, 'fk_product' => 10, 'info_bits' => 0, 'total_ht' => 170, 'total_tva' => 17, 'total_localtax1' => 0, 'total_localtax2' => 0, 'total_ttc' => 187, 'product_type' => 1, 'special_code' => 0, 'fk_parent_line' => null, 'rang' => 1, 'product_ref' => 'SERV', 'product_label' => 'Service', 'product_desc' => '', 'product_tobatch' => 0, 'product_barcode' => '', 'stockable_product' => 0, 'date_start' => 1800000000, 'date_end' => 1800086400, 'fk_unit' => 1, 'extraparams' => '', 'fk_multicurrency' => 0, 'multicurrency_code' => '', 'multicurrency_subprice' => '85.00', 'multicurrency_subprice_ttc' => 0, 'multicurrency_total_ht' => 170, 'multicurrency_total_tva' => 17, 'multicurrency_total_ttc' => 187, 'socid' => 1));
+		$extrafields = (object) array('attributes' => array('commande_fournisseurdet' => array('loaded' => 1)));
+		$this->api = new SupplierOrderLineApiFixture($this->order, $database);
 	}
 
 	/** @return void */
@@ -112,7 +120,8 @@ class SupplierOrdersLineApiTest extends CommonClassTest
 			$this->assertSame(10, $this->line->fk_product);
 			return 1;
 		});
-		$this->api->putLine(42, 7, array('desc' => 'New description'));
+		$result = $this->api->putLine(42, 7, array('desc' => 'New description'));
+		$this->assertSame('Reloaded line', $result->desc);
 	}
 
 	/** @return void */
@@ -177,7 +186,7 @@ class SupplierOrdersLineApiTest extends CommonClassTest
 	public function testExtrafieldValidationKeepsInternalMetadataAndMergesOmittedValues()
 	{
 		global $extrafields;
-		$extrafields = (object) array('attributes' => array('commande_fournisseurdet' => array('type' => array('options_notes' => 'html'))));
+		$extrafields = (object) array('attributes' => array('commande_fournisseurdet' => array('loaded' => 1, 'type' => array('options_notes' => 'html'))));
 		$this->order->expects($this->once())->method('updateline')->willReturnCallback(function (...$args) {
 			$this->assertSame(array('options_reference' => 'keep', 'options_notes' => '<b>New note</b>'), $args[14]);
 			$this->assertSame(array('options_reference' => 'keep'), $this->line->array_options);
@@ -376,10 +385,12 @@ class SupplierOrderLineApiFixture extends SupplierOrders
 
 	/**
 	 * @param CommandeFournisseur $order Mock order
+	 * @param ?DoliDB $database Mock database
 	 */
-	public function __construct($order)
+	public function __construct($order, $database = null)
 	{
 		$this->order = $order;
+		$this->db = $database;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
