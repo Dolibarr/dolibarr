@@ -428,7 +428,9 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * @param int $id Supplier order ID
 	 * @param int $lineid Line ID
-	 * @param array<string,mixed>|null $request_data Fields to change
+	 * @param array $request_data Fields to change
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return CommandeFournisseurLigne Updated line
 	 * @url PUT {id}/lines/{lineid}
 	 */
