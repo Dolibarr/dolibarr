@@ -1621,7 +1621,7 @@ InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified 
 ##### Supplier Orders #####
 SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
 SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.
-SupplierOrderUpdateBuyingPriceWhenOrdering=Propose to update the supplier price and the cost price of the products when placing a purchase order
+SupplierOrderUpdateBuyingPriceWhenOrdering=Suggest to update the supplier price and the cost price of the products when placing a purchase order for each prices on lines of the purchase order.
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models
