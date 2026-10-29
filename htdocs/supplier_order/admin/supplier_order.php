@@ -464,6 +464,12 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
+// Propose to update the supplier price and the cost price of the products when placing the order
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderUpdateBuyingPriceWhenOrdering").'</td>';
+print '<td colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER');
+print '</td></tr>';
+
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
