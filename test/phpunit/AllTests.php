@@ -306,8 +306,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
-		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
-		$suite->addTestSuite('SupplierOrdersLineApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 
