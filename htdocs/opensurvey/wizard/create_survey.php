@@ -52,6 +52,7 @@ $description = GETPOST('description', 'restricthtml');
 $mailsonde = GETPOST('mailsonde');
 $creation_sondage_date = GETPOST('creation_sondage_date');
 $creation_sondage_autre = GETPOST('creation_sondage_autre');
+$creation_sondage_form = GETPOST('creation_sondage_form');
 
 // We init some session variables to avoid PHP 8 "undefined array key" warning
 $session_var = array('title', 'description', 'mailsonde', 'allow_comments', 'allow_spy', 'champdatefin');
@@ -67,7 +68,7 @@ $cochemail = '';
 $champdatefin = 0;
 
 // Jump to correct page
-if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
+if (!empty($creation_sondage_date) || !empty($creation_sondage_autre) || !empty($creation_sondage_form)) {
 	$error = 0;
 
 	$_SESSION["title"] = $title;
@@ -123,6 +124,11 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 			header("Location: choix_autre.php");
 			exit();
 		}
+
+		if (!empty($creation_sondage_form)) {
+			header("Location: choix_form.php");
+			exit();
+		}
 	}
 }
 
@@ -153,7 +159,7 @@ print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle
 
 print '<td><input type="text" id="title" name="title" class="minwidth300" maxlength="80" value="'.dol_escape_htmltag($_SESSION["title"]).'" autofocus></td>'."\n";
 
-if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
+if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre') || GETPOST('creation_sondage_form'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
@@ -204,11 +210,16 @@ print '<input type="checkbox" id="allow_spy" name="allow_spy" '.$allow_spy.'> <l
 if (GETPOST('choix_sondage')) {
 	if (GETPOST('choix_sondage') == 'date') {
 		print '<input type="hidden" name="creation_sondage_date" value="date">';
+		$labeltype = $langs->trans("TypeDate");
+	} elseif (GETPOST('choix_sondage') == 'formulaire') {
+		print '<input type="hidden" name="creation_sondage_form" value="formulaire">';
+		$labeltype = $langs->trans("TypeForm");
 	} else {
 		print '<input type="hidden" name="creation_sondage_autre" value="autre">';
+		$labeltype = $langs->trans("TypeClassic");
 	}
-	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
-	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
+	print '<input type="hidden" name="choix_sondage" value="'.dol_escape_htmltag(GETPOST('choix_sondage')).'">';
+	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.$labeltype.')">';
 } else {
 	// Show image to select between date survey or other survey
 	print '<br><table>'."\n";
@@ -216,6 +227,8 @@ if (GETPOST('choix_sondage')) {
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";
 	print '<tr><td>'.$langs->trans("CreateSurveyStandard").'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_autre" value="'.$langs->trans('CreateSurveyStandard').'" src="../img/chart-32.png"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("CreateSurveyForm").'</td><td></td> '."\n";
+	print '<td><input type="image" name="creation_sondage_form" value="'.$langs->trans('CreateSurveyForm').'" src="../img/chart-32.png"></td></tr>'."\n";
 	print '</table>'."\n";
 }
 print '<br><br><br>'."\n";

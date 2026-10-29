@@ -73,6 +73,12 @@ print '<button id="autre" name="choix_sondage" value="autre" type="submit" class
 print '<img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'" style="padding-right: 4px" class="inline-block valignmiddle">';
 print '<div class="inline-block valignmiddle">'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</div></button>';
 print '</div>';
+print '<div class="index_sondage">';
+print '<div><img class="opacity imgopensurveywizard" src="../img/sondage2.png" onclick="document.formulaire.formulaire.click()"></div>';
+print '<button id="formulaire" name="choix_sondage" value="formulaire" type="submit" class="button blue bigrounded">';
+print '<img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyForm")).'" style="padding-right: 4px" class="inline-block valignmiddle">';
+print '<div class="inline-block valignmiddle">'.dol_escape_htmltag($langs->trans("CreateSurveyForm")).'</div></button>';
+print '</div>';
 print '<div class="clearboth"></div>';
 print '<br>';
 print '</div>';
