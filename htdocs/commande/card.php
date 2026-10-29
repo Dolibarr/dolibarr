@@ -1844,6 +1844,8 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
+			$oldbuyingprice = array_column($object->lines, 'pa_ht', 'id')[$lineid] ?? null;
+
 			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOSTINT('lineid')) {
@@ -1905,6 +1907,10 @@ if (empty($reshook)) {
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
+
+				if ($object->getLinkedBuyPriceDocuments($user, $lineid, $oldbuyingprice)) {
+					$action = 'ask_updatelinkedbuyingprice';
+				}
 			} else {
 				$db->rollback();
 
@@ -1914,6 +1920,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); //  To re-display card in edit mode
 		exit();
+	} elseif ($action == 'confirm_updatelinkedbuyingprice' && $confirm == 'yes' && $usercancreate) {
+		$result = $object->updateLinkedBuyPrice($user, $lineid, array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+		setEventMessages(($result < 0 ? $object->error : $langs->trans('RecordsModified', $result)), null, ($result < 0 ? 'errors' : 'mesgs'));
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
@@ -3025,6 +3034,16 @@ if ($action == 'create' && $usercancreate) {
 		// Confirmation to delete line
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		}
+
+		// Confirmation to apply the cost price of the line to the linked documents
+		if ($action == 'ask_updatelinkedbuyingprice') {
+			$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+			$formquestion = array(array('type' => 'hidden', 'name' => 'lineid', 'value' => $lineid));
+			foreach ($object->getLinkedBuyPriceDocuments($user, $lineid) as $element => $document) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_' . $element, 'label' => $langs->trans($labels[$element]) . ' ' . dol_escape_htmltag(implode(', ', $document['refs'])), 'value' => ($element != 'facture'));
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UpdateLinkedBuyingPrice'), $langs->trans('UpdateLinkedBuyingPriceQuestion'), 'confirm_updatelinkedbuyingprice', $formquestion, 'yes', 1);
 		}
 
 		// Generate form to delete a subtotal line
