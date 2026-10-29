@@ -258,6 +258,10 @@ if (GETPOST('type', 'alpha')) {
 if (preg_match('/html/i', $type)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.');
 }
+// Security: The type given into the URL must not be a type of page (xml, xhtml, svg) for a file of another extension
+if (GETPOST('type', 'alpha') && preg_match('/(xml|svg)/i', $type) && !preg_match('/(xml|svg)/i', dol_mimetype($original_file))) {
+	httponly_accessforbidden('Error: Using the image wrapper to output a file with a mime type XML is not possible.');
+}
 // Security: This wrapper is for images. We do not allow files ending with .noexe
 if (preg_match('/\.noexe$/i', $original_file)) {
 	httponly_accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.');
