@@ -388,6 +388,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'presend_addmessage',
 			'preview',
 			'reconcile',
+			'showsummary',
 			'specimen',
 			'testsetup',
 			'undeployconfirmed',

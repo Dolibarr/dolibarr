@@ -1130,6 +1130,10 @@ if ($action == 'showsummary') {
 		$idprof2indoc = (string) $invoiceindoc['vendor_profid2'];
 		$emailindoc = (string) $invoiceindoc['vendor_email'];
 		$vatnumberindoc = (string) $invoiceindoc['vendor_vat_number'];
+		$phoneindoc = (string) $invoiceindoc['vendor_phone'];
+		$zipindoc = (string) $invoiceindoc['vendor_zip'];
+		$townindoc = (string) $invoiceindoc['vendor_town'];
+		$countryindoc = (string) $invoiceindoc['vendor_country'];
 
 
 		// Thirdparty
@@ -1173,7 +1177,46 @@ if ($action == 'showsummary') {
 				if (GETPOST('supplierref', 'alphanohtml') !== '') {
 					$paramsbacktosummary['supplierref'] = GETPOST('supplierref', 'alphanohtml');
 				}
-				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode(dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary)).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				// Prefill the thirdparty creation form with the vendor data detected into the document
+				$paramstocreatethirdparty = array();
+				if ($nameindoc !== '') {
+					$paramstocreatethirdparty['name'] = $nameindoc;
+				}
+				if ($addressindoc !== '') {
+					$paramstocreatethirdparty['address'] = $addressindoc;
+				}
+				if ($phoneindoc !== '') {
+					$paramstocreatethirdparty['phone'] = $phoneindoc;
+				}
+				if ($emailindoc !== '') {
+					$paramstocreatethirdparty['email'] = $emailindoc;
+				}
+				if ($vatnumberindoc !== '') {
+					$paramstocreatethirdparty['tva_intra'] = $vatnumberindoc;
+				}
+				if ($idprof1indoc !== '') {
+					$paramstocreatethirdparty['idprof1'] = $idprof1indoc;
+				}
+				if ($idprof2indoc !== '') {
+					$paramstocreatethirdparty['idprof2'] = $idprof2indoc;
+				}
+				if ($zipindoc !== '') {
+					$paramstocreatethirdparty['zipcode'] = $zipindoc;
+				}
+				if ($townindoc !== '') {
+					$paramstocreatethirdparty['town'] = $townindoc;
+				}
+				if ($countryindoc !== '') {
+					$countryidindoc = (int) dol_getIdFromCode($db, $countryindoc, 'c_country', 'code', 'rowid');
+					if (empty($countryidindoc)) {
+						$countryidindoc = (int) dol_getIdFromCode($db, $countryindoc, 'c_country', 'label', 'rowid');
+					}
+					if (!empty($countryidindoc)) {
+						$paramstocreatethirdparty['country_id'] = $countryidindoc;
+					}
+				}
+				$paramstocreatethirdparty = array_merge(array('action' => 'create', 'client' => 0, 'fournisseur' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary)), $paramstocreatethirdparty);
+				print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/societe/card.php', $paramstocreatethirdparty).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 		} else {
 			print '<span class="valignmiddle">'.$langs->trans("WillUse").'</span> ';
