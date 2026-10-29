@@ -231,6 +231,15 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		// Use AJAX call instead of redirect
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
+			// Remove the "FileTransferComplete" message set by dol_add_file_process(), useless here
+			// because the page immediately shows the progress of the processing of the file
+			if (!empty($_SESSION['dol_events']['mesgs'])) {
+				$_SESSION['dol_events']['mesgs'] = array_diff($_SESSION['dol_events']['mesgs'], array($langs->transnoentitiesnoconv("FileTransferComplete")));
+				if (empty($_SESSION['dol_events']['mesgs'])) {
+					unset($_SESSION['dol_events']['mesgs']);
+				}
+			}
+
 			// We will make the AJAX call from the bottom of the page
 			$ajaxFileUrl = DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname);
 		}
@@ -1029,7 +1038,7 @@ if ($action == 'uploadfile') {
 		}
 	 */
 
-	print '<form class="" id="form-result" method="POST">';
+	print '<form class="" id="form-result" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="showsummary">';
 	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
@@ -1056,7 +1065,7 @@ if ($action == 'uploadfile') {
 }
 
 if ($action == 'showsummary') {
-	print '<form class="" id="summary-result" method="POST">';
+	print '<form class="" id="summary-result" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	// On wide screens (>= 1280), the summary and the preview of the file are shown side by side,
 	// both stretched to the height of the tallest one
 	print '<style>
@@ -1330,7 +1339,7 @@ if ($action == 'showsummary') {
 
 		print '<br>';
 		print $langs->trans("VATRate").' ';
-		print '<input type="text" class="width75 right" name="vat_rate" id="vat_rate" value="'.$vat_rate.'">%';
+		print '<input type="text" class="width75 right" name="vat_rate" id="vat_rate" value="'.$vat_rate.'"> %';
 
 		print '<br>';
 		print $langs->trans("TotalTTC").' ';
