@@ -946,6 +946,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 	$sql = "SELECT rowid, module";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as c";
 	$sql .= " WHERE module IS NOT NULL AND module <> ''";
+	$sql .= " AND c.entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY module";
 
 	$resql = $db->query($sql);
@@ -984,6 +985,7 @@ if ($ok && GETPOST('clean_menus', 'alpha')) {
 						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
 						if (GETPOST('clean_menus') == 'confirmed') {
 							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$db->escape($modulecond)."'";
+							$sql2 .= " AND entity = ".((int) $conf->entity);
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
 								$error++;
@@ -1464,6 +1466,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 	}
 
 	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1476,6 +1479,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') { // If confirmed, proceed with deletion
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
+						$sqldelete .= " AND entity = ".((int) $conf->entity);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -2024,7 +2028,9 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 
 	// Query to find all duplicate supplier orders
 	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
-	$sql .= " WHERE ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf GROUP BY cf.ref, cf.entity HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND ref IN (SELECT cf.ref FROM " . MAIN_DB_PREFIX . "commande_fournisseur cf WHERE cf.entity = ".((int) $conf->entity)." GROUP BY cf.ref HAVING COUNT(cf.rowid) > 1)";
+	$sql .= " ORDER BY rowid";
 
 	// Build a list of ref => []CommandeFournisseur
 	$duplicateSupplierOrders = [];
@@ -2051,6 +2057,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "commande_fournisseur cf SET cf.ref = '" . $db->escape($newRef) . "' WHERE cf.rowid = " . (int) $supplierOrder->id;
+			$sql .= " AND cf.entity = ".((int) $conf->entity);
 			if (!$db->query($sql)) {
 				$err++;
 			}
