@@ -909,6 +909,68 @@ class SupplierOrders extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Refuse a validated order that is waiting for approval
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 * @param   string	$comment	Reason of the refusal, added to the agenda event {@required false}
+	 *
+	 * @url POST    {id}/refuse
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order is not waiting for approval
+	 * @throws RestException 500 Error
+	 *
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "comment": ""
+	 * }
+	 */
+	public function refuse($id, $comment = '')
+	{
+		// Same right as checked by CommandeFournisseur::refuse(), which otherwise does nothing and returns 0
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "approuver")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_VALIDATED) {
+			throw new RestException(405, 'Only validated supplier orders waiting for approval can be refused');
+		}
+
+		if ((string) $comment !== '') {
+			$this->order->refuse_note = $comment;
+		}
+
+		$result = $this->order->refuse(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when refusing Order: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order refused (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
 
 	/**
 	 * Sends an order to the vendor
