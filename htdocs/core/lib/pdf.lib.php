@@ -3349,6 +3349,8 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 
 /**
  * Render subtotals line with a colored background and adapted text color .
+ * The hook 'pdf_render_subtotals' can replace this rendering (return > 0). A hook that does it must write the description
+ * of the line and call $generator->setAfterColsLinePositionsData('desc', ...) itself, and must not open/close a PDF transaction.
  *
  * @param  TCPDF              $pdf                PDF instance
  * @param  CommonDocGenerator $generator          Generator object
@@ -3377,6 +3379,17 @@ function pdf_render_subtotals(
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
 ) {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'generator' => $generator, 'curY' => $curY, 'i' => $i, 'outputlangs' => $outputlangs, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'bgColor' => $bgColor, 'isSubtotal' => $isSubtotal, 'applySubtotalLogic' => $applySubtotalLogic);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_render_subtotals', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return;
+		}
+	}
+
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
