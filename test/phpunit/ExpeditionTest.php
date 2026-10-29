@@ -1107,6 +1107,14 @@ class ExpeditionTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		// The contact type may be missing on a database upgraded from an old dump (insert without rowid fails on pgsql)
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_type_contact WHERE element = 'shipping' AND source = 'external' AND code = 'SHIPPING' AND active = 1";
+		$resql = $db->query($sql);
+		if (!$resql || !$db->num_rows($resql)) {
+			$this->markTestSkipped('No active contact type SHIPPING found in c_type_contact for element shipping.');
+			return;
+		}
+
 		$soc = new Societe($db);
 		$soc->name = "ExpeditionTest Standalone Unittest";
 		$soc_id = $soc->create($user);

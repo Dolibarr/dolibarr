@@ -269,7 +269,7 @@ class FormFile
 		}
 
 		$out .= '<input type="submit" class="button smallpaddingimp reposition'.($tooltiptext ? ' classfortooltip' : '').'" name="sendit" value="'.$langs->trans("Upload").'"';
-		$out .= ($tooltiptext ? ' title="'.dolPrintHTMLForAttribute($tooltiptext).'"' : '');
+		$out .= ($tooltiptext ? ' title="'.dolPrintHTMLForAttribute($tooltiptext).'" data-delayfortooltip="1000"' : '');	// tooltip shown after a delay of 1s
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
