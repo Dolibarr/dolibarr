@@ -466,7 +466,14 @@ class SupplierOrders extends DolibarrApi
 		if ($result <= 0) {
 			throw new RestException(400, $this->order->errorsToString());
 		}
-		return $this->getLine($id, $lineid);
+
+		$line = new CommandeFournisseurLigne($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			throw new RestException(500, 'Failed to reload the updated line');
+		}
+
+		$this->_cleanObjectDatas($line);
+		return $line;
 	}
 
 	/**
