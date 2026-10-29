@@ -10953,6 +10953,92 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Return the linked proposals, orders and invoices having, for the product of a line of this object, a cost price different from
+	 * the one saved on the line. Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
+	 * user can not change cost prices, and documents that the user can not edit or access (rights, restriction on thirdparties) are ignored.
+	 *
+	 * @param	User		$user			User making change
+	 * @param	int			$lineid			Id of the line of this object
+	 * @param	float|null	$oldbuyprice	If set, nothing is returned when the cost price saved on the line is still this one
+	 * @return	array<string,array{refs:string[],lineids:int[],buyprice:float}>	Documents by element ('propal', 'commande', 'facture')
+	 */
+	public function getLinkedBuyPriceDocuments($user, $lineid, $oldbuyprice = null)
+	{
+		$documents = array();
+
+		if (!getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS') || !$user->hasRight('margins', 'creer')) {
+			return $documents;
+		}
+
+		$sql = "SELECT fk_product, buy_price_ht FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		$line = ($resql ? $this->db->fetch_object($resql) : null);
+		if (!$line || $line->fk_product <= 0 || $line->buy_price_ht <= 0 || (isset($oldbuyprice) && price2num($oldbuyprice, 'MU') == price2num($line->buy_price_ht, 'MU'))) {
+			return $documents;
+		}
+
+		// The cost price is not an accounting data, so the status of the linked documents is not checked (like in margin/checkMargins.php)
+		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+		foreach (array('propal', 'commande', 'facture') as $element) {
+			$ids = array();
+			foreach ($this->linkedObjectsIds[$element] ?? array() as $id) {
+				if (restrictedArea($user, $element, $id, '', '', 'fk_soc', 'rowid', 0, 1, 'write')) {
+					$ids[] = (int) $id;
+				}
+			}
+			if (empty($ids)) {
+				continue;
+			}
+			$sql = "SELECT d.rowid, d.buy_price_ht, t.ref FROM ".$this->db->prefix().$element." as t, ".$this->db->prefix().$element."det as d";
+			$sql .= " WHERE d.fk_".$this->db->sanitize($element)." = t.rowid AND t.entity IN (".getEntity($element).")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
+			$sql .= " AND d.fk_product = ".((int) $line->fk_product);
+			$resql = $this->db->query($sql);
+			while ($resql && $obj = $this->db->fetch_object($resql)) {
+				if (price2num($obj->buy_price_ht, 'MU') != price2num($line->buy_price_ht, 'MU')) {
+					$documents[$element]['refs'][$obj->ref] = $obj->ref;
+					$documents[$element]['lineids'][] = (int) $obj->rowid;
+					$documents[$element]['buyprice'] = (float) $line->buy_price_ht;
+				}
+			}
+		}
+
+		return $documents;
+	}
+
+	/**
+	 * Apply the cost price of a line of this object to the lines of the same product of some linked documents
+	 *
+	 * @param	User				$user		User making change
+	 * @param	int					$lineid		Id of the line of this object
+	 * @param	array<string,mixed>	$elements	Elements ('propal', 'commande', 'facture') to update, when their value is not empty
+	 * @return	int							Return integer <0 if KO, number of lines updated if OK
+	 */
+	public function updateLinkedBuyPrice($user, $lineid, $elements)
+	{
+		$nbupdated = 0;
+
+		$this->db->begin();
+		foreach ($this->getLinkedBuyPriceDocuments($user, $lineid) as $element => $document) {
+			if (empty($elements[$element])) {
+				continue;
+			}
+			$sql = "UPDATE ".$this->db->prefix().$element."det SET buy_price_ht = ".((float) $document['buyprice']);
+			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $document['lineids'])).")";
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+			$nbupdated += count($document['lineids']);
+		}
+		$this->db->commit();
+
+		return $nbupdated;
+	}
+
+	/**
 	 * Function used to get the logos or photos of an object
 	 *
 	 * @param 	string	$modulepart		Module part
