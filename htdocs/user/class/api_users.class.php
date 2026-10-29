@@ -760,6 +760,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
@@ -951,6 +955,10 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Usergroup not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('user', $group_static->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if ($includepermissions) {
 			$group_static->loadRights();
 		}
@@ -1038,6 +1046,10 @@ class Users extends DolibarrApi
 		$result = $usergroup->fetch($group);
 		if ($result < 0) {
 			throw new RestException(404, 'Usergroup not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $usergroup->id, 'usergroup&usergroup')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$usergroup->delete(DolibarrApiAccess::$user)) {
