@@ -1459,7 +1459,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Note public
-		if (!empty($arrayfields['f.note_public']['checked'])) {
+		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
@@ -1468,7 +1468,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Note private
-		if (!empty($arrayfields['f.note_private']['checked'])) {
+		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';

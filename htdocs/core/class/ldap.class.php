@@ -1304,7 +1304,7 @@ class Ldap
 	 */
 	public function getObjectSid($ldapUser)
 	{
-		$criteria = '('.$this->getUserIdentifier().'='.$ldapUser.')';
+		$criteria = '('.$this->getUserIdentifier().'='.ldap_escape($ldapUser, '', LDAP_ESCAPE_FILTER).')';
 		$justthese = array("objectsid");
 
 		// if the directory is AD, then bind first with the search user first

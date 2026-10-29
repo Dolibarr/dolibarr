@@ -152,14 +152,14 @@ if ($object->id > 0) {
 	$datestart += 1;	// Add 1 second
 } else {
 	if ($syear && !$smonth) {
-		$datestart = dol_get_first_day($syear, 1, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, 12, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, 1, 'tzserver');
+		$dateend = dol_get_last_day($syear, 12, 'tzserver');
 	} elseif ($syear && $smonth && !$sday) {
-		$datestart = dol_get_first_day($syear, $smonth, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, $smonth, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, $smonth, 'tzserver');
+		$dateend = dol_get_last_day($syear, $smonth, 'tzserver');
 	} elseif ($syear && $smonth && $sday) {
-		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzuserrel');
-		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzuserrel');
+		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzserver');
+		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzserver');
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
@@ -930,11 +930,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip = '';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzuserrel').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzuserrel');
-		$htmltooltip .= '<br><span class="small opacitymedium">UTC : ';
+		$htmltooltip .= '<br><span class="small opacitymedium">';
+		$htmltooltip .= '<div class="width100 inline-block">Server TZ :</div>';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzserver').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzserver');
+		$htmltooltip .= '<br><div class="width100 inline-block">UTC :</div>';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
-		print $form->textwithpicto('', $htmltooltip);
+		print $form->textwithpicto('', $htmltooltip, 1, 'help', '');
 		print '</td></tr>';
 
 		// Other attributes
