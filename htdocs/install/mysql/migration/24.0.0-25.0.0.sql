@@ -566,15 +566,3 @@ ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
 ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
 ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
-
--- Add a primary key on the 4 tables that had none (a primary key is required by Galera and by the other multi-master clusters).
--- The primary key replaces the unique index when there was one.
---noqa:disable=PRS
-ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, fk_categ);
-ALTER TABLE llx_holiday_users ADD PRIMARY KEY pk_holiday_users(fk_user, fk_type);
-ALTER TABLE llx_user_param ADD PRIMARY KEY pk_user_param(fk_user, param, entity);
-ALTER TABLE llx_opensurvey_user_formanswers ADD PRIMARY KEY pk_opensurvey_user_formanswers(fk_user_survey, fk_question);
---noqa:enable=PRS
-ALTER TABLE llx_category_bankline DROP INDEX uk_category_bankline_lineid;
-ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
-ALTER TABLE llx_user_param DROP INDEX uk_user_param;
