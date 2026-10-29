@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsübersicht
 ContractStatusNotRunning=Läuft nicht
+ContractStatusClosed=Geschlossen
 ServiceStatusInitial=Nicht ausgeführt
 ServiceStatusNotLate=Läuft (noch nicht abgelaufen)
 ServiceStatusClosed=Geschlossen
@@ -34,7 +35,6 @@ ServiceStatus=Leistungs-Status
 DraftContracts=Vertragsentwürfe
 CloseAllContracts=schliesse alle Vertragsleistungen
 MoveToAnotherContract=In einen anderen Vertrag verschieben
-ConfirmMoveToAnotherContract=Haben Sie einen neuen Vertrag für das Verschieben gewählt und möchten Sie diesen Vorgang jetzt durchführen.
 ExpiredSince=Abgelaufen seit
 NoExpiredServices=Keine abgelaufen aktiven Dienste
 ListOfServicesToExpireWithDurationNeg=Liste der Services die seit mehr als %s Tagen abgelaufen sind
@@ -44,5 +44,6 @@ StandardContractsTemplate=Standard Vertragsschablone
 OnlyLinesWithTypeServiceAreUsed=Nur die Zeile der Kategorie "Service" wird kopiert.
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertrag Nachbetreuung durch Vertreter
+TypeContact_contrat_external_BILLING=Rechnungskontakt des Kunden
 TypeContact_contrat_external_CUSTOMER=Nachbetreuung durch Kundenkontakt
 TypeContact_contrat_external_SALESREPSIGN=Vertragsunterzeichnung durch Kundenkontakt

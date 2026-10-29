@@ -1,5 +1,5 @@
 ModuleQuickMemoName = Mémo rapide
-ModuleQuickMemoDesc = Permet d'ajouter rapidement des notes sur les documents
+ModuleQuickMemoDesc = Permet d'ajouter rapidement des notes (post-it) sur les écrans ou les documents
 QuickMemoSetup = Configuration de QuickMemo
 QUICKMEMO_COLORS_PRESET = Définissez ici les couleurs personnalisées de vos notes.
 QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE = Désactiver le redimensionnement automatique du texte en fonction de la densité du contenu des notes

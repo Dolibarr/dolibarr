@@ -87,7 +87,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -119,14 +119,17 @@ $ws = GETPOST("ws", "aZ09"); // Website reference where the newpayment page is e
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
 	if (is_numeric($amount) && !GETPOST("tag", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
 	if ($source && !GETPOST("ref", 'alpha')) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
 	}
@@ -134,6 +137,8 @@ if (!$action) {
 
 
 $thirdparty = null; // Init for static analysis
+$attendee = null; // Init for static analysis
+$invoice = null; // Init for static analysis
 $stripecu = null; // Init for static analysis
 $paymentintent = null; // Init for static analysis
 
@@ -426,6 +431,33 @@ dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, L
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	// Payment account information
+	$accountid = 0;
+	if ($paymentmethod == 'paybox') {
+		$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'paypal') {
+		$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'stripe') {
+		$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	// Get bank account for a specific paymentmedthod
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['bankaccountid'])) {
+			dol_syslog('accountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+			$accountid = $hookmanager->resArray['bankaccountid'];
+		}
+	}
+	if (isModEnabled('bank') && $accountid < 0) {
+		$mesg = 'Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
+		$action = '';
+	}
+
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
@@ -547,6 +579,9 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$error = 0;
 	$errormessage = '';
 	$stripeacc = null;
+	$customer = null;
+	$charge = null;
+	$paymentintent = null;
 
 	// When using the old Charge API architecture
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
@@ -810,11 +845,33 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			$action = '';
 		}
 
-		if ($paymentintent->status != 'succeeded') {
+		// Security: a succeeded PaymentIntent must not be reusable to record a payment on more than one Dolibarr object.
+		// Without this check, a PaymentIntent id obtained for one invoice/order/... could be resubmitted here with a
+		// different fulltag/ref to fraudulently record (and validate) a payment on a different object that was never
+		// really paid for, since Dolibarr never re-checks that a "succeeded" PaymentIntent is bound to a specific target.
+		$paymentintentalreadyused = 0;
+		if (!$error && is_object($paymentintent) && $paymentintent->status == 'succeeded') {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement";
+			$sql .= " WHERE ext_payment_id = '".$db->escape($paymentintent_id)."'";
+			$sql .= " OR ext_payment_id LIKE '".$db->escape($paymentintent_id).":%'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				if ($db->num_rows($resql) > 0) {
+					$paymentintentalreadyused = 1;
+				}
+				$db->free($resql);
+			}
+		}
+
+		if ($paymentintent->status != 'succeeded' || $paymentintentalreadyused) {
 			$error++;
-			$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			if ($paymentintentalreadyused) {
+				$errormessage = "PaymentIntent ".$paymentintent_id." was already used to record a payment, it cannot be reused for another object";
+			} else {
+				$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			}
 			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
-			setEventMessages($paymentintent->status, null, 'errors');
+			setEventMessages($errormessage, null, 'errors');
 			$action = '';
 
 			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
@@ -865,6 +922,18 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	} else {
 		$_SESSION['payerID'] = '';
+	}
+
+	// Save in database the data of the session (key = id of the charge or PaymentIntent), paymentok.php reads them from there first
+	if (!$error && !empty($_SESSION['TRANSACTIONID'])) {
+		onlinePaymentSessionSave(getDolGlobalString('STRIPE_LIVE') ? 'StripeLive' : 'StripeTest', $_SESSION['TRANSACTIONID'], array(
+			'fulltag' => $FULLTAG,
+			'FinalPaymentAmt' => $amount,
+			'currencyCodeType' => $currency,
+			'ipaddress' => $_SESSION['ipaddress'],
+			'payerID' => $_SESSION['payerID'],
+			'paymentType' => ''
+		));
 	}
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
@@ -1957,6 +2026,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		} else {
 			print '<input type="text" class="width75 amount" name="newamount" id="newamount" value="'.price($amount, 1, $langs, 1, -1, -1).'">';
 		}
+		print $langs->trans("Currency".$conf->currency);
 	} else {
 		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		if ($minimumamount > $amount) {
@@ -1965,7 +2035,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
-	print '<input type="hidden" name="currency" value="'.$currency.'">'.$langs->trans("Currency".$conf->currency);
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -2057,7 +2127,7 @@ if ($source == 'donation') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2"><b>';
-	if ($don->morphy == 'mor' && !empty($don->societe)) {
+	if (!empty($don->societe)) {
 		print $don->societe;
 	} else {
 		print $don->getFullName($langs);
@@ -2168,7 +2238,7 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
+if ($source == 'organizedeventregistration' && is_object($thirdparty) && is_object($attendee) && is_object($invoice)) {
 	dol_syslog("newpayment.php source=organizedeventregistration", LOG_DEBUG);
 
 	$found = true;
@@ -2260,7 +2330,7 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-if ($source == 'boothlocation') {
+if ($source == 'boothlocation' && is_object($invoice)) {
 	dol_syslog("newpayment.php source=boothlocation", LOG_DEBUG);
 
 	$found = true;
@@ -2347,6 +2417,7 @@ if ($source == 'boothlocation') {
 }
 
 if (!$found && !$mesg) {
+	$langs->load('errors');
 	$mesg = $langs->trans("ErrorBadParameters");
 }
 
@@ -2380,6 +2451,15 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
+		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && ($object->close_code == Facture::CLOSECODE_REPLACED || getDolGlobalString('INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON'))) {
+			// Only refuse the payment when the invoice was closed because it has been replaced: the amount is
+			// then claimed by the replacement invoice and paying this link would pay it twice. An invoice
+			// abandoned for any other reason, a bad debt for instance, keeps its link usable, since a customer
+			// paying it anyway is a good outcome.
+			// INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON extends the refusal to every
+			// abandoned invoice, for jurisdictions where collecting is no longer allowed once a
+			// receivable has been written off or sent to collections (#39327).
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {
@@ -2588,15 +2668,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			setEventMessages('Bad value for amount. Reported as a hack attempt.', null, 'errors');
 		}
 
+
+		$service = 'StripeLive';
+		$servicestatus = 1;
+		if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
+			$service = 'StripeTest';
+			$servicestatus = 0;
+		}
+
 		if ($checkamount && (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT'))) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-			$service = 'StripeLive';
-			$servicestatus = 1;
-			if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
-				$service = 'StripeTest';
-				$servicestatus = 0;
-			}
 
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
@@ -2616,6 +2697,21 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				//var_dump($paymentintent);
 				if ($stripe->error) {
 					setEventMessages($stripe->error, null, 'errors');
+				}
+
+				// Save the data needed by paymentok.php in database (key = PaymentIntent id), so they are found even if the session cookie is lost on the return from Stripe
+				if (is_object($paymentintent) && !empty($paymentintent->id)) {
+					$resultsave = onlinePaymentSessionSave($service, $paymentintent->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => getUserRemoteIP() ? getUserRemoteIP() : 'unknown',
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
+					if ($resultsave < 0) {
+						dol_syslog("Failed to save the data of the payment ".$paymentintent->id." into llx_onlinepayment_session", LOG_ERR, 0, '_payment');
+					}
 				}
 			}
 		}
@@ -2729,7 +2825,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 						)),
 						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
-						'success_url' => $urlok,
+						'success_url' => $urlok.'&session_id={CHECKOUT_SESSION_ID}',	// Stripe replaces the placeholder by the Checkout Session id, used by paymentok.php to find the session saved data
 						'cancel_url' => $urlko,
 						'payment_intent_data' => $arrayforpaymentintent
 					);
@@ -2755,6 +2851,16 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 					$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 					$_SESSION['payerID'] = is_object($stripecu) ? $stripecu->id : '';
 					$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
+
+					// Save the data needed by paymentok.php in database (key = Checkout Session id), so they are found even if the session cookie is lost
+					onlinePaymentSessionSave($service, $sessionstripe->id, array(
+						'fulltag' => $FULLTAG,
+						'FinalPaymentAmt' => $amount,
+						'currencyCodeType' => $currency,
+						'ipaddress' => ($remoteip ? $remoteip : 'unknown'),
+						'payerID' => is_object($stripecu) ? $stripecu->id : '',
+						'paymentType' => ''
+					));
 				} catch (Exception $e) {
 					print $e->getMessage();
 				} ?>
@@ -2796,6 +2902,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 
 			var cardElement = elements.create('card', {style: style});
 
+				<?php if (!empty($sessionstripe)) { ?>
 			// Comment this to avoid the redirect
 			stripe.redirectToCheckout({
 			  // Make the id field from the Checkout Session creation API response
@@ -2807,6 +2914,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			  // error, display the localized error message to your customer
 			  // using `result.error.message`.
 			});
+				<?php } else { ?>
+			// $sessionstripe was not created (Stripe API call failed, see the error message printed above)
+			console.error('Failed to create Stripe Checkout Session');
+				<?php } ?>
 
 
 				<?php
@@ -2888,19 +2999,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: 'test'
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>
@@ -2968,7 +3079,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				{
 					console.log("Field Card holder is empty");
 					var displayError = document.getElementById('card-errors');
-					displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
+					displayError.textContent = <?php print "'".dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner")))."'" ; ?>;
 				}
 				else
 				{
@@ -2982,19 +3093,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: cardholderName.value
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>

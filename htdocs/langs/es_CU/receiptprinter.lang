@@ -7,7 +7,6 @@ SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local
 CONNECTOR_CUPS_PRINT=Impresora de tazas
-CONNECTOR_DUMMY_HELP=Impresora falsa para prueba, no hace nada
 CONNECTOR_CUPS_PRINT_HELP=Nombre de la impresora CUPS, ejemplo: HPRT_TP805L
 PROFILE_SIMPLE=perfil sencillo
 PROFILE_STAR=Perfil de estrella

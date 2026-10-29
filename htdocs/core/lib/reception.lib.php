@@ -136,7 +136,7 @@ function reception_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin');
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/reception_extrafields.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'reception'));
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$nbExtrafields = $extrafields->attributes['reception']['count'];
 		if ($nbExtrafields > 0) {
@@ -147,7 +147,7 @@ function reception_admin_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/receptiondet_batch_extrafields.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'receptiondet_batch'));
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$nbExtrafields = $extrafields->attributes['receptiondet_batch']['count'];
 		if ($nbExtrafields > 0) {

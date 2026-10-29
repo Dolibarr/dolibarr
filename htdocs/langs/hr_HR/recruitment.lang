@@ -68,3 +68,4 @@ ApplyJobCandidature=Prijavite se za ovaj posao
 ErrorRecruitmmentCandidatureAlreadyExists= Kandidatura za zapošljavanje već postoji kod e-pošta %s
 RecruitmentCandidatureSaved=Kandidatura za zapošljavanje uspješno je spremljena
 NoOpenJobOffer=Trenutno nema otvorenih ponuda za posao
+ShowPositionToBeFilled=Show Position to be filled

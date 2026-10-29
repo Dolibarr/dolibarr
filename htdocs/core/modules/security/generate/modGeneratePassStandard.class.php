@@ -32,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 class modGeneratePassStandard extends ModeleGenPassword
 {
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string ID
 	 */
 	public $id;
@@ -98,11 +103,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 		// add random characters to $password until $length is reached
 		while ($i < $this->length) {
 			// pick a random character from the possible ones
-			if (function_exists('random_int')) {	// Cryptographic random
-				$char = substr($possible, random_int(0, dol_strlen($possible) - 1), 1);
-			} else {
-				$char = substr($possible, mt_rand(0, dol_strlen($possible) - 1), 1);
-			}
+			$char = substr($possible, random_int(0, dol_strlen($possible) - 1), 1);	// Cryptographic random
 
 			if (substr_count($password, $char) <= 6) {	// we don't want this character if it's already 5 times in the password
 				$password .= $char;

@@ -100,7 +100,7 @@ function categoriesadmin_prepare_head()
 	$head[$h][2] = 'setup';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'categorie'));
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
 	$nbExtrafields = $extrafields->attributes['categorie']['count'];
 	if ($nbExtrafields > 0) {
@@ -111,7 +111,7 @@ function categoriesadmin_prepare_head()
 
 	// Multilangs Extrafields
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie_lang_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'categorie_lang'));
 		$head[$h][1] = $langs->trans("CategoriesTranslationsExtrafields");
 		$nbExtrafields = isset($extrafields->attributes['categorie_lang']['count']) ? $extrafields->attributes['categorie_lang']['count'] : 0;
 		if ($nbExtrafields > 0) {

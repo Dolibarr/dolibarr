@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT= Cont contabil (din Planul de Conturi) folosit implicit pentru "utilizatori" la salarii 
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Contul contabil dedicat definit pe fișa de utilizator va fi utilizat doar pentru contabilitate subregistrelor. Acesta va fi folosit pentru contabilitate generală, dar și ca valoare implicită a contabilității subregistrului dacă nu este definit niciun cont de contabilitate utilizator dedicat pentru utilizator.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Contul contabil implicit pentru plata salariilor
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=În mod implicit, lăsați necompletată opțiunea "Creați automat o plată totală” la crearea unui salariu 
 Salary=Salariu
 Salaries=Salarii
 NewSalary=Salariu nou
 AddSalary=Adaugă salariu
 NewSalaryPayment=Card de salariu nou
 AddSalaryPayment=Adăugare plată salariu
-SalaryID=ID salariu
-SalaryAmount=Valoare salariu
 SalaryPayment=Plată salariu
 SalariesPayments=Plăţi salarii
 SalariesPaymentsOf=Plăţi salarii pentru %s
 ShowSalaryPayment=Arată plată salariu
-THM=Tarif orar mediu
-TJM=Tarif zilnic mediu
+SalaryID=ID salariu
+SalaryAmount=Valoare salariu
+SalaryDate=Salary date
+SalaryPaid=Plata salariu
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=TVA plătit
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT= Cont contabil (din Planul de Conturi) folosit implicit pentru "utilizatori" la salarii 
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Contul contabil dedicat definit pe fișa de utilizator va fi utilizat doar pentru contabilitate subregistrelor. Acesta va fi folosit pentru contabilitate generală, dar și ca valoare implicită a contabilității subregistrului dacă nu este definit niciun cont de contabilitate utilizator dedicat pentru utilizator.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Contul contabil implicit pentru plata salariilor
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=În mod implicit, lăsați necompletată opțiunea "Creați automat o plată totală” la crearea unui salariu 
+
+# Stats / Info
 CurrentSalary=Salariu curent
-THMDescription=Această valoare poate fi utilizată pentru a calcula costul timpului consumat pe un proiect introdus de utilizatori dacă se utilizează modulul Proiecte
-TJMDescription=Această valoare este în prezent doar informativă și nu este utilizată pentru niciun calcul
 LastSalaries=Ultimele %s salarii
 AllSalaries=Toate salariile
 SalariesStatistics=Statistici salariale
 SalariesAndPayments=Salarii și plăți
+UserPaySlip=Fișă de plată
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Tarif orar mediu
+THMDescription=Această valoare poate fi utilizată pentru a calcula costul timpului consumat pe un proiect introdus de utilizatori dacă se utilizează modulul Proiecte
+TJM=Tarif zilnic mediu
+TJMDescription=Această valoare este în prezent doar informativă și nu este utilizată pentru niciun calcul
+
+# Other actions
 ConfirmDeleteSalaryPayment=Vrei să ştergi această plată salarială ?
 FillFieldFirst=Completați mai întâi câmpul angajat
 UpdateAmountWithLastSalary=Setare valoare a ultimului salariu
@@ -32,8 +58,10 @@ VirementOrder=Cerere tranfer credit
 WithdrawalReceipt=Ordin de transfer de credit
 OrderWaiting=Comandă în așteptare
 FillEndOfMonth=Sfârșit de lună
+
+# Shortcuts
 PreviousMonthShort=Luna anterioară
 CurrentMonthShort=Luna curentă
+NextMonthShort=Luna următoare
 PreviousWeekShort=Săptămâna anterioară
 CurrentWeekShort=Săptămâna curentă
-UserPaySlip=Fișă de plată

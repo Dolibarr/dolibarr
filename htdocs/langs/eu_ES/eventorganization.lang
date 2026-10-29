@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferentzia edo standa
 AmountPaid = Ordaindutako zenbatekoa
 DateOfRegistration = Erregistroaren data
 ConferenceOrBoothAttendee = Konferentzia edo standeko parte-hartzailea
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Eskatzailea edo bisitaria
 Speaker=Hizlaria
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Ekitaldiko proiektuetako parte-hartzaileen zerrenda
 ListOfConfOrBoothOfEvent=Ekitaldi-proiektuen hitzaldien edo standen zerrenda
 DownloadICSLink=Deskargatu ICS fitxategia
 EVENTORGANIZATION_SECUREKEY=Konferentzia bat iradokitzeko erregistro-orri publikoaren gakoa ziurtatzeko hazia
-SERVICE_BOOTH_LOCATION=Stand baten kokapenari buruzko faktura-errenkadan erabilitako zerbitzua
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Ekitaldi baterako parte-hartzaile baten harpidetzari buruzko faktura-errenkadarako erabilitako zerbitzua
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Boto kopurua
 # Status
 EvntOrgDraft = Zirriborroa
@@ -122,7 +123,7 @@ NewSubscription=Izen-ematea
 OrganizationEventConfRequestWasReceived=Zure konferentziarako iradokizuna jaso da
 OrganizationEventBoothRequestWasReceived=Zure stand eskaera jaso da
 OrganizationEventPaymentOfBoothWasReceived=Zure standaren ordainketa erregistratu da
-OrganizationEventPaymentOfRegistrationWasReceived=Ekitaldiaren izen-ematearen ordainketa erregistratu da
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Hau ekitaldian parte-hartzaile gisa parte hartu duzula gogorarazteko abisua da.
 OrganizationEventBulkMailToSpeakers=Hau ekitaldian hizlari gisa parte hartu duzula gogorarazteko abisua da.
 OrganizationEventLinkToThirdParty=Hirugarren baten esteka (bezeroa, hornitzailea edo bazkidea)

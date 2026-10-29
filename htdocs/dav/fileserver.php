@@ -47,14 +47,6 @@ if (!defined('NOCSRFCHECK')) {
 }
 
 require "../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
-
-require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
-//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -62,6 +54,13 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
@@ -116,7 +115,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 	 * @return bool					True if login ok, false if not
 	 */
 	static function ($username, $password) {
-		global $user, $conf;
+		global $user, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		if (empty($user->login)) {
@@ -152,6 +151,12 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
+			return false;
+		}
+
+		// A password alone must not be enough for a user with a two-factor authentication, and the DAV access has no other credential
+		if (dolTotpGetEnrollment($db, $user->id) !== null) {
+			dol_syslog("DAV access refused for ".$username.": two-factor authentication is enabled", LOG_WARNING);
 			return false;
 		}
 
@@ -227,13 +232,11 @@ $server = new \Sabre\DAV\Server($nodes);
 // If you want to run the SabreDAV server in a custom location (using mod_rewrite for instance)
 // You can override the baseUri here.
 $baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
-if (isset($baseUri)) {
-	$server->setBaseUri($baseUri);
-}
+$server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
-	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
+	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', Sabre\Uri\normalize($_SERVER["PHP_SELF"])))
 	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 ) {
 	//var_dump($_SERVER["QUERY_STRING"]);exit;

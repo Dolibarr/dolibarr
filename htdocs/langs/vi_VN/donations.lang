@@ -57,3 +57,7 @@ donAnonymous=Đóng góp ẩn danh
 AnonymousDonationTooltip=Đánh dấu vào ô này nếu bạn muốn khoản quyên góp của mình được ẩn danh. Thông tin cá nhân của bạn sẽ không được hỏi.
 publicDonationFieldHelp=%s có thể công khai khoản quyên góp của tôi trong sổ đăng ký công khai
 listOfPublicDonations=Danh sách các khoản đóng góp của công chúng
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

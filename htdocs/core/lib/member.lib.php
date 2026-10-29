@@ -68,7 +68,7 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['id' => $object->id]);
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['rowid' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
@@ -246,7 +246,7 @@ function member_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
 	$nbExtrafields = $extrafields->attributes['adherent']['count'];
 	if ($nbExtrafields > 0) {
@@ -255,7 +255,7 @@ function member_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_type_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent_type'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
 	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
 	if ($nbExtrafields > 0) {

@@ -128,6 +128,7 @@ ShipmentDistribution=Dosbarthiad cludo
 ErrorTooManyCombinationBatchcode=Dim anfon am linell %s gan fod gormod o gyfuniadau o warws, cynnyrch, cod swp wedi'i ganfod (%s).
 ErrorNoCombinationBatchcode=Methu cadw'r llinell %s fel y cyfuniad o warws-product-lot/serial (%s, %s, %s) heb ei ddarganfod mewn stoc.
 ErrorTooMuchShipped=Ni ddylai'r swm a gludir fod yn fwy na'r swm a archebir ar gyfer llinell %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact

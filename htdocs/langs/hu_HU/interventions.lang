@@ -10,7 +10,6 @@ ActionsOnFicheInter=Műveletek beavatkozáskor
 LastInterventions=A legújabb %s beavatkozás
 AllInterventions=Minden beavatkozás
 CreateDraftIntervention=Piszkozat létrehozása
-InterventionContact=Beavatkozási kapcsolat
 DeleteIntervention=A beavatkozás törlése
 ValidateIntervention=A beavatkozás érvényesítése
 SignIntervention=Beavatkozás aláírása

@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Pagat në pritje të pagesës me transfertë krediti
 RefSalary=Rrogë
 NoSalaryInvoiceToWithdraw=Nuk ka rrogë në pritje të një '%s'. Shko te skeda '%s' në kartën e pagës për të bërë një kërkesë.
 SalaryInvoiceWaitingWithdraw=Pagat në pritje të pagesës me transfertë krediti
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

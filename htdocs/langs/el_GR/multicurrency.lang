@@ -41,4 +41,4 @@ CurrencyCode=κωδικός νομίσματος
 CurrencyUnitPrice=Τιμή μονάδας σε άλλο νομισμα
 CurrencyPrice=Τιμή σε ξένο νόμισμα
 MutltiCurrencyAutoUpdateCurrencies=Ενημέρωση  ισοτιμίας όλων των νομισμάτων
-MulticurrencyOriginalCurrency=original currency
+MulticurrencyOriginalCurrency=αρχικό νόμισμα

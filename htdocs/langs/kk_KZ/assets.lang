@@ -17,6 +17,7 @@ AccountancyCodeAsset=Есеп коды (актив)
 AccountancyCodeDepreciationAsset=Есеп коды (амортизациялық активтер шоты)
 AccountancyCodeDepreciationExpense=Бухгалтерлік есеп коды (амортизациялық шығындар шоты)
 AssetsLines=Активтер
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Жою
 DeleteAnAssetType=Актив үлгісін жою
 ConfirmDeleteAssetType=Осы актив үлгісін шынымен жойғыңыз келе ме?
@@ -70,6 +71,7 @@ AssetDisposal=Жою
 AssetConfirmDisposalAsk=<b> %s</b> активін тастағыңыз келетініне сенімдісіз бе?
 AssetConfirmReOpenAsk=<b> %s</b> активін шынымен қайта ашқыңыз келе ме?
 # Asset status
+AssetInDraft=Draft
 AssetInProgress=Орындалуда
 AssetDisposed=Жойылған
 AssetRecorded=Есепке алынған

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,8 +146,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	$newuser = new User($db);
 	$newuser->login = $sanitized_login;
 	$newuser->entity = $entity;
-	$newuser->statut = 1; // Active
-	$newuser->status = 1; // Active (alias)
+	$newuser->status = 1; // Active
 
 	if (property_exists($userinfo, $claim_email)) {
 		$newuser->email = $userinfo->$claim_email;
@@ -172,7 +172,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	}
 	$adminuser = new User($db);
 	$result_fetch = $adminuser->fetch($creator_id);
-	if ($result_fetch <= 0 || empty($adminuser->admin) || $adminuser->statut != 1) {
+	if ($result_fetch <= 0 || empty($adminuser->admin) || $adminuser->status != 1) {
 		dol_syslog("openid_connect_create_user::Error: configured creator user ID=".$creator_id." is not a valid active admin", LOG_ERR);
 		return -2;
 	}
@@ -189,7 +189,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	// Add to default group if configured
 	$default_group = getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP');
 	if ($default_group > 0) {
-		$res_group = $newuser->SetInGroup($default_group, $entity);
+		$res_group = $newuser->setInGroup($default_group, $entity);
 		if ($res_group < 0) {
 			dol_syslog("openid_connect_create_user::Warning: Error adding user to group ".$default_group.": ".$newuser->error, LOG_WARNING);
 			// Don't fail user creation if group assignment fails

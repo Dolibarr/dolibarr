@@ -153,14 +153,13 @@ $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print dol_get_fiche_head($head, 'handler', '', -1);
 
-print '<div class="opacitymedium justify hideonsmartphone">'.$langs->trans("MenusDesc")."</div>\n";
-print '<br class="hideonsmartphone">';
+print '<div class="info justify hideonsmartphone">'.$langs->trans("MenusDesc")."</div>\n";
 print "<br>\n";
 
 

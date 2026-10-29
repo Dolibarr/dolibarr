@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Τελευταίες αποστολές πελάτη
 BoxTitleLastCustomerShipments=Τελευταίες %s τροποποιημένες αποστολές πελάτη
 BoxTitleLastLeaveRequests=Τελευταία %s τροποποιημένα αιτήματα άδειας
 NoRecordedShipments=Καμία καταγεγραμμένη αποστολή πελάτη
+NoUpcomingEvent=Δεν υπάρχουν επερχόμενες εκδηλώσεις
 BoxCustomersOutstandingBillReached=Πελάτες που έχουν φτάσει το όριο μέγιστου οφειλόμενου
 BoxTitleLastFediverseInfos=Τελευταίες %s αναρτήσεις από %s
 BoxLastFediverseInfos=Τελευταίες ενημερώσεις Fediverse: Ειδήσεις και Τάσεις

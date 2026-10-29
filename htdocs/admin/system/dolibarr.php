@@ -138,9 +138,11 @@ print '<a href="'.$urlofchangelog.'" target="_blank" rel="noopener noreferrer ex
 $newversion = '';
 if (function_exists('curl_init')) {
 	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
-	print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+	print($action == 'getlastversion' ? '<br>' : ' &nbsp; &nbsp; - &nbsp; &nbsp; ');
 	if ($action == 'getlastversion') {
 		if ($sfurl) {
+			$currentversionarray = explode('.', DOL_VERSION);
+			$branchversion = '';	// Latest version of the branch currently running
 			$i = 0;
 			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
 				$title = $sfurl->channel[0]->item[$i]->title;
@@ -153,8 +155,23 @@ if (function_exists('curl_init')) {
 					if (versioncompare($newversionarray, $versionarray) > 0) {
 						$version = $newversion;
 					}
+					if (count($newversionarray) >= 2 && $newversionarray[0] == $currentversionarray[0] && $newversionarray[1] == $currentversionarray[1]
+						&& ($branchversion == '' || versioncompare($newversionarray, explode('.', $branchversion)) > 0)) {
+						$branchversion = $newversion;
+					}
 				}
 				$i++;
+			}
+
+			// Show first the latest version of the running branch, when it is not the latest stable one
+			$currentbranch = $currentversionarray[0].'.'.(isset($currentversionarray[1]) ? $currentversionarray[1] : '');
+			$versionarray = explode('.', $version);
+			if (!preg_match('/[a-z]+/i', DOL_VERSION) && $currentbranch != $versionarray[0].'.'.(isset($versionarray[1]) ? $versionarray[1] : '')) {
+				print $langs->trans("LastVersionOfBranch", $currentbranch).' : <b>'.($branchversion != '' ? $branchversion : $langs->trans("Unknown")).'</b>';
+				if ($branchversion != '') {
+					print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$branchversion.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'url', 'class="paddingright"').$langs->trans("SeeChangeLog").'</a>';
+				}
+				print '<br>';
 			}
 
 			// Show version
@@ -444,11 +461,14 @@ $configfileparameters = array(
 	'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 	'separator4' => '',
 	'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+	'dolibarr_main_restrict_eval_methods' => 'Restrict php commands for dol_eval',
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
+	'?dolibarr_website_allow_custom_php' => 'Allow custom php code in website pages',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
-	'?dolibarr_strict_mode' => 'Strict mode is on/off',
+	'?dolibarr_mail_allow_unrestricted_smtp_target' => 'Allow unrestricted SMTP target for emails',
+	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 
@@ -580,6 +600,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
 print '<td></td>';
+print '<td class="center width="120px"">'.$langs->trans("DateModificationShort").'</td>';
 if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
@@ -591,6 +612,7 @@ $sql .= ", ".$db->decrypt('name')." as name";
 $sql .= ", ".$db->decrypt('value')." as value";
 $sql .= ", type";
 $sql .= ", note";
+$sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
@@ -623,6 +645,7 @@ if ($resql) {
 			print dol_escape_htmltag($obj->value);
 		}
 		print '</td>'."\n";
+		print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>'."\n";
 		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}

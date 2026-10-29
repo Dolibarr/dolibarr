@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +45,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-$langs->loadLangs(array("admin", "errors"));
+$langs->loadLangs(array("admin"));
 
-if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
+if (!$user->admin && !$user->hasRight('blockedlog', 'read')) {
 	accessforbidden();
 }
 
@@ -263,9 +264,9 @@ function filecheckCollapseContext($diff, $context = 3)
 	$keep = array_fill(0, $n, false);
 	for ($i = 0; $i < $n; $i++) {
 		if ($diff[$i][0] !== ' ') {
-			$from = max(0, $i - $context);
-			$to = min($n - 1, $i + $context);
-			for ($k = $from; $k <= $to; $k++) {
+			$from_line = max(0, $i - $context);
+			$to_line = min($n - 1, $i + $context);
+			for ($k = $from_line; $k <= $to_line; $k++) {
 				$keep[$k] = true;
 			}
 		}
@@ -295,12 +296,14 @@ print '<!-- filecheck_diff.php fragment -->'."\n";
 $errormsg = '';
 $reallocal = '';
 if (empty($file) || $file[0] !== '/' || strpos($file, '..') !== false || !preg_match('/^[A-Za-z0-9_\/.\-]+$/', $file)) {
+	$langs->load('errors');
 	$errormsg = $langs->trans("ErrorBadValueForParameter", dol_escape_htmltag($file), "file");
 }
 
 if (empty($errormsg)) {
 	$reallocal = realpath(DOL_DOCUMENT_ROOT.$file);
 	if ($reallocal === false || strpos($reallocal, realpath(DOL_DOCUMENT_ROOT).'/') !== 0 || !is_file($reallocal)) {
+		$langs->load('errors');
 		$errormsg = $langs->trans("ErrorFileNotFound", $file);
 	}
 }
@@ -312,6 +315,7 @@ if (empty($errormsg) && preg_match('/\.(jpg|jpeg|png|gif|ico|svg|eot|woff|woff2|
 if (!empty($errormsg)) {
 	print '<div class="warning">'.$errormsg.'</div>';
 	llxFooterFragment();
+	exit;
 }
 
 // Build the URL of the original file for the running version.
@@ -331,6 +335,7 @@ if (!empty($res['curl_error_no']) || (isset($res['http_code']) && !in_array((int
 	print '<div class="warning">'.$langs->trans("CouldNotFetchOriginalFile").': '.dol_escape_htmltag($originurl);
 	print ' ('.dol_escape_htmltag((string) (empty($res['http_code']) ? $res['curl_error_msg'] : $res['http_code'])).')</div>';
 	llxFooterFragment();
+	exit;
 }
 
 $origincontent = (string) $res['content'];
@@ -348,6 +353,7 @@ if (!$verified) {
 if ($origincontent === $localcontent) {
 	print '<div class="opacitymedium">'.$langs->trans("NoDifferenceFound").'</div>';
 	llxFooterFragment();
+	exit;
 }
 
 $diff = filecheckLineDiff(explode("\n", $origincontent), explode("\n", $localcontent));
@@ -393,5 +399,4 @@ function llxFooterFragment()
 	if (is_object($db)) {
 		$db->close();
 	}
-	exit;
 }

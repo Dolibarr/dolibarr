@@ -5,7 +5,6 @@ SupplierInvoices=Faktur vendor
 ShowSupplierInvoice=Tampilkan Faktur Penjual
 NewSupplier=Vendor baru
 NewSupplierInvoice = Faktur vendor baru
-History=Riwayat
 ListOfSuppliers=Daftar vendor
 ShowSupplier=Tampilkan vendor
 BuyingPriceMin=Harga beli terbaik

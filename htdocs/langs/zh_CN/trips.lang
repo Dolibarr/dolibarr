@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=您可以为费用报销定义最高金额规则。将新
 ExpenseReportWaitingForApproval=新的费用报销单已被提请批准
 ExpenseReportWaitingForApprovalMessage=新的费用报销单已提交并正在等待批准。<br>  - 用户：%s <br>  - 期间：%s <br>点击此处验证：%s
 ExpenseReportWaitingForReApproval=已提交费用报销单以供重新批准
-ExpenseReportWaitingForReApprovalMessage=已提交费用报销单并等待重新批准。<br> %s，您拒绝批准费用报销单的原因：%s。<br>已提出新版本并等待您的批准。 <br>  - 用户：%s <br>  - 期间：%s <br>点击此处验证：%s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=里程费用的配置
 ExpenseReportsRules=费用报销单规则
 ExpenseReportsToApprove=批准费用报销单
@@ -120,7 +121,6 @@ ValideTrip=批准费用报销单
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=早餐
@@ -156,3 +156,6 @@ TF_PEAGE=总数
 TF_TAXI=的士
 TF_TRAIN=火车
 TF_TRIP=交通
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

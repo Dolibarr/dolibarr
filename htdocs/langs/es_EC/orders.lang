@@ -61,6 +61,7 @@ AddToDraftOrders=Añadir al proyecto de orden
 OrdersOpened=Órdenes a procesar
 NoDraftOrders=Ningún proyecto de órdenes
 NoOrder=Sin orden
+NoSupplierOrder=Sin orden de compra
 LastOrders=Últimos pedidos %s
 LastCustomerOrders=Últimos pedidos %s
 LastSupplierOrders=Últimas %s órdenes de compra
