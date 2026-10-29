@@ -108,7 +108,7 @@ function getListOfAIServices()
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'mistral-ocr-latest'),         // Model of the Mistral OCR endpoint, used to parse documents (PDF, images, ...)
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
@@ -917,6 +917,7 @@ function getAiChatAssistantConfig()
 		'AIHelpHelp',
 		'AIHelpClear',
 		'AIHelpStatus',
+		'AIHelpTools',
 		'AIHelpMentions',
 		'AIHelpMentionThirdparty',
 		'AIHelpMentionProduct',
@@ -975,6 +976,9 @@ function getAiChatAssistantConfig()
 	}
 
 	$defaultmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultmode === 'native') {	// Old value saved by the setup page, now 'cloud'
+		$defaultmode = 'cloud';
+	}
 	// The whisper option is not rendered without the experimental features: fall back
 	// to the default text mode so the JS never selects a value missing from the combo.
 	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
@@ -1514,11 +1518,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$forms[] = dol_substr($norm, 0, dol_strlen($norm) - 2);
 		}
 		foreach (array_unique($forms) as $w) {
-			$sql .= " OR s.nom LIKE '%".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($w))."%'";
+			$sql .= " OR s.nom LIKE '".$db->escape($db->escapeforlike($w))."%' OR s.name_alias LIKE '".$db->escape($db->escapeforlike($w))."%'";
 		}
 	}
 	$sql .= ")";
-	$sql .= " LIMIT 2000";
+	$sql .= " LIMIT 1000";
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);

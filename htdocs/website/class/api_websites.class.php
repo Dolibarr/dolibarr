@@ -433,12 +433,13 @@ class Websites extends DolibarrApi
 		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', (string) $this->websitepage->content);
 
 		// A blog post gets the header and footer containers of its language, and its structured data
+		$phpwrappers = array();
 		if ($this->websitepage->type_container == 'blogpost') {
-			$this->_addBlogpostWrappers($this->website, $this->websitepage);
+			$phpwrappers = $this->_addBlogpostWrappers($this->website, $this->websitepage);
 		}
 
 		// Create the page in database
-		$pageid = $this->websitepage->create(DolibarrApiAccess::$user);
+		$pageid = $this->websitepage->create(DolibarrApiAccess::$user, 0, $phpwrappers);
 		if ($pageid <= 0) {
 			throw new RestException(500, $this->websitepage->errorsToString());
 		}
@@ -683,10 +684,12 @@ class Websites extends DolibarrApi
 	 *
 	 * @param	Website		$website		Website
 	 * @param	WebsitePage	$websitepage	Blog post to complete (its content is modified)
-	 * @return	void
+	 * @return	string[]					PHP wrappers added to the content (to pass to WebsitePage::create())
 	 */
 	private function _addBlogpostWrappers($website, $websitepage)
 	{
+		dol_syslog("_addBlogpostWrappers");
+
 		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
 
 		$websitepagetemp = new WebsitePage($this->db);
@@ -704,15 +707,23 @@ class Websites extends DolibarrApi
 			}
 		}
 
+		$phpwrappers = array();
+
 		$content = (string) $websitepage->content;
 		if (count($found['header']) == 1 && strpos($content, "includeContainer('".$found['header'][0]."')") === false) {
-			$content = "<?php includeContainer('".$found['header'][0]."'); ?>\n".$content;
+			$wrapper = "<?php includeContainer('".$found['header'][0]."'); ?>\n";
+			$content = $wrapper.$content;
+			$phpwrappers[] = $wrapper;
 		}
 		if (count($found['footer']) == 1 && strpos($content, "includeContainer('".$found['footer'][0]."')") === false) {
-			$content .= "\n<?php includeContainer('".$found['footer'][0]."'); ?>\n";
+			$wrapper = "\n<?php includeContainer('".$found['footer'][0]."'); ?>\n";
+			$content .= $wrapper;
+			$phpwrappers[] = $wrapper;
 		}
 
 		$websitepage->content = $content;
+
+		return $phpwrappers;
 	}
 
 	/**

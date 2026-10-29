@@ -2345,17 +2345,17 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Add AI picto
 		$toprightmenu .= top_menu_ai();
 
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
 		// Add bookmark dropdown
 		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
-			// Add the import file link
-			$toprightmenu .= top_menu_importfile();
 		}
 
 		$toprightmenu .= '</div>';
@@ -3078,6 +3078,9 @@ function top_menu_importfile()
 		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
 		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
+		} elseif (!isModEnabled('ai')) {
+			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
+			return '';
 		}
 
 		$html .= '<!-- div for link to upload file -->
@@ -3308,12 +3311,12 @@ function top_menu_bookmark()
 		$langs->load("bookmarks");
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+			$html .= '<div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">';
 			$html .= printDropdownBookmarksList();
 			$html .= '</div>';
 		} else {
 			$html .= '<!-- div for bookmark link -->
-	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
 	            <a accesskey="b" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$conf->browser->stringforfirstkey.' b)"><i class="fa fa-star"></i></a>
 	            <div class="dropdown-menu">
 	                '.printDropdownBookmarksList().'

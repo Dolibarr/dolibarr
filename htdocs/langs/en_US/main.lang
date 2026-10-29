@@ -1451,4 +1451,5 @@ RefOfOnCustomerSide=Reference of %s on customer side
 RefOfOnVendorSide=Reference of %s on vendor side
 SeeDocumentation=See documentation
 AIAssistant=AI Assistant
+AIHelpTools=List of tools available to you in the AI assistant
 NoBookmarkFound = No bookmark found

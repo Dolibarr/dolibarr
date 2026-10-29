@@ -91,7 +91,8 @@ $errorDetails = "";
 
 $assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
-$doRedact = getDolGlobalInt('AI_PRIVACY_REDACTION', 0);
+$doRedact = getDolGlobalInt('AI_PRIVACY_REDACTION', 0);		// 0=no protection, 1=sensitive data masked, 2=third parties also replaced by socid:N
+$doRedactNames = ($doRedact >= 2);
 $timeout = getDolGlobalInt('AI_REQUEST_TIMEOUT', 120);
 
 // Kill switch
@@ -201,7 +202,7 @@ try {
 			$ctxObj = new $ctxMap[$ctxElement][1]($db);
 			if ($ctxObj->fetch($ctxId) > 0 && (empty($ctxObj->entity) || in_array((int) $ctxObj->entity, explode(',', getEntity($ctxElement))))) {
 				$ctxThirdpartyName = '';
-				if (empty($doRedact) && !empty($ctxObj->socid)) {
+				if (empty($doRedactNames) && !empty($ctxObj->socid)) {
 					// The counterparty NAME lets the model use name-based search
 					// tools too; under redaction it is omitted - the ids suffice
 					// and names must not travel to the provider.
@@ -211,7 +212,7 @@ try {
 						$ctxThirdpartyName = " (".dol_string_nohtmltag($ctxSoc->name).")";
 					}
 				}
-				if (empty($doRedact) && $ctxElement === 'societe' && !empty($ctxObj->name)) {
+				if (empty($doRedactNames) && $ctxElement === 'societe' && !empty($ctxObj->name)) {
 					$ctxThirdpartyName = " (".dol_string_nohtmltag((string) $ctxObj->name).")";
 				}
 				// Under redaction, elements whose ref IS a personal/company name
@@ -228,7 +229,7 @@ try {
 					$ctxNamesToMask[] = (string) $ctxObj->name_alias;	// the trade name is how people say it
 				}
 				$ctxRefPart = " with ref \"".$ctxObj->ref."\"";
-				if (!empty($doRedact) && in_array($ctxElement, array('societe', 'contact'), true)) {
+				if (!empty($doRedactNames) && in_array($ctxElement, array('societe', 'contact'), true)) {
 					$ctxRefPart = "";
 				}
 				$aiPageContextLine = "The user is currently viewing the ".$ctxMap[$ctxElement][2].$ctxRefPart." (id ".(int) $ctxObj->id.(!empty($ctxObj->socid) ? ", thirdparty id ".(int) $ctxObj->socid.$ctxThirdpartyName : $ctxThirdpartyName).").";
@@ -423,11 +424,11 @@ try {
 	// Third parties named in the request, found by matching the text against
 	// the words of their names and trade names in any order.
 	// The phrase that names one is resolved to its id before the model is called.
-	// When several fit, the user chooses before anything is sent
-	// the answer is built locally and the choice comes back with the same request.
-	// Privacy guard on: the phrase becomes "socid:N" so the name never reaches the provider.
-	// Privacy guard off: the name stays and the id is added "Name (socid:N)".
-	// A single word that is part of the whole name is asked about rather than wrongly resolved.
+	// Privacy guard level 2: the phrase becomes "socid:N" so the name never reaches the provider.
+	// When several fit, or for a single word that is part of the whole name, the user chooses before anything
+	// is sent: the answer is built locally and the choice comes back with the same request.
+	// Privacy guard level 0 or 1: the name stays and the id is added "Name (socid:N)" when only one fits.
+	// Otherwise the phrase is left as written and the model searches it (no question).
 	$aiNamesToMask = array();	// names masked in everything sent: query, history, tool results
 	$tpChoices = (!empty($data['thirdparty_choices']) && is_array($data['thirdparty_choices'])) ? $data['thirdparty_choices'] : array();
 	// An attached document is data, not the request: the third parties it names
@@ -436,12 +437,14 @@ try {
 	// privacy guard its names are still masked, like any other name.
 	$aiDocuments = aiExtractDocumentBlocks($query, $langs);
 	$query = $aiDocuments['text'];
-	if (!empty($doRedact)) {
+	if (!empty($doRedactNames)) {
 		foreach ($aiDocuments['blocks'] as $aiDocument) {
 			$aiNamesToMask = array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $aiDocument, $dynamicStopWords));
 		}
 	}
+
 	$tpFound = aiFindThirdpartiesInText($db, $user, $query, aiThirdpartyNatureHint($query, $langs), $dynamicStopWords);
+
 	$tpAsk = null;
 	$tpReplace = array();
 	foreach ($tpFound as $mt) {
@@ -465,12 +468,14 @@ try {
 		// A weak match (one word that is not the whole name) is confirmed by the
 		// user, even when the word is not the start of the name ("Jensen" for "Jon Jensen LLC").
 		// Under the guard the question is local.
-		$weak = (!$mt['exact'] && $mt['words'] === 1 && (empty($doRedact) || !$mt['first']));
+		$weak = (!$mt['exact'] && $mt['words'] === 1 && (empty($doRedactNames) || !$mt['first']));
 		if ($socidChosen < 0) {
 			if (count($visibleIds) === 1 && !$weak) {
 				$socidChosen = $visibleIds[0];
 			} elseif (count($visibleIds) === 0) {
-				$socidChosen = 0;	// nothing to offer: masked under the guard, left as written otherwise
+				$socidChosen = 0;	// nothing to offer: masked under the guard level 2, left as written otherwise
+			} elseif (empty($doRedactNames)) {
+				$socidChosen = 0;	// several or a weak match: the name may reach the provider, so left as written for the model to search
 			} else {
 				if ($tpAsk === null) {
 					$tpAsk = $mt;
@@ -479,7 +484,7 @@ try {
 			}
 		}
 		if ($socidChosen > 0) {
-			$tpReplace[] = array($mt['start'], $mt['end'], empty($doRedact) ? $mt['raw'].' (socid:'.$socidChosen.')' : 'socid:'.$socidChosen);
+			$tpReplace[] = array($mt['start'], $mt['end'], empty($doRedactNames) ? $mt['raw'].' (socid:'.$socidChosen.')' : 'socid:'.$socidChosen);
 		}
 	}
 
@@ -543,7 +548,7 @@ try {
 	$guard = null;
 	if ($doRedact && class_exists('PrivacyGuard')) {
 		$guard = new PrivacyGuard();
-		$query = $guard->mask($guard->maskNames($query, $aiNamesToMask));
+		$query = $guard->mask($doRedactNames ? $guard->maskNames($query, $aiNamesToMask) : $query);
 		// In-context reinforcement, adjacent to the placeholders themselves:
 		// weak models weigh nearby text far more than distant system rules, and
 		// the system-rule variant alone proved insufficient in the field.
@@ -748,7 +753,7 @@ try {
 			// names first (dictionary - arbitrary strings the patterns cannot
 			// see), then the pattern pass for refs, emails, IBANs and the rest.
 			if (!empty($doRedact) && !empty($guard)) {
-				$aiPageContextLine = $guard->mask($guard->maskNames($aiPageContextLine, $ctxNamesToMask));
+				$aiPageContextLine = $guard->mask($doRedactNames ? $guard->maskNames($aiPageContextLine, $ctxNamesToMask) : $aiPageContextLine);
 			}
 			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
 		}
@@ -879,7 +884,7 @@ try {
 					if ($htext === '') {
 						continue;
 					}
-					if ($guard) {
+					if ($guard && $doRedactNames) {
 						// Names before the cut: half a name would no longer match.
 						$hdata = json_decode((string) preg_replace('/^\[[^\]]*\]\s*/', '', $htext), true);
 						$htext = $guard->maskNames($htext, array_merge($aiNamesToMask, aiThirdpartyNamesToMask($db, $user, $htext, $dynamicStopWords, $hdata)));
@@ -924,7 +929,7 @@ try {
 							continue;
 						}
 						if ($guard) {
-							$mtext = $guard->maskNames($mtext, $aiNamesToMask);
+							$mtext = $doRedactNames ? $guard->maskNames($mtext, $aiNamesToMask) : $mtext;
 							$mtext = $guard->mask($mtext);
 						}
 						if (dol_strlen($mtext) > 800) {
