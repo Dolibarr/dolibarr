@@ -2541,4 +2541,3 @@ $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $ac
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
