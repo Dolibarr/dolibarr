@@ -105,6 +105,13 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) 
 		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
 		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
 		$moreparams = isset($moreparams) ? $moreparams : null;
+		// Choice made on the generation form to append or not the terms of sale file
+		if (GETPOSTISSET('addtermsofsale_shown')) {
+			if (!is_array($moreparams)) {
+				$moreparams = array();
+			}
+			$moreparams['addtermsofsale'] = (GETPOSTINT('addtermsofsale') ? 1 : 0);
+		}
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
