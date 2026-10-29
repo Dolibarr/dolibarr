@@ -199,6 +199,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				$listofobjectid[$toselectid] = $toselectid;
 
 				// Set $tmpobjectid that is ID of parent object (thirdparty or user in most cases)
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					'@phan-var-force Societe $objecttmp';
@@ -2540,3 +2541,4 @@ $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $ac
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
