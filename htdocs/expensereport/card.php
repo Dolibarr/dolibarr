@@ -2436,63 +2436,56 @@ if ($action == 'create') {
 							$colspan++;
 						}
 
-						print '<!-- line of expense report -->'."\n";
-						print '<tr class="tredited">';
-
-						print '<td class="center">';
-						print $numline;
-						print '</td>';
-
-						print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
-						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-						print '</a>';
 						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+							print '<!-- line of expense report -->'."\n";
+							print '<tr class="tredited">';
+
+							print '<td class="center">';
+							print $numline;
+							print '</td>';
+
+							print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
+							print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+							print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 							print '</a>';
-						}
 
-						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script type="text/javascript">'."\n";
-						print '$(document).ready(function() {
-        				        $( ".auploadnewfilenow" ).click(function() {
-        				            jQuery(".truploadnewfilenow").toggle();
-                                    jQuery(".trattachnewfilenow").hide();
-                                    return false;
-                                });
-        				        $( ".aattachtodoc" ).click(function() {
-        				            jQuery(".trattachnewfilenow").toggle();
-                                    jQuery(".truploadnewfilenow").hide();
-                                    return false;
-                                });';
-						if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
-							print 'jQuery(".trattachnewfilenow").toggle();'."\n";
-						}
-						print '
-                        		jQuery("form[name=\"expensereport\"]").submit(function() {
-                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                                		jQuery("input[name=\"sendit\"]").val("");
-                            		}
-                        		});
-                    		';
-						print '
-                            });
-        				    ';
-						print '</script>'."\n";
-						print '</td></tr>';
-
-						$filenamelinked = '';
-						if ($line->fk_ecm_files > 0) {
-							$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
-							if ($result > 0) {
-								$filenamelinked = $ecmfilesstatic->filename;
+							print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
+							print '<script type="text/javascript">'."\n";
+							print '$(document).ready(function() {
+	        				        $( ".aattachtodoc" ).click(function() {
+										/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+										var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+	        				            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+	                                    return false;
+	                                });';
+							if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
+								print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
 							}
-						}
+							print '
+	                        		jQuery("form[name=\"expensereport\"]").submit(function() {
+	                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                                		jQuery("input[name=\"sendit\"]").val("");
+	                            		}
+	                        		});
+	                    		';
+							print '
+	                            });
+	        				    ';
+							print '</script>'."\n";
+							print '</td></tr>';
 
-						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							$filenamelinked = '';
+							if ($line->fk_ecm_files > 0) {
+								$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+								if ($result > 0) {
+									$filenamelinked = $ecmfilesstatic->filename;
+								}
+							}
+
+							$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+						}
 
 						print '<tr class="oddeven tredited">';
 
@@ -2597,63 +2590,58 @@ if ($action == 'create') {
 					$nbLinks = Link::count($db, $object->element, $object->id);
 				}
 
-				// Add line with link to add new file or attach to an existing file
-				print '<tr class="liste_titre">';
-				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
-				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-				print '</a>';
 				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+					// Add line with link to add new file or attach to an existing file
+					print '<tr class="liste_titre">';
+					print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
+					print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+					print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 					print '</a>';
-				}
 
-				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script type="text/javascript">'."\n";
-				print '$(document).ready(function() {
-				        $( ".auploadnewfilenow" ).click(function() {
-							console.log("We click on toggle of auploadnewfilenow");
-				            jQuery(".truploadnewfilenow").toggle();
-                            jQuery(".trattachnewfilenow").hide();
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-                            } else {
-                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-                            }
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });
-				        $( ".aattachtodoc" ).click(function() {
-							console.log("We click on toggle of aattachtodoc");
-				            jQuery(".trattachnewfilenow").toggle();
-                            jQuery(".truploadnewfilenow").hide();
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });'."\n";
-				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
-					print 'jQuery(".trattachnewfilenow").show();'."\n";
-				}
-				print '
-						jQuery("form[name=\"expensereport\"]").submit(function() {
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-								/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
-								jQuery("input[name=\"sendit\"]").val("");
-								jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-							} else {
-								jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-							}
-						});
-					';
-				print '
-                    });
-				    ';
-				print '</script>'."\n";
-				print '</td></tr>';
+					print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
+					print '<script type="text/javascript">'."\n";
+					print '$(document).ready(function() {
+					        $( ".aattachtodoc" ).click(function() {
+								console.log("We click on toggle of aattachtodoc");
+								/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+								var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+					            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+	                            } else {
+	                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+	                            }
+								// TODO Switch css fa-chevron-dow and add fa-chevron-up
+	                            return false;
+	                        });'."\n";
+					if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
+						print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
+					}
+					if (GETPOSTISSET('sendit')) {
+						// After an upload, the section of existing files is already visible, so we also show the upload form
+						print 'jQuery(".truploadnewfilenow").show();'."\n";
+					}
+					print '
+							jQuery("form[name=\"expensereport\"]").submit(function() {
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+									/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
+									jQuery("input[name=\"sendit\"]").val("");
+									jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+								} else {
+									jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+								}
+							});
+						';
+					print '
+	                    });
+					    ';
+					print '</script>'."\n";
+					print '</td></tr>';
 
-				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+					$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+				}
 
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
