@@ -291,6 +291,79 @@ class SupplierOrdersLineApiTest extends CommonClassTest
 		$this->expectExceptionMessage('Update failed');
 		$this->api->putLine(42, 7, array('qty' => 3));
 	}
+
+	/** @return void */
+	public function testDeleteLineRemovesTheLine()
+	{
+		$this->order->expects($this->once())->method('deleteLine')->with(7)->willReturn(1);
+		$result = $this->api->deleteLine(42, 7);
+		$this->assertSame(200, $result['success']['code']);
+	}
+
+	/** @return void */
+	public function testDeleteLineRequiresALineId()
+	{
+		$this->order->expects($this->never())->method('fetch');
+		$this->order->expects($this->never())->method('deleteLine');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(400);
+		$this->api->deleteLine(42, 0);
+	}
+
+	/** @return void */
+	public function testDeleteLineRequiresWritePermission()
+	{
+		$actingUser = $this->createMock(User::class);
+		$actingUser->method('hasRight')->willReturnCallback(function ($module, $object, $permission) {
+			return $permission === 'lire';
+		});
+		DolibarrApiAccess::$user = $actingUser;
+		$this->order->expects($this->never())->method('deleteLine');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(403);
+		$this->api->deleteLine(42, 7);
+	}
+
+	/** @return void */
+	public function testDeleteLineRejectsALineFromAnotherOrder()
+	{
+		$this->order->expects($this->never())->method('deleteLine');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(404);
+		$this->api->deleteLine(42, 99);
+	}
+
+	/** @return void */
+	public function testDeleteLineRequiresADraftOrder()
+	{
+		$this->order->status = 3;
+		$this->order->expects($this->never())->method('deleteLine');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(405);
+		$this->api->deleteLine(42, 7);
+	}
+
+	/** @return void */
+	public function testDeleteLineReportsAReceivedLine()
+	{
+		$this->order->expects($this->once())->method('deleteLine')->willReturn(-3);
+		$this->order->method('errorsToString')->willReturn('LineAlreadyDispatched');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(405);
+		$this->expectExceptionMessage('LineAlreadyDispatched');
+		$this->api->deleteLine(42, 7);
+	}
+
+	/** @return void */
+	public function testDeleteLinePersistenceErrorIsReported()
+	{
+		$this->order->expects($this->once())->method('deleteLine')->willReturn(-1);
+		$this->order->method('errorsToString')->willReturn('Delete failed');
+		$this->expectException(Luracast\Restler\RestException::class);
+		$this->expectExceptionCode(405);
+		$this->expectExceptionMessage('Delete failed');
+		$this->api->deleteLine(42, 7);
+	}
 }
 
 /**
