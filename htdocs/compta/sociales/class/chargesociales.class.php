@@ -41,13 +41,6 @@ class ChargeSociales extends CommonObject
 
 	/**
 	 * @var string Name of table without prefix where object is stored
-	 * @deprecated Use $table_element
-	 * @see $table_element
-	 */
-	public $table = 'chargesociales';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'chargesociales';
 
