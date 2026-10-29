@@ -54,7 +54,7 @@ if (empty($object) || !is_object($object)) {
 <!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
 
-$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
+$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']) : $urltorefreshaftermove;
 // remove some parameters from URL
 $redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
 $redirectURL = preg_replace('/(&|\?)page_y=[^&#]*/', '', $redirectURL);
