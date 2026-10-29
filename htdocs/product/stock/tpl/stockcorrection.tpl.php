@@ -39,7 +39,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 '
-@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force Product|MouvementStock $object
 @phan-var-force FormProduct $formproduct
 @phan-var-force FormProjets $formproject
 @phan-var-force string $backtopage

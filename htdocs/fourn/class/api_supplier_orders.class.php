@@ -3,6 +3,7 @@
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for supplier orders
+ *
+ * @since	6.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -58,6 +61,8 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with supplier order information
 	 *
+	 * @since	6.0.0	Initial implementation
+	 *
 	 * @param	int		$id ID of supplier order
 	 * @return	array|mixed data without useless information
 	 *
@@ -86,6 +91,11 @@ class SupplierOrders extends DolibarrApi
 	 * List orders
 	 *
 	 * Get a list of supplier orders
+	 *
+	 * @since	6.0.0	Initial implementation
+	 * @since	12.0.0	Added product_ids parameter
+	 * @since	19.0.0	Added sqlfilterlines and properties parameters
+	 * @since	21.0.0	Added pagination_data parameter
 	 *
 	 * @param string	$sortfield		  Sort field
 	 * @param string	$sortorder		  Sort order
@@ -245,6 +255,8 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
 	 *
+	 * @since	6.0.0	Initial implementation
+	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
@@ -292,6 +304,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Update supplier order
+	 *
+	 * @since	6.0.0	Initial implementation
 	 *
 	 * @param 	int   	$id             	Id of supplier order to update
 	 * @param 	array 	$request_data   	Data
@@ -342,6 +356,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Add a line to a given supplier order
+	 *
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of order to update
 	 * @param array $request_data   OrderLine data
@@ -408,6 +424,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Get one supplier order line after checking access to its parent.
 	 *
+	 * @since	25.0.0	Initial implementation
+	 *
 	 * @param int $id Supplier order ID
 	 * @param int $lineid Line ID
 	 * @return CommandeFournisseurLigne Order line
@@ -426,9 +444,13 @@ class SupplierOrders extends DolibarrApi
 	 * Omitted fields keep their current value. Dates are Unix timestamps or null.
 	 * Give only one price, in company currency (HT or TTC) or order currency (HT).
 	 *
+	 * @since	25.0.0	Initial implementation
+	 *
 	 * @param int $id Supplier order ID
 	 * @param int $lineid Line ID
-	 * @param array<string,mixed>|null $request_data Fields to change
+	 * @param array $request_data Fields to change
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return CommandeFournisseurLigne Updated line
 	 * @url PUT {id}/lines/{lineid}
 	 */
@@ -466,7 +488,64 @@ class SupplierOrders extends DolibarrApi
 		if ($result <= 0) {
 			throw new RestException(400, $this->order->errorsToString());
 		}
-		return $this->getLine($id, $lineid);
+
+		$line = new CommandeFournisseurLigne($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			throw new RestException(500, 'Failed to reload the updated line');
+		}
+
+		$this->_cleanObjectDatas($line);
+		return $line;
+	}
+
+	/**
+	 * Deletes a line of a given draft supplier order
+	 *
+	 * A line that has already been received cannot be deleted.
+	 *
+	 * @since	25.0.0	Initial implementation
+	 * @param	int		$id			Id of supplier order
+	 * @param	int		$lineid		Id of the line to delete
+	 *
+	 * @url	DELETE {id}/lines/{lineid}
+	 *
+	 * @return	array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 400 Bad parameters
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Error
+	 */
+	public function deleteLine($id, $lineid)
+	{
+		if (empty($lineid)) {
+			throw new RestException(400, 'Line ID is mandatory');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'creer')) {
+			throw new RestException(403);
+		}
+
+		// Checks read permission and access to the order, and that the line belongs to it
+		$this->loadLineForOperation($id, $lineid);
+
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier order must be in draft status to delete lines');
+		}
+
+		$updateRes = $this->order->deleteLine((int) $lineid);
+		if ($updateRes > 0) {
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line '.$lineid.' deleted'
+				)
+			);
+		} else {
+			throw new RestException(405, $this->order->errorsToString());
+		}
 	}
 
 	/**
@@ -565,6 +644,8 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	18.0.0	Initial implementation
+	 *
 	 * @param	int					$id			ID of supplier order
 	 * @param	string				$source		Source of the contact (internal, external, all).
 	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
@@ -605,6 +686,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Add a contact type of given supplier order
+	 *
+	 * @since	18.0.0	Initial implementation
 	 *
 	 * @param int		$id				Id of supplier order to update
 	 * @param int		$contactid		Id of contact/user to add
@@ -654,6 +737,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Unlink a contact type of given supplier order
+	 *
+	 * @since	18.0.0	Initial implementation
 	 *
 	 * @param	int		$id             Id of supplier order to update
 	 * @param	int		$contactid      Id of contact/user to add
@@ -716,6 +801,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Delete supplier order
 	 *
+	 * @since	6.0.0	Initial implementation
+	 *
 	 * @param int		$id		Supplier order ID
 	 * @return array			Array of result
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -750,6 +837,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Validate an order
+	 *
+	 * @since	6.0.0	Initial implementation
 	 *
 	 * @param   int $id             Order ID
 	 * @param   int $idwarehouse    Warehouse ID
@@ -802,6 +891,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Approve an order
 	 *
+	 * @since	15.0.0	Initial implementation
+	 *
 	 * @param   int $id             Order ID
 	 * @param   int $idwarehouse    Warehouse ID
 	 * @param   int $secondlevel      1=Does not execute triggers, 0= execute triggers
@@ -850,9 +941,73 @@ class SupplierOrders extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Refuse a validated order that is waiting for approval
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 * @param   string	$comment	Reason of the refusal, added to the agenda event {@required false}
+	 *
+	 * @url POST    {id}/refuse
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order is not waiting for approval
+	 * @throws RestException 500 Error
+	 *
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "comment": ""
+	 * }
+	 */
+	public function refuse($id, $comment = '')
+	{
+		// Same right as checked by CommandeFournisseur::refuse(), which otherwise does nothing and returns 0
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "approuver")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_VALIDATED) {
+			throw new RestException(405, 'Only validated supplier orders waiting for approval can be refused');
+		}
+
+		if ((string) $comment !== '') {
+			$this->order->refuse_note = $comment;
+		}
+
+		$result = $this->order->refuse(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when refusing Order: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order refused (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
 
 	/**
 	 * Sends an order to the vendor
+	 *
+	 * @since	15.0.0	Initial implementation
 	 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$date		Date (unix timestamp in sec)
@@ -905,6 +1060,69 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Cancel an approved order that has not been sent to the vendor yet
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id			Order ID
+	 * @param   string	$comment	Reason of the cancellation, added to the agenda event {@required false}
+	 *
+	 * @url POST    {id}/cancel
+	 *
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Order is not approved
+	 * @throws RestException 500 Error
+	 *
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "comment": ""
+	 * }
+	 */
+	public function cancel($id, $comment = '')
+	{
+		// Same right as checked by CommandeFournisseur::cancel(), which otherwise returns -1 without error message
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "commander")) {
+			throw new RestException(403);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same status as the one allowing the cancel button on the supplier order card
+		if ((int) $this->order->status !== CommandeFournisseur::STATUS_ACCEPTED) {
+			throw new RestException(405, 'Only approved supplier orders can be canceled');
+		}
+
+		if ((string) $comment !== '') {
+			$this->order->cancel_note = $comment;
+		}
+
+		$result = $this->order->cancel(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling Order: '.$this->order->errorsToString());
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order canceled (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
 	 * Receives the order, dispatches products.
 	 *
 	 * Example:
@@ -924,6 +1142,8 @@ class SupplierOrders extends DolibarrApi
 	 *      "notrigger": 0
 	 *   }]
 	 * }</code>
+	 *
+	 * @since	15.0.0	Initial implementation
 	 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}

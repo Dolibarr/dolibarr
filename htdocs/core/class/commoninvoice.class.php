@@ -1437,14 +1437,20 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Define date limit */
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		// Note: $this->date is midnight in the server timezone, so the delay must be added as calendar days and not as
+		// a number of seconds. A day is not always 24 hours long: when the delay crosses a daylight saving time change,
+		// adding 86400 seconds per day shifts the result by one hour and can move it to the previous day.
+
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
-			$datelim += ($cdr_decalage * 3600 * 24);
+			$datelim = dol_time_plus_duree($datelim, $cdr_decalage, 'd', 0, 'tzserver');
 		} elseif ($cdr_type == 1) {
 			// 1 : application of the "end of the month" rule
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$mois = date('m', $datelim);
 			$annee = date('Y', $datelim);
@@ -1461,8 +1467,7 @@ abstract class CommonInvoice extends CommonObject
 			$datelim += ($cdr_decalage * 3600 * 24);
 		} elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
 			// 2 : application of the rule, the N of the current or next month
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
 			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds

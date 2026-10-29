@@ -38,6 +38,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force string $element
 @phan-var-force int $element_id
 @phan-var-force string $resource_type
+@phan-var-force string $mode
 @phan-var-force array<array{rowid:int,resource_id:int,resource_type:string,busy:int<0,1>,mandatory:int<0,1>}> $linked_resources
 ';
 
@@ -65,6 +66,7 @@ print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 if ((array) $linked_resources && count($linked_resources) > 0) {
 	foreach ($linked_resources as $linked_resource) {
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
+		'@phan-var-force Dolresource $object_resource';
 
 		//$element_id = $linked_resource['rowid'];
 

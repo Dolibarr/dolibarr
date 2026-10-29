@@ -166,6 +166,7 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($u
 $usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
 $usercanapprovesecond	= $user->hasRight("fournisseur", "commande", "approve2");
 $usercanorder			= $user->hasRight("fournisseur", "commande", "commander");
+$usercanupdateprices	= (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? ($user->hasRight("produit", "creer") || $user->hasRight("service", "creer")) : $user->hasRight("product", "product_advance", "write_supplier_prices"));
 if (!isModEnabled('reception')) {
 	$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 } else {
@@ -1430,6 +1431,10 @@ if (empty($reshook)) {
 		$object->context["sendmanualtriggers"] = GETPOST("manual_trigger_send");
 		$result = $object->commande($user, $date_com, GETPOSTINT('methodecommande'), GETPOST('comment'));
 		if ($result > 0) {
+			if (GETPOST('updatebuyingprice') && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->updateProductBuyPrices($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -2522,6 +2527,9 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'methodecommande', 'label' => $langs->trans('OrderMode'), 'value' => $inputmethod, 'tdclass' => getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL') ? '' : 'fieldrequired'),
 			array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans('Comment'), 'value' => dol_escape_htmltag(GETPOST('comment')), 'morecss' => 'quatrevingtpercent')
 		);
+		if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->hasProductsOrServices(1)) {
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'updatebuyingprice', 'label' => $langs->trans('UpdateBuyingPriceFromOrder'), 'value' => GETPOST('updatebuyingprice'));
+		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);

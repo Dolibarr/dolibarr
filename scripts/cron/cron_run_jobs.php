@@ -157,8 +157,8 @@ if (getDolUserString('MAIN_LANG_DEFAULT')) {
 	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
+	$langs = new Translate('', $conf);
 	$langs->setDefaultLang($langcode);
-	$langs->tab_translate = array();
 }
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
@@ -302,8 +302,8 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
 			if ($langs->getDefaultLang() != $langcode) {
+				$langs = new Translate('', $conf);
 				$langs->setDefaultLang($langcode);
-				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}

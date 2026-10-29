@@ -460,10 +460,10 @@ if ($search_date_valid_start) {
 	$sql .= " AND sp.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+	$sql .= " AND sp.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_note_private) {
-	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+	$sql .= " AND sp.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
@@ -1435,7 +1435,7 @@ if ($resql) {
 				}
 			}
 			// Note public
-			if (!empty($arrayfields['f.note_public']['checked'])) {
+			if (!empty($arrayfields['sp.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
@@ -1444,7 +1444,7 @@ if ($resql) {
 				}
 			}
 			// Note private
-			if (!empty($arrayfields['f.note_private']['checked'])) {
+			if (!empty($arrayfields['sp.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';

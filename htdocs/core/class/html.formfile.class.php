@@ -255,7 +255,21 @@ class FormFile
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		// Tooltip with max size limit, shown on the upload button
+		$tooltiptext = '';
+		if (getDolGlobalString('MAIN_UPLOAD_DOC') && $perm && empty($conf->dol_optimize_smallscreen)) {
+			$langs->load('other');
+
+			$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
+
+			$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
+				$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT').')</span>';
+			}
+		}
+
+		$out .= '<input type="submit" class="button smallpaddingimp reposition'.($tooltiptext ? ' classfortooltip' : '').'" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= ($tooltiptext ? ' title="'.dolPrintHTMLForAttribute($tooltiptext).'" data-delayfortooltip="1000"' : '');	// tooltip shown after a delay of 1s
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -264,21 +278,7 @@ class FormFile
 			$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 
-		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			if ($perm && empty($conf->dol_optimize_smallscreen)) {
-				$langs->load('other');
-
-				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
-
-				$tooltiptext = $langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow);
-				if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
-					$tooltiptext .= '<br><br>Option to extract the file content in text to save it in database is ON <span class="opacitymedium">('.getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT').')</span>';
-				}
-
-				$out .= ' ';
-				$out .= info_admin($tooltiptext, 1, 0, '1', 'classfortooltip');
-			}
-		} else {
+		if (!getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			$out .= ' ('.$langs->trans("UploadDisabled").')';
 		}
 		$out .= "</td></tr>";
