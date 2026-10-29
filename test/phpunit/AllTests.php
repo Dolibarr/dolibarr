@@ -308,8 +308,6 @@ class AllTests
 		$suite->addTestSuite('ProductTest');
 		require_once dirname(__FILE__).'/SupplierOrdersLineApiTest.php';
 		$suite->addTestSuite('SupplierOrdersLineApiTest');
-		require_once dirname(__FILE__).'/SupplierOrdersRefuseApiTest.php';
-		$suite->addTestSuite('SupplierOrdersRefuseApiTest');
 		require_once dirname(__FILE__).'/VariantsTest.php';
 		$suite->addTestSuite('VariantsTest');
 
@@ -463,6 +461,8 @@ class AllTests
 			$suite->addTestSuite('RestAPICronJobTest');
 			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
 			$suite->addTestSuite('RestAPIBankAccountsTest');
+			require_once dirname(__FILE__).'/RestAPISupplierOrderTest.php';
+			$suite->addTestSuite('RestAPISupplierOrderTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
