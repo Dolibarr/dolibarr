@@ -861,9 +861,12 @@ class Propal extends CommonObject
 						$this->line_order(true, 'DESC');
 					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 						// Update all rank of all other lines starting from the same $ranktouse
-						$linecount = count($this->lines);
-						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->rang >= $ranktouse) {
+								if (!empty($tmpline->id)) {
+									$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+								}
+							}
 						}
 					}
 
@@ -1351,13 +1354,20 @@ class Propal extends CommonObject
 					$fk_parent_line = 0;
 					$num = count($this->lines);
 
+					// Convert all lines into PropaleLigne objects before inserting the first one: when coming from REST API, they are still arrays, and addline() reads the whole of this->lines
 					for ($i = 0; $i < $num; $i++) {
-						if (!is_object($this->lines[$i])) {	// If this->lines is not array of objects, coming from REST API
-							// Convert into object this->lines[$i].
-							$line = (object) $this->lines[$i];
-						} else {
-							$line = $this->lines[$i];
+						if (!is_object($this->lines[$i])) {
+							$lineobj = new PropaleLigne($this->db);
+							foreach ($this->lines[$i] as $key => $val) {
+								$lineobj->$key = $val;
+							}
+							$this->lines[$i] = $lineobj;
 						}
+					}
+
+					for ($i = 0; $i < $num; $i++) {
+						$line = $this->lines[$i];
+
 						// Reset fk_parent_line for line that are not child lines or special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
