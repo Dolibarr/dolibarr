@@ -220,7 +220,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$action = '';
 }
 
-if ($action == 'addtimespent' && GETPOST('button_search_x', 'alpha')) {
+if ($action == 'addtimespent' && GETPOST('button_search_x', 'alpha')) {	// Test on permission not required
 	$action = '';
 }
 
