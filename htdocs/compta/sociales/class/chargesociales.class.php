@@ -293,7 +293,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
-		$sql .= ", '".$this->db->idate($this->period)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";		// Will be '2026-10-31' for example because $this->period was done with dol_mktime(0,0,0,lastday) so value is GMT date when 00:00 in timezone server and idate reconvert GMT date into 00:00.
 		$sql .= ", '".price2num($newamount)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
 		$sql .= ", ".((int) $conf->entity);
