@@ -477,6 +477,88 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return the value of the first column of the first row of a query (for example a COUNT(*) or a rowid).
+	 * Note : It should only be used with SELECT queries. Don't add LIMIT to your query, it will be added by this method.
+	 * Bound values can be given with '?' placeholders in the SQL and the list of values in $params (see prepare() and execute()).
+	 * The resultset is freed by this method. In case of error, the error is available with lasterror().
+	 *
+	 * @param 	string 				$sql 		The sql query string
+	 * @param 	array<int,mixed>	$params		Ordered list of values for the '?' placeholders of $sql
+	 * @return 	string|null|false				The value (as returned by the driver, so a string or null for a NULL value), null if the query returns no row, false on failure
+	 * @see getRow(), getColumn()
+	 */
+	public function getValue($sql, $params = array())
+	{
+		$resql = $this->queryWithParams($sql.' LIMIT 1', $params);
+		if (!$resql) {
+			return false;
+		}
+
+		$row = $this->fetch_row($resql);
+		$this->free($resql);
+		if (!$row) {
+			return null;
+		}
+
+		return $row[0];
+	}
+
+	/**
+	 * Return the values of the first column of all the rows of a query (for example a list of rowid). Using this is discouraged for a big
+	 * list because all the values are loaded in memory.
+	 * Note : It should only be used with SELECT queries and with a limit. If you are not able to defined/know what can be the limit, it
+	 * just means this function is not what you need. Do not use it.
+	 * Bound values can be given with '?' placeholders in the SQL and the list of values in $params (see prepare() and execute()).
+	 * The resultset is freed by this method. In case of error, the error is available with lasterror().
+	 *
+	 * @param 	string 				$sql 		The sql query string. Must end with "... LIMIT x"
+	 * @param 	array<int,mixed>	$params		Ordered list of values for the '?' placeholders of $sql
+	 * @return  false|array<int,string|null>	Values (empty array if the query returns no row), false on failure
+	 * @see getRows(), getValue()
+	 */
+	public function getColumn($sql, $params = array())
+	{
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
+		}
+
+		$resql = $this->queryWithParams($sql, $params);
+		if (!$resql) {
+			return false;
+		}
+
+		$results = array();
+		while ($row = $this->fetch_row($resql)) {
+			$results[] = $row[0];
+		}
+		$this->free($resql);
+
+		return $results;
+	}
+
+	/**
+	 * Run a query. If $params is empty the query is run with query(), else it is run with prepare() and execute().
+	 *
+	 * @param 	string 				$sql 		The sql query string, with '?' placeholders if $params is not empty
+	 * @param 	array<int,mixed>	$params		Ordered list of values for the '?' placeholders of $sql
+	 * @return 	mixed					Resultset usable with fetch_row() and free(), or false on failure
+	 */
+	private function queryWithParams($sql, $params)
+	{
+		if (empty($params)) {
+			return $this->query($sql);
+		}
+
+		$stmt = $this->prepare($sql);
+		if (!$stmt) {
+			return false;
+		}
+		$resql = $this->execute($stmt, $params);
+
+		return ($resql === true ? false : $resql);	// true means a statement that returns no resultset, so not a SELECT
+	}
+
+	/**
 	 * Get the last ID of an auto-increment field of a table
 	 *
 	 * @param 	string 		$table 	Name of table
