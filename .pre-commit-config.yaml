@@ -193,6 +193,8 @@ repos:
     hooks:
       - id: prettier
         stages: [manual]
+        # Use the last LTS node: "latest" may be a pre-release that nodeenv fails to parse (ex: v27.0.0-alpha)
+        language_version: lts
         exclude:
           (?x)^( .*\.(phar |min\.css |lock) |htdocs/(includes|theme/common)/.*
           )$
