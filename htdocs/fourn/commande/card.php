@@ -1435,6 +1435,16 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+			$elements = array_filter(array('propal' => GETPOST('updatelinked_propal'), 'commande' => GETPOST('updatelinked_commande'), 'facture' => GETPOST('updatelinked_facture')));
+			if ($elements && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER')) {
+				foreach ($object->lines as $line) {
+					if ($object->updateLinkedBuyPrice($user, $line->id, $elements) < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+						break;
+					}
+				}
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -2529,6 +2539,18 @@ if ($action == 'create') {
 		);
 		if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER') && $usercanupdateprices && $object->hasProductsOrServices(1)) {
 			$formquestion[] = array('type' => 'checkbox', 'name' => 'updatebuyingprice', 'label' => $langs->trans('UpdateBuyingPriceFromOrder'), 'value' => GETPOST('updatebuyingprice'));
+
+			// Linked documents with another cost price for a product of the order
+			$labels = array('propal' => 'Proposal', 'commande' => 'Order', 'facture' => 'Invoice');
+			$linked = array();
+			foreach ($object->lines as $line) {
+				foreach ($object->getLinkedBuyPriceDocuments($user, $line->id) as $element => $document) {
+					$linked[$element] = ($linked[$element] ?? array()) + $document['refs'];
+				}
+			}
+			foreach ($linked as $element => $refs) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'updatelinked_'.$element, 'label' => $langs->trans('UpdateLinkedBuyingPrice').': '.$langs->trans($labels[$element]).' '.dol_escape_htmltag(implode(', ', $refs)), 'value' => GETPOST('updatelinked_'.$element));
+			}
 		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
