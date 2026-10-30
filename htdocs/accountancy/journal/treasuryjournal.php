@@ -847,7 +847,9 @@ if ($resql) {
 					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						// One object per payment, not per loan (l.rowid): the split between capital, interest and insurance
+						// differs from one payment to the next, so several payments of a loan must not share one split
+						$object_key = $obj->bu_type.'_'.$obj->bu_url_id;
 
 						// Add object in payment
 						$payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
