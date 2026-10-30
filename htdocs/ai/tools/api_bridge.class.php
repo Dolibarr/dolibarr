@@ -1462,8 +1462,10 @@ class ToolApiBridge extends McpTool
 	 * per-context allow-lists, their 'right' blocks are checked per call, and
 	 * every 'write' goes through the confirmation gate.
 	 *
-	 * Expected module return (in $this->results of its actions class):
-	 *   array('endpointkey' => array('label' => ..., 'methods' => array(...)))
+	 * Expected module return (in $this->results of its actions class), nested
+	 * under the module name since the results of all modules are merged:
+	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
+	 * where 'endpointkey' is the X of the module's api_X.class.php file.
 	 *
 	 * @return void
 	 */
@@ -3104,6 +3106,44 @@ class ToolApiBridge extends McpTool
 		if (file_put_contents($tmpfile, $payload) !== false) {
 			@rename($tmpfile, $cachefile);
 		}
+	}
+
+	/**
+	 * Delete every bridge_tooldefs_*.json cache file of the ai temp directories
+	 * (current entity and the other ones), so the tool definitions are rebuilt
+	 * from scratch on the next request. Called by the /reload command of the
+	 * assistant chat.
+	 *
+	 * @return int Number of cache files deleted
+	 */
+	public function purgeDefsCache(): int
+	{
+		global $conf;
+
+		$dirs = array();
+		if (!empty($conf->ai->multidir_temp) && is_array($conf->ai->multidir_temp)) {
+			foreach ($conf->ai->multidir_temp as $dir) {
+				if (is_string($dir) && $dir !== '') {
+					$dirs[] = rtrim($dir, '/');
+				}
+			}
+		}
+		if (!empty($conf->ai->dir_temp) && is_string($conf->ai->dir_temp)) {
+			$dirs[] = rtrim($conf->ai->dir_temp, '/');
+		}
+
+		$count = 0;
+		foreach (array_unique($dirs) as $dir) {
+			// Same @unlink as writeDefsCache() pruning the previous states: no
+			// dol_delete_file() here, files.lib.php is not loaded in every context.
+			foreach ((array) glob($dir.'/bridge_tooldefs_*.json') as $file) {
+				if (is_string($file) && @unlink($file)) {
+					$count++;
+				}
+			}
+		}
+
+		return $count;
 	}
 
 	/**
