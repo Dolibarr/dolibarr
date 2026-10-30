@@ -83,7 +83,7 @@ class PaymentExpenseReport extends CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float	Amount debited from the bank account, in the currency of the account, when it is not the currency of the expense report
+	 * @var float	Amount debited from the bank account, in the currency of the account, when it is neither the currency of the expense report nor the company one
 	 */
 	public $bank_amount;
 	/**
@@ -631,17 +631,17 @@ class PaymentExpenseReport extends CommonObject
 					if ($currency != $conf->currency) {
 						$amount_main_currency = -$this->amount;
 					}
+				} elseif ($acc->currency_code == $conf->currency) {
+					$amount = $this->amount;
 				} else {
 					if (empty($this->bank_amount)) {
 						$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AmountDebitedFromBankAccount'));
 						return -1;
 					}
 					$amount = $this->bank_amount;
-					if ($acc->currency_code != $conf->currency) {
-						include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-						list(, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $acc->currency_code, $this->datep);
-						$amount_main_currency = -(float) price2num($this->bank_amount / $rate, 'MT');
-					}
+					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+					list(, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $acc->currency_code, $this->datep);
+					$amount_main_currency = -(float) price2num($this->bank_amount / $rate, 'MT');
 				}
 			}
 

@@ -129,6 +129,14 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			$error++;
 			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
 		}
+		$multicurrency_tx = $expensereport->getMulticurrencyRate();
+		if ($expensereport->isInForeignCurrency() && GETPOSTISSET('multicurrency_tx')) {
+			$multicurrency_tx = price2num(GETPOST('multicurrency_tx', 'alpha'));
+			if (!is_numeric($multicurrency_tx) || $multicurrency_tx <= 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorFieldFormat', $langs->transnoentities('CurrencyRate')), null, 'errors');
+			}
+		}
 		// A payment can't be higher than the remainder to pay
 		$remaintopay = (float) price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
 		$multicurrency_remaintopay = (float) price2num($expensereport->multicurrency_total_ttc - $expensereport->getSumPayments(1), 'MT');
@@ -138,9 +146,6 @@ if ($action == 'add_payment' && $permissiontoadd) {
 				$error++;
 				setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
 			}
-			foreach ($amounts as $key => $value) {
-				$amounts[$key] = ($multicurrency_amount == $multicurrency_remaintopay ? $remaintopay : (float) price2num($value / $expensereport->getMulticurrencyRate(), 'MT'));
-			}
 		} elseif (!$error && $multicurrency_amount > $remaintopay) {
 			$error++;
 			setEventMessages($langs->trans('PaymentHigherThanReminderToPay'), null, 'errors');
@@ -148,6 +153,17 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 		if (!$error) {
 			$db->begin();
+
+			if (price2num($multicurrency_tx, 'CU') != price2num($expensereport->getMulticurrencyRate(), 'CU') && $expensereport->setMulticurrencyRateAtPayment((float) $multicurrency_tx) < 0) {
+				$error++;
+				setEventMessages($expensereport->error, $expensereport->errors, 'errors');
+			}
+			if ($expensereport->isInForeignCurrency()) {
+				$remaintopay = (float) price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				foreach ($amounts as $key => $value) {
+					$amounts[$key] = ($multicurrency_amount == $multicurrency_remaintopay ? $remaintopay : (float) price2num($value / $expensereport->getMulticurrencyRate(), 'MT'));
+				}
+			}
 
 			// Create a line of payments
 			$payment = new PaymentExpenseReport($db);
@@ -293,6 +309,19 @@ if ($action == 'create' || empty($action)) {
 	print "</td>\n";
 	print '</tr>';
 
+	if ($expensereport->isInForeignCurrency()) {
+		$ratelabel = ' <span class="opacitymedium">'.$expensereport->multicurrency_code.' = 1 '.$conf->currency.'</span>';
+		print '<tr><td>';
+		if ($expensereport->canSetMulticurrencyRateAtPayment()) {
+			print $form->textwithpicto($langs->trans('CurrencyRate'), $langs->trans('ExpenseReportPaymentRateHelp', $conf->currency)).'</td>';
+			print '<td colspan="2"><input type="text" class="width75" name="multicurrency_tx" value="'.dol_escape_htmltag(GETPOSTISSET('multicurrency_tx') ? GETPOST('multicurrency_tx', 'alpha') : price(price2num($expensereport->multicurrency_tx, 'CU'))).'">'.$ratelabel;
+		} else {
+			print $form->textwithpicto($langs->trans('CurrencyRate'), $langs->trans('ErrorExpenseReportRateChangeOnlyAtFirstPayment')).'</td>';
+			print '<td colspan="2">'.price($expensereport->multicurrency_tx, 1, $langs, 0, 0).$ratelabel;
+		}
+		print '</td></tr>';
+	}
+
 	if (isModEnabled("bank")) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
@@ -302,7 +331,7 @@ if ($action == 'create' || empty($action)) {
 		print '</td></tr>';
 
 		print '<tr>';
-		print '<td>'.$form->textwithpicto($langs->trans('AmountDebitedFromBankAccount'), $langs->trans('AmountDebitedFromBankAccountHelp', $currency)).'</td>';
+		print '<td>'.$form->textwithpicto($langs->trans('AmountDebitedFromBankAccount'), $langs->trans('AmountDebitedFromBankAccountHelp', implode(', ', array_unique(array($currency, $conf->currency))))).'</td>';
 		print '<td colspan="2"><input type="text" class="width75" name="bank_amount" value="'.dol_escape_htmltag(GETPOST('bank_amount', 'alpha')).'"></td>';
 		print '</tr>';
 	}

@@ -2196,6 +2196,67 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
+	 * Return true when the payment of the expense report can still set its rate: approved, not paid at all and not transferred to accounting.
+	 *
+	 * @return	bool
+	 */
+	public function canSetMulticurrencyRateAtPayment()
+	{
+		return ($this->status == self::STATUS_APPROVED && empty($this->getSumPayments()) && empty($this->getVentilExportCompta()));
+	}
+
+	/**
+	 * Set the rate of the reimbursement on the expense report: its amounts in company currency are recalculated from the ones in its currency, that are kept.
+	 *
+	 * @param	float	$rate	Multicurrency rate
+	 * @return	int				>0 if OK, <0 if KO
+	 */
+	public function setMulticurrencyRateAtPayment($rate)
+	{
+		global $langs, $mysoc;
+
+		if (!$this->canSetMulticurrencyRateAtPayment()) {
+			$langs->load('trips');
+			$this->error = $langs->trans('ErrorExpenseReportRateChangeOnlyAtFirstPayment');
+			return -2;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET multicurrency_tx = ".((float) $rate)." WHERE rowid = ".((int) $this->id);
+		$error = ($this->db->query($sql) ? 0 : 1);
+		$this->multicurrency_tx = $rate;
+
+		if (empty($this->lines)) {
+			$this->fetch_lines();
+		}
+		foreach ($this->lines as $line) {
+			$value_unit = $line->multicurrency_subprice_ttc / $rate;
+			$tmp = calcul_price_total($line->qty, $value_unit, 0, (float) $line->vatrate, -1, -1, 0, 'TTC', 0, 0, $mysoc, array($line->localtax1_type, $line->localtax1_tx, $line->localtax2_type, $line->localtax2_tx));
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line;
+			$sql .= " SET value_unit = ".((float) price2num($value_unit));
+			$sql .= ", total_ht = ".((float) price2num($tmp[0], 'MT')).", total_tva = ".((float) price2num($tmp[1], 'MT')).", total_ttc = ".((float) price2num($tmp[2], 'MT'));
+			$sql .= ", total_localtax1 = ".((float) price2num($tmp[9], 'MT')).", total_localtax2 = ".((float) price2num($tmp[10], 'MT'));
+			$sql .= " WHERE rowid = ".((int) $line->id);
+			if (!$this->db->query($sql)) {
+				$error++;
+			}
+		}
+
+		if (!$error && $this->update_price(1) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		$this->db->rollback();
+		return -1;
+	}
+
+	/**
 	 * Set the error of a currency or rate change on an expense report that is not a draft.
 	 *
 	 * @return	int		-2
