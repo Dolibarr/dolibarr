@@ -2182,6 +2182,7 @@ class Holiday extends CommonObject
 	 */
 	public function fetch_users_approver_holiday()
 	{
+		global $conf;
 		// phpcs:enable
 		$users_validator = array();
 
@@ -2192,6 +2193,7 @@ class Holiday extends CommonObject
 		$sql .= " SELECT DISTINCT ugu.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
 		$sql .= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'holiday' AND rd.perms = 'approve'"; // Permission 'Approve';
+		$sql .= " AND ur.entity = " . (int) $conf->entity;
 		//print $sql;
 
 		dol_syslog(get_class($this)."::fetch_users_approver_holiday sql=".$sql);
