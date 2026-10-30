@@ -463,6 +463,8 @@ class CommandeTest extends CommonClassTest
 		$order->addline('Free line', 100, 1, 0);
 		$order->fetch($order->id);
 
+		$this->assertEquals(-1, $order->createPurchaseOrders(new User($db)), 'A user without rights must not create purchase orders');
+
 		$result = $order->createPurchaseOrders($user);
 		$this->assertIsArray($result, $order->errorsToString());
 		$this->assertCount(2, $result['orders'], 'One purchase order per supplier');

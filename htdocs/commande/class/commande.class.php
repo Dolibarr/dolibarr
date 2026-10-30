@@ -1630,6 +1630,11 @@ class Commande extends CommonOrder
 	{
 		global $mysoc;
 
+		if (!$user->hasRight('fournisseur', 'commande', 'creer') && !$user->hasRight('supplier_order', 'creer')) {
+			$this->error = 'NotAuthorized';
+			return -1;
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
