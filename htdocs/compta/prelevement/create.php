@@ -463,7 +463,7 @@ if (!$forusers) {
 	$sql .= " AND pd.ext_payment_id IS NULL";
 	$sql .= " AND s.rowid = pd.fk_salary AND s.paye = ".Salary::STATUS_UNPAID;
 	$sql .= " AND pd.traite = 0";
-} elseif ($sourcetype == 'expensereport') {
+} else {
 	$sql = "SELECT e.ref, e.rowid, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
 	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e,";
