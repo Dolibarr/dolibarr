@@ -433,6 +433,12 @@ if ($nolinesbefore) {
 						event.preventDefault();
 						$("#dropdownAddProductAndService").toggleClass("open");
 					});
+					// Close the dropdown when clicking outside of it
+					$(document).on("click", function(event) {
+						if ($(event.target).closest("#dropdownAddProductAndService").length == 0) {
+							$("#dropdownAddProductAndService").removeClass("open");
+						}
+					});
 				});
 			</script>
 			<?php

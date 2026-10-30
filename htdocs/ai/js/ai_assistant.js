@@ -1611,10 +1611,10 @@ export function initAiAssistant(container) {
 
     // "/tools" stays the debug command of the chat; any other "/..." line is the palette.
     // Commands the chat answers by itself (sendMessage): never caught by the palette.
-    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help'];
+    const CHAT_LOCAL_COMMANDS = ['/tools', '/new', '/clear', '/status', '/help', '/reload'];
 
     // Commands of the chat shown in the palette (run by handleQuery()), with their label key.
-    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus']];
+    const PALETTE_LOCALS = [['help', 'AIHelpHelp'], ['new', 'AIHelpClear'], ['status', 'AIHelpStatus'], ['tools', 'AIHelpTools'], ['reload', 'AIHelpReload']];
     // The whole name of one of them typed: the palette stays open on it until Enter.
     function paletteLocalTyped(v) {
         return typeof v === 'string' && PALETTE_LOCALS.some((l) => v.trim().toLowerCase() === '/' + l[0]);
@@ -1654,7 +1654,7 @@ export function initAiAssistant(container) {
     function paletteRank(tool, ctx) {
         if (!ctx) return 3;
         if (ctx.families.some((f) => tool.name.indexOf('api_' + f + '_') === 0)) return 0;
-        if (tool.name === 'api_documents_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
+        if (tool.name === 'api_documents_objects_list' && ctx.id && PALETTE_MODULEPART[ctx.element]) return 1;
         const p = tool.properties || {};
         if (ctx.socid && (p.socid || p.thirdparty_ids)) return 2;
         return 3;
@@ -2132,7 +2132,7 @@ export function initAiAssistant(container) {
         const own = paletteRank(tool, ctx) <= 1;   // the card's own tools and its files
         if (pname === 'id' && own && ctx.id) return String(ctx.id);
         if (pname === 'ref' && own && ctx.ref) return ctx.ref;
-        if (pname === 'modulepart' && tool.name === 'api_documents_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
+        if (pname === 'modulepart' && tool.name === 'api_documents_objects_list' && ctx.id) return PALETTE_MODULEPART[ctx.element] || '';
         if ((pname === 'socid' || pname === 'thirdparty_ids') && ctx.socid) return String(ctx.socid);
         return '';
     }
@@ -2285,6 +2285,13 @@ export function initAiAssistant(container) {
     // =========================================================================
 
     function initConfirmationVoiceRecognition() {
+        // The Google voice input is not offered in the webview of a smartphone
+        // webapp (the cloud option is not rendered server side): no cloud
+        // recognition here either, only the buttons answer.
+        if (engineSelect.value !== 'whisper' && !engineSelect.querySelector('option[value="cloud"]')) {
+            isConfirmationListening = false;
+            return;
+        }
         isConfirmationListening = true;
         if (engineSelect.value === 'whisper') {
             if (!whisperReady) { showVoiceFeedback(t('ModelLoading')); return; }
@@ -2834,6 +2841,7 @@ export function initAiAssistant(container) {
             html += line('/help', t('AIHelpHelp'), true);
             html += line('/new, /clear', t('AIHelpClear'), true);
             html += line('/status', t('AIHelpStatus'), true);
+            html += line('/reload', t('AIHelpReload'), true);
             html += '</ul><b>' + escapeHtml(t('AIHelpMentions')) + '</b><ul>';
             html += line('@', t('AIHelpMentionThirdparty'), true);
             html += line('#', t('AIHelpMentionProduct'), true);
@@ -2857,6 +2865,31 @@ export function initAiAssistant(container) {
                 .replace('%s', String(Math.round(whole.reduce((n, p) => n + p.text.length, 0) / 4)));
             appendMsg('user', escapeHtml(query));
             appendMsg('bot', escapeHtml(stats));
+            input.value = '';
+            input.style.height = '44px';
+            input.focus();
+            return;
+        }
+
+        // "/reload" is answered locally (no AI call): the tools endpoint with
+        // action=purge clears the cache of the AI tool definitions, so the next
+        // request rebuilds it from the current state. Both bubbles have no raw
+        // text so they never travel as context.
+        if (query.toLowerCase() === '/reload' && !readyDocs.length) {
+            appendMsg('user', escapeHtml(query));
+            appendTyping();
+            const loadingReload = chat.lastElementChild;
+            try {
+                const res = await fetch(epUrl('list_tools.php') + '&action=purge', { method: 'POST', credentials: 'same-origin' });
+                const reload = await aiJson(res);
+                loadingReload.remove();
+                const msg = (reload && reload.error) ? t('AIError') + ': ' + reload.error
+                    : ((reload && reload.purged) ? t('AIReloadDone').replace('%s', String(reload.purged)) : t('AIReloadNothing'));
+                appendMsg('bot', escapeHtml(msg));
+            } catch (e) {
+                loadingReload.remove();
+                appendMsg('error', t('AIError') + ': ' + e.message);
+            }
             input.value = '';
             input.style.height = '44px';
             input.focus();

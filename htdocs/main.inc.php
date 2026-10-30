@@ -388,6 +388,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'presend_addmessage',
 			'preview',
 			'reconcile',
+			'showsummary',
 			'specimen',
 			'testsetup',
 			'undeployconfirmed',
@@ -1857,6 +1858,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
+		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
+		if (isModEnabled('ai')) {
+			$titletoshow .= ' + ai';
+		}
+
 		print $titletoshow;
 		print '</title>';
 
@@ -1937,6 +1943,21 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
 		if (is_object($hookmanager)) {
 			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
+		}
+
+		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
+		$parameters = array('jsContextVars' => $jsContextVars);
+		$reshook = $hookmanager->executeHooks('addJsContextVars', $parameters);
+		if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+			foreach ($hookmanager->resArray as $key => $value) {
+				if (array_key_exists($key, $jsContextVars)) {
+					dol_syslog("JS context var '".$key."' added by a module is already defined, it is ignored", LOG_WARNING);
+				} elseif (!is_scalar($value)) {
+					dol_syslog("JS context var '".$key."' added by a module must be a string, a number or a boolean, it is ignored", LOG_WARNING);
+				} else {
+					$jsContextVars[$key] = $value;
+				}
+			}
 		}
 
 		// Load context and all js tools
@@ -2351,17 +2372,17 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Add AI picto
 		$toprightmenu .= top_menu_ai();
 
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
 		// Add bookmark dropdown
 		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
-			// Add the import file link
-			$toprightmenu .= top_menu_importfile();
 		}
 
 		$toprightmenu .= '</div>';
@@ -3084,6 +3105,9 @@ function top_menu_importfile()
 		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
 		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
+		} elseif (!isModEnabled('ai')) {
+			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
+			return '';
 		}
 
 		$html .= '<!-- div for link to upload file -->
@@ -3314,12 +3338,12 @@ function top_menu_bookmark()
 		$langs->load("bookmarks");
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+			$html .= '<div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">';
 			$html .= printDropdownBookmarksList();
 			$html .= '</div>';
 		} else {
 			$html .= '<!-- div for bookmark link -->
-	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
 	            <a accesskey="b" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$conf->browser->stringforfirstkey.' b)"><i class="fa fa-star"></i></a>
 	            <div class="dropdown-menu">
 	                '.printDropdownBookmarksList().'

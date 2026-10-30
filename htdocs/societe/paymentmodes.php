@@ -2172,7 +2172,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintText(GETPOSTISSET('address') ? GETPOST('address', 'alpha') : $companybankaccount->address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('address') ? GETPOST('address', 'alpha') : $companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -2181,7 +2181,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
-	print dolPrintText(GETPOSTISSET('owner_address') ? GETPOST('owner_address', 'alpha') : $companybankaccount->owner_address);
+	print dolPrintHTMLForTextArea(GETPOSTISSET('owner_address') ? GETPOST('owner_address', 'alpha') : $companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';

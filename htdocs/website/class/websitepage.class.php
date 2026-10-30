@@ -267,9 +267,10 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User		$user      User that creates
 	 * @param  int<0,1> $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  string[] $phpwrappers	PHP code strings added by the application itself (like header and footer containers), allowed even without permission writephp
 	 * @return int      	       Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0, $phpwrappers = array())
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -302,7 +303,14 @@ class WebsitePage extends CommonObject
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			$phpcontent = dolKeepOnlyPhpCode($this->content);
+			// PHP wrappers added by the application itself (parameter $phpwrappers) are excluded from this test
+			$contenttocheck = (string) $this->content;
+			if (is_array($phpwrappers)) {
+				foreach ($phpwrappers as $wrapper) {
+					$contenttocheck = str_replace((string) $wrapper, '', $contenttocheck);
+				}
+			}
+			$phpcontent = dolKeepOnlyPhpCode($contenttocheck);
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';

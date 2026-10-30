@@ -200,6 +200,11 @@ print '</td>';
 print '<td><span class="small opacitymedium">'.$langs->trans('ForceBuyingPriceIfNullDetails').'</span></td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MarginUpdateLinkedBuyingPrice").'</td>';
+print '<td colspan="2">'.ajax_constantonoff('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS').'</td>';
+print '</tr>';
+
 // GLOBAL DISCOUNT MANAGEMENT
 $methods = array(
 	1 => $langs->trans('UseDiscountAsProduct'),

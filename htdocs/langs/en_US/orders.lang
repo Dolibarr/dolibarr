@@ -16,6 +16,7 @@ NewSupplierOrderShort=New order
 NewOrderSupplier=New Purchase Order
 ToOrder=Make order
 MakeOrder=Make order
+UpdateBuyingPriceFromOrder=Update the supplier price and the cost price of the products with the prices of this order
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SaleOrderLines=Sales order lines
