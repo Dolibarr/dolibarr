@@ -1620,6 +1620,19 @@ class CommandeFournisseur extends CommonOrder
 			$canservice = $user->hasRight('service', 'creer');
 		}
 
+		// Products for which the supplier already has a price, whatever its ref
+		$withprice = array();
+		$productids = array(0);
+		foreach ($this->lines as $line) {
+			$productids[] = (int) $line->fk_product;
+		}
+		$sql = "SELECT DISTINCT fk_product FROM ".$this->db->prefix()."product_fournisseur_price";
+		$sql .= " WHERE fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity('productsupplierprice').") AND fk_product IN (".$this->db->sanitize(implode(',', $productids)).")";
+		$resql = $this->db->query($sql);
+		while ($resql && $obj = $this->db->fetch_object($resql)) {
+			$withprice[(int) $obj->fk_product] = 1;
+		}
+
 		$nbupdated = 0;
 		foreach ($this->lines as $line) {
 			if ($line->fk_product <= 0 || $line->qty <= 0 || $line->subprice <= 0 || ($line->product_type == Product::TYPE_SERVICE ? !$canservice : !$canproduct)) {
@@ -1645,10 +1658,11 @@ class CommandeFournisseur extends CommonOrder
 			// The supplier has no price for this product: create it for the quantity 1, like the buying prices tab of the product does.
 			// The supplier ref is the one of the line or else the ref of the product, as it must be unique for a supplier and a quantity.
 			$newprice = new ProductFournisseur($this->db);
-			if (empty($productsupplier->product_fourn_price_id) && $newprice->list_product_fournisseur_price($line->fk_product, '', '', 1, 0, (int) $this->socid) === array() && $newprice->fetch($line->fk_product) > 0) {
+			if (empty($productsupplier->product_fourn_price_id) && empty($withprice[$line->fk_product]) && $newprice->fetch($line->fk_product) > 0) {
 				$ref = ($line->ref_supplier ? (string) $line->ref_supplier : $newprice->ref);
 				$result = $newprice->add_fournisseur($user, (int) $this->socid, $ref, 1);	// -3 if this supplier ref is used by another product
 				if ($result > 0) {
+					$withprice[$line->fk_product] = 1;
 					$result = $newprice->update_buyprice(1, (float) $line->subprice, $user, 'HT', $this->thirdparty, 0, $ref, (float) $line->tva_tx, 0, $line->remise_percent, 0, 0, 0, '', array(), (string) $line->vat_src_code, (float) ($line->multicurrency_subprice ?: $line->subprice), 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code);
 					$nbupdated++;
 				}

@@ -506,9 +506,9 @@ class CommandeFournisseurTest extends CommonClassTest
 		$societe = new Societe($db);
 		$societe->fetch(1);
 
-		// Products 1 and 2 have no supplier price, product 3 has one with a supplier ref, product 4 has none and uses the supplier ref of product 3
+		// Products 1 and 2 have no supplier price, product 3 has one with a supplier ref, product 4 has none and uses the supplier ref of product 3, product 5 has one of another supplier, product 6 has one of this supplier in another entity
 		$products = array();
-		foreach (array(1, 2, 3, 4) as $i) {
+		foreach (array(1, 2, 3, 4, 5, 6) as $i) {
 			$products[$i] = new ProductFournisseur($db);
 			$products[$i]->initAsSpecimen();
 			$products[$i]->ref = 'PHPUNIT_CREATEPRICE_'.$i.'_'.dol_now();
@@ -517,12 +517,21 @@ class CommandeFournisseurTest extends CommonClassTest
 		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_'.dol_now();
 		$this->assertGreaterThan(0, $products[3]->add_fournisseur($user, $societe->id, $ref_fourn, 1), 'Failed to create the supplier price line of product 3');
 		$this->assertGreaterThan(0, $products[3]->update_buyprice(1, 40, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', 40, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 3');
+		$societe2 = new Societe($db);
+		$this->assertGreaterThan(0, $societe2->fetch(2), 'The other thirdparty must exist');
+		$ref_fourn2 = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_OTHER_'.dol_now();
+		$this->assertGreaterThan(0, $products[5]->add_fournisseur($user, $societe2->id, $ref_fourn2, 1), 'Failed to create the supplier price line of product 5');
+		$this->assertGreaterThan(0, $products[5]->update_buyprice(1, 30, $user, 'HT', $societe2, 0, $ref_fourn2, 0, 0, 0, 0, 0, 0, '', array(), '', 30, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 5');
+		$ref_fourn3 = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_ENTITY_'.dol_now();
+		$this->assertGreaterThan(0, $products[6]->add_fournisseur($user, $societe->id, $ref_fourn3, 1), 'Failed to create the supplier price line of product 6');
+		$this->assertGreaterThan(0, $products[6]->update_buyprice(1, 20, $user, 'HT', $societe, 0, $ref_fourn3, 0, 0, 0, 0, 0, 0, '', array(), '', 20, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 6');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price SET entity = 2 WHERE fk_product = ".((int) $products[6]->id));
 
 		$order = new CommandeFournisseur($db);
 		$order->initAsSpecimen();
 		$order->socid = $societe->id;
 		$order->lines = array();
-		foreach (array(array(1, 2, 50, ''), array(2, 1, 70, ''), array(3, 1, 45, ''), array(4, 1, 60, $ref_fourn)) as $data) {
+		foreach (array(array(1, 2, 50, ''), array(2, 1, 70, ''), array(3, 1, 45, ''), array(4, 1, 60, $ref_fourn), array(5, 1, 80, ''), array(6, 1, 90, '')) as $data) {
 			$line = new CommandeFournisseurLigne($db);
 			$line->desc = 'phpunit line of product '.$data[0];
 			$line->qty = $data[1];
@@ -535,7 +544,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
 		$order->fetch($orderid);
 
-		$this->assertEquals(6, $order->updateProductBuyPrices($user), 'Supplier price created and cost price of products 1 and 2, cost price of products 3 and 4');
+		$this->assertEquals(10, $order->updateProductBuyPrices($user), 'Supplier price created and cost price of products 1, 2, 5 and 6, cost price of products 3 and 4');
 
 		// The supplier prices of the products 1 and 2 are created for the quantity 1, with the ref of the product as supplier ref, and none replaces the other
 		foreach (array(1 => 50, 2 => 70) as $i => $unitprice) {
@@ -550,6 +559,18 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertCount(1, $prices, 'The supplier price of product 3 must not be duplicated');
 		$this->assertEquals(40, (float) $prices[0]->fourn_unitprice, 'The supplier price of product 3 must not change');
 		$this->assertCount(0, $products[4]->list_product_fournisseur_price($products[4]->id), 'No supplier price when the supplier ref is used by another product');
+
+		// The price of another supplier does not prevent to create the one of this supplier
+		$unitprices = array();
+		foreach ($products[5]->list_product_fournisseur_price($products[5]->id) as $price) {
+			$unitprices[] = (float) $price->fourn_unitprice;
+		}
+		$this->assertEqualsCanonicalizing(array(30, 80), $unitprices, 'The supplier price of product 5 is created next to the one of the other supplier');
+
+		// The price of this supplier in another entity does not prevent to create the one of this entity
+		$prices = $products[6]->list_product_fournisseur_price($products[6]->id);
+		$this->assertCount(1, $prices, 'The supplier price of product 6 is created in this entity');
+		$this->assertEquals(90, (float) $prices[0]->fourn_unitprice, 'Price created for product 6');
 
 		$conf->global->MAIN_USE_ADVANCED_PERMS = $advancedperms;
 
