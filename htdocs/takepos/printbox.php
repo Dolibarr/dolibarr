@@ -48,9 +48,6 @@ require '../main.inc.php'; // Load $user and permissions
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-
-global $langs, $db;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
@@ -89,7 +86,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 	function Save() {
 		console.log("We click so we call page receipt.php with facid=<?php echo $facid; ?>");
 		parent.$.colorbox.close();
-		$.colorbox({ href:"receipt.php?facid=<?php echo $facid; ?>&action=<?php echo $action; ?>&token=<?php echo newToken(); ?>&label="+$('#label').val()+"&qty="+$('#qty').val(), width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+		$.colorbox({ href:"receipt.php?facid=<?php echo $facid; ?>&action=<?php echo $action; ?>&token=<?php echo newToken(); ?>&label="+$('#label').val()+"&qty="+$('#qty').val(), width:"40%", height:"90%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("PrintTicket"))."'" ; ?>});
 	}
 
 	jQuery(document).ready(function(){

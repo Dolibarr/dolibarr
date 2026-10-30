@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -137,10 +137,10 @@ class modSociete extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 121; // id de la permission
-		$this->rights[$r][1] = 'Read third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 121; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read third parties'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		/*$r++;
@@ -161,10 +161,10 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 122; // id de la permission
-		$this->rights[$r][1] = 'Create and update third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 122; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create and update third parties'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		/* $r++;
@@ -185,17 +185,17 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 125; // id de la permission
-		$this->rights[$r][1] = 'Delete third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 125; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete third parties'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 126; // id de la permission
-		$this->rights[$r][1] = 'Export third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 126; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Export third parties'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		$r++;
@@ -225,34 +225,34 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 281; // id de la permission
-		$this->rights[$r][1] = 'Read contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 281; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read contacts'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 282; // id de la permission
-		$this->rights[$r][1] = 'Create and update contact'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 282; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create and update contact'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 283; // id de la permission
-		$this->rights[$r][1] = 'Delete contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 283; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete contacts'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 286; // id de la permission
-		$this->rights[$r][1] = 'Export contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 286; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Export contacts'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
@@ -618,16 +618,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
@@ -859,16 +853,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'

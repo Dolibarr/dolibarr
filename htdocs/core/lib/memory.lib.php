@@ -107,6 +107,10 @@ function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0, $replace = 
 			} else {
 				return -$rescode;
 			}
+		} elseif ($rescode == Memcached::RES_NOTSTORED) {
+			// Key already exists and caller did not ask to replace it: nothing to do, this is not an error.
+			// Happens when several requests load the same data concurrently, only the first add() wins.
+			return 0;
 		} else {
 			return -$rescode;
 		}
@@ -259,7 +263,7 @@ function dol_getcache($memoryid, $filecache = 0)
 		if ($json->expire > $now) {
 			return $json->data;
 		} else {
-			$result = dol_delete_file($pathcache.'/'.$memoryid.'.cache');
+			$result = dol_delete_file($pathcache.'/'.$memoryid.'.cache', 1);
 			if (!$result) {
 				return -2;
 			}

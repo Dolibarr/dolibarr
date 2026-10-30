@@ -5,7 +5,8 @@ param1="$1"
 
 # Configuration des versions
 START=14
-END=23
+# TODO Autodetec last version
+END=24
 DEV_DIR="dolibarr_dev"
 DEV_BRANCH="develop"
 

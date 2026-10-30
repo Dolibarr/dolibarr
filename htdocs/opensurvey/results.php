@@ -256,7 +256,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 		$dateinsertion = substr("$dateinsertion", 1);
 
 		// update with new topics into database
-		if (isset($erreur_ajout_date) && empty($erreur_ajout_date)) {
+		if (empty($erreur_ajout_date)) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 			$sql .= " SET sujet = '".$db->escape($dateinsertion)."'";
 			$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
@@ -528,7 +528,7 @@ print '<table class="border tableforfield centpercent">';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td>';
 if ($action == 'edit') {
-	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
+	print $form->selectDate(!empty($expiredate) ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
 	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {

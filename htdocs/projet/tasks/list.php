@@ -191,6 +191,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1179,6 +1182,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->projecttitle;
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
+	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
 	if ($obj->socid) {
@@ -1265,7 +1269,7 @@ while ($i < $imaxinloop) {
 			// Label
 			if (!empty($arrayfields['t.label']['checked'])) {
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
-				print dol_escape_htmltag($object->label);
+				print '<span class="spantitle">'.dol_escape_htmltag($object->label).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1349,7 +1353,7 @@ while ($i < $imaxinloop) {
 			// Project status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
 				print '<td class="center">';
-				print $projectstatic->getLibStatut(1);
+				print $projectstatic->getLibStatut(5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

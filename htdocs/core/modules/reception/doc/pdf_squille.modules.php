@@ -297,8 +297,8 @@ class pdf_squille extends ModelePdfReception
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;	// position of top tab
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top = 80 + $this->marge_haute;	// position of top tab
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -338,14 +338,14 @@ class pdf_squille extends ModelePdfReception
 
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
-							if ($object->reception_method_id > 0) {
+							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipment_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
 								}
-								$label .= $outputlangs->trans("ReceptionMethod").": ".$outputlangs->trans("ReceptionMethod".strtoupper($code));
+								$label .= $outputlangs->trans("ReceptionMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
 								//var_dump($object->tracking_url != $object->tracking_number);exit;
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= " : ";
@@ -987,13 +987,15 @@ class pdf_squille extends ModelePdfReception
 
 
 		$pdf->SetFont('', '', $default_font_size + 3);
-		$Yoff = 25;
+		$Yoff = 25 + $this->marge_haute;
 
 		// Add list of linked orders
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 
-		$object->fetch_origin();
+		if (!empty($origin) && $origin_id > 0) {
+			$object->fetch_origin();
+		}
 
 		// TODO move to external function
 		if (isModEnabled("supplier_order")) {     // commonly $origin='commande'
@@ -1002,13 +1004,14 @@ class pdf_squille extends ModelePdfReception
 			$classname = 'CommandeFournisseur';
 			$linkedobject = new $classname($this->db);
 			$result = $linkedobject->fetch($origin_id);
-			if ($result >= 0) {
+			if ($result > 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
+
 				$text = (string) $linkedobject->ref;
-				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
-					$text .= ' ('.$linkedobject->ref_client.')';
+				if (!empty($linkedobject->ref_supplier)) {
+					$text .= ' ('.$linkedobject->ref_supplier.')';
 				}
 				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
@@ -1029,7 +1032,7 @@ class pdf_squille extends ModelePdfReception
 			if (!empty($origin) && is_object($object->origin_object)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
 			}
-			if (empty($arrayidcontact)) {
+			if (empty($arrayidcontact) && is_object($object->origin_object)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
@@ -1047,7 +1050,7 @@ class pdf_squille extends ModelePdfReception
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1069,7 +1072,7 @@ class pdf_squille extends ModelePdfReception
 
 			// If RECEPTION contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = is_object($object->origin_object) ? $object->origin_object->getIdContact('external', 'SHIPPING') : array();
 
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
@@ -1104,7 +1107,7 @@ class pdf_squille extends ModelePdfReception
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

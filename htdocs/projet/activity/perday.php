@@ -227,7 +227,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assign
 				$obj = $db->fetch_object($resql);
 				if (!$obj) {	// User is not already linked to project, so we will create link to first type
 					$project = new Project($db);
-					$project->fetch($object->fk_project);
+					$project->fetch((int) $object->fk_project);
 					// Get type
 					$listofprojcontact = $project->liste_type_contact('internal');
 

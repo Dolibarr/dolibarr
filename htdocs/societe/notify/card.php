@@ -40,13 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
 
 $socid     = GETPOSTINT("socid");
 $action    = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $contactid = GETPOST('contactid', 'alpha'); // May be an int or 'thirdparty'
 $actionid  = GETPOSTINT('actionid');
-$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
 if ($user->socid) {
@@ -55,8 +57,6 @@ if ($user->socid) {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
-
-$result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -79,6 +79,11 @@ $now = dol_now();
 
 // Security check
 $object = new Societe($db);
+if ($socid > 0) {
+	$object->fetch($socid);
+}
+
+$result = restrictedArea($user, 'societe', $object, '');
 
 $permissiontoadd = $user->hasRight('societe', 'write');
 
@@ -140,7 +145,9 @@ if (empty($reshook)) {
 
 	// Remove a notification
 	if ($action == 'delete' && $permissiontoadd) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid = ".GETPOSTINT('actid');
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+		$sql .= " WHERE rowid = ".GETPOSTINT('actid');
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$db->query($sql);
 	}
 }
@@ -152,9 +159,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-
-$object = new Societe($db);
-$result = $object->fetch($socid);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {

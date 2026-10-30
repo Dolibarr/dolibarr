@@ -56,10 +56,12 @@ if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
 }
 
 // If upload has been allowed with WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES set, we check permissions.
+// This connector browses and writes into the medias directory, so it must be
+// restricted the same way as on the newer branches. Without this check any
+// authenticated user (even with no module right) could reach the file manager.
 if (empty($user->admin) && !$user->hasRight('website', 'write')) {
 	accessforbidden('Need to have website write permission to upload files in medias directory.');
 }
-
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only

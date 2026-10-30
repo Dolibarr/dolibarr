@@ -388,7 +388,7 @@ class SimpleOpenID
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
 
-		list($servers, $delegates) = $this->HTML2OpenIDServer($response);
+		list($servers, $delegates) = $this->HTML2OpenIDServer($response['content']);
 		if (count($servers) == 0) {
 			$this->ErrorStore('OPENID_NOSERVERSFOUND');
 			return false;

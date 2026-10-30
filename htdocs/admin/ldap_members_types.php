@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors'));
+$langs->loadLangs(array('admin'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -123,7 +123,7 @@ print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembersTypes").'</sp
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
@@ -134,7 +134,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembersTypes").'</td>';
 print "</tr>\n";
 
-// DN pour les types de membres
+// DN for the member types
 print '<!-- LDAP_MEMBER_TYPE_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
 print '<input size="48" type="text" name="membertype" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_DN').'">';
@@ -240,6 +240,7 @@ if (function_exists("ldap_connect")) {
 				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</span><br>';
+				$langs->load('errors');
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -252,6 +253,7 @@ if (function_exists("ldap_connect")) {
 			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</span><br>';
+			$langs->load('errors');
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -43,6 +46,8 @@ $langs->load("stocks");
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$socid = GETPOSTINT('socid');
 
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
@@ -97,7 +102,7 @@ if (isModEnabled('project')) {
 			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!empty($object->socid) ? $object->socid : 0), (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 		}
 	} else {
 		if (!empty($object->fk_project)) {

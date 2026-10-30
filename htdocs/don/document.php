@@ -132,7 +132,7 @@ if ($object->id && $upload_dir !== null) {
 
 	$head = donation_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation', 0, '', '', 0, '', 1);
 
 
 	// Build file list

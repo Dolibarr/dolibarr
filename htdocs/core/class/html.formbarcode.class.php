@@ -143,7 +143,7 @@ class FormBarCode
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY code";
 
 		$result = $this->db->query($sql);

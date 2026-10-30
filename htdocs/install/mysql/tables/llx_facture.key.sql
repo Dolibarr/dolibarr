@@ -32,6 +32,7 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
+ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);

@@ -3,52 +3,52 @@
 #
 # Global
 #
-Subtotal=Subtotals
-SubTotalModuleDesc=Subtotal and title lines for certain documents
+Subtotal=Проміжні підсумки
+SubTotalModuleDesc=Рядки проміжних підсумків та заголовків для певних документів
 #
 # Admin
 #
-SubtotalSetup=Subtotals module setup
-MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
-NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalSetup=Налаштування модуля проміжних підсумків
+MaxSubtotalLevel=Максимальний рівень
+SubtotalLineBackColor=Колір фону рядків рівня %s
+NotSupportedByAllPDF=Працюватиме з новими PDF, але не зі старими %s
 
 #
 # Card
 #
-AddTitleLine=Add title line
-AddSubtotalLine=Add subtotal line
-TitleNeedDesc=You must enter a valid description to create a title.
-TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
-TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
-DeleteSubtotalLine=Delete subtotal line
-ConfirmDeleteSubtotalLine=Are you sure you want to delete this subtotal line?
-DeleteTitleLine=Delete title line
-ConfirmDeleteTitleLine=Are you sure you want to delete this title line?
-DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
-SubtotalLevel=Level %s
-SubtotalLineDesc=Line description
-SubtotalLineLevel=Line level
-ShowUPOnPDF=Show unit price on PDF
-ShowTotalExludingVATOnPDF=Show the total excluding VAT on the PDF
-ForcePageBreak=Force page break before title
-NoTitleError=You have no title line or they already all have a corresponding subtotal line
-CorrespondingTitleLine=Corresponding title line
-SelectVATRate=Select VAT rate
-EnterRemisePercent=Enter discount percent
-ApplyVATForBlock=Apply VAT for this block
-ApplyDiscountForBlock=Apply discount for this block
-TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
-TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
-TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
-PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
-STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
-STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
-STLineUnderTitle=Subtotal line must be under its title
-UnsupportedModuleError=You can't add a subtotals line in unsupported module
-CorrespondingTitleNotFound=The corresponding title was not found
+AddTitleLine=Додати рядок заголовка
+AddSubtotalLine=Додати рядок проміжного підсумку
+TitleNeedDesc=Ви повинні ввести коректний опис, щоб створити заголовок.
+TitleAddedLevelTooHigh=Рівень доданого заголовка завеликий (натомість додано з рівнем %s).
+TitleEditedLevelTooHigh=Рівень відредагованого заголовка завеликий (натомість відредаговано з рівнем %s).
+DeleteSubtotalLine=Видалити рядок проміжного підсумку
+ConfirmDeleteSubtotalLine=Ви впевнені, що хочете видалити цей рядок проміжного підсумку?
+DeleteTitleLine=Видалити рядок заголовка
+ConfirmDeleteTitleLine=Ви впевнені, що хочете видалити цей рядок заголовка?
+DeleteCorrespondingSubtotalLine=Видалити відповідний рядок проміжного підсумку?
+SubtotalLevel=Рівень %s
+SubtotalLineDesc=Опис рядка
+SubtotalLineLevel=Рівень рядка
+ShowUPOnPDF=Показувати ціну за одиницю в PDF
+ShowTotalExludingVATOnPDF=Показувати загальну суму без ПДВ у PDF
+ForcePageBreak=Примусовий розрив сторінки перед заголовком
+NoTitleError=У вас немає рядка заголовка або всі вони вже мають відповідний рядок проміжного підсумку
+CorrespondingTitleLine=Відповідний рядок заголовка
+SelectVATRate=Виберіть ставку ПДВ
+EnterRemisePercent=Введіть відсоток знижки
+ApplyVATForBlock=Застосувати ПДВ для цього блоку
+ApplyDiscountForBlock=Застосувати знижку для цього блоку
+TitleUnderSameLevelSTLine=Заголовок того самого рівня має бути під рядком проміжного підсумку попереднього заголовка.
+TitleUnderSameLevelOrGreater=Заголовок має бути під заголовком того самого рівня або вищого.
+TitleAfterStLineOfSameLevelTitle=Заголовок має бути після рядка проміжного підсумку попереднього заголовка.
+PreviousTitleLevelTooHigh=Попередній заголовок на два рівні або більше вищий за переміщений рядок.
+STLineUnderCorrespondingTitleDesc=Рядок проміжного підсумку має бути під заголовком того самого рівня, що має такий самий опис.
+STLineUnderCorrespondingTitle=Рядок проміжного підсумку має бути під заголовком того самого рівня та з таким самим описом.
+STLineUnderTitle=Рядок проміжного підсумку має бути під своїм заголовком
+UnsupportedModuleError=Ви не можете додати рядок проміжних підсумків у непідтримуваному модулі
+CorrespondingTitleNotFound=Відповідний заголовок не знайдено
 
 #
 # PDF
 #
-SubtotalOf=Subtotal of %s:
+SubtotalOf=Проміжний підсумок %s:

@@ -14,6 +14,7 @@ DeleteProp=حذف پیشنهاد تجاری
 ValidateProp=تائید پیشنهاد تجاری
 CancelPropal=لغو کردن
 AddProp=ساخت پیشنهاد
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
 ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
@@ -23,7 +24,10 @@ AllPropals=تمام طرح های پیشنهادی
 SearchAProposal=جستجوی یک پیشنهاد
 NoProposal=No proposal
 ProposalsStatistics=آمار طرح های تجاری
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=شماره ماه
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Amount by month (excl. tax)
 NbOfProposals=تعداد طرح های تجاری
 ShowPropal=نمایش پیشنهاد
@@ -77,13 +81,11 @@ AvailabilityTypeAV_1W=1 هفته
 AvailabilityTypeAV_2W=2 هفته
 AvailabilityTypeAV_3W=3 هفته
 AvailabilityTypeAV_1M=1 ماه
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=نماینده زیر تا پیشنهاد
 TypeContact_propal_external_BILLING=تماس با فاکتور به مشتری
 TypeContact_propal_external_CUSTOMER=تماس با مشتری را در پی بالا پیشنهاد
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=Case followed by
@@ -94,7 +96,7 @@ ConfirmMassSignatureQuestion=Are you sure you want to sign the selected records 
 ConfirmMassValidation=Bulk Validate confirmation
 ConfirmMassValidationQuestion=Are you sure you want to validate the selected records ?
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
-ContractSigned=Contract signed
+ContractSigned=قرارداد امضا شد
 DefaultModelPropalClosed=قالب پیش فرض هنگام بستن یک طرح کسب و کار (unbilled)
 DefaultModelPropalCreate=ایجاد مدل پیش فرض
 DefaultModelPropalToBill=قالب پیش فرض هنگام بستن یک طرح کسب و کار (به صورتحساب می شود)
@@ -122,3 +124,7 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

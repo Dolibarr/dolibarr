@@ -29,6 +29,7 @@ ViewWeek=Vista setmanal
 ViewPerUser=Vista d'usuaris
 ViewPerType=Vista per tipus
 AutoActions= Inclusió automàtica a l'agenda
+ManualActions=Creat manualment per un usuari
 AgendaAutoActionDesc= Aquí pots definir esdeveniments que vols que Dolibarr creï automàticament a Agenda. Si no hi ha res comprovat, només s'inclouran les accions manuals als registres i es mostraran a Agenda. El seguiment automàtic de les accions empresarials realitzades en objectes (validació, canvi d'estat) no es desarà.
 AgendaSetupOtherDesc= Aquesta pàgina proporciona opcions per a permetre l'exportació dels vostres esdeveniments Dolibarr a un calendari extern (Thunderbird, Google Calendar, etc.)
 AgendaExtSitesDesc=Aquesta pàgina permet configurar calendaris externs per a la seva visualització en l'agenda de Dolibarr.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=L'esdeveniment forma part d'una sèrie recurrent amb 
 BookCalSystem=Reserva en línia
 BookCalInitHelp=Per començar, aneu al menú per crear un calendari nou amb disponibilitats...
 PublicLinkForBooking=Enllaç públic per a la reserva
+STOCKTRANSFER_CLOSEInDolibarr=Transferència de estoc %s completada.
+STOCKTRANSFER_VALIDATEInDolibarr=Transferència de estoc validada.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=estoc transfereix %s torna a ser esborrany.
+STOCKTRANSFER_MODIFYInDolibarr=estoc transfereix %s modificat.

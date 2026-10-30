@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,7 +174,7 @@ class FormSetup
 			$out .= $this->htmlBeforeOutputForm;
 
 			if ($editMode) {
-				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' autocomplete="off">';
 				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs
@@ -838,7 +839,12 @@ class FormSetupItem
 			return call_user_func($this->setValueFromPostCallBack);
 		}
 
-		// Modify constant only if key was posted (avoid resetting key to the null value)
+		// Modify constant only if key was posted (avoid resetting key to the null value).
+		// A multiselect with no option selected posts nothing, so its input adds a hidden marker field.
+		$posted = GETPOSTISSET($this->confKey) || ($this->type == 'multiselect' && GETPOSTISSET($this->confKey.'_multiselect'));
+		if (!$posted) {
+			return 0;
+		}
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
 				if (GETPOSTINT($this->confKey) == '-1') {
@@ -859,6 +865,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			} elseif ($this->type == 'number') {
 				$val_const = GETPOSTINT($this->confKey);
+			} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
+				$val_const = GETPOST($this->confKey, 'password');
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -1174,6 +1182,11 @@ class FormSetupItem
 			$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
 		}
 
+		// Add button to show/hide a key masked with the css class 'text-security'
+		if (!empty($conf->use_javascript_ajax) && !empty($this->fieldParams['showEyeButton'])) {
+			$out .= '<span class="fa fa-eye paddingleft paddingright cursorpointer pictofixedwidth" title="'.dolPrintHTMLForAttribute($this->langs->trans('Show')).'" onclick="jQuery(\'#'.trim($this->confKey).'\').toggleClass(\'text-security\'); jQuery(this).toggleClass(\'fa-eye fa-eye-slash\');"></span>';
+		}
+
 		return $out;
 	}
 
@@ -1197,12 +1210,12 @@ class FormSetupItem
 			if ($gen == 'none') {
 				$gen = 'standard';
 			}
-			$nomclass = "modGeneratePass".ucfirst($gen);
-			$nomfichier = $nomclass.".class.php";
-			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
-			$genhandler = new $nomclass($this->db, $conf, $langs, $user);
-			$min = $genhandler->length;
-			$max = $genhandler->length2;
+			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/modules_genpassword.php";
+			$genhandler = ModeleGenPassword::loadAndInstantiate($gen, $this->db, $conf, $langs, $user);
+			if ($genhandler) {
+				$min = $genhandler->length;
+				$max = $genhandler->length2;
+			}
 		}
 		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {
@@ -1232,7 +1245,11 @@ class FormSetupItem
 			$TSelected = explode(',', $this->fieldValue);
 		}
 
-		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
+		$out = $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
+		// Marker so that setValueFromPost() also saves an empty selection
+		$out .= '<input type="hidden" name="'.dol_escape_htmltag($this->confKey).'_multiselect" value="1">';
+
+		return $out;
 	}
 
 	/**
@@ -1745,7 +1762,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color?:string,picto?:string,labelhtml?:string,note?:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)

@@ -25,13 +25,13 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -48,6 +48,13 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
+ * @phan-file-suppress PhanParamTooMany
+ * @phan-file-suppress PhanPluginUnknownObjectMethodCall
+ * @phan-file-suppress PhanTypeMismatchArgumentProbablyReal
  */
 class CommandeFournisseurTest extends CommonClassTest
 {
@@ -324,5 +331,227 @@ class CommandeFournisseurTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testSupplierOrderLineInsertMulticurrencySubpriceTtc
+	 *
+	 * @return	void
+	 */
+	public function testSupplierOrderLineInsertMulticurrencySubpriceTtc()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+
+		$line = new CommandeFournisseurLigne($db);
+		$line->fk_commande = $orderid;
+		$line->desc = 'phpunit multicurrency line';
+		$line->qty = 1;
+		$line->product_type = 0;
+		$line->special_code = 0;
+		$line->rang = 0;
+		$line->vat_src_code = '';
+		$line->tva_tx = 20;
+		$line->localtax1_tx = 0;
+		$line->localtax2_tx = 0;
+		$line->localtax1_type = '';
+		$line->localtax2_type = '';
+		$line->remise_percent = 0;
+		$line->subprice = 100;
+		$line->subprice_ttc = 120;
+		$line->ref_supplier = '';
+		$line->total_ht = 100;
+		$line->total_tva = 20;
+		$line->total_localtax1 = 0;
+		$line->total_localtax2 = 0;
+		$line->total_ttc = 120;
+		$line->fk_multicurrency = 0;
+		$line->multicurrency_code = $conf->currency;
+		$line->multicurrency_subprice = 110;
+		$line->multicurrency_subprice_ttc = 132;
+		$line->multicurrency_total_ht = 110;
+		$line->multicurrency_total_tva = 22;
+		$line->multicurrency_total_ttc = 132;
+		$result = $line->insert(1);
+		$this->assertGreaterThan(0, $result, 'Failed to insert supplier order line: '.$line->errorsToString());
+
+		$reloaded = new CommandeFournisseurLigne($db);
+		$reloaded->fetch($line->id);
+		print __METHOD__." multicurrency_subprice_ttc=".$reloaded->multicurrency_subprice_ttc."\n";
+		$this->assertEquals(132, $reloaded->multicurrency_subprice_ttc, 'multicurrency_subprice_ttc must be persisted on insert');
+	}
+
+	/**
+	 * testUpdateProductBuyPrices
+	 *
+	 * @return	void
+	 */
+	public function testUpdateProductBuyPrices()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$advancedperms = getDolGlobalString('MAIN_USE_ADVANCED_PERMS');
+		$conf->global->MAIN_USE_ADVANCED_PERMS = 0;	// Test the default rights, create on products and services
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		// Product 1 has a supplier price of 20 (min qty 1), product 2 has no supplier price
+		$product1 = new ProductFournisseur($db);
+		$product1->initAsSpecimen();
+		$product1->ref = 'PHPUNIT_BUYPRICES_1_'.dol_now();
+		$productid1 = $product1->create($user);
+		$this->assertGreaterThan(0, $productid1, 'Failed to create product 1: '.$product1->errorsToString());
+		$product2 = new Product($db);
+		$product2->initAsSpecimen();
+		$product2->ref = 'PHPUNIT_BUYPRICES_2_'.dol_now();
+		$productid2 = $product2->create($user);
+		$this->assertGreaterThan(0, $productid2, 'Failed to create product 2: '.$product2->errorsToString());
+
+		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_BUYPRICES_'.dol_now();
+		$result = $product1->add_fournisseur($user, $societe->id, $ref_fourn, 1);
+		$this->assertGreaterThan(0, $result, 'Failed to create the supplier price line');
+		$result = $product1->update_buyprice(1, 20, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', 20, 'HT', 1, $conf->currency);
+		$this->assertGreaterThan(0, $result, 'Failed to set the supplier price');
+		$pricerowid = $product1->product_fourn_price_id;
+
+		// Purchase order with a line at 30 with 10% discount (net 27) on product 1, and a line at 50 on product 2
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$order->socid = $societe->id;
+		$order->lines = array();
+		$line = new CommandeFournisseurLigne($db);
+		$line->desc = 'phpunit line with a supplier price';
+		$line->qty = 1;
+		$line->subprice = 30;
+		$line->remise_percent = 10;
+		$line->fk_product = $productid1;
+		$line->ref_supplier = $ref_fourn;
+		$order->lines[] = $line;
+		$line = new CommandeFournisseurLigne($db);
+		$line->desc = 'phpunit line without supplier price';
+		$line->qty = 2;
+		$line->subprice = 50;
+		$line->fk_product = $productid2;
+		$order->lines[] = $line;
+		$line = new CommandeFournisseurLigne($db);
+		$line->desc = 'phpunit free of charge line, must be ignored';
+		$line->qty = 1;
+		$line->subprice = 0;
+		$line->fk_product = $productid2;
+		$order->lines[] = $line;
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+		$order->fetch($orderid);
+
+		$this->assertEquals(0, $order->updateProductBuyPrices(new User($db)), 'A user without rights must not update any price');
+
+		$result = $order->updateProductBuyPrices($user);
+		$this->assertEquals(3, $result, 'Supplier price and cost price of product 1, cost price of product 2');
+
+		// Supplier price of product 1 is the price of the line, and the previous price is kept in the history
+		$productsupplier = new ProductFournisseur($db);
+		$productsupplier->fetch_product_fournisseur_price($pricerowid);
+		$this->assertEquals(30, (float) $productsupplier->fourn_unitprice, 'Supplier price must be the price of the line');
+		$this->assertEquals(10, (float) $productsupplier->fourn_remise_percent, 'Supplier discount must be the discount of the line');
+		$this->assertCount(2, $productsupplier->listProductFournisseurPriceLog($pricerowid), 'History must contain the old and the new price');
+
+		// Cost price is the net unit price of the line, and no supplier price is created for product 2
+		$product1->fetch($productid1);
+		$this->assertEquals(27, (float) $product1->cost_price, 'Cost price must be the net unit price of the line');
+		$product2->fetch($productid2);
+		$this->assertEquals(50, (float) $product2->cost_price, 'Cost price must be the net unit price of the line');
+		$this->assertCount(0, $productsupplier->list_product_fournisseur_price($productid2), 'No supplier price must be created');
+
+		// Prices are already the ones of the order
+		$this->assertEquals(0, $order->updateProductBuyPrices($user), 'Nothing must be updated a second time');
+
+		$conf->global->MAIN_USE_ADVANCED_PERMS = $advancedperms;
+
+		$order->delete($user);
+		$product1->delete($user);
+		$product2->delete($user);
+	}
+
+	/**
+	 * testUpdateLinkedBuyPrice
+	 *
+	 * @return	void
+	 */
+	public function testUpdateLinkedBuyPrice()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$optionbefore = getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS');
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = 1;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_LINKED_BUYPRICE_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product: '.$product->errorsToString());
+
+		// A customer order with a cost price of 10 on the product
+		$commande = new Commande($db);
+		$commande->initAsSpecimen();
+		$commande->lines = array();
+		$commande->socid = $societe->id;
+		$this->assertGreaterThan(0, $commande->create($user), 'Failed to create customer order: '.$commande->errorsToString());
+		$commandelineid = $commande->addline('Line', 100, 1, 0, 0, 0, $productid);
+		$this->assertGreaterThan(0, $commandelineid, $commande->errorsToString());
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 10 WHERE rowid = ".((int) $commandelineid));
+
+		// A purchase order linked to it, with a line at 12 with 10% discount (net 10.8) on the product
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$order->socid = $societe->id;
+		$order->lines = array();
+		$line = new CommandeFournisseurLigne($db);
+		$line->desc = 'phpunit line';
+		$line->qty = 1;
+		$line->subprice = 12;
+		$line->remise_percent = 10;
+		$line->fk_product = $productid;
+		$order->lines[] = $line;
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+		$order->fetch($orderid);
+		$order->add_object_linked('commande', $commande->id);
+		$lineid = $order->lines[0]->id;
+
+		// The net unit price of the line is proposed as cost price on the customer order
+		$documents = $order->getLinkedBuyPriceDocuments($user, $lineid);
+		$this->assertEquals(array('commande'), array_keys($documents), 'The customer order has another cost price');
+		$this->assertEquals(10.8, price2num($documents['commande']['buyprice'], 'MU'), 'Cost price is the net unit price of the line');
+
+		$this->assertEquals(1, $order->updateLinkedBuyPrice($user, $lineid, array('commande' => 'on')), 'One line updated');
+		$obj = $db->fetch_object($db->query("SELECT buy_price_ht FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $commandelineid)));
+		$this->assertEquals(10.8, price2num($obj->buy_price_ht, 'MU'), 'Cost price saved on the line of the customer order');
+		$this->assertEquals(array(), $order->getLinkedBuyPriceDocuments($user, $lineid), 'Nothing is proposed once applied');
+
+		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
+
+		$order->delete($user);
+		$commande->delete($user);
+		$product->delete($user);
 	}
 }

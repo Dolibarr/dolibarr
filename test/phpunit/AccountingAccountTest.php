@@ -25,13 +25,12 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/accounting.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -57,17 +56,9 @@ class AccountingAccountTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('accounting')) {
-			print __METHOD__." module accounting must be enabled.\n";
-			exit(1);
-		}
-
-		print __METHOD__."\n";
+		self::assertTrue(isModEnabled('accounting'), " module double party accounting must be enabled");
+		parent::setUpBeforeClass();
 	}
-
 
 	/**
 	 * testAccountingAccountCreate

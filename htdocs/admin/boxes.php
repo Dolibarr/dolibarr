@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,7 +124,7 @@ if ($action == 'add') {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 							$sql .= "box_id, position, box_order, fk_user, entity";
 							$sql .= ") VALUES (";
-							$sql .= ((int) $boxid['value']).", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".((int) $fk_user).", ".$conf->entity;
+							$sql .= ((int) $boxid['value']).", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".((int) $fk_user).", ".((int) $conf->entity);
 							$sql .= ")";
 
 							dol_syslog("boxes.php activate box", LOG_DEBUG);
@@ -159,7 +159,7 @@ if ($action == 'delete') {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND box_id=".((int) $obj->box_id);
 
 		$resql = $db->query($sql);
@@ -236,7 +236,7 @@ $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
 $sql .= " bd.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql .= " WHERE b.box_id = bd.rowid";
-$sql .= " AND b.entity IN (0,".$conf->entity.")";
+$sql .= " AND b.entity IN (0,".((int) $conf->entity).")";
 $sql .= " AND b.fk_user = 0";
 $sql .= " ORDER by b.position, b.box_order";
 //print $sql;
@@ -272,7 +272,7 @@ if ($resql) {
 		// This occurs just after an insert.
 		$sql = "SELECT box_order";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND LENGTH(box_order) <= 2";
 
 		dol_syslog("Execute requests to renumber box order", LOG_DEBUG);
@@ -282,21 +282,21 @@ if ($resql) {
 				if (dol_strlen($record['box_order']) == 1) {
 					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1))) {
 						$box_order = "A0".$record['box_order'];
-						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".$conf->entity." AND box_order = '".$db->escape($record['box_order'])."'";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".((int) $conf->entity)." AND box_order = '".$db->escape($record['box_order'])."'";
 						$resql = $db->query($sql);
 					} elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1))) {
 						$box_order = "B0".$record['box_order'];
-						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".$conf->entity." AND box_order = '".$db->escape($record['box_order'])."'";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".((int) $conf->entity)." AND box_order = '".$db->escape($record['box_order'])."'";
 						$resql = $db->query($sql);
 					}
 				} elseif (dol_strlen($record['box_order']) == 2) {
 					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1))) {
 						$box_order = "A".$record['box_order'];
-						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".$conf->entity." AND box_order = '".$db->escape($record['box_order'])."'";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".((int) $conf->entity)." AND box_order = '".$db->escape($record['box_order'])."'";
 						$resql = $db->query($sql);
 					} elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1))) {
 						$box_order = "B".$record['box_order'];
-						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".$conf->entity." AND box_order = '".$db->escape($record['box_order'])."'";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$db->escape($box_order)."' WHERE entity = ".((int) $conf->entity)." AND box_order = '".$db->escape($record['box_order'])."'";
 						$resql = $db->query($sql);
 					}
 				}
@@ -311,7 +311,7 @@ $boxtoadd = InfoBox::listBoxes($db, 'available', -1, null, $actives);
 // Activated boxes
 $boxactivated = InfoBox::listBoxes($db, 'activated', -1, null);
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="add">'."\n";
 
@@ -445,7 +445,7 @@ print '</form>';
 
 print "\n\n".'<!-- Other Const -->'."\n";
 print load_fiche_titre($langs->trans("Other"), '', '');
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addconst">';
 print '<input type="hidden" name="page_y" value="">';

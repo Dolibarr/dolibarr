@@ -7,7 +7,7 @@
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ $dateend = null;
 $syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y", 'tzuserrel'));
 $smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m", 'tzuserrel'));
 $sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d", 'tzuserrel'));
-// TODO Add a global option to define the end hours when doing a cash control
+// TODO Add a global option to allow to enter the end hours when doing a cash control (currently only end of hours 23:59:59 for local hour so :xx::xx for UTC is supported)
 $shour = 0;
 $smin = 0;
 $ssec = 0;
@@ -152,14 +152,14 @@ if ($object->id > 0) {
 	$datestart += 1;	// Add 1 second
 } else {
 	if ($syear && !$smonth) {
-		$datestart = dol_get_first_day($syear, 1, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, 12, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, 1, 'tzserver');
+		$dateend = dol_get_last_day($syear, 12, 'tzserver');
 	} elseif ($syear && $smonth && !$sday) {
-		$datestart = dol_get_first_day($syear, $smonth, 'tzuserrel');
-		$dateend = dol_get_last_day($syear, $smonth, 'tzuserrel');
+		$datestart = dol_get_first_day($syear, $smonth, 'tzserver');
+		$dateend = dol_get_last_day($syear, $smonth, 'tzserver');
 	} elseif ($syear && $smonth && $sday) {
-		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzuserrel');
-		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzuserrel');
+		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzserver');
+		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzserver');
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
@@ -255,9 +255,9 @@ if ($action == "start" && $permissiontoadd) {
 
 	if (!$error) {
 		if (GETPOSTINT('closeday')) {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'gmt');
 		} else {
-			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'tzuserrel');
+			$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 15, GETPOSTINT('closeyear'), 'gmt');
 		}
 		dol_syslog('The closing date will be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
 
@@ -449,6 +449,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		// Delete OK
@@ -650,7 +651,7 @@ if ($action == "create" || $action == "start") {
 	if ($contextpage == 'takepos') {
 		print '<input type="hidden" name="contextpage" value="takepos">';
 	}
-	if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '<input type="hidden" name="action" value="add">';
 	} elseif ($action == 'close') {
 		print '<input type="hidden" name="action" value="valid">';
@@ -732,7 +733,7 @@ if ($action == "create" || $action == "start") {
 
 	// Button Start
 	print '<td>';
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '';
 	} else {
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
@@ -743,7 +744,7 @@ if ($action == "create" || $action == "start") {
 
 
 	// Table to see/enter balance
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 
@@ -930,11 +931,22 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip = '';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzuserrel').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzuserrel');
-		$htmltooltip .= '<br><span class="small opacitymedium">UTC : ';
+		$htmltooltip .= '<br><span class="small opacitymedium">';
+		$htmltooltip .= '<div class="width100 inline-block">Server TZ :</div>';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzserver').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzserver');
+		$htmltooltip .= '<br><div class="width100 inline-block">UTC :</div>';
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
-		print $form->textwithpicto('', $htmltooltip);
+		$htmltooltip .= '<br><br>';
+		if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("BlockedLog"), MAIN_DB_PREFIX."blockedlog", $langs->transnoentitiesnoconv("DateCreation"), "date_creation");
+		} else {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("Payment"), MAIN_DB_PREFIX."paiement", $langs->transnoentitiesnoconv("DatePayment"), "datep");
+		}
+
+		print $form->textwithpicto('', $htmltooltip, 1, 'help', '');
 		print '</td></tr>';
 
 		// Other attributes
@@ -1027,7 +1039,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($object->status == CashControl::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
 				if (!isALNERunningVersion()) {
 					if ($permissiontoreopen) {
@@ -1050,7 +1062,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($contextpage == 'takepos') {
 				print '<input type="hidden" name="contextpage" value="takepos">';
 			}
-			if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+			if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 				print '<input type="hidden" name="action" value="add">';
 			} elseif ($action == 'close') {
 				print '<input type="hidden" name="action" value="valid">';
@@ -1066,7 +1078,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<br>';
 
-				print '<!-- section to enter declareda mount -->';
+				print '<!-- section to enter declared mount -->';
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent">';
 
@@ -1171,7 +1183,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 					if ($action == 'start') {
 						print 'disabled '; // To start cash user only can set opening cash
 					}
-					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="';
+					$suggestedvalue = '';
+					if ($key == 'cash') {
+						$suggestedvalue = price($object->opening + $theoricalamountforterminal[$terminalid][$key]);
+					} else {
+						$suggestedvalue = price($theoricalamountforterminal[$terminalid][$key]);
+					}
+					print GETPOSTISSET($key.'_amount') ? GETPOST($key.'_amount', 'alpha') : $suggestedvalue;
+					print '">';
 					print '</td>';
 					$i++;
 				}

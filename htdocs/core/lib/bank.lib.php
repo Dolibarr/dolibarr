@@ -198,7 +198,7 @@ function bank_report_prepare_head(Account $object)
  * @param   ?CommonObject	$object						Object related to tabs
  * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function bank_admin_prepare_head($object)
+function bank_admin_prepare_head($object = null)
 {
 	global $langs, $conf, $extrafields;
 
@@ -229,7 +229,7 @@ function bank_admin_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bank_account'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
 	$nbExtrafields = $extrafields->attributes['bank_account']['count'];
 	if ($nbExtrafields > 0) {
@@ -238,7 +238,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bankline_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bank'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
 	$nbExtrafields = $extrafields->attributes['bank']['count'];
 	if ($nbExtrafields > 0) {
@@ -247,7 +247,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_payments_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'paiement'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("Payments").')';
 	$nbExtrafields = $extrafields->attributes['paiement']['count'];
 	if ($nbExtrafields > 0) {
@@ -256,7 +256,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bank_payments_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_various_payment_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'payment_various'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("VariousPayments").')';
 	$nbExtrafields = $extrafields->attributes['payment_various']['count'];
 	if ($nbExtrafields > 0) {
@@ -338,8 +338,12 @@ function various_payment_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->bank->dir_output."/various_payment/".dol_sanitizeFileName($object->ref);
+	$upload_dirold = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	if (!empty($upload_dirold) && dol_is_dir($upload_dirold)) {
+		$nbFiles += count(dol_dir_list($upload_dirold, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	}
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -461,7 +465,7 @@ function checkBanForAccount($account)
 			$code = substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
-		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
+		// Subtract modulo 97 of $s from 97 to get the key
 		$cle_rib = 97 - ($s % 97);
 		if ($cle_rib == $account->cle) {
 			return true;
@@ -473,6 +477,52 @@ function checkBanForAccount($account)
 	if ($country_code == 'BE') { // Belgian rules
 	}
 	*/
+
+	if ($country_code == 'DZ') { // Algerian rules (Instruction n° 06-2004 Bank of Algeria)
+		$code_banque = trim((string) $account->code_banque);
+		$code_guichet = trim((string) $account->code_guichet);
+		$number = trim((string) $account->number);
+		$cle = trim((string) $account->cle);
+
+		// Backward compatibility if full 20-digit RIB was entered into a single field
+		if (empty($code_banque) && empty($code_guichet) && empty($cle) && preg_match('/^[0-9]{20}$/', $number)) {
+			$code_banque = substr($number, 0, 3);
+			$code_guichet = substr($number, 3, 5);
+			$cle = substr($number, 18, 2);
+			$number = substr($number, 8, 10);
+		}
+
+		// Ensure proper zero-padding
+		if (is_numeric($code_banque) && strlen($code_banque) < 3) {
+			$code_banque = sprintf('%03s', $code_banque);
+		}
+		if (is_numeric($code_guichet) && strlen($code_guichet) < 5) {
+			$code_guichet = sprintf('%05s', $code_guichet);
+		}
+		if (is_numeric($number) && strlen($number) < 10) {
+			$number = sprintf('%010s', $number);
+		}
+		if (is_numeric($cle) && strlen($cle) < 2) {
+			$cle = sprintf('%02s', $cle);
+		}
+
+		$rib18 = $code_banque.$code_guichet.$number;
+
+		if (!preg_match('/^[0-9]{18}$/', $rib18) || !preg_match('/^[0-9]{2}$/', $cle)) {
+			return false;
+		}
+
+		// Calculate modulo 97 of ($rib18 * 100)
+		$remainder = 0;
+		$rib20 = $rib18.'00';
+		$len = strlen($rib20);
+		for ($i = 0; $i < $len; $i++) {
+			$remainder = ($remainder * 10 + (int) $rib20[$i]) % 97;
+		}
+		$calculated_key = sprintf('%02d', 97 - $remainder);
+
+		return ($calculated_key === $cle);
+	}
 
 	if ($country_code == 'ES') { // Spanish rules
 		$CCC = strtolower(trim($account->number));
@@ -552,7 +602,7 @@ function checkES($IentOfi, $InumCta)
 
 	$sum = 0;
 
-	for ($i = 0; $i < 11; $i++) {
+	for ($i = 0; $i < 10; $i++) {
 		$sum += $values[$i] * (int) substr($InumCta, $i, 1); //int to cast result of substr to a number
 	}
 

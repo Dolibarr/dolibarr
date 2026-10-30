@@ -68,3 +68,4 @@ ApplyJobCandidature=Jelentkezz erre az állásra
 ErrorRecruitmmentCandidatureAlreadyExists= Már létezik a toborzási pályázat a következő e-mail címmel: %s
 RecruitmentCandidatureSaved=A felvételi pályázat sikeresen mentve
 NoOpenJobOffer=Jelenleg nincsenek nyitott állásajánlatok
+ShowPositionToBeFilled=Show Position to be filled

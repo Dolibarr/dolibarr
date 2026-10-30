@@ -104,12 +104,11 @@ $massactionbutton = '';
 $num = -1;
 $nbtotalofrecords = $langs->trans("Statistics");
 $limit = 0;
-$mode = 'statistics';
 
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/salaries/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/salaries/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -119,11 +118,15 @@ dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
-	$useridtofilter = $user->id;
-}
-if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
-	$useridtofilter = $user->getAllChildIds(1);
+if (!$user->hasRight('salaries', 'readall')) {
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$useridtofilter = $user->id;	// Only his own salaries, whatever is the user in parameter
+	} else {
+		$childids = $user->getAllChildIds(1);
+		if (empty($useridtofilter) || !in_array($useridtofilter, $childids)) {
+			$useridtofilter = $childids;
+		}
+	}
 }
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
@@ -258,7 +261,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
+if ($user->hasRight('salaries', 'readall') || $user->hasRight('salaries', 'readchild')) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 } else {

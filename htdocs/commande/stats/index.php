@@ -6,7 +6,8 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +181,6 @@ if ($mode == 'supplier') {
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
@@ -218,18 +218,17 @@ if (!$mesg) {
 	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NbOfOrder"));
+	$px1->SetYLabel($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NumberOfOrders"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+	$px1->SetTitle($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrdersByMonth" : "NumberOfOrdersByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 $fileurlamount = '';
@@ -266,11 +265,11 @@ if (!$mesg) {
 	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfOrders"));
+	$px2->SetYLabel($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrders" : "AmountOfOrders"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
 	$px2->mode = 'depth';
-	$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+	$px2->SetTitle($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrdersByMonthHT" : "AmountOfOrdersByMonthHT"));
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
@@ -421,7 +420,10 @@ if (isModEnabled('category')) {
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+// Pass -1 (not 0) when no user is selected so the combo keeps its empty entry instead of defaulting to the
+// current user. The statistics query below is not filtered on the current user by default, so preselecting
+// them here wrongly suggests the displayed figures are limited to that user while they are actually global.
+print $form->select_dolusers(($userid > 0 ? $userid : -1), 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
@@ -460,7 +462,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td class="right">'.$langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NbOfOrders").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">%</td>';
@@ -476,12 +478,14 @@ foreach ($data as $val) {
 
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		// Empty year just after a year with records: delta is -100%
+		$isyearbeforeval = ($oldyear == (int) $year + 1);
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['nb'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['total'] > 0) ? '-100%' : '').'</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
+		print '<td class="right opacitylow" style="color: red;">'.(($isyearbeforeval && $val['avg'] > 0) ? '-100%' : '').'</td>';
 		print '</tr>';
 	}
 
@@ -489,11 +493,11 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? ($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%' : '').'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? round($val['avg_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? ($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%' : '').'</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

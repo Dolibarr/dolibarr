@@ -17,7 +17,6 @@ TrackingNumber=Número de rastreamento
 StatusDeliveryValidated=Recebida
 GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
 Deliverer=Entregador :
-Recipient=Destinatário
 ErrorStockIsNotEnough=Não existe estoque suficiente
 Shippable=Disponivel para envio
 NonShippable=Não disponivel para envio

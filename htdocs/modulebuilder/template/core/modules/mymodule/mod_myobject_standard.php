@@ -24,6 +24,7 @@
  *  \ingroup    mymodule
  *  \brief      File of class to manage MyObject numbering rules standard
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
@@ -96,15 +97,15 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$coyymm = '';
 		$max = '';
 
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$posindice = dol_strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
 		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
@@ -112,7 +113,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6);
+				$coyymm = dol_substr($row[0], 0, 6);
 				$max = $row[0];
 			}
 		}
@@ -136,15 +137,15 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		global $db, $conf;
 
 		// first we get the max value
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$posindice = dol_strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
 		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 

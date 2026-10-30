@@ -4,7 +4,7 @@
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,9 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
+	'productattribute' => 'product',
+	'productattributevalue' => 'product',
+	'productcombination' => 'product',
 	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
@@ -114,6 +117,9 @@ $entitytolang = array(
 	'account'      => 'BankTransactions',
 	'payment'      => 'Payment',
 	'product'      => 'Product',
+	'productattribute' => 'ProductAttribute',
+	'productattributevalue' => 'ProductAttributeValue',
+	'productcombination' => 'ProductCombination',
 	'virtualproduct'  => 'AssociatedProducts',
 	'subproduct'      => 'SubProduct',
 	'product_supplier_ref'      => 'SupplierPrices',
@@ -325,7 +331,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 
 	$file = $upload_dir."/".GETPOST('file');
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
@@ -344,6 +350,9 @@ if ($action == 'deleteprof' && $user->hasRight('export', 'lire')) {
 	if (GETPOSTINT("id")) {
 		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
+		if ($result < 0) {
+			setEventMessages($objexport->error, $objexport->errors, 'errors');
+		}
 	}
 }
 
@@ -520,7 +529,7 @@ if ($step == 1 || !$datatoexport) {
 			if ($objexport->array_export_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAllowed"), $langs->trans("NotEnoughPermissions")).'</span>';
 			}
 			print '</td></tr>';
 		}
@@ -692,7 +701,13 @@ if ($step == 2 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -887,7 +902,13 @@ if ($step == 3 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -930,7 +951,7 @@ if ($step == 3 && $datatoexport) {
 	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
-	// il n'est pas obligatoire de filtrer les champs
+	// it is not mandatory to filter the fields
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
 }
@@ -1098,7 +1119,13 @@ if ($step == 4 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -1121,10 +1148,10 @@ if ($step == 4 && $datatoexport) {
 		print $value.' ';
 		print '</td><td class="center nowraponall" width="40">';
 		if ($value < count($array_selected)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
 		}
 		if ($value > 1) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
 		}
 		print '</td>';
 

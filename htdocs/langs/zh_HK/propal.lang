@@ -14,6 +14,7 @@ DeleteProp=刪除報價
 ValidateProp=驗證報價
 CancelPropal=取消
 AddProp=創建報價
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=您確定要刪除此報價嗎？
 ConfirmValidateProp=您確定要驗證名為 <b>%s</b> 的報價嗎？
 ConfirmCancelPropal=您確定要取消編號為 <b>%s</b> 的報價單嗎？

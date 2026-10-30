@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - blockedlog
-OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos en esta línea no se modificaron y la entrada sigue a la anterior.
 AddedByAuthority=Almacenado en sitio remoto
 NotAddedByAuthorityYet=Aún no almacenado en sitio remoto
 ListOfTrackedEvents=Lista de eventos de seguimiento
 TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.
 BLOCKEDLOG_REGISTRATION_NAME=Nombre de empresa
+StatusValid=Válido
 logBILL_SENTBYMAIL=Factura del cliente enviar por correo
 logBILL_UNPAYED=Factura del cliente sin pagar
 logBILL_VALIDATE=Factura del cliente validada

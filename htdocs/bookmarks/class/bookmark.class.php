@@ -2,6 +2,7 @@
 /* Copyright (C) 2005       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +109,7 @@ class Bookmark extends CommonObject
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				Return integer <0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -118,12 +119,17 @@ class Bookmark extends CommonObject
 		$sql .= " title, position, favicon";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bookmark";
 		$sql .= " WHERE rowid = ".((int) $id);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog("Bookmark::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+			if (!$obj) {
+				// Bookmark not found (unknown id, or bookmark of another entity)
+				$this->db->free($resql);
+				return 0;
+			}
 
 			$this->id = $obj->rowid;
 			$this->ref = $obj->rowid;
@@ -168,7 +174,7 @@ class Bookmark extends CommonObject
 		$sql .= ",title,favicon,position";
 		$sql .= ",entity";
 		$sql .= ") VALUES (";
-		$sql .= ($this->fk_user > 0 ? $this->fk_user : "0").",";
+		$sql .= ($this->fk_user > 0 ? ((int) $this->fk_user) : "0").",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
 		$sql .= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', ".(int) $this->position;
@@ -212,7 +218,7 @@ class Bookmark extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user : "0");
+		$sql .= " SET fk_user = ".($this->fk_user > 0 ? ((int) $this->fk_user) : "0");
 		$sql .= " ,dateb = '".$this->db->idate($this->datec)."'";
 		$sql .= " ,url = '".$this->db->escape($this->url)."'";
 		$sql .= " ,target = '".$this->db->escape($this->target)."'";
@@ -248,23 +254,6 @@ class Bookmark extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-	}
-
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
-	 * @param 	int 	$origin_id 	Old thirdparty id
-	 * @param 	int 	$dest_id 	New thirdparty id
-	 * @return 	bool
-	 */
-	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'bookmark'
-		);
-
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -343,7 +332,7 @@ class Bookmark extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('mybookmarkdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

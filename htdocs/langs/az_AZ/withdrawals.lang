@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Kredit köçürmə yolu ilə ödənilməsini gözləyən m
 RefSalary=Maaş
 NoSalaryInvoiceToWithdraw='%s' gözlənilən maaş yoxdur. Sorğu etmək üçün əmək haqqı kartında '%s' sekmesine keçin.
 SalaryInvoiceWaitingWithdraw=Kredit köçürmə yolu ilə ödənilməsini gözləyən maaşlar
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

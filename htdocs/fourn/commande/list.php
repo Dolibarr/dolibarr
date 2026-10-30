@@ -10,8 +10,9 @@
  * Copyright (C) 2018-2022  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2019       Nicolas Zabouri             <info@inovea-conseil.com>
  * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       William Mead                <william.mead@manchenumerique.fr>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,7 +46,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -239,6 +238,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -398,8 +400,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createsupplierbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -474,7 +476,7 @@ if (empty($reshook)) {
 				$sql .= ", fk_target";
 				$sql .= ", targettype";
 				$sql .= ") VALUES (";
-				$sql .= $id_order;
+				$sql .= ((int) $id_order);
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
 				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";
@@ -603,7 +605,10 @@ if (empty($reshook)) {
 
 			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				}
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -920,6 +925,10 @@ if ($search_status != '' && $search_status != '-1') {
 if ($search_option == 'late') {
 	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
+if ($search_option == 'recv_late') {
+	// Same rule as FournisseurCommande::hasDelay() for the ordered and partially received status
+	$sql .= " AND cf.date_livraison < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
+}
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
 }
@@ -1007,9 +1016,9 @@ if ($search_project_ref != '') {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('cf.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierOrderList is an array of ID)
@@ -1337,7 +1346,7 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-	$topicmail = "SendOrderRef";
+	$topicmail = "SendSupplierOrderRef";
 	$modelmail = "order_supplier_send";
 	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;
@@ -1952,7 +1961,7 @@ if ($resql) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->alias).'">';
-				print dol_escape_htmltag($obj->alias);
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->alias).'</span>';
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;

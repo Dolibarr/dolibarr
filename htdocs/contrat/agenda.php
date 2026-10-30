@@ -205,7 +205,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.dolBuildUrl(DOL_URL_ROOT.'/contrat/list.php', ['socid' => $object->thirdparty->id, 'search_name' => $object->thirdparty->name]).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+		$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.dolBuildUrl(DOL_URL_ROOT.'/contrat/list.php', ['socid' => ((int) $object->thirdparty->id)]).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -220,7 +220,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

@@ -104,3 +104,22 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10211, 'Ενοίκιο', 1, 1,'ΕΝΟΙΚΙΟ');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10212, 'Κοινόχρηστα', 1, 1, 'ΚΟΙΝΟ');
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ( 102, 10213, 'Ηλεκτροδότηση', 1, 1, 'ΡΕΥΜΑ');
+
+--
+-- Algeria
+--
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1301, 'CNAS - Securite sociale (part employeur)',          1, 1, 'TAXDZCNAS-E');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1302, 'CNAS - Securite sociale (part salarie)',           0, 1, 'TAXDZCNAS-S');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1303, 'CASNOS - Assurances sociales (independants)',      1, 1, 'TAXDZCASNOS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1304, 'Retraite anticipee',                                 1, 1, 'TAXDZRA');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1305, 'IBS - Impot sur le benefice des societes',          0, 1, 'TAXDZIBS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1306, 'IRG - Impot sur le revenu global (salaries)',       0, 1, 'TAXDZIRG');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1307, 'IFU - Impot forfaitaire unique',                    0, 1, 'TAXDZIFU');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1308, 'TAP - Taxe sur l activite professionnelle',          1, 1, 'TAXDZTAP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1309, 'TVA - Taxe sur la valeur ajoutee',                  0, 1, 'TAXDZTVA');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1310, 'Versement forfaitaire (VF)',                        0, 1, 'TAXDZVF');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1311, 'Taxe sur l apprentissage',                           1, 1, 'TAXDZAPP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1312, 'Formation professionnelle continue',                 1, 1, 'TAXDZFPC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1313, 'Taxe sur les vehicules de societe',                  1, 1, 'TAXDZTVS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1314, 'Retenue a la source (RAS)',                          0, 1, 'TAXDZRAS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (13, 1315, 'Taxe fonciere',                                     1, 1, 'TAXDZFON');

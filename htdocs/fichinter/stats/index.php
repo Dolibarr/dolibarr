@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -71,12 +71,34 @@ $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 $form = new Form($db);
 $objectstatic = new Fichinter($db);
 
-$title = $langs->trans("InterventionStatistics");
+$picto = 'intervention';
+$title = $langs->trans("Interventions");
 $dir = $conf->ficheinter->dir_temp;
 
-llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats_index');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats');
 
-print load_fiche_titre($title, '', 'intervention');
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$urlnew = DOL_URL_ROOT.'/fichinter/card.php?action=create';
+if (!empty($socid)) {
+	$urlnew .= '&socid='.$socid;
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/fichinter/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/fichinter/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/fichinter/stats/index.php', '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('ficheinter', 'creer'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 

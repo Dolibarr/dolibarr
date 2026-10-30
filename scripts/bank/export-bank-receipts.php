@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -261,7 +261,7 @@ if ($resql) {
 			$sql2 = "SELECT sum(b.amount) as amount";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."bank as b";
 			$sql2 .= " WHERE b.num_releve < '".$db->escape($objp->num_releve)."'";
-			$sql2 .= " AND b.fk_account = ".$objp->bankid;
+			$sql2 .= " AND b.fk_account = ".((int) $objp->bankid);
 			$resql2 = $db->query($sql2);
 			if ($resql2) {
 				$obj2 = $db->fetch_object($resql2);

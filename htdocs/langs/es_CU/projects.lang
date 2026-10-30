@@ -169,7 +169,6 @@ AllowToLinkFromOtherCompany=Permitir vincular un elemento con un proyecto de otr
 LatestProjects=Últimos proyectos %s
 LatestModifiedProjects=Últimos proyectos modificados %s
 NoAssignedTasks=No se encontraron tareas asignadas (asigne proyectos/tareas al usuario actual desde el cuadro de selección superior para ingresar tiempo en él)
-ChooseANotYetAssignedTask=Elija una tarea que aún no se le haya asignado
 AllowCommentOnTask=Permitir comentarios de usuarios sobre tareas
 AllowCommentOnProject=Permitir comentarios de usuarios en proyectos
 SendProjectRef=Proyecto de información %s

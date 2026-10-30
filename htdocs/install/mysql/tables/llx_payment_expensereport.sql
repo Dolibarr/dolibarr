@@ -24,10 +24,13 @@ create table llx_payment_expensereport
   tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep                   datetime,           -- payment date
   amount                  double(24,8) DEFAULT 0,
+  multicurrency_amount    double(24,8) DEFAULT 0,    -- amount in the currency of the expense report
+  multicurrency_code      varchar(3),                -- currency of multicurrency_amount
   fk_typepayment          integer NOT NULL,
   num_payment             varchar(50),
   note                    text,
   fk_bank                 integer NOT NULL,
   fk_user_creat           integer,            -- creation user
-  fk_user_modif           integer             -- last modification user
+  fk_user_modif           integer,            -- last modification user
+  import_key              varchar(14)         -- import key
 )ENGINE=innodb;

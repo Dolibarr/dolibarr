@@ -138,7 +138,7 @@ class ExpenseReportStats extends Stats
 	{
 		$sql = "SELECT MONTH(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).") as dm, count(*)";
 		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
-		$sql .= " WHERE YEAR(e.".$this->datetouse.") = ".((int) $year);
+		$sql .= " WHERE YEAR(e.".$this->db->sanitize($this->datetouse).") = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

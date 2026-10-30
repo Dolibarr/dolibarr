@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
- * Copyright (C) 2005-2013	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
- * Copyright (C) 2010-2011	Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2010-2019	Philippe Grand				<philippe.grand@atoo-net.com>
- * Copyright (C) 2012		Christophe Battarel			<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2016		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne                 <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005       Marc Barilley / Ocebo       <marc@ocebo.com>
+ * Copyright (C) 2005-2013  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani            <acianfa@free.fr>
+ * Copyright (C) 2010-2011  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2010-2019  Philippe Grand              <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2016       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2018-2023  Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Benjamin Falière            <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,6 +219,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -457,10 +460,10 @@ if ($search_date_valid_start) {
 	$sql .= " AND sp.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+	$sql .= " AND sp.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_note_private) {
-	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+	$sql .= " AND sp.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
@@ -475,9 +478,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('sp.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('sp.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
@@ -731,6 +734,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php?mode=supplier'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('supplier_proposal', 'creer'));
 
@@ -826,35 +830,35 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['sp.ref']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat width75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Project ref
 	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'">';
+		print '<input type="text" class="flat width100" name="search_project_ref" value="'.$search_project_ref.'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
+		print '<input class="flat width100" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
+		print '<input class="flat width100" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+		print '<td class="liste_titre"><input class="flat width75" type="text" name="search_town" value="'.$search_town.'"></td>';
 	}
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
+		print '<td class="liste_titre"><input class="flat width75" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+		print '<input class="flat width75" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 		print '</td>';
 	}
 	// Country
@@ -1232,8 +1236,10 @@ if ($resql) {
 
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				print $companystatic->name_alias;
+				print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+				print '<span class="spantitle">';
+				print dolPrintHTML($companystatic->name_alias);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1429,7 +1435,7 @@ if ($resql) {
 				}
 			}
 			// Note public
-			if (!empty($arrayfields['f.note_public']['checked'])) {
+			if (!empty($arrayfields['sp.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
@@ -1438,7 +1444,7 @@ if ($resql) {
 				}
 			}
 			// Note private
-			if (!empty($arrayfields['f.note_private']['checked'])) {
+			if (!empty($arrayfields['sp.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
 				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
