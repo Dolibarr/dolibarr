@@ -101,9 +101,9 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) 
 		}
 
 		// To be sure vars is defined
-		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		$moreparams = isset($moreparams) ? $moreparams : null;
 		// Choice made on the generation form to append or not the terms of sale file
 		if (GETPOSTISSET('addtermsofsale_shown')) {
