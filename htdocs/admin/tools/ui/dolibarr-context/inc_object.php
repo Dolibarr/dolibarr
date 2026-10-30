@@ -146,6 +146,9 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<code>Dolibarr.tools.card.register(element, {sections, Controller})</code> specializes the cards of an element, only for needs the server side can not cover:
 		more sections for this element, or a class extending <code>Dolibarr.tools.card.Controller</code>. To call before a controller of this element is created.
 	</p>
+	<p>
+		<code>Dolibarr.tools.card.definePart(name, api)</code> adds a feature using the controllers of the cards, available as <code>Dolibarr.tools.card.&lt;name&gt;</code> (ex: the edition of the fields of a card). A part can not be replaced.
+	</p>
 	<?php
 	$lines = array(
 		'<script nonce="<?php print getNonce() ?>" >',
