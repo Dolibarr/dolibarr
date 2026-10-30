@@ -1221,11 +1221,8 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND sr.default_rib = 1";
 			$sql .= " AND sr.type = 'ban'";
 		} else {
-			//$sql .= " AND sr.type = 'ban'";		// TODO Add AND sr.type = 'ban' for users too
-			// TODO Add 'AND sr.default_rib = 1' in sourcetype salary too
-			// Note: the column has been created in v21 in llx_user_rib and default to 0
-			// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
-			// Also it may be found for on thirdparty and not for the other.
+			$sql .= " AND sr.default_rib = 1";
+			$sql .= " AND COALESCE(NULLIF(sr.currency_code, ''), '".$this->db->escape(getDolCurrency())."') = '".$this->db->escape(getDolCurrency())."'";
 		}
 		$sql .= " WHERE f.entity IN (".((int) $entity).')';
 		if ($sourcetype != 'salary') {
@@ -2127,7 +2124,7 @@ class BonPrelevement extends CommonObject
 					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					//$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, ";
 					$sql .= " pl.client_nom as nom, pl.amount as somme, pl.fk_prelevement_demande,";
-					$sql .= " s.ref as reffac,";
+					$sql .= " s.ref as reffac, '' as code, '' as fac_ref_supplier,";
 					$sql .= " p.fk_salary as idfac,";
 					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, '' as rum, '' as date_rum";
 					$sql .= " FROM";
@@ -2142,6 +2139,8 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND p.fk_salary = s.rowid";
 					$sql .= " AND s.fk_user = u.rowid";
 					$sql .= " AND rib.fk_user = s.fk_user";
+					$sql .= " AND rib.default_rib = 1";
+					$sql .= " AND COALESCE(NULLIF(rib.currency_code, ''), '".$this->db->escape(getDolCurrency())."') = '".$this->db->escape(getDolCurrency())."'";
 				} else {
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					//$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, ";

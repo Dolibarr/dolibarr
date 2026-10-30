@@ -596,3 +596,7 @@ ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, f
 -- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);

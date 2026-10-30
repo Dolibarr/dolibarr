@@ -68,6 +68,13 @@ class UserBankAccount extends Account
 	 */
 	public $userid;
 
+	/**
+	 * 1 if this is the default bank account of the user in its currency
+	 *
+	 * @var int<0,1>
+	 */
+	public $default_rib = 0;
+
 
 	/**
 	 *  Constructor
@@ -143,6 +150,12 @@ class UserBankAccount extends Account
 			$this->create($user, $notrigger);
 		}
 
+		$sql = "SELECT ".$this->sqlCurrencyCode('currency_code')." as currency_code FROM ".$this->db->prefix()."user_rib";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		$obj = $resql ? $this->db->fetch_object($resql) : null;
+		$currencychanged = ($obj && $obj->currency_code != (empty($this->currency_code) ? getDolCurrency() : $this->currency_code));
+
 		$sql = "UPDATE ".$this->db->prefix()."user_rib SET";
 		$sql .= " bank = '".$this->db->escape($this->bank)."'";
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
@@ -157,6 +170,9 @@ class UserBankAccount extends Account
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
 		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
+		if ($currencychanged) {
+			$sql .= ",default_rib = 0";
+		}
 
 		if (trim($this->label) != '') {
 			$sql .= ",label = '".$this->db->escape($this->label)."'";
@@ -166,7 +182,7 @@ class UserBankAccount extends Account
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if (!$result) {
+		if (!$result || $this->setOneDefaultPerCurrency() < 0) {
 			$error++;
 			$this->errors[] = $this->db->lasterror();
 		}
@@ -196,10 +212,11 @@ class UserBankAccount extends Account
 	 *
 	 *	@param	int		$id			Id of record
 	 *	@param	string	$ref		Ref of record
-	 *  @param  int     $userid     User id
+	 *  @param  int     $userid     User id, to load the default bank account of the user in $currency
+	 *  @param  string  $currency   Currency of the default bank account to load with $userid, company currency if empty
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $userid = 0)
+	public function fetch($id, $ref = '', $userid = 0, $currency = '')
 	{
 		if (empty($id) && empty($ref) && empty($userid)) {
 			return -1;
@@ -207,7 +224,7 @@ class UserBankAccount extends Account
 
 		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation as address";
 		$sql .= ", ur.proprio as owner_name, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
-		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
+		$sql .= ', ur.currency_code, ur.default_rib, ur.state_id, ur.fk_country as country_id';
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
 		$sql .= " FROM ".$this->db->prefix()."user_rib as ur";
@@ -222,6 +239,9 @@ class UserBankAccount extends Account
 		}
 		if ($userid) {
 			$sql .= " WHERE ur.fk_user = ".((int) $userid);
+			$sql .= " AND ".$this->sqlCurrencyCode('ur.currency_code')." = '".$this->db->escape(empty($currency) ? getDolCurrency() : $currency)."'";
+			$sql .= " ORDER BY ur.default_rib DESC, ur.rowid ASC";
+			$sql .= $this->db->plimit(1);
 		}
 
 		$resql = $this->db->query($sql);
@@ -252,6 +272,7 @@ class UserBankAccount extends Account
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
 				$this->currency_code = $obj->currency_code;
+				$this->default_rib = (int) $obj->default_rib;
 
 				$this->state_id = $obj->state_id;
 				$this->state_code = $obj->state_code;
@@ -303,7 +324,10 @@ class UserBankAccount extends Account
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result && $this->setOneDefaultPerCurrency() < 0) {
+				$error++;
+				$this->error = "Error ".$this->db->lasterror();
+			} elseif ($result) {
 				// Remove extrafields
 				/*
 				if (!$error) {
@@ -336,6 +360,102 @@ class UserBankAccount extends Account
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Load all the bank accounts of a user
+	 *
+	 * @param	int						$userid		User id
+	 * @return	UserBankAccount[]|int<-1,-1>		Bank accounts of the user, -1 if KO
+	 */
+	public function fetchAllOfUser($userid)
+	{
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."user_rib";
+		$sql .= " WHERE fk_user = ".((int) $userid);
+		$sql .= " ORDER BY ".$this->sqlCurrencyCode('currency_code').", default_rib DESC, rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$accounts = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$account = new UserBankAccount($this->db);
+			$account->fetch($obj->rowid);
+			$accounts[] = $account;
+		}
+		$this->db->free($resql);
+
+		return $accounts;
+	}
+
+	/**
+	 * Set this bank account as the default one of its user in its currency
+	 *
+	 * @return	int		Return integer <0 if KO, >0 if OK
+	 */
+	public function setAsDefault()
+	{
+		$sql = "UPDATE ".$this->db->prefix()."user_rib";
+		$sql .= " SET default_rib = (CASE WHEN rowid = ".((int) $this->id)." THEN 1 ELSE 0 END)";
+		$sql .= " WHERE fk_user = ".((int) $this->userid);
+		$sql .= " AND ".$this->sqlCurrencyCode('currency_code')." = '".$this->db->escape(empty($this->currency_code) ? getDolCurrency() : $this->currency_code)."'";
+
+		dol_syslog(get_class($this)."::setAsDefault", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$this->default_rib = 1;
+
+		return 1;
+	}
+
+	/**
+	 * Make sure the user of this bank account has exactly one default bank account in each of its currencies
+	 *
+	 * @return	int		Return integer <0 if KO, >0 if OK
+	 */
+	private function setOneDefaultPerCurrency()
+	{
+		$sql = "SELECT rowid, ".$this->sqlCurrencyCode('currency_code')." as currency_code, default_rib FROM ".$this->db->prefix()."user_rib";
+		$sql .= " WHERE fk_user = ".((int) $this->userid);
+		$sql .= " ORDER BY default_rib DESC, rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return -1;
+		}
+
+		$currencieswithdefault = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$isdefault = empty($currencieswithdefault[$obj->currency_code]) ? 1 : 0;
+			$currencieswithdefault[$obj->currency_code] = 1;
+			if ($isdefault != $obj->default_rib) {
+				if (!$this->db->query("UPDATE ".$this->db->prefix()."user_rib SET default_rib = ".$isdefault." WHERE rowid = ".((int) $obj->rowid))) {
+					return -1;
+				}
+			}
+			if ($obj->rowid == $this->id) {
+				$this->default_rib = $isdefault;
+			}
+		}
+		$this->db->free($resql);
+
+		return 1;
+	}
+
+	/**
+	 * Return the SQL expression of the currency of a bank account of user, an empty currency being the company currency
+	 *
+	 * @param	string	$field		Field of the currency code
+	 * @return	string				SQL expression
+	 */
+	private function sqlCurrencyCode($field)
+	{
+		return "COALESCE(NULLIF(".$field.", ''), '".$this->db->escape(getDolCurrency())."')";
 	}
 
 	/**
