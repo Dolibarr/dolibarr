@@ -1,7 +1,7 @@
 ---
 # Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)
-# and that the description of the PR does not contain the mention @eldy.
-# If this is not the case, the CI fails, so the PR is refused.
+# and that the description of the PR does not contain a mention of a maintainer (defined into MAINTENERS file).
+# If this is not the case, the CI fails, so the PR is refused. If the description contains the mention, the PR is also closed.
 # If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
 # Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
 # and must be followed by a space, a '#' or a ':' (for example: "Fix #456 Short description", "Fix: Short description", "New Short description").
@@ -13,8 +13,10 @@
 # the first job is green.
 name: Check PR title and description
 
+# Note: pull_request_target gives a write token even for PRs from forks. This is safe because
+# the workflow never checks out or runs code of the PR, it only reads the title, body, files and comments of the PR.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, ready_for_review, synchronize]
 
 permissions: {}
@@ -25,7 +27,7 @@ jobs:
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read # to get the list of files of the PR
+      pull-requests: write # to get the list of files of the PR and to close it
       issues: read # to get the comments of the PR
     steps:
       - name: Check PR title prefix
@@ -61,9 +63,26 @@ jobs:
       - name: Check PR description mentions
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          if echo "$PR_BODY" | grep -Eiq '@eldy\b'; then
-            echo "::error::The description of the PR must not contain the mention of the maintener (@eldy). This is useless as the maintener is already watching and notified for PR."
+          # Get the github logins of maintainers from the lines "M: Name <email> / login" of the MAINTENERS file of the target branch
+          # (the file is read from the base repository, never from the PR)
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${GH_REPO}/contents/MAINTENERS?ref=${PR_TARGET_BRANCH}" \
+            | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+            | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u | paste -sd '|' - || true)
+          if [ -z "$MAINTAINERS" ]; then
+            echo "No maintainer found into the MAINTENERS file. Check of mentions skipped."
+            exit 0
+          fi
+          echo "Maintainers found into MAINTENERS file: $MAINTAINERS"
+
+          if printf '%s' "$PR_BODY" | grep -Eiq "@(${MAINTAINERS})\b"; then
+            # Close the PR (a failure must not hide the CI error below)
+            gh pr close "$PR_NUMBER" --comment "PR closed automatically: its description must not contain the mention of a maintainer (defined into MAINTENERS file), who is already notified of every PR. Please reopen it after removing the mention." || true
+            echo "::error::The description of the PR must not contain the mention of a maintainer (defined into MAINTENERS file). This is useless as the maintainers are already watching and notified for PR."
             exit 1
           fi
 

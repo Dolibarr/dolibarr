@@ -249,6 +249,10 @@ class Invoices extends DolibarrApi
 				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'unpaid', 'paid', 'cancelled'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, unpaid, paid, cancelled");
+		}
 		// Filter by status
 		if ($status == 'draft') {
 			$sql .= " AND t.fk_statut IN (0)";
@@ -2274,6 +2278,10 @@ class Invoices extends DolibarrApi
 			}
 		}
 
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'active', 'suspended'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, active, suspended");
+		}
 		// Filter by status
 		if ($status == 'active') {
 			$sql .= " AND t.suspended = 0 AND t.frequency IS NOT NULL";

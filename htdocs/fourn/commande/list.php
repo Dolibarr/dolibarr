@@ -12,6 +12,7 @@
  * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       William Mead                <william.mead@manchenumerique.fr>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +400,7 @@ if (empty($reshook)) {
 	}
 
 	// Mass action to generate vendor bills
-	if (!$error && $massaction == 'confirm_createsupplierbills') {
+	if (!$error && $massaction == 'confirm_createsupplierbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
@@ -1345,7 +1346,7 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-	$topicmail = "SendOrderRef";
+	$topicmail = "SendSupplierOrderRef";
 	$modelmail = "order_supplier_send";
 	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;

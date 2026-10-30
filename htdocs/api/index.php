@@ -191,8 +191,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		dol_syslog("ErrorFailedToWriteInApiTempDirectory ".$conf->api->dir_temp, LOG_ERR);
-		print 'Erreur temp dir api/temp not writable';
 		header('HTTP/1.1 500 temp dir api/temp not writable');
+		print 'Erreur temp dir api/temp not writable';
 		exit(0);
 	}
 }
@@ -236,8 +236,8 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
-		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		print 'APIs are not allowed from the IP '.$ipremote;
 		//session_destroy();
 		exit(0);
 	}
@@ -399,8 +399,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 		if (! $endpointisallowed) {
 			dol_syslog('The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES', LOG_WARNING);
-			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
 			header('HTTP/1.1 501 API is forbidden by API_ENDPOINT_RULES');
+			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
 			//session_destroy();
 			exit(0);
 		}
@@ -423,8 +423,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	}
 	if (!$res) {
 		dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
-		print 'API not found (failed to include API file)';
 		header('HTTP/1.1 501 API not found (failed to include API file)');
+		print 'API not found (failed to include API file)';
 		//session_destroy();
 		exit(0);
 	}
