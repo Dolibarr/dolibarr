@@ -558,7 +558,7 @@ class CommandeFournisseurTest extends CommonClassTest
 	/**
 	 * testUpdateLinkedBuyPriceSeveralPurchaseOrders
 	 *
-	 * The cost price proposed on a customer order is the average net unit price of the placed purchase orders linked to it, weighted by the quantities.
+	 * The cost price proposed on a customer order is the average net unit price of the ordered purchase orders linked to it, weighted by the quantities.
 	 *
 	 * @return	void
 	 */
@@ -615,14 +615,12 @@ class CommandeFournisseurTest extends CommonClassTest
 		}
 		$lineid = $orders[1]->lines[0]->id;
 
-		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
-		$this->assertEquals(12, price2num($documents['commande']['buyprice'], 'MU'), 'The other purchase order is still a draft, so it does not count');
-		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_ORDERSENT)." WHERE rowid = ".((int) $orders[0]->id));
-		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
-		$this->assertEquals(11.7, price2num($documents['commande']['buyprice'], 'MU'), 'Average of 1 at 10.8 and 3 at 12');
-		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_CANCELED)." WHERE rowid = ".((int) $orders[0]->id));
-		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
-		$this->assertEquals(12, price2num($documents['commande']['buyprice'], 'MU'), 'A canceled purchase order does not count');
+		// The other purchase order counts when it is ordered or received (average of 1 at 10.8 and 3 at 12), not before nor when canceled
+		foreach (array(CommandeFournisseur::STATUS_DRAFT => 12, CommandeFournisseur::STATUS_ACCEPTED => 12, CommandeFournisseur::STATUS_ORDERSENT => 11.7, CommandeFournisseur::STATUS_RECEIVED_COMPLETELY => 11.7, CommandeFournisseur::STATUS_CANCELED => 12) as $status => $expected) {
+			$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $status)." WHERE rowid = ".((int) $orders[0]->id));
+			$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+			$this->assertEquals($expected, price2num($documents['commande']['buyprice'], 'MU'), 'Cost with the other purchase order at the status '.$status);
+		}
 
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
 

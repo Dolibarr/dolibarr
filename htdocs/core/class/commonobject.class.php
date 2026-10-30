@@ -10954,7 +10954,7 @@ abstract class CommonObject
 
 	/**
 	 * Return the linked proposals, orders and invoices having, for the product of a line of this object, a cost price different from
-	 * the one saved on the line (for a purchase order, the average net unit price of the product on the purchase orders linked to the same documents,
+	 * the one saved on the line (for a purchase order, the average net unit price of the product on the ordered purchase orders linked to the same documents,
 	 * weighted by the quantities). Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
 	 * user can not change cost prices, and documents that the user can not edit or access (rights, restriction on thirdparties) are ignored.
 	 *
@@ -10999,7 +10999,7 @@ abstract class CommonObject
 			$sql .= " FROM ".$this->db->prefix().$this->table_element." as t, ".$this->db->prefix().$this->table_element_line." as d";
 			$sql .= " WHERE d.".$this->db->sanitize($this->fk_element)." = t.rowid AND t.entity IN (".getEntity($this->table_element).")";
 			$sql .= " AND t.rowid IN (".$this->db->sanitize(implode(',', $orderids)).")";
-			$sql .= " AND (t.rowid = ".((int) $this->id)." OR t.fk_statut BETWEEN 1 AND 5)";	// This purchase order, and the other ones if placed and not canceled
+			$sql .= " AND (t.rowid = ".((int) $this->id)." OR t.fk_statut BETWEEN 3 AND 5)";	// This purchase order, and the other ones if ordered or received
 			$sql .= " AND d.fk_product = ".((int) $line->fk_product)." AND d.qty > 0";
 			$resql = $this->db->query($sql);
 			$obj = ($resql ? $this->db->fetch_object($resql) : null);
