@@ -5526,6 +5526,8 @@ abstract class CommonObject
 						$this->status_buy = $status;	// @phpstan-ignore-line
 					} elseif ($fieldstatus == 'tobatch') {
 						$this->status_batch = $status;	// @phpstan-ignore-line
+					} elseif ($fieldstatus == 'stockable_product') {
+						$this->stockable_product = $status;	// @phpstan-ignore-line
 					} else {
 						$this->status = $status;
 					}
