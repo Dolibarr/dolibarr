@@ -518,7 +518,10 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertGreaterThan(0, $products[3]->add_fournisseur($user, $societe->id, $ref_fourn, 1), 'Failed to create the supplier price line of product 3');
 		$this->assertGreaterThan(0, $products[3]->update_buyprice(1, 40, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', 40, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 3');
 		$societe2 = new Societe($db);
-		$this->assertGreaterThan(0, $societe2->fetch(2), 'The other thirdparty must exist');
+		$societe2->name = 'CommandeFournisseurTest other supplier Unittest';
+		$societe2->fournisseur = 1;
+		$societe2->code_fournisseur = -1;
+		$this->assertGreaterThan(0, $societe2->create($user), 'Failed to create the other supplier: '.$societe2->errorsToString());
 		$ref_fourn2 = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_OTHER_'.dol_now();
 		$this->assertGreaterThan(0, $products[5]->add_fournisseur($user, $societe2->id, $ref_fourn2, 1), 'Failed to create the supplier price line of product 5');
 		$this->assertGreaterThan(0, $products[5]->update_buyprice(1, 30, $user, 'HT', $societe2, 0, $ref_fourn2, 0, 0, 0, 0, 0, 0, '', array(), '', 30, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 5');
@@ -578,6 +581,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		foreach ($products as $product) {
 			$product->delete($user);
 		}
+		$societe2->delete($societe2->id, $user);
 	}
 
 	/**
