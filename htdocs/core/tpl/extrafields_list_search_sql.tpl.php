@@ -99,12 +99,12 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 					$critkeys[] = $critvalue;
 				}
 			}
-			$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IS NULL OR ".$extrafieldsobjectprefix.$tmpkey." = '' OR ".$extrafieldsobjectprefix.$tmpkey." = '0'";
+			$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." IS NULL OR ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '' OR ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '0'";
 			if (count($critkeys)) {
 				$modeforsearch = ($typ == 'chkbxlst' ? 4 : 3); // 4 = search inside a comma separated string, 3 = list of keys (quoted, the column is a varchar)
-				$morewhere .= " OR ".natural_search($extrafieldsobjectprefix.$tmpkey, implode(',', $critkeys), $modeforsearch, 1);
+				$sqlMoreWhere .= " OR ".natural_search($db->sanitize($extrafieldsobjectprefix.$tmpkey), implode(',', $critkeys), $modeforsearch, 1);
 			}
-			$morewhere .= ")";
+			$sqlMoreWhere .= ")";
 		} elseif ($crit != ''
 			&& (!in_array($typ, array('select', 'sellist', 'select', 'link')) || $crit != '0')
 			&& (!in_array($typ, array('link')) || ($crit != '0' && $crit != '-1'))) {

@@ -9884,6 +9884,8 @@ function dol_getmypid()
  */
 function natural_search_multiselect($field, $values)
 {
+	global $db;
+
 	if (!is_array($values) || !count($values)) {
 		return '';
 	}
@@ -9903,7 +9905,7 @@ function natural_search_multiselect($field, $values)
 		$sqlfilters[] = natural_search($field, implode(',', $ids), 2, 1);	// Returns "(field IN (id1,id2,...))"
 	}
 	if ($searchnotdefined) {
-		$sqlfilters[] = "(".$field." IS NULL OR ".$field." = 0)";
+		$sqlfilters[] = "(".$db->sanitize($field)." IS NULL OR ".$db->sanitize($field)." = 0)";
 	}
 
 	if (!count($sqlfilters)) {
