@@ -169,3 +169,41 @@ function dol_ch_controle_bvrb($bvrb)
 
 	return ($check == $bv);
 }
+
+/**
+ * Return if an IBAN is a Swiss QR-IBAN, that only accepts payments with a QR reference (QRR).
+ *
+ * @param	string	$iban		IBAN, with or without spaces
+ * @return	bool
+ */
+function dolCHIsQRIBAN($iban)
+{
+	$iban = strtoupper(preg_replace('/\s/', '', (string) $iban));
+	if (!preg_match('/^(CH|LI)\d{2}(\d{5})/', $iban, $matches)) {
+		return false;
+	}
+
+	return ((int) $matches[2] >= 30000 && (int) $matches[2] <= 31999);
+}
+
+/**
+ * Return if a Swiss QR reference (QRR, 27 digits with a recursive modulo 10 check digit) is valid.
+ *
+ * @param	string	$ref		QR reference, with or without spaces
+ * @return	bool
+ */
+function dolCHQRReferenceIsValid($ref)
+{
+	$ref = preg_replace('/\s/', '', (string) $ref);
+	if (!preg_match('/^\d{27}$/', $ref)) {
+		return false;
+	}
+
+	$table = array(0, 9, 4, 6, 8, 2, 7, 1, 3, 5);
+	$carry = 0;
+	for ($i = 0; $i < 26; $i++) {
+		$carry = $table[($carry + (int) $ref[$i]) % 10];
+	}
+
+	return ((10 - $carry) % 10) == (int) $ref[26];
+}

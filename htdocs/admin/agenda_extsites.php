@@ -127,6 +127,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 			$color = '';
 		}
 		$enabled = trim(GETPOST('AGENDA_EXT_ENABLED'.$i, 'alpha'));
+		$cachedelay = (GETPOSTINT('AGENDA_EXT_CACHE'.$i) > 0 ? (string) GETPOSTINT('AGENDA_EXT_CACHE'.$i) : '');
 
 		if (!empty($src) && !dol_is_url($src)) {
 			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
@@ -153,7 +154,13 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if (!($res > 0)) {
 			$error++;
 		}
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
+		if (GETPOSTISSET('AGENDA_EXT_ENABLED'.$i)) {
+			$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
+			if (!($res > 0)) {
+				$error++;
+			}
+		}
+		$res = dolibarr_set_const($db, 'AGENDA_EXT_CACHE'.$i, $cachedelay, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -197,7 +204,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
-print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("AgendaExtSitesDesc")."</div><br>\n";
 print "<br>\n";
 
 
@@ -210,7 +217,8 @@ print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda");
 print '<br><span class="hideonsmartphone opacitymedium">('.$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</span></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
-print '<td class="right">'.$langs->trans("Color").'</td>';
+print '<td class="nowrap">'.$form->textwithpicto($langs->trans("AgendaExtCacheDelay"), $langs->trans("AgendaExtCacheDelayDesc", 300), 1).'</td>';
+print '<td class="center">'.$langs->trans("Color").'</td>';
 print '<td class="center">'.$langs->trans("Enabled").'</td>';
 print '<td class="center">'.$langs->trans("ActiveByDefault").'</td>';
 print "</tr>";
@@ -222,6 +230,7 @@ while ($i <= $MAXAGENDA) {
 	$src = 'AGENDA_EXT_SRC' . $key;
 	$offsettz = 'AGENDA_EXT_OFFSETTZ' . $key;
 	$color = 'AGENDA_EXT_COLOR' . $key;
+	$cachedelay = 'AGENDA_EXT_CACHE' . $key;
 	$enabled = 'AGENDA_EXT_ENABLED' . $key;
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT' . $key;
 
@@ -238,6 +247,9 @@ while ($i <= $MAXAGENDA) {
 
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
+
+	// Cache duration
+	print '<td><input type="number" min="0" class="flat hideifnotset width75" name="AGENDA_EXT_CACHE' . $key . '" value="' . (GETPOSTISSET('AGENDA_EXT_CACHE' . $key) ? GETPOSTINT('AGENDA_EXT_CACHE' . $key) : getDolGlobalString($cachedelay)) . '" placeholder="300"></td>' . "\n";
 
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';

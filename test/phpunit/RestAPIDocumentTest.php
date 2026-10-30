@@ -54,7 +54,9 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 
 		// Send to non existent directory
 
-		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit1');
+		// Cleanups use $indexdatabase=0: deleting llx_ecm_files rows inside the uncommitted test transaction would lock them for the API server
+		$countdeleted = 0;
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit1', 0, 0, 0, $countdeleted, 0);
 
 		//$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
 		$data = array(
@@ -84,7 +86,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 
 		// Send to existent directory
 
-		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2', 0, 0, 0, $countdeleted, 0);
 		dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 
 		$data = array(
@@ -114,7 +116,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 		$this->assertEquals($object2, 'mynewfile.txt', 'Must contains basename of file');
 
 
-		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3');
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3', 0, 0, 0, $countdeleted, 0);
 
 		$data = array(
 			'filename' => "mynewfile.txt",
@@ -143,7 +145,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 		$this->assertEquals($object3, 'mynewfile.txt', 'Must contains basename of file');
 
 
-		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit', 0, 0, 0, $countdeleted, 0);
 
 		return 0;
 	}

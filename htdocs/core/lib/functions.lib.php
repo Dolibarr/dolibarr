@@ -2431,7 +2431,9 @@ function dol_escape_all($stringtoescape)
  */
 function dol_escape_xml($stringtoescape)
 {
-	return $stringtoescape;
+	$stringtoescape = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stringtoescape);	// Characters not allowed in XML 1.0
+
+	return htmlspecialchars($stringtoescape, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 
@@ -4391,15 +4393,16 @@ function dolGetFirstLetters($s, $nbofchar = 1)
  *
  * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
+ * @param	int			$binarycount		Do a binary count (count number of bytes in string, not number of human characters)
  * @return  int								Length of string
  */
-function dol_strlen($string, $stringencoding = 'UTF-8')
+function dol_strlen($string, $stringencoding = 'UTF-8', $binarycount = 0)
 {
 	if (is_null($string)) {
 		return 0;
 	}
 
-	if (function_exists('mb_strlen')) {
+	if (function_exists('mb_strlen') && empty($binarycount)) {
 		return mb_strlen($string, $stringencoding);
 	} else {
 		return strlen($string);
@@ -4580,7 +4583,23 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
+		$curcode = $currency_code;
+		if ($curcode === 'auto') {
+			$curcode = $conf->currency;
+		}
+
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		$rounding = min($max_decimals_unit, $max_decimals_tot);
 	}
 	$nbdecimal = $rounding;
 
@@ -4626,11 +4645,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$nbdecimal = dol_strlen($decpart);
 	}
 
+	$curcode = $currency_code;
+	if ($curcode === 'auto') {
+		$curcode = $conf->currency;
+	}
+
+	$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN');
+	if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode) && getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode) !== '') {
+		$max_decimals_shown = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN_'.$curcode);
+	}
+
 	// If nbdecimal is higher than max to show
-	$nbdecimalmaxshown = (int) str_replace('...', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'));
+	$nbdecimalmaxshown = (int) str_replace('...', '', $max_decimals_shown);
 	if ($trunc && $nbdecimal > $nbdecimalmaxshown) {
 		$nbdecimal = $nbdecimalmaxshown;
-		if (preg_match('/\.\.\./i', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN'))) {
+		if (preg_match('/\.\.\./i', $max_decimals_shown)) {
 			// If output is truncated, we show ...
 			$end = '...';
 		}
@@ -4638,10 +4667,21 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// If force rounding
 	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
-		if ($forcerounding === 'MU') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
-		} elseif ($forcerounding === 'MT') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($curcode)) {
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$curcode) !== '') {
+				$max_decimals_unit = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$curcode);
+			}
+			if (getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$curcode) !== '') {
+				$max_decimals_tot = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$curcode);
+			}
+		}
+
+		if ($forcerounding === 'MU' || $forcerounding === 'CU') {
+			$nbdecimal = $max_decimals_unit;
+		} elseif ($forcerounding === 'MT' || $forcerounding === 'CT') {
+			$nbdecimal = $max_decimals_tot;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = (int) $forcerounding;
 		}
@@ -4693,6 +4733,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
  * 					                        Default 0 if unknown.
+ *  @param	string			$currencycode	Currency code
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9c', '', 0)   => '9c', price2num('W9c', '', 1)   => 'W9c', price2num('W9c', '', 2)   => '9c'
@@ -4702,7 +4743,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *
  *	@see    price()							Opposite function of price2num
  */
-function price2num($amount, $rounding = '', $option = 0)
+function price2num($amount, $rounding = '', $option = 0, $currencycode = '')
 {
 	global $langs;
 
@@ -4796,18 +4837,39 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+			}
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($currencycode) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$currencycode) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$currencycode);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
+			}
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
-		} elseif ($rounding == 'CU') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
-		} elseif ($rounding == 'CT') {
-			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
-		} elseif ($rounding == 'CR') {
-			$currencycode = (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') ? getDolCurrency() : '';
-			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . ($currencycode ? '_' . $currencycode : '');
+		} elseif ($rounding == 'CU' || preg_match('/^CU_([a-zA-Z]+)$/', (string) $rounding, $regscu)) {
+			$cur = !empty($regscu[1]) ? $regscu[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_UNIT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
+			}
+		} elseif ($rounding == 'CT' || preg_match('/^CT_([a-zA-Z]+)$/', (string) $rounding, $regsct)) {
+			$cur = !empty($regsct[1]) ? $regsct[1] : $currencycode;
+			if (getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') && !empty($cur) && getDolGlobalString('MAIN_MAX_DECIMALS_TOT_'.$cur) !== '') {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_'.$cur);
+			} else {
+				$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));
+			}
+		} elseif ($rounding == 'CR' || preg_match('/^CR_([a-zA-Z]+)$/', (string) $rounding, $regscr)) {
+			$cur = !empty($regscr[1]) ? $regscr[1] : $currencycode;
+			if (empty($cur) && (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
+				$cur = getDolCurrency();
+			}
+			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . (!empty($cur) ? '_' . $cur : '');
 			$nbofdectoround = getDolGlobalInt($rounding_const, getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_RATE', 8));
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
@@ -11341,7 +11403,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				}
 
 				$ret = $objecttmp->fetch($element_id, $element_ref);
-				if ($ret >= 0) {
+				if ($ret > 0) {
 					if (empty($objecttmp->module)) {
 						$objecttmp->module = $element_prop['module'];
 					}
@@ -12124,6 +12186,86 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Function to remove parameters having their default value.
+ * By example, it could be useful to filter useless params from $_GET.
+ *
+ * @param array<string,string> $parameters An array containing a list of parameters to filter
+ *
+ * @return array<string,string> The filtered array cleaned from its default values.
+ */
+function dolRemoveDefaultParameters(array $parameters): array
+{
+	foreach ($parameters as $key => $value) {
+		if ($value == '' || $value == '-1') {
+			unset($parameters[$key]);
+		}
+	}
+
+	return $parameters;
+}
+
+/**
+ * Function to redirect search list forms from POST to GET request.
+ * The redirection is done only for search list forms following these conditions :
+ * - request parameter 'action' must be 'list'
+ * - request parameter 'formfilteraction' must be 'list'
+ * - request method must be 'POST'
+ * - request must not be a massaction request
+ * - string length of the redirection URL must be <= 2000
+ * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
+ *
+ * The goal of this function is to be able to avoid browser warning when going back to a search list page result when navigating in browser history.
+ * Typical case :
+ * - go to a search list page (propal list)
+ * - click on a propal item
+ * - go back in browser history
+ * - browser ask to resend post action (because search form list page return directly html content in the POST response)
+ *
+ * By redirecting POST request to a GET one, there will be not problem to go back to
+ * the search list page (because browser is going back to a GET page)
+ * Need to set the experimental conf MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE to 2000 (or to the max value allowed for GET string by the web server)
+ *
+ * @param string $context The current page context name
+ *
+ * @return void
+ */
+function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
+{
+	if (getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+		preg_match('/list$/', $context) &&
+		GETPOST('action') == 'list' &&
+		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
+		$_SERVER['REQUEST_METHOD'] == 'POST'
+	) {
+		// Detect if it is a simple search (not an massaction)
+		if (!GETPOST('massaction')) {
+			$postData = $_POST;
+
+			// Remove useless data for a simple search list request
+			unset($postData['massaction']);
+			unset($postData['confirmmassactioninvisible']);
+			unset($postData['token']);
+
+			$postData = dolRemoveDefaultParameters($postData);
+
+			// Prepare redirection URL
+			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
+			$urlParams = http_build_query($postData);
+			if ($urlParams !== '') {
+				$newLocationUrl .= '?' . $urlParams;
+			}
+
+			// Make a GET redirection if URL is not too long
+			$maxUrlLength = getDolGlobalInt("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE");
+			if (strlen($newLocationUrl) <= $maxUrlLength) {
+				header('Location: ' . $newLocationUrl);
+				exit();
+			}
+		}
+	}
 }
 
 /**

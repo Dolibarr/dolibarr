@@ -74,6 +74,9 @@ class FormOther
 	{
 		global $langs;
 
+		// $jstoexecuteonadd is the name of a js function: it is used as an id and called, so it can't contain anything else
+		$jstoexecuteonadd = sanitizeVal($jstoexecuteonadd, 'aZ09');
+
 		$out = '';
 
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
@@ -112,7 +115,7 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.$jstoexecuteonadd.'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
 		$out .= '</center>';
 		$out .= '<br>';
@@ -123,11 +126,9 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		// $jstoexecuteonadd is a name of a js function
-		// TODO: dol_escape_js($jstoexecuteonadd) seems wrong for execution, verify, fix
-		$out .= '$(\'#exec'.dol_escape_js($jstoexecuteonadd).'\').click(function(){
-			console.log(\'We call js to execute '.dol_escape_js($jstoexecuteonadd).'\');
-			'.dol_escape_js($jstoexecuteonadd).'();
+		$out .= '$(\'#exec'.$jstoexecuteonadd.'\').click(function(){
+			console.log(\'We call js to execute '.$jstoexecuteonadd.'\');
+			'.$jstoexecuteonadd.'();
 			return false;	/* We want to stay on the scan tool */
 		})';
 		$out .= '</script>';
