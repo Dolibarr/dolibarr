@@ -1324,6 +1324,8 @@ class Utils
 				}
 				if (GETPOST("nobin_disable_fk")) {
 					fwrite($handle, "ALTER TABLE `".$table."` ENABLE KEYS;\n"); // Enabling back the keys/index checking
+				} else {
+					fwrite($handle, "/*!40000 ALTER TABLE `".$table."` ENABLE KEYS */;\n");
 				}
 				if (!GETPOST("nobin_nolocks")) {
 					fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the table
