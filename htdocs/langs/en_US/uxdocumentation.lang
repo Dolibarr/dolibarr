@@ -206,9 +206,10 @@ JSContextCompatAndDeprecations = Backward compatibility and deprecations
 SetEventMessageTool = Dolibarr Tool : Set event message
 FetchTool = Dolibarr Tool : Fetch (ajax requests)
 ReplaceContentTool = Dolibarr Tool : Replace content
-ObjectTool = Dolibarr Tool : Object (ajax update of a card)
-FieldEditTool = Dolibarr Tool : Field edit (edition of the fields of a card in ajax)
-LineEditTool = Dolibarr Tool : Line edit (edition of the document lines of a card in ajax)
+ObjectTool = Dolibarr Tool : Object (read and update an object in ajax)
+CardTool = Dolibarr Tool : Card (controller of the card of an object displayed in the page)
+FieldEditTool = Dolibarr Tool : Card, part fields (edition of the fields of a card in ajax)
+LineEditTool = Dolibarr Tool : Card, part lines (edition of the document lines of a card in ajax)
 
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.

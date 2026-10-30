@@ -1,12 +1,13 @@
 document.addEventListener('Dolibarr:Init', function(e) {
 	/**
-	 * Dolibarr.tools.lineEdit
-	 * -----------------------
-	 * Edition of the document lines of a card in ajax, without reloading the page (see CommonObject::isAjaxLineEdit()).
+	 * Dolibarr.tools.card.lines
+	 * -------------------------
+	 * Edition of the document lines of a card in ajax, without reloading the page (experimental, see CommonObject::isAjaxLineEdit()).
+	 * It uses the controller of the card (Dolibarr.tools.card), shared with the edition of the fields: same date of modification.
 	 * The edit link of a line has the attributes data-dol-edit-line, data-dol-element and data-dol-id, its url is used without javascript.
 	 * - A click on the link replaces the line by its edit form, the one of the card (core/ajax/objectline.php with action=editline).
 	 *   The form to add a line is removed from the page during the edition: it uses the same names and ids of inputs, like in the card.
-	 * - The form is saved by the action updateline of the card, posted with Dolibarr.tools.object().postCard(): all the rules
+	 * - The form is saved by the action updateline of the card, posted with Dolibarr.tools.card().postCard(): all the rules
 	 *   of the card are applied (prices, taxes, hooks, triggers, document regenerated...).
 	 * - Then the line and the fields displayed (totals...) are refreshed. If the card returns an error, it is displayed and the form stays open.
 	 * Lines are also added and deleted in ajax, with the actions addline and confirm_deleteline of the card:
@@ -149,7 +150,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const table = row ? row.closest('table') : null;
 		if (!row || !form || !table) return false;
 
-		const controller = Dolibarr.tools.object(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
+		const controller = Dolibarr.tools.card(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
 
 		let data;
 		try {
@@ -255,7 +256,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	/**
 	 * Replace or remove the lines of the page with the lines loaded by core/ajax/objectline.php, then refresh the fields displayed (totals...)
 	 * and the sections of the card (status, action buttons, documents): with the card returned by the action, or later when a section
-	 * is visible if the card redirected after the action (lazy load, see scheduleCardSectionsRefresh())
+	 * is visible if the card redirected after the action (lazy load, see scheduleSectionsRefresh())
 	 * @param {Object} controller
 	 * @param {Object} data Answer of fetchLines()
 	 * @param {number[]} lineIds Lines asked
@@ -273,9 +274,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		});
 		await controller.refreshFields();
 		if (doc) {
-			await controller.refreshCardSections(doc);
+			await controller.refreshSections(doc);
 		} else {
-			controller.scheduleCardSectionsRefresh();
+			controller.scheduleSectionsRefresh();
 		}
 	}
 
@@ -337,7 +338,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		// No line yet: the table of the lines is built by the card
 		if (before.length === 0) return false;
 
-		const controller = Dolibarr.tools.object(button.dataset.dolElement, parseInt(button.dataset.dolId, 10));
+		const controller = Dolibarr.tools.card(button.dataset.dolElement, parseInt(button.dataset.dolId, 10));
 		button.dataset.dolAdding = '1';
 		button.disabled = true;
 
@@ -418,7 +419,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		if (!(await confirmDeleteLine())) return true;
 
-		const controller = Dolibarr.tools.object(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
+		const controller = Dolibarr.tools.card(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
 		const lineIds = getLinesToRefresh([lineId], getPageLineIds(table), table);
 		row.dataset.dolDeleting = '1';
 
@@ -491,5 +492,5 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		});
 	});
 
-	Dolibarr.defineTool('lineEdit', { open, close, addLine, deleteLine });
+	Dolibarr.tools.card.definePart('lines', { open, close, addLine, deleteLine });
 });
