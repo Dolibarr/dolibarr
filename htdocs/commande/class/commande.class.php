@@ -1673,7 +1673,7 @@ class Commande extends CommonOrder
 				$tva_tx = get_default_tva($order->thirdparty, $mysoc, $line->fk_product, $productsupplier->product_fourn_price_id);
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $order->thirdparty);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $order->thirdparty);
-				$ret = $order->addline($line->desc, $productsupplier->fourn_unitprice, $line->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $line->fk_product, $productsupplier->product_fourn_price_id, $productsupplier->ref_supplier, $productsupplier->fourn_remise_percent, 'HT', 0, $line->product_type, 0, 0, null, null, array(), $line->fk_unit, 0, $this->element, $line->id);
+				$ret = $order->addline($line->desc, $productsupplier->fourn_unitprice, $line->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $line->fk_product, $productsupplier->product_fourn_price_id, $productsupplier->ref_supplier, (float) $productsupplier->fourn_remise_percent, 'HT', 0, $line->product_type, 0, 0, null, null, array(), $line->fk_unit, 0, $this->element, $line->id);
 				if ($ret < 0) {
 					$this->setErrorsFromObject($order);
 					$this->db->rollback();
