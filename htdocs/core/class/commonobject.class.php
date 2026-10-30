@@ -4944,6 +4944,7 @@ abstract class CommonObject
 	{
 		$rank = array('propal' => 1, 'commande' => 2, 'facture' => 3);	// The oldest document of the sales chain is the source of the link
 		$mytype = $this->getElementType();
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$mysocid = (property_exists($this, 'socid') ? (int) $this->socid : 0);
 		$savedlinks = array($this->linkedObjectsIds, $this->linkedObjects);
 
