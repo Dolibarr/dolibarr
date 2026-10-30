@@ -1601,7 +1601,7 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 * 	Save the price of the predefined product lines as supplier price (with its history) and as cost price of the products
+	 * 	Save the price of the predefined product lines as supplier price (with its history, created if the supplier has none for the product) and as cost price of the products
 	 *
 	 * 	@param		User	$user		User making change
 	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
@@ -1640,6 +1640,22 @@ class CommandeFournisseur extends CommonOrder
 					return -1;
 				}
 				$nbupdated++;
+			}
+
+			// The supplier has no price for this product: create it for the quantity 1, like the buying prices tab of the product does.
+			// The supplier ref is the one of the line or else the ref of the product, as it must be unique for a supplier and a quantity.
+			$newprice = new ProductFournisseur($this->db);
+			if (empty($productsupplier->product_fourn_price_id) && $newprice->list_product_fournisseur_price($line->fk_product, '', '', 1, 0, (int) $this->socid) === array() && $newprice->fetch($line->fk_product) > 0) {
+				$ref = ($line->ref_supplier ? (string) $line->ref_supplier : $newprice->ref);
+				$result = $newprice->add_fournisseur($user, (int) $this->socid, $ref, 1);	// -3 if this supplier ref is used by another product
+				if ($result > 0) {
+					$result = $newprice->update_buyprice(1, (float) $line->subprice, $user, 'HT', $this->thirdparty, 0, $ref, (float) $line->tva_tx, 0, $line->remise_percent, 0, 0, 0, '', array(), (string) $line->vat_src_code, (float) ($line->multicurrency_subprice ?: $line->subprice), 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code);
+					$nbupdated++;
+				}
+				if ($result < 0 && $result != -3) {
+					$this->setErrorsFromObject($newprice);
+					return -1;
+				}
 			}
 
 			// Cost price (net unit price of the line)

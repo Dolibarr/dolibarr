@@ -459,7 +459,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertEquals(0, $order->updateProductBuyPrices(new User($db)), 'A user without rights must not update any price');
 
 		$result = $order->updateProductBuyPrices($user);
-		$this->assertEquals(3, $result, 'Supplier price and cost price of product 1, cost price of product 2');
+		$this->assertEquals(4, $result, 'Supplier price and cost price of product 1, supplier price created and cost price of product 2');
 
 		// Supplier price of product 1 is the price of the line, and the previous price is kept in the history
 		$productsupplier = new ProductFournisseur($db);
@@ -468,12 +468,12 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertEquals(10, (float) $productsupplier->fourn_remise_percent, 'Supplier discount must be the discount of the line');
 		$this->assertCount(2, $productsupplier->listProductFournisseurPriceLog($pricerowid), 'History must contain the old and the new price');
 
-		// Cost price is the net unit price of the line, and no supplier price is created for product 2
+		// Cost price is the net unit price of the line
 		$product1->fetch($productid1);
 		$this->assertEquals(27, (float) $product1->cost_price, 'Cost price must be the net unit price of the line');
 		$product2->fetch($productid2);
 		$this->assertEquals(50, (float) $product2->cost_price, 'Cost price must be the net unit price of the line');
-		$this->assertCount(0, $productsupplier->list_product_fournisseur_price($productid2), 'No supplier price must be created');
+		$this->assertCount(1, $productsupplier->list_product_fournisseur_price($productid2), 'The supplier price of product 2 must be created');
 
 		// Prices are already the ones of the order
 		$this->assertEquals(0, $order->updateProductBuyPrices($user), 'Nothing must be updated a second time');
@@ -483,6 +483,80 @@ class CommandeFournisseurTest extends CommonClassTest
 		$order->delete($user);
 		$product1->delete($user);
 		$product2->delete($user);
+	}
+
+	/**
+	 * testCreateMissingSupplierPrice
+	 *
+	 * The supplier price of a product is created when the supplier has none, and never replaces the price of another product.
+	 *
+	 * @return	void
+	 */
+	public function testCreateMissingSupplierPrice()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$advancedperms = getDolGlobalString('MAIN_USE_ADVANCED_PERMS');
+		$conf->global->MAIN_USE_ADVANCED_PERMS = 0;	// Test the default rights, create on products and services
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		// Products 1 and 2 have no supplier price, product 3 has one with a supplier ref, product 4 has none and uses the supplier ref of product 3
+		$products = array();
+		foreach (array(1, 2, 3, 4) as $i) {
+			$products[$i] = new ProductFournisseur($db);
+			$products[$i]->initAsSpecimen();
+			$products[$i]->ref = 'PHPUNIT_CREATEPRICE_'.$i.'_'.dol_now();
+			$this->assertGreaterThan(0, $products[$i]->create($user), 'Failed to create product '.$i.': '.$products[$i]->errorsToString());
+		}
+		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_CREATEPRICE_'.dol_now();
+		$this->assertGreaterThan(0, $products[3]->add_fournisseur($user, $societe->id, $ref_fourn, 1), 'Failed to create the supplier price line of product 3');
+		$this->assertGreaterThan(0, $products[3]->update_buyprice(1, 40, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', 40, 'HT', 1, $conf->currency), 'Failed to set the supplier price of product 3');
+
+		$order = new CommandeFournisseur($db);
+		$order->initAsSpecimen();
+		$order->socid = $societe->id;
+		$order->lines = array();
+		foreach (array(array(1, 2, 50, ''), array(2, 1, 70, ''), array(3, 1, 45, ''), array(4, 1, 60, $ref_fourn)) as $data) {
+			$line = new CommandeFournisseurLigne($db);
+			$line->desc = 'phpunit line of product '.$data[0];
+			$line->qty = $data[1];
+			$line->subprice = $data[2];
+			$line->fk_product = $products[$data[0]]->id;
+			$line->ref_supplier = $data[3];
+			$order->lines[] = $line;
+		}
+		$orderid = $order->create($user);
+		$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
+		$order->fetch($orderid);
+
+		$this->assertEquals(6, $order->updateProductBuyPrices($user), 'Supplier price created and cost price of products 1 and 2, cost price of products 3 and 4');
+
+		// The supplier prices of the products 1 and 2 are created for the quantity 1, with the ref of the product as supplier ref, and none replaces the other
+		foreach (array(1 => 50, 2 => 70) as $i => $unitprice) {
+			$prices = $products[$i]->list_product_fournisseur_price($products[$i]->id);
+			$this->assertCount(1, $prices, 'The supplier price of product '.$i.' must be created');
+			$this->assertEquals(array(1, $unitprice, $products[$i]->ref), array((float) $prices[0]->fourn_qty, (float) $prices[0]->fourn_unitprice, $prices[0]->ref_supplier), 'Quantity, price and supplier ref of the price of product '.$i);
+			$this->assertCount(1, $products[$i]->listProductFournisseurPriceLog($prices[0]->product_fourn_price_id), 'The created price of product '.$i.' is in the history');
+		}
+
+		// Nothing is created for a product that already has a price of this supplier, nor when the supplier ref is used by another product
+		$prices = $products[3]->list_product_fournisseur_price($products[3]->id);
+		$this->assertCount(1, $prices, 'The supplier price of product 3 must not be duplicated');
+		$this->assertEquals(40, (float) $prices[0]->fourn_unitprice, 'The supplier price of product 3 must not change');
+		$this->assertCount(0, $products[4]->list_product_fournisseur_price($products[4]->id), 'No supplier price when the supplier ref is used by another product');
+
+		$conf->global->MAIN_USE_ADVANCED_PERMS = $advancedperms;
+
+		$order->delete($user);
+		foreach ($products as $product) {
+			$product->delete($user);
+		}
 	}
 
 	/**
