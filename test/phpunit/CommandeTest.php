@@ -438,9 +438,9 @@ class CommandeTest extends CommonClassTest
 			$this->assertGreaterThan(0, $suppliers[$key]->create($user), $suppliers[$key]->errorsToString());
 		}
 
-		// The product 1 is sold by the 2 suppliers (A is cheaper), the product 2 by B only and the product 3 has no supplier price
+		// The product 1 is sold by the 2 suppliers (A is cheaper), the product 2 by B only, the product 3 has no supplier price and the product 4 a price from 10 units only
 		$products = array();
-		foreach (array(1, 2, 3) as $i) {
+		foreach (array(1, 2, 3, 4) as $i) {
 			$products[$i] = new Product($db);
 			$products[$i]->initAsSpecimen();
 			$products[$i]->ref = 'PHPUNIT_PURCHASE_ORDERS_'.$i.'_'.dol_now();
@@ -451,6 +451,9 @@ class CommandeTest extends CommonClassTest
 			$productsupplier->id = $products[$price[0]]->id;
 			$this->assertGreaterThan(0, $productsupplier->update_buyprice(1, $price[2], $user, 'HT', $suppliers[$price[1]], 0, 'REF_'.$price[0].$price[1], 0, 0, 0, 0, 0, 0, '', array(), '', $price[2], 'HT', 1, $conf->currency), $productsupplier->errorsToString());
 		}
+		$productsupplier = new ProductFournisseur($db);
+		$productsupplier->id = $products[4]->id;
+		$this->assertGreaterThan(0, $productsupplier->update_buyprice(10, 70, $user, 'HT', $suppliers['A'], 0, 'REF_4A', 0, 0, 0, 0, 0, 0, '', array(), '', 70, 'HT', 1, $conf->currency), $productsupplier->errorsToString());
 
 		$order = new Commande($db);
 		$order->initAsSpecimen();
@@ -460,6 +463,7 @@ class CommandeTest extends CommonClassTest
 		$order->addline('Line 1', 100, 2, 0, 0, 0, $products[1]->id);
 		$order->addline('Line 2', 100, 3, 0, 0, 0, $products[2]->id);
 		$order->addline('Line 3', 100, 1, 0, 0, 0, $products[3]->id);
+		$order->addline('Line 4', 100, 2, 0, 0, 0, $products[4]->id);
 		$order->addline('Free line', 100, 1, 0);
 		$order->fetch($order->id);
 
@@ -468,7 +472,7 @@ class CommandeTest extends CommonClassTest
 		$result = $order->createPurchaseOrders($user);
 		$this->assertIsArray($result, $order->errorsToString());
 		$this->assertCount(2, $result['orders'], 'One purchase order per supplier');
-		$this->assertEquals(array($products[3]->ref), $result['noprice'], 'The product without supplier price is reported');
+		$this->assertEquals(array($products[3]->ref, $products[4]->ref), $result['noprice'], 'The products without supplier price for their quantity are reported');
 
 		$found = array();
 		foreach ($result['orders'] as $id) {

@@ -1621,10 +1621,12 @@ class Commande extends CommonOrder
 
 	/**
 	 *	Create a draft purchase order per supplier for the product lines of this order, with the supplier having the best price of each product.
-	 *	The lines without supplier price are ignored.
+	 *	The lines without supplier price for their quantity are ignored.
 	 *
 	 *	@param	User	$user	User creating the purchase orders
-	 *	@return	array{orders:int[],noprice:string[]}|int<-1,-1>		Ids of the purchase orders created and refs of the products without supplier price, or -1 if KO
+	 *	@return	array{orders:int[],noprice:string[]}|int<-1,-1>		Ids of the purchase orders created and refs of the products without supplier price for their quantity, or -1 if KO
+	 *	@see	ProductFournisseur::find_min_price_product_fournisseur()
+	 *	@see	CommandeFournisseur::create()
 	 */
 	public function createPurchaseOrders($user)
 	{
