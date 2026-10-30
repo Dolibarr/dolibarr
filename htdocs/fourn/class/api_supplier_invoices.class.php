@@ -785,7 +785,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			0,
 			$request_data->array_options,
 			$request_data->fk_unit,
