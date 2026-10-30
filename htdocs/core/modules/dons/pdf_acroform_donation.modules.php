@@ -142,7 +142,7 @@ class pdf_acroform_donation extends ModeleDon
 			return 0;
 		}
 
-		$map = $this->readMap($template);
+		$map = $this->readMapFile($template);
 		if ($map === null) {
 			return 0;
 		}
@@ -222,12 +222,34 @@ class pdf_acroform_donation extends ModeleDon
 
 
 	/**
+	 *	Read the fields of a PDF form: their type, their maximum length, the tokens a
+	 *	checkbox accepts, and where each of their widgets sits in the document
+	 *
+	 *	@param	string	$template	Path of the PDF form
+	 *	@return	array<string,array{type:string,maxlen:int,options:string[],widgets:array<int,array{page:int,rect:float[]}>}>	Fields of the form
+	 **/
+	public function readFields($template)
+	{
+		if (!file_exists($template)) {
+			return array();
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/includes/fpdm/fpdm.php';
+
+		$reader = new FPDM($template);
+		$reader->useCheckboxParser = true;
+
+		return $reader->ListFields();
+	}
+
+
+	/**
 	 *	Read the file that tells which value goes into which field of the form
 	 *
 	 *	@param	string				$template	Path of the PDF form
 	 *	@return	?array<string,mixed>			Content of the file, null when it can not be read ($this->error is set)
 	 */
-	protected function readMap($template)
+	public function readMapFile($template)
 	{
 		$path = $template.'.map.json';
 		if (!file_exists($path)) {
@@ -258,13 +280,9 @@ class pdf_acroform_donation extends ModeleDon
 	 */
 	protected function buildValues($don, $outputlangs, $currency, $template, $map)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/includes/fpdm/fpdm.php';
+		$fields = $this->readFields($template);
 
-		$reader = new FPDM($template);
-		$reader->useCheckboxParser = true;
-		$fields = $reader->ListFields();
-
-		$substitutions = $this->getSubstitutions($don, $outputlangs, $currency);
+		$substitutions = $this->getSubstitutionArray($don, $outputlangs, $currency);
 
 		$values = array();
 		foreach ($map['fields'] as $name => $definition) {
@@ -319,7 +337,7 @@ class pdf_acroform_donation extends ModeleDon
 	 *	@param	string		$currency		Currency code
 	 *	@return	array<string,string>		Value of each key
 	 */
-	protected function getSubstitutions($don, $outputlangs, $currency)
+	public function getSubstitutionArray($don, $outputlangs, $currency)
 	{
 		$substitutions = getCommonSubstitutionArray($outputlangs, 0, null, $don);
 
@@ -352,7 +370,7 @@ class pdf_acroform_donation extends ModeleDon
 	 *	@param	string		$currency		Currency code
 	 *	@return	string						Value to store into the field
 	 */
-	protected function applyTransform($value, $transform, $outputlangs, $currency)
+	public function applyTransform($value, $transform, $outputlangs, $currency)
 	{
 		switch ($transform) {
 			case 'amountinwords':

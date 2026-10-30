@@ -505,3 +505,4 @@ ErrorAcroFormMapNotValid=The file %s, which tells what to write into each field 
 ErrorAcroFormFieldNotInForm=The field %s is set up but this form has no field of that name. The form was probably replaced by another revision.
 ErrorAcroFormTokenNotInField=The value %s is not one the field %s of the form accepts.
 ErrorAcroFormValueTooLong=The value of the field %s is %s characters long and the form accepts %s at most. The receipt would have been truncated.
+ErrorNoAcroFormDirectory=No directory is set to hold the PDF forms.
