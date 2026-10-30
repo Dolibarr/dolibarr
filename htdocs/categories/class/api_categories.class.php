@@ -5,6 +5,7 @@
  * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -69,6 +72,9 @@ class Categories extends DolibarrApi
 	 * Get properties of a category object
 	 *
 	 * Return an array with category information
+	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	11.0.0	Added include_childs parameter
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
@@ -111,6 +117,9 @@ class Categories extends DolibarrApi
 	 * List categories
 	 *
 	 * Get a list of categories according to filters
+	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -189,6 +198,8 @@ class Categories extends DolibarrApi
 	 *
 	 * Get a list of type of categories according to filters
 	 *
+	 * @since	24.0.0	Initial implementation
+	 *
 	 * @return array<string, string> Array of category types
 	 * @url GET /types
 	 *
@@ -206,6 +217,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Create category object
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -238,6 +251,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Update category
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param 	int   		$id             Id of category to update
 	 * @param 	array 		$request_data   Data
@@ -292,6 +307,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Delete category
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param 	int 	$id   Category ID
 	 * @return 	array
 	 *
@@ -328,6 +345,8 @@ class Categories extends DolibarrApi
 	 * List categories of an object
 	 *
 	 * Get the list of categories linked to an object
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int       $id         Object ID
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project', 'actioncomm')
@@ -398,6 +417,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Link an object to a category by id
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int $id  ID of category
 	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
@@ -503,6 +524,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by ref
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int 		$id  		ID of category
 	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
@@ -602,6 +625,8 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by id
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int      $id        ID of category
 	 * @param string   $type      Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
 	 * @param int      $object_id ID of the object
@@ -687,6 +712,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Unlink an object from a category by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param int      $id         	ID of category
 	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
@@ -877,6 +904,8 @@ class Categories extends DolibarrApi
 
 	/**
 	 * Get the list of objects in a category.
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param int        $id         ID of category
 	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
