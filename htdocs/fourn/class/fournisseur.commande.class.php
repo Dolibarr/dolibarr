@@ -1624,6 +1624,64 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 * 	Save the price of the predefined product lines as supplier price (with its history) and as cost price of the products
+	 *
+	 * 	@param		User	$user		User making change
+	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
+	 */
+	public function updateProductBuyPrices($user)
+	{
+		if (empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Same rights as the buying prices tab of the product card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$canproduct = $canservice = $user->hasRight('product', 'product_advance', 'write_supplier_prices');
+		} else {
+			$canproduct = $user->hasRight('produit', 'creer');
+			$canservice = $user->hasRight('service', 'creer');
+		}
+
+		$nbupdated = 0;
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0 || $line->subprice <= 0 || ($line->product_type == Product::TYPE_SERVICE ? !$canservice : !$canproduct)) {
+				continue;
+			}
+
+			// Supplier price. History and triggers are managed by update_buyprice(). Nothing to update if no price line exists for this supplier ref.
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->get_buyprice(0, $line->qty, $line->fk_product, $line->ref_supplier, (int) $this->socid) > 0
+				&& $productsupplier->fetch_product_fournisseur_price($productsupplier->product_fourn_price_id) > 0
+				&& (price2num($productsupplier->fourn_unitprice, 'MU') != price2num($line->subprice, 'MU') || (float) $productsupplier->fourn_remise_percent != (float) $line->remise_percent)) {
+				$qty = $productsupplier->fourn_qty;
+				$productsupplier->product_fourn_packaging = $productsupplier->packaging;	// Keep the packaging of the price line
+				$mcsubprice = (empty($line->multicurrency_subprice) ? $line->subprice : $line->multicurrency_subprice);
+				$result = $productsupplier->update_buyprice($qty, $line->subprice * $qty, $user, 'HT', $this->thirdparty, $productsupplier->fk_availability, $productsupplier->ref_supplier, (float) $productsupplier->fourn_tva_tx, (float) $productsupplier->fourn_charges, $line->remise_percent, $productsupplier->fourn_remise, $productsupplier->fourn_tva_npr, $productsupplier->delivery_time_days, $productsupplier->supplier_reputation, array(), $productsupplier->default_vat_code, $mcsubprice * $qty, 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code, $productsupplier->desc_supplier, $productsupplier->supplier_barcode, (int) $productsupplier->supplier_fk_barcode_type);
+				if ($result < 0) {
+					$this->setErrorsFromObject($productsupplier);
+					return -1;
+				}
+				$nbupdated++;
+			}
+
+			// Cost price (net unit price of the line)
+			$costprice = price2num($line->subprice * (1 - $line->remise_percent / 100), 'MU');
+			$product = new Product($this->db);
+			if ($product->fetch($line->fk_product) > 0 && price2num($product->cost_price, 'MU') != $costprice) {
+				$result = $product->setValueFrom('cost_price', $costprice, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+				if ($result < 0) {
+					$this->setErrorsFromObject($product);
+					return -1;
+				}
+				$nbupdated++;
+			}
+		}
+
+		return $nbupdated;
+	}
+
+	/**
 	 *  Create order with draft status
 	 *
 	 *  @param      User	$user       User making creation

@@ -420,6 +420,7 @@ if ($result) {
 			$is_sc = false;
 			$is_salary = false;
 			$is_expensereport = false;
+			$is_various = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
@@ -431,6 +432,10 @@ if ($result) {
 				}
 				if ($v['type'] == 'payment_expensereport') {
 					$is_expensereport = true;
+					break;
+				}
+				if ($v['type'] == 'payment_various') {
+					$is_various = true;
 					break;
 				}
 			}
@@ -477,7 +482,7 @@ if ($result) {
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					if ($compta_soc) {
+					if ($compta_soc && !$is_various) {
 						// because we are in 2 loop (loop on the line from the sql queries and loop on $links)
 						// and in case of option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on,
 						// we will pass here n times for each payment line
@@ -1678,9 +1683,9 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
-		$sqlmid = 'SELECT v.rowid as ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
-		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvatid"]);
+		$sqlmid = 'SELECT pv.fk_tva as ref';	// paymentvatid is the id of the payment, the ref is the id of the VAT declaration it pays
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_vat as pv";
+		$sqlmid .= " WHERE pv.rowid=".((int) $val["paymentvatid"]);
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
 	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';

@@ -286,7 +286,7 @@ repos:
           |htdocs/install/mysql/data/llx_20_c_departements\.sql
           |htdocs/install/mysql/migration/3\..*\.sql
           |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
-          |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
+          |htdocs/install/mysql/tables/llx_(categorie.*|category_bankline)\.key\.sql
           |htdocs/install/pgsql/functions/functions.*\.sql
           |htdocs/modulebuilder/template/sql/.*\.sql
           )$

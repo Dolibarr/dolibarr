@@ -1889,7 +1889,7 @@ class Form
 	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
 	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
-	 * @param int<0,1>		$showcode 				Show code
+	 * @param int<0,1>|'supplier'|'customer'	$showcode		Show code (1=code_client and code_fournisseur, 'supplier'=only code_fournisseur, 'customer'=only code_client)
 	 * @return string  		 	            		HTML string with select box for thirdparty.
 	 */
 	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
@@ -1936,6 +1936,12 @@ class Form
 			}
 
 			$out .= ajax_event($htmlname, $events);
+
+			// Label of the greyed line shown when the search returns nothing
+			if (!isset($ajaxoptions['noresultlabel'])) {
+				$langs->load("companies");
+				$ajaxoptions['noresultlabel'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NoThirdPartyFound"));
+			}
 
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
@@ -2111,7 +2117,7 @@ class Form
 	 * @param string 			$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param string[] 			$excludeids 	Exclude IDs from the select combo
-	 * @param int<0,1>			$showcode 		Show code in list
+	 * @param int<0,1>|'supplier'|'customer'	$showcode		Show code (1=code_client and code_fournisseur, 'supplier'=only code_fournisseur, 'customer'=only code_client)
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
 	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
@@ -2250,10 +2256,10 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					if ($showcode || getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
-						if (($obj->client) && (!empty($obj->code_client))) {
+						if (($obj->client) && (!empty($obj->code_client)) && $showcode != 'supplier') {
 							$label = $obj->code_client . ' - ';
 						}
-						if (($obj->fournisseur) && (!empty($obj->code_fournisseur))) {
+						if (($obj->fournisseur) && (!empty($obj->code_fournisseur)) && $showcode != 'customer') {
 							$label .= $obj->code_fournisseur . ' - ';
 						}
 						$label .= ' ' . $obj->name;
@@ -12782,7 +12788,7 @@ class Form
 
 		$out = '';
 		$sql = "SELECT rowid, label FROM " . $this->db->prefix() . "c_exp_tax_cat WHERE active = 1";
-		$sql .= " AND entity IN (0," . getEntity('exp_tax_cat') . ")";
+		$sql .= " AND entity IN (0," . getEntity('c_exp_tax_cat') . ")";
 		if (!empty($excludeid)) {
 			$sql .= " AND rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeid)) . ")";
 		}
@@ -12868,11 +12874,11 @@ class Form
 	 */
 	public function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$out = '';
 		$sql = "SELECT rowid, range_ik FROM " . $this->db->prefix() . "c_exp_tax_range";
-		$sql .= " WHERE entity = " . ((int) $conf->entity) . " AND active = 1";
+		$sql .= " WHERE entity IN (0," . getEntity('c_exp_tax_range') . ") AND active = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

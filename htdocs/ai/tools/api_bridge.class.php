@@ -1804,6 +1804,33 @@ class ToolApiBridge extends McpTool
 			)
 		);
 
+		// Object links (llx_element_element): which record is linked to which.
+		// Rights are dynamic - the REST class checks lire/read on the module of
+		// EACH side of the link - so everything is enforced downstream. The
+		// write side (create/delete links) needs rights on both element types
+		// too and is left for a follow-up.
+		$this->enrichments['objectlinks'] = array(
+			'label' => 'links between records',
+			'methods' => array(
+				'getById' => array(
+					'suffix' => 'get',
+					'description' => "One object link by its rowid: the pair it joins, (fk_source, sourcetype) to (fk_target, targettype).",
+					'params' => array('id' => "Rowid of the object link.")
+				),
+				'getByValues' => array(
+					'suffix' => 'get_by_values',
+					'description' => "Whether two records are linked: give the rowid and element type of each side. Answers 'is invoice X linked to proposal Y'. Element types are names like 'propal' (proposal), 'commande' (customer order), 'facture' (customer invoice), 'contrat', 'project', 'task', 'ticket', 'actioncomm' (agenda event), 'subscription' (membership), 'shipping', 'reception'.",
+					'params' => array(
+						'fk_source' => "Rowid of the record the link starts from.",
+						'sourcetype' => "Element type of the source record (e.g. 'propal', 'facture', 'project').",
+						'fk_target' => "Rowid of the record the link points to.",
+						'targettype' => "Element type of the target record (e.g. 'commande', 'task', 'ticket').",
+						'relationtype' => "Relation qualifier, usually left empty."
+					)
+				)
+			)
+		);
+
 		// Users (staff accounts) and their groups, read side. Lookups by id,
 		// login, email and self stay downstream-gated so a user may still read
 		// his own record without the user/user/lire right. Write side (user

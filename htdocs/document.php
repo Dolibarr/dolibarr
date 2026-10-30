@@ -264,9 +264,10 @@ if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 
 // Define mime type
 $type = 'application/octet-stream'; // By default
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
+$type = GETPOST('type', 'alpha');
+// Security: The type given into the URL must not turn a file (like a .txt or a .png that a user can upload) into a page (html, xhtml, svg, xml)
+// that the browser displays instead of downloading it. For such a file, the type is the one of the file extension.
+if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
 	$type = dol_mimetype($original_file);
 }
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file

@@ -111,9 +111,9 @@ RUN mkdir -p /opt/php-tools \
 
 # Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
 # Hooks configuration for Dolibarr is the file .pre-commit-config.yaml at repository root.
-RUN uv venv /opt/pre-commit \
-    && uv pip install --python /opt/pre-commit/bin/python pre-commit \
-    && ln -s /opt/pre-commit/bin/pre-commit /usr/local/bin/pre-commit \
+# Installed into the system python because the git hook generated on the host runs "/usr/bin/python3 -m pre_commit".
+RUN uv pip install --system --break-system-packages pre-commit \
+    && /usr/bin/python3 -m pre_commit --version \
     && pre-commit --version
 
 

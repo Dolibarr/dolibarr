@@ -113,6 +113,31 @@ $ajaxFileUrl = '';
 $fullnewname = '';
 $uploadedfilename = '';
 
+// Name of the model or local tool used to convert the file into text, and name of the model used to analyze it
+// (used to show the progress of the processing during the "uploadfile" action).
+// For the 'custom' service, the hardcoded defaults have no meaning for an unknown provider, so a missing constant means the model is not configured.
+$converternamefortext = '';
+$modelforanalysis = '';
+$arrayofaiservices = getListOfAIServices();
+$apiservice = $ai->getApiService();
+if (getDolGlobalString('AI_USED_FOR_FILE_TO_TEXT_CONVERTION')) {
+	$defaultmodel = ($apiservice != 'custom' && !empty($arrayofaiservices[$apiservice]['docparsing']['default']) && $arrayofaiservices[$apiservice]['docparsing']['default'] != 'na') ? $arrayofaiservices[$apiservice]['docparsing']['default'] : '';
+	$converternamefortext = getDolGlobalString('AI_API_'.strtoupper($apiservice).'_MODEL_DOCPARSING', $defaultmodel);
+} elseif (preg_match('/\.pdf$/i', $originalfilename)) {
+	$converternamefortext = 'pdftotext';
+} elseif (preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $originalfilename)) {
+	$converternamefortext = 'docling';
+}
+$defaultmodelfortext = ($apiservice != 'custom' && !empty($arrayofaiservices[$apiservice]['textgeneration']['default'])) ? $arrayofaiservices[$apiservice]['textgeneration']['default'] : '';
+$modelforanalysis = getDolGlobalString('AI_API_'.strtoupper($apiservice).'_MODEL_TEXT', $defaultmodelfortext);
+// Show "Not configured" when no model or converter is defined
+if (empty($converternamefortext)) {
+	$converternamefortext = $langs->trans("AIModelNotConfigured");
+}
+if (empty($modelforanalysis)) {
+	$modelforanalysis = $langs->trans("AIModelNotConfigured");
+}
+
 
 /*
  * Actions
@@ -123,6 +148,12 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlo
 
 	header("Location: ".$urlforuploadpage);
 	exit(1);
+}
+
+// Access control: this page uses the AI module to parse the uploaded files, so it is blocked when the module is not enabled.
+// Note: the redirect to a custom url defined into MAIN_USE_TOP_MENU_IMPORT_FILE must stay reachable.
+if (!isModEnabled('ai')) {
+	accessforbidden('ErrorAIModuleNotActive', 1, 1, 1);
 }
 
 if ($action == 'displayfile') {	// Test on permission not required here. Only files uploaded by the current user are returned: the file name embeds the user id.
@@ -200,6 +231,15 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		// Use AJAX call instead of redirect
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
+			// Remove the "FileTransferComplete" message set by dol_add_file_process(), useless here
+			// because the page immediately shows the progress of the processing of the file
+			if (!empty($_SESSION['dol_events']['mesgs'])) {
+				$_SESSION['dol_events']['mesgs'] = array_diff($_SESSION['dol_events']['mesgs'], array($langs->transnoentitiesnoconv("FileTransferComplete")));
+				if (empty($_SESSION['dol_events']['mesgs'])) {
+					unset($_SESSION['dol_events']['mesgs']);
+				}
+			}
+
 			// We will make the AJAX call from the bottom of the page
 			$ajaxFileUrl = DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname);
 		}
@@ -580,7 +620,27 @@ if ($action == 'addobject' && in_array($modulepart, array('invoice_supplier', 's
 
 	if (!$error) {
 		$db->commit();
-		$action = 'objectcreated';
+
+		// Redirect to the card of the created object (or of the invoice the file has been attached to).
+		// The confirmation message is shown on the card by setEventMessages().
+		$urltocreatedobject = '/fourn/facture/card.php?id='.$createdobject->id;
+		if ($createdobject instanceof Salary) {
+			$urltocreatedobject = '/salaries/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("SalaryCreatedFromFile"), null, 'mesgs');
+		} elseif ($createdobject instanceof ChargeSociales) {
+			$urltocreatedobject = '/compta/sociales/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("SocialContributionCreatedFromFile"), null, 'mesgs');
+		} elseif ($createdobject instanceof ExpenseReport) {
+			$urltocreatedobject = '/expensereport/card.php?id='.$createdobject->id;
+			setEventMessages($langs->trans("ExpenseAddedFromFile"), null, 'mesgs');
+		} elseif ($attachtoexistinginvoice) {
+			setEventMessages($langs->trans("FileAttachedToExistingInvoice"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("DraftInvoiceCreatedFromFile"), null, 'mesgs');
+		}
+		header("Location: ".dol_buildpath($urltocreatedobject, 1));
+		$db->close();
+		exit;
 	} else {
 		$db->rollback();
 		$createdobject = null;
@@ -694,7 +754,7 @@ if (empty($action)) {
 		<div>'.$langs->trans("UserPaySlip").'<br><br>';
 
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : -1, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		$uploadform .= '<br>';
 
@@ -749,13 +809,39 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	//print '<b>'.$langs->trans("ImportingFile", $originalfilename).'</b><br>';
 	//print '<br>';
 
-	print '<div class="'.($action == 'showsummary' ? 'green' : 'neutral').'" style="padding-left: 20px; padding-right: 20px;">';
+	// Blinking dots shown after the progress messages (the blinking is stopped by removing the span)
+	print '<style>
+.blink { animation: blinkerdots 1s linear infinite; }
+@keyframes blinkerdots { 50% { opacity: 0; } }
+</style>';
+
+	print '<div class="'.($action == 'showsummary' ? 'green' : 'neutral').'" style="padding-left: 20px; padding-right: 20px;'.($action == 'showsummary' ? ' border-left: solid 5px #118822;' : '').'">';
 
 	print '<div class="marginbottom">';
 	if ($action == 'showsummary') {
-		print $langs->trans("AIProcessingDone", $ai->getApiService());
+		// Name of the original file to show: the value posted by the form of the "uploadfile" action, or the posted
+		// originalfilename cleaned of the prefix and ids added during the upload (so the prefix is never shown)
+		$filenamefordisplay = (string) GETPOST('displayedfilename', 'alphanohtml');
+		if ($filenamefordisplay === '' || preg_match('/^upload_page-/', $filenamefordisplay)) {
+			$filenamefordisplay = preg_replace('/^upload_page-[a-z_]+(-uid\d+|-thiid\d+|-pid\d+|-erid\d+|-salid\d+)+-/', '', (string) GETPOST('originalfilename', 'alphanohtml'));
+		}
+		print $langs->trans("AIProcessingDocumentPleaseWait", dol_trunc($filenamefordisplay, 32, 'middle'), $ai->getApiService());
+		// Duration of the processing, posted by the form of the "uploadfile" action, or computed from the
+		// modification times of the uploaded file and of its JSON cache file saved at the end of the processing
+		$processingduration = GETPOSTFLOAT('processingduration');
+		if ($processingduration <= 0) {
+			$fileforduration = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
+			if (preg_match('/^upload_page-[a-z_]+-uid'.((int) $user->id).'-/', $fileforduration)
+				&& dol_is_file($upload_dir.'/'.$fileforduration) && dol_is_file($upload_dir.'/'.$fileforduration.'.json')) {
+				$processingduration = dol_filemtime($upload_dir.'/'.$fileforduration.'.json') - dol_filemtime($upload_dir.'/'.$fileforduration);
+			}
+		}
+		if ($processingduration > 0) {
+			print '<br><span id="ajax-progress-message">'.$langs->trans("AIProcessingDocumentAnalyzingComplete", sprintf('%.1f', $processingduration)).'</span>';
+		}
 	} else {
-		print $langs->trans("AIProcessingDocumentPleaseWait", $ai->getApiService(), dol_trunc($uploadedfilename, 32, 'middle'));
+		print $langs->trans("AIProcessingDocumentPleaseWait", dol_trunc($uploadedfilename, 32, 'middle'), $ai->getApiService());
+		print '<br><span id="ajax-progress-message">'.$langs->trans("AIProcessingDocumentConvertingIntoText", $converternamefortext).'</span><span class="blink"> ...</span>';
 	}
 	print '</div>';
 	print '<br>';
@@ -778,9 +864,12 @@ if ($action == 'uploadfile') {
 				window.location.href = $(this).data("url");
 			});
 
-			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
+			var ajaxUrlBase = \''.dol_escape_js($ajaxFileUrl).'\';
+			var timestartprocessing = Date.now();
+
+			console.log(\'Call ajaxFileUrl (step converttotext): \'.concat(ajaxUrlBase, "&step=converttotext"));
 			$.ajax({
-				url: \''.dol_escape_js($ajaxFileUrl).'\',
+				url: ajaxUrlBase.concat("&step=converttotext"),
 				type: "GET",
 				dataType: "json",
 				beforeSend: function() {
@@ -788,21 +877,58 @@ if ($action == 'uploadfile') {
 				},
 				success: function(data, textStatus, jqXHR) {
 					if (jqXHR.status === 200) {
-						// Display the JSON content
-						console.log("Fill the #ajax-result with json result");
-						console.log(data);
-						// Store the JSON encoded in base64 (UTF-8 safe) so it is not altered when posted
-						$("#ajax-result").val(btoa(Array.from(new TextEncoder().encode(JSON.stringify(data, null, 2)), function (c) { return String.fromCharCode(c); }).join("")));
-						$(".progress-bar").css("width", "100%");
+						// The conversion of the file into text is complete, we can ask the AI to analyze it
+						console.log("Conversion of the file into text complete, call the analysis");
+						$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAskingAnalyze", $modelforanalysis)).'\');
+						$(".progress-bar").css("width", "60%");
+						$.ajax({
+							url: ajaxUrlBase.concat("&step=analyze"),
+							type: "GET",
+							dataType: "json",
+							success: function(data, textStatus, jqXHR) {
+								if (jqXHR.status === 200) {
+									// Display the JSON content
+									console.log("Fill the #ajax-result with json result");
+									console.log(data);
+									// Store the JSON encoded in base64 (UTF-8 safe) so it is not altered when posted
+									$("#ajax-result").val(btoa(Array.from(new TextEncoder().encode(JSON.stringify(data, null, 2)), function (c) { return String.fromCharCode(c); }).join("")));
+									$(".progress-bar").css("width", "100%");
 
-						// Submit the form
-						//$("#form-result").submit();
+									$("span.blink").remove();
+									var durationofprocessing = ((Date.now() - timestartprocessing) / 1000).toFixed(1);
+									// The translation is made with "%s" as parameter, so the %s of the template survives the sprintf() done by trans()
+									$("#ajax-progress-message").text(\''.dol_escape_js($langs->trans("AIProcessingDocumentAnalyzingComplete", '%s')).'\'.replace("%s", durationofprocessing));
+									$("#processing-duration").val(durationofprocessing);
 
-						// or show the button Next
-						$("#ajax-result-message").html("<div class=\"ok\">Your file has been analyzed by the AI service.</div>");
-						$("#form-result-submit").show();
+									// Submit the form directly to show the summary of the analysis (instead of showing the button Next)
+									$("#form-result").submit();
+								} else {
+									console.log("We received an error");
+									$("span.blink").remove();
+
+									// Display error if status is not 200
+									$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+									// Replace the button Next by the button to go back to restart
+									$("#form-result-submit").hide();
+									$("#form-result-back").show();
+								}
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								// Display error
+								console.log("We received an error");
+								$("span.blink").remove();
+								// Show the messages of the JSON answer {"errors": [...]} as text, or the raw answer if it is not this format
+								var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
+								$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
+								$(".progress-bar").css("width", "100%");
+								// Replace the button Next by the button to go back to restart
+								$("#form-result-submit").hide();
+								$("#form-result-back").show();
+							}
+						});
 					} else {
 						console.log("We received an error");
+						$("span.blink").remove();
 
 						// Display error if status is not 200
 						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
@@ -814,6 +940,7 @@ if ($action == 'uploadfile') {
 				error: function(jqXHR, textStatus, errorThrown) {
 					// Display error
 					console.log("We received an error");
+					$("span.blink").remove();
 					// Show the messages of the JSON answer {"errors": [...]} as text, or the raw answer if it is not this format
 					var errormsg = (jqXHR.responseJSON && jqXHR.responseJSON.errors) ? jqXHR.responseJSON.errors.join(" - ") : (jqXHR.responseText || errorThrown || "Unknown error");
 					$("#ajax-result-message").html($("<div class=\"error\"></div>").text("Error: " + errormsg));
@@ -911,7 +1038,7 @@ if ($action == 'uploadfile') {
 		}
 	 */
 
-	print '<form class="" id="form-result" method="POST">';
+	print '<form class="" id="form-result" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="showsummary">';
 	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
@@ -924,6 +1051,8 @@ if ($action == 'uploadfile') {
 	print '<input type="hidden" name="feetypeid" value="'.$feetypeid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="">';	// Fill by the ajax answer with the JSON encoded in base64
+	print '<input type="hidden" name="displayedfilename" value="'.dolPrintHTMLForAttribute($uploadedfilename).'">';
+	print '<input type="hidden" name="processingduration" id="processing-duration" value="">';	// Fill by the JS at the end of the processing
 	print '<div id="ajax-result-message"></div>';
 	if ($action == 'uploadfile') {
 		print '<br>';
@@ -936,7 +1065,16 @@ if ($action == 'uploadfile') {
 }
 
 if ($action == 'showsummary') {
-	print '<form class="" id="summary-result" method="POST">';
+	print '<form class="" id="summary-result" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	// On wide screens (>= 1280), the summary and the preview of the file are shown side by side,
+	// both stretched to the height of the tallest one
+	print '<style>
+@media (min-width: 1280px) {
+	#summary-result { display: flex; flex-wrap: wrap; align-items: stretch; }
+	#divsummary { flex: 1 1 58%; display: flex; }
+	#divpreview { flex: 1 1 40%; }
+}
+</style>';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="addobject">';
 	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
@@ -946,7 +1084,8 @@ if ($action == 'showsummary') {
 
 	//print load_fiche_titre('Summary', '', 'upload');
 
-	print '<div class="neutral">';
+	print '<div id="divsummary">';
+	print '<div class="neutral" style="margin-top: 0px; margin-bottom: 0px">';
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -1000,6 +1139,10 @@ if ($action == 'showsummary') {
 		$idprof2indoc = (string) $invoiceindoc['vendor_profid2'];
 		$emailindoc = (string) $invoiceindoc['vendor_email'];
 		$vatnumberindoc = (string) $invoiceindoc['vendor_vat_number'];
+		$phoneindoc = (string) $invoiceindoc['vendor_phone'];
+		$zipindoc = (string) $invoiceindoc['vendor_zip'];
+		$townindoc = (string) $invoiceindoc['vendor_town'];
+		$countryindoc = (string) $invoiceindoc['vendor_country'];
 
 
 		// Thirdparty
@@ -1031,9 +1174,59 @@ if ($action == 'showsummary') {
 			if ($s) {
 				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
 			}
-			print $langs->trans("ChooseTheThirdPartyTouse").' ';
-			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen', '', '', 1, array(), false, array(), 1);
+			print $form->select_company($socid, 'socid', '((s.fournisseur:=:1) AND (s.status:=:1))', 'ChooseTheThirdPartyTouse', 1, 0, array(), 0, 'minwidth300 maxwidth400 disableautoopen', '', '', 1, array(), false, array(), 'supplier');
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
+			if ($user->hasRight('societe', 'creer')) {
+				$langs->load("companies");
+				// Back to the summary (the result of the AI analysis is read again from its JSON cache file), with the new thirdparty id
+				$paramsbacktosummary = array('action' => 'showsummary', 'modulepart' => $modulepart, 'originalfilename' => GETPOST('originalfilename', 'alphanohtml'), 'socid' => '--IDFORBACKTOPAGE--');
+				if (GETPOST('prodid', 'alpha') !== '') {
+					$paramsbacktosummary['prodid'] = GETPOST('prodid', 'alpha');
+				}
+				if (GETPOST('supplierref', 'alphanohtml') !== '') {
+					$paramsbacktosummary['supplierref'] = GETPOST('supplierref', 'alphanohtml');
+				}
+				// Prefill the thirdparty creation form with the vendor data detected into the document
+				$paramstocreatethirdparty = array();
+				if ($nameindoc !== '') {
+					$paramstocreatethirdparty['name'] = $nameindoc;
+				}
+				if ($addressindoc !== '') {
+					$paramstocreatethirdparty['address'] = $addressindoc;
+				}
+				if ($phoneindoc !== '') {
+					$paramstocreatethirdparty['phone'] = $phoneindoc;
+				}
+				if ($emailindoc !== '') {
+					$paramstocreatethirdparty['email'] = $emailindoc;
+				}
+				if ($vatnumberindoc !== '') {
+					$paramstocreatethirdparty['tva_intra'] = $vatnumberindoc;
+				}
+				if ($idprof1indoc !== '') {
+					$paramstocreatethirdparty['idprof1'] = $idprof1indoc;
+				}
+				if ($idprof2indoc !== '') {
+					$paramstocreatethirdparty['idprof2'] = $idprof2indoc;
+				}
+				if ($zipindoc !== '') {
+					$paramstocreatethirdparty['zipcode'] = $zipindoc;
+				}
+				if ($townindoc !== '') {
+					$paramstocreatethirdparty['town'] = $townindoc;
+				}
+				if ($countryindoc !== '') {
+					$countryidindoc = (int) dol_getIdFromCode($db, $countryindoc, 'c_country', 'code', 'rowid');
+					if (empty($countryidindoc)) {
+						$countryidindoc = (int) dol_getIdFromCode($db, $countryindoc, 'c_country', 'label', 'rowid');
+					}
+					if (!empty($countryidindoc)) {
+						$paramstocreatethirdparty['country_id'] = $countryidindoc;
+					}
+				}
+				$paramstocreatethirdparty = array_merge(array('action' => 'create', 'client' => 0, 'fournisseur' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary)), $paramstocreatethirdparty);
+				print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/societe/card.php', $paramstocreatethirdparty).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			}
 		} else {
 			print '<span class="valignmiddle">'.$langs->trans("WillUse").'</span> ';
 			print $tmpthirdparty->getNomUrl(1);
@@ -1042,7 +1235,7 @@ if ($action == 'showsummary') {
 
 
 		print "\n";
-		print '<br><br><hr><br>';
+		print '<br><br><hr style="margin: 0px"><br>';
 		print "\n";
 
 
@@ -1057,7 +1250,6 @@ if ($action == 'showsummary') {
 		}
 
 		// Product ($prodid was already converted into a product id at top of page)
-		$prodtext = $langs->trans("RefOrLabel");
 
 		$tmpproduct = new Product($db);
 		print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
@@ -1088,10 +1280,57 @@ if ($action == 'showsummary') {
 		print $s;
 		print '<br><br>';
 		if (empty($tmpproduct->id)) {
-			print $langs->trans("ChooseTheProductTouse").' ';
-			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+			print $form->select_produits_fournisseurs(0, ($prodid > 0 ? 'idprod_'.$prodid : $prodid), 'prodid', '', '', array(), 1, 1, 'minwidth300 maxwidth400 disableautoopen', $langs->trans("ChooseTheProductOrServiceTouse"), 1);
 
 			// TODO On selection of product, refresh next section with the product price ref
+
+			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
+			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
+			// Back to the summary (the result of the AI analysis is read again from its JSON cache file).
+			// After creation, product card replaces --IDFORBACKTOPAGE-- with the new product id so it is preselected in the form
+			$paramsbacktosummary = array('action' => 'showsummary', 'modulepart' => $modulepart, 'originalfilename' => GETPOST('originalfilename', 'alphanohtml'));
+			if (GETPOSTINT('socid') > 0) {
+				$paramsbacktosummary['socid'] = GETPOSTINT('socid');
+			}
+			if (GETPOST('supplierref', 'alphanohtml') !== '') {
+				$paramsbacktosummary['supplierref'] = GETPOST('supplierref', 'alphanohtml');
+			}
+			$urlbacktocancel = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary);
+			$paramsbacktosummary['prodid'] = 'idprod_--IDFORBACKTOPAGE--';
+			$urlbacktoobject = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktosummary);
+			if ($addproducton || $addserviceon) {
+				$langs->load("products");
+				if ($addproducton && $addserviceon) {
+					print ' <div id="dropdownAddProductAndService" class="dropdown inline-block">';
+					print '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
+					print '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+					print '</a>';
+					print '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
+					print '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'"> '.$langs->trans("NewProduct").'</a>';
+					print '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'"> '.$langs->trans("NewService").'</a>';
+					print '</div>';
+					print '</div>';
+					print '<script nonce="'.getNonce().'">
+					jQuery(document).ready(function() {
+						jQuery("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
+							console.log("toggle addproduct dropdown");
+							event.preventDefault();
+							jQuery("#dropdownAddProductAndService").toggleClass("open");
+						});
+						// Close the dropdown when clicking outside of it
+						jQuery(document).on("click", function(event) {
+							if (jQuery(event.target).closest("#dropdownAddProductAndService").length == 0) {
+								jQuery("#dropdownAddProductAndService").removeClass("open");
+							}
+						});
+					});
+					</script>';
+				} elseif ($addproducton) {
+					print ' <a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				} else {
+					print ' <a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($urlbacktoobject).'&backtopageforcancel='.urlencode($urlbacktocancel).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				}
+			}
 		} else {
 			print $langs->trans("WillUse").' ';
 			print $tmpproduct->getNomUrl(1);
@@ -1100,14 +1339,14 @@ if ($action == 'showsummary') {
 
 		print '<br>';
 		print $langs->trans("VATRate").' ';
-		print '<input type="text" class="width75 right" name="vat_rate" id="vat_rate" value="'.$vat_rate.'">%';
+		print '<input type="text" class="width75 right" name="vat_rate" id="vat_rate" value="'.$vat_rate.'"> %';
 
 		print '<br>';
 		print $langs->trans("TotalTTC").' ';
 		print '<input type="text" class="width100 right" name="amount_ttc" id="amount_ttc" value="'.$amount_ttc.'">';
 
 		print "\n";
-		print '<br><br><hr><br>';
+		print '<br><br><hr style="margin: 0px"><br>';
 		print "\n";
 
 
@@ -1166,16 +1405,15 @@ if ($action == 'showsummary') {
 			print '<input type="hidden" name="invoice_label" value="'.$invoiceindoc['invoice_label'].'">';
 		} else {
 			// The link is inserted after the translation, because trans() encodes the HTML of its parameters
-			print str_replace('__INVOICELINK__', $tmpinvoice->getNomUrl(1), $langs->trans("InvoiceSeemsToAlreadyExist", '__INVOICELINK__'));
+			print str_replace('__INVOICELINK__', $tmpinvoice->getNomUrl(1), $langs->trans("InvoiceSeemsToAlreadyExist", $tmpinvoice->ref_supplier, '__INVOICELINK__'));
 			print '<input type="hidden" name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
 		print '<br>
-		</div>
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans(empty($tmpinvoice->id) ? "CreateBill" : "AttachFileToExistingInvoice").'"></center>';
+		print '<br><br><center><input type="submit" name="submit" class="button" value="'.$langs->trans(empty($tmpinvoice->id) ? "CreateBill" : "AttachFileToExistingInvoice").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'salaries') {
 		$langs->loadLangs(array("salaries", "hrm", "compta", "bills"));
@@ -1214,7 +1452,7 @@ if ($action == 'showsummary') {
 		print $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : -1, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		print "\n";
-		print '<br><br><hr><br>';
+		print '<br><br><hr style="margin: 0px"><br>';
 		print "\n";
 
 		// Salary
@@ -1259,11 +1497,10 @@ if ($action == 'showsummary') {
 		}
 
 		print '<br>
-		</div>
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<br><br><center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'chargesociales') {
 		$langs->loadLangs(array("compta", "hrm", "bills"));
@@ -1343,11 +1580,10 @@ if ($action == 'showsummary') {
 		print $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : -1, 'usertaxid', 1, null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		print '<br>
-		</div>
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<br><br><center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 		print "\n";
 	} elseif ($modulepart == 'expensereport') {
 		$langs->loadLangs(array("trips", "hrm", "bills"));
@@ -1377,7 +1613,7 @@ if ($action == 'showsummary') {
 		print $form->select_dolusers($expenseuserid > 0 ? $expenseuserid : -1, 'userexpensereportid', 1, null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		print "\n";
-		print '<br><br><hr><br>';
+		print '<br><br><hr style="margin: 0px"><br>';
 		print "\n";
 
 		// Expense
@@ -1449,13 +1685,17 @@ if ($action == 'showsummary') {
 		print '<input type="text" class="width100 right" name="amount_ttc" id="amount_ttc" value="'.dolPrintHTMLForAttribute((string) $amount_ttc).'">';
 
 		print '<br>
-		</div>
 		</div>';
 		print "\n";
 
-		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<br><br><center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 		print "\n";
 	}
+	print '</div>';		// end of div neutral
+	print '</div>';		// end of div summary
+
+	print '<br><br>';
+	print '<div id="divpreview">';
 
 	// Preview of the uploaded file (PDF is shown with the native viewer of the browser)
 	$filetopreview = dol_sanitizeFileName(GETPOST('originalfilename', 'alphanohtml'));
@@ -1464,11 +1704,11 @@ if ($action == 'showsummary') {
 		$urltopreview = $_SERVER["PHP_SELF"].'?action=displayfile&originalfilename='.urlencode($filetopreview);
 		print "\n";
 		if ($mimetopreview == 'application/pdf') {
-			print '<br><br><div class="center">';
+			print '<div class="center">';
 			print '<iframe src="'.dolPrintHTMLForAttributeUrl($urltopreview).'" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Preview")).'" style="width: 100%; height: 800px; border: none;"></iframe>';
 			print '</div>';
 		} elseif (preg_match('/^image\/(png|jpeg|gif|webp|bmp)$/', $mimetopreview)) {
-			print '<br><br><div class="center">';
+			print '<div class="center">';
 			print '<img src="'.dolPrintHTMLForAttributeUrl($urltopreview).'" alt="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Preview")).'" style="max-width: 100%;">';
 			print '</div>';
 		}
