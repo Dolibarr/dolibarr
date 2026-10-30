@@ -701,7 +701,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
 		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
-		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
+		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid, d.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -728,6 +728,7 @@ class ExpenseReport extends CommonObject
 				$this->localtax2    = $obj->total_localtax2;		// For backward compatibility
 				$this->total_localtax1 = $obj->total_localtax1;
 				$this->total_localtax2 = $obj->total_localtax2;
+				$this->multicurrency_code = $obj->multicurrency_code;
 
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -2946,6 +2947,10 @@ class ExpenseReport extends CommonObject
 			$this->error = "Status of expense report does not allow this";
 			dol_syslog(get_class($this)."::demande_prelevement ".$this->error, LOG_WARNING);
 			return -3;
+		}
+		if (!empty($this->multicurrency_code) && $this->multicurrency_code != getDolCurrency()) {
+			$this->error = $langs->trans('ErrorCreditTransferExpenseReportNotInCompanyCurrency', $this->multicurrency_code, getDolCurrency());
+			return -5;
 		}
 		if ($amount == 0) {
 			$this->error = 'WithdrawRequestErrorNilAmount';

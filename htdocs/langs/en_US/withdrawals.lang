@@ -182,6 +182,7 @@ NbOfInvoiceToPayByBankTransferForExpenseReports=No. of qualified expense reports
 ExpenseReportWaitingWithdraw=Expense reports waiting for payment by credit transfer
 NoExpenseReportToWithdraw=No expense report waiting for a '%s'. Go to tab '%s' on the expense report card to make a request.
 ErrorCreditTransferHigherThanRemainToPay=The credit transfer requested (%s) is higher than the remaining amount to pay (%s)
+ErrorCreditTransferExpenseReportNotInCompanyCurrency=The expense report is in %s, a credit transfer can only be requested for an expense report in the company currency (%s)
 ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
 AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
 AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

@@ -1050,6 +1050,33 @@ class BonVirementTest extends CommonClassTest
 		$this->assertSame(1, $expensereport->demande_prelevement($user, 200.0), (string) $expensereport->error);
 	}
 
+	/**
+	 * testExpenseReportRequestInForeignCurrency
+	 *
+	 * An expense report in another currency than the company currency cannot be requested for a credit transfer.
+	 *
+	 * @return void
+	 */
+	public function testExpenseReportRequestInForeignCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = $this->createExpenseReport($this->createEmployeeWithBankAccount());
+		$this->assertGreaterThan(0, $expensereport->setValidate($user), (string) $expensereport->error);
+		$this->assertGreaterThan(0, $expensereport->setApproved($user), (string) $expensereport->error);
+		$foreigncurrency = ($conf->currency == 'EUR' ? 'CHF' : 'EUR');
+		$this->assertTrue((bool) $db->query("UPDATE ".MAIN_DB_PREFIX."expensereport SET multicurrency_code = '".$foreigncurrency."' WHERE rowid = ".((int) $expensereport->id)));
+		$expensereport->fetch($expensereport->id);
+
+		$this->assertSame(-5, $expensereport->demande_prelevement($user, 600.0));
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_expensereport = ".((int) $expensereport->id));
+		$this->assertEquals(0, $db->num_rows($resql));
+	}
+
 	// ---------------------------------------------------------------------------
 	// Private helpers
 	// ---------------------------------------------------------------------------
