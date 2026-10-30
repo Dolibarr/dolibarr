@@ -873,7 +873,7 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	if (empty($modulepartlinkedtothirdparty[$modulepart])) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
 		if (is_object($object)) {
-			return restrictedArea($user, $modulepart, $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+			return restrictedArea($user, $modulepart, $object, getTableAndShareOfObject($object), '', 'fk_soc', 'rowid', 0, 1, $mode);
 		}
 		// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
 		return 1;
@@ -890,7 +890,7 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, '', '', 'fk_soc', 'rowid', 0, 1, $mode);
+		return restrictedArea($user, $modulepartlinkedtothirdparty[$modulepart][1], $object, getTableAndShareOfObject($object), '', 'fk_soc', 'rowid', 0, 1, $mode);
 	}
 
 	// Object not found (file outside the directory of an object or faked path like 'REF/./file'): refused to users restricted to some thirdparties
@@ -900,6 +900,26 @@ function checkUserAccessToDocumentObject(User $user, $modulepart, $original_file
 	}
 
 	return 1;
+}
+
+/**
+ * Return the 'TableName&SharedElement' parameter of restrictedArea() for an object.
+ * Without it, restrictedArea() uses the name of the feature as table and sharing key, which is wrong when they differ
+ * (contacts are into 'socpeople', vendor orders into 'commande_fournisseur', interventions into 'fichinter', shared products
+ * would be checked on the current entity only, ...).
+ *
+ * @param	CommonObject	$object		Object
+ * @return	string						'TableName&SharedElement', or '' if the object has no table
+ * @see restrictedArea()
+ */
+function getTableAndShareOfObject($object)
+{
+	if (empty($object->table_element)) {
+		return '';
+	}
+
+	// The element is the sharing key understood by getEntity()
+	return $object->table_element.(empty($object->element) ? '' : '&'.$object->element);
 }
 
 /**
