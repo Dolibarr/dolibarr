@@ -799,6 +799,18 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				// The lot/serial fields are not in the form when module productbatch is disabled: keep their values,
+				// an empty status_batch would switch the product to "no lot" and move all its stock out of its lots.
+				if (!GETPOSTISSET('status_batch')) {
+					$object->status_batch = $object->oldcopy->status_batch;
+				}
+				if (!GETPOSTISSET('sell_or_eat_by_mandatory')) {
+					$object->sell_or_eat_by_mandatory = $object->oldcopy->sell_or_eat_by_mandatory;
+				}
+				if (!GETPOSTISSET('batch_mask')) {
+					$object->batch_mask = $object->oldcopy->batch_mask;
+				}
+
 				if (!$error && $object->check()) {
 					if ($object->update($object->id, $user) > 0) {
 						// Category association
@@ -1356,6 +1368,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -3078,6 +3093,9 @@ if ($action != 'create' && $action != 'edit') {
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
+			}
 			if (empty($object_is_used)) {
 				if (!isset($hookmanager->resArray['no_button_delete']) || $hookmanager->resArray['no_button_delete'] != 1) {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
@@ -3088,9 +3106,6 @@ if ($action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
-			}
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);

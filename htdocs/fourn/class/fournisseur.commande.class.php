@@ -1069,6 +1069,29 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
+	}
+
+	/**
 	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -1598,6 +1621,64 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		return ($error ? -1 : 1);
+	}
+
+	/**
+	 * 	Save the price of the predefined product lines as supplier price (with its history) and as cost price of the products
+	 *
+	 * 	@param		User	$user		User making change
+	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
+	 */
+	public function updateProductBuyPrices($user)
+	{
+		if (empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Same rights as the buying prices tab of the product card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$canproduct = $canservice = $user->hasRight('product', 'product_advance', 'write_supplier_prices');
+		} else {
+			$canproduct = $user->hasRight('produit', 'creer');
+			$canservice = $user->hasRight('service', 'creer');
+		}
+
+		$nbupdated = 0;
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0 || $line->subprice <= 0 || ($line->product_type == Product::TYPE_SERVICE ? !$canservice : !$canproduct)) {
+				continue;
+			}
+
+			// Supplier price. History and triggers are managed by update_buyprice(). Nothing to update if no price line exists for this supplier ref.
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->get_buyprice(0, $line->qty, $line->fk_product, $line->ref_supplier, (int) $this->socid) > 0
+				&& $productsupplier->fetch_product_fournisseur_price($productsupplier->product_fourn_price_id) > 0
+				&& (price2num($productsupplier->fourn_unitprice, 'MU') != price2num($line->subprice, 'MU') || (float) $productsupplier->fourn_remise_percent != (float) $line->remise_percent)) {
+				$qty = $productsupplier->fourn_qty;
+				$productsupplier->product_fourn_packaging = $productsupplier->packaging;	// Keep the packaging of the price line
+				$mcsubprice = (empty($line->multicurrency_subprice) ? $line->subprice : $line->multicurrency_subprice);
+				$result = $productsupplier->update_buyprice($qty, $line->subprice * $qty, $user, 'HT', $this->thirdparty, $productsupplier->fk_availability, $productsupplier->ref_supplier, (float) $productsupplier->fourn_tva_tx, (float) $productsupplier->fourn_charges, $line->remise_percent, $productsupplier->fourn_remise, $productsupplier->fourn_tva_npr, $productsupplier->delivery_time_days, $productsupplier->supplier_reputation, array(), $productsupplier->default_vat_code, $mcsubprice * $qty, 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code, $productsupplier->desc_supplier, $productsupplier->supplier_barcode, (int) $productsupplier->supplier_fk_barcode_type);
+				if ($result < 0) {
+					$this->setErrorsFromObject($productsupplier);
+					return -1;
+				}
+				$nbupdated++;
+			}
+
+			// Cost price (net unit price of the line)
+			$costprice = price2num($line->subprice * (1 - $line->remise_percent / 100), 'MU');
+			$product = new Product($this->db);
+			if ($product->fetch($line->fk_product) > 0 && price2num($product->cost_price, 'MU') != $costprice) {
+				$result = $product->setValueFrom('cost_price', $costprice, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+				if ($result < 0) {
+					$this->setErrorsFromObject($product);
+					return -1;
+				}
+				$nbupdated++;
+			}
+		}
+
+		return $nbupdated;
 	}
 
 	/**
@@ -2233,7 +2314,7 @@ class CommandeFournisseur extends CommonOrder
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3251,7 +3332,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, (float) $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, (float) $this->multicurrency_tx, (float) $pu_ht_devise, $this->multicurrency_code);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];

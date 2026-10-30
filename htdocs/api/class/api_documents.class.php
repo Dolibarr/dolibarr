@@ -719,6 +719,94 @@ class Documents extends DolibarrApi
 
 
 	/**
+	 * Return the list of files and subdirectories of a directory of a documents area not linked to an object
+	 *
+	 * Supported areas: ecm (manual tree of the DMS module), medias (public medias of the website module).
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   string 	$modulepart		Name of the area ('ecm' or 'medias')
+	 * @param	string	$subdir			Directory to list, relative to the root of the area ('' for the root)
+	 * @param	int		$recursive		1=Also list the content of the subdirectories
+	 * @param	string	$search			Return only entries whose name contains this string
+	 * @param	string	$sortfield		Sort criteria ('name','date','size')
+	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}	Array of files and directories
+	 * @phan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array<array{name:string,relativename:string,type:string,date:int,size:int}>|array{data:array<array{name:string,relativename:string,type:string,date:int,size:int}>,pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET /directory
+	 *
+	 * @throws	RestException	400		Bad value for a parameter
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Directory not found
+	 */
+	public function getDocumentsListByDirectory($modulepart, $subdir = '', $recursive = 0, $search = '', $sortfield = 'name', $sortorder = 'asc', $limit = 100, $page = 0, $pagination_data = false)
+	{
+		global $conf;
+
+		if (!in_array($modulepart, array('ecm', 'medias'))) {
+			throw new RestException(400, 'bad value for parameter modulepart, only ecm and medias are supported');
+		}
+		if ($modulepart == 'ecm' && !isModEnabled('ecm')) {
+			throw new RestException(400, 'Module ECM is not enabled');
+		}
+		$subdir = trim((string) $subdir, '/');
+		if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+			throw new RestException(400, 'bad value for parameter subdir');
+		}
+		if (!in_array($sortfield, array('name', 'date', 'size'))) {
+			$sortfield = 'name';
+		}
+
+		$check_access = dol_check_secure_access_document($modulepart, $subdir, $conf->entity, DolibarrApiAccess::$user, '', 'read');
+		if (empty($check_access['accessallowed'])) {
+			throw new RestException(403);
+		}
+		$dir = rtrim($check_access['original_file'], '/');
+		if (!dol_is_dir($dir)) {
+			throw new RestException(404, 'Directory '.$subdir.' not found in area '.$modulepart);
+		}
+
+		$filter = ($search !== '' ? preg_quote($search, '/') : '');
+		$excludefilter = array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$', '^thumbs$');
+		$filearray = dol_dir_list($dir, 'all', $recursive ? 1 : 0, $filter, $excludefilter, $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
+		$countarray = count($filearray);
+		$filearray = array_slice($filearray, $limit * $page, $limit);
+
+		// Return paths relative to the root of the area, so they can be used as original_file of /download
+		$result = array();
+		foreach ($filearray as $fileitem) {
+			$result[] = array(
+				'name' => $fileitem['name'],
+				'relativename' => ($subdir !== '' ? $subdir.'/' : '').$fileitem['relativename'],
+				'type' => ($fileitem['type'] == 'dir' ? 'dir' : 'file'),
+				'date' => (int) $fileitem['date'],
+				'size' => (int) $fileitem['size']
+			);
+		}
+
+		if ($pagination_data) {
+			$result = array(
+				'data' => $result,
+				'pagination' => array(
+					'total' => (int) $countarray,
+					'page' => (int) $page,
+					'page_count' => (int) ceil((int) $countarray / max(1, (int) $limit)),
+					'limit' => (int) $limit
+				)
+			);
+		}
+
+		return $result;
+	}
+
+
+	/**
 	 * Return a document.
 	 *
 	 * @param   int         $id          ID of document
@@ -983,7 +1071,15 @@ class Documents extends DolibarrApi
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
 					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
-				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+				if (!isModEnabled('ecm') || empty($conf->ecm->dir_output)) {
+					throw new RestException(400, 'Module ECM is not enabled');
+				}
+				$relativefile = $subdir;
+				if (preg_match('/\.\./', $subdir) || preg_match('/[<>|]/', $subdir)) {
+					throw new RestException(400, 'Bad value for parameter subdir');
+				}
+				// Manual area of the ECM module: the free tree of directories
+				$upload_dir = $conf->ecm->dir_output.($subdir !== '' ? '/'.$subdir : '');
 			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {

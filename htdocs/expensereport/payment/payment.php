@@ -47,10 +47,10 @@ $amounts = array();
 $accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
-$object = new PaymentExpenseReport($db);
-
-if ($id > 0) {
-	$result = $object->fetch($id);
+// $id is the id of the expense report to pay (see link on expensereport/card.php)
+$object = new ExpenseReport($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
 	if ($result <= 0) {
 		recordNotFound();
 	}
@@ -62,7 +62,11 @@ if ($user->isExternalUser()) {
 	$socid = $user->isExternalUser();
 }
 
-$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+// Check the user can read this expense report: entity, and author in his hierarchy unless readall.
+// Not restrictedArea(), that would also ask for 'creer' with action=create, the link of expensereport/card.php.
+if (!$user->hasRight('expensereport', 'lire') || !checkUserAccessToObject($user, array('expensereport'), $object, 'expensereport')) {
+	accessforbidden();
+}
 
 $permissiontoadd = $user->hasRight('expensereport', 'to_paid');
 

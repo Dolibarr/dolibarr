@@ -95,7 +95,7 @@ max_connections=255
 # Note: In case your tables change very often or if your queries are
 # textually different every time, the query cache may result in a
 # slowdown instead of a performance improvement.
-query_cache_size=8M
+;query_cache_size=8M  ; Query cache was removed in MariaDB 10.7 and this unknown option makes MariaDB 11.x fail to start
 
 # Maximum size for internal (in-memory) temporary tables. If a table
 # grows larger than this value, it is automatically converted to disk
@@ -222,7 +222,7 @@ max_connections=255
 # Note: In case your tables change very often or if your queries are
 # textually different every time, the query cache may result in a
 # slowdown instead of a performance improvement.
-query_cache_size=8M
+;query_cache_size=8M  ; Query cache was removed in MariaDB 10.7 and this unknown option makes MariaDB 11.x fail to start
 
 # Maximum size for internal (in-memory) temporary tables. If a table
 # grows larger than this value, it is automatically converted to disk

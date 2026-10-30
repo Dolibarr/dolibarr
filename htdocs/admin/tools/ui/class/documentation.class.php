@@ -265,6 +265,7 @@ class Documentation
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
 						'FetchTool' => '#titlesection-tool-fetch',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
 					),
 				),
 				'UxDolibarrContextLangsTool' => array(

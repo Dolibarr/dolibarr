@@ -87,3 +87,10 @@ After an edit, check that:
 3. The previous version exists as `page<pageid>.tpl.php.v<TIMESTAMP>`.
 
 If the site is served through the alias/container mode, also check that the alias file `documents/website/<site-ref>/<pageurl>.php` still points to the right tpl file (it should not need to be regenerated when only the content changes).
+
+
+## Saving website as a template in GIT sources
+
+When saving a website as a template into the sources of the git repository, the content (the columns) of the table `llx_website_page` are saved
+as SQL INSERT instructions int file doctemplates/websites/website_template-<websitekey>/website_pages.sql. The content of the directories medias/(image|js)/websitekey is saved into doctemplates/websites/website_template-<websitekey>/medias
+and all the .html/.txt/.php files that are not pages are saved into doctemplates/websites/website_template-<websitekey>/containers/

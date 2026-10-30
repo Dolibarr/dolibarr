@@ -4577,7 +4577,7 @@ abstract class CommonObject
 				if (empty($reshook) && $forcedroundingmode == '0') {	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 					// This part of code is to fix data. We should not call it too often.
 					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
-					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
+					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, $base_price_type, $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx, (isset($obj->multicurrency_subprice) ? $obj->multicurrency_subprice : 0), (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 					$diff_when_using_price_ht = price2num((float) $tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price and unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
 					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
@@ -4734,6 +4734,9 @@ abstract class CommonObject
 			$this->total_localtax1 = (float) price2num($this->total_localtax1);
 			$this->total_localtax2 = (float) price2num($this->total_localtax2);
 			$this->total_ttc = (float) price2num($this->total_ttc);
+			$this->multicurrency_total_ht = (float) price2num($this->multicurrency_total_ht, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_tva, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
+			$this->multicurrency_total_ttc = (float) price2num($this->multicurrency_total_ttc, 'CT', 0, (isset($this->multicurrency_code) ? $this->multicurrency_code : ''));
 
 			$this->db->free($resql);
 
@@ -4755,9 +4758,9 @@ abstract class CommonObject
 				$sql .= " ".$this->db->sanitize($fieldlocaltax1)." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldlocaltax2)." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
 				$sql .= " ".$this->db->sanitize($fieldttc)." = ".((float) price2num($this->total_ttc, 'MT', 1));
-				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
-				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
-				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
+				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
+				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'CT', 1, (isset($this->multicurrency_code) ? $this->multicurrency_code : '')));
 				$sql .= " WHERE rowid = ".((int) $this->id);
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -5979,25 +5982,9 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define $usemargins (used by objectline_xxx.tpl.php files)
-		$usemargins = 0;
-		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
-			$usemargins = 1;
-		}
+		$this->prepareObjectLinesDisplay();
 
 		$num = count($this->lines);
-
-		// Line extrafield
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line);
-
-		if (method_exists($this, 'loadExpeditions')) {
-			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
-			$this->loadExpeditions();
-		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printObjectLinesBlock', $parameters, $this, $action);
@@ -6036,23 +6023,178 @@ abstract class CommonObject
 				// Line extrafield. TODO Remove this. extrafields should be already loaded.
 				//$line->fetch_optionals();
 
-				if (is_object($hookmanager)) {
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
-						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
-				}
-				if (empty($reshook)) {
-					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
-				}
+				$this->printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 
 				$i++;
 			}
 			print "<!-- end printObjectLines() -->\n";
 		}
+	}
+
+	/**
+	 *	Prepare the display of the lines: global $usemargins and line extrafields used by the line templates (objectline_xxx.tpl.php)
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@return	void
+	 */
+	protected function prepareObjectLinesDisplay()
+	{
+		global $extrafields, $usemargins;
+
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
+		$usemargins = 0;
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+			$usemargins = 1;
+		}
+
+		// Line extrafield
+		if (!is_object($extrafields)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line);
+
+		if (method_exists($this, 'loadExpeditions')) {
+			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
+			$this->loadExpeditions();
+		}
+	}
+
+	/**
+	 *	Print a line of the lines table: hooks printObjectLine or printObjectSubLine, then printObjectLine() if no hook replaced it
+	 *	Used by printObjectLines() and getObjectLineHtml()
+	 *
+	 *	@param	string		$action				Action code
+	 *	@param	CommonObjectLine|CommonObject|stdClass	$line	Line to print
+	 *	@param	int			$num				Number of lines
+	 *	@param	int			$i					Index of the line in $this->lines
+	 *	@param	int			$dateSelector		1=Show also date range input fields
+	 *	@param	Societe		$seller				Object of seller third party
+	 *	@param	?Societe	$buyer				Object of buyer third party
+	 *	@param	int<0,max>	$selected			ID line selected
+	 *	@param	?ExtraFields	$extrafields	Object of extrafields
+	 *	@param	string		$defaulttpldir		Directory where to find the template
+	 *	@return	void
+	 */
+	protected function printObjectLineWithHooks($action, $line, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir)
+	{
+		global $hookmanager;
+
+		// Only lines of documents having sub lines declare fk_parent_line
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		$fk_parent_line = (empty($line->fk_parent_line) ? 0 : $line->fk_parent_line);
+
+		$reshook = 0;
+		if (is_object($hookmanager)) {
+			if (empty($fk_parent_line)) {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			} else {
+				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $fk_parent_line, 'defaulttpldir' => $defaulttpldir);
+				$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			}
+		}
+		if (empty($reshook)) {
+			$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+		}
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card of the object before printObjectLines() and formAddObjectLine().
+	 *	Override it in child classes when the card uses other values.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Seller and buyer third parties, $dateSelector, and values of the global variables used by the line templates (objectline_xxx.tpl.php)
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		return array(
+			'seller' => $mysoc,
+			'buyer' => (is_object($this->thirdparty) ? $this->thirdparty : null),
+			'dateSelector' => 1,
+			'forceall' => 0,
+			'senderissupplier' => 0,
+			'inputalsopricewithtax' => 0,
+		);
+	}
+
+	/**
+	 *	Init the display of the lines: set the global variables used by the line templates (objectline_xxx.tpl.php) from getObjectLinesDisplayContext()
+	 *	To call in the card before printObjectLines() and formAddObjectLine().
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	Display context, see getObjectLinesDisplayContext()
+	 */
+	public function initObjectLinesDisplay()
+	{
+		// TODO We should not use global var for this
+		global $forceall, $senderissupplier, $inputalsopricewithtax;
+
+		$context = $this->getObjectLinesDisplayContext();
+
+		$forceall = $context['forceall'];
+		$senderissupplier = $context['senderissupplier'];
+		$inputalsopricewithtax = $context['inputalsopricewithtax'];
+
+		return $context;
+	}
+
+	/**
+	 *	Return the HTML of a line as printed in the card by printObjectLines(), hooks printObjectLine and printObjectSubLine included.
+	 *	Used to reload a line with ajax. The line is always in view mode.
+	 *	The lines must be loaded into $this->lines (for example with getLinesArray()).
+	 *	Note: the caller must init the hook contexts of the page that printed the lines (ex: propalcard), so modules hooking them render the line as in this page.
+	 *	The global variables of the caller used for the rendering ($object, $form, ...) are restored at the end.
+	 *
+	 *	@param	int		$lineid		Id of the line
+	 *	@param	string	$action		Action code
+	 *	@return	string				HTML of the line (<tr id="row-...">), empty string if line not found (error in $this->error)
+	 */
+	public function getObjectLineHtml($lineid, $action = '')
+	{
+		global $object, $form, $extrafields;
+		global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+
+		$lines = (is_array($this->lines) ? $this->lines : array());
+		$num = count($lines);
+		$i = 0;
+		$line = null;
+		foreach ($lines as $tmpline) {
+			if ($tmpline->id == $lineid) {
+				$line = $tmpline;
+				break;
+			}
+			$i++;
+		}
+		if ($line === null) {
+			$this->error = 'ErrorRecordNotFound';
+			return '';
+		}
+
+		// Third party is needed for seller or buyer and by printObjectLine()
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (!is_object($this->thirdparty) && property_exists($this, 'socid') && !empty($this->socid)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Keep the global variables of the caller, they are restored at the end
+		$savedGlobals = array($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins);
+
+		$object = $this; // Used by the line templates
+		if (!is_object($form)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+		}
+		$context = $this->initObjectLinesDisplay();
+		$this->prepareObjectLinesDisplay();
+
+		ob_start();
+		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], 0, $extrafields, '/core/tpl');
+		$out = ob_get_clean();
+
+		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+
+		return (string) $out;
 	}
 
 	/**
@@ -6133,7 +6275,10 @@ abstract class CommonObject
 			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
 				// So we calculate an estimated value just to show something on screen.
 				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
-				if ($line->remise_percent != 100) {
+				if (empty((float) $line->localtax1_tx) && empty((float) $line->localtax2_tx) && !empty((float) $line->subprice)) {
+					// With only VAT, the unit price excl. tax gives an exact value, not rounded to the precision of totals like an estimate from total_ttc
+					$line->subprice_ttc = (float) price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU');
+				} elseif ($line->remise_percent != 100) {
 					// Suppose situation_percent is defined @phan-suppress-next-line PhanUndeclaredProperty
 					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
@@ -10947,6 +11092,92 @@ abstract class CommonObject
 		}
 
 		return (float) $buyPrice;
+	}
+
+	/**
+	 * Return the linked proposals, orders and invoices having, for the product of a line of this object, a cost price different from
+	 * the one saved on the line (for a purchase order, the net unit price of the line). Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
+	 * user can not change cost prices, and documents that the user can not edit or access (rights, restriction on thirdparties) are ignored.
+	 *
+	 * @param	User		$user			User making change
+	 * @param	int			$lineid			Id of the line of this object
+	 * @param	float|null	$oldbuyprice	If set, nothing is returned when the cost price saved on the line is still this one
+	 * @return	array<string,array{refs:string[],lineids:int[],buyprice:float}>	Documents by element ('propal', 'commande', 'facture')
+	 */
+	public function getLinkedBuyPriceDocuments($user, $lineid, $oldbuyprice = null)
+	{
+		$documents = array();
+
+		if (!getDolGlobalString('MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS') || !$user->hasRight('margins', 'creer')) {
+			return $documents;
+		}
+
+		$sql = "SELECT fk_product, ".($this->element == 'order_supplier' ? "subprice * (1 - remise_percent / 100)" : "buy_price_ht")." as buy_price_ht FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		$line = ($resql ? $this->db->fetch_object($resql) : null);
+		if (!$line || $line->fk_product <= 0 || $line->buy_price_ht <= 0 || (isset($oldbuyprice) && price2num($oldbuyprice, 'MU') == price2num($line->buy_price_ht, 'MU'))) {
+			return $documents;
+		}
+
+		// The cost price is not an accounting data, so the status of the linked documents is not checked (like in margin/checkMargins.php)
+		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+		foreach (array('propal', 'commande', 'facture') as $element) {
+			$ids = array();
+			foreach ($this->linkedObjectsIds[$element] ?? array() as $id) {
+				if (restrictedArea($user, $element, $id, '', '', 'fk_soc', 'rowid', 0, 1, 'write')) {
+					$ids[] = (int) $id;
+				}
+			}
+			if (empty($ids)) {
+				continue;
+			}
+			$sql = "SELECT d.rowid, d.buy_price_ht, t.ref FROM ".$this->db->prefix().$element." as t, ".$this->db->prefix().$element."det as d";
+			$sql .= " WHERE d.fk_".$this->db->sanitize($element)." = t.rowid AND t.entity IN (".getEntity($element).")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
+			$sql .= " AND d.fk_product = ".((int) $line->fk_product);
+			$resql = $this->db->query($sql);
+			while ($resql && $obj = $this->db->fetch_object($resql)) {
+				if (price2num($obj->buy_price_ht, 'MU') != price2num($line->buy_price_ht, 'MU')) {
+					$documents[$element]['refs'][$obj->ref] = $obj->ref;
+					$documents[$element]['lineids'][] = (int) $obj->rowid;
+					$documents[$element]['buyprice'] = (float) $line->buy_price_ht;
+				}
+			}
+		}
+
+		return $documents;
+	}
+
+	/**
+	 * Apply the cost price of a line of this object to the lines of the same product of some linked documents
+	 *
+	 * @param	User				$user		User making change
+	 * @param	int					$lineid		Id of the line of this object
+	 * @param	array<string,mixed>	$elements	Elements ('propal', 'commande', 'facture') to update, when their value is not empty
+	 * @return	int							Return integer <0 if KO, number of lines updated if OK
+	 */
+	public function updateLinkedBuyPrice($user, $lineid, $elements)
+	{
+		$nbupdated = 0;
+
+		$this->db->begin();
+		foreach ($this->getLinkedBuyPriceDocuments($user, $lineid) as $element => $document) {
+			if (empty($elements[$element])) {
+				continue;
+			}
+			$sql = "UPDATE ".$this->db->prefix().$element."det SET buy_price_ht = ".((float) $document['buyprice']);
+			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $document['lineids'])).")";
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+			$nbupdated += count($document['lineids']);
+		}
+		$this->db->commit();
+
+		return $nbupdated;
 	}
 
 	/**
