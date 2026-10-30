@@ -1610,7 +1610,7 @@ class Product extends CommonObject
 			$sql .= ", localtax2_type = ".($this->localtax2_type != '' ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'");
 
 			$sql .= ", barcode = ".(empty($this->barcode) ? "null" : "'".$this->db->escape($this->barcode)."'");
-			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : $this->db->escape((string) $this->barcode_type));
+			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : ((int) $this->barcode_type));
 
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
