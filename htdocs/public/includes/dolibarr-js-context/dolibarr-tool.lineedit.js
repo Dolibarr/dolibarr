@@ -1,12 +1,13 @@
 document.addEventListener('Dolibarr:Init', function(e) {
 	/**
-	 * Dolibarr.tools.lineEdit
-	 * -----------------------
-	 * Edition of the document lines of a card in ajax, without reloading the page (see CommonObject::isAjaxLineEdit()).
+	 * Dolibarr.tools.card.lines
+	 * -------------------------
+	 * Edition of the document lines of a card in ajax, without reloading the page (experimental, see CommonObject::isAjaxLineEdit()).
+	 * It uses the controller of the card (Dolibarr.tools.card), shared with the edition of the fields: same date of modification.
 	 * The edit link of a line has the attributes data-dol-edit-line, data-dol-element and data-dol-id, its url is used without javascript.
 	 * - A click on the link replaces the line by its edit form, the one of the card (core/ajax/objectline.php with action=editline).
 	 *   The form to add a line is removed from the page during the edition: it uses the same names and ids of inputs, like in the card.
-	 * - The form is saved by the action updateline of the card, posted with Dolibarr.tools.object().postCard(): all the rules
+	 * - The form is saved by the action updateline of the card, posted with Dolibarr.tools.card().postCard(): all the rules
 	 *   of the card are applied (prices, taxes, hooks, triggers, document regenerated...).
 	 * - Then the line and the fields displayed (totals...) are refreshed. If the card returns an error, it is displayed and the form stays open.
 	 */
@@ -142,7 +143,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const table = row ? row.closest('table') : null;
 		if (!row || !form || !table) return false;
 
-		const controller = Dolibarr.tools.object(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
+		const controller = Dolibarr.tools.card(link.dataset.dolElement, parseInt(link.dataset.dolId, 10));
 
 		let data;
 		try {
@@ -211,5 +212,5 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		});
 	});
 
-	Dolibarr.defineTool('lineEdit', { open, close });
+	Dolibarr.tools.card.definePart('lines', { open, close });
 });

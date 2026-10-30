@@ -81,18 +81,15 @@ var Dolibarr = {
 		replaceContent(target, content, options) {},
 
 		/**
-		 * Get the controller of an object displayed on a card
+		 * Get a controller of an object, to read and update it in ajax (data only, the page is not changed)
 		 * @param {string} element Element of the object, ex: 'propal'
 		 * @param {number} id
-		 * @param {Object} [options] {tms, url}
+		 * @param {Object} [options] {tms}
 		 * @returns {{
-		 *   element: string, id: number, tms: number, url: string,
+		 *   element: string, id: number, tms: number,
 		 *   setField: function(string, *, Object=): Promise<Object|null>,
-		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
-		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
-		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
-		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
-		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   fetchFields: function(string[], Object=): Promise<{element: string, id: number, fields: Object, tms: number|null}>,
+		 *   fetchLines: function(number[], Object=): Promise<{lines: Object, lineids: number[], tms: number|null, eventMessages: Object}>,
 		 *   on: function(string, function): function
 		 * }}
 		 */
@@ -102,33 +99,76 @@ var Dolibarr = {
 		}),
 
 		/**
-		 * Edition of the fields of a card in ajax, see Form::isAjaxFieldEdit()
+		 * Get the controller of the card of an object displayed in the page (one controller by card, shared by all the scripts)
+		 * @param {string} element Element of the object, ex: 'propal'
+		 * @param {number} id
+		 * @param {Object} [options] {tms, url}
+		 * @returns {{
+		 *   element: string, id: number, tms: number, url: string, object: Object,
+		 *   setField: function(string, *, Object=): Promise<Object|null>,
+		 *   reload: function({sections?: string[], lines?: number[], fields?: string[]|null}, Object=): Promise<{sections: Object, lines: Object, fields: Object, eventMessages: Object, lineids: number[]|null, tms: number|null, document: Document|null}>,
+		 *   reloadSection: function(string, Object=): Promise<HTMLElement|null>,
+		 *   reloadLine: function(number, Object=): Promise<HTMLElement|null>,
+		 *   refreshFields: function(string[]=, Object=): Promise<Object>,
+		 *   updateFields: function(Object, Object=): void,
+		 *   getFieldContainers: function(string=): HTMLElement[],
+		 *   getDisplayedFields: function(): string[],
+		 *   fetchLines: function(number[], Object=): Promise<Object>,
+		 *   replaceLine: function(number, string, number[]): HTMLElement|null,
+		 *   removeLine: function(number): null,
+		 *   postCard: function(FormData|Object, Object=): Promise<Document>,
+		 *   fetchCardWithoutLines: function(Object=): Promise<Document>,
+		 *   replaceFrom: function(Document, string): HTMLElement|null,
+		 *   on: function(string, function): function
+		 * }}
 		 */
-		fieldEdit: {
-			/**
-			 * Open the edition of the field of an edit link printed by Form::editfieldkey()
-			 * @param {HTMLElement} link
-			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
-			 */
-			open: function(link) {},
-		},
-
-		/**
-		 * Edition of the document lines of a card in ajax, see CommonObject::isAjaxLineEdit()
-		 */
-		lineEdit: {
-			/**
-			 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
-			 * @param {HTMLElement} link
-			 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
-			 */
-			open: function(link) {},
+		card: Object.assign(function(element, id, options) {}, {
+			/** Class of the controllers, to extend with Dolibarr.tools.card.register() */
+			Controller: class {},
 
 			/**
-			 * Cancel the edition of the line in progress
+			 * Specialize the cards of an element with a class extending Dolibarr.tools.card.Controller
+			 * @param {string} element
+			 * @param {{Controller: Function}} specialization
 			 */
-			close: function() {},
-		},
+			register(element, specialization) {},
+
+			/**
+			 * Define a part of the card tool, available as Dolibarr.tools.card.<name>
+			 * @param {string} name
+			 * @param {Object} api
+			 */
+			definePart(name, api) {},
+
+			/**
+			 * Part fields: edition of the fields of a card in ajax (experimental), see Form::isAjaxFieldEdit()
+			 */
+			fields: {
+				/**
+				 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+			},
+
+			/**
+			 * Part lines: edition of the document lines of a card in ajax (experimental), see CommonObject::isAjaxLineEdit()
+			 */
+			lines: {
+				/**
+				 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+
+				/**
+				 * Cancel the edition of the line in progress
+				 */
+				close: function() {},
+			},
+		}),
 
 		/**
 		 * TThe langs tool

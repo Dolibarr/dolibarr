@@ -164,7 +164,7 @@ $documentation->showSidebar(); ?>
 			<h2 class="documentation-title">Field edit tool</h2>
 
 			<p class="documentation-text">
-				<code>Dolibarr.tools.fieldEdit</code> edits the fields of a card in ajax, without reloading the page. There is no code to write in the card:
+				<code>Dolibarr.tools.card.fields</code>, part of the <a href="<?php echo $jscontexturl; ?>#titlesection-tool-card">Card tool</a>, edits the fields of a card in ajax, without reloading the page. There is no code to write in the card:
 				<code>Form::editfieldkey()</code> and <code>Form::editfieldval()</code> print the markup when the field is edited in ajax.
 			</p>
 			<ul>
@@ -172,9 +172,12 @@ $documentation->showSidebar(); ?>
 				<li>Only for the fields of a <code>CommonObject</code> editable from the user interface (<code>'uieditable' => 1</code> in <code>$fields</code>, see <code>CommonObject::isFieldEditableFromUi()</code>). Other fields keep the edition by reloading the page.</li>
 				<li>The edit link gets the attributes <code>data-dol-edit-field</code>, <code>data-dol-element</code>, <code>data-dol-id</code> and <code>data-dol-tms</code>, its url is still used without javascript. The value is printed in a container <code>[data-dol-field][data-dol-element][data-dol-id]</code>.</li>
 				<li>A click on the link replaces the value by the input of the field, returned by <code>core/ajax/objectfield.php</code> with <code>input=1</code> (<code>CommonObject::ajaxInputField()</code>). <kbd>Enter</kbd> saves a single line input, <kbd>Escape</kbd> cancels.</li>
-				<li>The value is saved with <code>setField()</code> of <a href="<?php echo $jscontexturl; ?>#titlesection-tool-object"><code>Dolibarr.tools.object</code></a>, refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed.</li>
-				<li><code>Dolibarr.tools.fieldEdit.open(link)</code> opens the edition of the field of an edit link.</li>
+				<li>The value is saved with <code>setField()</code> of the controller of the card (<code>Dolibarr.tools.card</code>), refused if the object was modified since the page was displayed. Then the value and the other fields changed by the update (containers <code>[data-dol-field]</code> of the page) are refreshed.</li>
+				<li><code>Dolibarr.tools.card.fields.open(link)</code> opens the edition of the field of an edit link.</li>
 			</ul>
+			<p class="documentation-text">
+				The controller of the card is shared with the edition of the lines: after a change of the lines, a field can be saved without being refused.
+			</p>
 			<p class="documentation-text">
 				<b>Note:</b> the hidden option <code>MAIN_USE_EDIT_IN_PLACE</code> (jeditable) is deprecated, the ajax edition of fields replaces it: it is ignored for the fields edited in ajax.
 			</p>
@@ -184,17 +187,17 @@ $documentation->showSidebar(); ?>
 			<h2 class="documentation-title">Line edit tool</h2>
 
 			<p class="documentation-text">
-				<code>Dolibarr.tools.lineEdit</code> edits the document lines of a card in ajax, without reloading the page. There is no code to write in the card:
+				<code>Dolibarr.tools.card.lines</code>, part of the <a href="<?php echo $jscontexturl; ?>#titlesection-tool-card">Card tool</a>, edits the document lines of a card in ajax, without reloading the page. There is no code to write in the card:
 				the links of the lines printed by <code>objectline_view.tpl.php</code> are used.
 			</p>
 			<ul>
 				<li>Enabled with <code>MAIN_FEATURES_LEVEL</code> &gt;= 2, or with the hidden option <code>MAIN_USE_AJAX_LINE_EDIT</code>, only on a draft: see <code>CommonObject::isAjaxLineEdit()</code>.</li>
 				<li>The edit link of a line gets the attributes <code>data-dol-edit-line</code>, <code>data-dol-element</code> and <code>data-dol-id</code>, its url is still used without javascript.</li>
 				<li>A click on the link replaces the line by its edit form, the one of the card: <code>core/ajax/objectline.php</code> with <code>action=editline</code> (<code>CommonObject::getObjectLineHtml($lineid, 'editline')</code>). The form to add a line is removed from the page during the edition, it uses the same names and ids of inputs. One line is edited at a time, <kbd>Escape</kbd> cancels.</li>
-				<li>The form is saved by the action <code>updateline</code> of the card, posted with <code>postCard()</code> of <a href="<?php echo $jscontexturl; ?>#titlesection-tool-object"><code>Dolibarr.tools.object</code></a>: all the rules of the card are applied (prices, taxes, hooks, triggers, document regenerated...).</li>
+				<li>The form is saved by the action <code>updateline</code> of the card, posted with <code>postCard()</code> of the controller of the card (<code>Dolibarr.tools.card</code>): all the rules of the card are applied (prices, taxes, hooks, triggers, document regenerated...).</li>
 				<li>If the card returns an error, it is displayed and the form stays open. Otherwise the line and the fields displayed (totals...) are refreshed.</li>
 				<li>The result of an action is read from the object, not from the messages: a line saved is displayed even if an error happened after the action (ex: document not generated), like in the card.</li>
-				<li><code>Dolibarr.tools.lineEdit.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.lineEdit.close()</code> cancels the edition in progress.</li>
+				<li><code>Dolibarr.tools.card.lines.open(link)</code> opens the edition of the line of an edit link, <code>Dolibarr.tools.card.lines.close()</code> cancels the edition in progress.</li>
 			</ul>
 		</div>
 
