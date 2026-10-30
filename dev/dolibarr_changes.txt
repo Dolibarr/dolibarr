@@ -373,15 +373,6 @@ PHP RESTLER:
 		}
 	}
 
-* Do not unregister the other autoloaders (Composer, the ones of the external modules, PHPUnit...) into
-  AutoLoader.php, function thereCanBeOnlyOne(). Once unregistered, the classes they load were not found
-  anymore for the rest of the request (loadLastResort() cannot call the loaders that are an array
-  [object, method]). For this, replace the loop that unregisters all the autoloaders but the one of
-  Restler with:
-
-	// @CHANGE DOL The other autoloaders are not unregistered anymore
-	return static::$instance;
-
 
 +With swagger 2 provided into /explorer:
 ----------------------------------------

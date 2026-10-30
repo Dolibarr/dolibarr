@@ -63,12 +63,21 @@ namespace Luracast\Restler {
 		 * AutoLoader is capable enough to handle all standards so no need
 		 * for others stumbling about.
 		 *
-		 * @CHANGE DOL The other autoloaders are not unregistered anymore (see dev/dolibarr_changes.txt).
-		 *
 		 * @return callable the one true auto loader.
 		 */
 		public static function thereCanBeOnlyOne()
 		{
+			if (static::$perfectLoaders === spl_autoload_functions())
+			return static::$instance;
+
+			if (false !== $loaders = spl_autoload_functions())
+			if (0 < $count = count($loaders))
+				for ($i = 0, static::$rogueLoaders += $loaders;
+					 $i < $count && false != ($loader = $loaders[$i]);
+					 $i++)
+					if ($loader !== static::$perfectLoaders[0])
+						spl_autoload_unregister($loader);
+
 			return static::$instance;
 		}
 
