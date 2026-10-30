@@ -25,12 +25,15 @@
  * Parse a stored phone number into country code and number parts
  *
  * Stored format is "+{code} {number}" (e.g. "+33 644986885").
+ * A code glued to the number (e.g. "+33644986885", from imports or old data) is
+ * recognized when $db is provided, using the longest phone code known in llx_c_country.
  * If no code is found, returns empty code and the full string as number.
  *
- * @param	string	$phone		Stored phone number
+ * @param	string		$phone		Stored phone number
+ * @param	?DoliDB		$db			Database handler, used to recognize a code glued to the number
  * @return	array{code:string,number:string}	Array with 'code' and 'number' keys
  */
-function dol_parse_phone($phone)
+function dol_parse_phone($phone, $db = null)
 {
 	$phone = trim((string) $phone);
 	if ($phone === '') {
@@ -45,11 +48,50 @@ function dol_parse_phone($phone)
 				'number' => substr($phone, $pos + 1)
 			);
 		}
-		// Phone starts with + but has no space: try to keep it as-is in code
+		// Phone starts with + but has no space: look for the longest known phone code
+		if ($db !== null) {
+			$digits = preg_replace('/[\-\.\(\)]/', '', substr($phone, 1));
+			$phonecodes = dol_get_all_phone_codes($db);
+			for ($len = 4; $len >= 1; $len--) {
+				$candidate = substr($digits, 0, $len);
+				if (strlen($digits) > $len && in_array($candidate, $phonecodes, true)) {
+					return array('code' => '+'.$candidate, 'number' => substr($digits, $len));
+				}
+			}
+		}
 		return array('code' => '', 'number' => $phone);
 	}
 
 	return array('code' => '', 'number' => $phone);
+}
+
+/**
+ * Get the list of all distinct phone codes known in llx_c_country
+ *
+ * @param	DoliDB	$db		Database handler
+ * @return	string[]		List of distinct phone codes, without "+" (e.g. array('33','32','1684'))
+ */
+function dol_get_all_phone_codes($db)
+{
+	static $cache = null;
+	if ($cache !== null) {
+		return $cache;
+	}
+
+	$cache = array();
+	$sql = "SELECT DISTINCT phone_code FROM ".$db->prefix()."c_country";
+	$sql .= " WHERE phone_code IS NOT NULL AND phone_code != 0";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$cache[] = (string) $obj->phone_code;
+		}
+		$db->free($resql);
+	} else {
+		dol_syslog("dol_get_all_phone_codes: ".$db->lasterror(), LOG_ERR);
+	}
+
+	return $cache;
 }
 
 /**
