@@ -6275,7 +6275,10 @@ abstract class CommonObject
 			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
 				// So we calculate an estimated value just to show something on screen.
 				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
-				if ($line->remise_percent != 100) {
+				if (empty((float) $line->localtax1_tx) && empty((float) $line->localtax2_tx) && !empty((float) $line->subprice)) {
+					// With only VAT, the unit price excl. tax gives an exact value, not rounded to the precision of totals like an estimate from total_ttc
+					$line->subprice_ttc = (float) price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU');
+				} elseif ($line->remise_percent != 100) {
 					// Suppose situation_percent is defined @phan-suppress-next-line PhanUndeclaredProperty
 					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
