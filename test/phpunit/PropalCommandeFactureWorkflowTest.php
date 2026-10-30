@@ -344,7 +344,7 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 	 *
 	 * @param	Propal|Commande|Facture	$document		Document to create
 	 * @param	int						$socid			Id of the thirdparty
-	 * @param	array<string,int>		$linkedobjects	Documents it is created from, by type
+	 * @param	array<string,int|int[]>	$linkedobjects	Documents it is created from, by type
 	 * @return	Propal|Commande|Facture
 	 */
 	private function createDraftFrom($document, $socid, $linkedobjects)
@@ -436,6 +436,49 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$this->assertEquals(array(), $this->getLinkedIds($invoiceD, 'commande', 'source'), 'The order of the proposal of another thirdparty is not linked');
 
 		foreach (array($invoiceD, $order2, $propal2, $invoiceC, $invoiceB, $invoiceA, $orderB, $orderA, $propal) as $document) {
+			$document->delete($user);
+		}
+		$soc2->delete($socid2, $user);
+		$soc->delete($socid, $user);
+	}
+
+	/**
+	 * testLinkedDocumentsOfSeveralOrigins
+	 *
+	 * An invoice created from several orders, like the billing of a list of orders, is linked to the proposals of all of them
+	 * but not to the proposal of an order of another thirdparty.
+	 *
+	 * @return void
+	 */
+	public function testLinkedDocumentsOfSeveralOrigins()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = 'PropalCommandeFactureWorkflowTest several origins Unittest';
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+		$soc2 = new Societe($db);
+		$soc2->name = 'PropalCommandeFactureWorkflowTest several origins other Unittest';
+		$socid2 = $soc2->create($user);
+		$this->assertGreaterThan(0, $socid2, $soc2->errorsToString());
+
+		// An order created from its own proposal: 2 for the thirdparty of the invoice, 1 for another thirdparty
+		$propals = array();
+		$orders = array();
+		foreach (array($socid, $socid, $socid2) as $i => $ordersocid) {
+			$propals[$i] = $this->createDraftFrom(new Propal($db), $ordersocid, array());
+			$orders[$i] = $this->createDraftFrom(new Commande($db), $ordersocid, array('propal' => $propals[$i]->id));
+		}
+
+		$invoice = $this->createDraftFrom(new Facture($db), $socid, array('commande' => array($orders[0]->id, $orders[1]->id, $orders[2]->id)));
+		$this->assertEqualsCanonicalizing(array($propals[0]->id, $propals[1]->id), $this->getLinkedIds($invoice, 'propal', 'source'), 'The invoice is linked to the proposals of the orders of its thirdparty only');
+
+		foreach (array_merge(array($invoice), $orders, $propals) as $document) {
 			$document->delete($user);
 		}
 		$soc2->delete($socid2, $user);
