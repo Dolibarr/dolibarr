@@ -42,6 +42,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $template = dol_sanitizeFileName(GETPOST('template', 'alpha'));
+$view = GETPOST('view', 'aZ09');
+$page = GETPOSTINT('page');
 
 $model = new pdf_acroform_donation($db);
 
@@ -75,6 +77,52 @@ if ($resql && ($obj = $db->fetch_object($resql))) {
 	$sampledon->fetch((int) $obj->rowid);
 } else {
 	$sampledon->initAsSpecimen();
+}
+
+
+/**
+ * Return the picture of one page of a PDF form, making it when it is not there yet
+ *
+ * @param	string	$pdf		Path of the PDF form
+ * @param	int		$pagenumber	Page to draw, counted from 1
+ * @return	string				Path of the picture, empty when it could not be made
+ */
+function acroformPagePicture($pdf, $pagenumber)
+{
+	if (!class_exists('Imagick')) {
+		return '';
+	}
+
+	$dir = dirname($pdf).'/preview';
+	$picture = $dir.'/'.basename($pdf).'-p'.((int) $pagenumber).'.png';
+
+	// The picture is made again when the form was replaced by another revision
+	if (dol_is_file($picture) && filemtime($picture) >= filemtime($pdf)) {
+		return $picture;
+	}
+
+	dol_mkdir($dir);
+	if (dol_convert_file($pdf, 'png', $picture, (string) ($pagenumber - 1)) <= 0) {
+		return '';
+	}
+
+	return dol_is_file($picture) ? $picture : '';
+}
+
+/**
+ * Return the url that serves a file of the directory of the templates
+ *
+ * @param	string	$path	Path of the file
+ * @return	string			Url, empty when the file is not under the templates of Dolibarr
+ */
+function acroformFileUrl($path)
+{
+	$root = DOL_DATA_ROOT.'/doctemplates/';
+	if (strpos($path, $root) !== 0) {
+		return '';
+	}
+
+	return DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file='.urlencode(substr($path, strlen($root)));
 }
 
 
@@ -266,8 +314,44 @@ if ($templatepath !== '') {
 		}
 	}
 
+	// The fields are shown on the form itself when a picture of it can be made
+	$pages = array();
+	foreach ($fields as $name => $info) {
+		foreach ($info['widgets'] as $widget) {
+			if (!empty($widget['page'])) {
+				$pages[$widget['page']] = 1;
+			}
+		}
+	}
+	ksort($pages);
+	$pages = array_keys($pages);
+
+	$picture = '';
+	$pictureurl = '';
+	if ($view != 'list' && count($pages)) {
+		$page = in_array($page, $pages) ? $page : $pages[0];
+		$picture = acroformPagePicture($templatepath, $page);
+		$pictureurl = ($picture === '') ? '' : acroformFileUrl($picture);
+	}
+	$showdocument = ($pictureurl !== '');
+
 	print load_fiche_titre($langs->trans("AcroFormFieldsOf", $template), '', '');
 	print '<span class="opacitymedium">'.$langs->trans("AcroFormFieldsCount", count($fields), $todo).'</span><br><br>';
+
+	// Which of the two views is shown
+	print '<div class="marginbottomonly">';
+	if ($showdocument) {
+		print '<span class="butActionRefused">'.$langs->trans("AcroFormDocumentView").'</span> ';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?template='.urlencode($template).'&view=list">'.$langs->trans("AcroFormListView").'</a>';
+	} elseif ($view != 'list' && class_exists('Imagick')) {
+		print '<span class="opacitymedium">'.$langs->trans("AcroFormNoPicture").'</span>';
+	} elseif ($view != 'list') {
+		print '<span class="opacitymedium">'.$langs->trans("AcroFormNeedsImagick").'</span>';
+	} else {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?template='.urlencode($template).'&view=document">'.$langs->trans("AcroFormDocumentView").'</a> ';
+		print '<span class="butActionRefused">'.$langs->trans("AcroFormListView").'</span>';
+	}
+	print '</div>';
 
 	// The values a receipt can show, with what they give on the donation of the preview
 	print '<div class="marginbottomonly">';
@@ -283,7 +367,114 @@ if ($templatepath !== '') {
 	print '<input type="hidden" name="action" value="savemap">';
 	print '<input type="hidden" name="template" value="'.dol_escape_htmltag($template).'">';
 
-	print '<div class="div-table-responsive-no-min">';
+	if ($showdocument) {
+		$size = getimagesize($picture);
+		// The picture is drawn at 72 pixels per inch, which is the unit the corners of a
+		// field are given in, so one pixel of the picture is one unit of the form
+		$width = ($size === false) ? 0 : (float) $size[0];
+		$height = ($size === false) ? 0 : (float) $size[1];
+
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+
+		if (count($pages) > 1) {
+			print '<div class="marginbottomonly">';
+			foreach ($pages as $one) {
+				if ($one == $page) {
+					print '<span class="butActionRefused">'.$langs->trans("Page").' '.$one.'</span> ';
+				} else {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?template='.urlencode($template).'&view=document&page='.$one.'">'.$langs->trans("Page").' '.$one.'</a> ';
+				}
+			}
+			print '</div>';
+		}
+
+		print '<div style="position: relative; max-width: '.((int) $width).'px; border: 1px solid #ccc;">';
+		print '<img src="'.$pictureurl.'" alt="'.dol_escape_htmltag($langs->trans("AcroFormPageOfForm", $page)).'" style="display: block; width: 100%;">';
+
+		foreach ($fields as $name => $info) {
+			$set = isset($known[$name]);
+			foreach ($info['widgets'] as $number => $widget) {
+				if (empty($widget['page']) || $widget['page'] != $page || empty($widget['rect']) || $width <= 0 || $height <= 0) {
+					continue;
+				}
+				$rect = $widget['rect'];
+				// The corners are counted from the bottom left of the page
+				$left = 100 * min($rect[0], $rect[2]) / $width;
+				$right = 100 * max($rect[0], $rect[2]) / $width;
+				$top = 100 * ($height - max($rect[1], $rect[3])) / $height;
+				$bottom = 100 * ($height - min($rect[1], $rect[3])) / $height;
+
+				print '<button type="button" class="acroformbox'.($set ? ' acroformboxset' : '').'" data-field="'.dol_escape_htmltag($name).'"';
+				print ' title="'.dol_escape_htmltag($name).'" aria-label="'.dol_escape_htmltag($langs->trans("AcroFormField").' '.$name).'"';
+				print ' style="position: absolute; left: '.round($left, 3).'%; top: '.round($top, 3).'%;';
+				print ' width: '.round($right - $left, 3).'%; height: '.round($bottom - $top, 3).'%;';
+				print ' min-width: 8px; min-height: 8px; padding: 0; margin: 0; cursor: pointer;';
+				print ' background: '.($set ? 'rgba(45, 105, 165, 0.20)' : 'rgba(180, 125, 30, 0.14)').';';
+				print ' border: 1px '.($set ? 'solid #2d69a5' : 'dashed #b47d1e').';"></button>';
+			}
+		}
+
+		print '</div>';
+		print '<div class="opacitymedium small margintoponly">'.$langs->trans("AcroFormClickAField").'</div>';
+		print '</div><div class="fichehalfright">';
+
+		// One block per field, the one of the field clicked on the form is shown
+		print '<div id="acroformpanel" class="marginleftonly">';
+		print '<div class="acroformpanelempty opacitymedium">'.$langs->trans("AcroFormClickAField").'</div>';
+
+		foreach ($fields as $name => $info) {
+			$isbutton = ($info['type'] == 'Button');
+			$value = isset($known[$name]['value']) ? (string) $known[$name]['value'] : '';
+			$transform = isset($known[$name]['transform']) ? (string) $known[$name]['transform'] : '';
+			$token = isset($known[$name]['token']) ? (string) $known[$name]['token'] : '';
+
+			print '<div class="acroformblock" id="acroformblock-'.dol_escape_htmltag($name).'" style="display: none;">';
+			print '<div class="tagtable centpercent">';
+			print '<div><b class="wordbreak">'.dol_escape_htmltag($name).'</b>';
+			print ' <span class="opacitymedium small">'.dol_escape_htmltag($info['type']);
+			if (!empty($info['maxlen'])) {
+				print ' &middot; '.$langs->trans("AcroFormMaxLength", $info['maxlen']);
+			}
+			print '</span></div>';
+
+			if ($isbutton) {
+				$choices = array('' => $langs->trans("AcroFormDoNotTick"));
+				foreach ($info['options'] as $option) {
+					if ($option !== 'Off') {
+						$choices[$option] = $option;
+					}
+				}
+				print '<div class="margintoponly">'.$form->selectarray('fieldtoken['.$name.']', $choices, $token, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200').'</div>';
+			} else {
+				print '<div class="margintoponly"><input type="text" class="minwidth300 maxwidth300onsmartphone" name="fieldvalue['.$name.']" value="'.dol_escape_htmltag($value).'"></div>';
+				print '<div class="margintoponly">'.$form->selectarray('fieldtransform['.$name.']', $transforms, $transform, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150').'</div>';
+				$preview = ($value === '') ? '' : $model->applyTransform(make_substitutions($value, $substitutions, $langs), $transform, $langs, $conf->currency);
+				print '<div class="margintoponly opacitymedium small">'.$langs->trans("AcroFormPreview").'</div>';
+				print '<div>'.($preview === '' ? '<span class="opacitymedium">'.$langs->trans("AcroFormWillStayEmpty").'</span>' : dol_escape_htmltag($preview)).'</div>';
+			}
+
+			print '</div>';
+			print '</div>';
+		}
+
+		print '</div>';
+		print '</div></div>';
+
+		print '<script type="text/javascript">
+		jQuery(document).ready(function () {
+			jQuery(".acroformbox").on("click", function () {
+				var field = jQuery(this).attr("data-field");
+				jQuery(".acroformpanelempty").hide();
+				jQuery(".acroformblock").hide();
+				jQuery("#acroformblock-" + field.replace(/([^a-zA-Z0-9_-])/g, "\\\\$1")).show();
+				jQuery(".acroformbox").css("outline", "");
+				jQuery(this).css("outline", "2px solid #2d69a5");
+			});
+		});
+		</script>';
+	}
+
+	print '<div class="div-table-responsive-no-min"'.($showdocument ? ' style="display: none;"' : '').'>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("AcroFormField").'</td>';
