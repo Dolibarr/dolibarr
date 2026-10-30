@@ -71,6 +71,18 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 	define('FPDM_PASSWORD_MAX_LEN',15); //Security to prevent shell overflow.
 
     class FPDM {
+
+	//FIX: old object number => new one, while a file read from object streams is	// @CHANGE DOL
+	//written again with consecutive object numbers
+	var $dolRenum=array();
+	//When a stream is written back decompressed, its dictionary must lose its filter
+	//and carry the new length
+	var $dolStripFilter=false;
+	var $dolNewLength=null;
+	//The length the file announces for the stream of the object being written again
+	var $dolStreamLength=null;
+	//ENDFIX
+
     //@@@@@@@@@
 		var $useCheckboxParser = false;      //boolean: allows activation of custom checkbox parser (not available in original FPDM source)
 
@@ -1137,6 +1149,13 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 
 			if($filetype=='PDF')
 			{
+				//FIX: a file whose objects live in object streams, or a linearized one,  // @CHANGE DOL
+				//holds nothing this line based parser can read, so rewrite it first
+				if($this->dolNeedsNormalization($content)) {
+					$normalized=$this->dolNormalizePdf($content);
+					if($normalized!==false) $content=$normalized;
+				}
+				//ENDFIX
 				$start = substr($content, 0, 2048);
 				if(strpos($start, '/ObjStm')!==false)
 					$this->Error('Object streams are not supported');
@@ -2414,6 +2433,783 @@ if (!call_user_func_array('class_exists', $__tmp)) {
         		unset($this->f);
         	}
         }
+
+
+		//FIX: read the PDFs that keep their objects inside object streams (PDF 1.5 and  // @CHANGE DOL
+		//later) and the linearized ones. The parser of this class is line based: it only
+		//sees the objects written as plain text, so such a file holds no readable field
+		//at all (the form downloaded from a government site is a typical case). The file
+		//is rewritten into the classic form before anything else reads it.
+
+		/**
+		*Tells if a PDF content must be rewritten before this class can read it
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@return bool
+		**/
+		function dolNeedsNormalization($content) {
+		//--------------------------------------
+			if(strpos($content,'/ObjStm')!==false) return true;
+			if(strpos($content,'/Linearized')!==false) return true;
+			if(preg_match('/\/Type\s*\/XRef/',$content)) return true;
+			return false;
+		}
+
+		/**
+		*Rewrites a PDF into the classic form: every object as plain text, one classic
+		*cross reference table, no linearization and no incremental update left
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@return string|false the rewritten content, or false when it can not be done
+		**/
+		function dolNormalizePdf($content) {
+		//--------------------------------
+			if(!preg_match_all('/startxref\s+(\d+)/',$content,$m)) return false;
+
+			$map=array();		//object number => where to read it
+			$trailer=array();	//the entries of the trailer, first one found wins
+			$todo=array((int) $m[1][count($m[1])-1]);
+			$seen=array();
+
+			while(count($todo)) {
+				$offset=array_shift($todo);
+				if($offset<=0 || $offset>=strlen($content) || isset($seen[$offset])) continue;
+				$seen[$offset]=1;
+
+				$section=$this->dolParseXrefSection($content,$offset);
+				if($section===false) continue;
+
+				foreach($section['entries'] as $num=>$entry)
+					if(!isset($map[$num])) $map[$num]=$entry;
+				foreach($section['trailer'] as $key=>$value)
+					if(!isset($trailer[$key])) $trailer[$key]=$value;
+
+				//An encrypted file is out of reach of this rewriting
+				if(isset($section['trailer']['Encrypt'])) return false;
+
+				if(isset($section['trailer']['Prev'])) $todo[]=(int) $section['trailer']['Prev'];
+				if(isset($section['trailer']['XRefStm'])) $todo[]=(int) $section['trailer']['XRefStm'];
+			}
+
+			if(!count($map) || !isset($trailer['Root'])) return false;
+
+			$bodies=array();
+			$streams=array();	//object streams already expanded
+
+			foreach($map as $num=>$entry) {
+				if($entry['type']==1) {
+					$body=$this->dolObjectBodyAt($content,$entry['offset'],$num);
+				} else {
+					if(!isset($streams[$entry['stream']])) {
+						$streams[$entry['stream']]=$this->dolExpandObjectStream($content,$map,$entry['stream']);
+					}
+					$body=isset($streams[$entry['stream']][$num]) ? $streams[$entry['stream']][$num] : false;
+				}
+				if($body===false || $body==='') continue;
+				//The object streams and the cross reference streams are replaced by what
+				//this rewriting produces, so they must not be written back
+				if(preg_match('/\/Type\s*\/(ObjStm|XRef)\b/',$body)) continue;
+				$bodies[$num]=$body;
+			}
+
+			if(!count($bodies)) return false;
+
+			//The objects that were dropped leave holes in the numbering, and this class
+			//wants exactly one object for each entry of the cross reference table, so the
+			//objects are numbered again from 1 and every reference is written again
+			ksort($bodies);
+			$this->dolRenum=array();
+			$new=0;
+			foreach($bodies as $num=>$body) {
+				$new++;
+				$this->dolRenum[$num]=$new;
+			}
+			$total=$new;
+
+			$formatted=array();
+			foreach($bodies as $num=>$body) {
+				//The data of a stream is taken from the length the file announces: the
+				//compressed bytes may hold the word "endstream" themselves
+				$this->dolStreamLength=$this->dolResolveLength($body,$content,$map);
+				$formatted[$this->dolRenum[$num]]=$this->dolFormatObjectBody($body);
+			}
+			$this->dolStreamLength=null;
+
+			$out="%PDF-1.7\n%\xE2\xE3\xCF\xD3\n";
+			$offsets=array();
+			for($num=1;$num<=$total;$num++) {
+				$offsets[$num]=strlen($out);
+				$out.=$num." 0 obj\n".$formatted[$num]."\nendobj\n";
+			}
+
+			$xrefoffset=strlen($out);
+			$out.="xref\n0 ".($total+1)."\n";
+			$out.="0000000000 65535 f \n";
+			for($num=1;$num<=$total;$num++) {
+				$out.=sprintf("%010d 00000 n \n",$offsets[$num]);
+			}
+
+			//The trailer is written one entry per line too: the parser of this class reads
+			//it line by line and loses the startxref that follows it otherwise
+			$out.="trailer\n<<\n/Size ".($total+1)."\n/Root ".$this->dolRenumRef($trailer['Root'])."\n";
+			if(isset($trailer['Info'])) $out.="/Info ".$this->dolRenumRef($trailer['Info'])."\n";
+			if(isset($trailer['ID'])) $out.="/ID ".$trailer['ID']."\n";
+			$out.=">>\nstartxref\n".$xrefoffset."\n%%EOF\n";
+
+			return $out;
+		}
+
+		/**
+		*Reads one cross reference section, a classic table or a cross reference stream
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $offset where the section starts
+		*@return array|false array('entries'=>..., 'trailer'=>...)
+		**/
+		function dolParseXrefSection($content,$offset) {
+		//--------------------------------------------
+			if(substr($content,$offset,4)=='xref') return $this->dolParseXrefTable($content,$offset);
+			return $this->dolParseXrefStream($content,$offset);
+		}
+
+		/**
+		*Reads a classic cross reference table and the trailer that follows it
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $offset where the table starts
+		*@return array|false
+		**/
+		function dolParseXrefTable($content,$offset) {
+		//-------------------------------------------
+			$entries=array();
+			$pos=$offset+4;
+
+			while(preg_match('/\s*(\d+)\s+(\d+)\s*/A',$content,$m,0,$pos)) {
+				$first=(int) $m[1];
+				$count=(int) $m[2];
+				$pos+=strlen($m[0]);
+				for($i=0;$i<$count;$i++) {
+					if(!preg_match('/\s*(\d{10})\s+(\d{5})\s+([nf])\s*/A',$content,$e,0,$pos)) return false;
+					$pos+=strlen($e[0]);
+					if($e[3]=='n') $entries[$first+$i]=array('type'=>1,'offset'=>(int) $e[1]);
+				}
+				//The next subsection starts with two numbers, the trailer with its keyword
+				if(preg_match('/\s*trailer/A',$content,$t,0,$pos)) {
+					$pos+=strlen($t[0]);
+					$dict=$this->dolExtractDict($content,$pos);
+					return array('entries'=>$entries,'trailer'=>$this->dolTrailerEntries($dict));
+				}
+			}
+
+			return array('entries'=>$entries,'trailer'=>array());
+		}
+
+		/**
+		*Reads a cross reference stream (PDF 1.5 and later)
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $offset where the object of the stream starts
+		*@return array|false
+		**/
+		function dolParseXrefStream($content,$offset) {
+		//--------------------------------------------
+			if(!preg_match('/\s*(\d+)\s+(\d+)\s+obj/A',$content,$m,0,$offset)) return false;
+
+			$dictstart=$offset+strlen($m[0]);
+			$dict=$this->dolExtractDict($content,$dictstart);
+			if($dict===false) return false;
+
+			$data=$this->dolStreamData($content,$dictstart,$dict);
+			if($data===false) return false;
+
+			if(!preg_match('/\/W\s*\[([^\]]*)\]/',$dict,$w)) return false;
+			$widths=preg_split('/\s+/',trim($w[1]));
+			$widths=array_map('intval',$widths);
+			if(count($widths)<3) return false;
+
+			$size=preg_match('/\/Size\s+(\d+)/',$dict,$s) ? (int) $s[1] : 0;
+			$index=array(0,$size);
+			if(preg_match('/\/Index\s*\[([^\]]*)\]/',$dict,$ix)) {
+				$index=array_map('intval',preg_split('/\s+/',trim($ix[1])));
+			}
+
+			$rowlen=array_sum($widths);
+			if($rowlen<=0) return false;
+
+			$entries=array();
+			$pos=0;
+			for($k=0;$k+1<count($index);$k+=2) {
+				$num=$index[$k];
+				$count=$index[$k+1];
+				for($i=0;$i<$count;$i++,$num++) {
+					if($pos+$rowlen>strlen($data)) break 2;
+					$fields=array();
+					foreach($widths as $wi) {
+						$value=0;
+						for($b=0;$b<$wi;$b++) {
+							$value=($value<<8)|ord($data[$pos]);
+							$pos++;
+						}
+						$fields[]=$value;
+					}
+					//A width of 0 on the first field means the type is 1
+					$type=($widths[0]==0) ? 1 : $fields[0];
+					if(isset($entries[$num])) continue;
+					if($type==1) $entries[$num]=array('type'=>1,'offset'=>$fields[1]);
+					elseif($type==2) $entries[$num]=array('type'=>2,'stream'=>$fields[1],'idx'=>$fields[2]);
+				}
+			}
+
+			return array('entries'=>$entries,'trailer'=>$this->dolTrailerEntries($dict));
+		}
+
+		/**
+		*Picks the entries this rewriting needs out of a trailer or a stream dictionary
+		*
+		*@access private
+		*@param string $dict the dictionary as text
+		*@return array
+		**/
+		function dolTrailerEntries($dict) {
+		//---------------------------------
+			$trailer=array();
+			if($dict===false) return $trailer;
+			if(preg_match('/\/Root\s+(\d+\s+\d+\s+R)/',$dict,$m)) $trailer['Root']=$m[1];
+			if(preg_match('/\/Info\s+(\d+\s+\d+\s+R)/',$dict,$m)) $trailer['Info']=$m[1];
+			if(preg_match('/\/ID\s*(\[[^\]]*\])/',$dict,$m)) $trailer['ID']=$m[1];
+			if(preg_match('/\/Prev\s+(\d+)/',$dict,$m)) $trailer['Prev']=$m[1];
+			if(preg_match('/\/XRefStm\s+(\d+)/',$dict,$m)) $trailer['XRefStm']=$m[1];
+			if(preg_match('/\/Encrypt\s/',$dict)) $trailer['Encrypt']=1;
+			return $trailer;
+		}
+
+		/**
+		*Returns the text of the dictionary that starts at the given position
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $pos the position of the opening of the dictionary
+		*@return string|false the dictionary, delimiters included
+		**/
+		function dolExtractDict($content,$pos) {
+		//-------------------------------------
+			$start=strpos($content,'<<',$pos);
+			if($start===false) return false;
+
+			$depth=0;
+			$i=$start;
+			$len=strlen($content);
+			while($i<$len-1) {
+				$two=substr($content,$i,2);
+				if($two=='<<') { $depth++; $i+=2; continue; }
+				if($two=='>>') {
+					$depth--;
+					$i+=2;
+					if($depth==0) return substr($content,$start,$i-$start);
+					continue;
+				}
+				$i++;
+			}
+			return false;
+		}
+
+		/**
+		*Returns the data of the stream that follows a dictionary, decoded when it is
+		*compressed with a filter this class supports
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $pos the position where the object starts
+		*@param string $dict the dictionary of the object
+		*@return string|false
+		**/
+		function dolStreamData($content,$pos,$dict) {
+		//------------------------------------------
+			$start=strpos($content,'stream',$pos);
+			if($start===false) return false;
+
+			$start+=6;
+			if(substr($content,$start,2)=="\r\n") $start+=2;
+			elseif($content[$start]=="\n" || $content[$start]=="\r") $start+=1;
+
+			$end=strpos($content,'endstream',$start);
+			if($end===false) return false;
+
+			$data=substr($content,$start,$end-$start);
+
+			if(strpos($dict,'/FlateDecode')!==false) {
+				$plain=@gzuncompress($data);
+				if($plain===false) $plain=@gzinflate($data);
+				if($plain===false) return false;
+				$data=$plain;
+			} elseif(preg_match('/\/Filter\s*\/?\w/',$dict) && strpos($dict,'/Filter')!==false) {
+				//Any other filter is not handled by this rewriting
+				if(!preg_match('/\/Filter\s*\[\s*\]/',$dict)) return false;
+			}
+
+			if(preg_match('/\/Predictor\s+(\d+)/',$dict,$p) && (int) $p[1]>=10) {
+				$columns=preg_match('/\/Columns\s+(\d+)/',$dict,$c) ? (int) $c[1] : 1;
+				$colors=preg_match('/\/Colors\s+(\d+)/',$dict,$co) ? (int) $co[1] : 1;
+				$bpc=preg_match('/\/BitsPerComponent\s+(\d+)/',$dict,$b) ? (int) $b[1] : 8;
+				$data=$this->dolUndoPngPredictor($data,$colors,$bpc,$columns);
+				if($data===false) return false;
+			}
+
+			return $data;
+		}
+
+		/**
+		*Undoes the PNG predictor used by most cross reference streams
+		*
+		*@access private
+		*@param string $data the predicted data
+		*@param int $colors the number of colors
+		*@param int $bpc the number of bits per component
+		*@param int $columns the number of columns
+		*@return string|false
+		**/
+		function dolUndoPngPredictor($data,$colors,$bpc,$columns) {
+		//--------------------------------------------------------
+			$bpp=(int) ceil($colors*$bpc/8);
+			$rowlen=(int) ceil($colors*$bpc*$columns/8);
+			$out='';
+			$prev=str_repeat("\x00",$rowlen);
+			$pos=0;
+			$len=strlen($data);
+
+			while($pos<$len) {
+				$tag=ord($data[$pos]);
+				$pos++;
+				$row=substr($data,$pos,$rowlen);
+				if(strlen($row)<$rowlen) $row=str_pad($row,$rowlen,"\x00");
+				$pos+=$rowlen;
+
+				$result='';
+				for($i=0;$i<$rowlen;$i++) {
+					$raw=ord($row[$i]);
+					$left=($i>=$bpp) ? ord($result[$i-$bpp]) : 0;
+					$up=ord($prev[$i]);
+					$upleft=($i>=$bpp) ? ord($prev[$i-$bpp]) : 0;
+
+					switch($tag) {
+						case 0: $value=$raw; break;
+						case 1: $value=$raw+$left; break;
+						case 2: $value=$raw+$up; break;
+						case 3: $value=$raw+(int) floor(($left+$up)/2); break;
+						case 4:
+							$p=$left+$up-$upleft;
+							$pa=abs($p-$left); $pb=abs($p-$up); $pc=abs($p-$upleft);
+							if($pa<=$pb && $pa<=$pc) $value=$raw+$left;
+							elseif($pb<=$pc) $value=$raw+$up;
+							else $value=$raw+$upleft;
+							break;
+						default: return false;
+					}
+					$result.=chr($value & 0xFF);
+				}
+
+				$out.=$result;
+				$prev=$result;
+			}
+
+			return $out;
+		}
+
+		/**
+		*Returns the body of the object written as plain text at the given position
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param int $offset where the object starts
+		*@param int $expected the object number the cross reference announces
+		*@return string|false the body, between the "obj" and the "endobj" keywords
+		**/
+		function dolObjectBodyAt($content,$offset,$expected) {
+		//---------------------------------------------------
+			if($offset<=0 || $offset>=strlen($content)) return false;
+			if(!preg_match('/\s*(\d+)\s+(\d+)\s+obj/A',$content,$m,0,$offset)) return false;
+			if((int) $m[1]!=(int) $expected) return false;
+
+			$start=$offset+strlen($m[0]);
+			$pos=$start;
+
+			while(true) {
+				$endobj=strpos($content,'endobj',$pos);
+				if($endobj===false) return false;
+
+				$stream=strpos($content,'stream',$pos);
+				//"endstream" holds "stream" too, step over it
+				while($stream!==false && $stream>=3 && substr($content,$stream-3,3)=='end') {
+					$stream=strpos($content,'stream',$stream+6);
+				}
+
+				if($stream!==false && $stream<$endobj) {
+					$endstream=strpos($content,'endstream',$stream+6);
+					if($endstream===false) return false;
+					$pos=$endstream+9;
+					continue;
+				}
+
+				return rtrim(substr($content,$start,$endobj-$start));
+			}
+		}
+
+
+		/**
+		*Translates a reference "number generation R" into the new numbering
+		*
+		*@access private
+		*@param string $ref the reference as it was read
+		*@return string the reference as it must be written
+		**/
+		function dolRenumRef($ref) {
+		//-------------------------
+			if(!preg_match('/^(\d+)\s+(\d+)\s+R$/',trim($ref),$m)) return $ref;
+			$num=(int) $m[1];
+			//An object that was dropped becomes a reference to a free object, which reads as null
+			$new=isset($this->dolRenum[$num]) ? $this->dolRenum[$num] : 0;
+			return $new.' 0 R';
+		}
+
+		/**
+		*Returns the length a file announces for the stream of an object, following the
+		*reference when the length is held by another object
+		*
+		*@access private
+		*@param string $body the body of the object
+		*@param string $content the content of the PDF file
+		*@param array $map where each object of the file is to be read
+		*@return int|null
+		**/
+		function dolResolveLength($body,$content,$map) {
+		//----------------------------------------------
+			if(preg_match('/\/Length\s+(\d+)\s+(\d+)\s+R/',$body,$m)) {
+				$num=(int) $m[1];
+				if(!isset($map[$num]) || $map[$num]['type']!=1) return null;
+				$target=$this->dolObjectBodyAt($content,$map[$num]['offset'],$num);
+				if($target===false) return null;
+				return preg_match('/^\s*(\d+)/',$target,$v) ? (int) $v[1] : null;
+			}
+			if(preg_match('/\/Length\s+(\d+)/',$body,$m)) return (int) $m[1];
+			return null;
+		}
+
+		/**
+		*Writes an object body the way the parser of this class reads it: one entry of a
+		*dictionary per line. A file whose objects come from an object stream is written
+		*without any useless byte, everything on a single line, which this line based
+		*parser can not read.
+		*
+		*@access private
+		*@param string $body the body of the object
+		*@return string the body, one dictionary entry per line
+		**/
+		function dolFormatObjectBody($body) {
+		//----------------------------------
+			$body=ltrim($body);
+			if(substr($body,0,2)!='<<') {
+				//Not a dictionary but a number, an array or a string. It is written again
+				//too, because an array of references holds object numbers that the
+				//renumbering has changed (the /Contents of a page is a typical case)
+				$tokens=$this->dolTokenize($body);
+				if($tokens===false || !count($tokens)) return $body;
+				$i=0;
+				$value=$this->dolFormatValue($tokens,$i,1);
+				return ($i>=count($tokens)) ? $value : $body;
+			}
+
+			$dict=$this->dolExtractDict($body,0);
+			if($dict===false) return $body;
+			$rest=substr($body,strlen($dict));
+
+			$this->dolStripFilter=false;
+			$this->dolNewLength=null;
+			$data=null;
+
+			if(preg_match('/^\s*stream/',$rest)) {
+				//The parser of this class decodes every stream it meets while it reads the
+				//file, and a stream it fails to decode stops everything. The data is
+				//therefore written back decompressed, as the tools that normalise a PDF do.
+				$data=$this->dolRawStream($rest);
+				if($data!==false && $this->dolOnlyFlate($dict)) {
+					$plain=$this->dolInflate($data,$dict);
+					if($plain!==false) {
+						$data=$plain;
+						$this->dolStripFilter=true;
+					}
+				}
+				if($data!==false) $this->dolNewLength=strlen($data);
+			}
+
+			$tokens=$this->dolTokenize($dict);
+			if($tokens===false || !count($tokens)) return $body;
+
+			$i=0;
+			$formatted=$this->dolFormatDict($tokens,$i,0);
+
+			$this->dolStripFilter=false;
+			$this->dolNewLength=null;
+
+			if($data!==null && $data!==false) return $formatted."\nstream\n".$data."\nendstream";
+			if(trim($rest)!=='') return $formatted."\n".ltrim($rest,"\r\n");
+
+			return $formatted;
+		}
+
+		/**
+		*Returns the bytes of a stream, as they are written in the file
+		*
+		*@access private
+		*@param string $rest what follows the dictionary of the object
+		*@return string|false
+		**/
+		function dolRawStream($rest) {
+		//---------------------------
+			$start=strpos($rest,'stream');
+			if($start===false) return false;
+			$start+=6;
+			if(substr($rest,$start,2)=="\r\n") $start+=2;
+			elseif(isset($rest[$start]) && ($rest[$start]=="\n" || $rest[$start]=="\r")) $start+=1;
+
+			if($this->dolStreamLength!==null && $start+$this->dolStreamLength<=strlen($rest)) {
+				return substr($rest,$start,$this->dolStreamLength);
+			}
+
+			$end=strpos($rest,'endstream',$start);
+			if($end===false) return false;
+
+			$data=substr($rest,$start,$end-$start);
+			//The end of line that introduces the "endstream" keyword is not part of the data
+			return preg_replace('/\r?\n$/','',$data);
+		}
+
+		/**
+		*Tells if the only filter of a stream is the one this rewriting can undo
+		*
+		*@access private
+		*@param string $dict the dictionary of the object
+		*@return bool
+		**/
+		function dolOnlyFlate($dict) {
+		//---------------------------
+			if(!preg_match('/\/Filter\s*(\/\w+|\[[^\]]*\])/',$dict,$m)) return false;
+			$filters=preg_match_all('/\/(\w+)/',$m[1],$all) ? $all[1] : array();
+			foreach($filters as $filter) if($filter!='FlateDecode') return false;
+			return count($filters)==1;
+		}
+
+		/**
+		*Undoes the compression of a stream
+		*
+		*@access private
+		*@param string $data the bytes of the stream
+		*@param string $dict the dictionary of the object
+		*@return string|false
+		**/
+		function dolInflate($data,$dict) {
+		//-------------------------------
+			$plain=@gzuncompress($data);
+			if($plain===false) $plain=@gzinflate($data);
+			if($plain===false) return false;
+
+			if(preg_match('/\/Predictor\s+(\d+)/',$dict,$p) && (int) $p[1]>=10) {
+				$columns=preg_match('/\/Columns\s+(\d+)/',$dict,$c) ? (int) $c[1] : 1;
+				$colors=preg_match('/\/Colors\s+(\d+)/',$dict,$co) ? (int) $co[1] : 1;
+				$bpc=preg_match('/\/BitsPerComponent\s+(\d+)/',$dict,$b) ? (int) $b[1] : 8;
+				$plain=$this->dolUndoPngPredictor($plain,$colors,$bpc,$columns);
+				if($plain===false) return false;
+			}
+
+			return $plain;
+		}
+
+		/**
+		*Cuts a piece of PDF syntax into its tokens
+		*
+		*@access private
+		*@param string $text the text to cut
+		*@return array|false the tokens
+		**/
+		function dolTokenize($text) {
+		//--------------------------
+			$delimiters=" \t\r\n\0\x0C/[]<>()%";
+			$tokens=array();
+			$i=0;
+			$len=strlen($text);
+
+			while($i<$len) {
+				$c=$text[$i];
+
+				if(strpos(" \t\r\n\0\x0C",$c)!==false) { $i++; continue; }
+
+				if($c=='<' && $i+1<$len && $text[$i+1]=='<') { $tokens[]='<<'; $i+=2; continue; }
+				if($c=='>' && $i+1<$len && $text[$i+1]=='>') { $tokens[]='>>'; $i+=2; continue; }
+				if($c=='[' || $c==']') { $tokens[]=$c; $i++; continue; }
+
+				if($c=='(') {	//a literal string, where parentheses may be nested and escaped
+					$start=$i;
+					$depth=0;
+					while($i<$len) {
+						if($text[$i]=='\\') { $i+=2; continue; }
+						if($text[$i]=='(') $depth++;
+						elseif($text[$i]==')') {
+							$depth--;
+							if($depth==0) { $i++; break; }
+						}
+						$i++;
+					}
+					$tokens[]=substr($text,$start,$i-$start);
+					continue;
+				}
+
+				if($c=='<') {	//a hexadecimal string
+					$end=strpos($text,'>',$i);
+					if($end===false) return false;
+					$tokens[]=substr($text,$i,$end-$i+1);
+					$i=$end+1;
+					continue;
+				}
+
+				$j=($c=='/') ? $i+1 : $i;
+				while($j<$len && strpos($delimiters,$text[$j])===false) $j++;
+				if($j==$i) $j++;	//a delimiter on its own
+				$tokens[]=substr($text,$i,$j-$i);
+				$i=$j;
+			}
+
+			return $tokens;
+		}
+
+		/**
+		*Writes a dictionary, one entry per line
+		*
+		*@access private
+		*@param array $tokens the tokens of the object
+		*@param int $i the token to start from, left on the one that follows the dictionary
+		*@return string
+		**/
+		function dolFormatDict($tokens,&$i,$depth=0) {
+		//-------------------------------------------
+			$count=count($tokens);
+			$i++;	//step over the "<<"
+			$out="<<\n";
+
+			while($i<$count && $tokens[$i]!='>>') {
+				$key=$tokens[$i];
+				$i++;
+				if($key==='' || $key[0]!='/') continue;	//not a key, the dictionary is malformed
+				if($i>=$count) break;
+
+				//Only the dictionary of the object itself describes its stream
+				if($depth==0 && $this->dolStripFilter && ($key=='/Filter' || $key=='/DecodeParms')) {
+					$this->dolFormatValue($tokens,$i);	//read the value and drop it
+					continue;
+				}
+				if($depth==0 && $this->dolNewLength!==null && $key=='/Length') {
+					$this->dolFormatValue($tokens,$i);
+					$out.="/Length ".$this->dolNewLength."\n";
+					continue;
+				}
+
+				if($tokens[$i]=='<<') {
+					//A dictionary as a value starts on its own line
+					$out.=$key." \n".$this->dolFormatDict($tokens,$i,$depth+1)."\n";
+				} else {
+					$out.=$key.' '.$this->dolFormatValue($tokens,$i,$depth)."\n";
+				}
+			}
+
+			$i++;	//step over the ">>"
+			return $out.">>";
+		}
+
+		/**
+		*Writes one value of a dictionary or of an array
+		*
+		*@access private
+		*@param array $tokens the tokens of the object
+		*@param int $i the token to start from, left on the one that follows the value
+		*@return string
+		**/
+		function dolFormatValue($tokens,&$i,$depth=0) {
+		//--------------------------------------------
+			$count=count($tokens);
+			if($i>=$count) return '';
+
+			$token=$tokens[$i];
+
+			if($token=='<<') return $this->dolFormatDict($tokens,$i,$depth+1);
+
+			if($token=='[') {
+				$i++;
+				$parts=array();
+				while($i<$count && $tokens[$i]!=']') {
+					$parts[]=$this->dolFormatValue($tokens,$i,$depth+1);
+				}
+				$i++;	//step over the "]"
+				return '['.implode(' ',$parts).']';
+			}
+
+			//A reference reads "number generation R"
+			if(ctype_digit($token) && isset($tokens[$i+2]) && ctype_digit($tokens[$i+1]) && $tokens[$i+2]=='R') {
+				$i+=3;
+				return $this->dolRenumRef($token.' '.$tokens[$i-2].' R');
+			}
+
+			$i++;
+			return $token;
+		}
+
+		/**
+		*Expands one object stream: returns the body of each object it holds
+		*
+		*@access private
+		*@param string $content the content of the PDF file
+		*@param array $map where each object of the file is to be read
+		*@param int $stmnum the object number of the object stream
+		*@return array object number => body
+		**/
+		function dolExpandObjectStream($content,$map,$stmnum) {
+		//----------------------------------------------------
+			if(!isset($map[$stmnum]) || $map[$stmnum]['type']!=1) return array();
+
+			$offset=$map[$stmnum]['offset'];
+			if(!preg_match('/\s*(\d+)\s+(\d+)\s+obj/A',$content,$m,0,$offset)) return array();
+
+			$dictstart=$offset+strlen($m[0]);
+			$dict=$this->dolExtractDict($content,$dictstart);
+			if($dict===false) return array();
+
+			$data=$this->dolStreamData($content,$dictstart,$dict);
+			if($data===false) return array();
+
+			if(!preg_match('/\/N\s+(\d+)/',$dict,$n)) return array();
+			if(!preg_match('/\/First\s+(\d+)/',$dict,$f)) return array();
+
+			$count=(int) $n[1];
+			$first=(int) $f[1];
+
+			$header=substr($data,0,$first);
+			$numbers=preg_split('/\s+/',trim($header));
+			if(count($numbers)<2*$count) return array();
+
+			$objects=array();
+			for($i=0;$i<$count;$i++) {
+				$num=(int) $numbers[2*$i];
+				$start=$first+(int) $numbers[2*$i+1];
+				if($i+1<$count) $end=$first+(int) $numbers[2*$i+3];
+				else $end=strlen($data);
+				$objects[$num]=trim(substr($data,$start,$end-$start));
+			}
+
+			return $objects;
+		}
+		//ENDFIX
 
         /**
          * Print Error and die

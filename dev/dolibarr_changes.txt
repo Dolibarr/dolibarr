@@ -217,6 +217,25 @@ NOTES   :
 ==> FILE   : fpdm.php (non-composer entry point)
     REASON : require_once() paths made absolute (__DIR__-based) instead of relative to the include_path/CWD.
 
+==> FILE   : src/fpdm.php, getContent() and the dol* methods added before Error()
+    REASON : A PDF of version 1.5 or later keeps its objects inside object streams (/ObjStm) and its cross
+             reference in a stream, and is often linearized ("Fast Web View"). The parser of this library is line
+             based and only sees the objects written as plain text, so such a file holds no readable field at all:
+             upstream stopped on "Fast Web View mode is not supported", and its /ObjStm guard only looks at the
+             first 2048 bytes, so a file whose streams start later was read as if it had no field. Every form
+             downloaded from a government site is in this shape: the Cerfa 16216*03 holds zero plain /T, zero
+             /Subtype /Widget and zero /Rect, and had to be normalised with qpdf before this library could use it.
+    CHANGE : getContent() rewrites such a file into the classic form before anything else reads it, which is what
+             qpdf --object-streams=disable --stream-data=uncompress does: the cross reference chain is read (both
+             the classic tables and the streams, with their PNG predictor), each object stream is expanded, the
+             objects are written again as plain text with one dictionary entry per line, their streams are written
+             decompressed (this parser decodes every stream it meets and fails on some of them), the objects are
+             numbered again from 1 with every reference rewritten (this parser wants exactly one object per entry
+             of the cross reference table), and a classic table and trailer are written. An encrypted file is left
+             untouched. Measured on the two official forms: the Cerfa 16216*03 and the 828-field MDPH form now
+             list exactly the same fields as their qpdf-normalised copy, keep their page content byte for byte,
+             and can be filled and rendered.
+
 
 
 ####################################################################################################
