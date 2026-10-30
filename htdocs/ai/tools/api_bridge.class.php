@@ -1462,8 +1462,10 @@ class ToolApiBridge extends McpTool
 	 * per-context allow-lists, their 'right' blocks are checked per call, and
 	 * every 'write' goes through the confirmation gate.
 	 *
-	 * Expected module return (in $this->results of its actions class):
-	 *   array('endpointkey' => array('label' => ..., 'methods' => array(...)))
+	 * Expected module return (in $this->results of its actions class), nested
+	 * under the module name since the results of all modules are merged:
+	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
+	 * where 'endpointkey' is the X of the module's api_X.class.php file.
 	 *
 	 * @return void
 	 */
