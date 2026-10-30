@@ -3072,4 +3072,29 @@ class AccountLine extends CommonObjectLine
 		}
 		return 0;
 	}
+
+	/**
+	 *	Return the exchange difference, in company currency, between the bank line and the supplier invoices or expense reports it pays at their own rate
+	 *
+	 *	@return		float|false		Gain if positive, loss if negative, false if KO
+	 */
+	public function getExchangeDifference()
+	{
+		$sql = "SELECT COALESCE(b.amount_main_currency, b.amount) as bankamount,";
+		$sql .= " (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiementfourn as pf WHERE pf.fk_bank = b.rowid) as supplieramount,";
+		$sql .= " (SELECT SUM(pe.amount) FROM ".MAIN_DB_PREFIX."payment_expensereport as pe WHERE pe.fk_bank = b.rowid) as expensereportamount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= " WHERE b.rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return false;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if (!$obj || ($obj->supplieramount === null && $obj->expensereportamount === null)) {
+			return 0.0;
+		}
+
+		return (float) price2num((float) $obj->bankamount + (float) $obj->supplieramount + (float) $obj->expensereportamount, 'MT');
+	}
 }

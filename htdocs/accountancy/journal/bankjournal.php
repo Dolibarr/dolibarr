@@ -249,6 +249,7 @@ $tabbq = array();
 $tabtp = array();
 $tabtype = array();
 $tabmoreinfo = array();
+$tabexchange = array();
 
 '
 @phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
@@ -714,6 +715,15 @@ if ($result) {
 			$tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
 		}
 
+		if (getDolGlobalInt('ACCOUNTING_BOOK_EXCHANGE_DIFFERENCE') && in_array($tabtype[$obj->rowid], array('payment_supplier', 'payment_expensereport'))) {
+			$accountLinestatic->id = $obj->rowid;
+			$exchangedifference = $accountLinestatic->getExchangeDifference();
+			if ($exchangedifference) {
+				$tabtp[$obj->rowid][array_key_first($tabtp[$obj->rowid])] -= $exchangedifference;
+				$tabexchange[$obj->rowid] = $exchangedifference;
+			}
+		}
+
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
 
 		$i++;
@@ -1048,6 +1058,49 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 			}
 		}
 
+		if (!$errorforline && !empty($tabexchange[$key])) {
+			$mt = $tabexchange[$key];
+			$k = ($mt > 0 ? getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_GAIN') : getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_LOSS'));
+			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $k, true);
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+			} else {
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+			}
+
+			$bookkeeping = new BookKeeping($db);
+			$bookkeeping->doc_date = $val["date"];
+			$bookkeeping->doc_ref = $ref;
+			$bookkeeping->doc_type = 'bank';
+			$bookkeeping->fk_doc = (int) $key;
+			$bookkeeping->fk_docdet = $val["fk_bank"];
+			$bookkeeping->numero_compte = $k;
+			$bookkeeping->label_compte = $accountingaccount->label;
+			$bookkeeping->subledger_account = '';
+			$bookkeeping->subledger_label = '';
+			$bookkeeping->label_operation = (!empty($val['lib']) ? dol_string_nohtmltag($val['lib'])." / " : "").$langs->transnoentities('ExchangeDifference');
+			$bookkeeping->montant = $mt;
+			$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+			$bookkeeping->debit = ($mt < 0 ? -$mt : 0);
+			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+			$bookkeeping->code_journal = $journal;
+			$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+			$bookkeeping->fk_user_author = $user->id;
+			$bookkeeping->date_creation = $now;
+			$bookkeeping->entity = $conf->entity;
+
+			$totaldebit += $bookkeeping->debit;
+			$totalcredit += $bookkeeping->credit;
+
+			$result = $bookkeeping->create($user);
+			if ($result < 0) {
+				$error++;
+				$errorforline++;
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+			}
+		}
+
 		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
@@ -1209,6 +1262,21 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 					print "\n";
 				}
 			}
+		}
+
+		if (!empty($tabexchange[$key])) {
+			$mt = $tabexchange[$key];
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["type_payment"].'"'.$sep;
+			print '"'.length_accountg($mt > 0 ? getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_GAIN') : getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_LOSS')).'"'.$sep;
+			print $sep;
+			print '"'.(!empty($val['lib']) ? dol_string_nohtmltag($val['lib'])." / " : "").$langs->transnoentitiesnoconv('ExchangeDifference').'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.$journal.'"'.$sep;
+			print '"'.dol_string_nohtmltag($ref).'"'.$sep;
+			print "\n";
 		}
 	}
 }
@@ -1589,6 +1657,28 @@ if (empty($action) || $action == 'view') {
 					$i++;
 				}
 			}
+		}
+
+		if (!empty($tabexchange[$key])) {
+			$mt = $tabexchange[$key];
+			$accounttoshow = length_accountg($mt > 0 ? getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_GAIN') : getDolGlobalString('ACCOUNTING_ACCOUNT_EXCHANGE_LOSS'));
+			if (empty($accounttoshow) || $accounttoshow == '-1') {
+				$accounttoshow = '<span class="error small">'.$langs->trans("AccountNotDefined").'</span>';
+			}
+
+			print '<!-- Exchange difference bank.rowid='.$key.' -->';
+			print '<tr class="oddeven">';
+			print "<td>".$date."</td>";
+			print '<td class="nopaddingtopimp nopaddingbottomimp">'.dol_escape_htmltag($ref)."</td>";
+			print '<td class="maxwidth300">'.$accounttoshow."</td>";
+			print "<td></td>";
+			print '<td class="nopaddingtopimpo paddingbottomimp">'.(!empty($val['lib']) ? $val['lib']." / " : "").$langs->trans("ExchangeDifference")."</td>";
+			print '<td class="center">'.$val["type_payment"]."</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print "</tr>";
+
+			$i++;
 		}
 	}
 
