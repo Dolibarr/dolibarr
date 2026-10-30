@@ -999,7 +999,7 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Create a payment for an expense report
 	 *
-	 * The amounts are in the currency of the expense report. From a bank account in another currency, bank_amount is the amount debited from the account, in its currency.
+	 * The amounts are in the currency of the expense report. multicurrency_tx is the rate of the reimbursement, taken by the expense report at its first payment. From a bank account in neither the currency of the expense report nor the company one, bank_amount is the amount debited from the account, in its currency.
 	 *
 	 * @since	20.0.0	Initial implementation
 	 *
@@ -1058,14 +1058,14 @@ class ExpenseReports extends DolibarrApi
 			if ($totalpayment > $multicurrency_remaintopay) {
 				throw new RestException(400, 'Payment higher than remainder to pay ('.$multicurrency_remaintopay.' '.$this->expensereport->multicurrency_code.')');
 			}
-			foreach ($paymentExpenseReport->amounts as $key => $value) {
-				$paymentExpenseReport->amounts[$key] = ($totalpayment == $multicurrency_remaintopay ? $remaintopay : (float) price2num((float) $value / $this->expensereport->getMulticurrencyRate(), 'MT'));
-			}
 		} elseif ($totalpayment > $remaintopay) {
 			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
 		}
 		if (isset($request_data['bank_amount']) && !(is_numeric($request_data['bank_amount']) && (float) $request_data['bank_amount'] > 0)) {
 			throw new RestException(400, 'bank_amount must be a positive number');
+		}
+		if (isset($request_data['multicurrency_tx']) && !(is_numeric($request_data['multicurrency_tx']) && (float) $request_data['multicurrency_tx'] > 0)) {
+			throw new RestException(400, 'multicurrency_tx must be a positive number');
 		}
 		$paymentExpenseReport->multicurrency_amount = $totalpayment;
 		$paymentExpenseReport->multicurrency_code = $this->expensereport->multicurrency_code;
@@ -1073,6 +1073,18 @@ class ExpenseReports extends DolibarrApi
 
 		// Same sequence as expensereport/payment/payment.php: all or nothing
 		$this->db->begin();
+
+		if ($this->expensereport->isInForeignCurrency()) {
+			if (isset($request_data['multicurrency_tx']) && (float) $request_data['multicurrency_tx'] != $this->expensereport->getMulticurrencyRate()
+				&& $this->expensereport->setMulticurrencyRateAtPayment((float) $request_data['multicurrency_tx']) < 0) {
+				$this->db->rollback();
+				throw new RestException(400, $this->expensereport->error);
+			}
+			$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+			foreach ($paymentExpenseReport->amounts as $key => $value) {
+				$paymentExpenseReport->amounts[$key] = ($totalpayment == $multicurrency_remaintopay ? $remaintopay : (float) price2num((float) $value / $this->expensereport->getMulticurrencyRate(), 'MT'));
+			}
+		}
 
 		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
 			$this->db->rollback();

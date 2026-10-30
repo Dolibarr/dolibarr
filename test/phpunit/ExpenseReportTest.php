@@ -356,7 +356,7 @@ class ExpenseReportTest extends CommonClassTest
 	/**
 	 * testExpenseReportPaymentInCurrency
 	 *
-	 * A payment settles the expense report in its currency. From an account in that currency the bank gets the amount
+	 * A payment settles the expense report in its currency. From an account in that currency or in the company one the bank gets the amount
 	 * of the payment, from an account in another currency it gets the amount really debited, that is required.
 	 *
 	 * @return	void
@@ -408,15 +408,116 @@ class ExpenseReportTest extends CommonClassTest
 		$payment2->multicurrency_amount = 20;
 		$payment2->multicurrency_code = 'USD';
 		$payment2->fk_typepayment = 2;
-		$this->assertGreaterThan(0, $payment2->create($user), (string) $payment2->error);
-		$this->assertLessThan(0, $payment2->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountcompany, '', ''), 'The amount debited is required from an account in another currency');
-
 		$payment2->bank_amount = 26.5;
+		$this->assertGreaterThan(0, $payment2->create($user), (string) $payment2->error);
 		$this->assertGreaterThan(0, $payment2->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountcompany, '', ''), (string) $payment2->error);
 		$resql = $db->query("SELECT b.amount, b.amount_main_currency FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."payment_expensereport as p WHERE p.fk_bank = b.rowid AND p.rowid = ".((int) $payment2->id));
 		$bankline = $db->fetch_object($resql);
-		$this->assertEquals(-26.5, (float) $bankline->amount, 'The company currency account is debited of the amount really debited');
+		$this->assertEquals(-25, (float) $bankline->amount, 'The company currency account is debited of the payment at the rate of the report');
 		$this->assertNull($bankline->amount_main_currency);
+
+		$payment3 = new PaymentExpenseReport($db);
+		$payment3->fk_expensereport = $expensereport->id;
+		$payment3->datep = dol_now();
+		$payment3->amounts = array($user->id => 5);
+		$payment3->multicurrency_amount = 4;
+		$payment3->multicurrency_code = 'USD';
+		$payment3->fk_typepayment = 2;
+		$this->assertGreaterThan(0, $payment3->create($user), (string) $payment3->error);
+		$accountother = $this->createBankAccount('XAG');
+		$this->assertLessThan(0, $payment3->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountother, '', ''), 'The amount debited is required from an account in another currency');
+		$payment3->bank_amount = 0.2;
+		$this->assertGreaterThan(0, $payment3->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountother, '', ''), (string) $payment3->error);
+		$resql = $db->query("SELECT b.amount FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."payment_expensereport as p WHERE p.fk_bank = b.rowid AND p.rowid = ".((int) $payment3->id));
+		$this->assertEquals(-0.2, (float) $db->fetch_object($resql)->amount, 'An account in another currency is debited of the amount really debited');
+	}
+
+	/**
+	 * testExpenseReportSetMulticurrencyRateAtPayment
+	 *
+	 * The first payment of an approved expense report sets its rate: the amounts in company currency are recalculated
+	 * and the ones in its currency are kept. Once paid or transferred to accounting, the rate is kept.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportSetMulticurrencyRateAtPayment()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id LIMIT 1");
+		$typefeesid = (int) $db->fetch_object($resql)->id;
+		$resql = $db->query("SELECT t.taux FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."' AND t.taux > 0 AND t.active = 1 AND t.localtax1 = '0' AND t.localtax2 = '0' ORDER BY t.taux DESC LIMIT 1");
+		$vatrate = (float) $db->fetch_object($resql)->taux;
+		$hotelht = (float) price2num(120 / (1 + $vatrate / 100), 'MT');
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$expensereport->multicurrency_code = 'USD';
+		$expensereport->multicurrency_tx = 0.8;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+		$expensereport->fetch($expensereport->id);
+		$this->assertGreaterThan(0, $expensereport->addline(1, 0, $typefeesid, 0, dol_now(), 'Taxi', 0, 0, 0, 0, 100), (string) $expensereport->error);
+		$this->assertGreaterThan(0, $expensereport->addline(1, 0, $typefeesid, $vatrate, dol_now(), 'Hotel', 0, 0, 0, 0, 60), (string) $expensereport->error);
+		$expensereport->fetch($expensereport->id);
+		$this->assertLessThan(0, $expensereport->setMulticurrencyRateAtPayment(0.5), 'The rate of a draft is not set by a payment');
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = ".ExpenseReport::STATUS_APPROVED." WHERE rowid = ".((int) $expensereport->id));
+		$expensereport->fetch($expensereport->id);
+		$this->assertTrue($expensereport->canSetMulticurrencyRateAtPayment());
+		$this->assertGreaterThan(0, $expensereport->setMulticurrencyRateAtPayment(0.5), (string) $expensereport->error);
+
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(0.5, (float) $expensereport->multicurrency_tx);
+		$this->assertEquals(160, (float) $expensereport->multicurrency_total_ttc, 'The amounts in the currency of the report are kept');
+		$this->assertEquals(320, (float) $expensereport->total_ttc, 'The amounts in company currency follow the rate of the payment');
+		$this->assertEquals(200 + $hotelht, (float) $expensereport->total_ht);
+		$this->assertEquals(120 - $hotelht, (float) $expensereport->total_tva);
+		$this->assertEquals(100, (float) $expensereport->lines[0]->multicurrency_total_ttc);
+		$this->assertEquals(200, (float) $expensereport->lines[0]->total_ttc);
+		$this->assertEquals(60, (float) $expensereport->lines[1]->multicurrency_total_ttc);
+		$this->assertEquals(120, (float) $expensereport->lines[1]->total_ttc);
+
+		$payment = new PaymentExpenseReport($db);
+		$payment->fk_expensereport = $expensereport->id;
+		$payment->datep = dol_now();
+		$payment->amounts = array($user->id => 20);
+		$payment->multicurrency_amount = 10;
+		$payment->multicurrency_code = 'USD';
+		$payment->fk_typepayment = 2;
+		$this->assertGreaterThan(0, $payment->create($user), (string) $payment->error);
+		$this->assertFalse($expensereport->canSetMulticurrencyRateAtPayment());
+		$this->assertLessThan(0, $expensereport->setMulticurrencyRateAtPayment(0.4), 'The rate of a report already paid is kept');
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(0.5, (float) $expensereport->multicurrency_tx);
+		$this->assertEquals(320, (float) $expensereport->total_ttc);
+
+		$expensereport2 = new ExpenseReport($db);
+		$expensereport2->initAsSpecimen();
+		$expensereport2->lines = array();
+		$expensereport2->status = 0;
+		$expensereport2->fk_statut = 0;
+		$expensereport2->multicurrency_code = 'USD';
+		$expensereport2->multicurrency_tx = 0.8;
+		$this->assertGreaterThan(0, $expensereport2->create($user), (string) $expensereport2->error);
+		$expensereport2->fetch($expensereport2->id);
+		$this->assertGreaterThan(0, $expensereport2->addline(1, 0, $typefeesid, 0, dol_now(), 'Taxi', 0, 0, 0, 0, 100), (string) $expensereport2->error);
+		$db->query("UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = ".ExpenseReport::STATUS_APPROVED." WHERE rowid = ".((int) $expensereport2->id));
+		$db->query("INSERT INTO ".MAIN_DB_PREFIX."accounting_bookkeeping (piece_num, doc_date, doc_type, doc_ref, fk_doc, fk_docdet, numero_compte, label_compte, debit, credit, fk_user_author, code_journal) VALUES (1, '".$db->idate(dol_now())."', 'expense_report', 'ER', ".((int) $expensereport2->id).", 0, '625', 'Travel', 125, 0, ".((int) $user->id).", 'ER')");
+		$expensereport2->fetch($expensereport2->id);
+		$this->assertLessThan(0, $expensereport2->setMulticurrencyRateAtPayment(0.5), 'The rate of a report transferred to accounting is kept');
+		$this->assertSame($langs->trans('ErrorExpenseReportRateChangeOnlyAtFirstPayment'), $expensereport2->error);
+		$expensereport2->fetch($expensereport2->id);
+		$this->assertEquals(0.8, (float) $expensereport2->multicurrency_tx);
+		$this->assertEquals(125, (float) $expensereport2->total_ttc);
 	}
 
 	/**
@@ -538,20 +639,36 @@ class ExpenseReportTest extends CommonClassTest
 			$this->assertEquals(400, $e->getCode());
 		}
 
-		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 40), 'accountid' => $accountusd));
+		try {
+			$api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 40), 'accountid' => $accountusd, 'multicurrency_tx' => '0'));
+			$this->fail('A rate that is not a positive number is refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+
+		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 40), 'accountid' => $accountusd, 'multicurrency_tx' => '0.5'));
 		$payment = new PaymentExpenseReport($db);
 		$payment->fetch($paymentid);
 		$this->assertEquals(40, (float) $payment->multicurrency_amount);
-		$this->assertEquals(50, (float) $payment->amount);
+		$this->assertEquals(80, (float) $payment->amount, 'The first payment converts at its rate');
 		$this->assertSame('USD', $payment->multicurrency_code);
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(200, (float) $expensereport->total_ttc, 'The report takes the rate of its first payment');
 
-		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 60), 'accountid' => $accountcompany, 'bank_amount' => '76.5'));
+		try {
+			$api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 60), 'accountid' => $accountcompany, 'multicurrency_tx' => '0.4'));
+			$this->fail('The rate of a report already paid is not changed');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+
+		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 60), 'accountid' => $accountcompany, 'bank_amount' => '76.5', 'multicurrency_tx' => '0.5'));
 		$payment = new PaymentExpenseReport($db);
 		$payment->fetch($paymentid);
 		$this->assertEquals(60, (float) $payment->multicurrency_amount);
-		$this->assertEquals(75, (float) $payment->amount, 'The last payment settles the remainder in company currency');
+		$this->assertEquals(120, (float) $payment->amount, 'The last payment settles the remainder in company currency');
 		$resql = $db->query("SELECT b.amount FROM ".MAIN_DB_PREFIX."bank as b WHERE b.rowid = ".((int) $payment->fk_bank));
-		$this->assertEquals(-76.5, (float) $db->fetch_object($resql)->amount);
+		$this->assertEquals(-120, (float) $db->fetch_object($resql)->amount, 'The company currency account is debited of the payment, bank_amount is not used');
 		$expensereport->fetch($expensereport->id);
 		$this->assertEquals(ExpenseReport::STATUS_CLOSED, $expensereport->status);
 	}
