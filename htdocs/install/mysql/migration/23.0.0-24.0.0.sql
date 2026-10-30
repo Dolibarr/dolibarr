@@ -379,7 +379,7 @@ UPDATE llx_c_country SET phone_code = 502 WHERE code = 'GT';
 UPDATE llx_c_country SET phone_code = 224 WHERE code = 'GN';
 UPDATE llx_c_country SET phone_code = 245 WHERE code = 'GW';
 UPDATE llx_c_country SET phone_code = 509 WHERE code = 'HT';
-UPDATE llx_c_country SET phone_code = 379 WHERE code = 'VA';
+UPDATE llx_c_country SET phone_code = 39 WHERE code = 'VA';
 UPDATE llx_c_country SET phone_code = 504 WHERE code = 'HN';
 UPDATE llx_c_country SET phone_code = 852 WHERE code = 'HK';
 UPDATE llx_c_country SET phone_code = 354 WHERE code = 'IS';
@@ -509,18 +509,21 @@ UPDATE llx_c_country SET phone_code = 382 WHERE code = 'ME';
 UPDATE llx_c_country SET phone_code = 590 WHERE code = 'BL';
 UPDATE llx_c_country SET phone_code = 590 WHERE code = 'MF';
 UPDATE llx_c_country SET phone_code = 383 WHERE code = 'XK';
+UPDATE llx_c_country SET phone_code = 212 WHERE code = 'EH';
 
 -- Add trunk_prefix column to llx_c_country
 ALTER TABLE llx_c_country ADD COLUMN trunk_prefix varchar(5);
 
 -- Populate trunk_prefix for countries with trunk prefix '0'
-UPDATE llx_c_country SET trunk_prefix = '0' WHERE code IN ('FR','BE','DE','CH','GB','IE','NL','SE','AT','GR','FI','HR','BA','BG','RO','RS','ME','MK','AL','SK','SI','LT','MD','UA','GE','XK','TR','CN','IN','ID','JP','KR','TH','VN','MY','PH','BD','PK','AF','IR','IQ','JO','LB','SA','AE','IL','SY','YE','AM','AZ','KH','LA','MM','NP','LK','TW','MN','KG','UZ','PS','KP','MA','DZ','EG','ZA','NG','GH','KE','ET','TZ','UG','SD','LY','NA','SL','ZM','ZW','ER','CD','AO','EH','AU','NZ','AR','BR','CU','VE','PE','EC','BO','PY','SR','GF','YT','PM','BL','MF','GG','JE','IM','AX');
+UPDATE llx_c_country SET trunk_prefix = '0' WHERE code IN ('FR','BE','DE','CH','GB','IE','NL','SE','AT','FI','HR','BA','BG','RO','RS','ME','MK','AL','SK','SI','LT','MD','UA','GE','XK','TR','CN','IN','ID','JP','KR','TH','VN','MY','PH','BD','PK','AF','IR','IQ','JO','LB','SA','AE','IL','SY','YE','AM','AZ','KH','LA','MM','NP','LK','TW','MN','KG','PS','KP','MA','DZ','EG','ZA','NG','GH','KE','ET','TZ','UG','SD','LY','NA','SL','ZM','ZW','ER','CD','EH','AU','NZ','AR','BR','CU','VE','PE','EC','BO','PY','GF','YT','PM','BL','MF','GG','JE','IM','AX','CC','CO','CX','KI','LI','LR','MC','MG','MW','RW','SO','UY');
 -- Populate trunk_prefix for post-Soviet countries with trunk prefix '8'
-UPDATE llx_c_country SET trunk_prefix = '8' WHERE code IN ('RU','BY','KZ','TJ','TM');
+UPDATE llx_c_country SET trunk_prefix = '8' WHERE code IN ('RU','BY','KZ','TM');
 -- Populate trunk_prefix for Hungary with trunk prefix '06'
 UPDATE llx_c_country SET trunk_prefix = '06' WHERE code = 'HU';
 -- Populate trunk_prefix for NANP countries with trunk prefix '1'
-UPDATE llx_c_country SET trunk_prefix = '1' WHERE code IN ('US','CA','PR','VI','GU','AS','MP','JM','BS','BB','AG','DM','GD','KN','LC','VC','TT','DO','AI','BM','VG','KY','MS','TC','SX','MH','FM');
+UPDATE llx_c_country SET trunk_prefix = '1' WHERE code IN ('US','CA','PR','VI','GU','AS','MP','JM','BS','BB','AG','DM','GD','KN','LC','VC','TT','DO','AI','BM','VG','KY','MS','TC','SX','MH');
+-- Reset trunk_prefix of countries that have no national trunk prefix (wrong values set by a previous run of this script)
+UPDATE llx_c_country SET trunk_prefix = NULL WHERE code IN ('AO','GR','SR','UZ','TJ','FM');
 
 -- Strip formatting sugar from existing phone numbers in llx_socpeople
 UPDATE llx_socpeople SET phone = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE phone IS NOT NULL AND phone != '';
