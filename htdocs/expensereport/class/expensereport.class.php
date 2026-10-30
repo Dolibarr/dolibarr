@@ -2152,6 +2152,65 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
+	 * Change the currency of a draft expense report, with the same rate as at creation.
+	 *
+	 * @param	string	$code	Currency code
+	 * @return	int				>0 if OK, <0 if KO
+	 */
+	public function setMulticurrencyCode($code)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			return $this->refuseCurrencyChangeOutOfDraft();
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+		list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code, $this->date_debut);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET multicurrency_code = '".$this->db->escape($code)."', fk_multicurrency = ".((int) $fk_multicurrency);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$this->multicurrency_code = $code;
+		$this->fk_multicurrency = $fk_multicurrency;
+
+		return $this->setMulticurrencyRate($rate, 2);
+	}
+
+	/**
+	 * Change the rate of a draft expense report.
+	 *
+	 * @param	double	$rate	Multicurrency rate
+	 * @param	int		$mode	1: amounts in company currency are recalculated, 2: amounts in the currency of the expense report are recalculated
+	 * @return	int				>0 if OK, <0 if KO
+	 */
+	public function setMulticurrencyRate($rate, $mode = 1)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			return $this->refuseCurrencyChangeOutOfDraft();
+		}
+
+		return parent::setMulticurrencyRate($rate, $mode);
+	}
+
+	/**
+	 * Set the error of a currency or rate change on an expense report that is not a draft.
+	 *
+	 * @return	int		-2
+	 */
+	private function refuseCurrencyChangeOutOfDraft()
+	{
+		global $langs;
+
+		$langs->load('trips');
+		$this->error = $langs->trans('ErrorExpenseReportCurrencyChangeOnlyInDraft');
+
+		return -2;
+	}
+
+	/**
 	 * Set the amounts of $this->line in the currency of the expense report, from its unit price with taxes in that currency or, when 0, from its unit price in the company currency.
 	 *
 	 * @param	float					$up_devise			Unit price with taxes in the currency of the expense report

@@ -352,4 +352,67 @@ class ExpenseReportTest extends CommonClassTest
 
 		$expensereport->delete($user);
 	}
+
+	/**
+	 * testExpenseReportSetMulticurrencyCodeUsesRateOfStartDate
+	 *
+	 * Changing the currency of a draft takes the same rate as at creation, and the currency and the rate are only changed on a draft.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportSetMulticurrencyCodeUsesRateOfStartDate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/currencyrate.class.php';
+
+		$savoption = getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
+		$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE = 1;
+
+		$currency = new MultiCurrency($db);
+		$currency->code = 'XTS';
+		$currency->name = 'ExpenseReportTest';
+		$this->assertGreaterThan(0, $currency->create($user), $currency->errorsToString());
+		foreach (array('2021-03-15' => 2, '2021-05-15' => 4) as $day => $value) {
+			$rate = new CurrencyRate($db);
+			$rate->rate = $value;
+			$rate->date_sync = dol_stringtotime($day.' 12:00:00');
+			$this->assertGreaterThan(0, $rate->create($user, $currency->id));
+		}
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$expensereport->date_debut = dol_stringtotime('2021-03-20 12:00:00');
+		$expensereport->date_fin = $expensereport->date_debut;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id LIMIT 1");
+		$typefeesid = (int) $db->fetch_object($resql)->id;
+		$expensereport->fetch($expensereport->id);
+		$this->assertGreaterThan(0, $expensereport->addline(1, 100, $typefeesid, 0, $expensereport->date_debut, 'Taxi'), (string) $expensereport->error);
+		$expensereport->fetch($expensereport->id);
+
+		$this->assertGreaterThan(0, $expensereport->setMulticurrencyCode('XTS'), (string) $expensereport->error);
+		$expensereport->fetch($expensereport->id);
+		$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE = $savoption;
+		$this->assertEquals(2, (float) $expensereport->multicurrency_tx, 'The rate of the start date of the report is used');
+		$this->assertEquals($currency->id, (int) $expensereport->fk_multicurrency);
+		$this->assertEquals(100, (float) $expensereport->total_ttc);
+		$this->assertEquals(200, (float) $expensereport->multicurrency_total_ttc);
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = ".ExpenseReport::STATUS_VALIDATED." WHERE rowid = ".((int) $expensereport->id));
+		$expensereport->fetch($expensereport->id);
+		$this->assertLessThan(0, $expensereport->setMulticurrencyRate(3, 1), 'The rate of a validated report is not changed');
+		$this->assertLessThan(0, $expensereport->setMulticurrencyCode('USD'), 'The currency of a validated report is not changed');
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals('XTS', $expensereport->multicurrency_code);
+		$this->assertEquals(2, (float) $expensereport->multicurrency_tx);
+	}
 }
