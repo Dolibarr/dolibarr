@@ -548,8 +548,37 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertEquals(10.8, price2num($obj->buy_price_ht, 'MU'), 'Cost price saved on the line of the customer order');
 		$this->assertEquals(array(), $order->getLinkedBuyPriceDocuments($user, $lineid), 'Nothing is proposed once applied');
 
+		// A second purchase order of the product for the same customer order: the cost is the average of the placed ones, weighted by the quantities
+		$order2 = new CommandeFournisseur($db);
+		$order2->initAsSpecimen();
+		$order2->ref = '';
+		$order2->socid = $societe->id;
+		$order2->lines = array();
+		$line2 = new CommandeFournisseurLigne($db);
+		$line2->desc = 'phpunit line 2';
+		$line2->qty = 3;
+		$line2->subprice = 12;
+		$line2->fk_product = $productid;
+		$order2->lines[] = $line2;
+		$order2id = $order2->create($user);
+		$this->assertGreaterThan(0, $order2id, 'Failed to create second supplier order: '.$order2->errorsToString());
+		$order2->fetch($order2id);
+		$order2->add_object_linked('commande', $commande->id);
+		$line2id = $order2->lines[0]->id;
+
+		$documents = $order2->getLinkedBuyPriceDocuments($user, $line2id);
+		$this->assertEquals(12, price2num($documents['commande']['buyprice'], 'MU'), 'The first purchase order is still a draft, so it does not count');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_ORDERSENT)." WHERE rowid = ".((int) $orderid));
+		$documents = $order2->getLinkedBuyPriceDocuments($user, $line2id);
+		$this->assertEquals(11.7, price2num($documents['commande']['buyprice'], 'MU'), 'Average of 1 at 10.8 and 3 at 12');
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_CANCELED)." WHERE rowid = ".((int) $orderid));
+		$documents = $order2->getLinkedBuyPriceDocuments($user, $line2id);
+		$this->assertEquals(12, price2num($documents['commande']['buyprice'], 'MU'), 'A canceled purchase order does not count');
+
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
 
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_DRAFT)." WHERE rowid = ".((int) $orderid));
+		$order2->delete($user);
 		$order->delete($user);
 		$commande->delete($user);
 		$product->delete($user);

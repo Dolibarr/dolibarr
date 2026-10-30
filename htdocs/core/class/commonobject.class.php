@@ -10954,7 +10954,8 @@ abstract class CommonObject
 
 	/**
 	 * Return the linked proposals, orders and invoices having, for the product of a line of this object, a cost price different from
-	 * the one saved on the line (for a purchase order, the net unit price of the line). Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
+	 * the one saved on the line (for a purchase order, the average net unit price of the product on the purchase orders linked to the same documents,
+	 * weighted by the quantities). Nothing is returned if the option MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS is off, if the
 	 * user can not change cost prices, and documents that the user can not edit or access (rights, restriction on thirdparties) are ignored.
 	 *
 	 * @param	User		$user			User making change
@@ -10980,6 +10981,33 @@ abstract class CommonObject
 
 		// The cost price is not an accounting data, so the status of the linked documents is not checked (like in margin/checkMargins.php)
 		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+
+		if ($this->element == 'order_supplier') {
+			// Several purchase orders can be linked to the same documents, so the cost is the average net unit price of the product on all of them, weighted by the quantities
+			$orderids = array((int) $this->id);
+			$linkedids = $this->linkedObjectsIds;
+			foreach (array('propal', 'commande', 'facture') as $element) {
+				foreach ($linkedids[$element] ?? array() as $id) {
+					$this->fetchObjectLinked($id, $element, $id, $element, 'OR', 1, 'sourcetype', 0);
+					$orderids = array_merge($orderids, array_map('intval', $this->linkedObjectsIds['order_supplier'] ?? array()));
+				}
+			}
+			$this->linkedObjectsIds = $linkedids;
+
+			// Limit: the purchase orders are supposed to cover the sold quantity, a part bought elsewhere (stock) is not valued
+			$sql = "SELECT SUM(d.qty * d.subprice * (1 - d.remise_percent / 100)) / SUM(d.qty) as cost";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element." as t, ".$this->db->prefix().$this->table_element_line." as d";
+			$sql .= " WHERE d.".$this->db->sanitize($this->fk_element)." = t.rowid AND t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize(implode(',', $orderids)).")";
+			$sql .= " AND (t.rowid = ".((int) $this->id)." OR t.fk_statut BETWEEN 1 AND 5)";	// This purchase order, and the other ones if placed and not canceled
+			$sql .= " AND d.fk_product = ".((int) $line->fk_product)." AND d.qty > 0";
+			$resql = $this->db->query($sql);
+			$obj = ($resql ? $this->db->fetch_object($resql) : null);
+			if ($obj && $obj->cost > 0) {
+				$line->buy_price_ht = $obj->cost;
+			}
+		}
+
 		foreach (array('propal', 'commande', 'facture') as $element) {
 			$ids = array();
 			foreach ($this->linkedObjectsIds[$element] ?? array() as $id) {
