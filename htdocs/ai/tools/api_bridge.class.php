@@ -3107,6 +3107,44 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Delete every bridge_tooldefs_*.json cache file of the ai temp directories
+	 * (current entity and the other ones), so the tool definitions are rebuilt
+	 * from scratch on the next request. Called by the /reload command of the
+	 * assistant chat.
+	 *
+	 * @return int Number of cache files deleted
+	 */
+	public function purgeDefsCache(): int
+	{
+		global $conf;
+
+		$dirs = array();
+		if (!empty($conf->ai->multidir_temp) && is_array($conf->ai->multidir_temp)) {
+			foreach ($conf->ai->multidir_temp as $dir) {
+				if (is_string($dir) && $dir !== '') {
+					$dirs[] = rtrim($dir, '/');
+				}
+			}
+		}
+		if (!empty($conf->ai->dir_temp) && is_string($conf->ai->dir_temp)) {
+			$dirs[] = rtrim($conf->ai->dir_temp, '/');
+		}
+
+		$count = 0;
+		foreach (array_unique($dirs) as $dir) {
+			// Same @unlink as writeDefsCache() pruning the previous states: no
+			// dol_delete_file() here, files.lib.php is not loaded in every context.
+			foreach ((array) glob($dir.'/bridge_tooldefs_*.json') as $file) {
+				if (is_string($file) && @unlink($file)) {
+					$count++;
+				}
+			}
+		}
+
+		return $count;
+	}
+
+	/**
 	 * Build one MCP tool definition from an API class method: reflection + docblock
 	 * give the skeleton, then the hand-written per-method enrichment is merged over
 	 * it ('description' appended, 'params' overriding parameter docs, shared
