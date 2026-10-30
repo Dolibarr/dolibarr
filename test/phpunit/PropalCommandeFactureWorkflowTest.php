@@ -425,9 +425,20 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$invoiceC = $this->createDraftFrom(new Facture($db), $socid, array('propal' => $propal->id, 'commande' => $orderA->id));
 		$this->assertEqualsCanonicalizing(array($orderA->id, $orderB->id), $this->getLinkedIds($invoiceC, 'commande', 'source'));
 
-		foreach (array($invoiceC, $invoiceB, $invoiceA, $orderB, $orderA, $propal) as $document) {
+		// The links of a proposal of another thirdparty are not followed
+		$soc2 = new Societe($db);
+		$soc2->name = 'PropalCommandeFactureWorkflowTest linked documents other Unittest';
+		$socid2 = $soc2->create($user);
+		$this->assertGreaterThan(0, $socid2, $soc2->errorsToString());
+		$propal2 = $this->createDraftFrom(new Propal($db), $socid2, array());
+		$order2 = $this->createDraftFrom(new Commande($db), $socid2, array('propal' => $propal2->id));
+		$invoiceD = $this->createDraftFrom(new Facture($db), $socid, array('propal' => $propal2->id));
+		$this->assertEquals(array(), $this->getLinkedIds($invoiceD, 'commande', 'source'), 'The order of the proposal of another thirdparty is not linked');
+
+		foreach (array($invoiceD, $order2, $propal2, $invoiceC, $invoiceB, $invoiceA, $orderB, $orderA, $propal) as $document) {
 			$document->delete($user);
 		}
+		$soc2->delete($socid2, $user);
 		$soc->delete($socid, $user);
 	}
 }

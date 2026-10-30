@@ -4953,6 +4953,14 @@ abstract class CommonObject
 				continue;
 			}
 			foreach ((array) $originids as $originid) {
+				// Follow the links of an origin of the same thirdparty and entity only
+				$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($origintype);
+				$sql .= " WHERE rowid = ".((int) $originid)." AND fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity($origintype).")";
+				$resql = $this->db->query($sql);
+				if (!$resql || !$this->db->num_rows($resql)) {
+					continue;
+				}
+
 				$this->fetchObjectLinked($originid, $origintype, $originid, $origintype, 'OR', 1, 'sourcetype', 0);
 				foreach ($this->linkedObjectsIds as $type => $ids) {
 					if (!isset($rank[$type]) || $type == $mytype) {
