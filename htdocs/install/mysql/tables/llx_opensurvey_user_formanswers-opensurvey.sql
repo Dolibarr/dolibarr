@@ -16,6 +16,7 @@
 -- ============================================================================
 
 CREATE TABLE llx_opensurvey_user_formanswers (
+    rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
     fk_user_survey INTEGER NOT NULL,
     fk_question INTEGER NOT NULL,
     reponses TEXT
