@@ -932,7 +932,7 @@ class BonVirementTest extends CommonClassTest
 		$this->assertGreaterThan(0, $expensereport->setApproved($user), (string) $expensereport->error);
 
 		$this->assertEquals(1, $expensereport->demande_prelevement($user, 600.0), (string) $expensereport->error);
-		$this->assertEquals(0, $expensereport->demande_prelevement($user, 600.0), 'A second request must be refused while the first one is waiting');
+		$this->assertSame(-4, $expensereport->demande_prelevement($user, 600.0), 'A second request must be refused while the first one is waiting');
 
 		$resql = $db->query("SELECT rowid, amount, multicurrency_code, multicurrency_amount FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_expensereport = ".((int) $expensereport->id));
 		$request = $db->fetch_object($resql);
@@ -1007,6 +1007,47 @@ class BonVirementTest extends CommonClassTest
 
 		$this->assertSame(-4, $expensereport->demande_prelevement($user, 600.01));
 		$this->assertSame(1, $expensereport->demande_prelevement($user, 600.0), (string) $expensereport->error);
+	}
+
+	/**
+	 * testExpenseReportRequestWhileInOrder
+	 *
+	 * A request in a transfer order not credited yet is still pending: no new request until the order is credited.
+	 *
+	 * @return void
+	 */
+	public function testExpenseReportRequestWhileInOrder()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = $this->createExpenseReport($this->createEmployeeWithBankAccount());
+		$this->assertGreaterThan(0, $expensereport->setValidate($user), (string) $expensereport->error);
+		$this->assertGreaterThan(0, $expensereport->setApproved($user), (string) $expensereport->error);
+
+		$this->assertSame(1, $expensereport->demande_prelevement($user, 400.0), (string) $expensereport->error);
+		$resql = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_expensereport = ".((int) $expensereport->id));
+		$requestid = (int) $db->fetch_object($resql)->rowid;
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer', array($requestid), self::$fkBankAccount, 'expensereport');
+		$this->assertEquals(1, $result, 'BonPrelevement::create() failed: '.$bon->error.' '.implode(', ', $bon->invoice_in_error));
+
+		$this->assertEquals(400.0, $expensereport->getCreditTransferPendingAmount());
+		$this->assertSame(-4, $expensereport->demande_prelevement($user, 600.0), 'The request in the order must be subtracted from the remain to pay');
+		$this->assertSame(0, $expensereport->demande_prelevement($user, 200.0), 'A second request must be refused while the first one is in an order not credited');
+
+		$this->assertGreaterThan(0, $bon->fetch($bon->id));
+		$this->assertGreaterThanOrEqual(0, $bon->set_infotrans($user, dol_now(), 2), (string) $bon->error);
+		$this->assertGreaterThan(0, $bon->fetch($bon->id));
+		$this->assertGreaterThanOrEqual(0, $bon->set_infocredit($user, dol_now(), 'expensereport'), (string) $bon->error);
+
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(0, $expensereport->getCreditTransferPendingAmount());
+		$this->assertSame(-4, $expensereport->demande_prelevement($user, 200.01));
+		$this->assertSame(1, $expensereport->demande_prelevement($user, 200.0), (string) $expensereport->error);
 	}
 
 	// ---------------------------------------------------------------------------

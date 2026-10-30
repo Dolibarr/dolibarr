@@ -2905,6 +2905,30 @@ class ExpenseReport extends CommonObject
 		return $return;
 	}
 
+	/**
+	 *	Return the amount of the credit transfer requests not processed yet or in a transfer order not credited yet
+	 *
+	 *	@return	float		Amount, or -1 if KO
+	 */
+	public function getCreditTransferPendingAmount(): float
+	{
+		$sql = "SELECT SUM(pfd.amount) as amount";
+		$sql .= " FROM ".$this->db->prefix()."prelevement_demande as pfd";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."prelevement_lignes as pl ON pl.fk_prelevement_demande = pfd.rowid";
+		$sql .= " WHERE pfd.fk_expensereport = ".((int) $this->id);
+		$sql .= " AND pfd.type = 'ban'";
+		$sql .= " AND (pfd.traite = 0 OR pl.statut = 0)";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+
+		return (float) $obj->amount;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a credit transfer request to pay the expense report to its user
@@ -2927,25 +2951,16 @@ class ExpenseReport extends CommonObject
 			$this->error = 'WithdrawRequestErrorNilAmount';
 			return -1;
 		}
-		$remaintopay = (float) price2num($this->total_ttc - $this->getSumPayments(), 'MT');
+		$pending = $this->getCreditTransferPendingAmount();
+		if ($pending < 0) {
+			return -2;
+		}
+		$remaintopay = (float) price2num($this->total_ttc - $this->getSumPayments() - $pending, 'MT');
 		if ((float) price2num($amount, 'MT') > $remaintopay) {
 			$this->error = $langs->trans('ErrorCreditTransferHigherThanRemainToPay', price($amount, 0, $langs, 1, -1, -1, $conf->currency), price($remaintopay, 0, $langs, 1, -1, -1, $conf->currency));
 			return -4;
 		}
-
-		$sql = "SELECT count(rowid) as nb";
-		$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
-		$sql .= " WHERE fk_expensereport = ".((int) $this->id);
-		$sql .= " AND type = 'ban'";
-		$sql .= " AND traite = 0";
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->error = $this->db->lasterror();
-			return -2;
-		}
-		$obj = $this->db->fetch_object($resql);
-		if ($obj && $obj->nb > 0) {
+		if ($pending > 0) {
 			$this->error = "A request already exists";
 			return 0;
 		}
