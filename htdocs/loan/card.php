@@ -499,7 +499,7 @@ if ($id > 0) {
 		// Capital
 		if ($action == 'edit') {
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("LoanCapital").'</td><td>';
-			print '<input name="capital" size="10" value="'.$object->capital.'"></td></tr>';
+			print '<input name="capital" size="10" value="'.price((float) $object->capital, 0, '', 1, -1, 'MT').'"></td></tr>';
 			print '</td></tr>';
 		} else {
 			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td><span class="amount">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
@@ -508,7 +508,7 @@ if ($id > 0) {
 		// Insurance
 		if ($action == 'edit') {
 			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
-			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
+			print '<input name="insurance_amount" size="10" value="'.price((float) $object->insurance_amount, 0, '', 1, -1, 'MT').'"></td></tr>';
 			print '</td></tr>';
 		} else {
 			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td><span class="amount">'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
