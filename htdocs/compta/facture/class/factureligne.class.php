@@ -1077,7 +1077,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * New mode = the values on the line already represent the delta between the previous
 	 * state and the current state, so we don't need a conversion (we return 1).
 	 *
-	 * @param float|null $previousProgress Previous progress already loaded by a batch caller, null to fetch it
+	 * @param float|null $previousProgress Previous progress already loaded by the caller, null to fetch it
 	 * @return float
 	 */
 	public function getSituationRatio($previousProgress = null)
