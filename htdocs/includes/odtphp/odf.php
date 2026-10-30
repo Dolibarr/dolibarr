@@ -905,7 +905,12 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$userinstallation = dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf';
+			// A Windows path (C:/...) needs the empty host of a file URL (file:///C:/...): on file:C:/... soffice fails, and hangs when run by a service
+			if (getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') || preg_match('/^[a-z]:/i', $userinstallation)) {
+				$userinstallation = '///'.$userinstallation;
+			}
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg($userinstallation).' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
