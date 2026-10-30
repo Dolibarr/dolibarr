@@ -160,3 +160,4 @@ TF_TRIP=Transportation
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
 NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport
+ErrorExpenseReportCurrencyChangeOnlyInDraft=The currency and the rate of an expense report can only be changed while it is a draft.
