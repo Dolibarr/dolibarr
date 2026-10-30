@@ -30,6 +30,8 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -404,5 +406,96 @@ class CommandeTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testCreatePurchaseOrders
+	 *
+	 * One draft purchase order per supplier, with the supplier having the best price of each product.
+	 *
+	 * @return	void
+	 */
+	public function testCreatePurchaseOrders()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$customer = new Societe($db);
+		$customer->name = 'CommandeTest purchase orders customer Unittest';
+		$customer->client = 1;
+		$customer->code_client = -1;
+		$this->assertGreaterThan(0, $customer->create($user), $customer->errorsToString());
+
+		$suppliers = array();
+		foreach (array('A', 'B') as $key) {
+			$suppliers[$key] = new Societe($db);
+			$suppliers[$key]->name = 'CommandeTest purchase orders supplier '.$key.' Unittest';
+			$suppliers[$key]->fournisseur = 1;
+			$suppliers[$key]->code_fournisseur = -1;
+			$this->assertGreaterThan(0, $suppliers[$key]->create($user), $suppliers[$key]->errorsToString());
+		}
+
+		// The product 1 is sold by the 2 suppliers (A is cheaper), the product 2 by B only and the product 3 has no supplier price
+		$products = array();
+		foreach (array(1, 2, 3) as $i) {
+			$products[$i] = new Product($db);
+			$products[$i]->initAsSpecimen();
+			$products[$i]->ref = 'PHPUNIT_PURCHASE_ORDERS_'.$i.'_'.dol_now();
+			$this->assertGreaterThan(0, $products[$i]->create($user), $products[$i]->errorsToString());
+		}
+		foreach (array(array(1, 'A', 10), array(1, 'B', 12), array(2, 'B', 5)) as $price) {
+			$productsupplier = new ProductFournisseur($db);
+			$productsupplier->id = $products[$price[0]]->id;
+			$this->assertGreaterThan(0, $productsupplier->update_buyprice(1, $price[2], $user, 'HT', $suppliers[$price[1]], 0, 'REF_'.$price[0].$price[1], 0, 0, 0, 0, 0, 0, '', array(), '', $price[2], 'HT', 1, $conf->currency), $productsupplier->errorsToString());
+		}
+
+		$order = new Commande($db);
+		$order->initAsSpecimen();
+		$order->lines = array();
+		$order->socid = $customer->id;
+		$this->assertGreaterThan(0, $order->create($user), $order->errorsToString());
+		$order->addline('Line 1', 100, 2, 0, 0, 0, $products[1]->id);
+		$order->addline('Line 2', 100, 3, 0, 0, 0, $products[2]->id);
+		$order->addline('Line 3', 100, 1, 0, 0, 0, $products[3]->id);
+		$order->addline('Free line', 100, 1, 0);
+		$order->fetch($order->id);
+
+		$result = $order->createPurchaseOrders($user);
+		$this->assertIsArray($result, $order->errorsToString());
+		$this->assertCount(2, $result['orders'], 'One purchase order per supplier');
+		$this->assertEquals(array($products[3]->ref), $result['noprice'], 'The product without supplier price is reported');
+
+		$found = array();
+		foreach ($result['orders'] as $id) {
+			$purchase = new CommandeFournisseur($db);
+			$this->assertGreaterThan(0, $purchase->fetch($id));
+			$this->assertEquals(CommandeFournisseur::STATUS_DRAFT, $purchase->status);
+			$purchase->fetchObjectLinked();
+			$this->assertEquals(array($order->id), array_values($purchase->linkedObjectsIds['commande']), 'The purchase order is linked to the customer order');
+			foreach ($purchase->lines as $line) {
+				$found[$purchase->socid][$line->fk_product] = array((float) $line->qty, (float) $line->subprice);
+			}
+		}
+		$this->assertEquals(array(
+			$suppliers['A']->id => array($products[1]->id => array(2.0, 10.0)),
+			$suppliers['B']->id => array($products[2]->id => array(3.0, 5.0)),
+		), $found, 'Each product is bought from the supplier with the best price');
+
+		foreach ($result['orders'] as $id) {
+			$purchase = new CommandeFournisseur($db);
+			$purchase->fetch($id);
+			$purchase->delete($user);
+		}
+		$order->delete($user);
+		foreach ($products as $product) {
+			$product->delete($user);
+		}
+		foreach ($suppliers as $supplier) {
+			$supplier->delete($supplier->id, $user);
+		}
+		$customer->delete($customer->id, $user);
 	}
 }

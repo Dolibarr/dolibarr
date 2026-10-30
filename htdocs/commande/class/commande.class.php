@@ -1619,6 +1619,74 @@ class Commande extends CommonOrder
 		}
 	}
 
+	/**
+	 *	Create a draft purchase order per supplier for the product lines of this order, with the supplier having the best price of each product.
+	 *	The lines without supplier price are ignored.
+	 *
+	 *	@param	User	$user	User creating the purchase orders
+	 *	@return	array{orders:int[],noprice:string[]}|int<-1,-1>		Ids of the purchase orders created and refs of the products without supplier price, or -1 if KO
+	 */
+	public function createPurchaseOrders($user)
+	{
+		global $mysoc;
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
+		$result = array('orders' => array(), 'noprice' => array());
+
+		// Lines by supplier, with the best supplier price of the product
+		$bysupplier = array();
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0) {
+				continue;
+			}
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->find_min_price_product_fournisseur($line->fk_product, $line->qty) > 0) {
+				$bysupplier[$productsupplier->fourn_id][] = array($line, $productsupplier);
+			} else {
+				$result['noprice'][] = $line->product_ref;
+			}
+		}
+
+		$this->db->begin();
+		foreach ($bysupplier as $socid => $items) {
+			$order = new CommandeFournisseur($this->db);
+			$order->socid = $socid;
+			$order->fetch_thirdparty();
+			$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+			$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+			$order->multicurrency_code = $order->thirdparty->multicurrency_code;
+			$order->fk_project = $this->fk_project;
+			$order->delivery_date = $this->delivery_date;
+			$order->origin = $this->element;
+			$order->origin_id = $this->id;
+			$order->linked_objects[$this->element] = $this->id;
+			$orderid = $order->create($user);
+			if ($orderid <= 0) {
+				$this->setErrorsFromObject($order);
+				$this->db->rollback();
+				return -1;
+			}
+
+			foreach ($items as list($line, $productsupplier)) {
+				$tva_tx = get_default_tva($order->thirdparty, $mysoc, $line->fk_product, $productsupplier->product_fourn_price_id);
+				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $order->thirdparty);
+				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $order->thirdparty);
+				$ret = $order->addline($line->desc, $productsupplier->fourn_unitprice, $line->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $line->fk_product, $productsupplier->product_fourn_price_id, $productsupplier->ref_supplier, $productsupplier->fourn_remise_percent, 'HT', 0, $line->product_type, 0, 0, null, null, array(), $line->fk_unit, 0, $this->element, $line->id);
+				if ($ret < 0) {
+					$this->setErrorsFromObject($order);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			$result['orders'][] = $orderid;
+		}
+		$this->db->commit();
+
+		return $result;
+	}
+
 
 	/**
 	 *	Add an order line into database (linked to product/service or not)
