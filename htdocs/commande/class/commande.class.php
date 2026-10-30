@@ -1250,6 +1250,7 @@ class Commande extends CommonOrder
 								}
 							}
 						}
+						$this->addLinkedFromOrigins();
 					}
 
 					if (!$error && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object

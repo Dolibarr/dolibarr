@@ -338,4 +338,96 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$product->delete($user);
 		$soc->delete($socid, $user);
 	}
+
+	/**
+	 * Create a draft document without line, linked to the documents it is created from
+	 *
+	 * @param	Propal|Commande|Facture	$document		Document to create
+	 * @param	int						$socid			Id of the thirdparty
+	 * @param	array<string,int>		$linkedobjects	Documents it is created from, by type
+	 * @return	Propal|Commande|Facture
+	 */
+	private function createDraftFrom($document, $socid, $linkedobjects)
+	{
+		global $user;
+
+		$document->initAsSpecimen();
+		$document->ref = '';
+		$document->lines = array();
+		$document->socid = $socid;
+		$document->linked_objects = $linkedobjects;
+		$this->assertGreaterThan(0, $document->create($user), $document->errorsToString());
+
+		return $document;
+	}
+
+	/**
+	 * Return the ids of the documents of a type linked to a document, as source (the oldest) or as target
+	 *
+	 * @param	CommonObject	$document		Document
+	 * @param	string			$type			Type of the linked documents
+	 * @param	string			$as				'source' or 'target' for the position of the linked documents in the link
+	 * @return	int[]
+	 */
+	private function getLinkedIds($document, $type, $as)
+	{
+		if ($as == 'source') {
+			$document->fetchObjectLinked(null, $type, $document->id, $document->getElementType(), 'OR', 1, 'sourcetype', 0);
+		} else {
+			$document->fetchObjectLinked($document->id, $document->getElementType(), null, $type, 'OR', 1, 'sourcetype', 0);
+		}
+
+		return array_map('intval', array_values($document->linkedObjectsIds[$type] ?? array()));
+	}
+
+	/**
+	 * testLinkedDocumentsOfSameOrigin
+	 *
+	 * An order and an invoice created from the same proposal are linked together, whatever is created first,
+	 * and an invoice created from an order is also linked to the proposal of this order.
+	 *
+	 * @return void
+	 */
+	public function testLinkedDocumentsOfSameOrigin()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = 'PropalCommandeFactureWorkflowTest linked documents Unittest';
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$propal = $this->createDraftFrom(new Propal($db), $socid, array());
+
+		// An order, then an invoice, created from the proposal: the order is the oldest, so it is the source of the link to the invoice
+		$orderA = $this->createDraftFrom(new Commande($db), $socid, array('propal' => $propal->id));
+		$invoiceA = $this->createDraftFrom(new Facture($db), $socid, array('propal' => $propal->id));
+		$this->assertEquals(array($invoiceA->id), $this->getLinkedIds($orderA, 'facture', 'target'), 'The invoice created from the proposal is linked to its order');
+		$this->assertEquals(array($orderA->id), $this->getLinkedIds($invoiceA, 'commande', 'source'), 'The order of the proposal is the source of the link');
+		$this->assertEquals(array($propal->id), $this->getLinkedIds($invoiceA, 'propal', 'source'), 'The invoice is still linked to its proposal');
+
+		// An order created from the proposal after the invoice is linked to the invoice, not to the other order
+		$orderB = $this->createDraftFrom(new Commande($db), $socid, array('propal' => $propal->id));
+		$this->assertEquals(array($invoiceA->id), $this->getLinkedIds($orderB, 'facture', 'target'), 'The order is linked to the invoice created before from the proposal');
+		$this->assertEquals(array(), array_merge($this->getLinkedIds($orderB, 'commande', 'source'), $this->getLinkedIds($orderB, 'commande', 'target')), 'Two orders of a proposal are not linked');
+
+		// An invoice created from an order is linked to the proposal of the order, but not to the other documents of the proposal
+		$invoiceB = $this->createDraftFrom(new Facture($db), $socid, array('commande' => $orderA->id));
+		$this->assertEquals(array($orderA->id), $this->getLinkedIds($invoiceB, 'commande', 'source'), 'The invoice is linked to its order only');
+		$this->assertEquals(array($propal->id), $this->getLinkedIds($invoiceB, 'propal', 'source'), 'The invoice is linked to the proposal of its order');
+		$this->assertEquals(array(), array_merge($this->getLinkedIds($invoiceB, 'facture', 'source'), $this->getLinkedIds($invoiceB, 'facture', 'target')), 'Two invoices are not linked');
+
+		// An invoice created from the proposal is linked to all its orders, and the links given at creation are not added twice
+		$invoiceC = $this->createDraftFrom(new Facture($db), $socid, array('propal' => $propal->id, 'commande' => $orderA->id));
+		$this->assertEqualsCanonicalizing(array($orderA->id, $orderB->id), $this->getLinkedIds($invoiceC, 'commande', 'source'));
+
+		foreach (array($invoiceC, $invoiceB, $invoiceA, $orderB, $orderA, $propal) as $document) {
+			$document->delete($user);
+		}
+		$soc->delete($socid, $user);
+	}
 }

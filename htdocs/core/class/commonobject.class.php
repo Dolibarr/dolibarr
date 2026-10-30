@@ -4934,6 +4934,47 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Link this new order or invoice to the other documents of the sales chain (proposal, order, invoice) that are linked to the proposal
+	 * or order it is created from (see $this->linked_objects). For example the order and the invoice created from the same proposal are linked together.
+	 *
+	 * @return	void
+	 * @see		add_object_linked()
+	 */
+	protected function addLinkedFromOrigins()
+	{
+		$rank = array('propal' => 1, 'commande' => 2, 'facture' => 3);	// The oldest document of the sales chain is the source of the link
+		$mytype = $this->getElementType();
+		$savedlinks = array($this->linkedObjectsIds, $this->linkedObjects);
+
+		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+		$linked = $this->linkedObjectsIds;	// Documents already linked to this object, by type
+		foreach ((array) $this->linked_objects as $origintype => $originids) {
+			if (!isset($rank[$mytype], $rank[$origintype]) || $rank[$origintype] >= $rank[$mytype]) {
+				continue;
+			}
+			foreach ((array) $originids as $originid) {
+				$this->fetchObjectLinked($originid, $origintype, $originid, $origintype, 'OR', 1, 'sourcetype', 0);
+				foreach ($this->linkedObjectsIds as $type => $ids) {
+					if (!isset($rank[$type]) || $type == $mytype) {
+						continue;
+					}
+					foreach (array_diff($ids, $linked[$type] ?? array()) as $id) {
+						$linked[$type][] = $id;
+						$other = array((int) $id, $type);
+						$me = array((int) $this->id, $mytype);
+						$link = ($rank[$type] < $rank[$mytype]) ? array_merge($other, $me) : array_merge($me, $other);	// fk_source, sourcetype, fk_target, targettype
+						$sql = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sql .= " VALUES (".((int) $link[0]).", '".$this->db->escape($link[1])."', ".((int) $link[2]).", '".$this->db->escape($link[3])."')";
+						$this->db->query($sql); // Best-effort: do not fail the creation
+					}
+				}
+			}
+		}
+
+		list($this->linkedObjectsIds, $this->linkedObjects) = $savedlinks;
+	}
+
+	/**
 	 * Return an element type string formatted like element_element target_type and source_type
 	 *
 	 * @return string
