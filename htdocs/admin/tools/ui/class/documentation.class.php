@@ -262,6 +262,7 @@ class Documentation
 						'ObjectTool' => '#titlesection-tool-object',
 						'CardTool' => '#titlesection-tool-card',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
 					),
 				),
 				'UxDolibarrContextLangsTool' => array(

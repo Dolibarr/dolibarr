@@ -192,6 +192,7 @@ DocTitleWithFiltersDescription=If you want to display a title with many navigati
 JSDolibarrhooksReadyVsInit = Difference between Dolibarr:Init and Dolibarr:Ready
 JSDolibarrhooksLateScripts = Scripts loaded after Ready (sticky events)
 SetAndUseContextVars = Set and use context vars
+AddContextVarsFromModule = Add context vars from a module (PHP hook)
 
 
 ConsoleHelp = Console help

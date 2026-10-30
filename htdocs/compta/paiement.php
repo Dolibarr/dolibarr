@@ -124,7 +124,8 @@ if (empty($reshook)) {
 
 		// Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 		$tmpinvoice = new Facture($db);
-		foreach ($_POST as $key => $value) {
+		// Can be into POST or GET (GET when the payment is confirmed from the ajax dialog box)
+		foreach (array_merge($_GET, $_POST) as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_' && GETPOST($key) != '') {
 				$cursorfacid = (int) substr($key, 7);
 				$amounts[$cursorfacid] = price2num(GETPOST($key));
@@ -358,11 +359,14 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("Payment"));
 
+// Does the confirm use the dialog box mode (must match the conditions into the formconfirm() method)
+$useajaxconfirm = (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) ? 1 : 0;
+
 
 $facture = new Facture($db);
 $result = $facture->fetch($facid);
 
-if ($result >= 0) {
+if ($result > 0) {
 	$facture->fetch_thirdparty();
 
 	$title = '';
@@ -376,11 +380,22 @@ if ($result >= 0) {
 
 	// Initialize data for confirmation (this is used because data can be change during confirmation)
 	if ($action == 'add_paiement') {
-		$i = 0;
+		$i = count($formquestion);
 
 		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'facid', 'value' => $facture->id);
 		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'socid', 'value' => $facture->socid);
 		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'type', 'value' => $facture->type);
+		// Fields of the payment form, so the ajax confirm dialog can propagate them to the confirm action
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'paiementcode', 'value' => (GETPOST('paiementcode', 'alpha') ? GETPOST('paiementcode', 'alpha') : $facture->mode_reglement_code));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'accountid', 'value' => $accountid);
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'reday', 'value' => GETPOSTINT('reday'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'remonth', 'value' => GETPOSTINT('remonth'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'reyear', 'value' => GETPOSTINT('reyear'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'num_paiement', 'value' => $paymentnum);
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'chqemetteur', 'value' => GETPOST('chqemetteur', 'alphanohtml'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'chqbank', 'value' => GETPOST('chqbank', 'alphanohtml'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'comment', 'value' => GETPOST('comment', 'restricthtml'));
+		$formquestion[$i++] = array('type' => 'hidden', 'name' => 'closepaidinvoices', 'value' => GETPOST('closepaidinvoices'));
 	}
 
 	// Invoice with Paypal transaction
@@ -860,13 +875,13 @@ if ($result >= 0) {
 					}
 
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						if ($action != 'add_paiement') {
+						if ($action != 'add_paiement' || $useajaxconfirm) {
 							if (!empty($conf->use_javascript_ajax)) {
 								print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
 								print img_picto("Auto fill", 'rightarrow.png');
 								print '</button>';
 							}
-							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount maxwidth100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
+							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount right maxwidth100" name="'.$namef.'" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.GETPOST($namef).'">';
 							print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 						} else {
 							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" placeholder="'.dol_escape_htmltag($langs->getCurrencySymbol($objp->multicurrency_code)).'" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
@@ -933,13 +948,13 @@ if ($result >= 0) {
 					}
 				}
 
-				if ($action != 'add_paiement') {
+				if ($action != 'add_paiement' || $useajaxconfirm) {
 					if (!empty($conf->use_javascript_ajax)) {
 						print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
 						print img_picto("Auto fill", 'rightarrow.png');
 						print '</button>';
 					}
-					print '<input '.$max.' '.$min.' type="text" class="amount maxwidth100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+					print '<input '.$max.' '.$min.' type="text" class="amount right maxwidth100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 					print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 				} else {
 					print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
@@ -1043,7 +1058,9 @@ if ($result >= 0) {
 	$formconfirm = '';
 
 	// Save button
-	if ($action != 'add_paiement') {
+	// When the confirm is a dialog box, the save button is kept so user can close the dialog,
+	// change data and submit the payment form again
+	if ($action != 'add_paiement' || $useajaxconfirm) {
 		$checkboxlabel = $langs->trans("ClosePaidInvoicesAutomatically");
 		if ($facture->type == Facture::TYPE_CREDIT_NOTE) {
 			$checkboxlabel = $langs->trans("ClosePaidCreditNotesAutomatically");
@@ -1052,9 +1069,11 @@ if ($result >= 0) {
 		if ($facture->type == Facture::TYPE_CREDIT_NOTE) {
 			$buttontitle = $langs->trans('ToMakePaymentBack');
 		}
+		// Keep the checkbox state entered by the user when the page is rendered again after a submit
+		$closepaidinvoiceschecked = (($action == 'add_paiement' && !GETPOST('closepaidinvoices')) ? '' : ' checked');
 
 		print '<br><div class="center">';
-		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$checkboxlabel.'</label>';
+		print '<input type="checkbox"'.$closepaidinvoiceschecked.' name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$checkboxlabel.'</label>';
 		print '<br><input type="submit" class="button reposition" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 		print '</div>';
 	}
@@ -1073,9 +1092,13 @@ if ($result >= 0) {
 		}
 		if (GETPOST('closepaidinvoices')) {
 			$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
-			print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+			if (empty($useajaxconfirm)) {
+				// In dialog mode, the value is read from the checkbox by the dialog box itself.
+				// In inline mode, we must carry it into the confirm form.
+				print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+			}
 		}
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice, $useajaxconfirm);
 	}
 
 	// Call Hook formConfirm
@@ -1091,6 +1114,8 @@ if ($result >= 0) {
 	print $formconfirm;
 
 	print "</form>\n";
+} else {
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 }
 
 

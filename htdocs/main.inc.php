@@ -388,6 +388,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'presend_addmessage',
 			'preview',
 			'reconcile',
+			'showsummary',
 			'specimen',
 			'testsetup',
 			'undeployconfirmed',
@@ -453,7 +454,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
-	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
+	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && !hash_equals((string) $sessiontokenforthisurl, (string) GETPOST('token', 'alpha'))) {
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referrer=".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
@@ -1857,6 +1858,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
+		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
+		if (isModEnabled('ai')) {
+			$titletoshow .= ' + ai';
+		}
+
 		print $titletoshow;
 		print '</title>';
 
@@ -1940,6 +1946,21 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// so modules hooking them render these parts as in the page. The hook context is the one of the page, not of an object.
 		if (is_object($hookmanager)) {
 			$jsContextVars['HOOK_CONTEXTS'] = implode(',', array_diff($hookmanager->contextarray, array('main', 'login'))); // Context vars are scalar
+		}
+
+		// Context vars added by modules : the hook returns them into ->results, ex: $this->results = array('MYMODULE_VAR' => 'value');
+		$parameters = array('jsContextVars' => $jsContextVars);
+		$reshook = $hookmanager->executeHooks('addJsContextVars', $parameters);
+		if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+			foreach ($hookmanager->resArray as $key => $value) {
+				if (array_key_exists($key, $jsContextVars)) {
+					dol_syslog("JS context var '".$key."' added by a module is already defined, it is ignored", LOG_WARNING);
+				} elseif (!is_scalar($value)) {
+					dol_syslog("JS context var '".$key."' added by a module must be a string, a number or a boolean, it is ignored", LOG_WARNING);
+				} else {
+					$jsContextVars[$key] = $value;
+				}
+			}
 		}
 
 		// Load context and all js tools
@@ -2354,17 +2375,17 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Add AI picto
 		$toprightmenu .= top_menu_ai();
 
+		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
+			// Add the import file link
+			$toprightmenu .= top_menu_importfile();
+		}
+
 		// Add bookmark dropdown
 		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
-		}
-
-		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
-			// Add the import file link
-			$toprightmenu .= top_menu_importfile();
 		}
 
 		$toprightmenu .= '</div>';
@@ -2825,12 +2846,26 @@ function top_menu_ai()
 	if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || empty($conf->use_javascript_ajax)) {
 		return $html;
 	}
-	// Per-user gate: same right as the assistant page and its endpoints
+	// Per-user gate: same right as the assistant page and its endpoints.
+	// Without the right, show a greyed non clickable icon so the user knows the feature exists.
 	if (!$user->hasRight('ai', 'assistant', 'use')) {
+		$html .= '<!-- div for AI Assistant link (disabled, no permission) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a class="login-dropdown-a nofocusvisible opacitymedium cursornotallowed classfortooltip" title="'.dol_escape_htmltag($langs->trans('AIAssistant').' - '.$langs->trans('NotEnoughPermissions')).'"><i class="fa fa-magic"></i></a>
+	</div>';
 		return $html;
 	}
 
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+
+	// On smartphone, no popover: the icon is a direct link to the standalone assistant page.
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$html .= '<!-- div for AI Assistant link (opens the AI assistant page) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a accesskey="a" href="'.DOL_URL_ROOT.'/ai/assistant/index.php?mainmenu=tools&amp;leftmenu=ai" id="topmenu-ai-toggle" class="login-dropdown-a nofocusvisible" title="'.dol_escape_htmltag($ailabel).'"><i class="fa fa-magic"></i></a>
+	</div>';
+		return $html;
+	}
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
 	// the standalone page ai/assistant/index.php uses the same pattern). Same
@@ -2880,6 +2915,18 @@ function top_menu_ai()
 	        });
 		});
 
+	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	document.addEventListener("click", function (event) {
+		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
+		if (!link) { return; }
+		try {
+			for (var i = sessionStorage.length - 1; i >= 0; i--) {
+				var key = sessionStorage.key(i);
+				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
+			}
+		} catch (e) { /* storage not available */ }
+	});
+
 	(function () {
 		var toggle = document.getElementById("topmenu-ai-toggle");
 		var popover = document.getElementById("topmenu-ai-popover");
@@ -2897,7 +2944,8 @@ function top_menu_ai()
 		function loadChat() {
 			if (loaded || loading) { return; }
 			loading = true;
-			fetch("'.DOL_URL_ROOT.'/ai/assistant/popover.php", { credentials: "same-origin" })
+			// Resolved against location.origin: fetch() rejects a URL inheriting user:pass@ from the page URL.
+			fetch(new URL("'.DOL_URL_ROOT.'/ai/assistant/popover.php", window.location.origin).href, { credentials: "same-origin" })
 				.then(function (resp) {
 					if (!resp.ok) { throw new Error("HTTP " + resp.status); }
 					return resp.text();
@@ -3060,6 +3108,9 @@ function top_menu_importfile()
 		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
 		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
+		} elseif (!isModEnabled('ai')) {
+			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
+			return '';
 		}
 
 		$html .= '<!-- div for link to upload file -->
@@ -3290,12 +3341,12 @@ function top_menu_bookmark()
 		$langs->load("bookmarks");
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+			$html .= '<div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">';
 			$html .= printDropdownBookmarksList();
 			$html .= '</div>';
 		} else {
 			$html .= '<!-- div for bookmark link -->
-	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
 	            <a accesskey="b" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$conf->browser->stringforfirstkey.' b)"><i class="fa fa-star"></i></a>
 	            <div class="dropdown-menu">
 	                '.printDropdownBookmarksList().'
@@ -3978,6 +4029,8 @@ if (!function_exists("llxFooter")) {
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
 					$_SESSION['lastsearch_values_tmp_'.$key] = json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
+				} elseif (!empty($_POST['button_removefilter']) || !empty($_POST['button_removefilter_x'])) {
+					unset($_SESSION['lastsearch_values_'.$key]);	// Filters were removed, so previously saved criteria must not be restored later
 				}
 			}
 		}

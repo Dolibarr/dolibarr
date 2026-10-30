@@ -64,6 +64,6 @@ llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 <?php
 // Chat markup (shared with the topbar popover fragment, see ai/assistant/popover.php).
 // The data-ai-autoinit attribute makes ai_assistant.js initialize it on load.
-print getAiChatAssistantHtml('page');
+print getAiChatAssistantHtml('page', GETPOSTINT('conv'));
 
 llxFooter();

@@ -137,8 +137,17 @@ class FormWebsite
 				}
 
 				$lasttypecontainer = '';
+
+				// Sort by group of type first, then position: sorting on position only can
+				// interleave the groups and make them appear several times in the list.
+				$arrayofcontainers = array();
 				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
+					$arrayofcontainers[] = $this->db->fetch_object($result);
+					$i++;
+				}
+				usort($arrayofcontainers, array('FormWebsite', 'compareTypeOfContainer'));
+
+				foreach ($arrayofcontainers as $obj) {
 					/*if (in_array($obj->typecontainer, array('library', 'service'))) {
 						if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
 							$i++;
@@ -172,8 +181,6 @@ class FormWebsite
 					$out .= '</option>';
 
 					$conf->cache['type_of_container'][$obj->code] = $obj->label;
-
-					$i++;
 				}
 				$out .= "</select>";
 				if ($user->admin) {
@@ -191,6 +198,29 @@ class FormWebsite
 		}
 
 		return $out;
+	}
+
+	/**
+	 *  Compare 2 types of container to sort them by group of type, then position, then label.
+	 *  Used as callback of usort() by selectTypeOfContainer().
+	 *
+	 *  @param	stdClass	$a		First record of c_type_container
+	 *  @param	stdClass	$b		Second record of c_type_container
+	 *  @return	int					Negative if $a is before $b, positive if $a is after $b, 0 if equal
+	 */
+	public static function compareTypeOfContainer($a, $b)
+	{
+		$rankofgroup = array('page' => 0, 'container' => 1, 'library' => 2);
+
+		$ga = array_key_exists($a->typecontainer, $rankofgroup) ? $rankofgroup[$a->typecontainer] : 3;
+		$gb = array_key_exists($b->typecontainer, $rankofgroup) ? $rankofgroup[$b->typecontainer] : 3;
+		if ($ga != $gb) {
+			return $ga - $gb;
+		}
+		if ($a->position != $b->position) {
+			return $a->position - $b->position;
+		}
+		return strcmp($a->label, $b->label);
 	}
 
 	/**

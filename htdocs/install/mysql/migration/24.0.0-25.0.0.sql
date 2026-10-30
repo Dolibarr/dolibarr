@@ -40,6 +40,26 @@
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_rowid_seq RENAME TO llx_adherent_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplier_extrafields_rowid_seq RENAME TO llx_supplier_proposal_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplierdet_extrafields_rowid_seq RENAME TO llx_supplier_proposaldet_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_payment_salary_extrafields_rowid_seq RENAME TO llx_salary_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_advtargetemailing_rowid_seq RENAME TO llx_mailing_advtarget_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_rowid_seq RENAME TO llx_prelevement_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_demande_rowid_seq RENAME TO llx_prelevement_demande_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_bank_categ_rowid_seq RENAME TO llx_category_bank_rowid_seq;
+
+-- V13 forgotten: sequences of tables renamed from llx_livraison* to llx_delivery* were not renamed with pgsql
+
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_rowid_seq RENAME TO llx_delivery_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_extrafields_rowid_seq RENAME TO llx_delivery_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_rowid_seq RENAME TO llx_deliverydet_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_extrafields_rowid_seq RENAME TO llx_deliverydet_extrafields_rowid_seq;
+
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -51,6 +71,19 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 
 -- v25 migration
+
+-- Add the 11 Algerian wilayas created by Law 26-06 and numbered by Decree 26-206.
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '59' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Aflou' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '59');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '60' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Barika' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '60');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '61' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Kantara' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '61');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '62' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Bir El Ater' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '62');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '63' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Aricha' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '63');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '64' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Ksar Chellala' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '64');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '65' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Aïn Ouessara' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '65');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '66' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Messaad' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '66');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '67' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Ksar El Boukhari' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '67');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '68' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Bou Saâda' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '68');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '69' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Abiodh Sidi Cheikh' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '69');
 
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
@@ -325,6 +358,13 @@ create table llx_loan_change
 ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0 AFTER amount;
+UPDATE llx_payment_expensereport SET multicurrency_amount = amount WHERE multicurrency_amount = 0;
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_code varchar(3) AFTER multicurrency_amount;
+-- The placeholders __DECRYPT()__ and __ENCRYPT()__, replaced at install time, can not be parsed by sqlfluff.
+--noqa:disable=PRS
+UPDATE llx_payment_expensereport SET multicurrency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = (SELECT entity FROM llx_expensereport WHERE rowid = llx_payment_expensereport.fk_expensereport)) WHERE multicurrency_code IS NULL;
+--noqa:enable=PRS
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 
 -- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
@@ -518,3 +558,44 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
 -- 1 if the user must log in with a passkey, 0 if not, NULL to use the global setup MAIN_AUTHENTICATION_PASSKEY_REQUIRED
 ALTER TABLE llx_user ADD COLUMN passkey_required tinyint DEFAULT NULL AFTER force_pass_change;
+
+-- RF or national reference the supplier provides to accept payments
+ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
+
+ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
+ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_code varchar(3) AFTER amount;
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_amount double(24,8) AFTER multicurrency_code;
+
+ALTER TABLE llx_prelevement ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+
+-- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
+
+-- Link a various payment to a thirdparty (optional) & add index and contraint
+ALTER TABLE llx_payment_various ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_projet;
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_datep (datep);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
+ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+-- Add a primary key on the 4 tables that had none (a primary key is required by Galera and by the other multi-master clusters).
+-- llx_category_bankline is a link table of categories, like the llx_categorie_* ones: its primary key is on the existing columns and replaces the unique index.
+--noqa:disable=PRS
+ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, fk_categ);
+--noqa:enable=PRS
+-- VMYSQL4.1 DROP INDEX uk_category_bankline_lineid ON llx_category_bankline;
+-- VPGSQL8.2 DROP INDEX uk_category_bankline_lineid;
+-- The 3 other tables get a rowid column as primary key, like the other tables.
+-- VMYSQL4.3 ALTER TABLE llx_holiday_users ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_holiday_users ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_user_param ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
