@@ -127,6 +127,8 @@ function dol_get_trunk_prefix($db, $phone_code)
 			return $obj->trunk_prefix;
 		}
 		$db->free($resql);
+	} else {
+		dol_syslog("dol_get_trunk_prefix: ".$db->lasterror(), LOG_ERR);
 	}
 
 	return '';
@@ -154,18 +156,43 @@ function dol_get_all_trunk_prefixes($db)
 			$cache[] = $obj->trunk_prefix;
 		}
 		$db->free($resql);
+	} else {
+		dol_syslog("dol_get_all_trunk_prefixes: ".$db->lasterror(), LOG_ERR);
 	}
 
 	return $cache;
 }
 
 /**
- * Build a natural_search() SQL fragment for a phone/fax field, tolerant of the
- * international storage format "+{code} {number}" vs a national search input
- * (e.g. searching "0645821542" must still match stored "+33 645821542").
+ * Return a SQL expression of a phone field without its formatting characters
+ * (spaces, dashes, dots, parentheses), so it can be compared to a stripped search value.
+ * REPLACE() and COALESCE() work the same way on MySQL/MariaDB and PostgreSQL.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	string	$field		Field name (e.g. "p.phone")
+ * @return	string				SQL expression
+ */
+function dol_sql_strip_phone_formatting($db, $field)
+{
+	// COALESCE so that a NULL field is an empty string, also for an exclusion search (NOT)
+	$sql = "COALESCE(".$db->sanitize($field).", '')";
+	foreach (array(' ', '-', '.', '(', ')') as $char) {
+		$sql = "REPLACE(".$sql.", '".$char."', '')";
+	}
+
+	return $sql;
+}
+
+/**
+ * Build a SQL search fragment for a phone/fax field, tolerant of formatting characters
+ * and of the international storage format "+{code} {number}" vs a national search input
+ * (e.g. searching "06 45 82" or "+33 6 45 82" must match stored "+33 645821542" and "06 45 82 15 42").
+ * Both the search value and the stored value are compared without spaces, dashes, dots and parentheses.
+ * Same operators as natural_search(): "|" (OR), leading "!" (exclude), "^" and "$" (start and end of the field),
+ * "*" (wildcard) and "^$" (empty field). Unlike natural_search(), spaces do not split the value into several criteria.
  *
  * @param	DoliDB			$db			Database handler
- * @param	string|string[]	$fields		Field(s) to search, same as natural_search()
+ * @param	string|string[]	$fields		Field(s) to search (combined with a OR)
  * @param	string			$value		Raw value entered by the user
  * @param	int				$nofirstand	1=Do not output the first 'AND'
  * @return	string			SQL to append to the query ('' if no value)
@@ -177,25 +204,71 @@ function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
 		return '';
 	}
 
-	$stripped = preg_replace('/[\s\-\.\(\)]/', '', $value);
+	$exclude = (strpos($value, '!') === 0);
+	$search = $exclude ? ltrim(substr($value, 1)) : $value;
+	if ($search === '^$' || preg_replace('/[\s\-\.\(\)\|\^\$\*]/', '', $search) === '') {
+		return natural_search($fields, $value, 0, $nofirstand);
+	}
 
-	$candidates = array($stripped);
-	if (strpos($stripped, '+') !== 0) {
-		foreach (dol_get_all_trunk_prefixes($db) as $prefix) {
-			if ($prefix !== '' && strpos($stripped, $prefix) === 0) {
-				$candidates[] = substr($stripped, strlen($prefix));
+	$patterns = array();
+	foreach (explode('|', $search) as $part) {
+		// "^" and "$" anchor the value at the start/end of the field, "*" is a wildcard
+		$part = trim($part);
+		$anchorstart = (strpos($part, '^') === 0);
+		$anchorend = (substr($part, -1) === '$');
+		$part = trim(preg_replace('/^\^|\$$/', '', $part));
+		$stripped = preg_replace('/[\s\-\.\(\)]/', '', $part);
+
+		$candidates = array($stripped);
+		if (strpos($stripped, '+') === 0) {
+			// International input: search the number without the trunk prefix after the code, and the national
+			// format of old data stored without code (e.g. "+33 (0)6 12" must find "+33 612..." and "06 12...")
+			$parsed = dol_parse_phone(str_replace('(0)', '', $part));
+			if ($parsed['code'] !== '') {
+				$number = preg_replace('/[\s\-\.\(\)]/', '', $parsed['number']);
+				$trunkprefix = dol_get_trunk_prefix($db, $parsed['code']);
+				if ($trunkprefix !== '' && strpos($number, $trunkprefix) === 0) {
+					$number = substr($number, strlen($trunkprefix));
+				}
+				if ($number !== '') {
+					$candidates[] = $parsed['code'].$number;
+					// Not without trunk prefix (the number alone would match far too much) nor for an exclusion
+					if ($trunkprefix !== '' && !$exclude) {
+						$candidates[] = $trunkprefix.$number;
+					}
+				}
+			}
+		} elseif (!$exclude && !$anchorstart) {
+			// National input: also search without the trunk prefix (e.g. "06 12" must find "+33 612...").
+			// Not for an exclusion or a value anchored at start, where it would exclude/miss far too much.
+			foreach (dol_get_all_trunk_prefixes($db) as $prefix) {
+				if ($prefix !== '' && strpos($stripped, $prefix) === 0) {
+					$candidates[] = substr($stripped, strlen($prefix));
+				}
+			}
+		}
+
+		foreach ($candidates as $candidate) {
+			if ($candidate !== '') {
+				$patterns[] = ($anchorstart ? '' : '%').str_replace('*', '%', $db->escapeforlike($candidate)).($anchorend ? '' : '%');
 			}
 		}
 	}
+	$patterns = array_values(array_unique($patterns));
 
-	$candidates = array_values(array_unique(array_filter($candidates, /** @return bool */ function (string $c) {
-		return $c !== '';
-	})));
-	if (empty($candidates)) {
-		$candidates = array($value);
+	if (!is_array($fields)) {
+		$fields = array($fields);
 	}
 
-	return natural_search($fields, implode('|', $candidates), 0, $nofirstand);
+	$crits = array();
+	foreach ($fields as $field) {
+		$strippedfield = dol_sql_strip_phone_formatting($db, $field);
+		foreach ($patterns as $pattern) {
+			$crits[] = $strippedfield." LIKE '".$db->escape($pattern)."'";
+		}
+	}
+
+	return ($nofirstand ? '' : ' AND ').($exclude ? 'NOT ' : '').'('.implode(' OR ', $crits).')';
 }
 
 /**
