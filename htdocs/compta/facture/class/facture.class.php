@@ -1819,11 +1819,15 @@ class Facture extends CommonInvoice
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
 			}
+			unset($total);	// Break the reference, it must not alter $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
