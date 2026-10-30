@@ -217,6 +217,17 @@ NOTES   :
 ==> FILE   : fpdm.php (non-composer entry point)
     REASON : require_once() paths made absolute (__DIR__-based) instead of relative to the include_path/CWD.
 
+==> FILE   : src/fpdm.php, ListFields() and parsePDFEntries()
+    REASON : ListFields() told what a field is, never where it is, so a caller could not show a field on the page
+             it belongs to. A field declared as a root with /Kids (every radio group) holds no place of its own
+             either: its widgets carry it, one per choice.
+    CHANGE : /Rect, /P and /Kids are captured on every object while the file is read, the page tree is walked to
+             number the pages, and each field of ListFields() now carries a "widgets" entry, one per widget,
+             with its page (counted from 1) and its rectangle. Measured: on the Cerfa 16216*03 all 55 fields
+             carry a widget and all 65 widgets carry a page (35 on page 1, 30 on page 2), on the 828-field MDPH
+             form all widgets carry a page over its 28 filled pages, and a normalised copy of either gives the
+             same answer as the file itself.
+
 ==> FILE   : src/fpdm.php, getContent() and the dol* methods added before Error()
     REASON : A PDF of version 1.5 or later keeps its objects inside object streams (/ObjStm) and its cross
              reference in a stream, and is often linearized ("Fast Web View"). The parser of this library is line

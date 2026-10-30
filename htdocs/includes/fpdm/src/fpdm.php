@@ -81,6 +81,12 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 	var $dolNewLength=null;
 	//The length the file announces for the stream of the object being written again
 	var $dolStreamLength=null;
+	//Where each widget sits: object number => array('page_object'=>int,'rect'=>float[4])
+	var $dolWidgetBoxes=array();
+	//The /Kids of an object: a field root lists its widgets, a page tree node its pages
+	var $dolKids=array();
+	//The object number of each node of the page tree, to put the pages in order
+	var $dolPagesNodes=array();
 	//ENDFIX
 
     //@@@@@@@@@
@@ -496,6 +502,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 			$this->parsePDFEntries($lines);
 
 			$result=array();
+			$pageindex=$this->dolPageIndex();	// @CHANGE DOL
 			foreach($lines as $name=>$field) {
 				if($name==='$_XREF_$') continue; //internal bookkeeping entry, not a real field
 
@@ -529,11 +536,96 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 					"type"=>$type,
 					"maxlen"=>isset($field["constraints"]["maxlen"]) ? (int) $field["constraints"]["maxlen"] : 0,
 					"options"=>$options,
+					//FIX: one entry per widget: a field is shown where its widgets are		// @CHANGE DOL
+					"widgets"=>$this->dolWidgetsOf(isset($infos["object"]) ? (int) $infos["object"] : 0,$pageindex),
 				);
 			}
 			return $result;
 		}
 		//ENDFIX
+
+		/**
+		*Puts the pages of the document in order: object number of the page => its number,
+		*counted from 1
+		*
+		*@access private
+		*@return array
+		**/
+		function dolPageIndex() {
+		//----------------------
+			if(!count($this->dolPagesNodes)) return array();
+
+			//The root of the page tree is the node no other node lists among its kids
+			$ischild=array();
+			foreach($this->dolPagesNodes as $node=>$one) {
+				if(!isset($this->dolKids[$node])) continue;
+				foreach($this->dolKids[$node] as $kid) $ischild[$kid]=1;
+			}
+
+			$root=0;
+			foreach($this->dolPagesNodes as $node=>$one) {
+				if(!isset($ischild[$node])) { $root=$node; break; }
+			}
+			if(!$root) return array();
+
+			$index=array();
+			$number=0;
+			$this->dolWalkPages($root,$index,$number);
+			return $index;
+		}
+
+		/**
+		*Walks the page tree, numbering the pages it meets
+		*
+		*@access private
+		*@param int $node the node to walk
+		*@param array $index object number of the page => its number
+		*@param int $number how many pages were numbered already
+		*@param int $depth guards against a tree that refers to itself
+		*@return void
+		**/
+		function dolWalkPages($node,&$index,&$number,$depth=0) {
+		//-----------------------------------------------------
+			if($depth>32 || !isset($this->dolKids[$node])) return;
+			foreach($this->dolKids[$node] as $kid) {
+				if(isset($this->dolPagesNodes[$kid])) {
+					$this->dolWalkPages($kid,$index,$number,$depth+1);
+				} else {
+					$number++;
+					$index[$kid]=$number;
+				}
+			}
+		}
+
+		/**
+		*Returns where the widgets of a field sit: the field itself when it holds a place,
+		*its kids otherwise (a radio group has one widget per choice)
+		*
+		*@access private
+		*@param int $objnum the object number of the field
+		*@param array $pageindex object number of a page => its number
+		*@param int $depth guards against a field that refers to itself
+		*@return array one entry per widget, array('page'=>int,'rect'=>float[4])
+		**/
+		function dolWidgetsOf($objnum,$pageindex,$depth=0) {
+		//-------------------------------------------------
+			$widgets=array();
+			if(!$objnum || $depth>8) return $widgets;
+
+			if(isset($this->dolWidgetBoxes[$objnum]["rect"])) {
+				$box=$this->dolWidgetBoxes[$objnum];
+				$page=isset($box["page_object"]) && isset($pageindex[$box["page_object"]]) ? $pageindex[$box["page_object"]] : 0;
+				$widgets[]=array("page"=>$page,"rect"=>$box["rect"]);
+			}
+
+			if(isset($this->dolKids[$objnum])) {
+				foreach($this->dolKids[$objnum] as $kid) {
+					foreach($this->dolWidgetsOf($kid,$pageindex,$depth+1) as $widget) $widgets[]=$widget;
+				}
+			}
+
+			return $widgets;
+		}
 
 		/**
 		*Merge FDF file with a PDF file
@@ -2059,6 +2151,28 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                                             $object["infos"]["checkbox_state"]=$as;
                                             $object["infos"]["checkbox_state_line"]=$Counter;
                                         }
+									}
+									//ENDFIX
+									//FIX: where the widget sits in the document, so that a caller can show	// @CHANGE DOL
+									//the field on the page it belongs to. A field declared as a root with
+									///Kids has no place of its own: its widgets carry it, one per choice for
+									//a radio group.
+									if(preg_match("/^\/Rect\s*\[([^\]]*)\]/",$CurLine,$match)) {
+										$corners=preg_split('/\s+/',trim($match[1]));
+										if(count($corners)==4) {
+											$this->dolWidgetBoxes[intval($obj)]["rect"]=array_map('floatval',$corners);
+										}
+									}
+									if(preg_match("/^\/P\s+(\d+)\s+\d+\s+R/",$CurLine,$match)) {
+										$this->dolWidgetBoxes[intval($obj)]["page_object"]=intval($match[1]);
+									}
+									if(preg_match("/^\/Kids\s*\[([^\]]*)\]/",$CurLine,$match)) {
+										if(preg_match_all('/(\d+)\s+\d+\s+R/',$match[1],$refs)) {
+											$this->dolKids[intval($obj)]=array_map('intval',$refs[1]);
+										}
+									}
+									if($this->extract_pdf_definition_value("/Type",$CurLine,$typematch) && $typematch[1]=='Pages') {
+										$this->dolPagesNodes[intval($obj)]=1;
 									}
 									//ENDFIX
 									if(($type=='')||($subtype=='')||($name=="")||($ft=='')) {
