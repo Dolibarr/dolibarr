@@ -147,8 +147,24 @@ if ($dirphpstan != 'disabled') {
 $phpstanversion = (empty($output_arrver) ? '' : $output_arrver[0]);
 
 $output_arrtd = array();
-if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? escapeshellarg($dirphpstan).'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon';
+if ($dirphpstan != 'disabled' && !is_readable('phpstan_apstats.neon')) {
+	print "Error: PHPStan configuration file phpstan_apstats.neon not found in current dir ".getcwd().", technical debt is not calculated\n";
+}
+if ($dirphpstan != 'disabled' && is_readable('phpstan_apstats.neon')) {
+	// Clear the PHPStan result cache if not done for 14 days, so a stale cache can't report outdated warnings.
+	$markerclearcache = $outputdir.'/.phpstan_lastclearcache';
+	if (!file_exists($markerclearcache) || filemtime($markerclearcache) < (time() - 14 * 24 * 3600)) {
+		$commandclear = ($dirphpstan ? escapeshellarg($dirphpstan).'/' : '').'phpstan clear-result-cache -c phpstan_apstats.neon';
+		print 'Execute PHPStan to clear the result cache: '.$commandclear."\n";
+		$output_arrclear = array();
+		$resexecclear = 0;
+		exec($commandclear, $output_arrclear, $resexecclear);
+		if ($resexecclear == 0) {
+			touch($markerclearcache);
+		}
+	}
+
+	$commandcheck =($dirphpstan ? escapeshellarg($dirphpstan).'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);

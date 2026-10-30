@@ -463,6 +463,26 @@ NOTES   :
         +       }
         +   }
 
+==> FILE   : AutoLoader.php, function thereCanBeOnlyOne()
+    REASON : Avoid an infinite loop in loadLastResort() when instance() is called again while an
+             AutoLoader (current or previous instance) is already registered: it was added into
+             $rogueLoaders and then called itself forever for any unknown class.
+    DIFF   :
+        -   for ($i = 0, static::$rogueLoaders += $loaders;
+        +   // @CHANGE DOL Never keep an AutoLoader (current or previous instance) as a rogue loader, or loadLastResort() calls itself in an infinite loop
+        +   for ($i = 0, static::$rogueLoaders += array_filter($loaders, function ($loader) {
+        +           return !($loader instanceof AutoLoader);
+        +       });
+
+==> FILE   : AutoLoader.php, function thereCanBeOnlyOne()
+    REASON : Do not unregister the other autoloaders (Composer, the ones of the external modules, PHPUnit...).
+             Once unregistered, the classes they load were not found anymore for the rest of the request
+             (loadLastResort() cannot call the loaders that are an array [object, method]).
+    DIFF   :
+        -   (loop that unregisters all the autoloaders but the one of Restler)
+        +   // @CHANGE DOL The other autoloaders are not unregistered anymore
+        +   return static::$instance;
+
 ==> FILE   : explorer/index.html
     REASON : Use swagger 2 provided into /explorer.
     CHANGE : Content of file changed.

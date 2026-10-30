@@ -93,6 +93,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_PRIVACY_REDACTION')) {
+		$res = dolibarr_set_const($db, "AI_PRIVACY_REDACTION", min(2, max(0, GETPOSTINT("AI_PRIVACY_REDACTION"))), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
 		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -251,21 +258,35 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print $form->textwithpicto('Default Interface', $langs->trans("InputMethodHelp"));
 	print '</td>';
 	print '<td>';
+	// Same values and pictos than the engine selector of the assistant (see ai.lib.php)
+	$labelcloud = $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp');
 	$input_modes = [
-		'text' => $langs->trans('OptionTextOnly'),
-		'native' => $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
-		'whisper' => $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
+		'text' => array('label' => $langs->trans('OptionTextOnly'), 'data-html' => img_picto('', 'fa-keyboard', 'class="pictofixedwidth"') . dolPrintHTML($langs->trans('OptionTextOnly'))),
+		'cloud' => array('label' => $labelcloud, 'data-html' => img_picto('', 'fa-cloud', 'class="pictofixedwidth"') . dolPrintHTML($labelcloud)),
 	];
-	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, getDolGlobalString('AI_DEFAULT_INPUT_MODE'), 0, 0, 0);
+	// The local whisper mode is experimental: only offered with the experimental features enabled
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+		$labelwhisper = $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp');
+		$input_modes['whisper'] = array('label' => $labelwhisper, 'data-html' => img_picto('', 'fa-microphone', 'class="pictofixedwidth"') . dolPrintHTML($labelwhisper) . ' <span class="opacitymedium">(' . $langs->trans('VersionExperimental') . ')</span>');
+	}
+	$defaultinputmode = getDolGlobalString('AI_DEFAULT_INPUT_MODE');
+	if ($defaultinputmode == 'native') {	// Old value saved before the key was aligned with the assistant selector
+		$defaultinputmode = 'cloud';
+	}
+	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, $defaultinputmode, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 
 	// Enhanced Privacy control
 	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans('ObfuscatePIIData') . '</td>';
+	print '<td>' . $form->textwithpicto($langs->trans('ObfuscatePIIData'), $langs->trans("RedactionHelp")) . '</td>';
 	print '<td>';
-	print ajax_constantonoff('AI_PRIVACY_REDACTION');
-	print ' &nbsp; <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
+	$redaction_options = [
+		'0' => $langs->trans("RedactionNone"),
+		'1' => $langs->trans("RedactionSensitiveData"),
+		'2' => $langs->trans("RedactionSensitiveDataAndThirdparties")
+	];
+	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print '</td>';
 	print '</tr>';
 
@@ -285,7 +306,15 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '</tr>';
+
+	// API tools in the palette of the chat input (the palette itself is always on)
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIPaletteApiTools"), $langs->trans("AIPaletteApiToolsHelp")) . '</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_PALETTE_API_TOOLS');
+	print '</td>';
 	print '</tr>';
 
 	// Logging

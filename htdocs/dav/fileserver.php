@@ -115,7 +115,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 	 * @return bool					True if login ok, false if not
 	 */
 	static function ($username, $password) {
-		global $user, $conf;
+		global $user, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		if (empty($user->login)) {
@@ -151,6 +151,12 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
+			return false;
+		}
+
+		// A password alone must not be enough for a user with a two-factor authentication, and the DAV access has no other credential
+		if (dolTotpGetEnrollment($db, $user->id) !== null) {
+			dol_syslog("DAV access refused for ".$username.": two-factor authentication is enabled", LOG_WARNING);
 			return false;
 		}
 

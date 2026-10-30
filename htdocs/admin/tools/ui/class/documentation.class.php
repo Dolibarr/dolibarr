@@ -261,6 +261,7 @@ class Documentation
 						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
 						'ObjectTool' => '#titlesection-tool-object',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
 					),
 				),
 				'UxDolibarrContextLangsTool' => array(

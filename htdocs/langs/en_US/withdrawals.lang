@@ -52,6 +52,7 @@ NoSalariesCouldBeWithdrawed=No salary processed successfully. Check that salary 
 WithdrawalCantBeCreditedTwice=This withdrawal receipt is already marked as credited; this can't be done twice, as this would potentially create duplicate payments and bank entries.
 ClassCredited=Classify credited
 ClassDebited=Classify debited
+ClassifyDebitedAtDateOfTransfer=Classify debited (at date of transfer)
 ClassCreditedConfirm=Are you sure you want to classify this withdrawal receipt as credited on your bank account?
 TransData=Transmission date
 TransMetod=Transmission method
