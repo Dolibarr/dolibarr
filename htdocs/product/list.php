@@ -500,6 +500,24 @@ if (empty($reshook)) {
 			}
 		}
 	}
+	if ($massaction == 'switchonstockstatus' && $permissiontoadd && isModEnabled('stock')) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$newstockable = $product->stockable_product ? 0 : 1;
+				// A product tracked by batch or lot cannot leave stock management, same rule as the product card.
+				if ($newstockable === 0 && $product->hasbatch() && isModEnabled('productbatch')) {
+					$langs->load('productbatch');
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement').' ('.$product->ref.')', null, 'warnings');
+					continue;
+				}
+				if ($product->setStatut($newstockable, null, 'product', 'PRODUCT_MODIFY', 'stockable_product') < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
+			}
+		}
+	}
 }
 
 
@@ -1018,6 +1036,9 @@ if ($user->hasRight($rightskey, 'creer')) {
 
 	$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 	$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
+	if (isModEnabled('stock')) {
+		$arrayofmassactions['switchonstockstatus'] = img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("SwitchOnStockStatus");
+	}
 }
 if (isModEnabled('category') && $user->hasRight($rightskey, 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
