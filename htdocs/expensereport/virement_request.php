@@ -153,6 +153,8 @@ $buttonlabel = $langs->trans("MakeTransferRequest");
 print '<div class="tabsAction">'."\n";
 if ($object->status != ExpenseReport::STATUS_APPROVED || $object->paid) {
 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("Approved"))).'">'.$buttonlabel.'</a>';
+} elseif (!empty($object->multicurrency_code) && $object->multicurrency_code != getDolCurrency()) {
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ErrorCreditTransferExpenseReportNotInCompanyCurrency", $object->multicurrency_code, getDolCurrency())).'">'.$buttonlabel.'</a>';
 } elseif ($pending != 0) {
 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
 } elseif ($resteapayer <= 0) {
