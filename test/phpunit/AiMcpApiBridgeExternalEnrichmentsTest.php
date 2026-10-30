@@ -13,6 +13,11 @@
  * \brief Tests for the 'addMcpApiBridgeEnrichments' hook of the AI MCP API bridge.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once __DIR__.'/../../htdocs/ai/class/mcptool.class.php';
 require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 
@@ -49,7 +54,7 @@ class AiMcpExternalHookStub
 /**
  * External-module enrichment tests requiring neither a database nor the HookManager.
  */
-class AiMcpApiBridgeExternalEnrichmentsTest extends PHPUnit\Framework\TestCase
+class AiMcpApiBridgeExternalEnrichmentsTest extends CommonClassTest
 {
 	/**
 	 * @param  ToolApiBridge $bridge Bridge instance under test.

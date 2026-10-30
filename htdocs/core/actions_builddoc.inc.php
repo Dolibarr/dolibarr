@@ -52,6 +52,9 @@
 '
 @phan-var-force int $id
 @phan-var-force int $permissiontoadd
+@phan-var-force ?int $hidedetails
+@phan-var-force ?int $hidedesc
+@phan-var-force ?int $hideref
 @phan-var-force ?array<string,mixed> $moreparams
 @phan-var-force ?int $hidedetails
 @phan-var-force ?int $hidedesc

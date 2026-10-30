@@ -517,6 +517,16 @@ class ProductFournisseur extends Product
 
 		$this->db->begin();
 
+		if (empty($this->product_fourn_price_id)) {
+			// Reuse the price line of this product, supplier, supplier ref and quantity, so its history is kept
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."product_fournisseur_price";
+			$sql .= " WHERE fk_product = ".((int) $this->id)." AND fk_soc = ".((int) $fourn->id)." AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
+			$sql .= " AND quantity = ".((float) $qty)." AND entity = ".((int) $conf->entity);
+			$resql = $this->db->query($sql);
+			$obj = ($resql ? $this->db->fetch_object($resql) : null);
+			$this->product_fourn_price_id = ($obj ? $obj->rowid : 0);
+		}
+
 		if ($this->product_fourn_price_id > 0) {
 			// check if price already logged, if not first log current price
 			$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id);

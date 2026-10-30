@@ -4,6 +4,7 @@
  * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1119,6 +1120,20 @@ class Asset extends CommonObject
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 
+				// Degressive depreciation: the yearly rate is the coefficient times the straight line rate, applied on
+				// the remaining value at the beginning of each fiscal year. As soon as the straight line depreciation of
+				// the remaining value on the remaining duration gives more, this one is used.
+				$is_degressive = ($fields['depreciation_type'] == 1 && (float) $fields['degressive_coefficient'] > 0 && $fields['duration'] > 0);
+				if ($is_degressive && $fields['duration_type'] == 2) {
+					$this->errors[] = $langs->trans('AssetErrorDegressiveDailyDurationForMode', $mode_key);
+					$error++;
+					break;
+				}
+				$degressive_rate = $is_degressive ? (float) $fields['degressive_coefficient'] * ($fields['duration_type'] == 1 ? 12 : 1) / $fields['duration'] : 0;
+				$degressive_year_end = null;
+				$degressive_year_rate = 0;
+				$degressive_year_base = 0;
+
 				//$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 				$first_period_date = $fiscal_period_start;
 
@@ -1160,7 +1175,22 @@ class Asset extends CommonObject
 							// partial month depend on the length of that month, and required a special case to
 							// give a full February a whole monthly amount.
 							$period_fraction = getAssetDepreciationMonthFraction($begin_date, $end_date, $day_count_convention, 'gmt');
-							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+							if ($is_degressive) {
+								// The yearly amount is fixed at the beginning of each fiscal year, then spread on its months
+								if ($degressive_year_end === null || $fiscal_period_start > $degressive_year_end) {
+									$degressive_year_end = ($degressive_year_end === null ? $init_fiscal_period_end : $degressive_year_end);
+									while ($fiscal_period_start > $degressive_year_end) {
+										$next_fy = getNextFiscalYear($this->db, $degressive_year_end, 'gmt');
+										$degressive_year_end = ($next_fy !== null ? $next_fy['date_end'] : dol_time_plus_duree($degressive_year_end, 1, 'y'));
+									}
+									$remaining_years = getAssetDepreciationPeriodFraction($begin_date, $depreciation_date_end, $day_count_convention, 'gmt');
+									$degressive_year_rate = max($degressive_rate, $remaining_years > 0 ? 1 / $remaining_years : 1);
+									$degressive_year_base = $depreciation_amount - (float) $cumulative_depreciation_ht;
+								}
+								$depreciation_ht = (float) price2num(min($depreciation_amount - (float) $cumulative_depreciation_ht, $degressive_year_base * $degressive_year_rate / 12 * $period_fraction), 'MT');
+							} else {
+								$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+							}
 						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
 							// A standard fiscal year lasts 365 days, or 366 when it covers a leap day. Anything else
 							// is a shortened or an extended fiscal year (e.g. 9 or 15 months), whose depreciation is
@@ -1188,7 +1218,14 @@ class Asset extends CommonObject
 									$period_fraction = min(1, $period_fraction);
 								}
 							}
-							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+							if ($is_degressive) {
+								$remaining_value = $depreciation_amount - (float) $cumulative_depreciation_ht;
+								$remaining_years = getAssetDepreciationPeriodFraction($begin_date, $depreciation_date_end, $day_count_convention, 'gmt');
+								$year_rate = max($degressive_rate, $remaining_years > 0 ? 1 / $remaining_years : 1);
+								$depreciation_ht = (float) price2num(min($remaining_value, $remaining_value * $year_rate * $period_fraction), 'MT');
+							} else {
+								$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+							}
 						}
 						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
 							if ($idx_loop < $max_loop) { // avoid last depreciation value

@@ -1006,13 +1006,19 @@ if ($resql) {
 		print '<!-- Last bank statements -->'."\n";
 		print $langs->trans("LastAccountStatements").' : ';
 
+		$nbmaxlinks = (empty($conf->dol_optimize_smallscreen) ? 5 : 2);	// Number of links of last statements to show
+		$j = 0;
 		foreach ($last_receipts as $num_releve) {
+			if ($j >= $nbmaxlinks) {
+				break;
+			}
 			$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
 			$newentreyinlist .= img_picto($num_releve, 'generic', 'class="paddingright"');
 			$newentreyinlist .= dol_escape_htmltag($num_releve).'</a> &nbsp; ';
 			$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
+			$j++;
 		}
-		if ($numr >= $nbmax) {
+		if ($numr > $nbmaxlinks) {
 			$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
 		}
 		print $listoflastreceipts;
@@ -1873,18 +1879,6 @@ if ($resql) {
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
 			print '<td class="nowraponall center">';
 			print yn($objp->conciliated);
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			print '<td class="nowraponall center">';
-			if ($objp->fk_bordereau > 0) {
-				$bordereaustatic->fetch($objp->fk_bordereau);
-				print $bordereaustatic->getNomUrl();
-			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
