@@ -143,20 +143,17 @@ if (!$resql) {
 }
 
 $requests = array();
-$hadRequest = 0;
 while ($resql && ($obj = $db->fetch_object($resql))) {
 	$requests[] = $obj;
-	if (!$obj->traite) {
-		$hadRequest++;
-	}
 }
+$pending = $object->getCreditTransferPendingAmount();
 
 $buttonlabel = $langs->trans("MakeTransferRequest");
 
 print '<div class="tabsAction">'."\n";
 if ($object->status != ExpenseReport::STATUS_APPROVED || $object->paid) {
 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("Approved"))).'">'.$buttonlabel.'</a>';
-} elseif ($hadRequest) {
+} elseif ($pending != 0) {
 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
 } elseif ($resteapayer <= 0) {
 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
