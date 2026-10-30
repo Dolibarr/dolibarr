@@ -231,14 +231,9 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		// Use AJAX call instead of redirect
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
-			// Remove the "FileTransferComplete" message set by dol_add_file_process(), useless here
+			// Remove the success messages (like "FileTransferComplete" set by dol_add_file_process()), useless here
 			// because the page immediately shows the progress of the processing of the file
-			if (!empty($_SESSION['dol_events']['mesgs'])) {
-				$_SESSION['dol_events']['mesgs'] = array_diff($_SESSION['dol_events']['mesgs'], array($langs->transnoentitiesnoconv("FileTransferComplete")));
-				if (empty($_SESSION['dol_events']['mesgs'])) {
-					unset($_SESSION['dol_events']['mesgs']);
-				}
-			}
+			unset($_SESSION['dol_events']['mesgs']);
 
 			// We will make the AJAX call from the bottom of the page
 			$ajaxFileUrl = DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname);
@@ -1703,7 +1698,20 @@ if ($action == 'showsummary') {
 		$mimetopreview = dol_mimetype($filetopreview);
 		$urltopreview = $_SERVER["PHP_SELF"].'?action=displayfile&originalfilename='.urlencode($filetopreview);
 		print "\n";
-		if ($mimetopreview == 'application/pdf') {
+		if ($mimetopreview == 'application/pdf' && !empty($conf->dol_use_jmobile)) {
+			// Webviews of smartphone apps can't show a PDF, so we show its first page converted into an image (no preview if conversion fails)
+			$fileimagetopreview = $filetopreview.'_preview.png';
+			$ret = 1;
+			if (!dol_is_file($upload_dir.'/'.$fileimagetopreview) || (dol_filemtime($upload_dir.'/'.$fileimagetopreview) < dol_filemtime($upload_dir.'/'.$filetopreview))) {
+				$ret = getDolGlobalString('MAIN_DISABLE_PDF_THUMBS') ? 0 : dol_convert_file($upload_dir.'/'.$filetopreview, 'png', $upload_dir.'/'.$fileimagetopreview, '0');
+			}
+			if ($ret > 0) {
+				$urlimagetopreview = $_SERVER["PHP_SELF"].'?action=displayfile&originalfilename='.urlencode($fileimagetopreview);
+				print '<div class="center">';
+				print '<img src="'.dolPrintHTMLForAttributeUrl($urlimagetopreview).'" alt="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Preview")).'" style="max-width: 100%;">';
+				print '</div>';
+			}
+		} elseif ($mimetopreview == 'application/pdf') {
 			print '<div class="center">';
 			print '<iframe src="'.dolPrintHTMLForAttributeUrl($urltopreview).'" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Preview")).'" style="width: 100%; height: 800px; border: none;"></iframe>';
 			print '</div>';
