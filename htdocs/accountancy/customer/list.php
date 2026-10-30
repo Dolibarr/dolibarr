@@ -323,6 +323,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+$sql .= " AND NOT (f.fk_statut = ".Facture::STATUS_ABANDONED." AND COALESCE(f.close_code, '') = '".$db->escape(Facture::CLOSECODE_ABANDONED)."')";
 $sql .= " AND l.product_type <= 2";
 // Add search filter like
 if ($search_societe) {

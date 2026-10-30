@@ -570,6 +570,31 @@ if (!empty($tabfac)) {
 }
 //var_dump($errorforinvoice);exit;
 
+$tabreversal = array();
+if ($in_bookkeeping == 'notyet') {
+	$sql = "SELECT f.rowid, f.ref, f.type, s.nom as name";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).")";
+	$sql .= " AND f.fk_statut = ".Facture::STATUS_ABANDONED;
+	$sql .= " AND f.close_code = '".$db->escape(Facture::CLOSECODE_ABANDONED)."'";
+	$sql .= " AND f.date_closing >= '".$db->idate($date_start)."' AND f.date_closing <= '".$db->idate($date_end)."'";
+	$sql .= " AND f.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = 'customer_invoice')";
+	$sql .= " ORDER BY f.date_closing, f.ref";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$bookkeepingstatic = new BookKeeping($db);
+		while ($obj = $db->fetch_object($resql)) {
+			$reversallines = $bookkeepingstatic->getAbandonedCustomerInvoiceReversal((int) $obj->rowid, $journal, $langs->transnoentities($journal_label));
+			if (is_array($reversallines) && !empty($reversallines)) {
+				$tabreversal[$obj->rowid] = array('ref' => $obj->ref, 'type' => $obj->type, 'name' => $obj->name, 'lines' => $reversallines);
+			}
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
+
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
 	$now = dol_now();
@@ -608,9 +633,9 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced or abandoned invoice? 0=not a replaced or abandoned invoice, 1=replaced or abandoned invoice not yet dispatched, 2=replaced or abandoned invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
+		if (in_array($invoicestatic->close_code, array(Facture::CLOSECODE_REPLACED, Facture::CLOSECODE_ABANDONED))) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) {
@@ -1161,7 +1186,16 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		}
 	}
 
-	$tabpay = $tabfac;
+	foreach ($tabreversal as $key => $reversal) {
+		$bookkeeping = new BookKeeping($db);
+		$result = $bookkeeping->createAbandonedCustomerInvoiceReversal($user, (int) $key, $journal, $langs->transnoentities($journal_label));
+		if ($result < 0) {
+			$error++;
+			setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+		}
+	}
+
+	$tabpay = $tabfac + $tabreversal;
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
@@ -1225,9 +1259,9 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced or abandoned invoice? 0=not a replaced or abandoned invoice, 1=replaced or abandoned invoice not yet dispatched, 2=replaced or abandoned invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
+		if (in_array($invoicestatic->close_code, array(Facture::CLOSECODE_REPLACED, Facture::CLOSECODE_ABANDONED))) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) {
@@ -1419,6 +1453,24 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			}
 		}
 	}
+
+	foreach ($tabreversal as $key => $reversal) {
+		foreach ($reversal['lines'] as $line) {
+			print '"'.$key.'"'.$sep;
+			print '"'.dol_print_date($line->doc_date, 'day').'"'.$sep;
+			print '"'.$reversal['ref'].'"'.$sep;
+			print '"'.csvClean(dol_trunc($reversal['name'], 32)).'"'.$sep;
+			print '"'.($line->subledger_account ? length_accounta($line->subledger_account) : length_accountg($line->numero_compte)).'"'.$sep;
+			print '"'.length_accountg($line->numero_compte).'"'.$sep;
+			print '"'.length_accounta($line->subledger_account).'"'.$sep;
+			print '"'.csvClean(dol_trunc($line->label_compte, 32)).'"'.$sep;
+			print '"'.csvClean($line->label_operation).'"'.$sep;
+			print '"'.($line->debit ? price($line->debit) : '').'"'.$sep;
+			print '"'.($line->credit ? price($line->credit) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
+		}
+	}
 }
 
 
@@ -1546,9 +1598,9 @@ if (empty($action) || $action == 'view') {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced or abandoned invoice? 0=not a replaced or abandoned invoice, 1=replaced or abandoned invoice not yet dispatched, 2=replaced or abandoned invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
+		if (in_array($invoicestatic->close_code, array(Facture::CLOSECODE_REPLACED, Facture::CLOSECODE_ABANDONED))) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) {
@@ -1564,7 +1616,7 @@ if (empty($action) || $action == 'view') {
 			print "<td><strike>".$invoicestatic->getNomUrl(1)."</strike></td>";
 			// Account
 			print "<td>";
-			print $langs->trans("Replaced");
+			print $langs->trans($invoicestatic->close_code == Facture::CLOSECODE_ABANDONED ? "Abandoned" : "Replaced");
 			print '</td>';
 			// Subledger account
 			print "<td>";
@@ -1886,6 +1938,28 @@ if (empty($action) || $action == 'view') {
 					$i++;
 				}
 			}
+		}
+	}
+
+	foreach ($tabreversal as $key => $reversal) {
+		$invoicestatic->id = (int) $key;
+		$invoicestatic->ref = (string) $reversal['ref'];
+		$invoicestatic->type = (int) $reversal['type'];
+		$invoicestatic->close_code = Facture::CLOSECODE_ABANDONED;
+
+		foreach ($reversal['lines'] as $line) {
+			print '<tr class="oddeven">';
+			print "<!-- Reversal of abandoned invoice -->";
+			print "<td>".dol_print_date($line->doc_date, 'day')."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+			print "<td>".length_accountg($line->numero_compte)."</td>";
+			print "<td>".length_accounta($line->subledger_account)."</td>";
+			print "<td>".dol_escape_htmltag($line->label_operation)."</td>";
+			print '<td class="right nowraponall amount">'.($line->debit ? price($line->debit) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($line->credit ? price($line->credit) : '')."</td>";
+			print "</tr>";
+
+			$i++;
 		}
 	}
 
