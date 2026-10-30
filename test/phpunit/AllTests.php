@@ -437,6 +437,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
+		require_once dirname(__FILE__).'/DeferredRevenueTest.php';
+		$suite->addTestSuite('DeferredRevenueTest');
 		require_once dirname(__FILE__).'/AssetModelTest.php';
 		$suite->addTestSuite('AssetModelTest');
 
