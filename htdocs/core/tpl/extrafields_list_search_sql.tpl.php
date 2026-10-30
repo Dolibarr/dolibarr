@@ -60,11 +60,6 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
 		$typ = $extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey];
 
-		if (is_array($crit) && in_array($typ, array('sellist', 'chkbxlst'))) {
-			// Multiselect filter criteria can be restored as an array (for example from the search session with restore_lastsearch_values)
-			$crit = implode(',', $crit);
-		}
-
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp'))) {
 			if (is_numeric($crit)) {
 				if ($typ == 'date') {
@@ -101,12 +96,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			}
 			$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IS NULL OR ".$extrafieldsobjectprefix.$tmpkey." = '' OR ".$extrafieldsobjectprefix.$tmpkey." = '0'";
 			if (count($critkeys)) {
-				$modeforsearch = 3; // List of string keys
-				if ($typ == 'chkbxlst') {
-					$modeforsearch = 4; // Search inside a comma separated string
-				} elseif (preg_match('/^\d+(,\d+)*$/', implode(',', $critkeys))) {
-					$modeforsearch = 2; // List of int keys
-				}
+				$modeforsearch = ($typ == 'chkbxlst' ? 4 : 3); // 4 = search inside a comma separated string, 3 = list of keys (quoted, the column is a varchar)
 				$morewhere .= " OR ".natural_search($extrafieldsobjectprefix.$tmpkey, implode(',', $critkeys), $modeforsearch, 1);
 			}
 			$morewhere .= ")";
@@ -122,9 +112,10 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			}
 			if (in_array($typ, array('sellist')) && !is_numeric($crit)) {
 				$mode_search = 0;// Search on a foreign key string
-				if (preg_match('/,/', $crit)) {
-					// List of keys coming from a multiselect search filter (not gated on the option so saved criteria keep working if the option is disabled later)
-					$mode_search = preg_match('/^\d+(,\d+)+$/', $crit) ? 2 : 3;
+				if (strpos($crit, ',') !== false || getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS')) {
+					// Keys coming from a multiselect search filter: exact match for 1 or n keys, quoted because the column is a varchar
+					// (a list is not gated on the option so saved criteria keep working if the option is disabled later)
+					$mode_search = 3;
 				}
 			}
 			if (in_array($typ, array('chkbxlst', 'checkbox', 'select'))) {

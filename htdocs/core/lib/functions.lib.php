@@ -13447,8 +13447,6 @@ function dol_getmypid()
  */
 function natural_search_multiselect($field, $values)
 {
-	global $db;
-
 	if (!is_array($values) || !count($values)) {
 		return '';
 	}

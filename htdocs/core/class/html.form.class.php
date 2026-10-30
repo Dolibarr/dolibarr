@@ -5519,7 +5519,8 @@ class Form
 			$arrayofpaymentterms[$id] = $label;
 		}
 
-		return $this->multiselectarray($htmlname, $arrayofpaymentterms, $selected, 0, 0, $morecss);
+		// The hidden empty entry makes an emptied combo post something, so GETPOST does not fall back on a default filter of Setup - Default values
+		return '<input type="hidden" name="'.$htmlname.'[]" value="">'.$this->multiselectarray($htmlname, $arrayofpaymentterms, $selected, 0, 0, $morecss);
 	}
 
 
@@ -5680,25 +5681,15 @@ class Form
 	 *
 	 * @param 	int[]|string[]	$selected 		Array of ids of payment modes preselected (-2 for "not defined")
 	 * @param 	string 			$htmlname 		Name of the multiselect zone
-	 * @param 	string 			$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or a list of ids 'id1,id2,...')
 	 * @param 	int<0,1> 		$addnotdefined 	1=Add an entry "Not defined" with the special value -2 (to search records with no value set)
 	 * @param 	string 			$morecss 		Add more CSS on select tag
 	 * @param 	int 			$active 		Keep only active (1) or inactive (0) payment modes, -1 = all
 	 * @return	string							String for the HTML multiselect component
 	 * @see select_types_paiements(), multiselectarray(), natural_search_multiselect()
 	 */
-	public function multiSelectTypesPaiements($selected = array(), $htmlname = 'search_paymentmode', $filtertype = '', $addnotdefined = 0, $morecss = '', $active = 1)
+	public function multiSelectTypesPaiements($selected = array(), $htmlname = 'search_paymentmode', $addnotdefined = 0, $morecss = '', $active = 1)
 	{
 		global $langs;
-
-		$filterarray = array();
-		if ($filtertype == 'CRDT') {
-			$filterarray = array(0, 2, 3);
-		} elseif ($filtertype == 'DBIT') {
-			$filterarray = array(1, 2, 3);
-		} elseif ($filtertype != '' && $filtertype != '-1') {
-			$filterarray = explode(',', $filtertype);
-		}
 
 		$this->load_cache_types_paiements();
 
@@ -5712,11 +5703,6 @@ class Form
 				continue;
 			}
 
-			// We skip of the user requested to filter on specific payment modes
-			if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
-				continue;
-			}
-
 			// We discard empty lines
 			if (empty($arraytypes['code'])) {
 				continue;
@@ -5725,7 +5711,8 @@ class Form
 			$arrayofpaymentmodes[$id] = $arraytypes['label'];
 		}
 
-		return $this->multiselectarray($htmlname, $arrayofpaymentmodes, $selected, 0, 0, $morecss);
+		// The hidden empty entry makes an emptied combo post something, so GETPOST does not fall back on a default filter of Setup - Default values
+		return '<input type="hidden" name="'.$htmlname.'[]" value="">'.$this->multiselectarray($htmlname, $arrayofpaymentmodes, $selected, 0, 0, $morecss);
 	}
 
 

@@ -153,9 +153,9 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
 
-$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
+$search_fk_cond_reglement = array_filter(GETPOST('search_fk_cond_reglement', 'array:intcomma'));	// Array from the multiselect combo (array_filter removes its hidden empty entry). A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'intcomma');
-$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
+$search_fk_mode_reglement = array_filter(GETPOST('search_fk_mode_reglement', 'array:intcomma'));	// Array from the multiselect combo (array_filter removes its hidden empty entry). A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_fk_input_reason = GETPOST('search_fk_input_reason', 'intcomma');
 
 $search_option = GETPOST('search_option', 'alpha');
@@ -1931,7 +1931,7 @@ if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 // Payment mode
 if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->multiSelectTypesPaiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 1, 'minwidth100 maxwidth100', -1);
+	print $form->multiSelectTypesPaiements($search_fk_mode_reglement, 'search_fk_mode_reglement', 1, 'minwidth100 maxwidth100', -1);
 	print '</td>';
 }
 // Channel

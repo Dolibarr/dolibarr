@@ -2041,6 +2041,78 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testNaturalSearchMultiselect
+	 *
+	 * @return void
+	 */
+	public function testNaturalSearchMultiselect()
+	{
+		$this->assertEquals('', natural_search_multiselect('f.x', array()));
+		$this->assertEquals('', natural_search_multiselect('f.x', array('', '0', '-1')));
+		$this->assertEquals(' AND ((f.x IN (4,5)))', natural_search_multiselect('f.x', array('4', '5')));
+		$this->assertEquals(' AND ((f.x IS NULL OR f.x = 0))', natural_search_multiselect('f.x', array('-2')));
+		$this->assertEquals(' AND ((f.x IN (4)) OR (f.x IS NULL OR f.x = 0))', natural_search_multiselect('f.x', array('-2', '4')));
+	}
+
+	/**
+	 * Test a sellist extrafield used as a multiselect search filter, from the posted or restored values to the SQL criteria
+	 *
+	 * @return void
+	 */
+	public function testExtrafieldsSellistMultiselectSearch()
+	{
+		global $conf, $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+		$extrafields = new ExtraFields($db);
+		$extrafields->attributes['facture']['label']['x'] = 'X';
+		$extrafields->attributes['facture']['type']['x'] = 'sellist';
+		$extrafieldsobjectkey = 'facture';
+		$extrafieldsobjectprefix = 'ef.';
+
+		$savedphpself = $_SERVER['PHP_SELF'];
+		$savedoption = getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS');
+		$_SERVER['PHP_SELF'] = '/test.php';
+		$_GET = array();
+
+		$tests = array(	// option, posted value, restored value, expected criteria, expected sql
+			'space' => array('1', array('Foo Bar'), null, 'Foo Bar', " AND (ef.x IN ('Foo Bar'))"),
+			'accent' => array('1', array('Fée', 'ABC'), null, 'Fée,ABC', " AND (ef.x IN ('Fée','ABC'))"),
+			'one string is exact' => array('1', array('EU'), null, 'EU', " AND (ef.x IN ('EU'))"),
+			'ints are quoted' => array('1', array('12', '15'), null, '12,15', " AND (ef.x IN ('12','15'))"),
+			'not defined' => array('1', array('-2', '12'), null, '-2,12', " AND (ef.x IS NULL OR ef.x = '' OR ef.x = '0' OR (ef.x IN ('12')))"),
+			'restored from session' => array('1', null, array('12', '15'), '12,15', " AND (ef.x IN ('12','15'))"),
+			'empty entries' => array('1', array(''), null, '', ''),
+			'option off, scalar is unchanged' => array('', 'EU', null, 'EU', " AND (ef.x LIKE '%EU%')"),
+			'option off, saved list' => array('', '12,15', null, '12,15', " AND (ef.x IN ('12','15'))"),
+		);
+		foreach ($tests as $label => $test) {
+			$conf->global->MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS = $test[0];
+			$_POST = ($test[1] === null ? array() : array('search_options_x' => $test[1]));
+			$_SESSION = array();
+			if ($test[2] !== null) {
+				$_GET['restore_lastsearch_values'] = 1;
+				$_SESSION['lastsearch_values_test.php'] = json_encode(array('search_options_x' => $test[2]));
+			}
+
+			$search_array_options = $extrafields->getOptionalsFromPost('facture', '', 'search_');
+			$this->assertSame($test[3], $search_array_options['search_options_x'], $label);
+
+			$sql = '';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+			$this->assertSame($test[4], $sql, $label);
+
+			unset($_GET['restore_lastsearch_values']);
+		}
+
+		$_POST = array();
+		$_SESSION = array();
+		$_SERVER['PHP_SELF'] = $savedphpself;
+		$conf->global->MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS = $savedoption;
+	}
+
+	/**
 	 * testDolExplodeKeepIfQuotes
 	 *
 	 * @return void

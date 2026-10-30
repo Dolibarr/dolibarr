@@ -133,8 +133,8 @@ $search_status = GETPOST('search_status', 'array:intcomma');
 // } elseif (is_array($search_status) && count($search_status) == 0) {
 // 	$search_status = '';
 // }
-$search_paymentmode = GETPOST('search_paymentmode', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
-$search_paymentterms = GETPOST('search_paymentterms', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
+$search_paymentmode = array_filter(GETPOST('search_paymentmode', 'array:intcomma'));	// Array from the multiselect combo (array_filter removes its hidden empty entry). A scalar value (old links, saved filters) is exploded into an array by GETPOST.
+$search_paymentterms = array_filter(GETPOST('search_paymentterms', 'array:intcomma'));	// Array from the multiselect combo (array_filter removes its hidden empty entry). A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
 $search_fk_input_reason = GETPOSTINT('search_fk_input_reason');
 $search_module_source = GETPOST('search_module_source', 'alpha');
@@ -1779,7 +1779,7 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 // Payment mode
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->multiSelectTypesPaiements($search_paymentmode, 'search_paymentmode', '', 1, 'minwidth100 maxwidth100');
+	print $form->multiSelectTypesPaiements($search_paymentmode, 'search_paymentmode', 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
 // Payment terms
