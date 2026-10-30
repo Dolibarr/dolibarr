@@ -15,7 +15,6 @@ if (empty($context) || !is_object($context)) {
  * @var Translate $langs
  */
 
-?>
 if ($context->userIsLog()) {
 	// menu propal
 	if (isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS')) {
@@ -54,7 +53,7 @@ if ($context->userIsLog()) {
 			'id' => 'document_list',
 			'rank' => 40,
 			'url' => $context->getControllerUrl('documentlist'),
-			'name' => $langs->trans('MyDocuments'), // CORRIGÉ : Clé de traduction correcte
+			'name' => $langs->trans('MyDocuments'),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
