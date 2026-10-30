@@ -56,7 +56,8 @@ button.dropdown-item.global-search-item {
 #topmenu-quickadd-dropdown a.login-dropdown-a,
 #topmenu-bookmark-dropdown a.login-dropdown-a,
 #topmenu-ai-dropdown a.login-dropdown-a,
-#topmenu-uploadfile-dropdown a.login-dropdown-a {
+#topmenu-uploadfile-dropdown a.login-dropdown-a,
+#topmenu-quickmemo-dropdown a.login-dropdown-a {
 	color: var(--colortextbackhmenu);
 }
 
@@ -167,7 +168,7 @@ button.dropdown-item.global-search-item {
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-ai-dropdown {
 	padding-right: 2px;
 }
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -254,6 +255,7 @@ div#topmenu-global-search-dropdown,
 div#topmenu-quickadd-dropdown,
 div#topmenu-bookmark-dropdown,
 div#topmenu-uploadfile-dropdown,
+div#topmenu-quickmemo-dropdown,
 div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
@@ -331,6 +333,9 @@ a.top-menu-dropdown-link {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
+#topmenu-quickmemo-dropdown .dropdown-body {
+	padding: 10px 10px 10px 15px;
+}
 
 
 .dropdown-body::-webkit-scrollbar {
@@ -354,7 +359,8 @@ a.top-menu-dropdown-link {
 #topmenu-bookmark-dropdown,
 #topmenu-global-search-dropdown,
 #topmenu-ai-dropdown,
-#topmenu-uploadfile-dropdown {
+#topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -730,7 +736,8 @@ div.quickaddblock:focus {
 	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a,
 	#topmenu-login-dropdown a.login-dropdown-a,
-	#topmenu-uploadfile-dropdown a.login-dropdown-a {
+	#topmenu-uploadfile-dropdown a.login-dropdown-a,
+	#topmenu-quickmemo-dropdown a.login-dropdown-a {
 		color: var(--colortextbackvmenu);
 	}
 
@@ -757,7 +764,8 @@ div.quickaddblock:focus {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 

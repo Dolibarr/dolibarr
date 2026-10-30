@@ -363,12 +363,16 @@ if (empty($reshook)) {
 			$object->email					= trim(GETPOST('email', 'email'));
 			$object->no_email 				= GETPOSTINT("no_email");
 			$object->url					= trim(GETPOST('url', 'url'));
-			$object->idprof1				= trim(GETPOST('idprof1', 'alphanohtml'));
-			$object->idprof2				= trim(GETPOST('idprof2', 'alphanohtml'));
-			$object->idprof3				= trim(GETPOST('idprof3', 'alphanohtml'));
-			$object->idprof4				= trim(GETPOST('idprof4', 'alphanohtml'));
-			$object->idprof5				= trim(GETPOST('idprof5', 'alphanohtml'));
-			$object->idprof6				= trim(GETPOST('idprof6', 'alphanohtml'));
+			// Only the professional ids displayed by the form are posted: the edit form renders the id N
+			// only when N <= THIRDPARTY_MIN_NB_PROF_ID or when the key ProfId<N><country code> is
+			// translated for the language of the user. Reading the 6 of them unconditionally erases
+			// the stored value of a hidden one, so keep it when the field was not submitted.
+			for ($i = 1; $i <= 6; $i++) {
+				$key = 'idprof'.$i;
+				if (GETPOSTISSET($key)) {
+					$object->$key = trim(GETPOST($key, 'alphanohtml'));
+				}
+			}
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
@@ -1520,17 +1524,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="spanlabel">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly nowraponall"><label for="prospectinput" class="spanlabel">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
 			}
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="spanlabel">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly nowraponall"><label for="customerinput" class="spanlabel">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
 			}
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly nowraponall"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -1650,7 +1654,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td>';
 			print '<td colspan="3">';
 			print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-			print dolPrintHTMLForTextArea($object->address);
+			print dolPrintText($object->address);
 			print '</textarea>';
 			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 			print '</td></tr>';
@@ -1812,7 +1816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 			print '<td class="nowrap">';
-			$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+			$s = '<input type="text" class="flat maxwidth200" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (!getDolGlobalString('MAIN_DISABLEVATCHECK') && isInEEC($object)) {
 				$s .= ' ';
@@ -1853,7 +1857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<td class="nowrap">'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
 			print '<td class="nowrap">';
-			print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+			print '<input type="text" class="flat maxwidth200" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
 			print '</td>';
 			print '</tr>';
 
@@ -2545,7 +2549,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 				print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft" spellcheck="false">';
-				print dolPrintHTMLForTextArea($object->address);
+				print dolPrintText($object->address);
 				print '</textarea>';
 				print $form->widgetForTranslation("address", $object, (int) $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 				print '</td></tr>';
@@ -2741,7 +2745,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// VAT Code
 				print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 				print '<td colspan="3">';
-				$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+				$s = '<input type="text" class="flat maxwidth200" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
 				if (!getDolGlobalString('MAIN_DISABLEVATCHECK') && isInEEC($object)) {
 					$s .= ' &nbsp; ';
@@ -2775,7 +2779,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td>'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
 				print '<td colspan="3">';
-				print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+				print '<input type="text" class="flat maxwidth200" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
 				print '</td>';
 				print '</tr>';
 

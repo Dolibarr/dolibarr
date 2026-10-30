@@ -18,19 +18,22 @@
 /**
  *	\file		test/phpunit/CreditorRefLibTest.php
  *	\ingroup	test
- *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php
- *				and paymentref.lib.php
+ *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php,
+ *				paymentref.lib.php and functions_ch.lib.php
  */
 
 global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_creditorref.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_gr.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/paymentref.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_ch.lib.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -117,7 +120,26 @@ class CreditorRefLibTest extends CommonClassTest
 		$this->assertSame('SCOR', dolPayRefDetectScheme('RF18 5390 0754 7034'));
 		$this->assertSame('BBA', dolPayRefDetectScheme('+++000/0000/00101+++'));
 		$this->assertSame('FI', dolPayRefDetectScheme('20240015'));
+		$this->assertSame('QRR', dolPayRefDetectScheme('21 00000 00003 13947 14300 09017'));
 		$this->assertSame('', dolPayRefDetectScheme(''));
+	}
+
+	/**
+	 * A Swiss QR-IBAN has an institution id from 30000 to 31999 and needs a QR reference
+	 *
+	 * @return void
+	 */
+	public function testSwissQRIBANAndQRReference()
+	{
+		$this->assertTrue(dolCHIsQRIBAN('CH44 3199 9123 0008 8901 2'));
+		$this->assertFalse(dolCHIsQRIBAN('CH9300762011623852957'));
+		$this->assertFalse(dolCHIsQRIBAN('FR7630001007941234567890185'));
+
+		$this->assertTrue(dolCHQRReferenceIsValid('210000000003139471430009017'));
+		$this->assertTrue(dolCHQRReferenceIsValid('21 00000 00003 13947 14300 09017'));
+		$this->assertFalse(dolCHQRReferenceIsValid('210000000003139471430009018'));
+		$this->assertFalse(dolCHQRReferenceIsValid('RF18539007547034'));
+		$this->assertFalse(dolCHQRReferenceIsValid(''));
 	}
 
 	/**

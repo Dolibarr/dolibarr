@@ -46,6 +46,7 @@
 @phan-var-force string $action
 @phan-var-force int $i
 @phan-var-force int $num
+@phan-var-force ProductAttributeValue $line
 ';
 
 // Protection to avoid direct call of template

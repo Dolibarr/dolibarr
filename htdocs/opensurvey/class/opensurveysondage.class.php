@@ -70,7 +70,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @var array<array{id_users:int,nom:string,responses:string}>
 	 */
-	public $lines;
+	public $lines; // @phpstan-ignore-line
 
 	/**
 	 *  'type' field format:

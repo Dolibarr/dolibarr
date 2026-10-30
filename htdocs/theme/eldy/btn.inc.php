@@ -235,6 +235,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
   font-weight: 900;            /* obligatoire pour la version "solid" */
   font-size: 14px;				/* using 1em does not work */
   /* vertical-align: middle; */
+  display: inline-block;		/* required for transform on a pseudo element */
+  transform: rotate(90deg);
 }
 
 
