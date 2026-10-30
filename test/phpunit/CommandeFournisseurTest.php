@@ -592,9 +592,9 @@ class CommandeFournisseurTest extends CommonClassTest
 		$this->assertGreaterThan(0, $commandelineid, $commande->errorsToString());
 		$db->query("UPDATE ".MAIN_DB_PREFIX."commandedet SET buy_price_ht = 10 WHERE rowid = ".((int) $commandelineid));
 
-		// Two purchase orders linked to it: 1 unit at 12 with 10% discount (net 10.8) and 3 units at 12
+		// Purchase orders linked to it: 1 unit at 12 with 10% discount (net 10.8), 3 units at 12 and, linked the other way round, 4 units at 12
 		$orders = array();
-		foreach (array(array(1, 10), array(3, 0)) as $data) {
+		foreach (array(array(1, 10), array(3, 0), array(4, 0)) as $data) {
 			$order = new CommandeFournisseur($db);
 			$order->initAsSpecimen();
 			$order->ref = '';
@@ -610,7 +610,11 @@ class CommandeFournisseurTest extends CommonClassTest
 			$orderid = $order->create($user);
 			$this->assertGreaterThan(0, $orderid, 'Failed to create supplier order: '.$order->errorsToString());
 			$order->fetch($orderid);
-			$order->add_object_linked('commande', $commande->id);
+			if (count($orders) < 2) {
+				$order->add_object_linked('commande', $commande->id);
+			} else {
+				$commande->add_object_linked('order_supplier', $order->id);
+			}
 			$orders[] = $order;
 		}
 		$lineid = $orders[1]->lines[0]->id;
@@ -622,9 +626,14 @@ class CommandeFournisseurTest extends CommonClassTest
 			$this->assertEquals($expected, price2num($documents['commande']['buyprice'], 'MU'), 'Cost with the other purchase order at the status '.$status);
 		}
 
+		// The purchase order linked the other way round counts too
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_ORDERSENT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
+		$documents = $orders[1]->getLinkedBuyPriceDocuments($user, $lineid);
+		$this->assertEquals(11.85, price2num($documents['commande']['buyprice'], 'MU'), 'Average of 1 at 10.8, 3 at 12 and 4 at 12');
+
 		$conf->global->MARGIN_CAN_UPDATE_BUYINGPRICE_ON_LINKED_DOCUMENTS = $optionbefore;
 
-		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_DRAFT)." WHERE rowid = ".((int) $orders[0]->id));
+		$db->query("UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) CommandeFournisseur::STATUS_DRAFT)." WHERE rowid IN (".((int) $orders[0]->id).", ".((int) $orders[2]->id).")");
 		foreach ($orders as $order) {
 			$order->delete($user);
 		}

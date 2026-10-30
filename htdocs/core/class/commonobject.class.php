@@ -10985,14 +10985,18 @@ abstract class CommonObject
 		if ($this->element == 'order_supplier') {
 			// Several purchase orders can be linked to the same documents, so the cost is the average net unit price of the product on all of them, weighted by the quantities
 			$orderids = array((int) $this->id);
-			$linkedids = $this->linkedObjectsIds;
+			$sql = "SELECT fk_source, sourcetype, fk_target, targettype FROM ".$this->db->prefix()."element_element WHERE 1 = 0";
 			foreach (array('propal', 'commande', 'facture') as $element) {
-				foreach ($linkedids[$element] ?? array() as $id) {
-					$this->fetchObjectLinked($id, $element, $id, $element, 'OR', 1, 'sourcetype', 0);
-					$orderids = array_merge($orderids, array_map('intval', $this->linkedObjectsIds['order_supplier'] ?? array()));
+				$linkedids = array_map('intval', $this->linkedObjectsIds[$element] ?? array());
+				if ($linkedids) {
+					$sql .= " OR (sourcetype = '".$this->db->escape($element)."' AND fk_source IN (".$this->db->sanitize(implode(',', $linkedids)).") AND targettype = 'order_supplier')";
+					$sql .= " OR (targettype = '".$this->db->escape($element)."' AND fk_target IN (".$this->db->sanitize(implode(',', $linkedids)).") AND sourcetype = 'order_supplier')";
 				}
 			}
-			$this->linkedObjectsIds = $linkedids;
+			$resql = $this->db->query($sql);
+			while ($resql && $obj = $this->db->fetch_object($resql)) {
+				$orderids[] = (int) ($obj->targettype == 'order_supplier' ? $obj->fk_target : $obj->fk_source);
+			}
 
 			// Limit: the purchase orders are supposed to cover the sold quantity, a part bought elsewhere (stock) is not valued
 			$sql = "SELECT SUM(d.qty * d.subprice * (1 - d.remise_percent / 100)) / SUM(d.qty) as cost";
