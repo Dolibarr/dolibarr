@@ -99,6 +99,7 @@ $search_note_private = GETPOST('search_note_private', 'alphanohtml');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $search_minbuyprice = GETPOST('search_minbuyprice', 'alpha');
+$search_numbuyprice = GETPOST('search_numbuyprice', 'alpha');
 $search_pmp = GETPOST('search_pmp', 'alpha');
 $search_cost_price = GETPOST('search_cost_price', 'alpha');
 $searchCategoryProductOperator = 0;
@@ -433,6 +434,7 @@ if (empty($reshook)) {
 		$search_state = "";
 		$search_vatrate = "";
 		$search_minbuyprice = '';
+		$search_numbuyprice = '';
 		$search_pmp = '';
 		$search_cost_price = '';
 		$search_finished = '';
@@ -546,7 +548,8 @@ $cansortfilterminbuyprice = $usercanreadsupplierpricesinlist && !isModEnabled('d
 if (!$usercanreadsupplierpricesinlist) {
 	$search_pmp = '';
 	$search_cost_price = '';
-	if (preg_match('/p\.pmp|p\.cost_price/', $sortfield)) {
+	$search_numbuyprice = '';
+	if (preg_match('/p\.pmp|p\.cost_price|pfpnum\./', $sortfield)) {
 		$sortfield = 'p.ref';
 	}
 }
@@ -629,6 +632,15 @@ if (preg_match('/pfpmin\./', $sortfield) || $search_minbuyprice !== '') {
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
 	$sql .= " AND s.status = 1";
 	$sql .= " GROUP BY pfp.fk_product) as pfpmin ON pfpmin.fk_product = p.rowid AND p.tobuy = 1";
+}
+// Same selection rules as ProductFournisseur::list_product_fournisseur_price()
+if (preg_match('/pfpnum\./', $sortfield) || $search_numbuyprice !== '') {
+	$sql .= " LEFT JOIN (SELECT pfp.fk_product, COUNT(pfp.rowid) as numbuyprice";
+	$sql .= " FROM ".$db->prefix()."product_fournisseur_price as pfp";
+	$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = pfp.fk_soc";
+	$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
+	$sql .= " AND s.status = 1";
+	$sql .= " GROUP BY pfp.fk_product) as pfpnum ON pfpnum.fk_product = p.rowid AND p.tobuy = 1";
 }
 
 // Add table from hooks
@@ -727,6 +739,9 @@ if ($search_vatrate) {
 if ($search_minbuyprice !== '') {
 	$sql .= natural_search('pfpmin.minbuyprice', $search_minbuyprice, 1);
 }
+if ($search_numbuyprice !== '') {
+	$sql .= natural_search('pfpnum.numbuyprice', $search_numbuyprice, 1);
+}
 if ($search_pmp !== '') {
 	$sql .= natural_search('p.pmp', $search_pmp, 1);
 }
@@ -824,7 +839,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	//$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$sqlforcount = preg_replace('/GROUP BY [^)]*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
@@ -963,6 +978,9 @@ if ($search_vatrate) {
 }
 if ($search_minbuyprice !== '') {
 	$param .= '&search_minbuyprice='.urlencode($search_minbuyprice);
+}
+if ($search_numbuyprice !== '') {
+	$param .= '&search_numbuyprice='.urlencode($search_numbuyprice);
 }
 if ($search_pmp !== '') {
 	$param .= '&search_pmp='.urlencode($search_pmp);
@@ -1396,8 +1414,10 @@ if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 }
 // Number buying Price
 if (!empty($arrayfields['p.numbuyprice']['checked'])) {
-	print '<td class="liste_titre">';
-	print '&nbsp;';
+	print '<td class="liste_titre right">';
+	if ($usercanreadsupplierpricesinlist) {
+		print '<input class="right flat maxwidth50" type="text" name="search_numbuyprice" value="'.dol_escape_htmltag($search_numbuyprice).'">';
+	}
 	print '</td>';
 }
 // VAT or Sell Tax Rate
@@ -1687,7 +1707,7 @@ if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.numbuyprice']['checked'])) {
-	print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"], ($usercanreadsupplierpricesinlist ? 'pfpnum.numbuyprice' : ''), "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.tva_tx']['checked'])) {
