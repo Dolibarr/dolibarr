@@ -193,6 +193,8 @@ repos:
     hooks:
       - id: prettier
         stages: [manual]
+        # Use the last LTS node: "latest" may be a pre-release that nodeenv fails to parse (ex: v27.0.0-alpha)
+        language_version: lts
         exclude:
           (?x)^( .*\.(phar |min\.css |lock) |htdocs/(includes|theme/common)/.*
           )$
@@ -284,6 +286,7 @@ repos:
           |htdocs/includes/.*
           |htdocs/install/doctemplates/websites/.*
           |htdocs/install/mysql/data/llx_20_c_departements\.sql
+          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
           |htdocs/install/mysql/migration/3\..*\.sql
           |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
           |htdocs/install/mysql/tables/llx_(categorie.*|category_bankline)\.key\.sql

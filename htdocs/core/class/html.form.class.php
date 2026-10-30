@@ -8006,10 +8006,21 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CR')) : 1) . '" spellcheck="false" /> ';
+			// Keep the value entered by the user when the page is submitted again (for example after an error)
+			$ratetoshow = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'alpha') : (!empty($rate) ? price(price2num($rate, 'CR')) : 1));
+			print '<input type="text" class="maxwidth75 valignmiddle" name="' . $htmlname . '" value="' . dolPrintHTMLForAttribute((string) $ratetoshow) . '" spellcheck="false" /> ';
+			$arraycalculationmode = array(
+				1 => 'Change ' . $langs->trans("PriceUHT") . ' of lines',
+				2 => 'Change ' . $langs->trans("PriceUHTCurrency") . ' of lines'
+			);
 			print '<select name="calculation_mode" id="calculation_mode">';
-			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
-			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';
+			// With several choices, no choice is preselected so the user must select one, with no risk of a wrong default
+			if (count($arraycalculationmode) > 1) {
+				print '<option value="-1">&nbsp;</option>';
+			}
+			foreach ($arraycalculationmode as $key => $val) {
+				print '<option value="' . $key . '">' . $val . '</option>';
+			}
 			print '</select> ';
 			print ajax_combobox("calculation_mode");
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
