@@ -677,7 +677,7 @@ class ExternalModules
 				}
 
 				// Direct install
-				if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
+				if ((!empty($product['direct-download']) && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
 					$urldownload = '';
 
 					if (in_array($product['source'], array('githubcommunity', 'githubcustom'))) {
@@ -694,7 +694,7 @@ class ExternalModules
 
 						// For community modules, we download from community repo.
 						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
-						if ($product["direct-download"] == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+						if (($product["direct-download"] ?? '') == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
 							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
 								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							}
@@ -823,7 +823,7 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
-			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+			if ((!empty($product['direct-download']) && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
 				if ($install_link) {
 					$html .= $install_link;
 				}
@@ -1384,7 +1384,8 @@ class ExternalModules
 					'module_version' => $package['module_version'],
 					'cover_photo_url' => $urlphoto,
 					'source' => 'dolistore',
-					'status' => empty($package['status']) ? '' : $package['status']
+					'status' => empty($package['status']) ? '' : $package['status'],
+					'direct-download' => '',
 				];
 
 				$adaptedData[$package['id']] = $adaptedPackage;
@@ -1567,7 +1568,7 @@ class ExternalModules
 					dol_syslog(__METHOD__ . ': The additional modules repository '.$sourcekey.' is not enabled or not valid into MAIN_ADD_EXTERNAL_MODULES_SOURCE', LOG_ERR);
 					return false;
 				}
-				if ($producttoinstall['direct-download'] && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
+				if (!empty($producttoinstall['direct-download']) && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
 					$source_url = $this->getGithubRawBaseUrl($producttoinstall['source'], $sourcekey).'/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
 					$downloaded = $this->_downloadFile($source_url, $tmpdir);
 					if (!$downloaded) {

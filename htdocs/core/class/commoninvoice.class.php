@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Joachim Kueter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,11 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int Deadline for payment
 	 */
 	public $date_lim_reglement;
+
+	/**
+	 * @var ?int	Point of tax date (date of supply)
+	 */
+	public $date_pointoftax;
 
 	/**
 	 * @var ?int		Payment term ID
@@ -611,6 +617,47 @@ abstract class CommonInvoice extends CommonObject
 			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
+	}
+
+	/**
+	 *  Check that the point of tax date of a validated invoice is not changed by an update.
+	 *  Once validated, the invoice is issued and its point of tax date decides the VAT period.
+	 *  To correct it, the invoice must be set back to draft, or a credit note must be created.
+	 *  The status is read from the database, the one of the object may have been changed (for example by the API).
+	 *
+	 *  @return	int		1 if not changed or invoice is a draft, -1 if changed on a validated invoice or error
+	 */
+	protected function checkPointOfTaxNotChanged()
+	{
+		global $langs;
+
+		if (empty($this->id)) {
+			return 1;
+		}
+
+		$sql = "SELECT fk_statut, date_pointoftax FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj || (int) $obj->fk_statut == self::STATUS_DRAFT) {
+			return 1;
+		}
+
+		// Compare the days, as stored by update()
+		$olddate = substr((string) $obj->date_pointoftax, 0, 10);
+		$newdate = (dol_strlen((string) $this->date_pointoftax) != 0 ? substr($this->db->idate((int) $this->date_pointoftax), 0, 10) : '');
+		if ($olddate !== $newdate) {
+			$langs->load("bills");
+			$this->error = $langs->trans("ErrorPointOfTaxOfValidatedInvoiceCantBeChanged", $this->ref);
+			return -1;
+		}
+
+		return 1;
 	}
 
 	/**
@@ -1390,14 +1437,20 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Define date limit */
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		// Note: $this->date is midnight in the server timezone, so the delay must be added as calendar days and not as
+		// a number of seconds. A day is not always 24 hours long: when the delay crosses a daylight saving time change,
+		// adding 86400 seconds per day shifts the result by one hour and can move it to the previous day.
+
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
-			$datelim += ($cdr_decalage * 3600 * 24);
+			$datelim = dol_time_plus_duree($datelim, $cdr_decalage, 'd', 0, 'tzserver');
 		} elseif ($cdr_type == 1) {
 			// 1 : application of the "end of the month" rule
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$mois = date('m', $datelim);
 			$annee = date('Y', $datelim);
@@ -1414,8 +1467,7 @@ abstract class CommonInvoice extends CommonObject
 			$datelim += ($cdr_decalage * 3600 * 24);
 		} elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
 			// 2 : application of the rule, the N of the current or next month
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+			$datelim = dol_time_plus_duree($this->date, $cdr_nbjour, 'd', 0, 'tzserver');
 
 			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
 			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds

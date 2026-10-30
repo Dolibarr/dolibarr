@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
  * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
@@ -29,6 +29,8 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure accounting expert module
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
  * @var Conf $conf
@@ -59,9 +61,16 @@ $list_account_main = array(
 	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
+
 if (isModEnabled('expensereport')) {
 	$list_account_main[] = 'ACCOUNTING_ACCOUNT_EXPENSEREPORT';
 }
+
+// Default subledger account (free text)
+$list_default_subledger = array(
+	'ACCOUNTING_ACCOUNT_CUSTOMER' => 'ACCOUNTING_ACCOUNT_CUSTOMER_DEFAULT_SUBLEDGER',
+	'ACCOUNTING_ACCOUNT_SUPPLIER' => 'ACCOUNTING_ACCOUNT_SUPPLIER_DEFAULT_SUBLEDGER',
+);
 
 $list_account = array();
 
@@ -171,6 +180,12 @@ if ($action == 'update') {
 			$error++;
 		}
 	}
+	foreach (array('ACCOUNTING_ACCOUNT_CUSTOMER_DEFAULT_SUBLEDGER', 'ACCOUNTING_ACCOUNT_SUPPLIER_DEFAULT_SUBLEDGER') as $constname) {
+		$constvalue = trim(GETPOST($constname, 'alphanohtml'));
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 	$constvalue = GETPOSTINT($constname);
@@ -248,9 +263,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-
 // Define main accounts for thirdparty
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("ThirdParties").' | '.$langs->trans("Users").'</td><td></td></tr>';
@@ -278,6 +291,20 @@ foreach ($list_account_main as $key) {
 	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain', '1', 2);
 	print '</td>';
 	print '</tr>';
+
+	// Default subledger account: dedicated row, not required
+	if (isset($list_default_subledger[$key])) {
+		$subkey = $list_default_subledger[$key];
+		print '<tr class="oddeven value">';
+		print '<td>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $form->textwithpicto($langs->trans($subkey), $langs->trans($subkey.'_Desc'));
+		print '</td>';
+		print '<td class="right">';
+		print '<input type="text" class="minwidth100 maxwidth300 maxwidthonsmartphone" name="'.$subkey.'" value="'.dol_escape_htmltag(getDolGlobalString($subkey)).'">';
+		print '</td>';
+		print '</tr>';
+	}
 }
 print "</table>\n";
 print "</div>\n";

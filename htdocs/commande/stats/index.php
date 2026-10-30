@@ -7,6 +7,7 @@
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,11 +218,11 @@ if (!$mesg) {
 	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NbOfOrder"));
+	$px1->SetYLabel($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NumberOfOrders"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+	$px1->SetTitle($langs->trans($mode == 'supplier' ? "NumberOfSupplierOrdersByMonth" : "NumberOfOrdersByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
 }
@@ -264,11 +265,11 @@ if (!$mesg) {
 	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfOrders"));
+	$px2->SetYLabel($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrders" : "AmountOfOrders"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
 	$px2->mode = 'depth';
-	$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+	$px2->SetTitle($langs->trans($mode == 'supplier' ? "AmountOfSupplierOrdersByMonthHT" : "AmountOfOrdersByMonthHT"));
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
@@ -461,7 +462,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td class="right">'.$langs->trans($mode == 'supplier' ? "NumberOfSupplierOrders" : "NbOfOrders").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">%</td>';
