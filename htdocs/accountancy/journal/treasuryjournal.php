@@ -817,7 +817,7 @@ if ($resql) {
 				// Payment loan
 				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label,";
-				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
+				$sql .= " pl.amount_capital, pl.rowid as payment_id, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
 				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
@@ -847,7 +847,7 @@ if ($resql) {
 					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						$object_key = $obj->bu_type.'_'.$obj->payment_id;
 
 						// Add object in payment
 						$payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
