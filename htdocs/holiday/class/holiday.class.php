@@ -2182,8 +2182,8 @@ class Holiday extends CommonObject
 	 */
 	public function fetch_users_approver_holiday()
 	{
-		global $conf;
 		// phpcs:enable
+		global $conf;
 		$users_validator = array();
 
 		$sql = "SELECT DISTINCT ur.fk_user";
