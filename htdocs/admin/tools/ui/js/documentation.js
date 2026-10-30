@@ -97,9 +97,10 @@ function showscroll()
 
         // Keep the active link visible when the summary is higher than the screen (without scrolling the page)
         if (toc.scrollHeight > toc.clientHeight) {
-            let linkTop = item.link.offsetTop - toc.offsetTop;
-            if (linkTop < toc.scrollTop) {
-                toc.scrollTop = linkTop - 8;
+            // Position of the link inside the scrollable summary (offsetTop is not reliable: the sticky summary is the offsetParent)
+            let linkTop = item.link.getBoundingClientRect().top - toc.getBoundingClientRect().top + toc.scrollTop;
+            if (linkTop < toc.scrollTop + tocHeader.offsetHeight) {
+                toc.scrollTop = linkTop - tocHeader.offsetHeight - 8; // The sticky header covers the top of the summary
             } else if (linkTop + item.link.offsetHeight > toc.scrollTop + toc.clientHeight) {
                 toc.scrollTop = linkTop + item.link.offsetHeight - toc.clientHeight + 8;
             }

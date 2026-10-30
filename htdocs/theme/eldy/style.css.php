@@ -648,7 +648,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
-input[type="search"] {
+input[type="search"]:not(.dropdown-search-input) {
 	padding-left: 4px !important;
 }
 
@@ -2466,6 +2466,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
 }
 .div-table-responsive, .div-table-responsive-no-min {
+	/* Keep wide tables from expanding the surrounding table-cell layout. */
+	width: 0;
+	min-width: 100%;
 	overflow-x: auto;
 	min-height: 0.01%;
 }
@@ -4183,6 +4186,10 @@ div.login_block_tools {
 	line-height: <?php echo $disableimages ? '25' : '53'; ?>px;
 	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
+div.login_block_tools .atoplogin {
+	width: 1em;
+	text-align: center;
+}
 div.login_block_other {
 	display: inline-block;
 	vertical-align: middle;
@@ -5055,7 +5062,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 }
 table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
-table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
+table.liste tr.lastvisible td, table.noborder tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -5107,10 +5114,12 @@ table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirs
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.lastvisible td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -5151,11 +5160,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-child td:first-child,
+table.liste tr:last-child td:first-child, table.liste tr.lastvisible td:first-child,
 table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.liste tr:last-child td:last-child,
+table.liste tr:last-child td:last-child, table.liste tr.lastvisible td:last-child,
 table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
@@ -6349,6 +6358,36 @@ img.boxhandle, img.boxclose {
 .fieldcombo-field.selected, .customreportscombo-field.selected {
 	font-weight: bold;
 }
+/* A date field of custom reports is shown once, its variants (by year, by month, by day) are into an expandable sub list */
+.customreportscombo-datefieldheader {
+	position: relative;
+	z-index: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 15px 4px 8px;
+	cursor: pointer;
+}
+.customreportscombo-datefieldheader:focus {
+	outline: none;
+}
+.customreportscombo-datefieldheader:hover::before, .customreportscombo-datefieldheader:focus::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -1000px;
+	right: 0;
+	z-index: -1;
+	background: var(--colorbacklinepairhover);
+}
+.customreportscombo-datefield.open .customreportscombo-datefieldcaret {
+	transform: rotate(90deg);
+}
+.customreportscombo-variants {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the date field */
+	padding-left: 20px;
+}
 /* The operator and value (text, date or select) of the filter editor have the same height and border than the combo of fields (.fieldcombo-toggle) */
 .search-component-assistance .operator .select2-container--default .select2-selection--single,
 .search-component-assistance .value .select2-container--default .select2-selection--single,
@@ -7181,6 +7220,15 @@ span#morelines {
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
+}
+.websitebar .button.buttonpictoonly {
+	display: inline-block;
+	min-width: 1.4em;
+	height: 1.2em;
+	line-height: 1.2em;
+	text-align: center;
+	box-sizing: content-box;
+	font-size: inherit;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -8112,6 +8160,7 @@ div.ecmjqft {
 }
 #ecm-layout-north {
 	min-height: 40px;
+	margin-bottom: 8px;
 }
 #ecm-layout-north div.attachareaformuserfileecm {
 	padding-bottom: 0px;

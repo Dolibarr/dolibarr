@@ -24,10 +24,9 @@
  */
 
 global $conf, $user, $langs, $db, $mysoc, $form;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.formmail.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
  * Class for PHPUnit tests

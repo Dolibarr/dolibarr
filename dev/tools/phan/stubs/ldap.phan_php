@@ -155,3 +155,9 @@ const LDAP_OPT_X_TLS_RANDOM_FILE = 24585;
 const LDAP_OPT_X_TLS_REQUIRE_CERT = 24582;
 const LDAP_OPT_X_TLS_TRY = 4;
 }
+
+// Since PHP 8.1, ldap_connect() returns an LDAP\Connection object (added by hand: these stubs are from PHP 7.4)
+namespace LDAP {
+final class Connection {
+}
+}
