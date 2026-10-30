@@ -33,6 +33,7 @@ allowlist = [
     "date",
     "diff",
     "dirname",
+    "dot",
     "du",
     "echo",
     "file",

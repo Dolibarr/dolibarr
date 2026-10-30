@@ -15795,7 +15795,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
-				if ($ret >= 0) {
+				if ($ret > 0) {
 					if (empty($objecttmp->module)) {
 						$objecttmp->module = $element_prop['module'];
 					}
