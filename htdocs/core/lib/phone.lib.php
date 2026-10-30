@@ -25,8 +25,9 @@
  * Parse a stored phone number into country code and number parts
  *
  * Stored format is "+{code} {number}" (e.g. "+33 644986885").
- * A code glued to the number (e.g. "+33644986885", from imports or old data) is
- * recognized when $db is provided, using the longest phone code known in llx_c_country.
+ * A code glued to the number or followed by formatting (e.g. "+33644986885" or
+ * "+33(0)6 44 98 68 85", from imports or old data) is recognized when $db is provided,
+ * using the longest phone code known in llx_c_country.
  * If no code is found, returns empty code and the full string as number.
  *
  * @param	string		$phone		Stored phone number
@@ -42,15 +43,16 @@ function dol_parse_phone($phone, $db = null)
 
 	if (strpos($phone, '+') === 0) {
 		$pos = strpos($phone, ' ');
-		if ($pos !== false) {
+		if ($pos !== false && preg_match('/^\+[0-9]+$/', substr($phone, 0, $pos))) {
 			return array(
 				'code' => substr($phone, 0, $pos),
 				'number' => substr($phone, $pos + 1)
 			);
 		}
-		// Phone starts with + but has no space: look for the longest known phone code
+		// Code glued to the number or followed by formatting (e.g. "+33612345678", "+33(0)9 72 36 76 46"):
+		// look for the longest known phone code
 		if ($db !== null) {
-			$digits = preg_replace('/[\-\.\(\)]/', '', substr($phone, 1));
+			$digits = preg_replace('/[^0-9]/', '', str_replace('(0)', '', substr($phone, 1)));
 			$phonecodes = dol_get_all_phone_codes($db);
 			for ($len = 4; $len >= 1; $len--) {
 				$candidate = substr($digits, 0, $len);
