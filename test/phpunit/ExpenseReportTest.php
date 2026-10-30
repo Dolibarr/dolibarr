@@ -483,6 +483,80 @@ class ExpenseReportTest extends CommonClassTest
 	}
 
 	/**
+	 * testExpenseReportApiPaymentInCurrency
+	 *
+	 * A payment created through the API takes its amounts in the currency of the expense report, like the payment page.
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportApiPaymentInCurrency()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/expensereport/class/api_expensereports.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$apiuser = clone $user;
+		$apiuser->rights = clone $user->rights;
+		$apiuser->rights->expensereport = new stdClass();
+		$apiuser->rights->expensereport->to_paid = 1;
+		DolibarrApiAccess::$user = $apiuser;
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->lines = array();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$expensereport->multicurrency_code = 'USD';
+		$expensereport->multicurrency_tx = 0.8;
+		$this->assertGreaterThan(0, $expensereport->create($user), (string) $expensereport->error);
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id LIMIT 1");
+		$typefeesid = (int) $db->fetch_object($resql)->id;
+		$expensereport->fetch($expensereport->id);
+		$this->assertGreaterThan(0, $expensereport->addline(1, 0, $typefeesid, 0, dol_now(), 'Taxi', 0, 0, 0, 0, 100), (string) $expensereport->error);
+		$db->query("UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = ".ExpenseReport::STATUS_APPROVED." WHERE rowid = ".((int) $expensereport->id));
+
+		$accountusd = $this->createBankAccount('USD');
+		$accountcompany = $this->createBankAccount($conf->currency);
+		$api = new ExpenseReports();
+
+		try {
+			$api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 101), 'accountid' => $accountusd));
+			$this->fail('A payment higher than the remainder in the currency of the report is refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertStringContainsString('remainder to pay (100 USD)', $e->getMessage());
+		}
+		try {
+			$api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 20), 'accountid' => $accountcompany, 'bank_amount' => 'abc'));
+			$this->fail('A bank_amount that is not a positive number is refused');
+		} catch (Luracast\Restler\RestException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+
+		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 40), 'accountid' => $accountusd));
+		$payment = new PaymentExpenseReport($db);
+		$payment->fetch($paymentid);
+		$this->assertEquals(40, (float) $payment->multicurrency_amount);
+		$this->assertEquals(50, (float) $payment->amount);
+		$this->assertSame('USD', $payment->multicurrency_code);
+
+		$paymentid = $api->addPayment($expensereport->id, array('fk_typepayment' => 2, 'datep' => dol_now(), 'amounts' => array($user->id => 60), 'accountid' => $accountcompany, 'bank_amount' => '76.5'));
+		$payment = new PaymentExpenseReport($db);
+		$payment->fetch($paymentid);
+		$this->assertEquals(60, (float) $payment->multicurrency_amount);
+		$this->assertEquals(75, (float) $payment->amount, 'The last payment settles the remainder in company currency');
+		$resql = $db->query("SELECT b.amount FROM ".MAIN_DB_PREFIX."bank as b WHERE b.rowid = ".((int) $payment->fk_bank));
+		$this->assertEquals(-76.5, (float) $db->fetch_object($resql)->amount);
+		$expensereport->fetch($expensereport->id);
+		$this->assertEquals(ExpenseReport::STATUS_CLOSED, $expensereport->status);
+	}
+
+	/**
 	 * Create a bank account in a currency
 	 *
 	 * @param	string	$currency	Currency code
@@ -494,7 +568,7 @@ class ExpenseReportTest extends CommonClassTest
 
 		$account = new Account($db);
 		$account->ref = 'ER'.$currency.substr(uniqid(), -6);
-		$account->label = 'ExpenseReportTest '.$currency;
+		$account->label = $account->ref;
 		$account->type = Account::TYPE_CURRENT;
 		$account->country_id = 1;
 		$account->date_solde = dol_now();

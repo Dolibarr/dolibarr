@@ -163,6 +163,8 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$now = dol_now();
@@ -224,12 +226,13 @@ class PaymentExpenseReport extends CommonObject
 			if (empty($this->multicurrency_amount)) {
 				$this->multicurrency_amount = $totalamount;
 			}
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount, multicurrency_amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount, multicurrency_amount, multicurrency_code,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".((int) $this->fk_expensereport).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((float) price2num($this->multicurrency_amount, 'MT')).",";
+			$sql .= " '".$this->db->escape(empty($this->multicurrency_code) ? $conf->currency : $this->multicurrency_code)."',";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";	// fk_bank is ID of transaction into ll_bank
 
@@ -278,6 +281,7 @@ class PaymentExpenseReport extends CommonObject
 		$sql .= " t.datep,";
 		$sql .= " t.amount,";
 		$sql .= " t.multicurrency_amount,";
+		$sql .= " t.multicurrency_code,";
 		$sql .= " t.fk_typepayment,";
 		$sql .= " t.num_payment,";
 		$sql .= " t.note as note_public,";
@@ -306,6 +310,7 @@ class PaymentExpenseReport extends CommonObject
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->multicurrency_amount = $obj->multicurrency_amount;
+				$this->multicurrency_code = $obj->multicurrency_code;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->note_public		= $obj->note_public;

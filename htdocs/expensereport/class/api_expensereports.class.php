@@ -999,6 +999,8 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Create a payment for an expense report
 	 *
+	 * The amounts are in the currency of the expense report. From a bank account in another currency, bank_amount is the amount debited from the account, in its currency.
+	 *
 	 * @since	20.0.0	Initial implementation
 	 *
 	 * @param	int		$id								ID of an expense report
@@ -1044,12 +1046,30 @@ class ExpenseReports extends DolibarrApi
 		}
 		$totalpayment = 0;
 		foreach ((array) $paymentExpenseReport->amounts as $value) {
+			if (!is_numeric($value)) {
+				throw new RestException(400, 'amounts must be numbers');
+			}
 			$totalpayment += (float) price2num($value, 'MT');
 		}
+		$totalpayment = (float) price2num($totalpayment, 'MT');
 		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
-		if ((float) price2num($totalpayment, 'MT') > $remaintopay) {
+		if ($this->expensereport->isInForeignCurrency()) {
+			$multicurrency_remaintopay = (float) price2num($this->expensereport->multicurrency_total_ttc - $this->expensereport->getSumPayments(1), 'MT');
+			if ($totalpayment > $multicurrency_remaintopay) {
+				throw new RestException(400, 'Payment higher than remainder to pay ('.$multicurrency_remaintopay.' '.$this->expensereport->multicurrency_code.')');
+			}
+			foreach ($paymentExpenseReport->amounts as $key => $value) {
+				$paymentExpenseReport->amounts[$key] = ($totalpayment == $multicurrency_remaintopay ? $remaintopay : (float) price2num((float) $value / $this->expensereport->getMulticurrencyRate(), 'MT'));
+			}
+		} elseif ($totalpayment > $remaintopay) {
 			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
 		}
+		if (isset($request_data['bank_amount']) && !(is_numeric($request_data['bank_amount']) && (float) $request_data['bank_amount'] > 0)) {
+			throw new RestException(400, 'bank_amount must be a positive number');
+		}
+		$paymentExpenseReport->multicurrency_amount = $totalpayment;
+		$paymentExpenseReport->multicurrency_code = $this->expensereport->multicurrency_code;
+		$paymentExpenseReport->bank_amount = (float) price2num($request_data['bank_amount'] ?? 0, 'MT');
 
 		// Same sequence as expensereport/payment/payment.php: all or nothing
 		$this->db->begin();
@@ -1073,7 +1093,11 @@ class ExpenseReports extends DolibarrApi
 			}
 		}
 
-		$remaintopay = price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		if ($this->expensereport->isInForeignCurrency()) {
+			$remaintopay = price2num($this->expensereport->multicurrency_total_ttc - $this->expensereport->getSumPayments(1), 'MT');
+		} else {
+			$remaintopay = price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		}
 		if ($remaintopay == 0 && $this->expensereport->setPaid($this->expensereport->id, DolibarrApiAccess::$user) < 0) {
 			$this->db->rollback();
 			throw new RestException(400, 'Set paid error : '.$this->expensereport->errorsToString());
