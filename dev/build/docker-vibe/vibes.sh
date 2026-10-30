@@ -167,5 +167,6 @@ sudo docker run --rm -it \
   --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
   --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
   --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
+  --mount "type=bind,src=$HOME/.transifexrc,dst=$HOME/.transifexrc" \
   -w "$HOME/git/$GIT_DIR" \
   docker-vibe "${ARGS[@]}"

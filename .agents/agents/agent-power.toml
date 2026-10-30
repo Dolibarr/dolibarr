@@ -19,7 +19,7 @@ When running bash commands, keep them plain so they can be auto-approved:
 
 [tools.bash]
 permission = "always"
-deny = ["rm -rf *", "sudo *"]
+denylist = ["rm -rf *", "sudo *"]
 
 [tools.read_file]
 permission = "always"
