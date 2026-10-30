@@ -4944,6 +4944,7 @@ abstract class CommonObject
 	{
 		$rank = array('propal' => 1, 'commande' => 2, 'facture' => 3);	// The oldest document of the sales chain is the source of the link
 		$mytype = $this->getElementType();
+		$mysocid = (property_exists($this, 'socid') ? (int) $this->socid : 0);
 		$savedlinks = array($this->linkedObjectsIds, $this->linkedObjects);
 
 		$this->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
@@ -4955,7 +4956,7 @@ abstract class CommonObject
 			foreach ((array) $originids as $originid) {
 				// Follow the links of an origin of the same thirdparty and entity only
 				$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($origintype);
-				$sql .= " WHERE rowid = ".((int) $originid)." AND fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity($origintype).")";
+				$sql .= " WHERE rowid = ".((int) $originid)." AND fk_soc = ".((int) $mysocid)." AND entity IN (".getEntity($origintype).")";
 				$resql = $this->db->query($sql);
 				if (!$resql || !$this->db->num_rows($resql)) {
 					continue;
