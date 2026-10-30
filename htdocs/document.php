@@ -294,6 +294,8 @@ if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
+$hookmanager->initHooks(array('document'));
+
 // Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
@@ -364,7 +366,6 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-$hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);

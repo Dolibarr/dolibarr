@@ -702,12 +702,6 @@ class Conf extends stdClass
 			if (empty($this->global->MAIN_MENUFRONT_STANDARD)) {
 				$this->global->MAIN_MENUFRONT_STANDARD = "eldy_menu.php";
 			}
-			if (empty($this->global->MAIN_MENU_SMARTPHONE)) {
-				$this->global->MAIN_MENU_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
-			}
-			if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) {
-				$this->global->MAIN_MENUFRONT_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
-			}
 			if (!isset($this->global->FACTURE_TVAOPTION)) {
 				$this->global->FACTURE_TVAOPTION = 1;
 			}
