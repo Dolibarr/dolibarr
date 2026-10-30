@@ -41,21 +41,21 @@ if (!in_array($search_status, array('calculated', 'review', 'all'))) {
 $limit = GETPOSTINT('limit') > 0 ? GETPOSTINT('limit') : $conf->liste_limit;
 $page = max(0, GETPOSTINT('page'));
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma') === 'DESC' ? 'DESC' : 'ASC';
+$sortorder = dol_strtoupper(GETPOST('sortorder', 'aZ09comma')) === 'DESC' ? 'DESC' : 'ASC';
 $contextpage = 'deferredrevenuelist';
 $action = GETPOST('action', 'aZ09');
 $arrayfields = array(
-	'f.ref' => array('label' => 'Invoice', 'checked' => 1, 'position' => 10),
-	'f.datef' => array('label' => 'DateInvoice', 'checked' => 1, 'position' => 20),
-	's.nom' => array('label' => 'ThirdParty', 'checked' => 1, 'position' => 30),
-	'fd.description' => array('label' => 'Description', 'checked' => 1, 'position' => 40),
-	'fd.date_start' => array('label' => 'DateStart', 'checked' => 1, 'position' => 50),
-	'fd.date_end' => array('label' => 'DateEnd', 'checked' => 1, 'position' => 60),
-	'aa.account_number' => array('label' => 'AccountAccounting', 'checked' => 1, 'position' => 70),
-	'fd.total_ht' => array('label' => 'AmountHT', 'checked' => 1, 'position' => 80),
-	'calculation' => array('label' => 'DeferredRevenueDays', 'checked' => 1, 'position' => 90),
-	'amount' => array('label' => 'DeferredRevenueAmount', 'checked' => 1, 'position' => 100),
-	'status' => array('label' => 'Status', 'checked' => 1, 'position' => 110),
+	'f.ref' => array('label' => 'Invoice', 'checked' => '1', 'position' => 10),
+	'f.datef' => array('label' => 'DateInvoice', 'checked' => '1', 'position' => 20),
+	's.nom' => array('label' => 'ThirdParty', 'checked' => '1', 'position' => 30),
+	'fd.description' => array('label' => 'Description', 'checked' => '1', 'position' => 40),
+	'fd.date_start' => array('label' => 'DateStart', 'checked' => '1', 'position' => 50),
+	'fd.date_end' => array('label' => 'DateEnd', 'checked' => '1', 'position' => 60),
+	'aa.account_number' => array('label' => 'AccountAccounting', 'checked' => '1', 'position' => 70),
+	'fd.total_ht' => array('label' => 'AmountHT', 'checked' => '1', 'position' => 80),
+	'calculation' => array('label' => 'DeferredRevenueDays', 'checked' => '1', 'position' => 90),
+	'amount' => array('label' => 'DeferredRevenueAmount', 'checked' => '1', 'position' => 100),
+	'status' => array('label' => 'Status', 'checked' => '1', 'position' => 110),
 );
 if (!isset($arrayfields[$sortfield])) {
 	$sortfield = 'f.datef';
@@ -187,10 +187,10 @@ if (!$conf->main_checkbox_left_column) {
 print '</tr>';
 
 foreach ($report->lines as $line) {
-	$invoice->id = $line->invoice_id;
+	$invoice->id = (int) $line->invoice_id;
 	$invoice->ref = $line->ref;
-	$invoice->type = $line->type;
-	$thirdparty->id = $line->fk_soc;
+	$invoice->type = (int) $line->type;
+	$thirdparty->id = (int) $line->fk_soc;
 	$thirdparty->name = $line->thirdparty_name;
 	print '<tr class="oddeven">';
 	if ($conf->main_checkbox_left_column) {

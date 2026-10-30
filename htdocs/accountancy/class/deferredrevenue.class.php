@@ -118,11 +118,11 @@ class DeferredRevenue
 		$sqlfrom .= ' AND (fd.fk_remise_except IS NULL OR fd.fk_remise_except = 0)';
 		$sqlfrom .= " AND (fd.date_end IS NULL OR fd.date_start IS NULL OR fd.date_start > fd.date_end OR fd.date_end > '".$this->db->escape($cutoff)."')";
 
-		$calculable = 'f.type <> '.Facture::TYPE_SITUATION.' AND fd.date_start IS NOT NULL AND fd.date_end IS NOT NULL AND fd.date_start <= fd.date_end';
+		$sqlcalculable = 'f.type <> '.Facture::TYPE_SITUATION.' AND fd.date_start IS NOT NULL AND fd.date_end IS NOT NULL AND fd.date_start <= fd.date_end';
 		if (empty($filter['status']) || $filter['status'] == 'calculated') {
-			$sqlfrom .= ' AND ('.$calculable.')';
+			$sqlfrom .= ' AND ('.$sqlcalculable.')';
 		} elseif ($filter['status'] == 'review') {
-			$sqlfrom .= ' AND NOT ('.$calculable.')';
+			$sqlfrom .= ' AND NOT ('.$sqlcalculable.')';
 		}
 		if (!empty($filter['ref'])) {
 			$sqlfrom .= natural_search('f.ref', $filter['ref']);
