@@ -27,6 +27,7 @@
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -10503,27 +10504,37 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {
+				// Use the extrafields already loaded into the object and fetch them only when none are loaded yet.
+				// The caller may hold values that are set but not saved yet: an object validated by an API or a
+				// connector inside the same write fires the notification triggers before its extrafields are stored,
+				// and fetching them unconditionally here silently discarded those values.
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					$resfetchoptionals = 1;
+				} else {
+					$resfetchoptionals = $object->fetch_optionals();
+				}
+				if ($resfetchoptionals > 0) {
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
