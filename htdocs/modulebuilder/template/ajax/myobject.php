@@ -78,7 +78,7 @@ if (!$res) {
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-dol_include_once('/mymodule/class/myobject.class.php');
+include_once __DIR__.'/../class/myobject.class.php';
 
 
 $mode = GETPOST('mode', 'aZ09');

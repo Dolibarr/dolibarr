@@ -237,6 +237,8 @@ class AllTests
 		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		require_once dirname(__FILE__).'/ModulebuilderIncludeRewriteTest.php';
+		$suite->addTestSuite('ModulebuilderIncludeRewriteTest');
 		require_once dirname(__FILE__).'/ModuleBuilderTemplateConventionsTest.php';
 		$suite->addTestSuite('ModuleBuilderTemplateConventionsTest');
 		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function

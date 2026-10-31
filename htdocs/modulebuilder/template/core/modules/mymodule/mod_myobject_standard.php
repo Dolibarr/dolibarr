@@ -25,7 +25,7 @@
  *  \brief      File of class to manage MyObject numbering rules standard
  */
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
+include_once __DIR__.'/modules_myobject.php';
 
 
 /**
